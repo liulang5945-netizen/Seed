@@ -1,0 +1,1474 @@
+{
+  "probe": "taiji_growth_wire",
+  "date": "2026-11-08",
+  "question": "can capacity growth be wired onto the real graph so that it is fully inert when switched off, survives a session boundary without dropping or evicting, and changes or does not change the 22-face correction reading?",
+  "preregistration": {
+    "manifest": "plans\\manifests\\taiji_growth_wire_20261108.json",
+    "sha256": "41047cbc8c808d9a10e8d8277dfea6b92075f1397485f2a6fc48758c6e4fdf04",
+    "written_before_any_reading": true
+  },
+  "criteria": {
+    "Z1_read_bytes": "with the switch off, all 154 battery reads through the wire are byte-identical to the frozen addressed_read: fast sha equal, identical top slot, max|delta| = 0",
+    "Z2_probabilities": "with the switch off, the real forward over the 132 texts (22 written read wordings, 66 unwritten, 22 new_token, 22 new_pairing) produces identical probability bytes at every patch and an identical end state",
+    "Z3_written_anchor": "the rebuilt store reproduces today exactly: keys/values/age sha and count equal the closed-line arm A, written floor 0.964818299 and 8/22 own-slot hits",
+    "Z4_identity": "parameter tensors, parameter elements, state bytes and candidate_sha_v2 are equal before and after the disabled wire is used; the value must be the 20.3a CF1 store sha",
+    "Z5_no_half_open": "with the switch off the boundary returns the same state object, allocates nothing, and the only enabled checks in the wire are the three entry-point early returns",
+    "S1_no_loss": "session A writes 28/32 slots; the boundary grows to 64; session B writes 4 more",
+    "S2_pass": "dropped_writes = 0, evictions = 0, the 28 session-A slots are byte-identical after growth, and each session-A text reads back a slot inside the prefix whose stored key is byte-identical to the key written for it; h_slots after >= 0.125.  The fixture's 8 base texts are identical by construction, so they share one address and value equality is reported separately, never used for the verdict",
+    "T1_two_rules": "the simplified gate is exactly two rules: capacity (grow before writing when the session reserve is short; refuse, never evict, when capped) and copy (a write whose direction is a copy of the occupied span is refused)",
+    "T2_count": "the 22 correction faces are read with their own read wording in both arms; correct = the top slot is the slot the face's write landed in",
+    "V1": "Z fails -> zero_perturbation_failed, hard stop",
+    "V2": "Z passes but any drop/eviction in the smoke -> growth_boundary_breaks",
+    "V3": "all pass -> growth_wired_default_off; whether training is needed is still open",
+    "unchanged": "no fixture, face, position, reserve ratio, growth factor or gate rule is retuned"
+  },
+  "amendments": [
+    {
+      "when": "after run 1, before run 2",
+      "what": "read-back criterion changed from own-slot equality to byte equality with the written value inside the prefix",
+      "why": "the fixture's 8 base texts are identical, so own-slot equality is not a valid measurement of survival",
+      "mechanism_changed": false,
+      "run1_report": "reports/taiji_growth_wire_20261108_run1_invalid_metric.json",
+      "run1_verdict": "growth_boundary_breaks",
+      "run1_read_back_hits": 21
+    },
+    {
+      "when": "after run 2, before run 3",
+      "what": "read-back compared stored *keys* instead of stored values",
+      "why": "the 8 base texts share one key but their values legitimately differ (the fast state carries over between turns), so a duplicate key can only return one of the eight values; this is a property of the existing encoding, not of growth",
+      "mechanism_changed": false,
+      "run2_read_back_value_hits": 21,
+      "note": "run 3 reports key hits and value hits separately in step2"
+    },
+    {
+      "when": "after run 3, before run 4",
+      "what": "added a clean-process identity anchor (a subprocess that never imports the wire)",
+      "why": "the 20.3a sha predates later decode-rule text, so it is not the right 'today' anchor; the clean process is",
+      "mechanism_changed": false,
+      "pass_rule_changed": false
+    }
+  ],
+  "anchors": {
+    "floor": 0.964818299,
+    "written_correct": 8,
+    "written_total": 22,
+    "store_keys_sha": "f586df56ef1c87ea6b3e765e214869e4421d34733668c8f00b04c9b0369f43aa",
+    "store_values_sha": "d71173d6e590b587987753856c982b58bd753ad4f8777fc4c7fa0c91646deac4",
+    "store_age_sha": "c48abcc4c2311df66c40d3a255a0d62f919f6f3e29788076911ebedb050e9787",
+    "store_count": 30,
+    "candidate_sha_v2_20_3a": "fdab07785f9722630784f55a43da61aadd12bdce01cc87b2a12dad285ae5fdd4",
+    "parameter_tensors_20_3a": 135
+  },
+  "step1_zero_perturbation": {
+    "boundary_disabled": {
+      "schema": "taiji-growth-wire-v1",
+      "session": "zero",
+      "enabled": false,
+      "generation": 0,
+      "slots": 32,
+      "occupied": 30,
+      "pending": 4,
+      "action": "legacy_path",
+      "state_same_object": true,
+      "bytes_added": 0
+    },
+    "same_state_object": true,
+    "tensor_objects_same": true,
+    "reads": {
+      "queries": 154,
+      "fast_sha_identical": 154,
+      "top_slot_identical": 154,
+      "info_identical": 154,
+      "max_abs_delta": 0.0
+    },
+    "forwards": {
+      "texts": 132,
+      "texts_identical": 132,
+      "patch_steps": 264,
+      "patch_steps_identical": 264,
+      "max_abs_delta_end_fast": 0.0
+    },
+    "face_anchor": {
+      "queries": 22,
+      "floor": 0.964818299,
+      "written_correct": 8,
+      "written_total": 22,
+      "baseline_floor": 0.964818299,
+      "baseline_written_correct": 8,
+      "floor_matches_baseline": true,
+      "correct_matches_baseline": true,
+      "store": {
+        "keys": "f586df56ef1c87ea6b3e765e214869e4421d34733668c8f00b04c9b0369f43aa",
+        "values": "d71173d6e590b587987753856c982b58bd753ad4f8777fc4c7fa0c91646deac4",
+        "age": "c48abcc4c2311df66c40d3a255a0d62f919f6f3e29788076911ebedb050e9787",
+        "count": 30
+      },
+      "store_matches_baseline": true,
+      "per_face": [
+        {
+          "tag": "face_00",
+          "slot": 8,
+          "top_slot": 8,
+          "top_cosine": 0.982632040977478,
+          "correct": true
+        },
+        {
+          "tag": "face_01",
+          "slot": 9,
+          "top_slot": 0,
+          "top_cosine": 0.9833678007125854,
+          "correct": false
+        },
+        {
+          "tag": "face_02",
+          "slot": 10,
+          "top_slot": 0,
+          "top_cosine": 0.9847049117088318,
+          "correct": false
+        },
+        {
+          "tag": "face_03",
+          "slot": 11,
+          "top_slot": 0,
+          "top_cosine": 0.9853453040122986,
+          "correct": false
+        },
+        {
+          "tag": "face_04",
+          "slot": 12,
+          "top_slot": 0,
+          "top_cosine": 0.9839265942573547,
+          "correct": false
+        },
+        {
+          "tag": "face_05",
+          "slot": 13,
+          "top_slot": 0,
+          "top_cosine": 0.9822584390640259,
+          "correct": false
+        },
+        {
+          "tag": "face_06",
+          "slot": 14,
+          "top_slot": 19,
+          "top_cosine": 0.9797124266624451,
+          "correct": false
+        },
+        {
+          "tag": "face_07",
+          "slot": 15,
+          "top_slot": 19,
+          "top_cosine": 0.9750710725784302,
+          "correct": false
+        },
+        {
+          "tag": "face_08",
+          "slot": 16,
+          "top_slot": 16,
+          "top_cosine": 0.9779387712478638,
+          "correct": true
+        },
+        {
+          "tag": "face_09",
+          "slot": 17,
+          "top_slot": 17,
+          "top_cosine": 0.9701303243637085,
+          "correct": true
+        },
+        {
+          "tag": "face_10",
+          "slot": 18,
+          "top_slot": 19,
+          "top_cosine": 0.9740228056907654,
+          "correct": false
+        },
+        {
+          "tag": "face_11",
+          "slot": 19,
+          "top_slot": 19,
+          "top_cosine": 0.9697652459144592,
+          "correct": true
+        },
+        {
+          "tag": "face_12",
+          "slot": 20,
+          "top_slot": 20,
+          "top_cosine": 0.9770272970199585,
+          "correct": true
+        },
+        {
+          "tag": "face_13",
+          "slot": 21,
+          "top_slot": 21,
+          "top_cosine": 0.9710649251937866,
+          "correct": true
+        },
+        {
+          "tag": "face_14",
+          "slot": 22,
+          "top_slot": 19,
+          "top_cosine": 0.9648182988166809,
+          "correct": false
+        },
+        {
+          "tag": "face_15",
+          "slot": 23,
+          "top_slot": 19,
+          "top_cosine": 0.9735286831855774,
+          "correct": false
+        },
+        {
+          "tag": "face_16",
+          "slot": 24,
+          "top_slot": 24,
+          "top_cosine": 0.9740180373191833,
+          "correct": true
+        },
+        {
+          "tag": "face_17",
+          "slot": 25,
+          "top_slot": 19,
+          "top_cosine": 0.9733766913414001,
+          "correct": false
+        },
+        {
+          "tag": "face_18",
+          "slot": 26,
+          "top_slot": 19,
+          "top_cosine": 0.9803906083106995,
+          "correct": false
+        },
+        {
+          "tag": "face_19",
+          "slot": 27,
+          "top_slot": 19,
+          "top_cosine": 0.9751172065734863,
+          "correct": false
+        },
+        {
+          "tag": "face_20",
+          "slot": 28,
+          "top_slot": 28,
+          "top_cosine": 0.9758922457695007,
+          "correct": true
+        },
+        {
+          "tag": "face_21",
+          "slot": 29,
+          "top_slot": 0,
+          "top_cosine": 0.9695503115653992,
+          "correct": false
+        }
+      ]
+    },
+    "identity_before": {
+      "candidate_sha_v2": "ff60ac2578f09f346f4bad9cf3d0fd0986633bd49e4e82c7ac76573dd87389ea",
+      "parameter_tensors": 135,
+      "parameter_count": 3311259,
+      "source_files": {
+        "taiji/rule_learning_20_1_net.py": "0b0297eeb76805df011eaceb8d9c6a50cc012f43bd484dee0bd7663ba873a6fc",
+        "taiji/living_core.py": "df7942806de9352418bea6e195f920c416b38a1be48236e05b36981b83527f7b",
+        "taiji/record_relation_core.py": "8318dde5c3d3b3ff42a2c94e528aec7552363d4f9aef2c11ee95b8e868ef64a2"
+      }
+    },
+    "identity_after": {
+      "candidate_sha_v2": "ff60ac2578f09f346f4bad9cf3d0fd0986633bd49e4e82c7ac76573dd87389ea",
+      "parameter_tensors": 135,
+      "parameter_count": 3311259,
+      "source_files": {
+        "taiji/rule_learning_20_1_net.py": "0b0297eeb76805df011eaceb8d9c6a50cc012f43bd484dee0bd7663ba873a6fc",
+        "taiji/living_core.py": "df7942806de9352418bea6e195f920c416b38a1be48236e05b36981b83527f7b",
+        "taiji/record_relation_core.py": "8318dde5c3d3b3ff42a2c94e528aec7552363d4f9aef2c11ee95b8e868ef64a2"
+      }
+    },
+    "identity_clean_process": {
+      "candidate_sha_v2": "ff60ac2578f09f346f4bad9cf3d0fd0986633bd49e4e82c7ac76573dd87389ea",
+      "arm": "CF1",
+      "fast_enabled": true,
+      "addressed_store_enabled": true,
+      "graph": "taiji-rule-learning-20-1",
+      "modules": [
+        "taiji/rule_learning_20_1_net.py",
+        "taiji/living_core.py",
+        "taiji/record_relation_core.py"
+      ],
+      "decode_rules": {
+        "answer_space": [
+          "应送左箱。",
+          "应送右箱。"
+        ],
+        "answer_bytes": 15,
+        "decision_positions": [
+          7,
+          8
+        ],
+        "decode": "greedy argmax over the 256 byte ids on the fixed 15-byte contract",
+        "feedback_release": "atomic five-line batches; only released lines enter E and F",
+        "fast_write": "CF1 writes F from released feedback only; B_EH never writes F",
+        "fast_window": "F edits happen inside the release call; query and self-generated bytes cannot write",
+        "session_freeze": "every parameter frozen inside a session; F state is the only inference-plastic tensor",
+        "truth_isolation": "rule id, signature, truth table and solver are scoring-only",
+        "answer_contract": "应送(左|右)箱。; decision bytes at positions 7..8",
+        "store_write": "addressed_store_enabled only: value = the turn's post-read F copy, written at every turn and at every released line; default off",
+        "store_read": "cosine similarity between the 128-d mean of BytePatchEncoder.context(query) and the stored keys; softmax temperature 0.1; F <- (1-a)F + a*sum p_i V_i, a=0.5",
+        "addressed_write": "addressed store writes are structural, never gradient driven",
+        "fifo": "32 slots, eviction of the lowest insertion age when full",
+        "cross_session_clear": "the store is zeroed at the first turn of a new session and is never restored across a session boundary"
+      },
+      "task_contract": {
+        "attributes": [
+          [
+            "表面",
+            "细",
+            "粗"
+          ],
+          [
+            "材质",
+            "软",
+            "硬"
+          ],
+          [
+            "光泽",
+            "哑",
+            "亮"
+          ],
+          [
+            "结构",
+            "空",
+            "实"
+          ]
+        ],
+        "rule_family": "y = b xor xor_{i in S} x_i, 1<=|S|<=2, |rules|=20",
+        "anchors": "0000 and the four basis vectors",
+        "sessions": [
+          10,
+          24,
+          17
+        ],
+        "turns": 51,
+        "correction_surface": 22
+      },
+      "init_scheme": "parent bundle weights copied verbatim; no new tensor initialised",
+      "state_schema": "taiji-rule-learning-20-1-state-v1",
+      "parameter_count": 3311259,
+      "parameter_tensors": 135,
+      "group_counts": {
+        "W": 458752,
+        "U": 8192,
+        "V": 57344,
+        "R": 917504,
+        "P": 131072,
+        "tau": 4,
+        "encoder": 205632,
+        "nu": 2176,
+        "message": 212992,
+        "fast_read": 164608,
+        "episodic": 83713,
+        "xi": 41984,
+        "readout": 327680,
+        "expression": 116547,
+        "write_heads": 434448,
+        "world": 148611
+      },
+      "source_files": {
+        "taiji/rule_learning_20_1_net.py": "0b0297eeb76805df011eaceb8d9c6a50cc012f43bd484dee0bd7663ba873a6fc",
+        "taiji/living_core.py": "df7942806de9352418bea6e195f920c416b38a1be48236e05b36981b83527f7b",
+        "taiji/record_relation_core.py": "8318dde5c3d3b3ff42a2c94e528aec7552363d4f9aef2c11ee95b8e868ef64a2"
+      }
+    },
+    "identity_clean_matches": true,
+    "identity_matches_20_3a": false,
+    "identity_20_3a_note": "the 20.3a sha predates later decode-rule text in the identity payload; it is recorded for reference only.  'Today' is the clean process that never imports the wire.",
+    "branch_audit": {
+      "enabled_checks": 3,
+      "lines": [
+        "\"enabled\": bool(config.enabled),",
+        "if not config.enabled:",
+        "if not config.enabled:"
+      ],
+      "grow_store_called_when_disabled": false
+    },
+    "state_bytes_before": 1100064,
+    "state_bytes_after": 1100064,
+    "checks": {
+      "Z1_read_bytes": true,
+      "Z2_probabilities": true,
+      "Z3_written_anchor": true,
+      "Z4_identity": true,
+      "Z5_no_half_open": true
+    },
+    "passed": true
+  },
+  "step2_cross_session": {
+    "session_a": {
+      "texts": 28,
+      "written": 28,
+      "evictions": 0,
+      "prefix_signature": {
+        "keys": "83bce717c053fbab7ef84f829b2a616edec1f98b7c29c600fff9a442c6956f93",
+        "values": "913852a874d030e35f2e1351a1c512a6c4cd5a92dd174e5194ccfa73601a4121",
+        "age": "4f2a7b3d0ccdbf29fc680922e9c93f266eed28042ccfa917a1769369198d8d1d"
+      }
+    },
+    "boundary_a": {
+      "schema": "taiji-growth-wire-v1",
+      "session": "A",
+      "enabled": true,
+      "generation": 0,
+      "slots": 32,
+      "occupied": 0,
+      "pending": 28,
+      "action": "write_now",
+      "reason": "headroom_ok",
+      "h_slots": 0.125,
+      "h_min_slots": 0.125,
+      "bytes_added": 0,
+      "state_same_object": true
+    },
+    "boundary_b": {
+      "schema": "taiji-growth-wire-v1",
+      "session": "B",
+      "enabled": true,
+      "generation": 1,
+      "slots": 64,
+      "occupied": 28,
+      "pending": 4,
+      "added": 32,
+      "action": "grow_then_write",
+      "reason": "headroom_short",
+      "h_slots": 0.0,
+      "h_min_slots": 0.125,
+      "bytes_added": 1065216,
+      "state_same_object": false
+    },
+    "session_b": {
+      "texts": 4,
+      "written": 4,
+      "evictions": 0
+    },
+    "generation": 1,
+    "state_bytes_added": 1065216,
+    "capacity_after": 64,
+    "occupied_after": 32,
+    "h_slots_after": 0.5,
+    "reserve_ratio": 0.125,
+    "dropped_writes": 0,
+    "evictions": 0,
+    "prefix_bytes_identical": true,
+    "read_back": [
+      {
+        "index": 0,
+        "slot": 0,
+        "top_slot": 0,
+        "cosine": 0.999999881,
+        "in_prefix": true,
+        "key_bytes_equal": true,
+        "value_bytes_equal": true
+      },
+      {
+        "index": 1,
+        "slot": 1,
+        "top_slot": 0,
+        "cosine": 0.999999881,
+        "in_prefix": true,
+        "key_bytes_equal": true,
+        "value_bytes_equal": false
+      },
+      {
+        "index": 2,
+        "slot": 2,
+        "top_slot": 0,
+        "cosine": 0.999999881,
+        "in_prefix": true,
+        "key_bytes_equal": true,
+        "value_bytes_equal": false
+      },
+      {
+        "index": 3,
+        "slot": 3,
+        "top_slot": 0,
+        "cosine": 0.999999881,
+        "in_prefix": true,
+        "key_bytes_equal": true,
+        "value_bytes_equal": false
+      },
+      {
+        "index": 4,
+        "slot": 4,
+        "top_slot": 0,
+        "cosine": 0.999999881,
+        "in_prefix": true,
+        "key_bytes_equal": true,
+        "value_bytes_equal": false
+      },
+      {
+        "index": 5,
+        "slot": 5,
+        "top_slot": 0,
+        "cosine": 0.999999881,
+        "in_prefix": true,
+        "key_bytes_equal": true,
+        "value_bytes_equal": false
+      },
+      {
+        "index": 6,
+        "slot": 6,
+        "top_slot": 0,
+        "cosine": 0.999999881,
+        "in_prefix": true,
+        "key_bytes_equal": true,
+        "value_bytes_equal": false
+      },
+      {
+        "index": 7,
+        "slot": 7,
+        "top_slot": 0,
+        "cosine": 0.999999881,
+        "in_prefix": true,
+        "key_bytes_equal": true,
+        "value_bytes_equal": false
+      },
+      {
+        "index": 8,
+        "slot": 8,
+        "top_slot": 8,
+        "cosine": 1.000000119,
+        "in_prefix": true,
+        "key_bytes_equal": true,
+        "value_bytes_equal": true
+      },
+      {
+        "index": 9,
+        "slot": 9,
+        "top_slot": 9,
+        "cosine": 1.000000119,
+        "in_prefix": true,
+        "key_bytes_equal": true,
+        "value_bytes_equal": true
+      },
+      {
+        "index": 10,
+        "slot": 10,
+        "top_slot": 10,
+        "cosine": 1.0,
+        "in_prefix": true,
+        "key_bytes_equal": true,
+        "value_bytes_equal": true
+      },
+      {
+        "index": 11,
+        "slot": 11,
+        "top_slot": 11,
+        "cosine": 1.0,
+        "in_prefix": true,
+        "key_bytes_equal": true,
+        "value_bytes_equal": true
+      },
+      {
+        "index": 12,
+        "slot": 12,
+        "top_slot": 12,
+        "cosine": 0.999999881,
+        "in_prefix": true,
+        "key_bytes_equal": true,
+        "value_bytes_equal": true
+      },
+      {
+        "index": 13,
+        "slot": 13,
+        "top_slot": 13,
+        "cosine": 1.0,
+        "in_prefix": true,
+        "key_bytes_equal": true,
+        "value_bytes_equal": true
+      },
+      {
+        "index": 14,
+        "slot": 14,
+        "top_slot": 14,
+        "cosine": 1.0,
+        "in_prefix": true,
+        "key_bytes_equal": true,
+        "value_bytes_equal": true
+      },
+      {
+        "index": 15,
+        "slot": 15,
+        "top_slot": 15,
+        "cosine": 1.0,
+        "in_prefix": true,
+        "key_bytes_equal": true,
+        "value_bytes_equal": true
+      },
+      {
+        "index": 16,
+        "slot": 16,
+        "top_slot": 16,
+        "cosine": 1.0,
+        "in_prefix": true,
+        "key_bytes_equal": true,
+        "value_bytes_equal": true
+      },
+      {
+        "index": 17,
+        "slot": 17,
+        "top_slot": 17,
+        "cosine": 1.000000119,
+        "in_prefix": true,
+        "key_bytes_equal": true,
+        "value_bytes_equal": true
+      },
+      {
+        "index": 18,
+        "slot": 18,
+        "top_slot": 18,
+        "cosine": 0.99999994,
+        "in_prefix": true,
+        "key_bytes_equal": true,
+        "value_bytes_equal": true
+      },
+      {
+        "index": 19,
+        "slot": 19,
+        "top_slot": 19,
+        "cosine": 1.000000238,
+        "in_prefix": true,
+        "key_bytes_equal": true,
+        "value_bytes_equal": true
+      },
+      {
+        "index": 20,
+        "slot": 20,
+        "top_slot": 20,
+        "cosine": 1.0,
+        "in_prefix": true,
+        "key_bytes_equal": true,
+        "value_bytes_equal": true
+      },
+      {
+        "index": 21,
+        "slot": 21,
+        "top_slot": 21,
+        "cosine": 1.0,
+        "in_prefix": true,
+        "key_bytes_equal": true,
+        "value_bytes_equal": true
+      },
+      {
+        "index": 22,
+        "slot": 22,
+        "top_slot": 22,
+        "cosine": 1.000000119,
+        "in_prefix": true,
+        "key_bytes_equal": true,
+        "value_bytes_equal": true
+      },
+      {
+        "index": 23,
+        "slot": 23,
+        "top_slot": 23,
+        "cosine": 0.999999762,
+        "in_prefix": true,
+        "key_bytes_equal": true,
+        "value_bytes_equal": true
+      },
+      {
+        "index": 24,
+        "slot": 24,
+        "top_slot": 24,
+        "cosine": 1.000000238,
+        "in_prefix": true,
+        "key_bytes_equal": true,
+        "value_bytes_equal": true
+      },
+      {
+        "index": 25,
+        "slot": 25,
+        "top_slot": 25,
+        "cosine": 0.999999881,
+        "in_prefix": true,
+        "key_bytes_equal": true,
+        "value_bytes_equal": true
+      },
+      {
+        "index": 26,
+        "slot": 26,
+        "top_slot": 26,
+        "cosine": 1.000000119,
+        "in_prefix": true,
+        "key_bytes_equal": true,
+        "value_bytes_equal": true
+      },
+      {
+        "index": 27,
+        "slot": 27,
+        "top_slot": 27,
+        "cosine": 1.0,
+        "in_prefix": true,
+        "key_bytes_equal": true,
+        "value_bytes_equal": true
+      }
+    ],
+    "read_back_hits": 28,
+    "read_back_value_bytes_equal": 21,
+    "checks": {
+      "S1_no_loss": true,
+      "S2_pass": true
+    },
+    "passed": true
+  },
+  "step3_task_alignment": {
+    "arm_no_growth": {
+      "arm": "no_growth",
+      "correct": 8,
+      "total": 22,
+      "floor": 0.964818299,
+      "capacity": 32,
+      "occupied": 30,
+      "records": [
+        {
+          "tag": "face_00",
+          "slot": 8,
+          "top_slot": 8,
+          "top_cosine": 0.982632041,
+          "correct": true
+        },
+        {
+          "tag": "face_01",
+          "slot": 9,
+          "top_slot": 0,
+          "top_cosine": 0.983367801,
+          "correct": false
+        },
+        {
+          "tag": "face_02",
+          "slot": 10,
+          "top_slot": 0,
+          "top_cosine": 0.984704912,
+          "correct": false
+        },
+        {
+          "tag": "face_03",
+          "slot": 11,
+          "top_slot": 0,
+          "top_cosine": 0.985345304,
+          "correct": false
+        },
+        {
+          "tag": "face_04",
+          "slot": 12,
+          "top_slot": 0,
+          "top_cosine": 0.983926594,
+          "correct": false
+        },
+        {
+          "tag": "face_05",
+          "slot": 13,
+          "top_slot": 0,
+          "top_cosine": 0.982258439,
+          "correct": false
+        },
+        {
+          "tag": "face_06",
+          "slot": 14,
+          "top_slot": 19,
+          "top_cosine": 0.979712427,
+          "correct": false
+        },
+        {
+          "tag": "face_07",
+          "slot": 15,
+          "top_slot": 19,
+          "top_cosine": 0.975071073,
+          "correct": false
+        },
+        {
+          "tag": "face_08",
+          "slot": 16,
+          "top_slot": 16,
+          "top_cosine": 0.977938771,
+          "correct": true
+        },
+        {
+          "tag": "face_09",
+          "slot": 17,
+          "top_slot": 17,
+          "top_cosine": 0.970130324,
+          "correct": true
+        },
+        {
+          "tag": "face_10",
+          "slot": 18,
+          "top_slot": 19,
+          "top_cosine": 0.974022806,
+          "correct": false
+        },
+        {
+          "tag": "face_11",
+          "slot": 19,
+          "top_slot": 19,
+          "top_cosine": 0.969765246,
+          "correct": true
+        },
+        {
+          "tag": "face_12",
+          "slot": 20,
+          "top_slot": 20,
+          "top_cosine": 0.977027297,
+          "correct": true
+        },
+        {
+          "tag": "face_13",
+          "slot": 21,
+          "top_slot": 21,
+          "top_cosine": 0.971064925,
+          "correct": true
+        },
+        {
+          "tag": "face_14",
+          "slot": 22,
+          "top_slot": 19,
+          "top_cosine": 0.964818299,
+          "correct": false
+        },
+        {
+          "tag": "face_15",
+          "slot": 23,
+          "top_slot": 19,
+          "top_cosine": 0.973528683,
+          "correct": false
+        },
+        {
+          "tag": "face_16",
+          "slot": 24,
+          "top_slot": 24,
+          "top_cosine": 0.974018037,
+          "correct": true
+        },
+        {
+          "tag": "face_17",
+          "slot": 25,
+          "top_slot": 19,
+          "top_cosine": 0.973376691,
+          "correct": false
+        },
+        {
+          "tag": "face_18",
+          "slot": 26,
+          "top_slot": 19,
+          "top_cosine": 0.980390608,
+          "correct": false
+        },
+        {
+          "tag": "face_19",
+          "slot": 27,
+          "top_slot": 19,
+          "top_cosine": 0.975117207,
+          "correct": false
+        },
+        {
+          "tag": "face_20",
+          "slot": 28,
+          "top_slot": 28,
+          "top_cosine": 0.975892246,
+          "correct": true
+        },
+        {
+          "tag": "face_21",
+          "slot": 29,
+          "top_slot": 0,
+          "top_cosine": 0.969550312,
+          "correct": false
+        }
+      ]
+    },
+    "arm_growth": {
+      "boundary": {
+        "schema": "taiji-growth-wire-v1",
+        "session": "correction",
+        "enabled": true,
+        "generation": 1,
+        "slots": 64,
+        "occupied": 8,
+        "pending": 22,
+        "added": 32,
+        "action": "grow_then_write",
+        "reason": "headroom_short",
+        "h_slots": 0.0625,
+        "h_min_slots": 0.125,
+        "bytes_added": 1065216,
+        "state_same_object": false
+      },
+      "generation": 1,
+      "base_writes": [
+        {
+          "slot": 0,
+          "action": "appended"
+        },
+        {
+          "slot": 1,
+          "action": "appended"
+        },
+        {
+          "slot": 2,
+          "action": "appended"
+        },
+        {
+          "slot": 3,
+          "action": "appended"
+        },
+        {
+          "slot": 4,
+          "action": "appended"
+        },
+        {
+          "slot": 5,
+          "action": "appended"
+        },
+        {
+          "slot": 6,
+          "action": "appended"
+        },
+        {
+          "slot": 7,
+          "action": "appended"
+        }
+      ],
+      "records": [
+        {
+          "tag": "face_00",
+          "action": "rejected_copy",
+          "slot": null,
+          "top_slot": 0,
+          "top_cosine": 0.981068015,
+          "band": "growth_is_copy",
+          "overlap": 0.969800317,
+          "separation": 0.030199683,
+          "correct": false
+        },
+        {
+          "tag": "face_01",
+          "action": "rejected_copy",
+          "slot": null,
+          "top_slot": 0,
+          "top_cosine": 0.983367801,
+          "band": "growth_is_copy",
+          "overlap": 0.985172682,
+          "separation": 0.014827318,
+          "correct": false
+        },
+        {
+          "tag": "face_02",
+          "action": "rejected_copy",
+          "slot": null,
+          "top_slot": 0,
+          "top_cosine": 0.984704912,
+          "band": "growth_is_copy",
+          "overlap": 0.973571218,
+          "separation": 0.026428782,
+          "correct": false
+        },
+        {
+          "tag": "face_03",
+          "action": "rejected_copy",
+          "slot": null,
+          "top_slot": 0,
+          "top_cosine": 0.985345304,
+          "band": "growth_is_copy",
+          "overlap": 0.97628881,
+          "separation": 0.02371119,
+          "correct": false
+        },
+        {
+          "tag": "face_04",
+          "action": "rejected_copy",
+          "slot": null,
+          "top_slot": 0,
+          "top_cosine": 0.983926594,
+          "band": "growth_is_copy",
+          "overlap": 0.973837259,
+          "separation": 0.026162741,
+          "correct": false
+        },
+        {
+          "tag": "face_05",
+          "action": "rejected_copy",
+          "slot": null,
+          "top_slot": 0,
+          "top_cosine": 0.982258439,
+          "band": "growth_is_copy",
+          "overlap": 0.972042568,
+          "separation": 0.027957432,
+          "correct": false
+        },
+        {
+          "tag": "face_06",
+          "action": "rejected_copy",
+          "slot": null,
+          "top_slot": 0,
+          "top_cosine": 0.972466886,
+          "band": "growth_is_copy",
+          "overlap": 0.962309909,
+          "separation": 0.037690091,
+          "correct": false
+        },
+        {
+          "tag": "face_07",
+          "action": "rejected_copy",
+          "slot": null,
+          "top_slot": 0,
+          "top_cosine": 0.962397814,
+          "band": "growth_is_copy",
+          "overlap": 0.957312601,
+          "separation": 0.042687399,
+          "correct": false
+        },
+        {
+          "tag": "face_08",
+          "action": "rejected_copy",
+          "slot": null,
+          "top_slot": 0,
+          "top_cosine": 0.962347329,
+          "band": "growth_is_copy",
+          "overlap": 0.949754285,
+          "separation": 0.050245715,
+          "correct": false
+        },
+        {
+          "tag": "face_09",
+          "action": "rejected_copy",
+          "slot": null,
+          "top_slot": 0,
+          "top_cosine": 0.957383335,
+          "band": "growth_is_copy",
+          "overlap": 0.940061944,
+          "separation": 0.059938056,
+          "correct": false
+        },
+        {
+          "tag": "face_10",
+          "action": "rejected_copy",
+          "slot": null,
+          "top_slot": 0,
+          "top_cosine": 0.966117918,
+          "band": "growth_is_copy",
+          "overlap": 0.953495717,
+          "separation": 0.046504283,
+          "correct": false
+        },
+        {
+          "tag": "face_11",
+          "action": "rejected_copy",
+          "slot": null,
+          "top_slot": 0,
+          "top_cosine": 0.966297209,
+          "band": "growth_is_copy",
+          "overlap": 0.988036269,
+          "separation": 0.011963731,
+          "correct": false
+        },
+        {
+          "tag": "face_12",
+          "action": "rejected_copy",
+          "slot": null,
+          "top_slot": 0,
+          "top_cosine": 0.962289393,
+          "band": "growth_is_copy",
+          "overlap": 0.944312115,
+          "separation": 0.055687885,
+          "correct": false
+        },
+        {
+          "tag": "face_13",
+          "action": "rejected_copy",
+          "slot": null,
+          "top_slot": 0,
+          "top_cosine": 0.958373845,
+          "band": "growth_is_copy",
+          "overlap": 0.940407695,
+          "separation": 0.059592305,
+          "correct": false
+        },
+        {
+          "tag": "face_14",
+          "action": "rejected_copy",
+          "slot": null,
+          "top_slot": 0,
+          "top_cosine": 0.959400713,
+          "band": "growth_is_copy",
+          "overlap": 0.95699609,
+          "separation": 0.04300391,
+          "correct": false
+        },
+        {
+          "tag": "face_15",
+          "action": "rejected_copy",
+          "slot": null,
+          "top_slot": 0,
+          "top_cosine": 0.962243617,
+          "band": "growth_is_copy",
+          "overlap": 0.94576673,
+          "separation": 0.05423327,
+          "correct": false
+        },
+        {
+          "tag": "face_16",
+          "action": "rejected_copy",
+          "slot": null,
+          "top_slot": 0,
+          "top_cosine": 0.958327413,
+          "band": "growth_is_copy",
+          "overlap": 0.938691444,
+          "separation": 0.061308556,
+          "correct": false
+        },
+        {
+          "tag": "face_17",
+          "action": "rejected_copy",
+          "slot": null,
+          "top_slot": 0,
+          "top_cosine": 0.967885911,
+          "band": "growth_is_copy",
+          "overlap": 0.953731251,
+          "separation": 0.046268749,
+          "correct": false
+        },
+        {
+          "tag": "face_18",
+          "action": "rejected_copy",
+          "slot": null,
+          "top_slot": 0,
+          "top_cosine": 0.976968825,
+          "band": "growth_is_copy",
+          "overlap": 0.957251009,
+          "separation": 0.042748991,
+          "correct": false
+        },
+        {
+          "tag": "face_19",
+          "action": "rejected_copy",
+          "slot": null,
+          "top_slot": 0,
+          "top_cosine": 0.965085924,
+          "band": "growth_is_copy",
+          "overlap": 0.952284512,
+          "separation": 0.047715488,
+          "correct": false
+        },
+        {
+          "tag": "face_20",
+          "action": "rejected_copy",
+          "slot": null,
+          "top_slot": 0,
+          "top_cosine": 0.962704062,
+          "band": "growth_is_copy",
+          "overlap": 0.939136486,
+          "separation": 0.060863514,
+          "correct": false
+        },
+        {
+          "tag": "face_21",
+          "action": "rejected_copy",
+          "slot": null,
+          "top_slot": 0,
+          "top_cosine": 0.969550312,
+          "band": "growth_is_copy",
+          "overlap": 0.963333843,
+          "separation": 0.036666157,
+          "correct": false
+        }
+      ],
+      "written": 0,
+      "refused_copy": 22,
+      "dropped": 0,
+      "correct": 0,
+      "total": 22,
+      "capacity_after": 64,
+      "occupied_after": 8,
+      "h_slots_after": 0.875
+    },
+    "comparison": {
+      "correct_no_growth": 8,
+      "correct_growth": 0,
+      "same_correct_count": false,
+      "differing_faces": [
+        {
+          "tag": "face_00",
+          "no_growth": {
+            "slot": 8,
+            "top_slot": 8,
+            "correct": true
+          },
+          "growth": {
+            "action": "rejected_copy",
+            "slot": null,
+            "top_slot": 0,
+            "band": "growth_is_copy",
+            "correct": false
+          }
+        },
+        {
+          "tag": "face_06",
+          "no_growth": {
+            "slot": 14,
+            "top_slot": 19,
+            "correct": false
+          },
+          "growth": {
+            "action": "rejected_copy",
+            "slot": null,
+            "top_slot": 0,
+            "band": "growth_is_copy",
+            "correct": false
+          }
+        },
+        {
+          "tag": "face_07",
+          "no_growth": {
+            "slot": 15,
+            "top_slot": 19,
+            "correct": false
+          },
+          "growth": {
+            "action": "rejected_copy",
+            "slot": null,
+            "top_slot": 0,
+            "band": "growth_is_copy",
+            "correct": false
+          }
+        },
+        {
+          "tag": "face_08",
+          "no_growth": {
+            "slot": 16,
+            "top_slot": 16,
+            "correct": true
+          },
+          "growth": {
+            "action": "rejected_copy",
+            "slot": null,
+            "top_slot": 0,
+            "band": "growth_is_copy",
+            "correct": false
+          }
+        },
+        {
+          "tag": "face_09",
+          "no_growth": {
+            "slot": 17,
+            "top_slot": 17,
+            "correct": true
+          },
+          "growth": {
+            "action": "rejected_copy",
+            "slot": null,
+            "top_slot": 0,
+            "band": "growth_is_copy",
+            "correct": false
+          }
+        },
+        {
+          "tag": "face_10",
+          "no_growth": {
+            "slot": 18,
+            "top_slot": 19,
+            "correct": false
+          },
+          "growth": {
+            "action": "rejected_copy",
+            "slot": null,
+            "top_slot": 0,
+            "band": "growth_is_copy",
+            "correct": false
+          }
+        },
+        {
+          "tag": "face_11",
+          "no_growth": {
+            "slot": 19,
+            "top_slot": 19,
+            "correct": true
+          },
+          "growth": {
+            "action": "rejected_copy",
+            "slot": null,
+            "top_slot": 0,
+            "band": "growth_is_copy",
+            "correct": false
+          }
+        },
+        {
+          "tag": "face_12",
+          "no_growth": {
+            "slot": 20,
+            "top_slot": 20,
+            "correct": true
+          },
+          "growth": {
+            "action": "rejected_copy",
+            "slot": null,
+            "top_slot": 0,
+            "band": "growth_is_copy",
+            "correct": false
+          }
+        },
+        {
+          "tag": "face_13",
+          "no_growth": {
+            "slot": 21,
+            "top_slot": 21,
+            "correct": true
+          },
+          "growth": {
+            "action": "rejected_copy",
+            "slot": null,
+            "top_slot": 0,
+            "band": "growth_is_copy",
+            "correct": false
+          }
+        },
+        {
+          "tag": "face_14",
+          "no_growth": {
+            "slot": 22,
+            "top_slot": 19,
+            "correct": false
+          },
+          "growth": {
+            "action": "rejected_copy",
+            "slot": null,
+            "top_slot": 0,
+            "band": "growth_is_copy",
+            "correct": false
+          }
+        },
+        {
+          "tag": "face_15",
+          "no_growth": {
+            "slot": 23,
+            "top_slot": 19,
+            "correct": false
+          },
+          "growth": {
+            "action": "rejected_copy",
+            "slot": null,
+            "top_slot": 0,
+            "band": "growth_is_copy",
+            "correct": false
+          }
+        },
+        {
+          "tag": "face_16",
+          "no_growth": {
+            "slot": 24,
+            "top_slot": 24,
+            "correct": true
+          },
+          "growth": {
+            "action": "rejected_copy",
+            "slot": null,
+            "top_slot": 0,
+            "band": "growth_is_copy",
+            "correct": false
+          }
+        },
+        {
+          "tag": "face_17",
+          "no_growth": {
+            "slot": 25,
+            "top_slot": 19,
+            "correct": false
+          },
+          "growth": {
+            "action": "rejected_copy",
+            "slot": null,
+            "top_slot": 0,
+            "band": "growth_is_copy",
+            "correct": false
+          }
+        },
+        {
+          "tag": "face_18",
+          "no_growth": {
+            "slot": 26,
+            "top_slot": 19,
+            "correct": false
+          },
+          "growth": {
+            "action": "rejected_copy",
+            "slot": null,
+            "top_slot": 0,
+            "band": "growth_is_copy",
+            "correct": false
+          }
+        },
+        {
+          "tag": "face_19",
+          "no_growth": {
+            "slot": 27,
+            "top_slot": 19,
+            "correct": false
+          },
+          "growth": {
+            "action": "rejected_copy",
+            "slot": null,
+            "top_slot": 0,
+            "band": "growth_is_copy",
+            "correct": false
+          }
+        },
+        {
+          "tag": "face_20",
+          "no_growth": {
+            "slot": 28,
+            "top_slot": 28,
+            "correct": true
+          },
+          "growth": {
+            "action": "rejected_copy",
+            "slot": null,
+            "top_slot": 0,
+            "band": "growth_is_copy",
+            "correct": false
+          }
+        }
+      ],
+      "statement": "growth changes the task reading under this battery; the differing faces are listed above"
+    }
+  },
+  "cost": {
+    "trainable_parameters": 3311259,
+    "parameters_added": 0,
+    "state_bytes_added_by_growth": 1065216,
+    "reason": "growth pads state tensors; no parameter, no optimiser, no graph edit"
+  },
+  "discipline": {
+    "training_updates": 0,
+    "optimizer_steps": 0,
+    "adam_steps": 0,
+    "confirm_reads": 0,
+    "checkpoints_written": 0,
+    "black_invoked": false,
+    "cpu_cap_seconds": 200.0,
+    "watchdog_seconds": 60.0,
+    "watchdog_fired": false,
+    "cpu_seconds": 43.219,
+    "wall_seconds": 7.201
+  },
+  "verdict": "growth_wired_default_off",
+  "training_needed_for_effect": "unanswered",
+  "plain_language": {
+    "summary": "This run installs a memory-capacity growth step at the boundary between sessions and checks three things in order. First, with growth switched off, every answer the model gives is byte-for-byte the same as before (same 154 questions, same 22 written faces, same parameter count and same identity fingerprint). Second, a session fills the memory to 28 of 32 places, the boundary doubles it to 64, and the next session keeps writing: nothing is dropped, nothing is overwritten, and everything written in the first session is still readable. Third, on the 22 correction faces the two-rule gate (is there room? is this write a copy of something already stored?) is compared with the arm that never grows; the count of faces that land on their own record is reported for both.",
+    "can_prove": "if all three steps pass: on this model, growth can be attached to the real memory without changing any existing answer while switched off, and it can double the memory at a session boundary without losing a single stored record. That is a wiring and capacity result, and it is directly checkable.",
+    "cannot_prove": "it cannot show that switching growth on makes the model better: the training question -- whether a grown memory needs training to become useful -- is not answered here. It also cannot show that the copy rule is safe to leave on: with today's averaged address the 22 faces already sit almost on top of each other, so a copy test may refuse writes that a better address would admit. Any such difference is reported per face, not smoothed over."
+  },
+  "runner_sha256": {
+    "start": "c8a150b89e33edf7ce93cc8fb172ac704aed6b7f6d9253a978498ecef33438f6",
+    "end": "c8a150b89e33edf7ce93cc8fb172ac704aed6b7f6d9253a978498ecef33438f6"
+  },
+  "artifacts": {
+    "wire_module": "taiji\\growth_wire.py",
+    "wire_module_sha256": "ef34d4548779b987882002910740efc6548a18358d22da5f623447364ac8aa16",
+    "manifest_sha256": "41047cbc8c808d9a10e8d8277dfea6b92075f1397485f2a6fc48758c6e4fdf04"
+  }
+}
