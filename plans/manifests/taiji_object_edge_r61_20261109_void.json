@@ -1,0 +1,31 @@
+{
+  "schema": "taiji-prereg-void-record-v1",
+  "step": "R61",
+  "date": "2026-11-09",
+  "voided_manifest": "plans/manifests/taiji_object_edge_r61_20261109.json",
+  "voided_manifest_sha256": "d17227c12b971608c792ff760e0725ec09e5ec5f1547faad0e4d117bd5bd7799",
+  "superseded_by": "plans/manifests/taiji_object_edge_r61_20261109_v2.json",
+  "status": "void_before_any_reading",
+  "readings_taken": 0,
+  "report_written": false,
+  "progress_written": false,
+  "cells_measured": 0,
+  "reason": "runner 的发牌同一性守卫把内存里的 int 字节长度键（6/9/12/15）与 manifest JSON 回读后的 str 键直接比较，必然不等，于是main 在测量前抛 RuntimeError('stem deal drift')。这是身份守卫自身的取法 bug，不是词干发牌漂移：发牌规则、池、种子与 12 条词干全部未变。",
+  "fix": "比较改在 JSON 空间进行：manifest['stems'] != json.loads(json.dumps(stems, ensure_ascii=False))；同时把 MANIFEST 指向 _v2 路径，v1 原件保留不改写。",
+  "criteria_changed": false,
+  "definition_digest_before": "3c5c18e70b624f2ea90b83acff3547dc49522b992c2c5bd6b8f3c7d96a2d92fc",
+  "definition_digest_after": "3c5c18e70b624f2ea90b83acff3547dc49522b992c2c5bd6b8f3c7d96a2d92fc",
+  "runner_sha256_before": "10e32e385556b48c183d089cc5945d06a9b9e68c038041e92f8cad5a2230c4f1",
+  "runner_sha256_after": "14c9a62dbf20fddb819c0dc32af4c46637a4891176c7e413f9259eb33409947b",
+  "gates_rerun_before_refreeze": ["ruff check", "ruff check --select B,SIM --ignore B008", "black_check_gate.py"],
+  "gates_result": "all rc=0; black NothingChanged; CR bytes 0",
+  "discipline": {
+    "training_runs": 0,
+    "optimizer_steps": 0,
+    "parameters_added": 0,
+    "graph_changes": 0,
+    "confirm_reads": 0,
+    "confirm_holdout_report_reads": 0
+  },
+  "note": "判据、基线、发牌规则、出口表与代价口径一字未改（definition_digest 前后相同）；本次作废只涉及 runner 的身份比较取法。v1 不删除，作为『读数前工程失败』的证据保留。"
+}
