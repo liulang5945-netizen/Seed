@@ -2049,3 +2049,23 @@ owner 2026-11-07 裁定：多模态是整个算法内部系统的一部分，不
 | S-81 | “把夹具 80 句全写成键就是 80 键规模” | R-D29-265 | **不成立**：60 句含实体名，名字永不进键；可写上限 78，且该刻度被拒绝登记，不得引用为读数。 |
 | S-82 | “同键异值默认就是先写者保留” | R-D29-267 | **不成立**：默认 `replace` 会接受后写者并转主；先写者保留必须显式 `on_conflict="reject"`，接线时须写明。 |
 
+---
+
+## 62. R15 句子级两段读＋写冲突结构：一句两实体 40/40、零线仍 0、`replace` 不可达（2026-11-09；**0 训练／0 优化器步／0 Adam／0 新参数**）
+
+| 编号 | 断言 | 证据 |
+|---|---|---|
+| R-D29-269 | 读规则冻结：每遍取**起点最早**的已写键（长度无法区分两个 5 字说法）；同起点两记录 → `ambiguous_same_start` 弃答；命中后把该键**首次出现**的整段按同宽替换为 `\u0000` 再读 | [报告](../../reports/taiji_bridge_two_pass_20261109.json) `definition`；[桥模块](../../taiji/address_bridge.py#L380-L520)；[manifest](../manifests/taiji_bridge_two_pass_20261109.json) |
+| R-D29-270 | 两段读 **40/40 实体**（20 句 × 2 槽），句级分布 **答出 2 个 20／只答 1 个 0／答错 0／弃答 0**；遮蔽宽度 5 字 ×10、6 字 ×10；单遍基线 0/20（20/20 多锚）；12 未写候选 **0**、18 碎片 **0** | 同上 `two_pass`／`zeros` |
+| R-D29-271 | 第二遍出口：无键 `masked_no_match`；同址重复 `same_address_repeated`（算 1 个实体，不算 2）；同起点冲突 `ambiguous_same_start`（绝不静默取一条） | 同上 `controls` |
+| R-D29-272 | **`replace` 在桥里不可达**：`BridgeTable.__init__` 参数仅 `start_capacity／key_fn／read_mode`；传 `on_conflict` 抛 `TypeError`；语法树无 `on_conflict／replaced／history／history_at／values_at`；重绑批 `rejected_batch_address_already_bound` 且摘要不变；同键同值仍 `accepted`（`merged 1`） | 同上 `structural` |
+| R-D29-273 | 关闭态**九项全等**；判定 `replace_path_absent`／`two_pass_clean`／`zeros_clean`／`exits_declared`；成本 **2.016 CPU／2.684 wall**（估 30、上限 200、`threads=1`） | 同上 `closed_state`／`verdict`／`cost` |
+| R-D29-274 | 两段读只覆盖“一句两实体”；起点最早是阅读顺序规则；两说法**位置相交**的情形本轮未测；写入仍是“写多少认多少、无同义压缩” | 同上 `two_pass.rows`；SPEC §21.24 边界 |
+
+**62.1 superseded／范围登记**
+
+| 编号 | 被取代／被限定的对象 | 取代者 | 处置与理由 |
+|---|---|---|---|
+| S-83 | “先写者保留要显式选 `reject`，默认仍是 `replace`” | R-D29-272 | **被取代**：R15 删除 `replace` 参数、分支与计数，写入端只有先写者保留；不存在“选错策略”的接线风险。 |
+| S-84 | “R11–R14 的 runner 可随时复跑复核” | R-D29-272 | **不再成立**：那些 runner 绑定含 `replace`／`history` 的旧模块，本轮后不可复跑；历史证据以各自报告与 manifest 的字节为准，不得据新模块重算旧读数。 |
+
