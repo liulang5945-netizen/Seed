@@ -1,0 +1,167 @@
+{
+ "schema": "taiji-bridge-prefix-use-r36-v1",
+ "created": "2026-11-09T17:45:41",
+ "seed": 20261109,
+ "estimate_cpu_upper": 60.0,
+ "cpu_cap": 200.0,
+ "effect_floor_bits_per_byte": 0.1,
+ "win_steps": 14,
+ "pair_total": 19,
+ "runner_sha256": "cee269ae1442436acd272191a75917b8ae58d6fff8cae504f693b8f7dd094833",
+ "bridge_sha256": "4edf29b22a199c29160523debb8ea23a45e59321f2b0c8dc06da72497672e831",
+ "core_sha256": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d"
+ },
+ "definition": {
+  "measurement": "for each describe sentence from step 2, one fixed S0 is prompted with none/self/shuffled/foreign and the sentence is scored with teacher forcing",
+  "lengths": "self, shuffled and foreign prompts have exactly the same byte length",
+  "reading": "bits per target byte; lower is better",
+  "useful": "median(self better than foreign) >= 0.1 and median(self better than shuffled) >= 0.1 and >= 14/19 steps better against both",
+  "harmful": "the same magnitudes with >= 14/19 steps worse against both",
+  "fallback": "otherwise prefix_not_useful_yet; none is reported but never decides",
+  "closed_state": "the nine legacy closed-state readings stay equal before and after"
+ },
+ "criteria": {
+  "expressions": "the 20 expression texts are exact (reused from the frozen table)",
+  "rows": "19 paired steps (2..20); every step reports all four conditions",
+  "foreign_match": "every paired step finds a foreign expression of equal byte length",
+  "decision": "useful / harmful / not_useful_yet by the frozen medians and 14/19 counts",
+  "secondary": "the none-vs-self difference is reported and does not decide",
+  "closed_state": "the nine legacy readings stay equal before and after",
+  "rerun": "the R35 anchor carries a commit, a runner blob sha1, a runner sha256 and a core sha256"
+ },
+ "definition_digest": "dc3a13ef10c2dfa61013e8b7dc45a8355f4c84d539cb7cfb68e8a2b9fd488ada",
+ "counts": {
+  "describe_sentences": 20,
+  "conditions": 4,
+  "paired_steps": 19,
+  "unknown_candidates": 12,
+  "rerun_anchors": 1
+ },
+ "inputs": {
+  "authority": "verifier:v1",
+  "conditions": [
+   "none",
+   "self",
+   "shuffled",
+   "foreign"
+  ],
+  "values": [
+   [
+    "object",
+    "蓝色杯子"
+   ],
+   [
+    "object",
+    "红色印章"
+   ],
+   [
+    "object",
+    "绿色瓶子"
+   ],
+   [
+    "place",
+    "木桌"
+   ],
+   [
+    "place",
+    "书架"
+   ]
+  ],
+  "aliases": [
+   [
+    "喝水的杯子",
+    [
+     "object",
+     "蓝色杯子"
+    ]
+   ],
+   [
+    "盖章用的印章",
+    [
+     "object",
+     "红色印章"
+    ]
+   ],
+   [
+    "盛水的瓶子",
+    [
+     "object",
+     "绿色瓶子"
+    ]
+   ],
+   [
+    "圆形的皮球",
+    [
+     "object",
+     "黄色球"
+    ]
+   ],
+   [
+    "方方正正的木桌子",
+    [
+     "place",
+     "木桌"
+    ]
+   ],
+   [
+    "窗前的台板",
+    [
+     "place",
+     "窗台"
+    ]
+   ],
+   [
+    "手边的小盒子",
+    [
+     "place",
+     "左盒"
+    ]
+   ],
+   [
+    "墙上的架子",
+    [
+     "place",
+     "书架"
+    ]
+   ],
+   [
+    "脚下的垫子",
+    [
+     "place",
+     "地毯"
+    ]
+   ]
+  ],
+  "unknown_candidates": [
+   "黑色铁铃",
+   "白色帆布",
+   "长柄铜勺",
+   "软木瓶塞",
+   "蓝色毛巾",
+   "银质圆镜",
+   "棕色皮箱",
+   "青色陶罐",
+   "灰色石阶",
+   "紫色绸带",
+   "金色烛台",
+   "深红木箱"
+  ],
+  "rerun_anchors": [
+   {
+    "round": "R35",
+    "runner": "scripts/training/probe_taiji_bridge_policy_20261109.py",
+    "rerun_commit": "d4dba0069",
+    "runner_blob_sha1": "4b8a0b9f58e030c0fcb393a1d66921d634b5abd1",
+    "report_runner_sha256": "e59f869d625233b5dd5a6137f821e79dcdfa8309f1d898e4360f0a41df5dce29",
+    "runner_blob_sha256": "e59f869d625233b5dd5a6137f821e79dcdfa8309f1d898e4360f0a41df5dce29",
+    "report_core_sha256": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d",
+    "matches_report": true,
+    "note": "R36 does not change living_core; R35 stays runnable at HEAD"
+   }
+  ]
+ }
+}
