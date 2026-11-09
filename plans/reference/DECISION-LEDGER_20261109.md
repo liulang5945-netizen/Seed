@@ -17,6 +17,7 @@
 | D-20261109-06 | 读数后 runner 增补（R4a 输出逐对明细） | R4a 首跑缺逐对距离，无法做家族拆分；给 runner 加 `pairs` 输出后重冻重跑，判据/阈值/夹具未动，八项读数逐项相同 | 90426725e |
 | D-20261109-07 | 预算超限＋读数后 runner 修正（CPU 线程与 wall 计时） | R5 首跑 845.0 CPU、次跑 702.0 CPU（上限 200）；归因为 BLAS 线程自旋＋wall 计时公式写错，限 1 线程后重冻重跑 0.516 CPU，判定与全部读数逐项相同 | 0061918d8 |
 | D-20261109-08 | 判据改写（读数后发现 joint 列结构性无效，冻结新口径重跑） | R6 的 joint 用 20 类 one-hot，而按 goal 分组交叉验证时测试折的联合类在训练中无样本，20 个权重恒零、argmax 永不选中，joint 必然 0.0；改为“同一行 object ∧ place 都对”后 R6b 三臂 joint 1.0、判 `cross_family_readout_transfers` | 98263aba2 |
+| D-20261109-09 | 读数后 runner 修正（名字域串用，分子错位） | R8 首跑三臂短语 object 全是 0.0、且预测里出现“左盒／窗台”等地点名：`detail()` 用 `slot` 同时决定名字表与目标字段，短语级传 `slot="target"` 导致名字表取成 `place_names`；改为显式传 `names` 后重冻重跑，判据／分母／夹具未动，verdict 仍 `control_failed` | 待回填 |
 
 ---
 
@@ -306,4 +307,30 @@ reading["pairs"] = {
 **7. 授权来源**：用户 2026-11-09 授权（放权，须留档；“改写已冻结判据”属三类之一）。
 
 **8. 对已有结论的影响**：R6 的 `cross_family_readout_fails` **作废**（构造性零，不是读数）。R6b 判定 **`cross_family_readout_transfers`**：R1／R2／R3 三臂在 λ=0.001 上 **object 1.0、place 1.0、joint 1.0**，λ=0.1 时 R2 **0.975**、R3 仍 **1.0**，λ=10 降到 0.125／0.0125／0.475，λ=1000 全部塌到 ≤0.0375。**限定**：object／place 在夹具中各只有一个名称串与一个描述串，同物件的其它 goal 在训练折里出现过，所以 1.0 是“固定槽位串的词汇查表 + 跨组合外推”，**不**是“理解改写语义”；R1（纯字节直方图）与 R3（句向量）同为 1.0，正说明此处不需要句向量。§21.4／§21.11／§21.12 的判负**不撤销**（那是整句余弦读法），R5 的“同族可读”**不扩大**为“跨说法语义可读”。
+
+---
+
+## D-20261109-09 R8 名字域串用的实现修正（判据／分母／夹具未变）
+
+**1. 编号／时间／类型**：D-20261109-09，2026-11-09，读数后 runner 修正（不属于预算超限、封存集、判据改写、训练窗口四类；照 D-06／D-07 先例登记）。
+
+**2. 动了什么（逐字引用）**：`probe_taiji_slot_bridge_20261109.py` 的 `detail()` 签名由
+
+> `def detail(rows, predicted, slot) -> list[dict]` … `names = object_names if slot == "object" else place_names`
+
+改为显式传入名字表：
+
+> `def detail(rows, predicted, slot, names) -> list[dict]`，调用处分别为 `detail(payload["phrase_object"], phrase_object_pred, "target", object_names)`／`detail(payload["phrase_place"], phrase_place_pred, "target", place_names)`。
+
+**3. 触发原因与读数出处**：首跑报告 `verdict=control_failed`，但三臂的 `phrase.object_accuracy` **全为 0.0**，且 `phrase.object_detail` 的 `predicted` 里出现“左盒／窗台／书架”等**地点名**——object 槽位不可能出现这些字符串。定位为：短语级调用传 `slot="target"`，而 `detail()` 用同一个 `slot` 决定名字表，于是 object 预测被拿 `place_names` 解释、并与地点名比较，24 个判对全被算成错。出处：`reports/taiji_slot_bridge_20261109_run1.json`（原样留档，未覆盖）。
+
+**4. 代价**：重跑 **13.016 CPU／18.59 wall**（跑前按上限估 60，低于 200 未立预算账），`threads=1`。
+
+**5. 替代方案**：①保留 0.0 当读数——**否决**，那是实现错误不是读数；②只改文档说明、不改代码——**否决**，会让“短语级 object 无桥”的错误结论进能力账；③重写整个度量——**否决**，过度改动会换掉已冻结的口径。
+
+**6. 撤回路径**：把 `detail()` 恢复为单 `slot` 参数即可回到 run1 的读数；无夹具／语料／阈值改动，`fixture_sha256` 与 `criteria` 在两次 manifest 中逐字相同。
+
+**7. 授权来源**：用户 2026-11-09 授权（放权，须留档）。
+
+**8. 对已有结论的影响**：修正后短语级 object 从 0.0 变为 **R1 0.5／R2 0.5／R3 1.0**，place **0.6／0.6／0.6**；整句级 **R1 0.2／0.35、R2 0.5／0.3、R3 0.85／0.6**；paraphrase 控制 **R1 0.85／0.867、R2 0.65／0.85、R3 1.0／1.0**。总判定仍 **`control_failed`**（冻结规则要求所有可用臂控制 ≥0.90；R1／R2 未过 ⇒ 最近名度量对低维臂不成立），`project_bridge=absent` 不变。**R3 自身控制 1.0／1.0 通过**，其读数可解释：object 短语 **1.0** → 整句 **0.85**（掉 0.15，未达 0.25 稀释阈），place 短语 **0.6** = 整句 **0.6**（掉 0）⇒ **地点名不存在“句内稀释”**，在短语级就已经只有 3/5；object 的桥在短语级完整、整句有轻微损失。该解释只作 R3 上界观察，**不升级能力账**（见 D-05）。
 

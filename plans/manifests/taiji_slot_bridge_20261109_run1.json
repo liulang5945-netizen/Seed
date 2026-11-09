@@ -1,0 +1,43 @@
+{
+ "schema": "taiji-slot-bridge-v1",
+ "date": "2026-11-09",
+ "frozen_at": "2026-11-09T13:01:31",
+ "runner_sha256": "92a9a5ef61fff1ee662b40db5cbf9930551b7ebbca2e93aa03d1bee667e80266",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "8fa3aafde38b1cbad3b021dc271abd316c0a265c68870403dd4ca7b0b53e0c6a"
+ },
+ "fixture_files": [
+  "taiji/native_goal_world_wide.py",
+  "taiji/goal_paraphrase.py",
+  "taiji/living_core.py"
+ ],
+ "question": "R7 的地点名 0.583 是句内稀释，还是描述到名字的桥本来就不存在？",
+ "counts": {
+  "phrases": 9,
+  "describe_sentences": 20,
+  "paraphrase_control": 60,
+  "texts_per_arm": 98
+ },
+ "cost_estimate_cpu_upper": 60.0,
+ "header_note": "R3 使用外部冻结句向量，只作上界；它的读数不进能力账，也不升级/降级任何既有判定。",
+ "definition": {
+  "phrase": "the 9 description phrases from OBJECT_DESCRIPTIONS / PLACE_DESCRIPTIONS, each embedded alone and matched against the 4 object names or the 5 place names it may stand for.",
+  "describe_sentence": "the 20 describe_goal sentences.  Each sentence yields one object prediction and one place prediction, so this level has 20 samples per slot.",
+  "paraphrase_sentence": "the 60 needs / hope / state sentences, as a control: they contain the names verbatim, so a sound metric must score them high.",
+  "metric": "top-1 nearest name by cosine similarity within the slot's candidate set; zero training, ties broken by the smaller candidate index.  The same metric is used at every level, so phrase and sentence numbers are directly comparable.",
+  "dilution_index": "phrase accuracy minus describe-sentence accuracy, per slot.",
+  "chance": {
+   "object": 0.25,
+   "place": 0.2
+  }
+ },
+ "criteria": {
+  "phrase_readable": "an arm is phrase-readable iff object phrase accuracy >= 0.75 and place phrase accuracy >= 0.80 (the same thresholds as R7, applied to 4 and 5 phrases).",
+  "dilution": "place_dilution iff R3 phrase place >= 0.80, R3 describe-sentence place <= 0.65 and the drop is >= 0.25; place_semantic_gap iff R3 phrase place <= 0.60; else inconclusive.",
+  "project_side": "the R1/R2 line is reported on its own: project_bridge_absent iff neither R1 nor R2 is phrase-readable.  R3 cannot change this line.",
+  "control": "the paraphrase control must score >= 0.90 on both slots for every available arm; if it does not, the metric is broken and the round is inconclusive regardless of other numbers.",
+  "no_fit": "0 training, 0 optimizer steps, 0 Adam, 0 confirm, 0 new parameters."
+ }
+}
