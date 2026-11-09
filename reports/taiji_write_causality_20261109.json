@@ -1,0 +1,146 @@
+{
+ "schema": "taiji-write-causality-r39-report-v1",
+ "runner_sha256": "a1485ffc99b00d6fe8f36e9dced8aa0353a6fbc2f139e085b2f3b2860c9171f0",
+ "manifest_sha256": "87cd82dae0571cc2ee154be91db7233412d59ee2f039978eac94920419533a1d",
+ "core_sha256": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d"
+ },
+ "definition": {
+  "m0": "default allow mask; one observe pass; fast must stay all zero",
+  "m1": "all-true allow mask; one observe pass; fast must move",
+  "m1_grad": "all-true allow mask plus one backward; the 16 write heads must leave the no-gradient set",
+  "m2": "after a write-enabled step, score the next sentence from the same state intact vs with fast zeroed",
+  "m3": "scale world weights by 1.5 and compare output distributions with the unperturbed model",
+  "closed_state": "the nine legacy readings on the main subject stay equal before and after"
+ },
+ "criteria": {
+  "m0": "fast abs sum is 0 under the default mask",
+  "m1": "fast abs sum is > 0 and its digest differs from M0",
+  "m1_grad": "all 16 write_heads have a gradient; the nonzero count is reported",
+  "m2": "the intact and ablated distributions differ and max |delta| > 1e-6",
+  "m3": "the perturbed and unperturbed distributions are bit identical (max |delta| == 0)",
+  "closed_state": "the nine legacy readings stay equal and the main parameter digest does not move",
+  "rerun": "the R38 anchor carries a commit, a runner blob sha1, a runner sha256 and a core sha256"
+ },
+ "arms": {
+  "m0": {
+   "fast_abs_sum": 0.0,
+   "fast_sha": "c35020473aed1b4642cd726cad727b63fff2824ad68cedd7ffb73c7cbd890479",
+   "h_sha": "0911e7bb034fee683e891adf080a1fcb110c44f97986d89c06c18781bdfa3793"
+  },
+  "m1": {
+   "fast_abs_sum": 13.113274574279785,
+   "fast_sha": "38c0082992092792a66bd7c349241a0e5d371f8a24822069d4d1acb8cb12c0b2",
+   "h_sha": "0ab4a27574091d4311cdfdd6c08f1ca93d08017a9b3e1f92dee95504a897ac6a"
+  },
+  "m1_grad": {
+   "loss": 5.52461051940918,
+   "with_grad": 111,
+   "write_heads_with_grad": 16,
+   "write_heads_nonzero": 16,
+   "write_head_grad_sums": {
+    "write_heads.0.0.bias": 0.000818997,
+    "write_heads.0.0.weight": 0.088927805,
+    "write_heads.0.2.bias": 0.001262258,
+    "write_heads.0.2.weight": 0.023843002,
+    "write_heads.1.0.bias": 0.000601325,
+    "write_heads.1.0.weight": 0.063969284,
+    "write_heads.1.2.bias": 0.000931682,
+    "write_heads.1.2.weight": 0.016649496,
+    "write_heads.2.0.bias": 0.000316581,
+    "write_heads.2.0.weight": 0.029671665,
+    "write_heads.2.2.bias": 0.000484049,
+    "write_heads.2.2.weight": 0.008514876,
+    "write_heads.3.0.bias": 0.00011133,
+    "write_heads.3.0.weight": 0.00994223,
+    "write_heads.3.2.bias": 0.000209631,
+    "write_heads.3.2.weight": 0.00315531
+   }
+  },
+  "m2": {
+   "fast_abs_sum": 13.113274574279785,
+   "intact_sha": "3389199bd545cca50e9d8a47f8f5198c7b5fddc545eee733a9e79b3c9ea4a4e1",
+   "ablated_sha": "ce36c77613729b50dc738f23a892a26fc08d531a1a8c29a0ee182b870c7897c6",
+   "max_abs_delta": 6.998889148235321e-07
+  },
+  "m3": {
+   "before_sha": "7800c94e7004f612a7d040f6cdbe4f99b4379c3b51225b0e0f56f914ae241265",
+   "perturbed_sha": "7800c94e7004f612a7d040f6cdbe4f99b4379c3b51225b0e0f56f914ae241265",
+   "max_abs_delta": 0.0
+  }
+ },
+ "rerun_anchors": [
+  {
+   "round": "R38",
+   "runner": "scripts/training/probe_taiji_gradient_coverage_20261109.py",
+   "rerun_commit": "63264aac2",
+   "runner_blob_sha1": "790aa223972282c4ba1d050b374d3c441b9fcc36",
+   "report_runner_sha256": "cc5ce376a18ed95ab7f51e7838d8a99be1bce8338dca151e6772932968e94cc7",
+   "runner_blob_sha256": "cc5ce376a18ed95ab7f51e7838d8a99be1bce8338dca151e6772932968e94cc7",
+   "report_core_sha256": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d",
+   "matches_report": true,
+   "note": "R39 does not change living_core; R38 stays runnable at HEAD"
+  }
+ ],
+ "closed_state": {
+  "baseline": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "26e802924521d9895d641dcb783cbcb599170e863ce5a249e9bf1d3eeb3722b3",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk_none": true,
+   "sc_bridge_none": true,
+   "battery_sha": "52ef48e0ca27e05bc3e0b9d5b1149430967d5f8e71f30f8fa937b96c44e4542e",
+   "battery_steps": 20
+  },
+  "after": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "26e802924521d9895d641dcb783cbcb599170e863ce5a249e9bf1d3eeb3722b3",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk_none": true,
+   "sc_bridge_none": true,
+   "battery_sha": "52ef48e0ca27e05bc3e0b9d5b1149430967d5f8e71f30f8fa937b96c44e4542e",
+   "battery_steps": 20
+  },
+  "checks": {
+   "parameters_equal": true,
+   "state_equal": true,
+   "identity_equal": true,
+   "store_equal": true,
+   "battery_equal": true,
+   "steps_equal": true,
+   "sc_sfk_none": true,
+   "flag_disabled": true,
+   "rng_untouched": true
+  }
+ },
+ "main_parameter_sha_equal": true,
+ "bridge_default_none": true,
+ "verdict": {
+  "m0": "default_mask_no_write",
+  "m1": "all_true_mask_writes",
+  "m1_grad": "write_heads_graded",
+  "m2": "memory_written_not_read",
+  "m3": "world_heads_pure",
+  "closed_state": "closed_state_equal",
+  "main_untouched": "main_subject_untouched",
+  "bridge_default": "bridge_default_none",
+  "rerun_anchors": "anchors_complete",
+  "overall": "memory_causality_unexpected"
+ },
+ "cost": {
+  "cpu_seconds": 2.296875,
+  "wall_seconds": 2.76007342338562,
+  "cpu_cap": 200.0,
+  "estimate_cpu_upper": 40.0,
+  "threads": 1
+ }
+}

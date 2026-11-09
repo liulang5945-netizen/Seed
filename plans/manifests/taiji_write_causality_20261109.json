@@ -1,0 +1,77 @@
+{
+ "schema": "taiji-write-causality-r39-v1",
+ "created": "2026-11-09T17:58:06",
+ "seed": 20261109,
+ "estimate_cpu_upper": 40.0,
+ "cpu_cap": 200.0,
+ "world_scale": 1.5,
+ "m2_effect_floor": 1e-06,
+ "runner_sha256": "a1485ffc99b00d6fe8f36e9dced8aa0353a6fbc2f139e085b2f3b2860c9171f0",
+ "core_sha256": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d"
+ },
+ "definition": {
+  "m0": "default allow mask; one observe pass; fast must stay all zero",
+  "m1": "all-true allow mask; one observe pass; fast must move",
+  "m1_grad": "all-true allow mask plus one backward; the 16 write heads must leave the no-gradient set",
+  "m2": "after a write-enabled step, score the next sentence from the same state intact vs with fast zeroed",
+  "m3": "scale world weights by 1.5 and compare output distributions with the unperturbed model",
+  "closed_state": "the nine legacy readings on the main subject stay equal before and after"
+ },
+ "criteria": {
+  "m0": "fast abs sum is 0 under the default mask",
+  "m1": "fast abs sum is > 0 and its digest differs from M0",
+  "m1_grad": "all 16 write_heads have a gradient; the nonzero count is reported",
+  "m2": "the intact and ablated distributions differ and max |delta| > 1e-6",
+  "m3": "the perturbed and unperturbed distributions are bit identical (max |delta| == 0)",
+  "closed_state": "the nine legacy readings stay equal and the main parameter digest does not move",
+  "rerun": "the R38 anchor carries a commit, a runner blob sha1, a runner sha256 and a core sha256"
+ },
+ "definition_digest": "1a7c0e66598f3900914f5e67a8be2ee6d95580c22f1b65366cd414f79c204b60",
+ "counts": {
+  "describe_sentences": 20,
+  "write_heads": 16,
+  "rerun_anchors": 1
+ },
+ "inputs": {
+  "goal": "r39",
+  "sentences": [
+   "让圆口的器皿到四方木台。",
+   "让圆口的器皿到靠窗的台面。"
+  ],
+  "write_heads": [
+   "write_heads.0.0.bias",
+   "write_heads.0.0.weight",
+   "write_heads.0.2.bias",
+   "write_heads.0.2.weight",
+   "write_heads.1.0.bias",
+   "write_heads.1.0.weight",
+   "write_heads.1.2.bias",
+   "write_heads.1.2.weight",
+   "write_heads.2.0.bias",
+   "write_heads.2.0.weight",
+   "write_heads.2.2.bias",
+   "write_heads.2.2.weight",
+   "write_heads.3.0.bias",
+   "write_heads.3.0.weight",
+   "write_heads.3.2.bias",
+   "write_heads.3.2.weight"
+  ],
+  "rerun_anchors": [
+   {
+    "round": "R38",
+    "runner": "scripts/training/probe_taiji_gradient_coverage_20261109.py",
+    "rerun_commit": "63264aac2",
+    "runner_blob_sha1": "790aa223972282c4ba1d050b374d3c441b9fcc36",
+    "report_runner_sha256": "cc5ce376a18ed95ab7f51e7838d8a99be1bce8338dca151e6772932968e94cc7",
+    "runner_blob_sha256": "cc5ce376a18ed95ab7f51e7838d8a99be1bce8338dca151e6772932968e94cc7",
+    "report_core_sha256": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d",
+    "matches_report": true,
+    "note": "R39 does not change living_core; R38 stays runnable at HEAD"
+   }
+  ]
+ }
+}
