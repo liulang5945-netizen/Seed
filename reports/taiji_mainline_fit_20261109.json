@@ -1,0 +1,449 @@
+{
+ "bridge_sha256": "4edf29b22a199c29160523debb8ea23a45e59321f2b0c8dc06da72497672e831",
+ "checks": {
+  "address_ok": 384,
+  "answers": 384,
+  "name_bytes_ok": 384,
+  "question_span_ok": 384,
+  "single_key_unique": 384,
+  "slots": 384,
+  "value_ok": 384
+ },
+ "closed_state": {
+  "battery_steps": 20,
+  "checks": {
+   "battery_equal": true,
+   "flag_disabled": true,
+   "identity_equal": true,
+   "parameters_equal": true,
+   "rng_untouched": true,
+   "sc_sfk_none": true,
+   "state_equal": true,
+   "steps_equal": true,
+   "store_equal": true
+  },
+  "equal": true
+ },
+ "copy_sha256": "27e5b9a63be29e98197331d59c5ad471e5ae46fa68921c87ce13b42bf193d702",
+ "cost": {
+  "cpu_seconds": 1.75,
+  "limit": 200.0,
+  "wall_seconds": 2.471020460128784
+ },
+ "criteria": {
+  "closed_state": "nine items equal",
+  "distribution": "the four joint classes and the per-slot classes are all reported by count",
+  "mainline": "each of the four failures is classified and the number the bridge would fix is counted",
+  "samples": "at least three real cases, including one joint no_match and one published failure",
+  "verdict": "exactly one of the three names, decided by the frozen rule",
+  "wiring": "route equality, name-byte equality, and the question-vs-record coordinate difference are reported with concrete byte offsets"
+ },
+ "definition": {
+  "closed_state": "the nine closed-state readings stay equal before and after",
+  "key_rule": "frozen wording rule: the key is the description phrase exactly as it appears in the record (ordered characters, containment read); names never enter the key",
+  "mainline_comparison": "the four published 19.2v confirm failures are re-read from the report (never re-scored); for each, the gate reports whether the bridge's choice would differ from the route 19.2v took, and whether the failure is already selection-correct",
+  "question": "can the written bridge serve Task1, or does it live in a parallel world?",
+  "questions": "Task1's own 192 confirm goals 让{object description}到{place description}。 (12 worlds x 16); no question is authored for this gate",
+  "readings": {
+   "coordinate_check": "the bridge's span is a character span in the QUESTION; the copy chain's field is a byte span in the RECORD; the report must state the difference in bytes, not call it agreement",
+   "joint": "R54' joint rule applied unchanged: every key of the goal must sit in one record; exactly one -> selected, two or more -> ambiguous_multiple_records, zero -> no_match, no key -> no_keys",
+   "per_slot": "the bridge's own frozen two-pass read, one record per description; answers are checked against the record the fixture says carries that description",
+   "wiring": "for every answered slot: does the bridge's record index equal the copy chain's route, and does the bridge's value equal the copy chain's own name-field bytes record[start:end] from field_bounds"
+  },
+  "sealed_set": "confirm worlds are materialised once for their record and goal bytes only; zero model forwards, zero scoring, and the published 19.2v reading is not recomputed",
+  "source_records": "Task1's eight candidate records per world, raw bytes exactly as the frozen generator writes them; no rewriting, no added fields, no new key type",
+  "training": "zero training, zero optimizer steps, zero Adam, zero parameters",
+  "verdict_rule": {
+   "bridge_parallel_world": "per-slot address exact below 0.5: the bridge cannot even name the records",
+   "bridge_partial_overlap": "otherwise; the report must name the overlapping part and the part that does not",
+   "bridge_reaches_mainline": "joint selects one record for all 192 goals AND per-slot exact 384/384 AND wiring exact 384/384 AND the bridge fixes at least one of the four failures"
+  }
+ },
+ "joint": {
+  "ambiguous_multiple_records": 0,
+  "no_keys": 0,
+  "no_match": 192,
+  "selected": 0
+ },
+ "mainline": {
+  "already_selection_correct": 4,
+  "bridge_fixes": 0,
+  "completion_note": "188/192 as published; not recomputed here",
+  "confirm_completion": 0.9791666666666666,
+  "detail": [
+   {
+    "bridge_names": [
+     [
+      "object",
+      "朱砂铜镜"
+     ],
+     [
+      "place",
+      "雾尾"
+     ]
+    ],
+    "bridge_routes": [
+     0,
+     5
+    ],
+    "bridge_would_change_route": false,
+    "decoded_text": "把朱砂铜镜放到雾尾到",
+    "goal": "让扁圆的盒子到楼梯入口。",
+    "gold_routes": [
+     0,
+     5
+    ],
+    "index": 13,
+    "published_category": "extra_bytes",
+    "published_position": 27,
+    "published_routes": [
+     0,
+     5
+    ],
+    "selection_correct": true,
+    "target_text": "把朱砂铜镜放到雾尾",
+    "world": 3
+   },
+   {
+    "bridge_names": [
+     [
+      "object",
+      "玄铁锡壶"
+     ],
+     [
+      "place",
+      "瓮尾"
+     ]
+    ],
+    "bridge_routes": [
+     1,
+     3
+    ],
+    "bridge_would_change_route": false,
+    "decoded_text": "把玄铁锡壶放到瓮尾到",
+    "goal": "让细颈的瓶子到楼梯入口。",
+    "gold_routes": [
+     1,
+     3
+    ],
+    "index": 4,
+    "published_category": "extra_bytes",
+    "published_position": 27,
+    "published_routes": [
+     1,
+     3
+    ],
+    "selection_correct": true,
+    "target_text": "把玄铁锡壶放到瓮尾",
+    "world": 4
+   },
+   {
+    "bridge_names": [
+     [
+      "object",
+      "霜白玉玦"
+     ],
+     [
+      "place",
+      "瓮尾"
+     ]
+    ],
+    "bridge_routes": [
+     5,
+     3
+    ],
+    "bridge_would_change_route": false,
+    "decoded_text": "把霜白玉玦放到瓮尾到",
+    "goal": "让扁圆的盒子到楼梯入口。",
+    "gold_routes": [
+     5,
+     3
+    ],
+    "index": 8,
+    "published_category": "extra_bytes",
+    "published_position": 27,
+    "published_routes": [
+     5,
+     3
+    ],
+    "selection_correct": true,
+    "target_text": "把霜白玉玦放到瓮尾",
+    "world": 4
+   },
+   {
+    "bridge_names": [
+     [
+      "object",
+      "赤铜香炉"
+     ],
+     [
+      "place",
+      "瓮尾"
+     ]
+    ],
+    "bridge_routes": [
+     4,
+     3
+    ],
+    "bridge_would_change_route": false,
+    "decoded_text": "把赤铜香炉放到瓮尾到",
+    "goal": "让高足的盘子到楼梯入口。",
+    "gold_routes": [
+     4,
+     3
+    ],
+    "index": 12,
+    "published_category": "extra_bytes",
+    "published_position": 27,
+    "published_routes": [
+     4,
+     3
+    ],
+    "selection_correct": true,
+    "target_text": "把赤铜香炉放到瓮尾",
+    "world": 4
+   }
+  ],
+  "failures": 4,
+  "out_of_scope_stop_edge": 4
+ },
+ "mainline_relation": {
+  "affects_mainline": true,
+  "how": "the bridge is built from Task1's own eight record lines and asked Task1's own 192 confirm goals; its routes and names are compared against the fixture's records and against the published 19.2v failure rows",
+  "limit": "this gate cannot change 188/192 by itself: it only decides whether wiring the bridge in could change it, and the answer is read from the four failures",
+  "not_a_proxy": "no fixture-world data is used for the judgement; every record and goal is Task1's",
+  "which_reading": "Task1's record choice (route) and copied name per goal, and whether the bridge repairs any of the four published confirm failures"
+ },
+ "manifest_sha256": "4fbd8edbf364369ac99179573f07f498c41003354dd393b8f9cfe3ec44744c5f",
+ "materialisation": {
+  "goals": 192,
+  "model_forwards_on_confirm": 0,
+  "previous_reading_recomputed": false,
+  "scored": 0,
+  "split": "confirm",
+  "worlds": 12
+ },
+ "per_slot": {
+  "ambiguous_same_start": 0,
+  "answered_pair": 192,
+  "answered_single": 0,
+  "no_match": 0
+ },
+ "prediction": {
+  "joint": {
+   "ambiguous_multiple_records": 0,
+   "goals": 192,
+   "no_keys": 0,
+   "no_match": 192,
+   "selected": 0,
+   "why": "every Task1 record carries exactly one description, so no single record can contain both keys of a goal; the joint rule can only return no_match"
+  },
+  "mainline": {
+   "already_selection_correct": 4,
+   "bridge_fixes": 0,
+   "failures": 4,
+   "why": "all four published failures are extra_bytes at answer position 27 with both spans aligned: the stop edge, not the record choice"
+  },
+  "per_slot": {
+   "address_ok": 384,
+   "answered_pair": 192,
+   "goals": 192,
+   "slots": 384,
+   "value_ok": 384,
+   "why": "each description occurs in exactly one record, so the two-pass read is unique"
+  },
+  "verdict": "bridge_partial_overlap",
+  "wiring": {
+   "name_bytes_equal": 384,
+   "route_equal": 384,
+   "why": "the bridge's value is the same name field the copy chain derives from the record"
+  }
+ },
+ "prediction_holds": {
+  "joint": true,
+  "mainline": true,
+  "per_slot": true,
+  "verdict": true,
+  "wiring": true
+ },
+ "premise_sha256": "b98b68534d26773091b234d5b7c92220def1059be56ab2c2bb0f3f8cc5791204",
+ "previous_report_sha256": "f0fa6a311a6ab5716bf8a210ae8789c42fabbd24286974fd693b9a1b72891cb1",
+ "runner_sha256": "02ddfa5b5d210fa79f6751c7bf828a427929fb028b4aa94ffd61d21affc149a3",
+ "samples": [
+  {
+   "case": "plain goal: joint no_match, per-slot pair exact",
+   "goal": "让细颈的瓶子到生火近旁。",
+   "index": 0,
+   "joint_candidates": [],
+   "joint_status": "no_match",
+   "keys": [
+    "细颈的瓶子",
+    "生火近旁"
+   ],
+   "per_slot": [
+    {
+     "copy_field_bytes": [
+      0,
+      12
+     ],
+     "gold_route": 7,
+     "name": "乌木罗盘",
+     "record": "乌木罗盘又叫细颈的瓶子。",
+     "route": 7,
+     "slot": "object"
+    },
+    {
+     "copy_field_bytes": [
+      18,
+      24
+     ],
+     "gold_route": 1,
+     "name": "池外",
+     "record": "生火近旁对应池外。",
+     "route": 1,
+     "slot": "place"
+    }
+   ],
+   "per_slot_decision": "answered_pair",
+   "world": 0
+  },
+  {
+   "case": "aka-styled object record: name field starts at byte 0",
+   "goal": "让扁圆的盒子到生火近旁。",
+   "index": 12,
+   "joint_candidates": [],
+   "joint_status": "no_match",
+   "keys": [
+    "扁圆的盒子",
+    "生火近旁"
+   ],
+   "per_slot": [
+    {
+     "copy_field_bytes": [
+      0,
+      12
+     ],
+     "gold_route": 3,
+     "name": "赭石玉玦",
+     "record": "赭石玉玦又叫扁圆的盒子。",
+     "route": 3,
+     "slot": "object"
+    },
+    {
+     "copy_field_bytes": [
+      18,
+      24
+     ],
+     "gold_route": 1,
+     "name": "池外",
+     "record": "生火近旁对应池外。",
+     "route": 1,
+     "slot": "place"
+    }
+   ],
+   "per_slot_decision": "answered_pair",
+   "world": 0
+  },
+  {
+   "bridge_names": [
+    [
+     "object",
+     "朱砂铜镜"
+    ],
+    [
+     "place",
+     "雾尾"
+    ]
+   ],
+   "bridge_routes": [
+    0,
+    5
+   ],
+   "bridge_would_change_route": false,
+   "case": "published 19.2v failure: selection was already right",
+   "decoded_text": "把朱砂铜镜放到雾尾到",
+   "goal": "让扁圆的盒子到楼梯入口。",
+   "gold_routes": [
+    0,
+    5
+   ],
+   "index": 13,
+   "published_category": "extra_bytes",
+   "published_position": 27,
+   "published_routes": [
+    0,
+    5
+   ],
+   "selection_correct": true,
+   "target_text": "把朱砂铜镜放到雾尾",
+   "world": 3
+  }
+ ],
+ "schema": "taiji-mainline-fit-r56-v1",
+ "verdict": {
+  "branch": "per-slot route and name are exact, but the joint rule selects nothing on Task1 and the bridge fixes none of the four published failures",
+  "bridge_fixes": 0,
+  "joint_all": false,
+  "slot_all": true,
+  "verdict": "bridge_partial_overlap",
+  "wiring_all": true
+ },
+ "wiring": {
+  "bridge_coordinate": "character span inside the question",
+  "copy_coordinate": "byte span of the name field inside the record",
+  "goal": "让细颈的瓶子到生火近旁。",
+  "goal_bytes": 36,
+  "note": "the bridge never supplies the record-side field; the copy chain derives start/end from field_bounds on the same record, so the two only meet on (route, name text)",
+  "same_object": false,
+  "slots": [
+   {
+    "bridge_span_chars": [
+     1,
+     6
+    ],
+    "bridge_span_question_bytes": [
+     3,
+     18
+    ],
+    "bridge_value": [
+     "object",
+     "乌木罗盘"
+    ],
+    "copy_field_record_bytes": [
+     0,
+     12
+    ],
+    "copy_field_text": "乌木罗盘",
+    "gold_route": 7,
+    "record": "乌木罗盘又叫细颈的瓶子。",
+    "record_bytes": 36,
+    "route": 7,
+    "slot": "object"
+   },
+   {
+    "bridge_span_chars": [
+     7,
+     11
+    ],
+    "bridge_span_question_bytes": [
+     21,
+     33
+    ],
+    "bridge_value": [
+     "place",
+     "池外"
+    ],
+    "copy_field_record_bytes": [
+     18,
+     24
+    ],
+    "copy_field_text": "池外",
+    "gold_route": 1,
+    "record": "生火近旁对应池外。",
+    "record_bytes": 27,
+    "route": 1,
+    "slot": "place"
+   }
+  ]
+ }
+}

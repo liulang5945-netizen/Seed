@@ -1,0 +1,87 @@
+{
+ "bridge_sha256": "4edf29b22a199c29160523debb8ea23a45e59321f2b0c8dc06da72497672e831",
+ "copy_sha256": "27e5b9a63be29e98197331d59c5ad471e5ae46fa68921c87ce13b42bf193d702",
+ "counts": {
+  "goals": 192,
+  "records_per_world": 8,
+  "slots": 384,
+  "worlds": 12
+ },
+ "cpu_cap": 200.0,
+ "created": "2026-11-09T19:12:11",
+ "criteria": {
+  "closed_state": "nine items equal",
+  "distribution": "the four joint classes and the per-slot classes are all reported by count",
+  "mainline": "each of the four failures is classified and the number the bridge would fix is counted",
+  "samples": "at least three real cases, including one joint no_match and one published failure",
+  "verdict": "exactly one of the three names, decided by the frozen rule",
+  "wiring": "route equality, name-byte equality, and the question-vs-record coordinate difference are reported with concrete byte offsets"
+ },
+ "definition": {
+  "closed_state": "the nine closed-state readings stay equal before and after",
+  "key_rule": "frozen wording rule: the key is the description phrase exactly as it appears in the record (ordered characters, containment read); names never enter the key",
+  "mainline_comparison": "the four published 19.2v confirm failures are re-read from the report (never re-scored); for each, the gate reports whether the bridge's choice would differ from the route 19.2v took, and whether the failure is already selection-correct",
+  "question": "can the written bridge serve Task1, or does it live in a parallel world?",
+  "questions": "Task1's own 192 confirm goals 让{object description}到{place description}。 (12 worlds x 16); no question is authored for this gate",
+  "readings": {
+   "coordinate_check": "the bridge's span is a character span in the QUESTION; the copy chain's field is a byte span in the RECORD; the report must state the difference in bytes, not call it agreement",
+   "joint": "R54' joint rule applied unchanged: every key of the goal must sit in one record; exactly one -> selected, two or more -> ambiguous_multiple_records, zero -> no_match, no key -> no_keys",
+   "per_slot": "the bridge's own frozen two-pass read, one record per description; answers are checked against the record the fixture says carries that description",
+   "wiring": "for every answered slot: does the bridge's record index equal the copy chain's route, and does the bridge's value equal the copy chain's own name-field bytes record[start:end] from field_bounds"
+  },
+  "sealed_set": "confirm worlds are materialised once for their record and goal bytes only; zero model forwards, zero scoring, and the published 19.2v reading is not recomputed",
+  "source_records": "Task1's eight candidate records per world, raw bytes exactly as the frozen generator writes them; no rewriting, no added fields, no new key type",
+  "training": "zero training, zero optimizer steps, zero Adam, zero parameters",
+  "verdict_rule": {
+   "bridge_parallel_world": "per-slot address exact below 0.5: the bridge cannot even name the records",
+   "bridge_partial_overlap": "otherwise; the report must name the overlapping part and the part that does not",
+   "bridge_reaches_mainline": "joint selects one record for all 192 goals AND per-slot exact 384/384 AND wiring exact 384/384 AND the bridge fixes at least one of the four failures"
+  }
+ },
+ "definition_digest": "e1425732a8e43c4b396d6ddaba3e17ab47a69dc190783983d7ea1867860e872f",
+ "estimate_cpu_upper": 20.0,
+ "mainline_relation": {
+  "affects_mainline": true,
+  "how": "the bridge is built from Task1's own eight record lines and asked Task1's own 192 confirm goals; its routes and names are compared against the fixture's records and against the published 19.2v failure rows",
+  "limit": "this gate cannot change 188/192 by itself: it only decides whether wiring the bridge in could change it, and the answer is read from the four failures",
+  "not_a_proxy": "no fixture-world data is used for the judgement; every record and goal is Task1's",
+  "which_reading": "Task1's record choice (route) and copied name per goal, and whether the bridge repairs any of the four published confirm failures"
+ },
+ "prediction": {
+  "joint": {
+   "ambiguous_multiple_records": 0,
+   "goals": 192,
+   "no_keys": 0,
+   "no_match": 192,
+   "selected": 0,
+   "why": "every Task1 record carries exactly one description, so no single record can contain both keys of a goal; the joint rule can only return no_match"
+  },
+  "mainline": {
+   "already_selection_correct": 4,
+   "bridge_fixes": 0,
+   "failures": 4,
+   "why": "all four published failures are extra_bytes at answer position 27 with both spans aligned: the stop edge, not the record choice"
+  },
+  "per_slot": {
+   "address_ok": 384,
+   "answered_pair": 192,
+   "goals": 192,
+   "slots": 384,
+   "value_ok": 384,
+   "why": "each description occurs in exactly one record, so the two-pass read is unique"
+  },
+  "verdict": "bridge_partial_overlap",
+  "wiring": {
+   "name_bytes_equal": 384,
+   "route_equal": 384,
+   "why": "the bridge's value is the same name field the copy chain derives from the record"
+  }
+ },
+ "premise_sha256": "b98b68534d26773091b234d5b7c92220def1059be56ab2c2bb0f3f8cc5791204",
+ "previous_report_sha256": "f0fa6a311a6ab5716bf8a210ae8789c42fabbd24286974fd693b9a1b72891cb1",
+ "runner_sha256": "02ddfa5b5d210fa79f6751c7bf828a427929fb028b4aa94ffd61d21affc149a3",
+ "schema": "taiji-mainline-fit-r56-v1",
+ "sealed_set_note": "confirm materialisation registered in D-20261109-57: record and goal bytes only, zero model forwards, zero scoring",
+ "seed": 20261109,
+ "split": "confirm"
+}
