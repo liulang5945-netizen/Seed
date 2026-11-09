@@ -2490,6 +2490,32 @@ owner 2026-11-07 裁定：多模态是整个算法内部系统的一部分，不
 | S-134 | “快照导入策略继承导出端” | R-D29-391 | **被取代**：导入端 `v2` 策略生效，`v1` 被拒。 |
 | S-135 | “损坏快照会半途恢复” | R-D29-393 | **被取代**：4/4 拒绝，无半张表。 |
 
+## 80. R33 跨进程快照继承（2026-11-09）
+
+**80.0 冻结与范围**：父快照、子恢复/表达/纠正/再快照、父恢复与损坏快照在读数前写入 [manifest](../manifests/taiji_bridge_snapshot_handoff_20261109.json) 的 `definition_digest`。本轮**不修改** `taiji/living_core.py` 或 `address_bridge.py`；两个子进程由 runner 以独立 Python 解释器启动。0 训练／0 优化器步／0 Adam／0 confirm。
+
+**80.1 读数**
+
+| 编号 | 读数 | 出处 |
+|---|---|---|
+| R-D29-398 | **父快照**：**2,513 B**、摘要 `a4edca3e…`。 | `snapshot` |
+| R-D29-399 | **子恢复与纠正前**：摘要相等、返回码 0；20 条 describe 句 **20/20** 成对精确。 | `child_import`／`before` |
+| R-D29-400 | **子纠正与纠正后**：CUP **描述键**→`绿色瓶子`、`corrected`、日志 1 条（`v1`／`r33:snapshot`）；仍 **20/20**，5 句变 GREEN、地点不变；导出文本 `"黄色球在地毯"`。 | `correction`／`after` |
+| R-D29-401 | **父恢复子快照**：表摘要相等、文本相等、20/20、日志来源/理由保留。 | `handback` |
+| R-D29-402 | **损坏快照**：第二个子进程收截断快照 ⇒ `rejected_snapshot_invalid_json: …`、**无输出**。 | `corrupt` |
+| R-D29-403 | **关闭态九项全等**；`sc_bridge` 前后 `None`（单列）。 | `closed_state` |
+| R-D29-404 | **复跑锚**：R32→`aea59f09e`（blob `90cb1c4b…`、runner sha `9f27b956…`、core sha `d5ccb13b…`），报告 sha 与 blob sha 一致；R33 未改模块，R32 在当前 HEAD 仍可复跑。 | `rerun_anchors` |
+| R-D29-405 | **判定与成本**：`child_expression_20_20`／`snapshot_handback_clean`／`corrupt_snapshot_rejected`／`closed_state_equal`／`bridge_default_none`／`anchors_complete` ⇒ 总判 **`snapshot_handoff_clean`**；成本 **1.344 CPU／13.250 wall**（估 60、上限 200）。 | 报告 `verdict`／`cost` |
+
+**80.2 superseded／范围登记**
+
+| 编号 | 被取代／被限定的对象 | 取代者 | 处置与理由 |
+|---|---|---|---|
+| S-136 | “快照不能跨进程带文本” | R-D29-399 | **被取代**：子进程恢复后 20/20，父恢复文本相等。 |
+| S-137 | “子进程恢复后文本会丢” | R-D29-401 | **被取代**：交回文本 `"黄色球在地毯"` 相等。 |
+| S-138 | “截断快照子进程会半途写输出” | R-D29-402 | **被取代**：无输出。 |
+
+
 
 
 
