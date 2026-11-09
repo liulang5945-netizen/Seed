@@ -1,0 +1,1900 @@
+{
+ "schema": "taiji-written-bridge-v1",
+ "date": "2026-11-09",
+ "runner_sha256": "8be1bef02604541ee0e295889b31c1096f92b6eaaff3de665f6931bad14c280e",
+ "manifest_sha256": "4d97f2439857e3af04d4021dde6135431a1540857460790631ebfa7d5db65ce1",
+ "bridge_sha256": "ddb5a48b4215e9677ecfb49b8c2e5d2d436344b93f3f283d8cb3e060ade32caf",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "8fa3aafde38b1cbad3b021dc271abd316c0a265c68870403dd4ca7b0b53e0c6a"
+ },
+ "counts": {
+  "records": 9,
+  "describe_sentences": 20,
+  "capability_reads": 40,
+  "unknown_phrases": 5,
+  "unknown_candidates": 12,
+  "ambiguous_pairs": 36,
+  "battery_texts": 20
+ },
+ "definition": {
+  "key": "the phrase's 2-byte token set (hex), order-free, deduped; a sliding 2-byte window over the UTF-8 bytes, so it is alignment-sensitive by construction.",
+  "value": "(slot, name), e.g. ('place', '书架').  Names never enter the key.",
+  "record_count": 9,
+  "write_outcomes": {
+   "appended": "the key is new.",
+   "merged": "same key, same value: count+1, no new record.",
+   "replaced": "same key, different value: the old value moves to history.",
+   "rejected_batches": "one batch carries two different values for one key; the batch is validated before it is applied and the table is restored from a snapshot."
+  },
+  "read_rule": "an address anchors the query only through a token that occurs in exactly one address; exactly one anchor answers, two or more say ambiguous_multiple_anchors, zero says no_match.  A non-answer returns value None.",
+  "route": "sentence -> locate the written phrase inside it (exact substring) -> the phrase's token set -> read.  Reading the raw sentence instead is reported separately: the 2-byte window drifts by one byte after the 3-byte lead character, so the sentence cannot be used as the key directly."
+ },
+ "criteria": {
+  "capability": "20 describe sentences: accuracy >= 0.95 and zero wrong pointers (a wrong pointer is a non-empty value different from the expected (slot, name)).",
+  "mechanism": "one merge battery with merged == 9 and slots == 9; one replace battery with replaced == 9, slots == 9 and every original value still in history; one conflict battery with rejected_batches == 1, rollbacks == 1 and an unchanged table digest.",
+  "abstention": "every unwritten phrase returns no_match with value None; every two-record query returns ambiguous_multiple_anchors with value None; zero non-empty wrong answers across all abstention batteries.",
+  "closed_state": "same battery (20 sentences) replayed before and after the bridge work: parameters, state tensors, identity digest, store signature and emitted bytes are identical, and state.sc_sfk stays None."
+ },
+ "verdict": "written_bridge_operational",
+ "groups": {
+  "capability_ok": true,
+  "mechanism_ok": true,
+  "abstention_ok": true,
+  "closed_state_ok": true
+ },
+ "capability": {
+  "rows": [
+   {
+    "sentence": "让圆口的器皿到四方木台。",
+    "slot": "object",
+    "phrase": "圆口的器皿",
+    "expected": [
+     "object",
+     "蓝色杯子"
+    ],
+    "decision": "matched",
+    "value": [
+     "object",
+     "蓝色杯子"
+    ],
+    "reason": "single_anchor",
+    "ok": true
+   },
+   {
+    "sentence": "让圆口的器皿到四方木台。",
+    "slot": "place",
+    "phrase": "四方木台",
+    "expected": [
+     "place",
+     "木桌"
+    ],
+    "decision": "matched",
+    "value": [
+     "place",
+     "木桌"
+    ],
+    "reason": "single_anchor",
+    "ok": true
+   },
+   {
+    "sentence": "让圆口的器皿到靠窗的台面。",
+    "slot": "object",
+    "phrase": "圆口的器皿",
+    "expected": [
+     "object",
+     "蓝色杯子"
+    ],
+    "decision": "matched",
+    "value": [
+     "object",
+     "蓝色杯子"
+    ],
+    "reason": "single_anchor",
+    "ok": true
+   },
+   {
+    "sentence": "让圆口的器皿到靠窗的台面。",
+    "slot": "place",
+    "phrase": "靠窗的台面",
+    "expected": [
+     "place",
+     "窗台"
+    ],
+    "decision": "matched",
+    "value": [
+     "place",
+     "窗台"
+    ],
+    "reason": "single_anchor",
+    "ok": true
+   },
+   {
+    "sentence": "让圆口的器皿到手边的匣子。",
+    "slot": "object",
+    "phrase": "圆口的器皿",
+    "expected": [
+     "object",
+     "蓝色杯子"
+    ],
+    "decision": "matched",
+    "value": [
+     "object",
+     "蓝色杯子"
+    ],
+    "reason": "single_anchor",
+    "ok": true
+   },
+   {
+    "sentence": "让圆口的器皿到手边的匣子。",
+    "slot": "place",
+    "phrase": "手边的匣子",
+    "expected": [
+     "place",
+     "左盒"
+    ],
+    "decision": "matched",
+    "value": [
+     "place",
+     "左盒"
+    ],
+    "reason": "single_anchor",
+    "ok": true
+   },
+   {
+    "sentence": "让圆口的器皿到靠墙的层架。",
+    "slot": "object",
+    "phrase": "圆口的器皿",
+    "expected": [
+     "object",
+     "蓝色杯子"
+    ],
+    "decision": "matched",
+    "value": [
+     "object",
+     "蓝色杯子"
+    ],
+    "reason": "single_anchor",
+    "ok": true
+   },
+   {
+    "sentence": "让圆口的器皿到靠墙的层架。",
+    "slot": "place",
+    "phrase": "靠墙的层架",
+    "expected": [
+     "place",
+     "书架"
+    ],
+    "decision": "matched",
+    "value": [
+     "place",
+     "书架"
+    ],
+    "reason": "single_anchor",
+    "ok": true
+   },
+   {
+    "sentence": "让圆口的器皿到脚边的毡子。",
+    "slot": "object",
+    "phrase": "圆口的器皿",
+    "expected": [
+     "object",
+     "蓝色杯子"
+    ],
+    "decision": "matched",
+    "value": [
+     "object",
+     "蓝色杯子"
+    ],
+    "reason": "single_anchor",
+    "ok": true
+   },
+   {
+    "sentence": "让圆口的器皿到脚边的毡子。",
+    "slot": "place",
+    "phrase": "脚边的毡子",
+    "expected": [
+     "place",
+     "地毯"
+    ],
+    "decision": "matched",
+    "value": [
+     "place",
+     "地毯"
+    ],
+    "reason": "single_anchor",
+    "ok": true
+   },
+   {
+    "sentence": "让带纹路的方块到四方木台。",
+    "slot": "object",
+    "phrase": "带纹路的方块",
+    "expected": [
+     "object",
+     "红色印章"
+    ],
+    "decision": "matched",
+    "value": [
+     "object",
+     "红色印章"
+    ],
+    "reason": "single_anchor",
+    "ok": true
+   },
+   {
+    "sentence": "让带纹路的方块到四方木台。",
+    "slot": "place",
+    "phrase": "四方木台",
+    "expected": [
+     "place",
+     "木桌"
+    ],
+    "decision": "matched",
+    "value": [
+     "place",
+     "木桌"
+    ],
+    "reason": "single_anchor",
+    "ok": true
+   },
+   {
+    "sentence": "让带纹路的方块到靠窗的台面。",
+    "slot": "object",
+    "phrase": "带纹路的方块",
+    "expected": [
+     "object",
+     "红色印章"
+    ],
+    "decision": "matched",
+    "value": [
+     "object",
+     "红色印章"
+    ],
+    "reason": "single_anchor",
+    "ok": true
+   },
+   {
+    "sentence": "让带纹路的方块到靠窗的台面。",
+    "slot": "place",
+    "phrase": "靠窗的台面",
+    "expected": [
+     "place",
+     "窗台"
+    ],
+    "decision": "matched",
+    "value": [
+     "place",
+     "窗台"
+    ],
+    "reason": "single_anchor",
+    "ok": true
+   },
+   {
+    "sentence": "让带纹路的方块到手边的匣子。",
+    "slot": "object",
+    "phrase": "带纹路的方块",
+    "expected": [
+     "object",
+     "红色印章"
+    ],
+    "decision": "matched",
+    "value": [
+     "object",
+     "红色印章"
+    ],
+    "reason": "single_anchor",
+    "ok": true
+   },
+   {
+    "sentence": "让带纹路的方块到手边的匣子。",
+    "slot": "place",
+    "phrase": "手边的匣子",
+    "expected": [
+     "place",
+     "左盒"
+    ],
+    "decision": "matched",
+    "value": [
+     "place",
+     "左盒"
+    ],
+    "reason": "single_anchor",
+    "ok": true
+   },
+   {
+    "sentence": "让带纹路的方块到靠墙的层架。",
+    "slot": "object",
+    "phrase": "带纹路的方块",
+    "expected": [
+     "object",
+     "红色印章"
+    ],
+    "decision": "matched",
+    "value": [
+     "object",
+     "红色印章"
+    ],
+    "reason": "single_anchor",
+    "ok": true
+   },
+   {
+    "sentence": "让带纹路的方块到靠墙的层架。",
+    "slot": "place",
+    "phrase": "靠墙的层架",
+    "expected": [
+     "place",
+     "书架"
+    ],
+    "decision": "matched",
+    "value": [
+     "place",
+     "书架"
+    ],
+    "reason": "single_anchor",
+    "ok": true
+   },
+   {
+    "sentence": "让带纹路的方块到脚边的毡子。",
+    "slot": "object",
+    "phrase": "带纹路的方块",
+    "expected": [
+     "object",
+     "红色印章"
+    ],
+    "decision": "matched",
+    "value": [
+     "object",
+     "红色印章"
+    ],
+    "reason": "single_anchor",
+    "ok": true
+   },
+   {
+    "sentence": "让带纹路的方块到脚边的毡子。",
+    "slot": "place",
+    "phrase": "脚边的毡子",
+    "expected": [
+     "place",
+     "地毯"
+    ],
+    "decision": "matched",
+    "value": [
+     "place",
+     "地毯"
+    ],
+    "reason": "single_anchor",
+    "ok": true
+   },
+   {
+    "sentence": "让细长的容器到四方木台。",
+    "slot": "object",
+    "phrase": "细长的容器",
+    "expected": [
+     "object",
+     "绿色瓶子"
+    ],
+    "decision": "matched",
+    "value": [
+     "object",
+     "绿色瓶子"
+    ],
+    "reason": "single_anchor",
+    "ok": true
+   },
+   {
+    "sentence": "让细长的容器到四方木台。",
+    "slot": "place",
+    "phrase": "四方木台",
+    "expected": [
+     "place",
+     "木桌"
+    ],
+    "decision": "matched",
+    "value": [
+     "place",
+     "木桌"
+    ],
+    "reason": "single_anchor",
+    "ok": true
+   },
+   {
+    "sentence": "让细长的容器到靠窗的台面。",
+    "slot": "object",
+    "phrase": "细长的容器",
+    "expected": [
+     "object",
+     "绿色瓶子"
+    ],
+    "decision": "matched",
+    "value": [
+     "object",
+     "绿色瓶子"
+    ],
+    "reason": "single_anchor",
+    "ok": true
+   },
+   {
+    "sentence": "让细长的容器到靠窗的台面。",
+    "slot": "place",
+    "phrase": "靠窗的台面",
+    "expected": [
+     "place",
+     "窗台"
+    ],
+    "decision": "matched",
+    "value": [
+     "place",
+     "窗台"
+    ],
+    "reason": "single_anchor",
+    "ok": true
+   },
+   {
+    "sentence": "让细长的容器到手边的匣子。",
+    "slot": "object",
+    "phrase": "细长的容器",
+    "expected": [
+     "object",
+     "绿色瓶子"
+    ],
+    "decision": "matched",
+    "value": [
+     "object",
+     "绿色瓶子"
+    ],
+    "reason": "single_anchor",
+    "ok": true
+   },
+   {
+    "sentence": "让细长的容器到手边的匣子。",
+    "slot": "place",
+    "phrase": "手边的匣子",
+    "expected": [
+     "place",
+     "左盒"
+    ],
+    "decision": "matched",
+    "value": [
+     "place",
+     "左盒"
+    ],
+    "reason": "single_anchor",
+    "ok": true
+   },
+   {
+    "sentence": "让细长的容器到靠墙的层架。",
+    "slot": "object",
+    "phrase": "细长的容器",
+    "expected": [
+     "object",
+     "绿色瓶子"
+    ],
+    "decision": "matched",
+    "value": [
+     "object",
+     "绿色瓶子"
+    ],
+    "reason": "single_anchor",
+    "ok": true
+   },
+   {
+    "sentence": "让细长的容器到靠墙的层架。",
+    "slot": "place",
+    "phrase": "靠墙的层架",
+    "expected": [
+     "place",
+     "书架"
+    ],
+    "decision": "matched",
+    "value": [
+     "place",
+     "书架"
+    ],
+    "reason": "single_anchor",
+    "ok": true
+   },
+   {
+    "sentence": "让细长的容器到脚边的毡子。",
+    "slot": "object",
+    "phrase": "细长的容器",
+    "expected": [
+     "object",
+     "绿色瓶子"
+    ],
+    "decision": "matched",
+    "value": [
+     "object",
+     "绿色瓶子"
+    ],
+    "reason": "single_anchor",
+    "ok": true
+   },
+   {
+    "sentence": "让细长的容器到脚边的毡子。",
+    "slot": "place",
+    "phrase": "脚边的毡子",
+    "expected": [
+     "place",
+     "地毯"
+    ],
+    "decision": "matched",
+    "value": [
+     "place",
+     "地毯"
+    ],
+    "reason": "single_anchor",
+    "ok": true
+   },
+   {
+    "sentence": "让圆滚滚的东西到四方木台。",
+    "slot": "object",
+    "phrase": "圆滚滚的东西",
+    "expected": [
+     "object",
+     "黄色球"
+    ],
+    "decision": "matched",
+    "value": [
+     "object",
+     "黄色球"
+    ],
+    "reason": "single_anchor",
+    "ok": true
+   },
+   {
+    "sentence": "让圆滚滚的东西到四方木台。",
+    "slot": "place",
+    "phrase": "四方木台",
+    "expected": [
+     "place",
+     "木桌"
+    ],
+    "decision": "matched",
+    "value": [
+     "place",
+     "木桌"
+    ],
+    "reason": "single_anchor",
+    "ok": true
+   },
+   {
+    "sentence": "让圆滚滚的东西到靠窗的台面。",
+    "slot": "object",
+    "phrase": "圆滚滚的东西",
+    "expected": [
+     "object",
+     "黄色球"
+    ],
+    "decision": "matched",
+    "value": [
+     "object",
+     "黄色球"
+    ],
+    "reason": "single_anchor",
+    "ok": true
+   },
+   {
+    "sentence": "让圆滚滚的东西到靠窗的台面。",
+    "slot": "place",
+    "phrase": "靠窗的台面",
+    "expected": [
+     "place",
+     "窗台"
+    ],
+    "decision": "matched",
+    "value": [
+     "place",
+     "窗台"
+    ],
+    "reason": "single_anchor",
+    "ok": true
+   },
+   {
+    "sentence": "让圆滚滚的东西到手边的匣子。",
+    "slot": "object",
+    "phrase": "圆滚滚的东西",
+    "expected": [
+     "object",
+     "黄色球"
+    ],
+    "decision": "matched",
+    "value": [
+     "object",
+     "黄色球"
+    ],
+    "reason": "single_anchor",
+    "ok": true
+   },
+   {
+    "sentence": "让圆滚滚的东西到手边的匣子。",
+    "slot": "place",
+    "phrase": "手边的匣子",
+    "expected": [
+     "place",
+     "左盒"
+    ],
+    "decision": "matched",
+    "value": [
+     "place",
+     "左盒"
+    ],
+    "reason": "single_anchor",
+    "ok": true
+   },
+   {
+    "sentence": "让圆滚滚的东西到靠墙的层架。",
+    "slot": "object",
+    "phrase": "圆滚滚的东西",
+    "expected": [
+     "object",
+     "黄色球"
+    ],
+    "decision": "matched",
+    "value": [
+     "object",
+     "黄色球"
+    ],
+    "reason": "single_anchor",
+    "ok": true
+   },
+   {
+    "sentence": "让圆滚滚的东西到靠墙的层架。",
+    "slot": "place",
+    "phrase": "靠墙的层架",
+    "expected": [
+     "place",
+     "书架"
+    ],
+    "decision": "matched",
+    "value": [
+     "place",
+     "书架"
+    ],
+    "reason": "single_anchor",
+    "ok": true
+   },
+   {
+    "sentence": "让圆滚滚的东西到脚边的毡子。",
+    "slot": "object",
+    "phrase": "圆滚滚的东西",
+    "expected": [
+     "object",
+     "黄色球"
+    ],
+    "decision": "matched",
+    "value": [
+     "object",
+     "黄色球"
+    ],
+    "reason": "single_anchor",
+    "ok": true
+   },
+   {
+    "sentence": "让圆滚滚的东西到脚边的毡子。",
+    "slot": "place",
+    "phrase": "脚边的毡子",
+    "expected": [
+     "place",
+     "地毯"
+    ],
+    "decision": "matched",
+    "value": [
+     "place",
+     "地毯"
+    ],
+    "reason": "single_anchor",
+    "ok": true
+   }
+  ],
+  "of": 40,
+  "hits": 40,
+  "wrong_pointers": 0,
+  "abstained": 0,
+  "accuracy": 1.0,
+  "sentences": 20,
+  "located_both_slots": true
+ },
+ "mechanism": {
+  "merge": {
+   "batches": 2,
+   "first_batch": {
+    "action": "accepted",
+    "items": 9,
+    "batch": 1,
+    "slots": 9,
+    "appended": 9,
+    "merged": 0,
+    "replaced": 0,
+    "items_detail": [
+     {
+      "item": 0,
+      "address": 0,
+      "action": "appended"
+     },
+     {
+      "item": 1,
+      "address": 1,
+      "action": "appended"
+     },
+     {
+      "item": 2,
+      "address": 2,
+      "action": "appended"
+     },
+     {
+      "item": 3,
+      "address": 3,
+      "action": "appended"
+     },
+     {
+      "item": 4,
+      "address": 4,
+      "action": "appended"
+     },
+     {
+      "item": 5,
+      "address": 5,
+      "action": "appended"
+     },
+     {
+      "item": 6,
+      "address": 6,
+      "action": "appended"
+     },
+     {
+      "item": 7,
+      "address": 7,
+      "action": "appended"
+     },
+     {
+      "item": 8,
+      "address": 8,
+      "action": "appended"
+     }
+    ]
+   },
+   "second_batch": {
+    "action": "accepted",
+    "items": 9,
+    "batch": 2,
+    "slots": 9,
+    "appended": 0,
+    "merged": 9,
+    "replaced": 0,
+    "items_detail": [
+     {
+      "item": 0,
+      "address": 0,
+      "action": "merged_duplicate"
+     },
+     {
+      "item": 1,
+      "address": 1,
+      "action": "merged_duplicate"
+     },
+     {
+      "item": 2,
+      "address": 2,
+      "action": "merged_duplicate"
+     },
+     {
+      "item": 3,
+      "address": 3,
+      "action": "merged_duplicate"
+     },
+     {
+      "item": 4,
+      "address": 4,
+      "action": "merged_duplicate"
+     },
+     {
+      "item": 5,
+      "address": 5,
+      "action": "merged_duplicate"
+     },
+     {
+      "item": 6,
+      "address": 6,
+      "action": "merged_duplicate"
+     },
+     {
+      "item": 7,
+      "address": 7,
+      "action": "merged_duplicate"
+     },
+     {
+      "item": 8,
+      "address": 8,
+      "action": "merged_duplicate"
+     }
+    ]
+   },
+   "slots": 9,
+   "appended": 9,
+   "merged": 9,
+   "replaced": 0,
+   "rejected_batches": 0,
+   "rollbacks": 0,
+   "counts": [
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2
+   ],
+   "read_after_merge": [
+    [
+     "object",
+     "蓝色杯子"
+    ],
+    [
+     "object",
+     "红色印章"
+    ],
+    [
+     "object",
+     "绿色瓶子"
+    ],
+    [
+     "object",
+     "黄色球"
+    ],
+    [
+     "place",
+     "木桌"
+    ],
+    [
+     "place",
+     "窗台"
+    ],
+    [
+     "place",
+     "左盒"
+    ],
+    [
+     "place",
+     "书架"
+    ],
+    [
+     "place",
+     "地毯"
+    ]
+   ]
+  },
+  "replace": {
+   "batch": {
+    "action": "accepted",
+    "items": 9,
+    "batch": 2,
+    "slots": 9,
+    "appended": 0,
+    "merged": 0,
+    "replaced": 9,
+    "items_detail": [
+     {
+      "item": 0,
+      "address": 0,
+      "action": "replaced"
+     },
+     {
+      "item": 1,
+      "address": 1,
+      "action": "replaced"
+     },
+     {
+      "item": 2,
+      "address": 2,
+      "action": "replaced"
+     },
+     {
+      "item": 3,
+      "address": 3,
+      "action": "replaced"
+     },
+     {
+      "item": 4,
+      "address": 4,
+      "action": "replaced"
+     },
+     {
+      "item": 5,
+      "address": 5,
+      "action": "replaced"
+     },
+     {
+      "item": 6,
+      "address": 6,
+      "action": "replaced"
+     },
+     {
+      "item": 7,
+      "address": 7,
+      "action": "replaced"
+     },
+     {
+      "item": 8,
+      "address": 8,
+      "action": "replaced"
+     }
+    ]
+   },
+   "slots": 9,
+   "appended": 9,
+   "merged": 0,
+   "replaced": 9,
+   "rejected_batches": 0,
+   "rollbacks": 0,
+   "originals": [
+    [
+     "object",
+     "蓝色杯子"
+    ],
+    [
+     "object",
+     "红色印章"
+    ],
+    [
+     "object",
+     "绿色瓶子"
+    ],
+    [
+     "object",
+     "黄色球"
+    ],
+    [
+     "place",
+     "木桌"
+    ],
+    [
+     "place",
+     "窗台"
+    ],
+    [
+     "place",
+     "左盒"
+    ],
+    [
+     "place",
+     "书架"
+    ],
+    [
+     "place",
+     "地毯"
+    ]
+   ],
+   "history": [
+    [
+     [
+      "object",
+      "蓝色杯子"
+     ]
+    ],
+    [
+     [
+      "object",
+      "红色印章"
+     ]
+    ],
+    [
+     [
+      "object",
+      "绿色瓶子"
+     ]
+    ],
+    [
+     [
+      "object",
+      "黄色球"
+     ]
+    ],
+    [
+     [
+      "place",
+      "木桌"
+     ]
+    ],
+    [
+     [
+      "place",
+      "窗台"
+     ]
+    ],
+    [
+     [
+      "place",
+      "左盒"
+     ]
+    ],
+    [
+     [
+      "place",
+      "书架"
+     ]
+    ],
+    [
+     [
+      "place",
+      "地毯"
+     ]
+    ]
+   ],
+   "old_value_preserved": true,
+   "read_after_replace": [
+    [
+     "replaced",
+     "sentinel"
+    ],
+    [
+     "replaced",
+     "sentinel"
+    ],
+    [
+     "replaced",
+     "sentinel"
+    ],
+    [
+     "replaced",
+     "sentinel"
+    ],
+    [
+     "replaced",
+     "sentinel"
+    ],
+    [
+     "replaced",
+     "sentinel"
+    ],
+    [
+     "replaced",
+     "sentinel"
+    ],
+    [
+     "replaced",
+     "sentinel"
+    ],
+    [
+     "replaced",
+     "sentinel"
+    ]
+   ],
+   "reads_return_replacement": true
+  },
+  "conflict": {
+   "batch": {
+    "action": "rejected_batch_address_collision",
+    "items": 4,
+    "reason": "batch_address_collision",
+    "conflict_items": [
+     1
+    ],
+    "batch": 2,
+    "digest_unchanged": true
+   },
+   "content_digest_before": "f5cac5bdcaa2c74cd112a440f12acacec1790d0e70a6843c1b3dcbfe7fad5dee",
+   "content_digest_after": "f5cac5bdcaa2c74cd112a440f12acacec1790d0e70a6843c1b3dcbfe7fad5dee",
+   "digest_unchanged": true,
+   "slots_before": 9,
+   "slots_after": 9,
+   "values_unchanged": true,
+   "rejected_batches": 1,
+   "rollbacks": 1,
+   "rejected_reasons": {
+    "batch_address_collision": 1
+   },
+   "new_key_absent": true
+  }
+ },
+ "abstention": {
+  "unknown": [
+   {
+    "phrase": "黑色铁铃",
+    "tokens": 6,
+    "disjoint_from_keys": true,
+    "decision": "no_match",
+    "value": null,
+    "reason": "unknown_token"
+   },
+   {
+    "phrase": "长柄铜勺",
+    "tokens": 6,
+    "disjoint_from_keys": true,
+    "decision": "no_match",
+    "value": null,
+    "reason": "unknown_token"
+   },
+   {
+    "phrase": "软木瓶塞",
+    "tokens": 6,
+    "disjoint_from_keys": true,
+    "decision": "no_match",
+    "value": null,
+    "reason": "unknown_token"
+   },
+   {
+    "phrase": "蓝色毛巾",
+    "tokens": 6,
+    "disjoint_from_keys": true,
+    "decision": "no_match",
+    "value": null,
+    "reason": "unknown_token"
+   },
+   {
+    "phrase": "灰色石阶",
+    "tokens": 6,
+    "disjoint_from_keys": true,
+    "decision": "no_match",
+    "value": null,
+    "reason": "unknown_token"
+   }
+  ],
+  "unknown_tally": {
+   "no_match": 5
+  },
+  "unknown_all_disjoint": true,
+  "shared_token_only": {
+   "status": "shared_token_only",
+   "token": "84e5",
+   "document_frequency": 5,
+   "owners": [
+    0,
+    2,
+    5,
+    6,
+    7
+   ],
+   "decision": "no_match",
+   "reason": "no_unique_token",
+   "value": null
+  },
+  "ambiguous_pairs": [
+   {
+    "pair": [
+     "圆口的器皿",
+     "带纹路的方块"
+    ],
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   },
+   {
+    "pair": [
+     "圆口的器皿",
+     "细长的容器"
+    ],
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   },
+   {
+    "pair": [
+     "圆口的器皿",
+     "圆滚滚的东西"
+    ],
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   },
+   {
+    "pair": [
+     "圆口的器皿",
+     "四方木台"
+    ],
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   },
+   {
+    "pair": [
+     "圆口的器皿",
+     "靠窗的台面"
+    ],
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   },
+   {
+    "pair": [
+     "圆口的器皿",
+     "手边的匣子"
+    ],
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   },
+   {
+    "pair": [
+     "圆口的器皿",
+     "靠墙的层架"
+    ],
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   },
+   {
+    "pair": [
+     "圆口的器皿",
+     "脚边的毡子"
+    ],
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   },
+   {
+    "pair": [
+     "带纹路的方块",
+     "细长的容器"
+    ],
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   },
+   {
+    "pair": [
+     "带纹路的方块",
+     "圆滚滚的东西"
+    ],
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   },
+   {
+    "pair": [
+     "带纹路的方块",
+     "四方木台"
+    ],
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   },
+   {
+    "pair": [
+     "带纹路的方块",
+     "靠窗的台面"
+    ],
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   },
+   {
+    "pair": [
+     "带纹路的方块",
+     "手边的匣子"
+    ],
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   },
+   {
+    "pair": [
+     "带纹路的方块",
+     "靠墙的层架"
+    ],
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   },
+   {
+    "pair": [
+     "带纹路的方块",
+     "脚边的毡子"
+    ],
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   },
+   {
+    "pair": [
+     "细长的容器",
+     "圆滚滚的东西"
+    ],
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   },
+   {
+    "pair": [
+     "细长的容器",
+     "四方木台"
+    ],
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   },
+   {
+    "pair": [
+     "细长的容器",
+     "靠窗的台面"
+    ],
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   },
+   {
+    "pair": [
+     "细长的容器",
+     "手边的匣子"
+    ],
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   },
+   {
+    "pair": [
+     "细长的容器",
+     "靠墙的层架"
+    ],
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   },
+   {
+    "pair": [
+     "细长的容器",
+     "脚边的毡子"
+    ],
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   },
+   {
+    "pair": [
+     "圆滚滚的东西",
+     "四方木台"
+    ],
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   },
+   {
+    "pair": [
+     "圆滚滚的东西",
+     "靠窗的台面"
+    ],
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   },
+   {
+    "pair": [
+     "圆滚滚的东西",
+     "手边的匣子"
+    ],
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   },
+   {
+    "pair": [
+     "圆滚滚的东西",
+     "靠墙的层架"
+    ],
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   },
+   {
+    "pair": [
+     "圆滚滚的东西",
+     "脚边的毡子"
+    ],
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   },
+   {
+    "pair": [
+     "四方木台",
+     "靠窗的台面"
+    ],
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   },
+   {
+    "pair": [
+     "四方木台",
+     "手边的匣子"
+    ],
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   },
+   {
+    "pair": [
+     "四方木台",
+     "靠墙的层架"
+    ],
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   },
+   {
+    "pair": [
+     "四方木台",
+     "脚边的毡子"
+    ],
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   },
+   {
+    "pair": [
+     "靠窗的台面",
+     "手边的匣子"
+    ],
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   },
+   {
+    "pair": [
+     "靠窗的台面",
+     "靠墙的层架"
+    ],
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   },
+   {
+    "pair": [
+     "靠窗的台面",
+     "脚边的毡子"
+    ],
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   },
+   {
+    "pair": [
+     "手边的匣子",
+     "靠墙的层架"
+    ],
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   },
+   {
+    "pair": [
+     "手边的匣子",
+     "脚边的毡子"
+    ],
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   },
+   {
+    "pair": [
+     "靠墙的层架",
+     "脚边的毡子"
+    ],
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   }
+  ],
+  "ambiguous_pair_tally": {
+   "ambiguous_multiple_anchors": 36
+  },
+  "ambiguous_sentences": [
+   {
+    "sentence": "让圆口的器皿到四方木台。",
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   },
+   {
+    "sentence": "让圆口的器皿到靠窗的台面。",
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   },
+   {
+    "sentence": "让圆口的器皿到手边的匣子。",
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   },
+   {
+    "sentence": "让圆口的器皿到靠墙的层架。",
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   },
+   {
+    "sentence": "让圆口的器皿到脚边的毡子。",
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   },
+   {
+    "sentence": "让带纹路的方块到四方木台。",
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   },
+   {
+    "sentence": "让带纹路的方块到靠窗的台面。",
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   },
+   {
+    "sentence": "让带纹路的方块到手边的匣子。",
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   },
+   {
+    "sentence": "让带纹路的方块到靠墙的层架。",
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   },
+   {
+    "sentence": "让带纹路的方块到脚边的毡子。",
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   },
+   {
+    "sentence": "让细长的容器到四方木台。",
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   },
+   {
+    "sentence": "让细长的容器到靠窗的台面。",
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   },
+   {
+    "sentence": "让细长的容器到手边的匣子。",
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   },
+   {
+    "sentence": "让细长的容器到靠墙的层架。",
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   },
+   {
+    "sentence": "让细长的容器到脚边的毡子。",
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   },
+   {
+    "sentence": "让圆滚滚的东西到四方木台。",
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   },
+   {
+    "sentence": "让圆滚滚的东西到靠窗的台面。",
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   },
+   {
+    "sentence": "让圆滚滚的东西到手边的匣子。",
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   },
+   {
+    "sentence": "让圆滚滚的东西到靠墙的层架。",
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   },
+   {
+    "sentence": "让圆滚滚的东西到脚边的毡子。",
+    "decision": "ambiguous_multiple_anchors",
+    "anchors": 2,
+    "value": null
+   }
+  ],
+  "ambiguous_sentence_tally": {
+   "ambiguous_multiple_anchors": 20
+  },
+  "sentence_direct": [
+   {
+    "sentence": "让圆口的器皿到四方木台。",
+    "decision": "ambiguous_multiple_anchors",
+    "reason": "multiple_anchors",
+    "unknown_tokens": 14,
+    "value": null,
+    "wrong_pointer": false
+   },
+   {
+    "sentence": "让圆口的器皿到靠窗的台面。",
+    "decision": "matched",
+    "reason": "single_anchor",
+    "unknown_tokens": 14,
+    "value": [
+     "object",
+     "绿色瓶子"
+    ],
+    "wrong_pointer": true
+   },
+   {
+    "sentence": "让圆口的器皿到手边的匣子。",
+    "decision": "matched",
+    "reason": "single_anchor",
+    "unknown_tokens": 16,
+    "value": [
+     "object",
+     "绿色瓶子"
+    ],
+    "wrong_pointer": true
+   },
+   {
+    "sentence": "让圆口的器皿到靠墙的层架。",
+    "decision": "matched",
+    "reason": "single_anchor",
+    "unknown_tokens": 16,
+    "value": [
+     "object",
+     "绿色瓶子"
+    ],
+    "wrong_pointer": true
+   },
+   {
+    "sentence": "让圆口的器皿到脚边的毡子。",
+    "decision": "matched",
+    "reason": "single_anchor",
+    "unknown_tokens": 16,
+    "value": [
+     "object",
+     "绿色瓶子"
+    ],
+    "wrong_pointer": true
+   },
+   {
+    "sentence": "让带纹路的方块到四方木台。",
+    "decision": "ambiguous_multiple_anchors",
+    "reason": "multiple_anchors",
+    "unknown_tokens": 10,
+    "value": null,
+    "wrong_pointer": false
+   },
+   {
+    "sentence": "让带纹路的方块到靠窗的台面。",
+    "decision": "ambiguous_multiple_anchors",
+    "reason": "multiple_anchors",
+    "unknown_tokens": 11,
+    "value": null,
+    "wrong_pointer": false
+   },
+   {
+    "sentence": "让带纹路的方块到手边的匣子。",
+    "decision": "ambiguous_multiple_anchors",
+    "reason": "multiple_anchors",
+    "unknown_tokens": 11,
+    "value": null,
+    "wrong_pointer": false
+   },
+   {
+    "sentence": "让带纹路的方块到靠墙的层架。",
+    "decision": "ambiguous_multiple_anchors",
+    "reason": "multiple_anchors",
+    "unknown_tokens": 11,
+    "value": null,
+    "wrong_pointer": false
+   },
+   {
+    "sentence": "让带纹路的方块到脚边的毡子。",
+    "decision": "ambiguous_multiple_anchors",
+    "reason": "multiple_anchors",
+    "unknown_tokens": 11,
+    "value": null,
+    "wrong_pointer": false
+   },
+   {
+    "sentence": "让细长的容器到四方木台。",
+    "decision": "ambiguous_multiple_anchors",
+    "reason": "multiple_anchors",
+    "unknown_tokens": 14,
+    "value": null,
+    "wrong_pointer": false
+   },
+   {
+    "sentence": "让细长的容器到靠窗的台面。",
+    "decision": "ambiguous_multiple_anchors",
+    "reason": "multiple_anchors",
+    "unknown_tokens": 14,
+    "value": null,
+    "wrong_pointer": false
+   },
+   {
+    "sentence": "让细长的容器到手边的匣子。",
+    "decision": "ambiguous_multiple_anchors",
+    "reason": "multiple_anchors",
+    "unknown_tokens": 15,
+    "value": null,
+    "wrong_pointer": false
+   },
+   {
+    "sentence": "让细长的容器到靠墙的层架。",
+    "decision": "ambiguous_multiple_anchors",
+    "reason": "multiple_anchors",
+    "unknown_tokens": 15,
+    "value": null,
+    "wrong_pointer": false
+   },
+   {
+    "sentence": "让细长的容器到脚边的毡子。",
+    "decision": "ambiguous_multiple_anchors",
+    "reason": "multiple_anchors",
+    "unknown_tokens": 15,
+    "value": null,
+    "wrong_pointer": false
+   },
+   {
+    "sentence": "让圆滚滚的东西到四方木台。",
+    "decision": "ambiguous_multiple_anchors",
+    "reason": "multiple_anchors",
+    "unknown_tokens": 10,
+    "value": null,
+    "wrong_pointer": false
+   },
+   {
+    "sentence": "让圆滚滚的东西到靠窗的台面。",
+    "decision": "ambiguous_multiple_anchors",
+    "reason": "multiple_anchors",
+    "unknown_tokens": 11,
+    "value": null,
+    "wrong_pointer": false
+   },
+   {
+    "sentence": "让圆滚滚的东西到手边的匣子。",
+    "decision": "ambiguous_multiple_anchors",
+    "reason": "multiple_anchors",
+    "unknown_tokens": 11,
+    "value": null,
+    "wrong_pointer": false
+   },
+   {
+    "sentence": "让圆滚滚的东西到靠墙的层架。",
+    "decision": "ambiguous_multiple_anchors",
+    "reason": "multiple_anchors",
+    "unknown_tokens": 11,
+    "value": null,
+    "wrong_pointer": false
+   },
+   {
+    "sentence": "让圆滚滚的东西到脚边的毡子。",
+    "decision": "ambiguous_multiple_anchors",
+    "reason": "multiple_anchors",
+    "unknown_tokens": 11,
+    "value": null,
+    "wrong_pointer": false
+   }
+  ],
+  "sentence_direct_tally": {
+   "ambiguous_multiple_anchors": 16,
+   "matched": 4
+  },
+  "sentence_direct_wrong_pointers": 4,
+  "sentence_direct_status": "diagnostic only: the raw sentence carries both phrases, so it anchors two records and is withheld; it also drifts a byte after the 3-byte lead character.  This is why the route localises the phrase first.",
+  "false_answers": 0
+ },
+ "closed_state": {
+  "checks": {
+   "parameters_equal": true,
+   "state_equal": true,
+   "identity_equal": true,
+   "store_equal": true,
+   "battery_equal": true,
+   "steps_equal": true,
+   "sc_sfk_none": true,
+   "flag_disabled": true,
+   "rng_untouched": true
+  },
+  "baseline": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "3ef846448994f833cb4e832494eac053626eb47a2a73f278c63772a4ecc18fac",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk": null,
+   "sc_sfk_none": true,
+   "battery_sha": "4908a35e2156ba90cbd058d2b858afc5ad3827d09cc70cca92d313e3ecb29fdd",
+   "battery_steps": 20
+  },
+  "after": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "3ef846448994f833cb4e832494eac053626eb47a2a73f278c63772a4ecc18fac",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk": null,
+   "sc_sfk_none": true,
+   "battery_sha": "4908a35e2156ba90cbd058d2b858afc5ad3827d09cc70cca92d313e3ecb29fdd",
+   "battery_steps": 20
+  },
+  "note": "the same reference object is reused for both replays; only the bridge work happens in between, so any difference would be a leak from the new module into the default path"
+ },
+ "write_baseline": {
+  "action": "accepted",
+  "items": 9,
+  "batch": 1,
+  "slots": 9,
+  "appended": 9,
+  "merged": 0,
+  "replaced": 0,
+  "items_detail": [
+   {
+    "item": 0,
+    "address": 0,
+    "action": "appended"
+   },
+   {
+    "item": 1,
+    "address": 1,
+    "action": "appended"
+   },
+   {
+    "item": 2,
+    "address": 2,
+    "action": "appended"
+   },
+   {
+    "item": 3,
+    "address": 3,
+    "action": "appended"
+   },
+   {
+    "item": 4,
+    "address": 4,
+    "action": "appended"
+   },
+   {
+    "item": 5,
+    "address": 5,
+    "action": "appended"
+   },
+   {
+    "item": 6,
+    "address": 6,
+    "action": "appended"
+   },
+   {
+    "item": 7,
+    "address": 7,
+    "action": "appended"
+   },
+   {
+    "item": 8,
+    "address": 8,
+    "action": "appended"
+   }
+  ]
+ },
+ "table_readings": {
+  "slots": 9,
+  "appended": 9,
+  "merged": 0,
+  "replaced": 0,
+  "rejected_batches": 0,
+  "rollbacks": 0,
+  "digest": "44ad846fd08103123368c8acd55dcd153bf6ad21e029ebca6dbd06d815591b0f"
+ },
+ "cost": {
+  "cpu_seconds": 1.672,
+  "wall_seconds": 1.68,
+  "cpu_cap": 200.0,
+  "estimate_cpu_upper": 60.0,
+  "threads": 1
+ }
+}

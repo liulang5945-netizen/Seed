@@ -1,0 +1,87 @@
+{
+ "schema": "taiji-written-bridge-v1",
+ "date": "2026-11-09",
+ "frozen_at": "2026-11-09T14:56:04",
+ "runner_sha256": "8be1bef02604541ee0e295889b31c1096f92b6eaaff3de665f6931bad14c280e",
+ "bridge_sha256": "ddb5a48b4215e9677ecfb49b8c2e5d2d436344b93f3f283d8cb3e060ade32caf",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "8fa3aafde38b1cbad3b021dc271abd316c0a265c68870403dd4ca7b0b53e0c6a"
+ },
+ "fixture_files": [
+  "taiji/native_goal_world_wide.py",
+  "taiji/goal_paraphrase.py",
+  "taiji/living_core.py"
+ ],
+ "question": "把 9 条 (短语 -> (槽位,名字)) 真正写进地址层后，20 条 describe 句能否零训练读出名字、且不说错；写入的三种结局与两种“不知道”是否都可读？",
+ "counts": {
+  "records": 9,
+  "describe_sentences": 20,
+  "capability_reads": 40,
+  "unknown_phrases": 5,
+  "unknown_candidates": 12,
+  "ambiguous_pairs": 36,
+  "battery_texts": 20
+ },
+ "unknown_selection": {
+  "chosen": [
+   "黑色铁铃",
+   "长柄铜勺",
+   "软木瓶塞",
+   "蓝色毛巾",
+   "灰色石阶"
+  ],
+  "rejected": [
+   {
+    "phrase": "白色帆布",
+    "shared_tokens": [
+     "86e5",
+     "e5b8"
+    ]
+   },
+   {
+    "phrase": "银质圆镜",
+    "shared_tokens": [
+     "86e9",
+     "e59c"
+    ]
+   },
+   {
+    "phrase": "棕色皮箱",
+    "shared_tokens": [
+     "e79a"
+    ]
+   },
+   {
+    "phrase": "青色陶罐",
+    "shared_tokens": [
+     "e99d"
+    ]
+   }
+  ],
+  "requested": 5
+ },
+ "accuracy_floor": 0.95,
+ "cost_estimate_cpu_upper": 60.0,
+ "seed": 20261109,
+ "definition": {
+  "key": "the phrase's 2-byte token set (hex), order-free, deduped; a sliding 2-byte window over the UTF-8 bytes, so it is alignment-sensitive by construction.",
+  "value": "(slot, name), e.g. ('place', '书架').  Names never enter the key.",
+  "record_count": 9,
+  "write_outcomes": {
+   "appended": "the key is new.",
+   "merged": "same key, same value: count+1, no new record.",
+   "replaced": "same key, different value: the old value moves to history.",
+   "rejected_batches": "one batch carries two different values for one key; the batch is validated before it is applied and the table is restored from a snapshot."
+  },
+  "read_rule": "an address anchors the query only through a token that occurs in exactly one address; exactly one anchor answers, two or more say ambiguous_multiple_anchors, zero says no_match.  A non-answer returns value None.",
+  "route": "sentence -> locate the written phrase inside it (exact substring) -> the phrase's token set -> read.  Reading the raw sentence instead is reported separately: the 2-byte window drifts by one byte after the 3-byte lead character, so the sentence cannot be used as the key directly."
+ },
+ "criteria": {
+  "capability": "20 describe sentences: accuracy >= 0.95 and zero wrong pointers (a wrong pointer is a non-empty value different from the expected (slot, name)).",
+  "mechanism": "one merge battery with merged == 9 and slots == 9; one replace battery with replaced == 9, slots == 9 and every original value still in history; one conflict battery with rejected_batches == 1, rollbacks == 1 and an unchanged table digest.",
+  "abstention": "every unwritten phrase returns no_match with value None; every two-record query returns ambiguous_multiple_anchors with value None; zero non-empty wrong answers across all abstention batteries.",
+  "closed_state": "same battery (20 sentences) replayed before and after the bridge work: parameters, state tensors, identity digest, store signature and emitted bytes are identical, and state.sc_sfk stays None."
+ }
+}
