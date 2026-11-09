@@ -15,7 +15,10 @@ Record shape (one per (phrase, slot+name) observation):
 * key   -- the phrase's token *set* (order-free, no positions, deduped).  The
   token unit is a parameter: R11 used 2-byte windows (``phrase_key``); R12 adds
   UTF-8 code points (``codepoint_key``) and code points with their character
-  index (``codepoint_offset_key``).  Nothing else in the table changes.
+  index (``codepoint_offset_key``).  R13 adds the identity arm: the *ordered*
+  characters (``sequence_key``) read by containment (``read_mode="sequence"``),
+  because a set of characters cannot tell "shares one character" from "same
+  phrase".  Nothing else in the table changes.
 * value -- (slot, name), e.g. ("place", "书架"); names never enter the key.
 
 Write outcomes, all counted and all reachable:
@@ -30,8 +33,10 @@ Write outcomes, all counted and all reachable:
 Read outcomes (structural, no thresholds): an address anchors a query only when
 it shares a token that occurs in exactly one address.  Exactly one anchor
 answers; two or more say ``ambiguous_multiple_anchors``; zero says ``no_match``
-with a reason.  A read never invents a value: ``value`` is ``None`` in both
-non-answer branches (unlike ``AddressTable.read``, which always returns top-1).
+with a reason.  With ``read_mode="sequence"`` the anchor rule is containment
+instead of token sharing (see ``read_sequence``).  A read never invents a value:
+``value`` is ``None`` in both non-answer branches (unlike ``AddressTable.read``,
+which always returns top-1).
 
 Zero training, zero optimizer steps, zero parameters, zero torch tensors.
 """
@@ -65,20 +70,24 @@ def byte_pair_key(text: str | bytes) -> frozenset[str]:
     return phrase_key(text)
 
 
+def _decoded(text: str | bytes) -> str | None:
+    """The text as characters, or None when the bytes are not valid UTF-8."""
+    if isinstance(text, str):
+        return text
+    try:
+        return bytes(text).decode("utf-8")
+    except UnicodeDecodeError:
+        return None
+
+
 def codepoint_key(text: str | bytes) -> frozenset[str]:
     """Order-free set of UTF-8 code points (one whole character per token).
 
     Bytes are decoded strictly: a byte slice that cuts a character in half is
     not text, so it has an empty key and can never address a record.
     """
-    if isinstance(text, str):
-        characters = text
-    else:
-        try:
-            characters = bytes(text).decode("utf-8")
-        except UnicodeDecodeError:
-            return frozenset()
-    return frozenset(characters)
+    characters = _decoded(text)
+    return frozenset() if characters is None else frozenset(characters)
 
 
 def codepoint_offset_key(text: str | bytes) -> frozenset[str]:
@@ -87,20 +96,36 @@ def codepoint_offset_key(text: str | bytes) -> frozenset[str]:
     Diagnostic only in R12: it is the pre-registered treatment for positional
     drift, and the report must state which failure class it does *not* treat.
     """
-    if isinstance(text, str):
-        characters = text
-    else:
-        try:
-            characters = bytes(text).decode("utf-8")
-        except UnicodeDecodeError:
-            return frozenset()
+    characters = _decoded(text)
+    if characters is None:
+        return frozenset()
     return frozenset(f"{index}:{character}" for index, character in enumerate(characters))
+
+
+def sequence_key(text: str | bytes) -> tuple[str, ...]:
+    """The characters in order, multiplicity kept: the R13 identity arm.
+
+    A set of characters cannot tell "shares one character" from "same phrase";
+    a sequence can.  Read side pairs this with ``read_mode="sequence"``, which
+    answers only when a record's whole sequence occurs *contiguously* in the
+    query.
+    """
+    characters = _decoded(text)
+    return () if characters is None else tuple(characters)
 
 
 def value_key(value: Any) -> str:
     if isinstance(value, (bytes, bytearray, str)):
         return value.decode("utf-8", "replace") if isinstance(value, (bytes, bytearray)) else value
     return json.dumps(value, ensure_ascii=False, sort_keys=True)
+
+
+def contains_sequence(query: tuple[str, ...], pattern: tuple[str, ...]) -> bool:
+    """True when ``pattern`` occurs contiguously inside ``query`` (both non-empty)."""
+    width = len(pattern)
+    if width == 0 or width > len(query):
+        return False
+    return any(query[start : start + width] == pattern for start in range(len(query) - width + 1))
 
 
 class BridgeTable:
@@ -110,8 +135,10 @@ class BridgeTable:
         self,
         start_capacity: int = START_CAPACITY,
         key_fn: Any = phrase_key,
+        read_mode: str = "token",
     ) -> None:
         self.key_fn = key_fn
+        self.read_mode = read_mode
         self.capacity = int(start_capacity)
         self.peak_capacity = int(start_capacity)
         self.records: list[dict[str, Any]] = []
@@ -173,7 +200,11 @@ class BridgeTable:
     def _record_payload(self) -> list[dict[str, Any]]:
         return [
             {
-                "key": sorted(record["key"]),
+                "key": (
+                    sorted(record["key"])
+                    if isinstance(record["key"], frozenset)
+                    else list(record["key"])
+                ),
                 "values": [value_key(value) for value in record["values"]],
                 "history": [value_key(value) for value in record["history"]],
                 "count": record["count"],
@@ -212,7 +243,7 @@ class BridgeTable:
         self.appended, self.merged, self.replaced = snapshot["counters"]
 
     # -- write ---------------------------------------------------------------
-    def find(self, key: frozenset[str]) -> int | None:
+    def find(self, key: Any) -> int | None:
         for index, record in enumerate(self.records):
             if record["key"] == key:
                 return index
@@ -223,7 +254,7 @@ class BridgeTable:
         self.batches += 1
         digest_before = self.content_digest()
 
-        first_value: dict[frozenset[str], str] = {}
+        first_value: dict[Any, str] = {}
         conflict_positions: list[int] = []
         for position, (text, value) in enumerate(items):
             key = self.key_fn(text)
@@ -301,7 +332,64 @@ class BridgeTable:
 
     # -- read ----------------------------------------------------------------
     def read(self, query: str | bytes) -> dict[str, Any]:
-        return self.read_tokens(self.key_fn(query))
+        key = self.key_fn(query)
+        if self.read_mode == "sequence":
+            return self.read_sequence(key)
+        if self.read_mode != "token":
+            raise ValueError(f"unknown read_mode: {self.read_mode}")
+        return self.read_tokens(key)
+
+    def read_sequence(self, key: tuple[str, ...]) -> dict[str, Any]:
+        """Answer only when one record's whole sequence occurs inside the query.
+
+        Identity, not similarity: a query that merely shares characters with a
+        record cannot answer, so "shares one character" and "same phrase" stop
+        being the same event.  An empty or undecodable query never answers.
+        """
+        if not key:
+            return {
+                "decision": "no_match",
+                "address": None,
+                "value": None,
+                "anchors": [],
+                "reason": "empty_key",
+                "unknown_tokens": [],
+                "query_tokens": 0,
+            }
+        anchors = [
+            index
+            for index, record in enumerate(self.records)
+            if contains_sequence(key, tuple(record["key"]))
+        ]
+        if len(anchors) == 1:
+            return {
+                "decision": "matched",
+                "address": anchors[0],
+                "value": self.current(anchors[0]),
+                "anchors": anchors,
+                "reason": "single_containment",
+                "unknown_tokens": [],
+                "query_tokens": len(key),
+            }
+        if len(anchors) > 1:
+            return {
+                "decision": "ambiguous_multiple_anchors",
+                "address": None,
+                "value": None,
+                "anchors": anchors,
+                "reason": "multiple_containments",
+                "unknown_tokens": [],
+                "query_tokens": len(key),
+            }
+        return {
+            "decision": "no_match",
+            "address": None,
+            "value": None,
+            "anchors": [],
+            "reason": "not_contained",
+            "unknown_tokens": [],
+            "query_tokens": len(key),
+        }
 
     def read_tokens(self, tokens: frozenset[str]) -> dict[str, Any]:
         document_frequency: dict[str, int] = {}
