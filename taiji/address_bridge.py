@@ -36,6 +36,14 @@ bridge whose default is "the last writer wins" can silently re-point an entity,
 and R14 measured that the difference is not cosmetic.  A caller cannot select a
 different rule because there is no parameter and no branch for one.
 
+Correction is **not** a second conflict rule.  ``correct`` is a separate
+compare-and-swap operation: the caller must present the value currently bound to
+the address, the whole batch is validated before any mutation, and every applied
+correction is appended to an audit log (old value, new value).  A plain
+``write`` of a conflicting value is still rejected, so no blind later writer can
+re-point an entity.  Old values are never readable as current again; they remain
+only in the log.
+
 Read outcomes (structural, no thresholds): an address anchors a query only when
 it shares a token that occurs in exactly one address.  Exactly one anchor
 answers; two or more say ``ambiguous_multiple_anchors``; zero says ``no_match``
@@ -165,6 +173,10 @@ class BridgeTable:
         self.rejected_batches = 0
         self.rollbacks = 0
         self.rejected_reasons: dict[str, int] = {}
+        self.correction_batches = 0
+        self.corrected = 0
+        self.rejected_corrections = 0
+        self.corrections: list[dict[str, Any]] = []
 
     # -- bookkeeping ---------------------------------------------------------
     @property
@@ -185,6 +197,10 @@ class BridgeTable:
             "rejected_batches": self.rejected_batches,
             "rollbacks": self.rollbacks,
             "rejected_reasons": dict(sorted(self.rejected_reasons.items())),
+            "correction_batches": self.correction_batches,
+            "corrected": self.corrected,
+            "rejected_corrections": self.rejected_corrections,
+            "corrections": self._correction_payload(),
             "records": self._record_payload(),
         }
         blob = json.dumps(payload, ensure_ascii=False, sort_keys=True).encode("utf-8")
@@ -217,6 +233,16 @@ class BridgeTable:
                 "count": record["count"],
             }
             for record in self.records
+        ]
+
+    def _correction_payload(self) -> list[dict[str, Any]]:
+        return [
+            {
+                "key": row["key"],
+                "from": value_key(row["from"]),
+                "to": value_key(row["to"]),
+            }
+            for row in self.corrections
         ]
 
     def snapshot(self) -> dict[str, Any]:
@@ -333,6 +359,115 @@ class BridgeTable:
             "appended": sum(1 for row in planned if row["action"] == "appended"),
             "merged": sum(1 for row in planned if row["action"] == "merged_duplicate"),
             "items_detail": planned,
+        }
+
+    def correct(self, items: Iterable[tuple[str | bytes, Any, Any]]) -> dict[str, Any]:
+        """Explicit compare-and-swap correction, appended to an audit log.
+
+        ``items`` are ``(text, expected_value, new_value)``.  The whole batch is
+        validated before anything is mutated:
+
+        * the address must exist (``rejected_batch_unknown_address``);
+        * the value currently bound must equal ``expected_value`` byte for byte
+          (``rejected_batch_correction_mismatch``) -- the expected value *is* the
+          credential, so a caller that does not know the current value cannot
+          re-point the address;
+        * the new value must differ (``rejected_batch_correction_no_change``);
+        * one key may not appear twice (``rejected_batch_address_collision`` for
+          different new values, ``rejected_batch_correction_duplicate_key`` for
+          the same one).
+
+        On acceptance every row appends ``{key, from, to}`` to ``corrections``
+        and the current value becomes ``new_value``.  ``count`` is not touched:
+        a correction is not an observation.  The old value is never readable
+        again; it survives only in the log.
+        """
+        items = list(items)
+        self.correction_batches += 1
+        digest_before = self.content_digest()
+        planned: list[dict[str, Any]] = []
+        seen: dict[Any, str] = {}
+        for position, (text, expected, new_value) in enumerate(items):
+            key = self.key_fn(text)
+            if not key:
+                self.rejected_corrections += 1
+                return {
+                    "action": "rejected_batch_correction_key_too_short",
+                    "items": len(items),
+                    "rejected_item": position,
+                    "batch": self.correction_batches,
+                    "digest_unchanged": self.content_digest() == digest_before,
+                }
+            index = self.find(key)
+            if index is None:
+                self.rejected_corrections += 1
+                return {
+                    "action": "rejected_batch_unknown_address",
+                    "items": len(items),
+                    "rejected_item": position,
+                    "batch": self.correction_batches,
+                    "digest_unchanged": self.content_digest() == digest_before,
+                }
+            bound = value_key(self.current(index))
+            expected_key = value_key(expected)
+            new_key = value_key(new_value)
+            if bound != expected_key:
+                self.rejected_corrections += 1
+                return {
+                    "action": "rejected_batch_correction_mismatch",
+                    "items": len(items),
+                    "rejected_item": position,
+                    "bound": bound,
+                    "attempted_expected": expected_key,
+                    "batch": self.correction_batches,
+                    "digest_unchanged": self.content_digest() == digest_before,
+                }
+            if new_key == expected_key:
+                self.rejected_corrections += 1
+                return {
+                    "action": "rejected_batch_correction_no_change",
+                    "items": len(items),
+                    "rejected_item": position,
+                    "batch": self.correction_batches,
+                    "digest_unchanged": self.content_digest() == digest_before,
+                }
+            if key in seen:
+                self.rejected_corrections += 1
+                action = (
+                    "rejected_batch_address_collision"
+                    if seen[key] != new_key
+                    else "rejected_batch_correction_duplicate_key"
+                )
+                return {
+                    "action": action,
+                    "items": len(items),
+                    "rejected_item": position,
+                    "batch": self.correction_batches,
+                    "digest_unchanged": self.content_digest() == digest_before,
+                }
+            seen[key] = new_key
+            planned.append(
+                {
+                    "item": position,
+                    "address": index,
+                    "key": text,
+                    "from": self.current(index),
+                    "to": new_value,
+                }
+            )
+        for row in planned:
+            self.records[row["address"]]["value"] = row["to"]
+            self.corrections.append({"key": row["key"], "from": row["from"], "to": row["to"]})
+            self.corrected += 1
+        return {
+            "action": "corrected",
+            "items": len(items),
+            "batch": self.correction_batches,
+            "corrected": len(planned),
+            "items_detail": [
+                {"item": row["item"], "address": row["address"], "action": "corrected"}
+                for row in planned
+            ],
         }
 
     # -- read ----------------------------------------------------------------

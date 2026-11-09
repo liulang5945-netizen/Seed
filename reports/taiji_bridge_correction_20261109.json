@@ -1,0 +1,292 @@
+{
+ "schema": "taiji-bridge-correction-r18-report-v1",
+ "runner_sha256": "4ba6e0a0331e20f44067abfc537d0e619756ead0bf1400e5fbfc3a58f00652e4",
+ "manifest_sha256": "f3d232f784c78938cc6efe9a4ad699741b35391c0dca228388172ea349628aea",
+ "bridge_sha256": "65d86897c25544e683f757d4771f2d7e516476528bafd9520e14bdc59ab1fbd4",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "8fa3aafde38b1cbad3b021dc271abd316c0a265c68870403dd4ca7b0b53e0c6a"
+ },
+ "definition": {
+  "correction": "correct(items) is compare-and-swap: each item is (text, expected_value, new_value); the expected value is the credential, the whole batch is validated before mutation, and every applied row is appended to an audit log",
+  "plain_write": "a plain write of a conflicting value is still rejected with the first writer kept; correction is a separate method, not a new conflict rule and not a parameter",
+  "stale_credential": "a correction whose expected value is not the currently bound value is rejected whole; nothing moves, the audit log does not grow",
+  "unknown_address": "a correction of a key that was never written is rejected whole",
+  "batch_collision": "one correction batch cannot bind the same key to two different new values; the batch is rejected before any row is applied",
+  "chain": "v1 -> v2 -> v3 must leave three audited steps in order and read v3",
+  "round_trip": "on the 18-key table, correct an alias to another value and back; content digest returns to the original, R15 stays 40/40, zeros stay 0/0, and the log has two entries",
+  "rerun_anchors": "R16 and R17 carry the commit at which their own runner bytes were last runnable, because R18 changes the bridge module their manifests pin",
+  "closed_state": "the nine closed-state readings stay equal before and after"
+ },
+ "criteria": {
+  "plain_write": "action rejected_batch_address_already_bound, content digest unchanged, read still the original value, corrections log empty",
+  "correction": "action corrected, one row applied, read the new value, log length 1 with from=old and to=new, corrected count 1",
+  "stale_credential": "action rejected_batch_correction_mismatch, content digest unchanged, read the corrected value, log length unchanged",
+  "unknown_address": "action rejected_batch_unknown_address, content digest unchanged, log length unchanged",
+  "batch_collision": "action rejected_batch_address_collision, content digest unchanged, read the original value, log empty",
+  "chain": "two corrections applied, log from/to sequence is old -> middle -> final, read final",
+  "round_trip": "content digest after the round trip equals the digest before it; alias reads the original value; regression 40/40 with wrong 0; zeros 0/0; log length 2",
+  "rerun": "every row names a commit, a runner blob sha1, a runner sha256 and the bridge sha256 used by the report; a mismatch is declared in the row rather than hidden",
+  "closed_state": "the nine closed-state readings stay equal before and after",
+  "reporting": "segments are reported separately; a successful correction does not carry the rejection segments, and a rejected correction is evidence that the credential is checked"
+ },
+ "plain_conflict": {
+  "action": "rejected_batch_address_already_bound",
+  "content_digest_unchanged": true,
+  "read": {
+   "decision": "answered_single",
+   "answers": 1,
+   "values": [
+    [
+     "object",
+     "蓝色杯子"
+    ]
+   ],
+   "stopped_at_pass": 2,
+   "final_exit": "no_match"
+  },
+  "log_length": 0,
+  "ok": true
+ },
+ "cas_correction": {
+  "action": "corrected",
+  "corrected": 1,
+  "content_digest_changed": true,
+  "read": {
+   "decision": "answered_single",
+   "answers": 1,
+   "values": [
+    [
+     "object",
+     "红色印章"
+    ]
+   ],
+   "stopped_at_pass": 2,
+   "final_exit": "no_match"
+  },
+  "log": [
+   [
+    "[\"object\", \"蓝色杯子\"]",
+    "[\"object\", \"红色印章\"]"
+   ]
+  ],
+  "log_length": 1,
+  "ok": true
+ },
+ "stale_credential": {
+  "action": "rejected_batch_correction_mismatch",
+  "bound": "[\"object\", \"红色印章\"]",
+  "attempted_expected": "[\"object\", \"蓝色杯子\"]",
+  "content_digest_unchanged": true,
+  "read": {
+   "decision": "answered_single",
+   "answers": 1,
+   "values": [
+    [
+     "object",
+     "红色印章"
+    ]
+   ],
+   "stopped_at_pass": 2,
+   "final_exit": "no_match"
+  },
+  "log_length": 1,
+  "ok": true
+ },
+ "unknown_address": {
+  "action": "rejected_batch_unknown_address",
+  "content_digest_unchanged": true,
+  "log_length": 0,
+  "ok": true
+ },
+ "batch_collision": {
+  "action": "rejected_batch_address_collision",
+  "content_digest_unchanged": true,
+  "read": {
+   "decision": "answered_single",
+   "answers": 1,
+   "values": [
+    [
+     "object",
+     "蓝色杯子"
+    ]
+   ],
+   "stopped_at_pass": 2,
+   "final_exit": "no_match"
+  },
+  "log_length": 0,
+  "ok": true
+ },
+ "correction_chain": {
+  "actions": [
+   "corrected",
+   "corrected"
+  ],
+  "read": {
+   "decision": "answered_single",
+   "answers": 1,
+   "values": [
+    [
+     "object",
+     "绿色瓶子"
+    ]
+   ],
+   "stopped_at_pass": 2,
+   "final_exit": "no_match"
+  },
+  "log": [
+   [
+    "[\"object\", \"蓝色杯子\"]",
+    "[\"object\", \"红色印章\"]"
+   ],
+   [
+    "[\"object\", \"红色印章\"]",
+    "[\"object\", \"绿色瓶子\"]"
+   ]
+  ],
+  "log_length": 2,
+  "ok": true
+ },
+ "round_trip": {
+  "records": 18,
+  "actions": [
+   "corrected",
+   "corrected"
+  ],
+  "middle": {
+   "decision": "answered_single",
+   "answers": 1,
+   "values": [
+    [
+     "object",
+     "红色印章"
+    ]
+   ],
+   "stopped_at_pass": 2,
+   "final_exit": "no_match"
+  },
+  "final": {
+   "decision": "answered_single",
+   "answers": 1,
+   "values": [
+    [
+     "object",
+     "蓝色杯子"
+    ]
+   ],
+   "stopped_at_pass": 2,
+   "final_exit": "no_match"
+  },
+  "content_digest_unchanged": true,
+  "content_digest_before": "17f0aeab88b0a802a2573ecdf9bd80b887d34528b80d02b0bf3e220ba3a8a41c",
+  "content_digest_after": "17f0aeab88b0a802a2573ecdf9bd80b887d34528b80d02b0bf3e220ba3a8a41c",
+  "log": [
+   [
+    "[\"object\", \"蓝色杯子\"]",
+    "[\"object\", \"红色印章\"]"
+   ],
+   [
+    "[\"object\", \"红色印章\"]",
+    "[\"object\", \"蓝色杯子\"]"
+   ]
+  ],
+  "log_length": 2,
+  "regression": {
+   "entities": 40,
+   "hits": 40,
+   "wrong": 0,
+   "distribution": {
+    "answered_2": 20,
+    "answered_1": 0,
+    "wrong": 0,
+    "abstained": 0
+   },
+   "ok": true
+  },
+  "zeros": {
+   "unknown_answering": 0,
+   "fragment_answering": 0,
+   "ok": true
+  },
+  "ok": true
+ },
+ "rerun_anchors": [
+  {
+   "round": "R16",
+   "runner": "scripts/training/probe_taiji_bridge_geometry_20261109.py",
+   "rerun_commit": "93e292840",
+   "runner_blob_sha1": "e4e32b19c794edbcfbe74b3329750a0434969996",
+   "report_runner_sha256": "5076807011a0e717e9d609fae0f792bfba2ccfc0bec9d30b381286e93f663261",
+   "runner_blob_sha256": "5076807011a0e717e9d609fae0f792bfba2ccfc0bec9d30b381286e93f663261",
+   "report_bridge_sha256": "e680d69d6ae8b05b3b0e6d9d3d22e29e1d38d48d067c1626ce54264196fb2d5b",
+   "matches_report": true,
+   "note": "current HEAD cannot run it after R18 (bridge sha changed); checkout this commit"
+  },
+  {
+   "round": "R17",
+   "runner": "scripts/training/probe_taiji_bridge_compression_20261109.py",
+   "rerun_commit": "f6b627fd8",
+   "runner_blob_sha1": "1d61b6a9f8c825ffcddaf2a3251f614d28c1945f",
+   "report_runner_sha256": "9a40229fa6fd9d01dcece65b2f67aea37ecb6443033355e376047fd93e47cca8",
+   "runner_blob_sha256": "9a40229fa6fd9d01dcece65b2f67aea37ecb6443033355e376047fd93e47cca8",
+   "report_bridge_sha256": "e680d69d6ae8b05b3b0e6d9d3d22e29e1d38d48d067c1626ce54264196fb2d5b",
+   "matches_report": true,
+   "note": "current HEAD cannot run it after R18 (bridge sha changed); checkout this commit"
+  }
+ ],
+ "closed_state": {
+  "baseline": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "1f7e709e028b2e71cfed71290b8e214bdb53b93b43d4d0da5c1e9bc89068ac89",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk_none": true,
+   "battery_sha": "525fa6418e283b1b66975e2c413b0d3a8798922392396d6f2ecd41c6b48038eb",
+   "battery_steps": 20
+  },
+  "after": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "1f7e709e028b2e71cfed71290b8e214bdb53b93b43d4d0da5c1e9bc89068ac89",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk_none": true,
+   "battery_sha": "525fa6418e283b1b66975e2c413b0d3a8798922392396d6f2ecd41c6b48038eb",
+   "battery_steps": 20
+  },
+  "checks": {
+   "parameters_equal": true,
+   "state_equal": true,
+   "identity_equal": true,
+   "store_equal": true,
+   "battery_equal": true,
+   "steps_equal": true,
+   "sc_sfk_none": true,
+   "flag_disabled": true,
+   "rng_untouched": true
+  }
+ },
+ "verdict": {
+  "plain_conflict": "plain_conflict_still_rejected",
+  "correction": "cas_correction_applied",
+  "stale": "stale_credential_rejected",
+  "unknown": "unknown_address_rejected",
+  "collision": "correction_batch_collision_rejected",
+  "chain": "correction_chain_audited",
+  "round_trip": "round_trip_clean",
+  "closed_state": "closed_state_equal",
+  "rerun_anchors": "anchors_complete",
+  "overall": "explicit_correction_available"
+ },
+ "cost": {
+  "cpu_seconds": 1.703125,
+  "wall_seconds": 2.5406267642974854,
+  "cpu_cap": 200.0,
+  "estimate_cpu_upper": 30.0,
+  "threads": 1
+ }
+}
