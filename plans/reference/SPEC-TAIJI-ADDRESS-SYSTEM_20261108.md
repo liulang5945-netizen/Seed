@@ -2141,7 +2141,31 @@ R6b 的 joint 1.0 有两种解释：学会了“描述↔名字”的桥，或�
 
 **边界（与读数一起引用）**：① 模板仍是**固定字符串**，不是生成模型；② **纠正哪个键就只影响哪些查询**——改别名不会改 describe 句，改描述键才会；③ 子进程策略由自己构造决定，不继承父进程；④ 损坏输入整批拒绝，但**合法但语义错误**的字节仍无法识别；⑤ 交接的只是表状态，不含主体参数/`fast`；⑥ 桥**仍不得**接进默认图。
 
-**下一步**：R30“双槽表达接入 `step`（只读侧输出字段）”闸——给 `LivingState` 增加可选的 `last_bridge_text` 字段，由 `bridge_choose_pair` 写入、`step`／`observe` 只透传不改张量；测①字段默认 `None`、②写入后 20 步仍保留、③参数/`fast` 不变、④清除桥后字段清空、⑤关闭态九项全等。判据读数前冻结。
+**下一步（已于 §21.39 执行）**：R30“双槽表达接入 `step`（只读侧输出字段）”闸——给 `LivingState` 增加可选的 `last_bridge_text` 字段，由 `bridge_choose_pair` 写入、`step`／`observe` 只透传不改张量；测①字段默认 `None`、②写入后 20 步仍保留、③参数/`fast` 不变、④清除桥后字段清空、⑤关闭态九项全等。判据读数前冻结。
+
+## 21.39 R30 双槽表达接入 `step`：文本字段 20 步不丢、弃答清空（2026-11-09）
+
+**一句话**：`LivingState` 多了一个可选的 `last_bridge_text`。新的 `bridge_express`（内部调用 `bridge_choose_pair`）把成对模板串写进这个字段；**连续 20 次 `observe` 后字段仍保留、桥仍挂着、文本不变**，参数与 `fast` 等张量不因写文本而改变。任何 `no_pair` 会**清空**字段，避免把旧答案当新答案；`clear_bridge` 同时清空 `sc_bridge` 与文本字段。
+
+**A 字段读数**
+
+| 测点 | 结果 |
+|---|---|
+| 默认 | 新状态 `last_bridge_text is None` |
+| 写入 | `bridge_express` 后文本 **`"蓝色杯子在木桌"`**；状态摘要与参数摘要**与基线相等** |
+| 20 步 | **20/20** 步文本不变、`sc_bridge` 仍是同一张表；参数摘要**相等**；表摘要不变 |
+| 弃答 | 未知查询 `no_pair` 后字段 **`None`**（不保留旧文本） |
+| 清除 | `clear_bridge` 后 `sc_bridge=None`、`last_bridge_text=None`、`bridge_read` 为 `no_bridge` |
+| 关闭态 | **九项全等**；`sc_bridge` 前后 `None`（单列） |
+
+**D 复跑锚**：R29 → `fc800aa81`（blob `52511f28…`、runner sha `b05f8fc2…`、core sha `9fe7fbf7…`），报告 sha 与 blob sha 一致；R29 在当前 HEAD 不可跑（R30 改了 `living_core`），按该提交可复跑。
+
+**判定与成本**：`text_default_none`／`text_written_read_side`／`text_survives_steps`／`no_pair_clears_text`／`text_cleared_with_bridge`／`closed_state_equal`／`bridge_default_none`／`anchors_complete` ⇒ 总判 **`bridge_text_state_field_clean`**；成本 **2.234 CPU／2.941 wall**（估 30、上限 200、`threads=1`）。0 训练／0 优化器步／0 Adam／0 confirm。
+
+**边界（与读数一起引用）**：① 字段是**只读侧文本**，`step` 不读它，也不因它改变张量；② `no_pair` 清空字段，不保留旧答案；③ 文本仍是固定模板，不是生成；④ 字段不在 `state_dict`／`candidate_sha_v2` 里；⑤ 只测 1 句写入、20 步、1 个未知查询；⑥ 桥**仍不得**接进默认图。
+
+**下一步**：R31“表达随主体步进自动更新”闸——新增 `bridge_observe(state, raw, goal)`：先 `observe` 一步，再对同一 raw 调 `bridge_express`，返回新状态与 info；测①20 句逐步文本 20/20，②张量轨迹与无桥 `observe` 逐位相等，③参数不动、④弃答清空、⑤关闭态九项全等。判据读数前冻结。
+
 
 
 

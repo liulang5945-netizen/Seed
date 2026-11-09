@@ -2416,6 +2416,31 @@ owner 2026-11-07 裁定：多模态是整个算法内部系统的一部分，不
 | S-125 | “纠正别名会改变 describe 句” | R-D29-369 | **被限定**：describe 句用描述键，改别名不影响；改描述键才改变那 5 句。 |
 | S-126 | “子进程坏文件会半途落盘” | R-D29-372 | **被取代**：截断文件整批拒绝，无输出表。 |
 
+## 77. R30 双槽表达接入 `step`（2026-11-09）
+
+**77.0 冻结与范围**：字段默认、一次写入、20 步、弃答清空、清除与 R29 复跑锚在读数前写入 [manifest](../manifests/taiji_bridge_text_20261109.json) 的 `definition_digest`。本轮**修改** `taiji/living_core.py`：`LivingState` 增加可选 `last_bridge_text`，新增 `bridge_express`，`clear_bridge` 同时清空文本；`step`/`observe` 的张量路径未改（仍用 `replace`）。0 训练／0 优化器步／0 Adam／0 confirm。
+
+**77.1 读数**
+
+| 编号 | 读数 | 出处 |
+|---|---|---|
+| R-D29-375 | **默认 None**：新状态 `last_bridge_text is None`。 | `default` |
+| R-D29-376 | **写入只读侧**：`bridge_express` 后文本 `"蓝色杯子在木桌"`；状态摘要与参数摘要**与基线相等**。 | `express` |
+| R-D29-377 | **20 步保留**：**20/20** 步文本不变、`sc_bridge` 仍为同一张表；参数摘要相等；表摘要不变。 | `steps` |
+| R-D29-378 | **弃答清空**：未知查询 `no_pair` 后字段 `None`。 | `no_pair` |
+| R-D29-379 | **清除清空**：`clear_bridge` 后 `sc_bridge=None`、`last_bridge_text=None`、`bridge_read` 为 `no_bridge`。 | `clear` |
+| R-D29-380 | **关闭态九项全等**；`sc_bridge` 前后 `None`（单列）。 | `closed_state` |
+| R-D29-381 | **判定与成本**：`text_default_none`／`text_written_read_side`／`text_survives_steps`／`no_pair_clears_text`／`text_cleared_with_bridge`／`closed_state_equal`／`bridge_default_none`／`anchors_complete` ⇒ 总判 **`bridge_text_state_field_clean`**；成本 **2.234 CPU／2.941 wall**（估 30、上限 200）。R29→`fc800aa81` 锚完整。 | 报告 `verdict`／`cost` |
+
+**77.2 superseded／范围登记**
+
+| 编号 | 被取代／被限定的对象 | 取代者 | 处置与理由 |
+|---|---|---|---|
+| S-127 | “表达文本无法随主体步进保留” | R-D29-377 | **被取代**：20 步文本字段保留、桥仍挂着。 |
+| S-128 | “弃答会保留旧文本” | R-D29-378 | **被取代**：`no_pair` 清空字段。 |
+| S-129 | “清除桥会留下旧文本” | R-D29-379 | **被取代**：`clear_bridge` 同时清空文本。 |
+
+
 
 
 
