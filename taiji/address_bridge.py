@@ -1,5 +1,16 @@
 """Written bridge: the phrase->name map stored as address-layer records (R11).
 
+STATUS: CLOSED_NO_INCREMENT (2026-11-09, D-20261109-61).  R56 put this table on
+Task1's eight real records and 192 real goals: joint hit was ``no_match`` on
+192/192 (Task1 records are single-description lines, so a rule that requires all
+literal keys in one record is structurally unusable there), while the per-slot
+route and name bytes (384/384 each) are already covered by 19.2's byte matching
+(``bridge_fixes = 0``).  The bridge therefore adds **zero increment** on the
+main task.  Keep the module as evidence, do NOT import it into the default
+graph, and do NOT open new gates on it; restarting requires a new task where one
+sentence carries several entities *and* a falsifiable gate that names what the
+new information is (see D-20261109-60/61).
+
 R6-R10b established that no closed-form read-out recovers a name from a phrase
 once the exact (phrase, name) row is gone: the one-wording bank gives a
 constructive zero, the two-wording bank gives a lambda-fragile middle band.
