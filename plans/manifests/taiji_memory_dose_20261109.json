@@ -1,0 +1,73 @@
+{
+ "schema": "taiji-memory-dose-r40-v1",
+ "created": "2026-11-09T18:00:30",
+ "seed": 20261109,
+ "estimate_cpu_upper": 30.0,
+ "cpu_cap": 200.0,
+ "dose_steps": [
+  0,
+  1,
+  10,
+  100,
+  1000
+ ],
+ "practical_floor": 0.001,
+ "saturation_ratio": 1.2,
+ "runner_sha256": "8dfbba299e379f5aa8ed81d00ad2d0ddc313839c03d351372d31a531275e548e",
+ "core_sha256": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d"
+ },
+ "definition": {
+  "write": "one write-enabled observe pass on sentence 0 produces the fast memory",
+  "dose": "the same written fast is multiplied by k in {0, 1, 10, 100, 1000}",
+  "reading": "from each scaled state, sentence 1 is scored and compared to the k = 0 baseline",
+  "monotone": "the max |delta| values are non-decreasing in k",
+  "practical": "at least one k reaches max |delta| > 1e-3",
+  "saturation": "delta(1000) / delta(100) <= 1.2 means saturated",
+  "closed_state": "the nine legacy readings on the main subject stay equal before and after"
+ },
+ "criteria": {
+  "write": "the written fast has abs sum > 0",
+  "curve": "all five doses are reported with max |delta| and mean |delta|",
+  "monotone": "max |delta| is non-decreasing across the five doses",
+  "practical": "the first dose above 1e-3 is reported; absence is a finding, not a failure",
+  "saturation": "the delta(1000)/delta(100) ratio is reported and classified",
+  "closed_state": "the nine legacy readings stay equal and the main parameter digest does not move",
+  "rerun": "the R39 anchor carries a commit, a runner blob sha1, a runner sha256 and a core sha256"
+ },
+ "definition_digest": "4b5a239ae18c2ada0c74aac26f7f973eff7a1ef37311d1b040a1397c7e842452",
+ "counts": {
+  "describe_sentences": 20,
+  "doses": 5
+ },
+ "inputs": {
+  "goal": "r40",
+  "sentences": [
+   "让圆口的器皿到四方木台。",
+   "让圆口的器皿到靠窗的台面。"
+  ],
+  "dose_steps": [
+   0,
+   1,
+   10,
+   100,
+   1000
+  ],
+  "rerun_anchors": [
+   {
+    "round": "R39",
+    "runner": "scripts/training/probe_taiji_write_causality_20261109.py",
+    "rerun_commit": "a50f7eeaa",
+    "runner_blob_sha1": "5a2a97718241d75685e9253e302b28a009537a59",
+    "report_runner_sha256": "67555021396c1bf52ce35fd75cacda4bf3882379d1b5e00a70ad01c4cac5a3c8",
+    "runner_blob_sha256": "67555021396c1bf52ce35fd75cacda4bf3882379d1b5e00a70ad01c4cac5a3c8",
+    "report_core_sha256": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d",
+    "matches_report": true,
+    "note": "R40 does not change living_core; R39 stays runnable at HEAD"
+   }
+  ]
+ }
+}
