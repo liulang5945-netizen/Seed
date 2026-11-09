@@ -1,0 +1,104 @@
+{
+  "schema": "taiji-stop-boundary-r57-manifest-v1",
+  "step": "R57",
+  "date": "2026-11-09",
+  "preregistration": "plans\\manifests\\taiji_stop_boundary_20261109.json",
+  "definition": {
+    "gate": "R57 stop-boundary on confirm",
+    "stop_rule": "decode terminates one byte past the final hop's declared field end",
+    "stop_position": 27,
+    "answer_bytes_expected": 27,
+    "criteria": {
+      "a": "the four published failures become exactly 27 B and byte-equal to target",
+      "b": "the other 188 stay byte-equal to target (per-example trace now stored)",
+      "c": "report position-27 stop probability and runner-up bytes with probabilities"
+    },
+    "exits": [
+      "stop_edge_fixed",
+      "stop_edge_probability_side",
+      "stop_edge_not_the_cause"
+    ],
+    "retune_policy": "no retune on the sealed split; any failed gate goes back to dev/synthetic",
+    "recovery_policy": "a crash after the read but before the report may be recovered by one rerun of the identical frozen configuration; the rerun must reproduce every logged per-example (answer_bytes, byte_exact, terminated) triple",
+    "confirm_read_index": 2,
+    "previous_confirm_read": "N19.2v",
+    "identity_policy": "the 19.2u assembly predates the declarative decode rule 'sequence_stop'; identity drift is accepted only if dropping that one key reproduces the assembled candidate_sha_v2 exactly, which leaves weights, modules and graph structure untouched"
+  },
+  "definition_digest": "027f9b173f6406377e79edf0e2e82aa123606cafe581e76fdb093143760e4101",
+  "frozen_files": {
+    "scripts/training/probe_taiji_stop_boundary_20261109.py": "f706770d400137fccf177ff546deabbedb8090e996428cb97d240e84112bba59",
+    "scripts/training/probe_taiji_package19_2v_confirm_holdout.py": "c81d80dcc67d67a4eae12e7758996a53a96ed11fd1e19d2737667d59860b9307",
+    "scripts/training/probe_taiji_content_transport_18_1.py": "202167c20485af10550a73047f0ce78ad3f7c92da3c5972d2d76c38dcc3b37d4",
+    "taiji/copy_stop_boundary.py": "27e5b9a63be29e98197331d59c5ad471e5ae46fa68921c87ce13b42bf193d702",
+    "taiji/binding_copy.py": "37f4885e8dc33a41f6f701e3d0e87daf15c126be735acceea02098e5e39c045c",
+    "taiji/byte_match_route.py": "367f2441c9fbe3d91fb178d1b4dc6d2eb73e41c8eaf87bc4dc6c05b7ccbfe4df",
+    "taiji/record_relation_core.py": "8318dde5c3d3b3ff42a2c94e528aec7552363d4f9aef2c11ee95b8e868ef64a2",
+    "taiji/living_core.py": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d",
+    "taiji/data_premise_18_0.py": "b98b68534d26773091b234d5b7c92220def1059be56ab2c2bb0f3f8cc5791204",
+    "taiji/candidate_identity.py": "7aa1babf4737334461ae1a599504c946297f723ffc5a74ba36225397d50bd31c"
+  },
+  "previous_confirm_read": {
+    "report": "reports\\taiji_package19_2v_confirm_holdout_20261105.json",
+    "sha256": "f0fa6a311a6ab5716bf8a210ae8789c42fabbd24286974fd693b9a1b72891cb1",
+    "failure_examples": [
+      {
+        "world": 3,
+        "index": 13,
+        "decoded_text": "把朱砂铜镜放到雾尾到",
+        "target_text": "把朱砂铜镜放到雾尾",
+        "position": 27
+      },
+      {
+        "world": 4,
+        "index": 4,
+        "decoded_text": "把玄铁锡壶放到瓮尾到",
+        "target_text": "把玄铁锡壶放到瓮尾",
+        "position": 27
+      },
+      {
+        "world": 4,
+        "index": 8,
+        "decoded_text": "把霜白玉玦放到瓮尾到",
+        "target_text": "把霜白玉玦放到瓮尾",
+        "position": 27
+      },
+      {
+        "world": 4,
+        "index": 12,
+        "decoded_text": "把赤铜香炉放到瓮尾到",
+        "target_text": "把赤铜香炉放到瓮尾",
+        "position": 27
+      }
+    ],
+    "failure_count": 4
+  },
+  "assembly": {
+    "assembled_state": "output\\taiji_package19_2u_assembled_zero_training_stopfix.pt",
+    "assembled_sha256": "f5bd80e780bf0cb48d18f7e27915549432c07932a28ae833290e8873d6959e88",
+    "parent_bundle_sha256": "fe04fbfb14aa0390877385a4429f2a851396a6fe6acb3107bae0a5e4e331dfca",
+    "candidate_sha_v2": "0d6a5df304f0bf952e97046822edf24fcba5371984c820063ef0b8331100cc42",
+    "candidate_parameters": 3563859,
+    "byte_match_parameters": 65807
+  },
+  "identity_reconciliation": {
+    "assembled_declared": "1d69e945ac149d436cc39426de5717b8a3e2b82de5e8f35565354028c0a33728",
+    "current_declared": "0d6a5df304f0bf952e97046822edf24fcba5371984c820063ef0b8331100cc42",
+    "rebuilt_without_sequence_stop": "1d69e945ac149d436cc39426de5717b8a3e2b82de5e8f35565354028c0a33728",
+    "removed_key": "decode_rules.sequence_stop",
+    "identical": false,
+    "explained": true
+  },
+  "cost_caps": {
+    "cpu_seconds": 400.0,
+    "wall_seconds": 3600.0
+  },
+  "immutability": "written once before the second confirm read; never rewritten",
+  "retune_policy": "no retune on the sealed split; any failed gate goes back to dev/synthetic",
+  "discipline": {
+    "training_runs": 0,
+    "optimizer_steps": 0,
+    "confirm_reads": 1,
+    "parameters_added": 0,
+    "graph_changes": 0
+  }
+}
