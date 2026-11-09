@@ -1,0 +1,322 @@
+{
+ "schema": "taiji-bridge-step-r25-report-v1",
+ "runner_sha256": "e829326eb94baa39e839752134c90b72effd5d5a77f70256f0b235b419bb4962",
+ "manifest_sha256": "11c82d4dcb5dc712f6ee04ae42ab2cb14c2b3b41d586b80e5178124538e6f700",
+ "bridge_sha256": "4edf29b22a199c29160523debb8ea23a45e59321f2b0c8dc06da72497672e831",
+ "core_sha256": "d1d8fb7a219d79fd92e22b30572c561b7e0ce3500d0a71f09824874813c6bd30",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "d1d8fb7a219d79fd92e22b30572c561b7e0ce3500d0a71f09824874813c6bd30"
+ },
+ "definition": {
+  "survival": "20 consecutive observe calls start from one initial state; the bridge is attached before the first call; after every call sc_bridge is the same object and the table digest is unchanged",
+  "read_each_step": "after every observe the bridge reads the 20 describe sentences at 40/40 and the zero lines at 0/0",
+  "inert": "a bridged trajectory and a no-bridge trajectory from the same initial state must have the same h/fast/nu_ema/coverage/prior hash after 20 observe calls",
+  "parameters": "no parameter moves and no parameter receives a gradient during the 20 forwards",
+  "clear": "clear_bridge returns sc_bridge to None, bridge_read answers no_bridge, and five more observes stay identical to the no-bridge run",
+  "closed_state": "the nine legacy closed-state readings stay equal before and after"
+ },
+ "criteria": {
+  "survival": "20/20 steps keep sc_bridge; table digest equals the initial digest",
+  "read_each_step": "each of the 20 steps reads 40/40 and 0/0",
+  "inert": "bridged and no-bridge tensor hashes are equal after 20 steps",
+  "parameters": "parameter hash equals the baseline; every parameter grad is None",
+  "clear": "sc_bridge None; bridge_read no_bridge; five more steps stay equal to the no-bridge run",
+  "closed_state": "the nine legacy readings stay equal before and after",
+  "reporting": "the bridge is a side table; this round measures survival, not coupling. A failure to survive would be reported as a structural defect, not hidden"
+ },
+ "survival": {
+  "steps": [
+   {
+    "step": 1,
+    "bridge_attached": true,
+    "table_digest_equal": true,
+    "regression_hits": 40,
+    "zeros": [
+     0,
+     0
+    ],
+    "state_sha": "e005ba25fed59abac77c0c9d28069be32fc919862ba43a87c047548ed07ad715"
+   },
+   {
+    "step": 2,
+    "bridge_attached": true,
+    "table_digest_equal": true,
+    "regression_hits": 40,
+    "zeros": [
+     0,
+     0
+    ],
+    "state_sha": "1408f536601a0b0cfeb5ffeb6589f183b783789c6ca1856ed396b1fd5b6272e3"
+   },
+   {
+    "step": 3,
+    "bridge_attached": true,
+    "table_digest_equal": true,
+    "regression_hits": 40,
+    "zeros": [
+     0,
+     0
+    ],
+    "state_sha": "b2cfee10d6eda9e14438bc5f158b9f293ad7822280a52301328474d8754b1fee"
+   },
+   {
+    "step": 4,
+    "bridge_attached": true,
+    "table_digest_equal": true,
+    "regression_hits": 40,
+    "zeros": [
+     0,
+     0
+    ],
+    "state_sha": "e06906fb8e501a3147f4e426b5e772208bd696b4901e638d9d3ca23738a95f13"
+   },
+   {
+    "step": 5,
+    "bridge_attached": true,
+    "table_digest_equal": true,
+    "regression_hits": 40,
+    "zeros": [
+     0,
+     0
+    ],
+    "state_sha": "aa83ee640ebe8be868acf83a72b11c1db205740cc6e184a62c604fc0b7b4b200"
+   },
+   {
+    "step": 6,
+    "bridge_attached": true,
+    "table_digest_equal": true,
+    "regression_hits": 40,
+    "zeros": [
+     0,
+     0
+    ],
+    "state_sha": "04fff2920c8e6df227b042bccc65df2ed49eb87d81dd4e5a742fd21b722be26b"
+   },
+   {
+    "step": 7,
+    "bridge_attached": true,
+    "table_digest_equal": true,
+    "regression_hits": 40,
+    "zeros": [
+     0,
+     0
+    ],
+    "state_sha": "d0621ee84b3d4b110f1b63ba15060b48ff29e63be4c05d5753fbb5c1bde2dec0"
+   },
+   {
+    "step": 8,
+    "bridge_attached": true,
+    "table_digest_equal": true,
+    "regression_hits": 40,
+    "zeros": [
+     0,
+     0
+    ],
+    "state_sha": "0ed0f941b5437781633b3cf750d66bc950d86192135eaee9317159d5edec2743"
+   },
+   {
+    "step": 9,
+    "bridge_attached": true,
+    "table_digest_equal": true,
+    "regression_hits": 40,
+    "zeros": [
+     0,
+     0
+    ],
+    "state_sha": "cf0dc121fee4bff1a986df80f19c136917921b988cd5858a59ed84cd13ea1fbf"
+   },
+   {
+    "step": 10,
+    "bridge_attached": true,
+    "table_digest_equal": true,
+    "regression_hits": 40,
+    "zeros": [
+     0,
+     0
+    ],
+    "state_sha": "f86a2c31426243254df622448d405e8093c105aa926d05eb92babe304a7e8859"
+   },
+   {
+    "step": 11,
+    "bridge_attached": true,
+    "table_digest_equal": true,
+    "regression_hits": 40,
+    "zeros": [
+     0,
+     0
+    ],
+    "state_sha": "7a811782863540c5371d0649499437c33dcf41cc7e7f5dd07d549ac97c098dda"
+   },
+   {
+    "step": 12,
+    "bridge_attached": true,
+    "table_digest_equal": true,
+    "regression_hits": 40,
+    "zeros": [
+     0,
+     0
+    ],
+    "state_sha": "08eeacc68d4a76cb8b8faf5d785ad04d78249c72384ab4b4300f3b6c3f022ac1"
+   },
+   {
+    "step": 13,
+    "bridge_attached": true,
+    "table_digest_equal": true,
+    "regression_hits": 40,
+    "zeros": [
+     0,
+     0
+    ],
+    "state_sha": "4736b947ea8316c18e61c0233e4854cd7b47bbb3c4764ead215aaea0a01ed99d"
+   },
+   {
+    "step": 14,
+    "bridge_attached": true,
+    "table_digest_equal": true,
+    "regression_hits": 40,
+    "zeros": [
+     0,
+     0
+    ],
+    "state_sha": "e1196cfcd12a57626b35ea3ea87239e60123578de4ddfd40c4792d60d417ff8b"
+   },
+   {
+    "step": 15,
+    "bridge_attached": true,
+    "table_digest_equal": true,
+    "regression_hits": 40,
+    "zeros": [
+     0,
+     0
+    ],
+    "state_sha": "579d65a43c194f361a175df0cdcccf1dd55694ac654b3a0781706722f449be83"
+   },
+   {
+    "step": 16,
+    "bridge_attached": true,
+    "table_digest_equal": true,
+    "regression_hits": 40,
+    "zeros": [
+     0,
+     0
+    ],
+    "state_sha": "29d8918e32ad5b40d49384ecaa10e2419bf5838eeb0911b40680f2e14514d46f"
+   },
+   {
+    "step": 17,
+    "bridge_attached": true,
+    "table_digest_equal": true,
+    "regression_hits": 40,
+    "zeros": [
+     0,
+     0
+    ],
+    "state_sha": "b85fa6f567673cf01b7ff9e2c29940437030fd29ab56dd86bb7c7a030795970b"
+   },
+   {
+    "step": 18,
+    "bridge_attached": true,
+    "table_digest_equal": true,
+    "regression_hits": 40,
+    "zeros": [
+     0,
+     0
+    ],
+    "state_sha": "98ef827d04247b98ed9e36ed7d5ef570282ce9662d50f0fb65e8a5f9a41f6dee"
+   },
+   {
+    "step": 19,
+    "bridge_attached": true,
+    "table_digest_equal": true,
+    "regression_hits": 40,
+    "zeros": [
+     0,
+     0
+    ],
+    "state_sha": "6b26a4c9e8d3407cec922e9dfca3e4d5317bc72c2c572d7690888e2ca3dfcea5"
+   },
+   {
+    "step": 20,
+    "bridge_attached": true,
+    "table_digest_equal": true,
+    "regression_hits": 40,
+    "zeros": [
+     0,
+     0
+    ],
+    "state_sha": "d66b34d4f8ba1065d207cb240ac9a25248d29bb84f74e17dcf55872721e5186b"
+   }
+  ],
+  "step_count": 20,
+  "bridged_state_sha": "d66b34d4f8ba1065d207cb240ac9a25248d29bb84f74e17dcf55872721e5186b",
+  "no_bridge_state_sha": "d66b34d4f8ba1065d207cb240ac9a25248d29bb84f74e17dcf55872721e5186b",
+  "trajectories_equal": true,
+  "parameters_equal": true,
+  "gradients_none": true,
+  "table_digest_equal": true,
+  "ok": true
+ },
+ "clear": {
+  "sc_bridge_none": true,
+  "read": {
+   "decision": "no_bridge",
+   "answers": 0
+  },
+  "state_sha_equal": true,
+  "ok": true
+ },
+ "closed_state": {
+  "baseline": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "d66b34d4f8ba1065d207cb240ac9a25248d29bb84f74e17dcf55872721e5186b",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk_none": true,
+   "sc_bridge_none": true,
+   "battery_sha": "d31a6acb6db1ba822e5bf770a15e70a67d1d0b258a5c9e63e55b3797168c9273",
+   "battery_steps": 20
+  },
+  "after": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "d66b34d4f8ba1065d207cb240ac9a25248d29bb84f74e17dcf55872721e5186b",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk_none": true,
+   "sc_bridge_none": true,
+   "battery_sha": "d31a6acb6db1ba822e5bf770a15e70a67d1d0b258a5c9e63e55b3797168c9273",
+   "battery_steps": 20
+  },
+  "checks": {
+   "parameters_equal": true,
+   "state_equal": true,
+   "identity_equal": true,
+   "store_equal": true,
+   "battery_equal": true,
+   "steps_equal": true,
+   "sc_sfk_none": true,
+   "flag_disabled": true,
+   "rng_untouched": true
+  }
+ },
+ "bridge_default_none": true,
+ "verdict": {
+  "survival": "bridge_survives_steps",
+  "clear": "bridge_cleared_after_steps",
+  "closed_state": "closed_state_equal",
+  "bridge_default": "bridge_default_none",
+  "overall": "bridge_step_survival_clean"
+ },
+ "cost": {
+  "cpu_seconds": 5.171875,
+  "wall_seconds": 5.985405206680298,
+  "cpu_cap": 200.0,
+  "estimate_cpu_upper": 30.0,
+  "threads": 1
+ }
+}

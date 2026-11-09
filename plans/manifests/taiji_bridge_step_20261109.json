@@ -1,0 +1,145 @@
+{
+ "schema": "taiji-bridge-step-r25-v1",
+ "created": "2026-11-09T16:55:09",
+ "seed": 20261109,
+ "estimate_cpu_upper": 30.0,
+ "cpu_cap": 200.0,
+ "runner_sha256": "e829326eb94baa39e839752134c90b72effd5d5a77f70256f0b235b419bb4962",
+ "bridge_sha256": "4edf29b22a199c29160523debb8ea23a45e59321f2b0c8dc06da72497672e831",
+ "core_sha256": "d1d8fb7a219d79fd92e22b30572c561b7e0ce3500d0a71f09824874813c6bd30",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "d1d8fb7a219d79fd92e22b30572c561b7e0ce3500d0a71f09824874813c6bd30"
+ },
+ "definition": {
+  "survival": "20 consecutive observe calls start from one initial state; the bridge is attached before the first call; after every call sc_bridge is the same object and the table digest is unchanged",
+  "read_each_step": "after every observe the bridge reads the 20 describe sentences at 40/40 and the zero lines at 0/0",
+  "inert": "a bridged trajectory and a no-bridge trajectory from the same initial state must have the same h/fast/nu_ema/coverage/prior hash after 20 observe calls",
+  "parameters": "no parameter moves and no parameter receives a gradient during the 20 forwards",
+  "clear": "clear_bridge returns sc_bridge to None, bridge_read answers no_bridge, and five more observes stay identical to the no-bridge run",
+  "closed_state": "the nine legacy closed-state readings stay equal before and after"
+ },
+ "criteria": {
+  "survival": "20/20 steps keep sc_bridge; table digest equals the initial digest",
+  "read_each_step": "each of the 20 steps reads 40/40 and 0/0",
+  "inert": "bridged and no-bridge tensor hashes are equal after 20 steps",
+  "parameters": "parameter hash equals the baseline; every parameter grad is None",
+  "clear": "sc_bridge None; bridge_read no_bridge; five more steps stay equal to the no-bridge run",
+  "closed_state": "the nine legacy readings stay equal before and after",
+  "reporting": "the bridge is a side table; this round measures survival, not coupling. A failure to survive would be reported as a structural defect, not hidden"
+ },
+ "definition_digest": "aa9779e6b71aa5a1df859c2a4d2be74a3406eff94198f9c61ca70c84d6904820",
+ "counts": {
+  "observe_steps": 20,
+  "extra_clear_steps": 5,
+  "regression_sentences": 20,
+  "unknown_candidates": 12,
+  "fragments": 18
+ },
+ "inputs": {
+  "alias_key": "喝水的杯子",
+  "authority": "verifier:v1",
+  "values": [
+   [
+    "object",
+    "蓝色杯子"
+   ],
+   [
+    "object",
+    "红色印章"
+   ],
+   [
+    "object",
+    "绿色瓶子"
+   ],
+   [
+    "place",
+    "木桌"
+   ],
+   [
+    "place",
+    "书架"
+   ]
+  ],
+  "aliases": [
+   [
+    "喝水的杯子",
+    [
+     "object",
+     "蓝色杯子"
+    ]
+   ],
+   [
+    "盖章用的印章",
+    [
+     "object",
+     "红色印章"
+    ]
+   ],
+   [
+    "盛水的瓶子",
+    [
+     "object",
+     "绿色瓶子"
+    ]
+   ],
+   [
+    "圆形的皮球",
+    [
+     "object",
+     "黄色球"
+    ]
+   ],
+   [
+    "方方正正的木桌子",
+    [
+     "place",
+     "木桌"
+    ]
+   ],
+   [
+    "窗前的台板",
+    [
+     "place",
+     "窗台"
+    ]
+   ],
+   [
+    "手边的小盒子",
+    [
+     "place",
+     "左盒"
+    ]
+   ],
+   [
+    "墙上的架子",
+    [
+     "place",
+     "书架"
+    ]
+   ],
+   [
+    "脚下的垫子",
+    [
+     "place",
+     "地毯"
+    ]
+   ]
+  ],
+  "unknown_candidates": [
+   "黑色铁铃",
+   "白色帆布",
+   "长柄铜勺",
+   "软木瓶塞",
+   "蓝色毛巾",
+   "银质圆镜",
+   "棕色皮箱",
+   "青色陶罐",
+   "灰色石阶",
+   "紫色绸带",
+   "金色烛台",
+   "深红木箱"
+  ]
+ }
+}
