@@ -2028,3 +2028,24 @@ owner 2026-11-07 裁定：多模态是整个算法内部系统的一部分，不
 | S-78 | “未写短语误答 0 等于桥有了泛化能力” | R-D29-259 | **不成立**：零误答来自“不答”，9 条同义说法全部 `no_match`；能力只覆盖**写入过的逐字说法**。 |
 | S-79 | “写别名会扩大碰撞面” | R-D29-261 | **在本批输入上不成立**：9 条别名与 12 候选、碎片、整句均无连续包含关系，写后三项零线不变；**但**别名只能逐条写入，不许由相似度自动生成。 |
 
+---
+
+## 61. R14 全量说法写入＋一说法两实体对抗：比值随说法数上升、大表零线仍 0、冲突显式拒绝（2026-11-09；**0 训练／0 优化器步／0 Adam／0 新参数**）
+
+| 编号 | 断言 | 证据 |
+|---|---|---|
+| R-D29-263 | 写入端新增冲突策略 `on_conflict`：`"replace"`（R11 默认，同键异值→替换、旧值进 history）与 `"reject"`（同键异值→整批拒绝 `rejected_batch_address_already_bound`、先写者保留、`content_digest` 不变） | [报告](../../reports/taiji_bridge_wording_scale_20261109.json) `definition`；[桥模块](../../taiji/address_bridge.py)；[manifest](../manifests/taiji_bridge_wording_scale_20261109.json) |
+| R-D29-264 | **成本曲线**：`corpus` **9 键／9 实体＝1.0**（min／中位／max 均 1）、`corpus_plus_authored` **18／9＝2.0**（均 2）、`refused_scale` **78／9＝8.667 且 `admitted=false`**；**比值随说法数增长、不随实体数收敛** | 同上 `cost_curve` |
+| R-D29-265 | **“80 键”不可达**：80 句里 **60 句用实体名**（`goal_paraphrase` 三种风格均直接写名字），名字不得进键，可写上限 20＋9＝**78**，该刻度被拒未跑 | 同上 `wording_inventory.sentences_with_entity_names`／`refused_scale` |
+| R-D29-266 | **大键表零线仍成立**：18 键表上 12 未写候选 **0**、18 条半字碎片 **0/18**、20 整句误指 **0**、能力 **40/40** | 同上 `segment_d` |
+| R-D29-267 | **一说法两实体不静默取中**：3 例均 `rejected_batch_address_already_bound`、摘要不变、先写者仍读回、同批合法项未写入；`replace` 对照为 `accepted`／`replaced 1`／读出转后写者 | 同上 `segment_e` |
+| R-D29-268 | 关闭态**九项全等**；判定 C `cost_curve_measured`／D `large_table_zero_clean`／E `conflict_rejected_first_writer_kept`；成本 **1.891 CPU／2.418 wall**（估 30、上限 200、`threads=1`） | 同上 `closed_state.checks`／`verdict`／`cost` |
+
+**61.1 superseded／范围登记**
+
+| 编号 | 被取代／被限定的对象 | 取代者 | 处置与理由 |
+|---|---|---|---|
+| S-80 | “键/实体比值是常数 2.0，随规模稳定” | R-D29-264 | **被否定**：比值＝每实体说法数，随说法数增长（9→18→78 键对应 1.0→2.0→8.667），不随实体数收敛。 |
+| S-81 | “把夹具 80 句全写成键就是 80 键规模” | R-D29-265 | **不成立**：60 句含实体名，名字永不进键；可写上限 78，且该刻度被拒绝登记，不得引用为读数。 |
+| S-82 | “同键异值默认就是先写者保留” | R-D29-267 | **不成立**：默认 `replace` 会接受后写者并转主；先写者保留必须显式 `on_conflict="reject"`，接线时须写明。 |
+
