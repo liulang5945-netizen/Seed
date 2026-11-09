@@ -1,0 +1,58 @@
+{
+ "schema": "taiji-damping-stage-r41-v1",
+ "created": "2026-11-09T18:03:08",
+ "seed": 20261109,
+ "estimate_cpu_upper": 30.0,
+ "cpu_cap": 200.0,
+ "dose": 1000,
+ "damping_factor": 0.1,
+ "runner_sha256": "2dbfc6b2beaffd48a65a68035189124cf3798b1aee47579d104f203d184ac6e9",
+ "core_sha256": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d"
+ },
+ "definition": {
+  "write": "one write-enabled observe pass on sentence 0 produces the fast memory",
+  "dose": "the same state is stepped twice on sentence 1, with fast x0 and fast x1000",
+  "stages": "forward hooks capture xi (readout input), z (readout output) and probabilities",
+  "decision": "readout_ratio = delta_z/delta_xi; output_ratio = delta_prob/delta_z",
+  "localise": "a ratio below 0.1 marks that stage as the damping site",
+  "closed_state": "the nine legacy readings on the main subject stay equal before and after"
+ },
+ "criteria": {
+  "write": "the written fast has abs sum > 0",
+  "reach": "all three stage deltas are > 0",
+  "ratios": "both ratios are reported with the raw deltas",
+  "decision": "the damping site follows the frozen 0.1 rule and is reported with its exit name",
+  "closed_state": "the nine legacy readings stay equal and the main parameter digest does not move",
+  "rerun": "the R40 anchor carries a commit, a runner blob sha1, a runner sha256 and a core sha256"
+ },
+ "definition_digest": "abbd95444c276777f23c614ba1523e8a0f22b7dddee42cf15204da76355902cb",
+ "counts": {
+  "describe_sentences": 20,
+  "stages": 3
+ },
+ "inputs": {
+  "goal": "r41",
+  "sentences": [
+   "让圆口的器皿到四方木台。",
+   "让圆口的器皿到靠窗的台面。"
+  ],
+  "dose": 1000,
+  "rerun_anchors": [
+   {
+    "round": "R40",
+    "runner": "scripts/training/probe_taiji_memory_dose_20261109.py",
+    "rerun_commit": "bb9a8b97f",
+    "runner_blob_sha1": "03ddd6c36cac00d786cea99d51323b260bb5fd0a",
+    "report_runner_sha256": "2c000d713445c0a75d03060126b026138a74652a917616d495da6a2009a00681",
+    "runner_blob_sha256": "2c000d713445c0a75d03060126b026138a74652a917616d495da6a2009a00681",
+    "report_core_sha256": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d",
+    "matches_report": true,
+    "note": "R41 does not change living_core; R40 stays runnable at HEAD"
+   }
+  ]
+ }
+}
