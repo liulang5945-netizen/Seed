@@ -2465,6 +2465,32 @@ owner 2026-11-07 裁定：多模态是整个算法内部系统的一部分，不
 | S-131 | “自动表达会改张量轨迹” | R-D29-383 | **被取代**：轨迹 20/20 与无桥逐位相等。 |
 | S-132 | “未知输入会保留旧文本” | R-D29-385 | **被取代**：未知输入清空字段。 |
 
+## 79. R32 表达状态快照（2026-11-09）
+
+**79.0 冻结与范围**：快照往返、导入端策略、空快照、四类损坏与 R31 复跑锚在读数前写入 [manifest](../manifests/taiji_bridge_snapshot_20261109.json) 的 `definition_digest`。本轮**修改** `taiji/living_core.py`：新增 `bridge_snapshot`／`bridge_restore`，并导入 `BridgeTable`；`observe`/`step` 未改。0 训练／0 优化器步／0 Adam／0 confirm。
+
+**79.1 读数**
+
+| 编号 | 读数 | 出处 |
+|---|---|---|
+| R-D29-390 | **往返**：快照 **2,513 B**、sha `5f75d0c6…`；表摘要 `a4edca3e…` 相等；文本 `"蓝色杯子在木桌"` 相等；20 句 **20/20**。 | `round_trip` |
+| R-D29-391 | **导入端策略**：以 `v2` 恢复后 `v1` 纠正 `rejected_batch_unknown_authority`、内容摘要不变（`17f0aeab…`）；`v2` 纠正 `corrected`、内容摘要变 `63b7f398…`。 | `policy` |
+| R-D29-392 | **空快照**：恢复为 `sc_bridge=None`、`last_bridge_text=None`。 | `empty` |
+| R-D29-393 | **损坏**：截断／错误 schema／坏 base64／有文本无表 **4/4** 拒绝，无半张表。 | `corrupt` |
+| R-D29-394 | **关闭态九项全等**；`sc_bridge` 前后 `None`（单列）。 | `closed_state` |
+| R-D29-395 | **复跑锚**：R31→`62394837e`（blob `eef7cafd…`、runner sha `c7826323…`、core sha `f1725d42…`），报告 sha 与 blob sha 一致。 | `rerun_anchors` |
+| R-D29-396 | **判定与成本**：`snapshot_round_trip_exact`／`importer_decides_policy`／`empty_snapshot_restores_none`／`corrupt_snapshot_rejected`／`closed_state_equal`／`bridge_default_none`／`anchors_complete` ⇒ 总判 **`bridge_snapshot_round_trip_clean`**；成本 **1.328 CPU／2.069 wall**（估 30、上限 200）。 | 报告 `verdict`／`cost` |
+| R-D29-397 | **首跑披露**：用完整 `digest()` 判“拒绝纠正后不变”，完整摘要含计数器、拒绝也会动它；判据改为 `content_digest()` 后重跑，往返/文本/20 口径未变。 | 报告 |
+
+**79.2 superseded／范围登记**
+
+| 编号 | 被取代／被限定的对象 | 取代者 | 处置与理由 |
+|---|---|---|---|
+| S-133 | “表与文本不能同快照” | R-D29-390 | **被取代**：快照同时含表与文本，往返 20/20。 |
+| S-134 | “快照导入策略继承导出端” | R-D29-391 | **被取代**：导入端 `v2` 策略生效，`v1` 被拒。 |
+| S-135 | “损坏快照会半途恢复” | R-D29-393 | **被取代**：4/4 拒绝，无半张表。 |
+
+
 
 
 

@@ -2186,7 +2186,35 @@ R6b 的 joint 1.0 有两种解释：学会了“描述↔名字”的桥，或�
 
 **边界（与读数一起引用）**：① 文本仍是**只读侧**，`step` 不读它；② 轨迹相等是“文本不进入张量”的证据，不是“表达有用”的证据；③ 固定模板、精确候选；④ 只测 20 句 describe 与 1 个未知输入；⑤ 字段不在 `state_dict`／身份里；⑥ 桥**仍不得**接进默认图。
 
-**下一步**：R32“表达状态快照（表＋文本）”闸——新增 `bridge_snapshot(state)` 与 `bridge_restore(bytes, allowed_authorities)`：快照含表状态字节与 `last_bridge_text`；测①快照往返后表摘要、文本、20/20 一致，②导入端策略自定，③损坏快照整批拒绝，④关闭态九项全等。判据读数前冻结。
+**下一步（已于 §21.41 执行）**：R32“表达状态快照（表＋文本）”闸——新增 `bridge_snapshot(state)` 与 `bridge_restore(bytes, allowed_authorities)`：快照含表状态字节与 `last_bridge_text`；测①快照往返后表摘要、文本、20/20 一致，②导入端策略自定，③损坏快照整批拒绝，④关闭态九项全等。判据读数前冻结。
+
+## 21.41 R32 表达状态快照：表与文本一起往返、策略由导入端定（2026-11-09）
+
+**一句话**：`bridge_snapshot(state)` 把**表状态字节**与 `last_bridge_text` 一起打成 **2,513 B**；`bridge_restore(state, blob, allowed_authorities)` 在新的主体状态上重建表与文本。往返后**表摘要相同、文本相同、20 条 describe 句仍 20/20**；导入端可用自己的策略（`v2`），此时 `v1` 纠正被拒且**内容摘要不变**、`v2` 纠正生效。空快照恢复为 `None`；四类损坏快照**整批拒绝**。
+
+**A 往返**
+
+| 测点 | 结果 |
+|---|---|
+| 快照 | **2,513 B**，sha `5f75d0c6…` |
+| 表摘要 | `a4edca3e…` **相等** |
+| 文本 | `"蓝色杯子在木桌"` **相等** |
+| 20 句成对输出 | **20/20** 精确 |
+
+**B 导入端策略**：以 `verifier:v2` 恢复后，`v1` 纠正 ⇒ `rejected_batch_unknown_authority`，**内容摘要不变**（`17f0aeab…`）；`v2` 纠正 ⇒ `corrected`，内容摘要变为 `63b7f398…`。
+
+**C 空快照与损坏**：空快照恢复为 `sc_bridge=None`、`last_bridge_text=None`；截断、错误 schema、坏 base64、有文本无表 **4/4** 分别以 `rejected_snapshot_invalid_json`／`rejected_snapshot_schema`／`rejected_snapshot_invalid_base64`／`rejected_snapshot_text_without_bridge` 拒绝，无半张表逃出。
+
+**D 关闭态**：**九项全等**；`sc_bridge` 前后 `None`（单列）。
+
+**E 复跑锚**：R31 → `62394837e`（blob `eef7cafd…`、runner sha `c7826323…`、core sha `f1725d42…`），报告 sha 与 blob sha 一致；R31 在当前 HEAD 不可跑（R32 改了 `living_core`），按该提交可复跑。
+
+**判定与成本**：`snapshot_round_trip_exact`／`importer_decides_policy`／`empty_snapshot_restores_none`／`corrupt_snapshot_rejected`／`closed_state_equal`／`bridge_default_none`／`anchors_complete` ⇒ 总判 **`bridge_snapshot_round_trip_clean`**；成本 **1.328 CPU／2.069 wall**（估 30、上限 200、`threads=1`）。0 训练／0 优化器步／0 Adam／0 confirm。**披露**：首跑用完整 `digest()` 判“拒绝纠正后不变”，而完整摘要含计数器、拒绝也会动它；判据改为 `content_digest()` 后重跑，往返/文本/20 口径未变。
+
+**边界（与读数一起引用）**：① 快照**只含表与文本**，不含参数、`fast`、`sc_sfk`；② 文本不校验是否由该表产生；③ 导入端策略自定，不继承导出端；④ 损坏快照整批拒绝，但**合法但语义错误**的文本仍无法识别；⑤ 只测 1 张 18 键表、1 条纠正、20 句；⑥ 桥**仍不得**接进默认图。
+
+**下一步**：R33“跨进程快照继承”闸——父进程写快照，子进程恢复后输出 20/20 成对文本、纠正描述键、再写快照；父进程恢复子快照并核对表摘要、文本、20/20；子进程策略自定，截断快照无输出。判据读数前冻结。
+
 
 
 
