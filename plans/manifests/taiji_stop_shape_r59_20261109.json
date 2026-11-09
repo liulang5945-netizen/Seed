@@ -1,0 +1,137 @@
+{
+  "schema": "taiji-stop-shape-r59-manifest-v1",
+  "step": "R59",
+  "date": "2026-11-09",
+  "definition": {
+    "gate": "R59 frozen-criterion dev probe: slot localisation + same-shape word effect",
+    "group_a": {
+      "template": "2-hop 把{object}放到{place}; records written as {desc}是{name}。 and {desc}对应{name}。",
+      "names": "R58 GLYPHS slices (each Han char is 3 bytes)",
+      "cells": [
+        [
+          3,
+          12
+        ],
+        [
+          12,
+          3
+        ],
+        [
+          6,
+          12
+        ],
+        [
+          12,
+          6
+        ]
+      ],
+      "fixture_assignment": {
+        "3x12": 0,
+        "12x3": 1,
+        "6x12": 2,
+        "12x6": 4,
+        "note": "12x6 re-reads R58's control fixture index 4"
+      },
+      "classifier": {
+        "total_length_threshold": "(3,12) fails AND (12,3) fails AND (6,12) passes AND (12,6) passes",
+        "object_slot_short": "(3,12) fails AND (12,3) passes AND (12,6) passes",
+        "place_slot_short": "(12,3) fails AND (3,12) passes AND (12,6) passes",
+        "unexplained": "anything else; all four booleans are reported",
+        "note": "(6,12) is reported separately as the 6-byte-short-field reading"
+      }
+    },
+    "group_b": {
+      "shape": {
+        "object_bytes": 12,
+        "place_bytes": 6,
+        "answer_bytes": 27
+      },
+      "object_name": "乌木罗盘",
+      "object_description": "古旧木制器具",
+      "place_description": "旧年石砌场所",
+      "words": [
+        "井前",
+        "亭畔",
+        "亭角",
+        "兰上",
+        "圃外",
+        "崖前",
+        "廊前",
+        "松上",
+        "松前",
+        "池前",
+        "池外",
+        "沙外",
+        "溪前",
+        "瓮尾",
+        "瓮沿",
+        "竹上",
+        "舟侧",
+        "雾尾",
+        "井北",
+        "井尾",
+        "井畔",
+        "兰外",
+        "圃下",
+        "圃尾",
+        "廊北",
+        "桥尾",
+        "梅角",
+        "瓮北",
+        "竹沿",
+        "雾外"
+      ],
+      "tail_words": [
+        "瓮尾",
+        "雾尾",
+        "井尾",
+        "圃尾",
+        "桥尾"
+      ],
+      "word_source": "reports/taiji_stop_boundary_20261109.json trace (R57 published list)",
+      "statistic": "EOS rank (1-based, descending) at the place stop edge (byte position 27); larger rank = more desire to continue",
+      "decision_rules": [
+        "complete separation: min(tail rank) > max(non-tail rank) -> word_effect_systematic",
+        "otherwise exact one-sided permutation test on the mean-rank difference, C(30,5)=142506 splits: p < 0.05 and median(tail) > median(non-tail) -> word_effect_systematic",
+        "p >= 0.05 and not separated -> word_effect_absent",
+        "otherwise (direction right but p undecidable) -> word_effect_weak"
+      ]
+    },
+    "gates": {
+      "structural_pass": "12 structural cells exact AND every A/B cell field_lengths_ok",
+      "zero_extra_pass": "all four A cells stop at the declared end with zero extra bytes",
+      "locate_class": "A classifier output",
+      "word_effect": "B decision output",
+      "failing_axes": "names of failed boolean gates"
+    },
+    "scope": "dev/synthetic only; the sealed confirm holdout report is not read; no change to 192/192",
+    "estimate_rule": "D-64: single run x 3 (one run plus two replay margins) + report assembly"
+  },
+  "definition_digest": "322bf729f24b9db1267f9d54bec987b088b881c5bd0f1ba752a6e9fe4c81fb87",
+  "frozen_files": {
+    "scripts/training/probe_taiji_stop_shape_r59_20261109.py": "e0bff4c025e221087e51053fe7e2f45b80689751ccb8d1b81fc48e41c79fa08f",
+    "scripts/training/probe_taiji_stop_shape_r58_20261109.py": "b4866f9d77ec28ac59c35788e045241fb5b8cf64c7775b34ea73e2cccfbe4e2a",
+    "scripts/training/probe_taiji_content_transport_18_1.py": "202167c20485af10550a73047f0ce78ad3f7c92da3c5972d2d76c38dcc3b37d4",
+    "taiji/copy_stop_boundary.py": "27e5b9a63be29e98197331d59c5ad471e5ae46fa68921c87ce13b42bf193d702",
+    "taiji/binding_copy.py": "37f4885e8dc33a41f6f701e3d0e87daf15c126be735acceea02098e5e39c045c",
+    "taiji/record_relation_core.py": "8318dde5c3d3b3ff42a2c94e528aec7552363d4f9aef2c11ee95b8e868ef64a2",
+    "taiji/living_core.py": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d",
+    "taiji/data_premise_18_0.py": "b98b68534d26773091b234d5b7c92220def1059be56ab2c2bb0f3f8cc5791204",
+    "taiji/selection_routing.py": "3b80ed033055ed9eb15afc386befae7d6b73ad829844c68a59a89f20b2aa5bde",
+    "taiji/selection_routing_checkpoint.py": "606cc68cf1c5a628d3b91c494258c9f4b20084fa638eb88615e8e60dfcd5ce61"
+  },
+  "bundle": "output\\taiji_package19_compare\\28031-B_stop_lock-step300.pt",
+  "bundle_sha256": "fe04fbfb14aa0390877385a4429f2a851396a6fe6acb3107bae0a5e4e331dfca",
+  "word_source": {
+    "path": "reports\\taiji_stop_boundary_20261109.json",
+    "sha256": "368cdfcc4eca8a92ee29fb5e84833ea626e8984dbcac1fb47410f699c20cb1cb"
+  },
+  "cost": {
+    "single_run_estimate": 45.0,
+    "estimate_with_replays": 135.0,
+    "cpu_cap": 200.0,
+    "wall_cap": 1800.0
+  },
+  "immutability": "written once before the run; never rewritten",
+  "sealed_split": "not read"
+}
