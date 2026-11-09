@@ -1,0 +1,300 @@
+{
+ "schema": "taiji-bridge-pair-r28-report-v1",
+ "runner_sha256": "baae99d01c70d38bd86373c5df476102078c632cc67336467843a75f732dd0fd",
+ "manifest_sha256": "6cc4a732c24f5a85be886315edbc62b90c4f15d4b62edbe9dc70c5e2c8b5c866",
+ "bridge_sha256": "4edf29b22a199c29160523debb8ea23a45e59321f2b0c8dc06da72497672e831",
+ "core_sha256": "9fe7fbf786e900032498b00d6cbeaa600e29e3e14100a625aadbf548629f6d82",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "9fe7fbf786e900032498b00d6cbeaa600e29e3e14100a625aadbf548629f6d82"
+ },
+ "definition": {
+  "pair": "bridge_choose_pair chooses object and place independently; both must be chosen, otherwise the whole pair is no_pair and reasons records both slot exits",
+  "template": "the text is exactly '{object_name}在{place_name}'",
+  "twenty": "the 20 describe sentences must each yield the expected pair and text",
+  "unknown": "an unknown query yields no_pair with object and place reasons no_choice",
+  "ambiguous": "a sentence with two objects yields no_pair; object reason ambiguous_read and place reason no_choice",
+  "correction": "correcting CUP to GREEN changes object and text, keeps place TABLE, moves the table digest, and leaves the subject tensors unchanged",
+  "no_bridge": "a state without a table yields no_pair with both reasons no_bridge",
+  "closed_state": "the nine legacy closed-state readings stay equal before and after"
+ },
+ "criteria": {
+  "twenty": "20/20 exact pairs and exact texts",
+  "unknown": "no_pair; reasons object=no_choice, place=no_choice",
+  "ambiguous": "no_pair; reasons object=ambiguous_read, place=no_choice",
+  "correction": "before object CUP / place TABLE / text '蓝色杯子在木桌'; after object GREEN / place TABLE / text '绿色瓶子在木桌'; digest changes; subject hashes equal",
+  "no_bridge": "no_pair; reasons object=no_bridge, place=no_bridge",
+  "inert": "parameter and state hashes equal before and after all pairs",
+  "closed_state": "the nine legacy readings stay equal before and after",
+  "rerun": "the R27 anchor carries a commit, a runner blob sha1, a runner sha256 and a core sha256"
+ },
+ "pair": {
+  "exact": 20,
+  "of": 20,
+  "rows": [
+   {
+    "text": "让圆口的器皿到四方木台。",
+    "expected": "蓝色杯子在木桌",
+    "got": "蓝色杯子在木桌",
+    "ok": true
+   },
+   {
+    "text": "让圆口的器皿到靠窗的台面。",
+    "expected": "蓝色杯子在窗台",
+    "got": "蓝色杯子在窗台",
+    "ok": true
+   },
+   {
+    "text": "让圆口的器皿到手边的匣子。",
+    "expected": "蓝色杯子在左盒",
+    "got": "蓝色杯子在左盒",
+    "ok": true
+   },
+   {
+    "text": "让圆口的器皿到靠墙的层架。",
+    "expected": "蓝色杯子在书架",
+    "got": "蓝色杯子在书架",
+    "ok": true
+   },
+   {
+    "text": "让圆口的器皿到脚边的毡子。",
+    "expected": "蓝色杯子在地毯",
+    "got": "蓝色杯子在地毯",
+    "ok": true
+   },
+   {
+    "text": "让带纹路的方块到四方木台。",
+    "expected": "红色印章在木桌",
+    "got": "红色印章在木桌",
+    "ok": true
+   },
+   {
+    "text": "让带纹路的方块到靠窗的台面。",
+    "expected": "红色印章在窗台",
+    "got": "红色印章在窗台",
+    "ok": true
+   },
+   {
+    "text": "让带纹路的方块到手边的匣子。",
+    "expected": "红色印章在左盒",
+    "got": "红色印章在左盒",
+    "ok": true
+   },
+   {
+    "text": "让带纹路的方块到靠墙的层架。",
+    "expected": "红色印章在书架",
+    "got": "红色印章在书架",
+    "ok": true
+   },
+   {
+    "text": "让带纹路的方块到脚边的毡子。",
+    "expected": "红色印章在地毯",
+    "got": "红色印章在地毯",
+    "ok": true
+   },
+   {
+    "text": "让细长的容器到四方木台。",
+    "expected": "绿色瓶子在木桌",
+    "got": "绿色瓶子在木桌",
+    "ok": true
+   },
+   {
+    "text": "让细长的容器到靠窗的台面。",
+    "expected": "绿色瓶子在窗台",
+    "got": "绿色瓶子在窗台",
+    "ok": true
+   },
+   {
+    "text": "让细长的容器到手边的匣子。",
+    "expected": "绿色瓶子在左盒",
+    "got": "绿色瓶子在左盒",
+    "ok": true
+   },
+   {
+    "text": "让细长的容器到靠墙的层架。",
+    "expected": "绿色瓶子在书架",
+    "got": "绿色瓶子在书架",
+    "ok": true
+   },
+   {
+    "text": "让细长的容器到脚边的毡子。",
+    "expected": "绿色瓶子在地毯",
+    "got": "绿色瓶子在地毯",
+    "ok": true
+   },
+   {
+    "text": "让圆滚滚的东西到四方木台。",
+    "expected": "黄色球在木桌",
+    "got": "黄色球在木桌",
+    "ok": true
+   },
+   {
+    "text": "让圆滚滚的东西到靠窗的台面。",
+    "expected": "黄色球在窗台",
+    "got": "黄色球在窗台",
+    "ok": true
+   },
+   {
+    "text": "让圆滚滚的东西到手边的匣子。",
+    "expected": "黄色球在左盒",
+    "got": "黄色球在左盒",
+    "ok": true
+   },
+   {
+    "text": "让圆滚滚的东西到靠墙的层架。",
+    "expected": "黄色球在书架",
+    "got": "黄色球在书架",
+    "ok": true
+   },
+   {
+    "text": "让圆滚滚的东西到脚边的毡子。",
+    "expected": "黄色球在地毯",
+    "got": "黄色球在地毯",
+    "ok": true
+   }
+  ],
+  "unknown": {
+   "decision": "no_pair",
+   "object": null,
+   "place": null,
+   "text": null,
+   "object_index": null,
+   "place_index": null,
+   "reasons": {
+    "object": "no_choice",
+    "place": "no_choice"
+   }
+  },
+  "ambiguous": {
+   "decision": "no_pair",
+   "object": null,
+   "place": null,
+   "text": null,
+   "object_index": null,
+   "place_index": null,
+   "reasons": {
+    "object": "ambiguous_read",
+    "place": "no_choice"
+   }
+  },
+  "no_bridge": {
+   "decision": "no_pair",
+   "object": null,
+   "place": null,
+   "text": null,
+   "object_index": null,
+   "place_index": null,
+   "reasons": {
+    "object": "no_bridge",
+    "place": "no_bridge"
+   }
+  },
+  "before": {
+   "decision": "chosen_pair",
+   "object": [
+    "object",
+    "蓝色杯子"
+   ],
+   "place": [
+    "place",
+    "木桌"
+   ],
+   "text": "蓝色杯子在木桌",
+   "object_index": 0,
+   "place_index": 0,
+   "reasons": {
+    "object": "chosen",
+    "place": "chosen"
+   }
+  },
+  "correction": "corrected",
+  "after": {
+   "decision": "chosen_pair",
+   "object": [
+    "object",
+    "绿色瓶子"
+   ],
+   "place": [
+    "place",
+    "木桌"
+   ],
+   "text": "绿色瓶子在木桌",
+   "object_index": 1,
+   "place_index": 0,
+   "reasons": {
+    "object": "chosen",
+    "place": "chosen"
+   }
+  },
+  "table_digest_changed": true,
+  "state_sha_equal": true,
+  "parameter_sha_equal": true,
+  "ok": true
+ },
+ "rerun_anchors": [
+  {
+   "round": "R27",
+   "runner": "scripts/training/probe_taiji_bridge_slot_choice_20261109.py",
+   "rerun_commit": "accfcf984",
+   "runner_blob_sha1": "29041a8da515b3ff46730b96b8cc17905cb9de40",
+   "report_runner_sha256": "54f07049bf23efbd984edbea3004a245bcf9de4236ec53da8a4c060e012eb0f3",
+   "runner_blob_sha256": "54f07049bf23efbd984edbea3004a245bcf9de4236ec53da8a4c060e012eb0f3",
+   "report_core_sha256": "76936e0e8b1114ee4e122d5b78e8c4fd5e98c6db3d71d82eab27b05b9d8c622c",
+   "matches_report": true,
+   "note": "current HEAD cannot run it after R28 (core sha changed); checkout this commit"
+  }
+ ],
+ "closed_state": {
+  "baseline": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "fa739ff08d2ef1e8217d6559ac7a2e0c5dbe27ccffbaac3cb77050981fc1be64",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk_none": true,
+   "sc_bridge_none": true,
+   "battery_sha": "affae0df832410fb9b9e687b3626e2597287c1c2b6623879acc5a20a7d1a412c",
+   "battery_steps": 20
+  },
+  "after": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "fa739ff08d2ef1e8217d6559ac7a2e0c5dbe27ccffbaac3cb77050981fc1be64",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk_none": true,
+   "sc_bridge_none": true,
+   "battery_sha": "affae0df832410fb9b9e687b3626e2597287c1c2b6623879acc5a20a7d1a412c",
+   "battery_steps": 20
+  },
+  "checks": {
+   "parameters_equal": true,
+   "state_equal": true,
+   "identity_equal": true,
+   "store_equal": true,
+   "battery_equal": true,
+   "steps_equal": true,
+   "sc_sfk_none": true,
+   "flag_disabled": true,
+   "rng_untouched": true
+  }
+ },
+ "bridge_default_none": true,
+ "verdict": {
+  "pair": "pair_from_read",
+  "closed_state": "closed_state_equal",
+  "bridge_default": "bridge_default_none",
+  "rerun_anchors": "anchors_complete",
+  "overall": "bridge_pair_expression_available"
+ },
+ "cost": {
+  "cpu_seconds": 2.15625,
+  "wall_seconds": 3.1194794178009033,
+  "cpu_cap": 200.0,
+  "estimate_cpu_upper": 30.0,
+  "threads": 1
+ }
+}

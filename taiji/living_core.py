@@ -662,6 +662,42 @@ class LivingCoreReference(nn.Module):
         result["index"] = choices.index(value)
         return result
 
+    def bridge_choose_pair(
+        self,
+        state: LivingState,
+        query: str | bytes,
+        object_candidates: list[tuple[str, str]] | tuple[tuple[str, str], ...],
+        place_candidates: list[tuple[str, str]] | tuple[tuple[str, str], ...],
+    ) -> dict:
+        """Choose one object and one place, or abstain as a pair.
+
+        Both slots must be chosen; otherwise the whole pair is ``no_pair`` and
+        ``reasons`` says which slot failed and why.  The template is fixed:
+        ``"{object}在{place}"``.  No tensor is touched.
+        """
+        object_result = self.bridge_choose(state, query, object_candidates, slot="object")
+        place_result = self.bridge_choose(state, query, place_candidates, slot="place")
+        result = {
+            "decision": "",
+            "object": None,
+            "place": None,
+            "text": None,
+            "object_index": object_result["index"],
+            "place_index": place_result["index"],
+            "reasons": {
+                "object": object_result["decision"],
+                "place": place_result["decision"],
+            },
+        }
+        if object_result["decision"] == "chosen" and place_result["decision"] == "chosen":
+            result["decision"] = "chosen_pair"
+            result["object"] = object_result["choice"]
+            result["place"] = place_result["choice"]
+            result["text"] = f"{object_result['choice'][1]}在{place_result['choice'][1]}"
+        else:
+            result["decision"] = "no_pair"
+        return result
+
     def store_query_key(self, state: LivingState, raw: bytes) -> torch.Tensor:
         context = self.encoder.context(raw)
         if context.numel() == 0:
