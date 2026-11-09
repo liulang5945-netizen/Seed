@@ -1,0 +1,144 @@
+{
+ "schema": "taiji-rebalance-r45-report-v1",
+ "runner_sha256": "9177914374e07dfd0cdc05aed88af50ceec7e3f0d654d2649e22c8e07325be47",
+ "manifest_sha256": "80afdee39fce8547ba0d79a6106e852df1fc7d19267eb5d110cc6c4460aea490",
+ "core_sha256": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d"
+ },
+ "definition": {
+  "write": "one write-enabled observe pass on sentence 0 produces the fast memory",
+  "rebalance": "a pre-hook scales the z slice of the generate input by s so its share hits a target",
+  "targets": "shares 0.05, 0.2, 0.5, 0.8; the same s is used for the k=0 and k=1000 runs",
+  "readings": "rel_logits and output TV/KL per target share",
+  "baseline": "share 0.05 must reproduce R44 (dilution < 0.5, rel_logits near 0.033)",
+  "confirm": "at share 0.5 rel_logits and TV must both be >= 3x the baseline",
+  "closed_state": "the nine legacy readings on the main subject stay equal before and after"
+ },
+ "criteria": {
+  "write": "the written fast has abs sum > 0",
+  "baseline": "the share-0.05 row reproduces dilution < 0.5 and rel_logits > 0",
+  "monotone": "rel_logits and TV are non-decreasing across the four target shares",
+  "confirm": "at share 0.5 rel_logits >= 3x baseline and TV >= 3x baseline",
+  "decision": "the frozen confirm ratio decides the exit name",
+  "closed_state": "the nine legacy readings stay equal and the main parameter digest does not move",
+  "rerun": "the R44 anchor carries a commit, a runner blob sha1, a runner sha256 and a core sha256"
+ },
+ "reading": {
+  "fast_abs_sum": 12.365152359008789,
+  "dose": 1000,
+  "rows": [
+   {
+    "share": 0.05,
+    "scale": 1.1206350636371634,
+    "z_share": 0.05,
+    "rel_logits": 0.045430525340487554,
+    "tv": 0.005903535853747699,
+    "kl_zero_to_full": 0.00011003500704457887
+   },
+   {
+    "share": 0.2,
+    "scale": 5.323016552276526,
+    "z_share": 0.19999999999999998,
+    "rel_logits": 0.20984475661395469,
+    "tv": 0.028168730232781797,
+    "kl_zero_to_full": 0.002496814501382739
+   },
+   {
+    "share": 0.5,
+    "scale": 21.292066209106103,
+    "z_share": 0.5,
+    "rel_logits": 0.6124432802794189,
+    "tv": 0.11431973706071967,
+    "kl_zero_to_full": 0.04072589770572828
+   },
+   {
+    "share": 0.8,
+    "scale": 85.16826483642443,
+    "z_share": 0.8,
+    "rel_logits": 0.8386611570924466,
+    "tv": 0.44587466835111267,
+    "kl_zero_to_full": 0.6619649511979063
+   }
+  ],
+  "monotone": true,
+  "baseline_rel_logits": 0.045430525340487554,
+  "logits_ratio_at_confirm": 13.480876034105886,
+  "tv_ratio_at_confirm": 19.364621456164596,
+  "baseline_reproduced": true,
+  "confirmed": true,
+  "ok": true
+ },
+ "rerun_anchors": [
+  {
+   "round": "R44",
+   "runner": "scripts/training/probe_taiji_generate_dilution_20261109.py",
+   "rerun_commit": "167e6a645",
+   "runner_blob_sha1": "3d0c8af6253cfa0018e84848cc6d2401da509f15",
+   "report_runner_sha256": "4ca366903739a5b01478e585bd7a96812a399ed503ff7f541d9dd9672e312a22",
+   "runner_blob_sha256": "4ca366903739a5b01478e585bd7a96812a399ed503ff7f541d9dd9672e312a22",
+   "report_core_sha256": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d",
+   "matches_report": true,
+   "note": "R45 does not change living_core; R44 stays runnable at HEAD"
+  }
+ ],
+ "closed_state": {
+  "baseline": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "83fd9c8026855f72b9ec91330b73d83a26fd89baee97106037f08bd6f85c24b0",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk_none": true,
+   "sc_bridge_none": true,
+   "battery_sha": "6e97b9eb4dbc160b6143fdd9d523180b4c73e64a3ef8e8787e7d58a776353e14",
+   "battery_steps": 20
+  },
+  "after": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "83fd9c8026855f72b9ec91330b73d83a26fd89baee97106037f08bd6f85c24b0",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk_none": true,
+   "sc_bridge_none": true,
+   "battery_sha": "6e97b9eb4dbc160b6143fdd9d523180b4c73e64a3ef8e8787e7d58a776353e14",
+   "battery_steps": 20
+  },
+  "checks": {
+   "parameters_equal": true,
+   "state_equal": true,
+   "identity_equal": true,
+   "store_equal": true,
+   "battery_equal": true,
+   "steps_equal": true,
+   "sc_sfk_none": true,
+   "flag_disabled": true,
+   "rng_untouched": true
+  }
+ },
+ "main_parameter_sha_equal": true,
+ "bridge_default_none": true,
+ "verdict": {
+  "write": "memory_written",
+  "baseline": "baseline_reproduces_r44",
+  "monotone": "rebalance_monotone",
+  "confirm": "rebalance_confirms_dilution",
+  "closed_state": "closed_state_equal",
+  "main_untouched": "main_subject_untouched",
+  "bridge_default": "bridge_default_none",
+  "rerun_anchors": "anchors_complete",
+  "overall": "dilution_confirmed_by_rebalance"
+ },
+ "cost": {
+  "cpu_seconds": 1.28125,
+  "wall_seconds": 1.7194092273712158,
+  "cpu_cap": 200.0,
+  "estimate_cpu_upper": 20.0,
+  "threads": 1
+ }
+}

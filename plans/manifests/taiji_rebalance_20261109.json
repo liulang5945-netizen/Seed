@@ -1,0 +1,73 @@
+{
+ "schema": "taiji-rebalance-r45-v1",
+ "created": "2026-11-09T18:13:11",
+ "seed": 20261109,
+ "estimate_cpu_upper": 20.0,
+ "cpu_cap": 200.0,
+ "dose": 1000,
+ "target_shares": [
+  0.05,
+  0.2,
+  0.5,
+  0.8
+ ],
+ "baseline_share": 0.05,
+ "confirm_share": 0.5,
+ "confirm_ratio": 3.0,
+ "runner_sha256": "9177914374e07dfd0cdc05aed88af50ceec7e3f0d654d2649e22c8e07325be47",
+ "core_sha256": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d"
+ },
+ "definition": {
+  "write": "one write-enabled observe pass on sentence 0 produces the fast memory",
+  "rebalance": "a pre-hook scales the z slice of the generate input by s so its share hits a target",
+  "targets": "shares 0.05, 0.2, 0.5, 0.8; the same s is used for the k=0 and k=1000 runs",
+  "readings": "rel_logits and output TV/KL per target share",
+  "baseline": "share 0.05 must reproduce R44 (dilution < 0.5, rel_logits near 0.033)",
+  "confirm": "at share 0.5 rel_logits and TV must both be >= 3x the baseline",
+  "closed_state": "the nine legacy readings on the main subject stay equal before and after"
+ },
+ "criteria": {
+  "write": "the written fast has abs sum > 0",
+  "baseline": "the share-0.05 row reproduces dilution < 0.5 and rel_logits > 0",
+  "monotone": "rel_logits and TV are non-decreasing across the four target shares",
+  "confirm": "at share 0.5 rel_logits >= 3x baseline and TV >= 3x baseline",
+  "decision": "the frozen confirm ratio decides the exit name",
+  "closed_state": "the nine legacy readings stay equal and the main parameter digest does not move",
+  "rerun": "the R44 anchor carries a commit, a runner blob sha1, a runner sha256 and a core sha256"
+ },
+ "definition_digest": "2df3ee02fe30b2df53744d2f1c1238101217fbfa88e626e0b9d6b613213db611",
+ "counts": {
+  "describe_sentences": 20,
+  "shares": 4
+ },
+ "inputs": {
+  "goal": "r45",
+  "sentences": [
+   "让圆口的器皿到四方木台。",
+   "让圆口的器皿到靠窗的台面。"
+  ],
+  "target_shares": [
+   0.05,
+   0.2,
+   0.5,
+   0.8
+  ],
+  "rerun_anchors": [
+   {
+    "round": "R44",
+    "runner": "scripts/training/probe_taiji_generate_dilution_20261109.py",
+    "rerun_commit": "167e6a645",
+    "runner_blob_sha1": "3d0c8af6253cfa0018e84848cc6d2401da509f15",
+    "report_runner_sha256": "4ca366903739a5b01478e585bd7a96812a399ed503ff7f541d9dd9672e312a22",
+    "runner_blob_sha256": "4ca366903739a5b01478e585bd7a96812a399ed503ff7f541d9dd9672e312a22",
+    "report_core_sha256": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d",
+    "matches_report": true,
+    "note": "R45 does not change living_core; R44 stays runnable at HEAD"
+   }
+  ]
+ }
+}
