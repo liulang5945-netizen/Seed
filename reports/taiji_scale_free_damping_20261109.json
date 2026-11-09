@@ -1,0 +1,127 @@
+{
+ "schema": "taiji-scale-free-damping-r43-report-v1",
+ "runner_sha256": "da886d3a16b932817b1dbd4208352aca14e214cd183777e5a5865a23031e4f22",
+ "manifest_sha256": "dd2eb49aacbad0c9986324ecf9ad21dae4adef97ccbaba7a2845721a55672607",
+ "core_sha256": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d"
+ },
+ "definition": {
+  "dose": "the same written state is stepped with fast x0 and fast x1000",
+  "stages": "h, z, logits and probabilities are captured with forward hooks",
+  "relative": "rel_x = ||delta_x||2 / ||x_ref||2, the same units inside each stage",
+  "attenuation": "rel_next / rel_prev for readout, generate and softmax",
+  "output": "KL(p0||pk), KL(pk||p0) and TV on the two distributions",
+  "decision": "a stage attenuation below 0.1 marks a damping site",
+  "measurable": "KL(p0||pk) >= 1e-3 or TV >= 1e-3",
+  "closed_state": "the nine legacy readings on the main subject stay equal before and after"
+ },
+ "criteria": {
+  "write": "the written fast has abs sum > 0",
+  "reach": "all four relative deltas are > 0",
+  "ratios": "all three attenuations and the four rel values are reported",
+  "decision": "one site -> localised, several -> distributed, none -> absent (frozen 0.1 rule)",
+  "kl": "KL(p0||pk), KL(pk||p0) and TV are reported",
+  "measurable": "the measurable exit follows the frozen KL/TV floors",
+  "closed_state": "the nine legacy readings stay equal and the main parameter digest does not move",
+  "rerun": "the R42 anchor carries a commit, a runner blob sha1, a runner sha256 and a core sha256"
+ },
+ "reading": {
+  "fast_abs_sum": 12.614280700683594,
+  "dose": 1000,
+  "rel": {
+   "h": 0.9501808523909612,
+   "z": 0.8877255153605313,
+   "logits": 0.04276274983239175,
+   "prob": 0.014645904485506579
+  },
+  "attenuations": {
+   "readout": 0.9342700530396165,
+   "generate": 0.04817113971881786,
+   "softmax": 0.34249211154360004
+  },
+  "sites": [
+   "generate"
+  ],
+  "decision": "damping_localised_generate",
+  "kl_zero_to_full": 9.905407572152202e-05,
+  "kl_full_to_zero": 9.920218445628467e-05,
+  "tv": 0.0055882272175131345,
+  "measurable": true,
+  "kl_floor": 0.001,
+  "tv_floor": 0.001,
+  "ok": true
+ },
+ "rerun_anchors": [
+  {
+   "round": "R42",
+   "runner": "scripts/training/probe_taiji_expression_damping_20261109.py",
+   "rerun_commit": "c42d815ba",
+   "runner_blob_sha1": "60b4ae257fc4c2f8bd1fa3b7cfc9a38b1798c6b3",
+   "report_runner_sha256": "da5f701dac180c07e342904c3749c379a4fc7a823e3f5062c496c92f59a0b089",
+   "runner_blob_sha256": "da5f701dac180c07e342904c3749c379a4fc7a823e3f5062c496c92f59a0b089",
+   "report_core_sha256": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d",
+   "matches_report": true,
+   "note": "R43 does not change living_core; R42 stays runnable at HEAD"
+  }
+ ],
+ "closed_state": {
+  "baseline": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "a876034f6cd0d40fc7b3c08e50f32cb422cbad19336c4a59a3f0dd145a028104",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk_none": true,
+   "sc_bridge_none": true,
+   "battery_sha": "9f5ba7d199a2ed148aa9481d0fbc1a66dde3185e4065fd510a5a7a93914a68f1",
+   "battery_steps": 20
+  },
+  "after": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "a876034f6cd0d40fc7b3c08e50f32cb422cbad19336c4a59a3f0dd145a028104",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk_none": true,
+   "sc_bridge_none": true,
+   "battery_sha": "9f5ba7d199a2ed148aa9481d0fbc1a66dde3185e4065fd510a5a7a93914a68f1",
+   "battery_steps": 20
+  },
+  "checks": {
+   "parameters_equal": true,
+   "state_equal": true,
+   "identity_equal": true,
+   "store_equal": true,
+   "battery_equal": true,
+   "steps_equal": true,
+   "sc_sfk_none": true,
+   "flag_disabled": true,
+   "rng_untouched": true
+  }
+ },
+ "main_parameter_sha_equal": true,
+ "bridge_default_none": true,
+ "verdict": {
+  "write": "memory_written",
+  "reach": "memory_reaches_all_stages",
+  "decision": "damping_localised_generate",
+  "measurable": "output_measurable",
+  "closed_state": "closed_state_equal",
+  "main_untouched": "main_subject_untouched",
+  "bridge_default": "bridge_default_none",
+  "rerun_anchors": "anchors_complete",
+  "overall": "scale_free_damping_measured"
+ },
+ "cost": {
+  "cpu_seconds": 1.09375,
+  "wall_seconds": 1.5166552066802979,
+  "cpu_cap": 200.0,
+  "estimate_cpu_upper": 20.0,
+  "threads": 1
+ }
+}

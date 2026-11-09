@@ -1,0 +1,64 @@
+{
+ "schema": "taiji-scale-free-damping-r43-v1",
+ "created": "2026-11-09T18:08:28",
+ "seed": 20261109,
+ "estimate_cpu_upper": 20.0,
+ "cpu_cap": 200.0,
+ "dose": 1000,
+ "damping_factor": 0.1,
+ "kl_floor": 0.001,
+ "tv_floor": 0.001,
+ "runner_sha256": "da886d3a16b932817b1dbd4208352aca14e214cd183777e5a5865a23031e4f22",
+ "core_sha256": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d"
+ },
+ "definition": {
+  "dose": "the same written state is stepped with fast x0 and fast x1000",
+  "stages": "h, z, logits and probabilities are captured with forward hooks",
+  "relative": "rel_x = ||delta_x||2 / ||x_ref||2, the same units inside each stage",
+  "attenuation": "rel_next / rel_prev for readout, generate and softmax",
+  "output": "KL(p0||pk), KL(pk||p0) and TV on the two distributions",
+  "decision": "a stage attenuation below 0.1 marks a damping site",
+  "measurable": "KL(p0||pk) >= 1e-3 or TV >= 1e-3",
+  "closed_state": "the nine legacy readings on the main subject stay equal before and after"
+ },
+ "criteria": {
+  "write": "the written fast has abs sum > 0",
+  "reach": "all four relative deltas are > 0",
+  "ratios": "all three attenuations and the four rel values are reported",
+  "decision": "one site -> localised, several -> distributed, none -> absent (frozen 0.1 rule)",
+  "kl": "KL(p0||pk), KL(pk||p0) and TV are reported",
+  "measurable": "the measurable exit follows the frozen KL/TV floors",
+  "closed_state": "the nine legacy readings stay equal and the main parameter digest does not move",
+  "rerun": "the R42 anchor carries a commit, a runner blob sha1, a runner sha256 and a core sha256"
+ },
+ "definition_digest": "b83e3a7ebd6378bc5e18cdf6a9ea55d9704339d4d4409d2e181b467547993621",
+ "counts": {
+  "describe_sentences": 20,
+  "stages": 4
+ },
+ "inputs": {
+  "goal": "r43",
+  "sentences": [
+   "让圆口的器皿到四方木台。",
+   "让圆口的器皿到靠窗的台面。"
+  ],
+  "dose": 1000,
+  "rerun_anchors": [
+   {
+    "round": "R42",
+    "runner": "scripts/training/probe_taiji_expression_damping_20261109.py",
+    "rerun_commit": "c42d815ba",
+    "runner_blob_sha1": "60b4ae257fc4c2f8bd1fa3b7cfc9a38b1798c6b3",
+    "report_runner_sha256": "da5f701dac180c07e342904c3749c379a4fc7a823e3f5062c496c92f59a0b089",
+    "runner_blob_sha256": "da5f701dac180c07e342904c3749c379a4fc7a823e3f5062c496c92f59a0b089",
+    "report_core_sha256": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d",
+    "matches_report": true,
+    "note": "R43 does not change living_core; R42 stays runnable at HEAD"
+   }
+  ]
+ }
+}
