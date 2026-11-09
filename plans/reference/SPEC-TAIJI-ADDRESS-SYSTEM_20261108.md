@@ -2342,11 +2342,36 @@ R6b 的 joint 1.0 有两种解释：学会了“描述↔名字”的桥，或�
 
 **判定与成本**：`one_step_changes_parameters`／`checkpoint_written_with_state`／`child_load_exact`／`child_forward_exact`／`child_resume_exact`／`adam_step_restored`／`checkpoint_rejections_4_4`／`closed_state_equal`／`main_subject_untouched`／`bridge_default_none`／`anchors_complete`；**但 `no_step_effect`**（冻结判据要求 135/135 有梯度）⇒ 总判 **`checkpoint_round_trip_unexpected`**；成本 **5.531 CPU／15.830 wall**（估 40、上限 200、`threads=1`）。
 
-**偏差归因（事后诊断，不改判据）**：40 个 `None` 分三簇——① `expression.*` 13 个：无 `records` 时 `CopyExpression.forward` **早退**，只走 `generate` 支路，键控支路（`z`／`a`／`meta`／`position`／`goal`／`coverage`／`score`／`mix`／`continuation`）根本不在图上；② `world.*` 12 个：三个预测头不在“下一字节”损失里；③ `write_heads.*` 16 个：写入只影响**未来步**，本轮损失只覆盖当前步。34 个恰为 0：`V`／`episodic.*` 14 个／`fast_queries` 16 个／`fast_outputs` 4 个——空 `fast` 与默认关闭的 addressed 读让读侧对参数的一阶导为 **0**。合计 **61/135（45.2%）** 拿到非零信号，**74/135（54.8%）** 在当前损失下学不到。
+**偏差归因（事后诊断，不改判据）**：40 个 `None` 分三簇——① `expression.*` 12 个：无 `records` 时 `CopyExpression.forward` **早退**，只走 `generate` 支路，键控支路（`z`／`a`／`meta`／`position`／`goal`／`coverage`／`score`／`mix`／`continuation`）根本不在图上；② `world.*` 12 个：三个预测头不在“下一字节”损失里；③ `write_heads.*` 16 个：写入只影响**未来步**，本轮损失只覆盖当前步。34 个恰为 0：`V`／`episodic.*` 13 个／`fast_queries` 16 个／`fast_outputs` 4 个——空 `fast` 与默认关闭的 addressed 读让读侧对参数的一阶导为 **0**。合计 **61/135（45.2%）** 拿到非零信号，**74/135（54.8%）** 在当前损失下学不到。
 
 **边界（与读数一起引用）**：① 1 步**只用于验证保存/恢复**，不是训练轮；主主体 0 步；② “每个参数都有梯度”是读数前冻结的判据，本轮**不改判据**、如实判未过；③ 偏差归因是事后诊断，另立 R38 冻结测；④ 34.7 MB 含 Adam 动量，文件跑完即删，只留摘要；⑤ 只测默认配置、单句、无源视图；⑥ 桥**仍不得**接进默认图。
 
-**下一步**：R38“梯度覆盖归因”闸——零训练三臂：A 现状（无 `records`、单句）；B 带 `records` 源视图（激活拷贝支路）；C 两句话链式累加（让写入影响下一步）。逐参数报“非零／恰零／无”，判“哪些负责机制在当前损失下可学、哪些必须换损失或换步数才可学”。判据读数前冻结。
+**下一步（已于 §21.47 执行）**：R38“梯度覆盖归因”闸——零训练三臂：A 现状（无 `records`、单句）；B 带 `records` 源视图（激活拷贝支路）；C 两句话链式累加（让写入影响下一步）。逐参数报“非零／恰零／无”，判“哪些负责机制在当前损失下可学、哪些必须换损失或换步数才可学”。判据读数前冻结。
+
+## 21.47 R38 梯度覆盖归因：B 臂救回表达支路，写入头因“默认禁止写”仍全暗（2026-11-09）
+
+**一句话**：同一损失下三臂逐参数分类。**A** 精确复现 R37（**61** 非零／**34** 恰零／**40** 无，40 个名字逐一相同）；**B** 带一条源记录 → **86／21／28**，**12** 个表达拷贝参数全部回图，另有 12 个离开“无”和 13 个由零转非零；**C** 两句链式 → 仍是 **61／34／40**，**16** 个写入头全暗。总判 **`gradient_coverage_unexpected`**（C 臂未过冻结预期）。事后静态定位：`step(allowed=None)` 默认给**全 False** 写权限，`edit_fast` 原样返回 `memory`，写入头的输出算出来就被丢掉——所以缺的不是步数，是**写权限默认关闭**。
+
+**A 读数**
+
+| 臂 | 非零／恰零／无 | 损失 | 关键变化 |
+|---|---|---|---|
+| A 现状（无源记录、单句） | **61／34／40** | 5.526201 | 40 个无梯度名字与 R37 逐项一致 |
+| B 一条源记录、单句 | **86／21／28** | 3.482698 | 12 个 `expression` 拷贝参数全部离开“无”；另 13 个由恰零转非零 |
+| C 两句链式、无记录 | **61／34／40** | 11.129034 | 16 个 `write_heads` **仍全“无”** |
+| 预测头 | 三臂全“无” | — | 12 个 `world` 参数不在下一字节损失里 |
+| 分类完整 | 135／135／135 | — | 每臂三类计数之和均为 135 |
+| 主主体 | 参数摘要不动 | — | 九项全等；`sc_bridge` 前后 `None` |
+
+**B 复跑锚**：R37 → `842ecb094`（blob `3f9c482e…`、runner sha `9b7b26b0…`、core sha `6c0c53a2…`），报告 sha 与 blob sha 一致；**R38 未改模块，R37 在当前 HEAD 仍可复跑**。
+
+**判定与成本**：`coverage_135_per_arm`／`arm_a_matches_r37`／`records_revive_expression`／`world_heads_dark`／`closed_state_equal`／`main_subject_untouched`／`bridge_default_none`／`anchors_complete`；**但 `write_heads_stay_dark`** ⇒ 总判 **`gradient_coverage_unexpected`**；成本 **3.297 CPU／3.782 wall**（估 40、上限 200、`threads=1`）。
+
+**事后定位（静态阅读，不改判据）**：`step` 的 `allowed` 参数默认构造为 `torch.zeros((groups, fast_heads), dtype=bool)`；`write_fast` 在 `allowed` 为假的分支里经 `edit_fast` **原样返回 memory**（第 488–490 行），所以写入头的前向结果从不进入输出，梯度自然为 `None`。`score_targets` 不暴露 `allowed`，因此默认评分路径**没有写权限**。这解释了 C 臂失败：不是“两步不够”，而是“写入被默认关闭”。
+
+**边界（与读数一起引用）**：① 未改任何模块，0 优化器步；② 三臂各一次前向＋反向；③ B 臂的源记录是构造的，只用于激活拷贝支路，不构成能力声明；④ C 臂未过预期，判据未事后放宽；⑤ 写权限归因是静态阅读，另立 R39 冻结测；⑥ 桥**仍不得**接进默认图。
+
+**下一步**：R39“记忆写权限与因果消融”闸——四臂零训练：M0 默认（全 False）；M1 `allowed` 全 True；M2 M1 之后再走一步时把 `fast` 置零（因果消融）；M3 扰动 `world` 权重后看 `probabilities` 是否变化。判 M1 写入头是否拿到梯度、M2 记忆是否有因果作用、M3 预测头是否纯输出。判据读数前冻结。
 
 
 
