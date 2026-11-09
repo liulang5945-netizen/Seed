@@ -1848,3 +1848,21 @@ owner 2026-11-07 裁定：多模态是整个算法内部系统的一部分，不
 | S-55 | “`bridge_insufficient` 说明表示里没有内容” | R-D24-210／211 | 该说法**不成立**：内容在 R1／R2 里线性可读；判负的对象是**整句余弦读法**，不是表示中没有内容。但“内容存在”仅限同词法家族。 |
 | S-56 | “R5 证明跨说法可读／表示可以接训练图” | R-D24-209 | **不成立**：480 句全为 `describe` 形态，句面自带物件／地点描述词；跨说法迁移未测（R6 才测），也不构成接训练图的依据。 |
 
+---
+
+## 52. R6／R6b 跨说法闭式线性读出（2026-11-09；**0 梯度步／0 优化器步／0 Adam／0 新参数**）
+
+| 编号 | 断言 | 证据 |
+|---|---|---|
+| R-D25-214 | 80 句＝20 goals × 4 说法（describe＋needs/hope/state）；按 goal 分组 5 折，goal 顺序由 `sha256(goal)` 发牌、每折 **4 goals＝16 句**；λ∈{0.001,0.1,10,1000}；R1／R2／R3 同一闭式解 | [R6b 报告](../../reports/taiji_cross_family_readout_joint_20261109.json) `counts`／`definition`；[manifest](../manifests/taiji_cross_family_readout_joint_20261109.json) |
+| R-D25-215 | R6 的 joint 定义（20 类 one-hot）在按 goal 分组 CV 下**构造性恒 0**：测试折的 4 个联合类在训练折无样本，20 列权重全零、argmax 永不选中；三臂四档 λ **全 0.0**，其总判定 `cross_family_readout_fails` **不可解释** | [R6 报告](../../reports/taiji_cross_family_readout_20261109.json) `arms`；D-20261109-08 |
+| R-D25-216 | R6b（joint＝同一行 object ∧ place 都对）：λ=0.001 上 R1／R2／R3 均 **object 1.0、place 1.0、joint 1.0**；λ=0.1 时 R2 **1.0／0.975／0.975**、R3 **1.0／1.0／1.0**；λ=10 为 0.4875／0.2375／0.125（R1）、0.375／0.125／0.0125（R2）、0.9125／0.525／0.475（R3）；λ=1000 全塌到 ≤0.0375 | 同上 `arms.*.per_lambda` |
+| R-D25-217 | 总判定 **`cross_family_readout_transfers`**（三臂全 `readable`）；chance 为 object 0.25／place 0.20／joint 0.05 | 同上 `verdict`／`criteria` |
+| R-D25-218 | 成本：R6 **15.609 CPU／19.18 wall**（首跑 17.578／37.03，留档 `_run1.json`）、R6b **15.469 CPU／18.64 wall**（首跑 15.609／19.16，留档 `_run1.json`），均低于上限 200；`threads=1`。两个 runner 在提交前因本地 B/SIM 闸做了只改语法的等价修正（`zip(strict=True)`、Yoda 条件、未用循环变量），重冻重跑后 `arms`／`verdict`／`counts` 与首跑逐项相同 | 两份报告的 `cost`；两份 `_run1` 报告 |
+
+**52.1 superseded／范围登记**
+
+| 编号 | 被取代／被限定的对象 | 取代者 | 处置与理由 |
+|---|---|---|---|
+| S-57 | “R6 判 `cross_family_readout_fails`，说明换读法也救不了跨说法” | R-D25-215／216 | **不成立**：该判定由构造性零驱动。R6b 在同一夹具、同一折、同一阈值下三臂全 `readable`，joint **1.0**。但 1.0 的机制是每个槽位固定串的词汇查表＋跨组合外推，**不是**语义桥接；要区分二者必须做 R7 零样本跨说法读出（训练只给 describe，测试只给名称串）。 |
+

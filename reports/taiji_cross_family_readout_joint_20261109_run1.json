@@ -1,0 +1,207 @@
+{
+ "schema": "taiji-cross-family-readout-joint-v1",
+ "date": "2026-11-09",
+ "runner_sha256": "05547a3e9e62a1f010a7ed1fc17e7af2dff87ca75d243e29a45548985d8ee4f6",
+ "manifest_sha256": "cfdc3841f3deb9184de997dc179f196e4ae344158e0a25bfa57edd5eb6afe7f0",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "8fa3aafde38b1cbad3b021dc271abd316c0a265c68870403dd4ca7b0b53e0c6a"
+ },
+ "counts": {
+  "sentences": 80,
+  "goals": 20,
+  "variants_per_goal": [
+   4
+  ],
+  "folds": 5,
+  "fold_assignment": {
+   "绿色瓶子|窗台": 0,
+   "红色印章|左盒": 1,
+   "蓝色杯子|窗台": 2,
+   "黄色球|左盒": 3,
+   "蓝色杯子|左盒": 4,
+   "红色印章|木桌": 0,
+   "绿色瓶子|地毯": 1,
+   "绿色瓶子|木桌": 2,
+   "黄色球|书架": 3,
+   "黄色球|地毯": 4,
+   "红色印章|窗台": 0,
+   "蓝色杯子|地毯": 1,
+   "蓝色杯子|木桌": 2,
+   "蓝色杯子|书架": 3,
+   "黄色球|木桌": 4,
+   "红色印章|书架": 0,
+   "黄色球|窗台": 1,
+   "红色印章|地毯": 2,
+   "绿色瓶子|左盒": 3,
+   "绿色瓶子|书架": 4
+  }
+ },
+ "definition": {
+  "inherits": "every field of base.DEFINITION (fixture, labels, readout, folds, arms, chance).",
+  "joint": "joint_accuracy = fraction of held-out rows where the arg-max object label and the arg-max place label are both correct on that row.  This replaces the invalid 20-class column of R6, whose held-out classes have no training rows.",
+  "why": "R6's joint column is 0.0 for every arm and every lambda by construction, not by measurement; the overall verdict of R6 is therefore not interpretable."
+ },
+ "criteria": {
+  "per_arm": "readable iff joint >= 0.75 and object >= 0.85 and place >= 0.80; not_readable iff joint <= chance + 0.10; otherwise inconclusive.  Thresholds are fixed here, before the first reading, and are not revisited afterwards.",
+  "overall": "cross_family_readout_transfers if any arm is readable; cross_family_readout_fails if every available arm is not_readable; otherwise inconclusive.",
+  "lambda": "the reported reading is the best joint accuracy over the four lambdas.",
+  "no_fit": "0 training, 0 optimizer steps, 0 Adam, 0 confirm, 0 new parameters.",
+  "joint": "identical thresholds to R6; only the column definition changed, before this run."
+ },
+ "model": {
+  "model_id": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+  "status": "available",
+  "payload": {
+   "format": "taiji-document-embedder-v1",
+   "version": 1,
+   "model_id": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+   "revision": "e8f8c211226b894fcb81acc59f3b34ba3efd5f42",
+   "config_digest": "584d721354a4443103960a80b1a3a61226765bc470bd4077d96e37beb85b433f",
+   "dimension": 384,
+   "max_length": 256,
+   "batch_size": 32,
+   "pooling": "mean",
+   "normalized": true
+  }
+ },
+ "arms": {
+  "R1": {
+   "per_lambda": [
+    {
+     "lambda": 0.001,
+     "object_accuracy": 1.0,
+     "place_accuracy": 1.0,
+     "joint_accuracy": 1.0
+    },
+    {
+     "lambda": 0.1,
+     "object_accuracy": 1.0,
+     "place_accuracy": 1.0,
+     "joint_accuracy": 1.0
+    },
+    {
+     "lambda": 10.0,
+     "object_accuracy": 0.4875,
+     "place_accuracy": 0.2375,
+     "joint_accuracy": 0.125
+    },
+    {
+     "lambda": 1000.0,
+     "object_accuracy": 0.175,
+     "place_accuracy": 0.0,
+     "joint_accuracy": 0.0
+    }
+   ],
+   "best": {
+    "lambda": 0.001,
+    "object_accuracy": 1.0,
+    "place_accuracy": 1.0,
+    "joint_accuracy": 1.0
+   },
+   "verdict": "readable",
+   "fold_sizes": [
+    16,
+    16,
+    16,
+    16,
+    16
+   ],
+   "dimensions": 128
+  },
+  "R2": {
+   "per_lambda": [
+    {
+     "lambda": 0.001,
+     "object_accuracy": 1.0,
+     "place_accuracy": 1.0,
+     "joint_accuracy": 1.0
+    },
+    {
+     "lambda": 0.1,
+     "object_accuracy": 1.0,
+     "place_accuracy": 0.975,
+     "joint_accuracy": 0.975
+    },
+    {
+     "lambda": 10.0,
+     "object_accuracy": 0.375,
+     "place_accuracy": 0.125,
+     "joint_accuracy": 0.0125
+    },
+    {
+     "lambda": 1000.0,
+     "object_accuracy": 0.15,
+     "place_accuracy": 0.0,
+     "joint_accuracy": 0.0
+    }
+   ],
+   "best": {
+    "lambda": 0.001,
+    "object_accuracy": 1.0,
+    "place_accuracy": 1.0,
+    "joint_accuracy": 1.0
+   },
+   "verdict": "readable",
+   "fold_sizes": [
+    16,
+    16,
+    16,
+    16,
+    16
+   ],
+   "dimensions": 128
+  },
+  "R3": {
+   "per_lambda": [
+    {
+     "lambda": 0.001,
+     "object_accuracy": 1.0,
+     "place_accuracy": 1.0,
+     "joint_accuracy": 1.0
+    },
+    {
+     "lambda": 0.1,
+     "object_accuracy": 1.0,
+     "place_accuracy": 1.0,
+     "joint_accuracy": 1.0
+    },
+    {
+     "lambda": 10.0,
+     "object_accuracy": 0.9125,
+     "place_accuracy": 0.525,
+     "joint_accuracy": 0.475
+    },
+    {
+     "lambda": 1000.0,
+     "object_accuracy": 0.7125,
+     "place_accuracy": 0.0875,
+     "joint_accuracy": 0.0375
+    }
+   ],
+   "best": {
+    "lambda": 0.001,
+    "object_accuracy": 1.0,
+    "place_accuracy": 1.0,
+    "joint_accuracy": 1.0
+   },
+   "verdict": "readable",
+   "fold_sizes": [
+    16,
+    16,
+    16,
+    16,
+    16
+   ],
+   "dimensions": 384
+  }
+ },
+ "verdict": "cross_family_readout_transfers",
+ "cost": {
+  "cpu_seconds": 15.609,
+  "wall_seconds": 19.16,
+  "cpu_cap": 200.0,
+  "threads": 1
+ }
+}

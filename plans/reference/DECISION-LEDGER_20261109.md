@@ -16,6 +16,7 @@
 | D-20261109-05 | 外部依赖（R3 由“仅缓存”放宽为“允许下载”） | 为回答“夹具是否存在可分上界”，允许下载冻结句向量权重并记录 revision／config digest，R3 只作上界、不进总判定 | c23b1d9ca |
 | D-20261109-06 | 读数后 runner 增补（R4a 输出逐对明细） | R4a 首跑缺逐对距离，无法做家族拆分；给 runner 加 `pairs` 输出后重冻重跑，判据/阈值/夹具未动，八项读数逐项相同 | 90426725e |
 | D-20261109-07 | 预算超限＋读数后 runner 修正（CPU 线程与 wall 计时） | R5 首跑 845.0 CPU、次跑 702.0 CPU（上限 200）；归因为 BLAS 线程自旋＋wall 计时公式写错，限 1 线程后重冻重跑 0.516 CPU，判定与全部读数逐项相同 | 0061918d8 |
+| D-20261109-08 | 判据改写（读数后发现 joint 列结构性无效，冻结新口径重跑） | R6 的 joint 用 20 类 one-hot，而按 goal 分组交叉验证时测试折的联合类在训练中无样本，20 个权重恒零、argmax 永不选中，joint 必然 0.0；改为“同一行 object ∧ place 都对”后 R6b 三臂 joint 1.0、判 `cross_family_readout_transfers` | 待回填 |
 
 ---
 
@@ -269,4 +270,40 @@ reading["pairs"] = {
 **7. 授权来源**：用户 2026-11-09 授权（放权，须留档；“预算要超”属三类之一）。
 
 **8. 对已有结论的影响**：**无读数作废**。三次运行的 `arms`、`verdict`、`counts` 逐项相同：R1／R2 在 λ=0.001／0.1／10 上 **object 1.0、place 1.0、joint 1.0**，λ=1000 时 place 降到 **0.627083**（R1）／**0.552083**（R2），总判定 **`content_present_readout_wrong`**。新增的只是资源读数（最终 **0.516 CPU／0.54 wall／threads=1**）与可用的 wall 计时。
+
+---
+
+## D-20261109-08 R6 的 joint 列结构性无效：冻结新口径重跑（R6b）
+
+**1. 编号／时间／类型**：D-20261109-08｜2026-11-09｜**判据改写类**——读数之后发现预注册的 `joint` 分子本身不可测，冻结新口径并重跑；阈值一字未改。
+
+**2. 动了什么（逐字）**：
+
+- R6 manifest（`plans/manifests/taiji_cross_family_readout_20261109.json`）原判据（逐字）：`readable iff joint >= 0.75 and object >= 0.85 and place >= 0.80; not_readable iff joint <= chance + 0.10; otherwise inconclusive.`
+- R6 的 `definition.labels`（逐字）：`object (4 classes), place (5 classes), joint (20 classes), one-hot targets.`
+- 实际读数（逐字，[R6 报告](../../reports/taiji_cross_family_readout_20261109.json)）：R1／R2／R3 四档 λ 的 `joint_accuracy` **全部为 0.0**，而同一批行的 `object_accuracy` 为 **1.0**、`place_accuracy` 为 **1.0**（λ=0.001）。R6 总判定 `cross_family_readout_fails`。
+- 修正（R6b，新冻结 `plans/manifests/taiji_cross_family_readout_joint_20261109.json`）：`joint_accuracy = fraction of held-out rows where the arg-max object label and the arg-max place label are both correct on that row.`
+- **阈值、折划分（sha256 发牌的 5 折、按 goal 分组）、λ 网格、80 句夹具、三臂定义全部不变。**
+
+**3. 触发原因**：R6 的 joint 是 20 类 one-hot 回归，而交叉验证**按 goal 分组**——测试折的 4 个 goal 在训练折中完全缺席，因此对应那 4 个联合类的 20 个权重列没有任何训练行（恒为 0），argmax 永远不可能选中它们。**joint=0.0 是构造决定的，不是测出来的**；以它驱动的总判定 `cross_family_readout_fails` 不可解释，不能作为对表示或读法的读数。发现时 R6 报告已落盘，故不覆盖、不删除，改为并列冻结 R6b 并在两份文档中互相指向。
+
+**4. 代价**：
+
+- 失去的保证：R6 的预注册判据在读数后被证明不可用，这是本轮第二次“读数后改口径”（第一次为 D-06 增补输出）。区别是：D-06 只增字段、读数不变；本笔是**判据的分子本身重定义**。
+- 变化的分母／分类：`joint` 的分子由“20 类 argmax 命中”改为“同一行 object ∧ place 同时命中”；分母仍 80。object／place 两列的读数**一字未变**（R6 与 R6b 都是 1.0／1.0／0.975）。
+- 旧结论可比性：R3／R4a／R5 全部可比（夹具、折、λ、阈值、表示均未动）。
+- 预算：R6 **17.578 CPU／37.03 wall**（首跑，留档 `reports/taiji_cross_family_readout_20261109_run1.json`）、R6b **15.609 CPU／19.16 wall**（首跑，留档 `..._joint_20261109_run1.json`），各自低于 200。提交前两个 runner 因本地 B/SIM 闸做了**只改语法的等价修正**（`zip(strict=True)`、Yoda 条件、未用循环变量），重冻重跑后成本为 **15.609 CPU／19.18 wall**（R6）与 **15.469 CPU／18.64 wall**（R6b），`arms`／`verdict`／`counts` 与首跑逐项相同。
+
+**5. 替代方案（及否掉理由）**：
+
+- 保留 R6 判定、写一句“joint 无意义”——**否决**：总判定会带着一个构造性零继续在计划里流转，正是本轮要清理的“旧机制残留”。
+- 把折改成按 object 或随机分组，让联合类在训练中出现——**否决**：那会泄漏“同一 goal 的四种说法分处训练与测试”，直接摧毁本探针要测的跨说法迁移。
+- 用 20 类但把未见类的分数按 object+place 组合重建——**否决**：等价于本笔的逐行合取，却把逻辑藏进代码、不可复核。
+- 直接改 R6 runner 重跑覆盖报告——**否决**：R6 的冻结报告必须保留，否则“读数前冻结”的纪律无从检验。
+
+**6. 撤回路径**：删除 `plans/manifests/taiji_cross_family_readout_joint_20261109.json`、`reports/taiji_cross_family_readout_joint_20261109.json` 与 R6b runner，把 R6 的 `cross_family_readout_fails` 恢复为唯一判定即可；无夹具／语料／阈值改动。
+
+**7. 授权来源**：用户 2026-11-09 授权（放权，须留档；“改写已冻结判据”属三类之一）。
+
+**8. 对已有结论的影响**：R6 的 `cross_family_readout_fails` **作废**（构造性零，不是读数）。R6b 判定 **`cross_family_readout_transfers`**：R1／R2／R3 三臂在 λ=0.001 上 **object 1.0、place 1.0、joint 1.0**，λ=0.1 时 R2 **0.975**、R3 仍 **1.0**，λ=10 降到 0.125／0.0125／0.475，λ=1000 全部塌到 ≤0.0375。**限定**：object／place 在夹具中各只有一个名称串与一个描述串，同物件的其它 goal 在训练折里出现过，所以 1.0 是“固定槽位串的词汇查表 + 跨组合外推”，**不**是“理解改写语义”；R1（纯字节直方图）与 R3（句向量）同为 1.0，正说明此处不需要句向量。§21.4／§21.11／§21.12 的判负**不撤销**（那是整句余弦读法），R5 的“同族可读”**不扩大**为“跨说法语义可读”。
 
