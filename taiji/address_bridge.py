@@ -451,22 +451,31 @@ class BridgeTable:
             "candidates": 1,
         }
 
-    def read_sentence(self, query: str | bytes) -> dict[str, Any]:
-        """Two passes over one sentence: answer, mask the answered span, answer again.
+    def read_sentence(self, query: str | bytes, max_passes: int = 2) -> dict[str, Any]:
+        """Repeated passes over one sentence: answer, mask that span, answer again.
 
         Pass rule (fixed, not tuned): the key that starts earliest answers; a
         same-start collision between two records abstains.  Masking rule (fixed,
         not tuned): the **first** occurrence of that record's whole character
         sequence is replaced by ``MASK_CHARACTER`` repeated to the same width.
         The width is preserved, so positions after the span do not shift and the
-        second pass sees the same sentence minus exactly the answered wording.
+        next pass sees the same sentence minus exactly the answered wording.
 
-        Exit names: ``answered_pair`` (two distinct entities), ``answered_single``
-        (one entity; the second pass exited ``no_match``), ``no_match`` (first
-        pass found nothing), ``ambiguous_same_start`` (two records claim the same
-        earliest position -- abstain, never pick one), ``same_address_repeated``
-        (the same key occurs twice, so it is one entity, not two), ``empty_key``.
+        ``max_passes`` bounds the loop (default 2 = the R15 reading).  The loop
+        stops on the first non-answer, on a repeated address, or when the bound
+        is reached; ``stopped_at_pass`` and ``final_exit`` say which of the three
+        happened, so "answered fewer than expected" is never reported without
+        the layer it stopped at.
+
+        Exit names: ``answered_pair`` (two distinct entities), ``answered_triple``
+        (three), ``answered_multi`` (four or more), ``answered_single`` (one
+        entity), ``no_match`` (nothing found), ``ambiguous_same_start`` (two
+        records claim the same earliest position -- abstain, never pick one),
+        ``same_address_repeated`` (the same key occurs twice, so it is one
+        entity, not two), ``empty_key``.
         """
+        if max_passes < 1:
+            raise ValueError("max_passes must be at least 1")
         characters = _decoded(query)
         if not characters:
             return {
@@ -476,12 +485,15 @@ class BridgeTable:
                 "distinct_addresses": 0,
                 "query_chars": 0,
                 "mask": None,
+                "masks": [],
+                "stopped_at_pass": 0,
+                "final_exit": "empty_key",
             }
         passes: list[dict[str, Any]] = []
         answers: list[dict[str, Any]] = []
+        masks: list[dict[str, Any]] = []
         remaining = tuple(characters)
-        mask: dict[str, Any] | None = None
-        for pass_index in (1, 2):
+        for pass_index in range(1, max_passes + 1):
             reason = "not_contained" if pass_index == 1 else "masked_no_match"
             result = self._earliest_contained(remaining, reason)
             passes.append({"pass": pass_index, **result})
@@ -489,6 +501,7 @@ class BridgeTable:
                 break
             if any(row["address"] == result["address"] for row in answers):
                 passes[-1]["decision"] = "same_address_repeated"
+                passes[-1]["reason"] = "same_key_answered_twice"
                 break
             start = result["span_start"]
             width = result["key_chars"]
@@ -502,21 +515,27 @@ class BridgeTable:
                 }
             )
             masked = remaining[:start] + (MASK_CHARACTER,) * width + remaining[start + width :]
-            if pass_index == 1:
-                mask = {
+            masks.append(
+                {
                     "character": "\\u0000",
                     "rule": "first occurrence of the answered key, same width, positions preserved",
-                    "pass": 1,
+                    "pass": pass_index,
                     "span_start": start,
                     "span_end": result["span_end"],
                     "masked_query": "".join(masked),
                 }
+            )
             remaining = masked
-        if len(answers) == 2:
+        count = len(answers)
+        if count == 2:
             decision = "answered_pair"
-        elif len(answers) == 1 and passes and passes[-1]["decision"] == "same_address_repeated":
+        elif count == 3:
+            decision = "answered_triple"
+        elif count > 3:
+            decision = "answered_multi"
+        elif count == 1 and passes and passes[-1]["decision"] == "same_address_repeated":
             decision = "answered_single_duplicate_key"
-        elif len(answers) == 1:
+        elif count == 1:
             decision = "answered_single"
         else:
             decision = passes[0]["decision"] if passes else "empty_key"
@@ -526,7 +545,10 @@ class BridgeTable:
             "passes": passes,
             "distinct_addresses": len({row["address"] for row in answers}),
             "query_chars": len(characters),
-            "mask": mask,
+            "mask": masks[0] if masks else None,
+            "masks": masks,
+            "stopped_at_pass": len(passes),
+            "final_exit": passes[-1]["decision"] if passes else "empty_key",
         }
 
     def read_tokens(self, tokens: frozenset[str]) -> dict[str, Any]:

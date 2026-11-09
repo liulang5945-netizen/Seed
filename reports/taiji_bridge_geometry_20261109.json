@@ -1,0 +1,907 @@
+{
+ "schema": "taiji-bridge-geometry-r16-report-v1",
+ "runner_sha256": "5076807011a0e717e9d609fae0f792bfba2ccfc0bec9d30b381286e93f663261",
+ "manifest_sha256": "595654853c82df9955ed7f3344b22c11bf218b3324d89b5ca6c44501a7f0ae87",
+ "bridge_sha256": "e680d69d6ae8b05b3b0e6d9d3d22e29e1d38d48d067c1626ce54264196fb2d5b",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "8fa3aafde38b1cbad3b021dc271abd316c0a265c68870403dd4ca7b0b53e0c6a"
+ },
+ "definition": {
+  "overlap": "four frozen cases in which two written wordings touch: containment, one shared character, abutting spans, and partial overlap without containment; each case declares answers, decision, stopped_at_pass and final exit before the reading",
+  "swallowed": "a written key is reported as swallowed when its first occurrence intersects a span that a previous pass masked; that is the direct evidence that masking deleted characters it needed",
+  "three_entities": "one sentence naming three entities: the disjoint case must answer 3 and stop at pass 4 by no_match (not by the pass bound); the straddling case must answer 2 and stop at pass 3",
+  "stop_reporting": "every case reports stopped_at_pass and final_exit, so a shortfall is never reported without the layer it stopped at",
+  "regression": "the 20 describe sentences must still reach 40/40 with the default two passes",
+  "zeros": "on the 18-key table, 12 unknown candidates and 18 byte fragments must answer 0",
+  "rerun_anchors": "R11-R15 each carry the commit at which their own runner bytes were last runnable; old reports are reproducible by checking out that commit, not orphans"
+ },
+ "criteria": {
+  "overlap": "every overlap case matches its frozen answers/decision/stopped_at_pass/final_exit exactly, wrong pointers 0, and the swallowed set equals the frozen one",
+  "three_entities": "three_disjoint answers 3 with pass 4 exiting no_match; middle_wording_swallowed answers 2 and stops at pass 3 with the swallowed key named; three_records_same_start abstains at pass 1; same_address_three_times answers 1 entity",
+  "regression": "20 describe sentences still reach 40/40, wrong 0, all answered_pair",
+  "zeros": "12 unknown candidates answer 0 and 18 byte fragments answer 0",
+  "closed_state": "the nine closed-state readings stay equal before and after",
+  "rerun": "every row names a commit and a blob; a mismatch between report hash and blob hash is declared in the row rather than hidden",
+  "reporting": "segments are reported separately; a clean overlap segment does not carry the three-entity segment"
+ },
+ "overlap": {
+  "rows": [
+   {
+    "name": "nested_long_first",
+    "sentence": "甲乙丙丁",
+    "max_passes": 3,
+    "expected": {
+     "answers": 1,
+     "values": [
+      [
+       "object",
+       "蓝色杯子"
+      ]
+     ],
+     "decision": "answered_single",
+     "stopped_at_pass": 2,
+     "final_exit": "no_match",
+     "final_reason": "masked_no_match",
+     "swallowed": [
+      "乙丙"
+     ]
+    },
+    "actual": {
+     "answers": 1,
+     "values": [
+      [
+       "object",
+       "蓝色杯子"
+      ]
+     ],
+     "decision": "answered_single",
+     "stopped_at_pass": 2,
+     "final_exit": "no_match",
+     "final_reason": "masked_no_match",
+     "swallowed": [
+      "乙丙"
+     ]
+    },
+    "masks": [
+     {
+      "pass": 1,
+      "span": [
+       0,
+       3
+      ],
+      "masked_query": "\u0000\u0000\u0000丁"
+     }
+    ],
+    "passes": [
+     {
+      "pass": 1,
+      "decision": "matched",
+      "reason": "single_earliest_containment",
+      "span_start": 0,
+      "span_end": 3,
+      "candidates": 1
+     },
+     {
+      "pass": 2,
+      "decision": "no_match",
+      "reason": "masked_no_match",
+      "span_start": null,
+      "span_end": null,
+      "candidates": 0
+     }
+    ],
+    "ok": true
+   },
+   {
+    "name": "share_one_character",
+    "sentence": "甲乙丙",
+    "max_passes": 3,
+    "expected": {
+     "answers": 1,
+     "values": [
+      [
+       "object",
+       "蓝色杯子"
+      ]
+     ],
+     "decision": "answered_single",
+     "stopped_at_pass": 2,
+     "final_exit": "no_match",
+     "final_reason": "masked_no_match",
+     "swallowed": [
+      "乙丙"
+     ]
+    },
+    "actual": {
+     "answers": 1,
+     "values": [
+      [
+       "object",
+       "蓝色杯子"
+      ]
+     ],
+     "decision": "answered_single",
+     "stopped_at_pass": 2,
+     "final_exit": "no_match",
+     "final_reason": "masked_no_match",
+     "swallowed": [
+      "乙丙"
+     ]
+    },
+    "masks": [
+     {
+      "pass": 1,
+      "span": [
+       0,
+       2
+      ],
+      "masked_query": "\u0000\u0000丙"
+     }
+    ],
+    "passes": [
+     {
+      "pass": 1,
+      "decision": "matched",
+      "reason": "single_earliest_containment",
+      "span_start": 0,
+      "span_end": 2,
+      "candidates": 1
+     },
+     {
+      "pass": 2,
+      "decision": "no_match",
+      "reason": "masked_no_match",
+      "span_start": null,
+      "span_end": null,
+      "candidates": 0
+     }
+    ],
+    "ok": true
+   },
+   {
+    "name": "abutting_no_overlap",
+    "sentence": "甲乙丙丁",
+    "max_passes": 3,
+    "expected": {
+     "answers": 2,
+     "values": [
+      [
+       "object",
+       "蓝色杯子"
+      ],
+      [
+       "place",
+       "木桌"
+      ]
+     ],
+     "decision": "answered_pair",
+     "stopped_at_pass": 3,
+     "final_exit": "no_match",
+     "final_reason": "masked_no_match",
+     "swallowed": []
+    },
+    "actual": {
+     "answers": 2,
+     "values": [
+      [
+       "object",
+       "蓝色杯子"
+      ],
+      [
+       "place",
+       "木桌"
+      ]
+     ],
+     "decision": "answered_pair",
+     "stopped_at_pass": 3,
+     "final_exit": "no_match",
+     "final_reason": "masked_no_match",
+     "swallowed": []
+    },
+    "masks": [
+     {
+      "pass": 1,
+      "span": [
+       0,
+       2
+      ],
+      "masked_query": "\u0000\u0000丙丁"
+     },
+     {
+      "pass": 2,
+      "span": [
+       2,
+       4
+      ],
+      "masked_query": "\u0000\u0000\u0000\u0000"
+     }
+    ],
+    "passes": [
+     {
+      "pass": 1,
+      "decision": "matched",
+      "reason": "single_earliest_containment",
+      "span_start": 0,
+      "span_end": 2,
+      "candidates": 1
+     },
+     {
+      "pass": 2,
+      "decision": "matched",
+      "reason": "single_earliest_containment",
+      "span_start": 2,
+      "span_end": 4,
+      "candidates": 1
+     },
+     {
+      "pass": 3,
+      "decision": "no_match",
+      "reason": "masked_no_match",
+      "span_start": null,
+      "span_end": null,
+      "candidates": 0
+     }
+    ],
+    "ok": true
+   },
+   {
+    "name": "partial_overlap_no_containment",
+    "sentence": "甲乙丙丁",
+    "max_passes": 3,
+    "expected": {
+     "answers": 1,
+     "values": [
+      [
+       "object",
+       "蓝色杯子"
+      ]
+     ],
+     "decision": "answered_single",
+     "stopped_at_pass": 2,
+     "final_exit": "no_match",
+     "final_reason": "masked_no_match",
+     "swallowed": [
+      "乙丙丁"
+     ]
+    },
+    "actual": {
+     "answers": 1,
+     "values": [
+      [
+       "object",
+       "蓝色杯子"
+      ]
+     ],
+     "decision": "answered_single",
+     "stopped_at_pass": 2,
+     "final_exit": "no_match",
+     "final_reason": "masked_no_match",
+     "swallowed": [
+      "乙丙丁"
+     ]
+    },
+    "masks": [
+     {
+      "pass": 1,
+      "span": [
+       0,
+       3
+      ],
+      "masked_query": "\u0000\u0000\u0000丁"
+     }
+    ],
+    "passes": [
+     {
+      "pass": 1,
+      "decision": "matched",
+      "reason": "single_earliest_containment",
+      "span_start": 0,
+      "span_end": 3,
+      "candidates": 1
+     },
+     {
+      "pass": 2,
+      "decision": "no_match",
+      "reason": "masked_no_match",
+      "span_start": null,
+      "span_end": null,
+      "candidates": 0
+     }
+    ],
+    "ok": true
+   }
+  ],
+  "cases": 4,
+  "declared_matches": 4,
+  "wrong_pointers": 0,
+  "ok": true
+ },
+ "three_entities": {
+  "rows": [
+   {
+    "name": "three_disjoint",
+    "sentence": "圆口的器皿放在窗前的台板上面，盖章用的印章也在。",
+    "max_passes": 4,
+    "expected": {
+     "answers": 3,
+     "values": [
+      [
+       "object",
+       "蓝色杯子"
+      ],
+      [
+       "place",
+       "窗台"
+      ],
+      [
+       "object",
+       "红色印章"
+      ]
+     ],
+     "decision": "answered_triple",
+     "stopped_at_pass": 4,
+     "final_exit": "no_match",
+     "final_reason": "masked_no_match",
+     "swallowed": []
+    },
+    "actual": {
+     "answers": 3,
+     "values": [
+      [
+       "object",
+       "蓝色杯子"
+      ],
+      [
+       "place",
+       "窗台"
+      ],
+      [
+       "object",
+       "红色印章"
+      ]
+     ],
+     "decision": "answered_triple",
+     "stopped_at_pass": 4,
+     "final_exit": "no_match",
+     "final_reason": "masked_no_match",
+     "swallowed": []
+    },
+    "masks": [
+     {
+      "pass": 1,
+      "span": [
+       0,
+       5
+      ],
+      "masked_query": "\u0000\u0000\u0000\u0000\u0000放在窗前的台板上面，盖章用的印章也在。"
+     },
+     {
+      "pass": 2,
+      "span": [
+       7,
+       12
+      ],
+      "masked_query": "\u0000\u0000\u0000\u0000\u0000放在\u0000\u0000\u0000\u0000\u0000上面，盖章用的印章也在。"
+     },
+     {
+      "pass": 3,
+      "span": [
+       15,
+       21
+      ],
+      "masked_query": "\u0000\u0000\u0000\u0000\u0000放在\u0000\u0000\u0000\u0000\u0000上面，\u0000\u0000\u0000\u0000\u0000\u0000也在。"
+     }
+    ],
+    "passes": [
+     {
+      "pass": 1,
+      "decision": "matched",
+      "reason": "single_earliest_containment",
+      "span_start": 0,
+      "span_end": 5,
+      "candidates": 1
+     },
+     {
+      "pass": 2,
+      "decision": "matched",
+      "reason": "single_earliest_containment",
+      "span_start": 7,
+      "span_end": 12,
+      "candidates": 1
+     },
+     {
+      "pass": 3,
+      "decision": "matched",
+      "reason": "single_earliest_containment",
+      "span_start": 15,
+      "span_end": 21,
+      "candidates": 1
+     },
+     {
+      "pass": 4,
+      "decision": "no_match",
+      "reason": "masked_no_match",
+      "span_start": null,
+      "span_end": null,
+      "candidates": 0
+     }
+    ],
+    "ok": true
+   },
+   {
+    "name": "middle_wording_swallowed",
+    "sentence": "甲乙丙丁戊",
+    "max_passes": 4,
+    "expected": {
+     "answers": 2,
+     "values": [
+      [
+       "object",
+       "蓝色杯子"
+      ],
+      [
+       "place",
+       "木桌"
+      ]
+     ],
+     "decision": "answered_pair",
+     "stopped_at_pass": 3,
+     "final_exit": "no_match",
+     "final_reason": "masked_no_match",
+     "swallowed": [
+      "乙丙丁"
+     ]
+    },
+    "actual": {
+     "answers": 2,
+     "values": [
+      [
+       "object",
+       "蓝色杯子"
+      ],
+      [
+       "place",
+       "木桌"
+      ]
+     ],
+     "decision": "answered_pair",
+     "stopped_at_pass": 3,
+     "final_exit": "no_match",
+     "final_reason": "masked_no_match",
+     "swallowed": [
+      "乙丙丁"
+     ]
+    },
+    "masks": [
+     {
+      "pass": 1,
+      "span": [
+       0,
+       3
+      ],
+      "masked_query": "\u0000\u0000\u0000丁戊"
+     },
+     {
+      "pass": 2,
+      "span": [
+       3,
+       5
+      ],
+      "masked_query": "\u0000\u0000\u0000\u0000\u0000"
+     }
+    ],
+    "passes": [
+     {
+      "pass": 1,
+      "decision": "matched",
+      "reason": "single_earliest_containment",
+      "span_start": 0,
+      "span_end": 3,
+      "candidates": 1
+     },
+     {
+      "pass": 2,
+      "decision": "matched",
+      "reason": "single_earliest_containment",
+      "span_start": 3,
+      "span_end": 5,
+      "candidates": 1
+     },
+     {
+      "pass": 3,
+      "decision": "no_match",
+      "reason": "masked_no_match",
+      "span_start": null,
+      "span_end": null,
+      "candidates": 0
+     }
+    ],
+    "ok": true
+   },
+   {
+    "name": "three_records_same_start",
+    "sentence": "甲乙丙丁",
+    "max_passes": 4,
+    "expected": {
+     "answers": 0,
+     "values": [],
+     "decision": "ambiguous_same_start",
+     "stopped_at_pass": 1,
+     "final_exit": "ambiguous_same_start",
+     "final_reason": "two_records_share_the_earliest_start",
+     "swallowed": []
+    },
+    "actual": {
+     "answers": 0,
+     "values": [],
+     "decision": "ambiguous_same_start",
+     "stopped_at_pass": 1,
+     "final_exit": "ambiguous_same_start",
+     "final_reason": "two_records_share_the_earliest_start",
+     "swallowed": []
+    },
+    "masks": [],
+    "passes": [
+     {
+      "pass": 1,
+      "decision": "ambiguous_same_start",
+      "reason": "two_records_share_the_earliest_start",
+      "span_start": null,
+      "span_end": null,
+      "candidates": 2
+     }
+    ],
+    "ok": true
+   },
+   {
+    "name": "same_address_three_times",
+    "sentence": "圆口的器皿和圆口的器皿和圆口的器皿都在。",
+    "max_passes": 4,
+    "expected": {
+     "answers": 1,
+     "values": [
+      [
+       "object",
+       "蓝色杯子"
+      ]
+     ],
+     "decision": "answered_single_duplicate_key",
+     "stopped_at_pass": 2,
+     "final_exit": "same_address_repeated",
+     "final_reason": "same_key_answered_twice",
+     "swallowed": []
+    },
+    "actual": {
+     "answers": 1,
+     "values": [
+      [
+       "object",
+       "蓝色杯子"
+      ]
+     ],
+     "decision": "answered_single_duplicate_key",
+     "stopped_at_pass": 2,
+     "final_exit": "same_address_repeated",
+     "final_reason": "same_key_answered_twice",
+     "swallowed": []
+    },
+    "masks": [
+     {
+      "pass": 1,
+      "span": [
+       0,
+       5
+      ],
+      "masked_query": "\u0000\u0000\u0000\u0000\u0000和圆口的器皿和圆口的器皿都在。"
+     }
+    ],
+    "passes": [
+     {
+      "pass": 1,
+      "decision": "matched",
+      "reason": "single_earliest_containment",
+      "span_start": 0,
+      "span_end": 5,
+      "candidates": 1
+     },
+     {
+      "pass": 2,
+      "decision": "same_address_repeated",
+      "reason": "same_key_answered_twice",
+      "span_start": 6,
+      "span_end": 11,
+      "candidates": 1
+     }
+    ],
+    "ok": true
+   }
+  ],
+  "cases": 4,
+  "declared_matches": 4,
+  "disjoint_three_answered": 3,
+  "disjoint_stop_pass": 4,
+  "straddling_answered": 2,
+  "straddling_stop_pass": 3,
+  "straddling_swallowed": [
+   "乙丙丁"
+  ],
+  "tie_exit": "ambiguous_same_start",
+  "repeated_entities": 1,
+  "ok": true
+ },
+ "regression": {
+  "entities": 40,
+  "hits": 40,
+  "wrong": 0,
+  "distribution": {
+   "answered_2": 20,
+   "answered_1": 0,
+   "wrong": 0,
+   "abstained": 0
+  },
+  "ok": true
+ },
+ "zeros": {
+  "unknown": {
+   "rows": [
+    {
+     "phrase": "黑色铁铃",
+     "decision": "no_match"
+    },
+    {
+     "phrase": "白色帆布",
+     "decision": "no_match"
+    },
+    {
+     "phrase": "长柄铜勺",
+     "decision": "no_match"
+    },
+    {
+     "phrase": "软木瓶塞",
+     "decision": "no_match"
+    },
+    {
+     "phrase": "蓝色毛巾",
+     "decision": "no_match"
+    },
+    {
+     "phrase": "银质圆镜",
+     "decision": "no_match"
+    },
+    {
+     "phrase": "棕色皮箱",
+     "decision": "no_match"
+    },
+    {
+     "phrase": "青色陶罐",
+     "decision": "no_match"
+    },
+    {
+     "phrase": "灰色石阶",
+     "decision": "no_match"
+    },
+    {
+     "phrase": "紫色绸带",
+     "decision": "no_match"
+    },
+    {
+     "phrase": "金色烛台",
+     "decision": "no_match"
+    },
+    {
+     "phrase": "深红木箱",
+     "decision": "no_match"
+    }
+   ],
+   "candidates": 12,
+   "answering": 0,
+   "zero_ok": true
+  },
+  "fragments": {
+   "rows": [
+    {
+     "phrase": "圆口的器皿",
+     "byte_offset": 1,
+     "decision": "empty_key"
+    },
+    {
+     "phrase": "圆口的器皿",
+     "byte_offset": 2,
+     "decision": "empty_key"
+    },
+    {
+     "phrase": "带纹路的方块",
+     "byte_offset": 1,
+     "decision": "empty_key"
+    },
+    {
+     "phrase": "带纹路的方块",
+     "byte_offset": 2,
+     "decision": "empty_key"
+    },
+    {
+     "phrase": "细长的容器",
+     "byte_offset": 1,
+     "decision": "empty_key"
+    },
+    {
+     "phrase": "细长的容器",
+     "byte_offset": 2,
+     "decision": "empty_key"
+    },
+    {
+     "phrase": "圆滚滚的东西",
+     "byte_offset": 1,
+     "decision": "empty_key"
+    },
+    {
+     "phrase": "圆滚滚的东西",
+     "byte_offset": 2,
+     "decision": "empty_key"
+    },
+    {
+     "phrase": "四方木台",
+     "byte_offset": 1,
+     "decision": "empty_key"
+    },
+    {
+     "phrase": "四方木台",
+     "byte_offset": 2,
+     "decision": "empty_key"
+    },
+    {
+     "phrase": "靠窗的台面",
+     "byte_offset": 1,
+     "decision": "empty_key"
+    },
+    {
+     "phrase": "靠窗的台面",
+     "byte_offset": 2,
+     "decision": "empty_key"
+    },
+    {
+     "phrase": "手边的匣子",
+     "byte_offset": 1,
+     "decision": "empty_key"
+    },
+    {
+     "phrase": "手边的匣子",
+     "byte_offset": 2,
+     "decision": "empty_key"
+    },
+    {
+     "phrase": "靠墙的层架",
+     "byte_offset": 1,
+     "decision": "empty_key"
+    },
+    {
+     "phrase": "靠墙的层架",
+     "byte_offset": 2,
+     "decision": "empty_key"
+    },
+    {
+     "phrase": "脚边的毡子",
+     "byte_offset": 1,
+     "decision": "empty_key"
+    },
+    {
+     "phrase": "脚边的毡子",
+     "byte_offset": 2,
+     "decision": "empty_key"
+    }
+   ],
+   "inputs": 18,
+   "answering": 0,
+   "zero_ok": true
+  },
+  "ok": true
+ },
+ "rerun_anchors": [
+  {
+   "round": "R11",
+   "runner": "scripts/training/probe_taiji_written_bridge_20261109.py",
+   "rerun_commit": "0c8cad59e",
+   "runner_blob_sha1": "4b35beed2e421b98b732ef7cbc28817e1c942cad",
+   "report_runner_sha256": "8be1bef02604541ee0e295889b31c1096f92b6eaaff3de665f6931bad14c280e",
+   "runner_blob_sha256": "8be1bef02604541ee0e295889b31c1096f92b6eaaff3de665f6931bad14c280e",
+   "report_bridge_sha256": "ddb5a48b4215e9677ecfb49b8c2e5d2d436344b93f3f283d8cb3e060ade32caf",
+   "matches_report": true,
+   "note": "current HEAD cannot run it (constructor has no on_conflict); checkout this commit to re-run"
+  },
+  {
+   "round": "R12",
+   "runner": "scripts/training/probe_taiji_bridge_key_unit_20261109.py",
+   "rerun_commit": "31ef1850c",
+   "runner_blob_sha1": "255cb07c08c80d3b7be51e1596955b3ae84c6f7f",
+   "report_runner_sha256": "3d484121c294976d15cb41408694ec4c7d62d6d0f1eae7af59861fae1e859ef1",
+   "runner_blob_sha256": "3d484121c294976d15cb41408694ec4c7d62d6d0f1eae7af59861fae1e859ef1",
+   "report_bridge_sha256": "248a04934fa4ce60e3d0e92a7381e1dab4df71b22fbe71e08853e73f6941f4de",
+   "matches_report": true,
+   "note": "current HEAD cannot run it; checkout this commit to re-run"
+  },
+  {
+   "round": "R13",
+   "runner": "scripts/training/probe_taiji_sequence_identity_20261109.py",
+   "rerun_commit": "ff79e7094",
+   "runner_blob_sha1": "0f4309714f5bda3179ced3f5e24dcb617ab1d0a9",
+   "report_runner_sha256": "d600c33ae11b42a51ce5cf28a6d3463614817f22e563aeca15e40a05cfdb2d17",
+   "runner_blob_sha256": "d600c33ae11b42a51ce5cf28a6d3463614817f22e563aeca15e40a05cfdb2d17",
+   "report_bridge_sha256": "d48821ba7c4ef3a153b1f4ba214e217c74fcbbe7c00b0adaa0d7bc48429b21ba",
+   "matches_report": true,
+   "note": "current HEAD cannot run it; checkout this commit to re-run"
+  },
+  {
+   "round": "R14",
+   "runner": "scripts/training/probe_taiji_bridge_wording_scale_20261109.py",
+   "rerun_commit": "edcf623ca",
+   "runner_blob_sha1": "490e0050f49b69679c31625f2c2cfa0fc61d105e",
+   "report_runner_sha256": "da86411e3ed12a74c49741eca0d81ba5271ef37cfd8b0086b925db770e3b3cb9",
+   "runner_blob_sha256": "b807deffabd365a0a20de9e80fdf5559350898bd4f2cbb0dcf11cee830e7761e",
+   "report_bridge_sha256": "104077f89034c9f59a863c29f49deeedf46b9d6958ff7d978797f61a185a8d4b",
+   "matches_report": false,
+   "note": "report hash is of the working-tree bytes (CRLF); the git blob is LF, the code is identical; checkout this commit to re-run"
+  },
+  {
+   "round": "R15",
+   "runner": "scripts/training/probe_taiji_bridge_two_pass_20261109.py",
+   "rerun_commit": "c1fdeaa7d",
+   "runner_blob_sha1": "36c77d23207b2ae0916dfae95c028c69ac3b2e44",
+   "report_runner_sha256": "b6721d6f654d3a244e574983a57426417aef76bd1e8af7eee03322992cbac8a2",
+   "runner_blob_sha256": "b6721d6f654d3a244e574983a57426417aef76bd1e8af7eee03322992cbac8a2",
+   "report_bridge_sha256": "967017e197b382accdcd5286c79eaa6970416ec19ff4fb5b633f1c2ae0ff8b82",
+   "matches_report": true,
+   "note": "current HEAD cannot run it after R16; checkout this commit to re-run"
+  }
+ ],
+ "closed_state": {
+  "baseline": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "98f0195dd19032cc4b1ad73553397ebf4a01365750b3642591cd8e4b9faa721d",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk_none": true,
+   "battery_sha": "e7ed5f901b69082eb602d19f0a40a82d8877c0848189439cf472fb3999af4302",
+   "battery_steps": 20
+  },
+  "after": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "98f0195dd19032cc4b1ad73553397ebf4a01365750b3642591cd8e4b9faa721d",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk_none": true,
+   "battery_sha": "e7ed5f901b69082eb602d19f0a40a82d8877c0848189439cf472fb3999af4302",
+   "battery_steps": 20
+  },
+  "checks": {
+   "parameters_equal": true,
+   "state_equal": true,
+   "identity_equal": true,
+   "store_equal": true,
+   "battery_equal": true,
+   "steps_equal": true,
+   "sc_sfk_none": true,
+   "flag_disabled": true,
+   "rng_untouched": true
+  }
+ },
+ "verdict": {
+  "overlap": "overlap_declared",
+  "three_entities": "three_entity_declared",
+  "regression": "r15_two_pass_unchanged",
+  "zeros": "zeros_clean",
+  "rerun_anchors": "anchors_complete"
+ },
+ "cost": {
+  "cpu_seconds": 1.578125,
+  "wall_seconds": 2.251983404159546,
+  "cpu_cap": 200.0,
+  "estimate_cpu_upper": 40.0,
+  "threads": 1
+ }
+}

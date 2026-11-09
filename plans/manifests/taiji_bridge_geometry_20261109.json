@@ -1,0 +1,126 @@
+{
+ "schema": "taiji-bridge-geometry-r16-v1",
+ "created": "2026-11-09T15:53:43",
+ "seed": 20261109,
+ "estimate_cpu_upper": 40.0,
+ "cpu_cap": 200.0,
+ "runner_sha256": "5076807011a0e717e9d609fae0f792bfba2ccfc0bec9d30b381286e93f663261",
+ "bridge_sha256": "e680d69d6ae8b05b3b0e6d9d3d22e29e1d38d48d067c1626ce54264196fb2d5b",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "8fa3aafde38b1cbad3b021dc271abd316c0a265c68870403dd4ca7b0b53e0c6a"
+ },
+ "definition": {
+  "overlap": "four frozen cases in which two written wordings touch: containment, one shared character, abutting spans, and partial overlap without containment; each case declares answers, decision, stopped_at_pass and final exit before the reading",
+  "swallowed": "a written key is reported as swallowed when its first occurrence intersects a span that a previous pass masked; that is the direct evidence that masking deleted characters it needed",
+  "three_entities": "one sentence naming three entities: the disjoint case must answer 3 and stop at pass 4 by no_match (not by the pass bound); the straddling case must answer 2 and stop at pass 3",
+  "stop_reporting": "every case reports stopped_at_pass and final_exit, so a shortfall is never reported without the layer it stopped at",
+  "regression": "the 20 describe sentences must still reach 40/40 with the default two passes",
+  "zeros": "on the 18-key table, 12 unknown candidates and 18 byte fragments must answer 0",
+  "rerun_anchors": "R11-R15 each carry the commit at which their own runner bytes were last runnable; old reports are reproducible by checking out that commit, not orphans"
+ },
+ "criteria": {
+  "overlap": "every overlap case matches its frozen answers/decision/stopped_at_pass/final_exit exactly, wrong pointers 0, and the swallowed set equals the frozen one",
+  "three_entities": "three_disjoint answers 3 with pass 4 exiting no_match; middle_wording_swallowed answers 2 and stops at pass 3 with the swallowed key named; three_records_same_start abstains at pass 1; same_address_three_times answers 1 entity",
+  "regression": "20 describe sentences still reach 40/40, wrong 0, all answered_pair",
+  "zeros": "12 unknown candidates answer 0 and 18 byte fragments answer 0",
+  "closed_state": "the nine closed-state readings stay equal before and after",
+  "rerun": "every row names a commit and a blob; a mismatch between report hash and blob hash is declared in the row rather than hidden",
+  "reporting": "segments are reported separately; a clean overlap segment does not carry the three-entity segment"
+ },
+ "definition_digest": "88b9ce7d7dd618b37e258f65ee3270276ebbd5a09411f32796eced609a6f2391",
+ "counts": {
+  "overlap_cases": 4,
+  "triple_cases": 4,
+  "regression_sentences": 20,
+  "unknown_candidates": 12,
+  "fragments": 18,
+  "rerun_anchors": 5
+ },
+ "inputs": {
+  "overlap_cases": [
+   "nested_long_first",
+   "share_one_character",
+   "abutting_no_overlap",
+   "partial_overlap_no_containment"
+  ],
+  "triple_cases": [
+   "three_disjoint",
+   "middle_wording_swallowed",
+   "three_records_same_start",
+   "same_address_three_times"
+  ],
+  "unknown_candidates": [
+   "黑色铁铃",
+   "白色帆布",
+   "长柄铜勺",
+   "软木瓶塞",
+   "蓝色毛巾",
+   "银质圆镜",
+   "棕色皮箱",
+   "青色陶罐",
+   "灰色石阶",
+   "紫色绸带",
+   "金色烛台",
+   "深红木箱"
+  ],
+  "rerun_anchors": [
+   {
+    "round": "R11",
+    "runner": "scripts/training/probe_taiji_written_bridge_20261109.py",
+    "rerun_commit": "0c8cad59e",
+    "runner_blob_sha1": "4b35beed2e421b98b732ef7cbc28817e1c942cad",
+    "report_runner_sha256": "8be1bef02604541ee0e295889b31c1096f92b6eaaff3de665f6931bad14c280e",
+    "runner_blob_sha256": "8be1bef02604541ee0e295889b31c1096f92b6eaaff3de665f6931bad14c280e",
+    "report_bridge_sha256": "ddb5a48b4215e9677ecfb49b8c2e5d2d436344b93f3f283d8cb3e060ade32caf",
+    "matches_report": true,
+    "note": "current HEAD cannot run it (constructor has no on_conflict); checkout this commit to re-run"
+   },
+   {
+    "round": "R12",
+    "runner": "scripts/training/probe_taiji_bridge_key_unit_20261109.py",
+    "rerun_commit": "31ef1850c",
+    "runner_blob_sha1": "255cb07c08c80d3b7be51e1596955b3ae84c6f7f",
+    "report_runner_sha256": "3d484121c294976d15cb41408694ec4c7d62d6d0f1eae7af59861fae1e859ef1",
+    "runner_blob_sha256": "3d484121c294976d15cb41408694ec4c7d62d6d0f1eae7af59861fae1e859ef1",
+    "report_bridge_sha256": "248a04934fa4ce60e3d0e92a7381e1dab4df71b22fbe71e08853e73f6941f4de",
+    "matches_report": true,
+    "note": "current HEAD cannot run it; checkout this commit to re-run"
+   },
+   {
+    "round": "R13",
+    "runner": "scripts/training/probe_taiji_sequence_identity_20261109.py",
+    "rerun_commit": "ff79e7094",
+    "runner_blob_sha1": "0f4309714f5bda3179ced3f5e24dcb617ab1d0a9",
+    "report_runner_sha256": "d600c33ae11b42a51ce5cf28a6d3463614817f22e563aeca15e40a05cfdb2d17",
+    "runner_blob_sha256": "d600c33ae11b42a51ce5cf28a6d3463614817f22e563aeca15e40a05cfdb2d17",
+    "report_bridge_sha256": "d48821ba7c4ef3a153b1f4ba214e217c74fcbbe7c00b0adaa0d7bc48429b21ba",
+    "matches_report": true,
+    "note": "current HEAD cannot run it; checkout this commit to re-run"
+   },
+   {
+    "round": "R14",
+    "runner": "scripts/training/probe_taiji_bridge_wording_scale_20261109.py",
+    "rerun_commit": "edcf623ca",
+    "runner_blob_sha1": "490e0050f49b69679c31625f2c2cfa0fc61d105e",
+    "report_runner_sha256": "da86411e3ed12a74c49741eca0d81ba5271ef37cfd8b0086b925db770e3b3cb9",
+    "runner_blob_sha256": "b807deffabd365a0a20de9e80fdf5559350898bd4f2cbb0dcf11cee830e7761e",
+    "report_bridge_sha256": "104077f89034c9f59a863c29f49deeedf46b9d6958ff7d978797f61a185a8d4b",
+    "matches_report": false,
+    "note": "report hash is of the working-tree bytes (CRLF); the git blob is LF, the code is identical; checkout this commit to re-run"
+   },
+   {
+    "round": "R15",
+    "runner": "scripts/training/probe_taiji_bridge_two_pass_20261109.py",
+    "rerun_commit": "c1fdeaa7d",
+    "runner_blob_sha1": "36c77d23207b2ae0916dfae95c028c69ac3b2e44",
+    "report_runner_sha256": "b6721d6f654d3a244e574983a57426417aef76bd1e8af7eee03322992cbac8a2",
+    "runner_blob_sha256": "b6721d6f654d3a244e574983a57426417aef76bd1e8af7eee03322992cbac8a2",
+    "report_bridge_sha256": "967017e197b382accdcd5286c79eaa6970416ec19ff4fb5b633f1c2ae0ff8b82",
+    "matches_report": true,
+    "note": "current HEAD cannot run it after R16; checkout this commit to re-run"
+   }
+  ]
+ }
+}
