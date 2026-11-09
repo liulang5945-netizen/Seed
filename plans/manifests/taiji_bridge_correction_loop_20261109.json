@@ -1,0 +1,143 @@
+{
+ "schema": "taiji-bridge-correction-loop-r19-v1",
+ "created": "2026-11-09T16:26:45",
+ "seed": 20261109,
+ "estimate_cpu_upper": 30.0,
+ "cpu_cap": 200.0,
+ "runner_sha256": "bd92a15aec36488ee8f5c7c3e238c31e91aabfab773eee6d155450b1a04bddf8",
+ "bridge_sha256": "65d86897c25544e683f757d4771f2d7e516476528bafd9520e14bdc59ab1fbd4",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "8fa3aafde38b1cbad3b021dc271abd316c0a265c68870403dd4ca7b0b53e0c6a"
+ },
+ "definition": {
+  "loop": "one iteration = read the key, compare the read value with the frozen verifier, and if they differ call correct(key, read_value, verifier_value); the read value is the credential",
+  "one_step": "initial CUP, verifier RED: the loop must read CUP, correct to RED and read RED back",
+  "read_credential": "initial RED, verifier GREEN: the correction must present RED (the read value), not a hard-coded CUP",
+  "no_op": "when the read already equals the verifier, no correction is issued and the log stays empty",
+  "stale_read": "a read captured before another actor corrects the address is a stale credential; using it must be rejected whole and the newer value must stay",
+  "wrong_verifier": "the table holds CUP, the verifier says GREEN; the loop accepts the correction because the protocol checks only the old value -- reported as a declared boundary",
+  "plain_write": "a plain write of the old value is still rejected; correction is the only path",
+  "convergence": "two iterations: the first corrects, the second sees agreement and stops; exactly one log entry",
+  "default_table": "on the 18-key table, correct an alias to another value and back; content digest returns to the original, R15 stays 40/40, zeros stay 0/0",
+  "closed_state": "the nine closed-state readings stay equal before and after"
+ },
+ "criteria": {
+  "one_step": "read CUP, action corrected, read RED, log length 1 with from=CUP and to=RED",
+  "read_credential": "read RED, action corrected, read GREEN, log from=RED and to=GREEN",
+  "no_op": "no correction, read CUP, log length 0, content digest unchanged",
+  "stale_read": "action rejected_batch_correction_mismatch, read RED, log length 1, content digest unchanged",
+  "wrong_verifier": "action corrected, read GREEN, log length 1, verifier_error_accepted true and final_matches_ground_truth false -- the boundary is declared, not hidden",
+  "plain_write": "action rejected_batch_address_already_bound, read CUP, log length 0, content digest unchanged",
+  "convergence": "two reads, one correction, log length 1, final RED",
+  "default_table": "content digest after the round trip equals before; regression 40/40 with wrong 0; zeros 0/0; log length 2",
+  "closed_state": "the nine closed-state readings stay equal before and after",
+  "reporting": "segments are reported separately; the wrong-verifier segment is evidence of a boundary, not evidence that the loop understands correctness"
+ },
+ "definition_digest": "4192a86b44da9aafb54ae26b04171b7f53c1ed5109d02e830a7b0f0521be8b09",
+ "counts": {
+  "loop_cases": 6,
+  "default_table_round_trip": 1,
+  "regression_sentences": 20,
+  "unknown_candidates": 12,
+  "fragments": 18
+ },
+ "inputs": {
+  "base_key": "甲乙",
+  "alias_key": "喝水的杯子",
+  "values": [
+   [
+    "object",
+    "蓝色杯子"
+   ],
+   [
+    "object",
+    "红色印章"
+   ],
+   [
+    "object",
+    "绿色瓶子"
+   ]
+  ],
+  "aliases": [
+   [
+    "喝水的杯子",
+    [
+     "object",
+     "蓝色杯子"
+    ]
+   ],
+   [
+    "盖章用的印章",
+    [
+     "object",
+     "红色印章"
+    ]
+   ],
+   [
+    "盛水的瓶子",
+    [
+     "object",
+     "绿色瓶子"
+    ]
+   ],
+   [
+    "圆形的皮球",
+    [
+     "object",
+     "黄色球"
+    ]
+   ],
+   [
+    "方方正正的木桌子",
+    [
+     "place",
+     "木桌"
+    ]
+   ],
+   [
+    "窗前的台板",
+    [
+     "place",
+     "窗台"
+    ]
+   ],
+   [
+    "手边的小盒子",
+    [
+     "place",
+     "左盒"
+    ]
+   ],
+   [
+    "墙上的架子",
+    [
+     "place",
+     "书架"
+    ]
+   ],
+   [
+    "脚下的垫子",
+    [
+     "place",
+     "地毯"
+    ]
+   ]
+  ],
+  "unknown_candidates": [
+   "黑色铁铃",
+   "白色帆布",
+   "长柄铜勺",
+   "软木瓶塞",
+   "蓝色毛巾",
+   "银质圆镜",
+   "棕色皮箱",
+   "青色陶罐",
+   "灰色石阶",
+   "紫色绸带",
+   "金色烛台",
+   "深红木箱"
+  ]
+ }
+}

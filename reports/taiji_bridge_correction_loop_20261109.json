@@ -1,0 +1,428 @@
+{
+ "schema": "taiji-bridge-correction-loop-r19-report-v1",
+ "runner_sha256": "bd92a15aec36488ee8f5c7c3e238c31e91aabfab773eee6d155450b1a04bddf8",
+ "manifest_sha256": "4e770a1947d69048181a81c665bd1c96b59ec0c111e0bdd3e4d02f2574156236",
+ "bridge_sha256": "65d86897c25544e683f757d4771f2d7e516476528bafd9520e14bdc59ab1fbd4",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "8fa3aafde38b1cbad3b021dc271abd316c0a265c68870403dd4ca7b0b53e0c6a"
+ },
+ "definition": {
+  "loop": "one iteration = read the key, compare the read value with the frozen verifier, and if they differ call correct(key, read_value, verifier_value); the read value is the credential",
+  "one_step": "initial CUP, verifier RED: the loop must read CUP, correct to RED and read RED back",
+  "read_credential": "initial RED, verifier GREEN: the correction must present RED (the read value), not a hard-coded CUP",
+  "no_op": "when the read already equals the verifier, no correction is issued and the log stays empty",
+  "stale_read": "a read captured before another actor corrects the address is a stale credential; using it must be rejected whole and the newer value must stay",
+  "wrong_verifier": "the table holds CUP, the verifier says GREEN; the loop accepts the correction because the protocol checks only the old value -- reported as a declared boundary",
+  "plain_write": "a plain write of the old value is still rejected; correction is the only path",
+  "convergence": "two iterations: the first corrects, the second sees agreement and stops; exactly one log entry",
+  "default_table": "on the 18-key table, correct an alias to another value and back; content digest returns to the original, R15 stays 40/40, zeros stay 0/0",
+  "closed_state": "the nine closed-state readings stay equal before and after"
+ },
+ "criteria": {
+  "one_step": "read CUP, action corrected, read RED, log length 1 with from=CUP and to=RED",
+  "read_credential": "read RED, action corrected, read GREEN, log from=RED and to=GREEN",
+  "no_op": "no correction, read CUP, log length 0, content digest unchanged",
+  "stale_read": "action rejected_batch_correction_mismatch, read RED, log length 1, content digest unchanged",
+  "wrong_verifier": "action corrected, read GREEN, log length 1, verifier_error_accepted true and final_matches_ground_truth false -- the boundary is declared, not hidden",
+  "plain_write": "action rejected_batch_address_already_bound, read CUP, log length 0, content digest unchanged",
+  "convergence": "two reads, one correction, log length 1, final RED",
+  "default_table": "content digest after the round trip equals before; regression 40/40 with wrong 0; zeros 0/0; log length 2",
+  "closed_state": "the nine closed-state readings stay equal before and after",
+  "reporting": "segments are reported separately; the wrong-verifier segment is evidence of a boundary, not evidence that the loop understands correctness"
+ },
+ "one_step": {
+  "step": {
+   "read": {
+    "decision": "answered_single",
+    "answers": 1,
+    "values": [
+     [
+      "object",
+      "蓝色杯子"
+     ]
+    ],
+    "stopped_at_pass": 2,
+    "final_exit": "no_match"
+   },
+   "action": "corrected",
+   "corrected": 1
+  },
+  "after": {
+   "decision": "answered_single",
+   "answers": 1,
+   "values": [
+    [
+     "object",
+     "红色印章"
+    ]
+   ],
+   "stopped_at_pass": 2,
+   "final_exit": "no_match"
+  },
+  "log": [
+   [
+    "[\"object\", \"蓝色杯子\"]",
+    "[\"object\", \"红色印章\"]"
+   ]
+  ],
+  "log_length": 1,
+  "ok": true
+ },
+ "read_credential": {
+  "step": {
+   "read": {
+    "decision": "answered_single",
+    "answers": 1,
+    "values": [
+     [
+      "object",
+      "红色印章"
+     ]
+    ],
+    "stopped_at_pass": 2,
+    "final_exit": "no_match"
+   },
+   "action": "corrected",
+   "corrected": 1
+  },
+  "after": {
+   "decision": "answered_single",
+   "answers": 1,
+   "values": [
+    [
+     "object",
+     "绿色瓶子"
+    ]
+   ],
+   "stopped_at_pass": 2,
+   "final_exit": "no_match"
+  },
+  "log": [
+   [
+    "[\"object\", \"红色印章\"]",
+    "[\"object\", \"绿色瓶子\"]"
+   ]
+  ],
+  "log_length": 1,
+  "ok": true
+ },
+ "no_op": {
+  "step": {
+   "read": {
+    "decision": "answered_single",
+    "answers": 1,
+    "values": [
+     [
+      "object",
+      "蓝色杯子"
+     ]
+    ],
+    "stopped_at_pass": 2,
+    "final_exit": "no_match"
+   },
+   "action": "agreed",
+   "corrected": 0
+  },
+  "after": {
+   "decision": "answered_single",
+   "answers": 1,
+   "values": [
+    [
+     "object",
+     "蓝色杯子"
+    ]
+   ],
+   "stopped_at_pass": 2,
+   "final_exit": "no_match"
+  },
+  "log_length": 0,
+  "content_digest_unchanged": true,
+  "ok": true
+ },
+ "stale_read": {
+  "stale_read": {
+   "decision": "answered_single",
+   "answers": 1,
+   "values": [
+    [
+     "object",
+     "蓝色杯子"
+    ]
+   ],
+   "stopped_at_pass": 2,
+   "final_exit": "no_match"
+  },
+  "step": {
+   "action": "rejected_batch_correction_mismatch",
+   "corrected": 0
+  },
+  "after": {
+   "decision": "answered_single",
+   "answers": 1,
+   "values": [
+    [
+     "object",
+     "红色印章"
+    ]
+   ],
+   "stopped_at_pass": 2,
+   "final_exit": "no_match"
+  },
+  "log_length": 1,
+  "content_digest_unchanged": true,
+  "ok": true
+ },
+ "wrong_verifier": {
+  "ground_truth": [
+   "object",
+   "蓝色杯子"
+  ],
+  "verifier": [
+   "object",
+   "绿色瓶子"
+  ],
+  "step": {
+   "read": {
+    "decision": "answered_single",
+    "answers": 1,
+    "values": [
+     [
+      "object",
+      "蓝色杯子"
+     ]
+    ],
+    "stopped_at_pass": 2,
+    "final_exit": "no_match"
+   },
+   "action": "corrected",
+   "corrected": 1
+  },
+  "after": {
+   "decision": "answered_single",
+   "answers": 1,
+   "values": [
+    [
+     "object",
+     "绿色瓶子"
+    ]
+   ],
+   "stopped_at_pass": 2,
+   "final_exit": "no_match"
+  },
+  "log_length": 1,
+  "verifier_error_accepted": true,
+  "final_matches_ground_truth": false,
+  "ok": true
+ },
+ "plain_write": {
+  "action": "rejected_batch_address_already_bound",
+  "after": {
+   "decision": "answered_single",
+   "answers": 1,
+   "values": [
+    [
+     "object",
+     "蓝色杯子"
+    ]
+   ],
+   "stopped_at_pass": 2,
+   "final_exit": "no_match"
+  },
+  "log_length": 0,
+  "content_digest_unchanged": true,
+  "ok": true
+ },
+ "convergence": {
+  "first": {
+   "read": {
+    "decision": "answered_single",
+    "answers": 1,
+    "values": [
+     [
+      "object",
+      "蓝色杯子"
+     ]
+    ],
+    "stopped_at_pass": 2,
+    "final_exit": "no_match"
+   },
+   "action": "corrected",
+   "corrected": 1
+  },
+  "second": {
+   "read": {
+    "decision": "answered_single",
+    "answers": 1,
+    "values": [
+     [
+      "object",
+      "红色印章"
+     ]
+    ],
+    "stopped_at_pass": 2,
+    "final_exit": "no_match"
+   },
+   "action": "agreed",
+   "corrected": 0
+  },
+  "after": {
+   "decision": "answered_single",
+   "answers": 1,
+   "values": [
+    [
+     "object",
+     "红色印章"
+    ]
+   ],
+   "stopped_at_pass": 2,
+   "final_exit": "no_match"
+  },
+  "log_length": 1,
+  "ok": true
+ },
+ "default_table": {
+  "records": 18,
+  "first": {
+   "read": {
+    "decision": "answered_single",
+    "answers": 1,
+    "values": [
+     [
+      "object",
+      "蓝色杯子"
+     ]
+    ],
+    "stopped_at_pass": 2,
+    "final_exit": "no_match"
+   },
+   "action": "corrected",
+   "corrected": 1
+  },
+  "middle": {
+   "decision": "answered_single",
+   "answers": 1,
+   "values": [
+    [
+     "object",
+     "红色印章"
+    ]
+   ],
+   "stopped_at_pass": 2,
+   "final_exit": "no_match"
+  },
+  "second": {
+   "read": {
+    "decision": "answered_single",
+    "answers": 1,
+    "values": [
+     [
+      "object",
+      "红色印章"
+     ]
+    ],
+    "stopped_at_pass": 2,
+    "final_exit": "no_match"
+   },
+   "action": "corrected",
+   "corrected": 1
+  },
+  "final": {
+   "decision": "answered_single",
+   "answers": 1,
+   "values": [
+    [
+     "object",
+     "蓝色杯子"
+    ]
+   ],
+   "stopped_at_pass": 2,
+   "final_exit": "no_match"
+  },
+  "content_digest_unchanged": true,
+  "log": [
+   [
+    "[\"object\", \"蓝色杯子\"]",
+    "[\"object\", \"红色印章\"]"
+   ],
+   [
+    "[\"object\", \"红色印章\"]",
+    "[\"object\", \"蓝色杯子\"]"
+   ]
+  ],
+  "log_length": 2,
+  "regression": {
+   "entities": 40,
+   "hits": 40,
+   "wrong": 0,
+   "distribution": {
+    "answered_2": 20,
+    "answered_1": 0,
+    "wrong": 0,
+    "abstained": 0
+   },
+   "ok": true
+  },
+  "zeros": {
+   "unknown_answering": 0,
+   "fragment_answering": 0,
+   "ok": true
+  },
+  "ok": true
+ },
+ "closed_state": {
+  "baseline": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "7d3e692d203e2fdc0f8211b13a0454cccbda70896c5972e3248bb4f5b54a868d",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk_none": true,
+   "battery_sha": "91de826c25b2b1e8be626ab444830d173d977031f5b22de5be34ca47e73cc53c",
+   "battery_steps": 20
+  },
+  "after": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "7d3e692d203e2fdc0f8211b13a0454cccbda70896c5972e3248bb4f5b54a868d",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk_none": true,
+   "battery_sha": "91de826c25b2b1e8be626ab444830d173d977031f5b22de5be34ca47e73cc53c",
+   "battery_steps": 20
+  },
+  "checks": {
+   "parameters_equal": true,
+   "state_equal": true,
+   "identity_equal": true,
+   "store_equal": true,
+   "battery_equal": true,
+   "steps_equal": true,
+   "sc_sfk_none": true,
+   "flag_disabled": true,
+   "rng_untouched": true
+  }
+ },
+ "verdict": {
+  "one_step": "one_step_correction",
+  "read_credential": "read_value_used_as_credential",
+  "no_op": "no_op_when_agree",
+  "stale_read": "stale_read_rejected",
+  "wrong_verifier": "verifier_error_accepted",
+  "plain_write": "plain_write_still_rejected",
+  "convergence": "loop_converges",
+  "default_table": "default_table_unchanged",
+  "closed_state": "closed_state_equal",
+  "overall": "read_verify_correct_loop_available"
+ },
+ "cost": {
+  "cpu_seconds": 1.765625,
+  "wall_seconds": 2.591773748397827,
+  "cpu_cap": 200.0,
+  "estimate_cpu_upper": 30.0,
+  "threads": 1
+ }
+}
