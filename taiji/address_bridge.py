@@ -136,9 +136,11 @@ class BridgeTable:
         start_capacity: int = START_CAPACITY,
         key_fn: Any = phrase_key,
         read_mode: str = "token",
+        on_conflict: str = "replace",
     ) -> None:
         self.key_fn = key_fn
         self.read_mode = read_mode
+        self.on_conflict = on_conflict
         self.capacity = int(start_capacity)
         self.peak_capacity = int(start_capacity)
         self.records: list[dict[str, Any]] = []
@@ -272,6 +274,23 @@ class BridgeTable:
                     "digest_unchanged": self.content_digest() == digest_before,
                 }
             encoded = value_key(value)
+            if self.on_conflict == "reject":
+                bound = self.find(key)
+                if bound is not None and value_key(self.current(bound)) != encoded:
+                    # First writer keeps the address; the whole batch is not applied.
+                    self.rejected_batches += 1
+                    self.rollbacks += 1
+                    reason = "address_already_bound"
+                    self.rejected_reasons[reason] = self.rejected_reasons.get(reason, 0) + 1
+                    return {
+                        "action": "rejected_batch_address_already_bound",
+                        "items": len(items),
+                        "rejected_item": position,
+                        "batch": self.batches,
+                        "bound": value_key(self.current(bound)),
+                        "attempted": encoded,
+                        "digest_unchanged": self.content_digest() == digest_before,
+                    }
             if key not in first_value:
                 first_value[key] = encoded
             elif first_value[key] != encoded:
