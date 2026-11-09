@@ -2920,6 +2920,28 @@ owner 2026-11-07 裁定：多模态是整个算法内部系统的一部分，不
 | S-178 | “桥只能输出 `(slot, name)`，不能出字节” | R-D46-500…502 | **被证伪**：实体级链路可输出语料原字节，L2 1.0。 |
 | S-179 | “出处忠实 1.0 就等于回答了问题” | R-D46-503 | **被限定**：31/40 忠实但配对不符；忠实只证“是该记录的一段”，不证“答了所问那一层”。 |
 
+## 100. R54' 联合命中记录选择（2026-11-09）
+
+**100.0 冻结与范围**：选择规则（一条记录须同时含本句全部字面键；1 条→输出、0 条→`no_match`、≥2 条→`ambiguous_multiple_records`，后两者 0 字节）、**删除最小地址兜底**、输出单元（§16.2）、L1/L2/L3、并列数（`pairing_matches` 与 `answers_lost`）写入 [manifest](../manifests/taiji_joint_select_20261109.json) 的 `definition_digest`；预测同时冻结。**未改模块；0 优化器步**；语料与 §16.2 判据零改动。
+
+**100.1 读数**
+
+| 编号 | 读数 | 出处 |
+|---|---|---|
+| R-D46-504 | **主组**（20 句／40 槽）：`selected 20`、`ambiguous 0`、`no_match 0`；`answered_correct 40`／其余 0；**`pairing_matches 40`／`answers_lost 0`**（R53 同口径 9/40）。 | `primary` |
+| R-D46-505 | **L1／L2**：编造 0、非法切片 0、UTF-8 20/20、边界 20/20；出处忠实 **20/20＝1.0**。 | `primary.l1`／`primary.l2` |
+| R-D46-506 | **结构**：签名／字面量／AST／行为四条全过 ⇒ 最小地址兜底**不可达**；`selected` 分支用单元素解包，长度≠1 即抛错。 | `structural` |
+| R-D46-507 | **可达性代价**：名字组 20 句 `no_keys 20`（名字不是键）；别名组 9 句 `no_match 9`；paraphrase 60 句／120 槽 `no_keys 60`、**answers_lost 120**；混合句 9 句 `no_match 9`。 | `names`／`aliases`／`paraphrase`／`mixed` |
+| R-D46-508 | **预测偏差**：主组与别名组成立；名字组预测（3 候选 ambiguous）**不成立**，实测无键。诊断组读后新增、不进判定。 | `prediction_holds` |
+| R-D46-509 | **判定与成本**：`fallback_unreachable`／`l1_clean`／`provenance_faithful`／`joint_select_resolves`／`zero_loss`／`closed_state_equal`／`reach_limited_to_verbatim_questions` ⇒ 总判 **`joint_select_measured`**；**2.047 CPU／2.774 wall**；九项全等。 | 报告 `verdict`／`cost` |
+
+**100.2 superseded／范围登记**
+
+| 编号 | 被取代／被限定的对象 | 取代者 | 处置与理由 |
+|---|---|---|---|
+| S-180 | “31/40 错配对只能靠调选择规则修” | R-D46-504 | **被证实可行**：改为联合命中后同批问句配对 40/40、损失 0；兜底路径删除。 |
+| S-181 | “配对修好＝选择层可用” | R-D46-507／508 | **被限定**：仅对逐字引用一条记录的问句成立；名字与别名问句分别因“不是键／不在语料”全部损失，`ambiguous` 分支无真实触发。 |
+
 
 
 
