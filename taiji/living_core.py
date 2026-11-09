@@ -728,17 +728,28 @@ class LivingCoreReference(nn.Module):
         object_candidates: list[tuple[str, str]] | tuple[tuple[str, str], ...],
         place_candidates: list[tuple[str, str]] | tuple[tuple[str, str], ...],
         goal: str | bytes = b"",
+        *,
+        use_text_prefix: bool = False,
     ) -> tuple[LivingState, dict]:
         """One subject step plus one paired expression on the same input.
 
         The tensor path is exactly ``observe``; the expression only writes the
-        read-side ``last_bridge_text``.  ``info`` records the expression and the
-        resulting step count so the caller can see both.
+        read-side ``last_bridge_text``.  With ``use_text_prefix`` the previous
+        text (if any) is prepended to the step input as a read-only prefix; the
+        expression itself still reads the unprefixed ``raw``.  ``info`` records
+        the prefix, the expression and the resulting step count.
         """
+        prefix = state.last_bridge_text if use_text_prefix else None
         raw_bytes = raw.encode("utf-8") if isinstance(raw, str) else raw
-        state = self.observe(state, raw_bytes, goal=goal)
+        input_bytes = prefix.encode("utf-8") + b"\n" + raw_bytes if prefix else raw_bytes
+        state = self.observe(state, input_bytes, goal=goal)
         state, expression = self.bridge_express(state, raw, object_candidates, place_candidates)
-        return state, {"bridge_expression": expression, "step": int(state.step)}
+        return state, {
+            "bridge_expression": expression,
+            "step": int(state.step),
+            "prefix_used": prefix,
+            "input_bytes": len(input_bytes),
+        }
 
     def bridge_snapshot(self, state: LivingState) -> bytes:
         """Serialize the attached table plus the read-side text into bytes."""

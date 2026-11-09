@@ -1,0 +1,299 @@
+{
+ "schema": "taiji-bridge-prefix-r34-report-v1",
+ "runner_sha256": "ebb80205188b2c452b56f2da4c393914527a0bd0b9cd85fd7b80375117c2445c",
+ "manifest_sha256": "420e06ab169fa0cf5085ca776caf5c7e08aa10f0d56d299ec2f21df714d2475f",
+ "bridge_sha256": "4edf29b22a199c29160523debb8ea23a45e59321f2b0c8dc06da72497672e831",
+ "core_sha256": "ca6422fef7929f4bc5771798668458da33dabfa84d73edd275bc135a8d272b9c",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "ca6422fef7929f4bc5771798668458da33dabfa84d73edd275bc135a8d272b9c"
+ },
+ "definition": {
+  "prefix": "bridge_observe(..., use_text_prefix=True) prepends the previous last_bridge_text plus a newline to the step input; the first step has no prefix",
+  "expression": "the 20 describe sentences still produce the expected paired texts",
+  "control": "the bridged trajectory equals a plain observe run on the same prefixed bytes",
+  "difference": "the bridged trajectory differs from a no-prefix observe run on at least one step",
+  "unknown": "an unknown input clears the text; the following step carries no prefix",
+  "closed_state": "the nine legacy closed-state readings stay equal before and after"
+ },
+ "criteria": {
+  "expression": "20/20 expression texts exact",
+  "prefix": "19/20 steps carry a prefix; the first carries none; each prefix equals the previous text",
+  "control": "20/20 state hashes equal to the prefixed plain run",
+  "difference": "at least 1 of 20 state hashes differs from the no-prefix run",
+  "unknown": "unknown expression is no_pair, text None; the next step has prefix None",
+  "parameters": "parameter hash and table digest unchanged",
+  "closed_state": "the nine legacy readings stay equal before and after",
+  "rerun": "the R33 anchor carries a commit, a runner blob sha1, a runner sha256 and a core sha256"
+ },
+ "prefix": {
+  "exact": 20,
+  "of": 20,
+  "prefixed": 19,
+  "control_equal": 20,
+  "raw_equal": 1,
+  "rows": [
+   {
+    "step": 1,
+    "prefix": null,
+    "expected": "蓝色杯子在木桌",
+    "got": "蓝色杯子在木桌",
+    "control_equal": true,
+    "raw_equal": true,
+    "ok": true
+   },
+   {
+    "step": 2,
+    "prefix": "蓝色杯子在木桌",
+    "expected": "蓝色杯子在窗台",
+    "got": "蓝色杯子在窗台",
+    "control_equal": true,
+    "raw_equal": false,
+    "ok": true
+   },
+   {
+    "step": 3,
+    "prefix": "蓝色杯子在窗台",
+    "expected": "蓝色杯子在左盒",
+    "got": "蓝色杯子在左盒",
+    "control_equal": true,
+    "raw_equal": false,
+    "ok": true
+   },
+   {
+    "step": 4,
+    "prefix": "蓝色杯子在左盒",
+    "expected": "蓝色杯子在书架",
+    "got": "蓝色杯子在书架",
+    "control_equal": true,
+    "raw_equal": false,
+    "ok": true
+   },
+   {
+    "step": 5,
+    "prefix": "蓝色杯子在书架",
+    "expected": "蓝色杯子在地毯",
+    "got": "蓝色杯子在地毯",
+    "control_equal": true,
+    "raw_equal": false,
+    "ok": true
+   },
+   {
+    "step": 6,
+    "prefix": "蓝色杯子在地毯",
+    "expected": "红色印章在木桌",
+    "got": "红色印章在木桌",
+    "control_equal": true,
+    "raw_equal": false,
+    "ok": true
+   },
+   {
+    "step": 7,
+    "prefix": "红色印章在木桌",
+    "expected": "红色印章在窗台",
+    "got": "红色印章在窗台",
+    "control_equal": true,
+    "raw_equal": false,
+    "ok": true
+   },
+   {
+    "step": 8,
+    "prefix": "红色印章在窗台",
+    "expected": "红色印章在左盒",
+    "got": "红色印章在左盒",
+    "control_equal": true,
+    "raw_equal": false,
+    "ok": true
+   },
+   {
+    "step": 9,
+    "prefix": "红色印章在左盒",
+    "expected": "红色印章在书架",
+    "got": "红色印章在书架",
+    "control_equal": true,
+    "raw_equal": false,
+    "ok": true
+   },
+   {
+    "step": 10,
+    "prefix": "红色印章在书架",
+    "expected": "红色印章在地毯",
+    "got": "红色印章在地毯",
+    "control_equal": true,
+    "raw_equal": false,
+    "ok": true
+   },
+   {
+    "step": 11,
+    "prefix": "红色印章在地毯",
+    "expected": "绿色瓶子在木桌",
+    "got": "绿色瓶子在木桌",
+    "control_equal": true,
+    "raw_equal": false,
+    "ok": true
+   },
+   {
+    "step": 12,
+    "prefix": "绿色瓶子在木桌",
+    "expected": "绿色瓶子在窗台",
+    "got": "绿色瓶子在窗台",
+    "control_equal": true,
+    "raw_equal": false,
+    "ok": true
+   },
+   {
+    "step": 13,
+    "prefix": "绿色瓶子在窗台",
+    "expected": "绿色瓶子在左盒",
+    "got": "绿色瓶子在左盒",
+    "control_equal": true,
+    "raw_equal": false,
+    "ok": true
+   },
+   {
+    "step": 14,
+    "prefix": "绿色瓶子在左盒",
+    "expected": "绿色瓶子在书架",
+    "got": "绿色瓶子在书架",
+    "control_equal": true,
+    "raw_equal": false,
+    "ok": true
+   },
+   {
+    "step": 15,
+    "prefix": "绿色瓶子在书架",
+    "expected": "绿色瓶子在地毯",
+    "got": "绿色瓶子在地毯",
+    "control_equal": true,
+    "raw_equal": false,
+    "ok": true
+   },
+   {
+    "step": 16,
+    "prefix": "绿色瓶子在地毯",
+    "expected": "黄色球在木桌",
+    "got": "黄色球在木桌",
+    "control_equal": true,
+    "raw_equal": false,
+    "ok": true
+   },
+   {
+    "step": 17,
+    "prefix": "黄色球在木桌",
+    "expected": "黄色球在窗台",
+    "got": "黄色球在窗台",
+    "control_equal": true,
+    "raw_equal": false,
+    "ok": true
+   },
+   {
+    "step": 18,
+    "prefix": "黄色球在窗台",
+    "expected": "黄色球在左盒",
+    "got": "黄色球在左盒",
+    "control_equal": true,
+    "raw_equal": false,
+    "ok": true
+   },
+   {
+    "step": 19,
+    "prefix": "黄色球在左盒",
+    "expected": "黄色球在书架",
+    "got": "黄色球在书架",
+    "control_equal": true,
+    "raw_equal": false,
+    "ok": true
+   },
+   {
+    "step": 20,
+    "prefix": "黄色球在书架",
+    "expected": "黄色球在地毯",
+    "got": "黄色球在地毯",
+    "control_equal": true,
+    "raw_equal": false,
+    "ok": true
+   }
+  ],
+  "unknown": {
+   "prefix": "黄色球在地毯",
+   "decision": "no_pair",
+   "stored": null,
+   "next_prefix": null,
+   "after_steps": 166
+  },
+  "parameter_sha_equal": true,
+  "table_digest_unchanged": true,
+  "ok": true
+ },
+ "rerun_anchors": [
+  {
+   "round": "R33",
+   "runner": "scripts/training/probe_taiji_bridge_snapshot_handoff_20261109.py",
+   "rerun_commit": "205c748a5",
+   "runner_blob_sha1": "24a9aac51df4d6d4bbfe448465981b5da805de96",
+   "report_runner_sha256": "bb5fbb282764552871c02d8db69d45ff2f2311aca7ea15be7b5857df7adc7f57",
+   "runner_blob_sha256": "bb5fbb282764552871c02d8db69d45ff2f2311aca7ea15be7b5857df7adc7f57",
+   "report_core_sha256": "d5ccb13bcf15636c400a45655dc7253f60e003d177044d54248e44814d2ee78b",
+   "matches_report": true,
+   "note": "current HEAD cannot run it after R34 (core sha changed); checkout this commit"
+  }
+ ],
+ "closed_state": {
+  "baseline": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "f96fd3ca474e545d7fda47efba783908016fa77ead95ea20031070964ce7eea4",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk_none": true,
+   "sc_bridge_none": true,
+   "battery_sha": "2bfc78160b3052c1b41337de358613ea922b4137e14f5b2da54a31504c1dd0c5",
+   "battery_steps": 20
+  },
+  "after": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "f96fd3ca474e545d7fda47efba783908016fa77ead95ea20031070964ce7eea4",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk_none": true,
+   "sc_bridge_none": true,
+   "battery_sha": "2bfc78160b3052c1b41337de358613ea922b4137e14f5b2da54a31504c1dd0c5",
+   "battery_steps": 20
+  },
+  "checks": {
+   "parameters_equal": true,
+   "state_equal": true,
+   "identity_equal": true,
+   "store_equal": true,
+   "battery_equal": true,
+   "steps_equal": true,
+   "sc_sfk_none": true,
+   "flag_disabled": true,
+   "rng_untouched": true
+  }
+ },
+ "bridge_default_none": true,
+ "verdict": {
+  "expression": "prefix_expression_20_20",
+  "prefix": "prefix_used_19_20",
+  "control": "prefix_control_equal",
+  "difference": "prefix_changes_input",
+  "unknown": "unknown_clears_prefix",
+  "parameters": "parameters_untouched",
+  "closed_state": "closed_state_equal",
+  "bridge_default": "bridge_default_none",
+  "rerun_anchors": "anchors_complete",
+  "overall": "text_prefix_feedback_clean"
+ },
+ "cost": {
+  "cpu_seconds": 4.125,
+  "wall_seconds": 4.632111310958862,
+  "cpu_cap": 200.0,
+  "estimate_cpu_upper": 40.0,
+  "threads": 1
+ }
+}

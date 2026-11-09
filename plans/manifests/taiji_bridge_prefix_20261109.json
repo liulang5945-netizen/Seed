@@ -1,0 +1,157 @@
+{
+ "schema": "taiji-bridge-prefix-r34-v1",
+ "created": "2026-11-09T17:33:24",
+ "seed": 20261109,
+ "estimate_cpu_upper": 40.0,
+ "cpu_cap": 200.0,
+ "runner_sha256": "ebb80205188b2c452b56f2da4c393914527a0bd0b9cd85fd7b80375117c2445c",
+ "bridge_sha256": "4edf29b22a199c29160523debb8ea23a45e59321f2b0c8dc06da72497672e831",
+ "core_sha256": "ca6422fef7929f4bc5771798668458da33dabfa84d73edd275bc135a8d272b9c",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "ca6422fef7929f4bc5771798668458da33dabfa84d73edd275bc135a8d272b9c"
+ },
+ "definition": {
+  "prefix": "bridge_observe(..., use_text_prefix=True) prepends the previous last_bridge_text plus a newline to the step input; the first step has no prefix",
+  "expression": "the 20 describe sentences still produce the expected paired texts",
+  "control": "the bridged trajectory equals a plain observe run on the same prefixed bytes",
+  "difference": "the bridged trajectory differs from a no-prefix observe run on at least one step",
+  "unknown": "an unknown input clears the text; the following step carries no prefix",
+  "closed_state": "the nine legacy closed-state readings stay equal before and after"
+ },
+ "criteria": {
+  "expression": "20/20 expression texts exact",
+  "prefix": "19/20 steps carry a prefix; the first carries none; each prefix equals the previous text",
+  "control": "20/20 state hashes equal to the prefixed plain run",
+  "difference": "at least 1 of 20 state hashes differs from the no-prefix run",
+  "unknown": "unknown expression is no_pair, text None; the next step has prefix None",
+  "parameters": "parameter hash and table digest unchanged",
+  "closed_state": "the nine legacy readings stay equal before and after",
+  "rerun": "the R33 anchor carries a commit, a runner blob sha1, a runner sha256 and a core sha256"
+ },
+ "definition_digest": "e1be4db0e4ef5c2054a5a82d1daceb1029677b3a9f47808d71b7e8f112a4c610",
+ "counts": {
+  "describe_sentences": 20,
+  "unknown_candidates": 12,
+  "rerun_anchors": 1
+ },
+ "inputs": {
+  "unknown": "黑色铁铃",
+  "authority": "verifier:v1",
+  "values": [
+   [
+    "object",
+    "蓝色杯子"
+   ],
+   [
+    "object",
+    "红色印章"
+   ],
+   [
+    "object",
+    "绿色瓶子"
+   ],
+   [
+    "place",
+    "木桌"
+   ],
+   [
+    "place",
+    "书架"
+   ]
+  ],
+  "aliases": [
+   [
+    "喝水的杯子",
+    [
+     "object",
+     "蓝色杯子"
+    ]
+   ],
+   [
+    "盖章用的印章",
+    [
+     "object",
+     "红色印章"
+    ]
+   ],
+   [
+    "盛水的瓶子",
+    [
+     "object",
+     "绿色瓶子"
+    ]
+   ],
+   [
+    "圆形的皮球",
+    [
+     "object",
+     "黄色球"
+    ]
+   ],
+   [
+    "方方正正的木桌子",
+    [
+     "place",
+     "木桌"
+    ]
+   ],
+   [
+    "窗前的台板",
+    [
+     "place",
+     "窗台"
+    ]
+   ],
+   [
+    "手边的小盒子",
+    [
+     "place",
+     "左盒"
+    ]
+   ],
+   [
+    "墙上的架子",
+    [
+     "place",
+     "书架"
+    ]
+   ],
+   [
+    "脚下的垫子",
+    [
+     "place",
+     "地毯"
+    ]
+   ]
+  ],
+  "unknown_candidates": [
+   "黑色铁铃",
+   "白色帆布",
+   "长柄铜勺",
+   "软木瓶塞",
+   "蓝色毛巾",
+   "银质圆镜",
+   "棕色皮箱",
+   "青色陶罐",
+   "灰色石阶",
+   "紫色绸带",
+   "金色烛台",
+   "深红木箱"
+  ],
+  "rerun_anchors": [
+   {
+    "round": "R33",
+    "runner": "scripts/training/probe_taiji_bridge_snapshot_handoff_20261109.py",
+    "rerun_commit": "205c748a5",
+    "runner_blob_sha1": "24a9aac51df4d6d4bbfe448465981b5da805de96",
+    "report_runner_sha256": "bb5fbb282764552871c02d8db69d45ff2f2311aca7ea15be7b5857df7adc7f57",
+    "runner_blob_sha256": "bb5fbb282764552871c02d8db69d45ff2f2311aca7ea15be7b5857df7adc7f57",
+    "report_core_sha256": "d5ccb13bcf15636c400a45655dc7253f60e003d177044d54248e44814d2ee78b",
+    "matches_report": true,
+    "note": "current HEAD cannot run it after R34 (core sha changed); checkout this commit"
+   }
+  ]
+ }
+}
