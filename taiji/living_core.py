@@ -717,6 +717,25 @@ class LivingCoreReference(nn.Module):
         text = result["text"] if result["decision"] == "chosen_pair" else None
         return replace(state, last_bridge_text=text), result
 
+    def bridge_observe(
+        self,
+        state: LivingState,
+        raw: str | bytes,
+        object_candidates: list[tuple[str, str]] | tuple[tuple[str, str], ...],
+        place_candidates: list[tuple[str, str]] | tuple[tuple[str, str], ...],
+        goal: str | bytes = b"",
+    ) -> tuple[LivingState, dict]:
+        """One subject step plus one paired expression on the same input.
+
+        The tensor path is exactly ``observe``; the expression only writes the
+        read-side ``last_bridge_text``.  ``info`` records the expression and the
+        resulting step count so the caller can see both.
+        """
+        raw_bytes = raw.encode("utf-8") if isinstance(raw, str) else raw
+        state = self.observe(state, raw_bytes, goal=goal)
+        state, expression = self.bridge_express(state, raw, object_candidates, place_candidates)
+        return state, {"bridge_expression": expression, "step": int(state.step)}
+
     def store_query_key(self, state: LivingState, raw: bytes) -> torch.Tensor:
         context = self.encoder.context(raw)
         if context.numel() == 0:

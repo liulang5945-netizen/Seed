@@ -1,0 +1,310 @@
+{
+ "schema": "taiji-bridge-observe-r31-report-v1",
+ "runner_sha256": "c7826323a0b7592b903bfcc0fc14c3eba83ffea67082fc60e1a429a53f02d5f6",
+ "manifest_sha256": "c8fe2107aa44a2bc93177e6d5eb4021cd268c3bceedf99154d4798199e7408dd",
+ "bridge_sha256": "4edf29b22a199c29160523debb8ea23a45e59321f2b0c8dc06da72497672e831",
+ "core_sha256": "f1725d42b3c91fc8c727c7afadaa45c8a4c4c376dec84e9466a1b72a1c0f1701",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "f1725d42b3c91fc8c727c7afadaa45c8a4c4c376dec84e9466a1b72a1c0f1701"
+ },
+ "definition": {
+  "observe": "bridge_observe runs observe on the raw input and then bridge_express on the same raw input; it returns the new state and info with a bridge_expression entry",
+  "twenty": "the 20 describe sentences must produce the expected pair texts",
+  "trajectory": "the bridged tensor trajectory must be bit-identical to a plain observe run",
+  "unknown": "an unknown input clears last_bridge_text through no_pair",
+  "closed_state": "the nine legacy closed-state readings stay equal before and after"
+ },
+ "criteria": {
+  "twenty": "20/20 expression decisions are chosen_pair and 20/20 texts are exact",
+  "trajectory": "20/20 state hashes equal to the plain run; final state hash equal",
+  "parameters": "parameter hash equal before and after; table digest unchanged",
+  "unknown": "unknown expression is no_pair and last_bridge_text is None; tensors equal to plain",
+  "closed_state": "the nine legacy readings stay equal before and after",
+  "rerun": "the R30 anchor carries a commit, a runner blob sha1, a runner sha256 and a core sha256"
+ },
+ "observed": {
+  "exact": 20,
+  "of": 20,
+  "trajectory_equal": 20,
+  "rows": [
+   {
+    "step": 1,
+    "text": "让圆口的器皿到四方木台。",
+    "expected": "蓝色杯子在木桌",
+    "decision": "chosen_pair",
+    "got": "蓝色杯子在木桌",
+    "stored": "蓝色杯子在木桌",
+    "tensor_equal": true,
+    "ok": true
+   },
+   {
+    "step": 2,
+    "text": "让圆口的器皿到靠窗的台面。",
+    "expected": "蓝色杯子在窗台",
+    "decision": "chosen_pair",
+    "got": "蓝色杯子在窗台",
+    "stored": "蓝色杯子在窗台",
+    "tensor_equal": true,
+    "ok": true
+   },
+   {
+    "step": 3,
+    "text": "让圆口的器皿到手边的匣子。",
+    "expected": "蓝色杯子在左盒",
+    "decision": "chosen_pair",
+    "got": "蓝色杯子在左盒",
+    "stored": "蓝色杯子在左盒",
+    "tensor_equal": true,
+    "ok": true
+   },
+   {
+    "step": 4,
+    "text": "让圆口的器皿到靠墙的层架。",
+    "expected": "蓝色杯子在书架",
+    "decision": "chosen_pair",
+    "got": "蓝色杯子在书架",
+    "stored": "蓝色杯子在书架",
+    "tensor_equal": true,
+    "ok": true
+   },
+   {
+    "step": 5,
+    "text": "让圆口的器皿到脚边的毡子。",
+    "expected": "蓝色杯子在地毯",
+    "decision": "chosen_pair",
+    "got": "蓝色杯子在地毯",
+    "stored": "蓝色杯子在地毯",
+    "tensor_equal": true,
+    "ok": true
+   },
+   {
+    "step": 6,
+    "text": "让带纹路的方块到四方木台。",
+    "expected": "红色印章在木桌",
+    "decision": "chosen_pair",
+    "got": "红色印章在木桌",
+    "stored": "红色印章在木桌",
+    "tensor_equal": true,
+    "ok": true
+   },
+   {
+    "step": 7,
+    "text": "让带纹路的方块到靠窗的台面。",
+    "expected": "红色印章在窗台",
+    "decision": "chosen_pair",
+    "got": "红色印章在窗台",
+    "stored": "红色印章在窗台",
+    "tensor_equal": true,
+    "ok": true
+   },
+   {
+    "step": 8,
+    "text": "让带纹路的方块到手边的匣子。",
+    "expected": "红色印章在左盒",
+    "decision": "chosen_pair",
+    "got": "红色印章在左盒",
+    "stored": "红色印章在左盒",
+    "tensor_equal": true,
+    "ok": true
+   },
+   {
+    "step": 9,
+    "text": "让带纹路的方块到靠墙的层架。",
+    "expected": "红色印章在书架",
+    "decision": "chosen_pair",
+    "got": "红色印章在书架",
+    "stored": "红色印章在书架",
+    "tensor_equal": true,
+    "ok": true
+   },
+   {
+    "step": 10,
+    "text": "让带纹路的方块到脚边的毡子。",
+    "expected": "红色印章在地毯",
+    "decision": "chosen_pair",
+    "got": "红色印章在地毯",
+    "stored": "红色印章在地毯",
+    "tensor_equal": true,
+    "ok": true
+   },
+   {
+    "step": 11,
+    "text": "让细长的容器到四方木台。",
+    "expected": "绿色瓶子在木桌",
+    "decision": "chosen_pair",
+    "got": "绿色瓶子在木桌",
+    "stored": "绿色瓶子在木桌",
+    "tensor_equal": true,
+    "ok": true
+   },
+   {
+    "step": 12,
+    "text": "让细长的容器到靠窗的台面。",
+    "expected": "绿色瓶子在窗台",
+    "decision": "chosen_pair",
+    "got": "绿色瓶子在窗台",
+    "stored": "绿色瓶子在窗台",
+    "tensor_equal": true,
+    "ok": true
+   },
+   {
+    "step": 13,
+    "text": "让细长的容器到手边的匣子。",
+    "expected": "绿色瓶子在左盒",
+    "decision": "chosen_pair",
+    "got": "绿色瓶子在左盒",
+    "stored": "绿色瓶子在左盒",
+    "tensor_equal": true,
+    "ok": true
+   },
+   {
+    "step": 14,
+    "text": "让细长的容器到靠墙的层架。",
+    "expected": "绿色瓶子在书架",
+    "decision": "chosen_pair",
+    "got": "绿色瓶子在书架",
+    "stored": "绿色瓶子在书架",
+    "tensor_equal": true,
+    "ok": true
+   },
+   {
+    "step": 15,
+    "text": "让细长的容器到脚边的毡子。",
+    "expected": "绿色瓶子在地毯",
+    "decision": "chosen_pair",
+    "got": "绿色瓶子在地毯",
+    "stored": "绿色瓶子在地毯",
+    "tensor_equal": true,
+    "ok": true
+   },
+   {
+    "step": 16,
+    "text": "让圆滚滚的东西到四方木台。",
+    "expected": "黄色球在木桌",
+    "decision": "chosen_pair",
+    "got": "黄色球在木桌",
+    "stored": "黄色球在木桌",
+    "tensor_equal": true,
+    "ok": true
+   },
+   {
+    "step": 17,
+    "text": "让圆滚滚的东西到靠窗的台面。",
+    "expected": "黄色球在窗台",
+    "decision": "chosen_pair",
+    "got": "黄色球在窗台",
+    "stored": "黄色球在窗台",
+    "tensor_equal": true,
+    "ok": true
+   },
+   {
+    "step": 18,
+    "text": "让圆滚滚的东西到手边的匣子。",
+    "expected": "黄色球在左盒",
+    "decision": "chosen_pair",
+    "got": "黄色球在左盒",
+    "stored": "黄色球在左盒",
+    "tensor_equal": true,
+    "ok": true
+   },
+   {
+    "step": 19,
+    "text": "让圆滚滚的东西到靠墙的层架。",
+    "expected": "黄色球在书架",
+    "decision": "chosen_pair",
+    "got": "黄色球在书架",
+    "stored": "黄色球在书架",
+    "tensor_equal": true,
+    "ok": true
+   },
+   {
+    "step": 20,
+    "text": "让圆滚滚的东西到脚边的毡子。",
+    "expected": "黄色球在地毯",
+    "decision": "chosen_pair",
+    "got": "黄色球在地毯",
+    "stored": "黄色球在地毯",
+    "tensor_equal": true,
+    "ok": true
+   }
+  ],
+  "unknown": {
+   "decision": "no_pair",
+   "stored": null,
+   "tensor_equal": true
+  },
+  "parameter_sha_equal": true,
+  "table_digest_unchanged": true,
+  "ok": true
+ },
+ "rerun_anchors": [
+  {
+   "round": "R30",
+   "runner": "scripts/training/probe_taiji_bridge_text_20261109.py",
+   "rerun_commit": "d476e1cef",
+   "runner_blob_sha1": "9215eb7bbed8e5fbebf82acfb04eb12e7fbe8a4c",
+   "report_runner_sha256": "b9b2fe368ac2f3d926e921af98968a416b623f0dac06dc6dd446d8409cbe7655",
+   "runner_blob_sha256": "b9b2fe368ac2f3d926e921af98968a416b623f0dac06dc6dd446d8409cbe7655",
+   "report_core_sha256": "ec5c24ece09343848ae0151e52399fbd437df42100fe362cadf6c93bd17ca368",
+   "matches_report": true,
+   "note": "current HEAD cannot run it after R31 (core sha changed); checkout this commit"
+  }
+ ],
+ "closed_state": {
+  "baseline": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "e63cd9dc2725284b62e5ef4da655e9676f3b5cc6386dc2e3619638d4949ffeb1",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk_none": true,
+   "sc_bridge_none": true,
+   "battery_sha": "a9992e8172ac922aad1a019425abbb69d885a1cb5500011b58b0097924a27ba3",
+   "battery_steps": 20
+  },
+  "after": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "e63cd9dc2725284b62e5ef4da655e9676f3b5cc6386dc2e3619638d4949ffeb1",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk_none": true,
+   "sc_bridge_none": true,
+   "battery_sha": "a9992e8172ac922aad1a019425abbb69d885a1cb5500011b58b0097924a27ba3",
+   "battery_steps": 20
+  },
+  "checks": {
+   "parameters_equal": true,
+   "state_equal": true,
+   "identity_equal": true,
+   "store_equal": true,
+   "battery_equal": true,
+   "steps_equal": true,
+   "sc_sfk_none": true,
+   "flag_disabled": true,
+   "rng_untouched": true
+  }
+ },
+ "bridge_default_none": true,
+ "verdict": {
+  "expression": "observe_expression_20_20",
+  "trajectory": "tensor_trajectory_equal",
+  "parameters": "parameters_untouched",
+  "unknown": "unknown_clears_text",
+  "closed_state": "closed_state_equal",
+  "bridge_default": "bridge_default_none",
+  "rerun_anchors": "anchors_complete",
+  "overall": "bridge_observe_expression_clean"
+ },
+ "cost": {
+  "cpu_seconds": 2.984375,
+  "wall_seconds": 3.623155117034912,
+  "cpu_cap": 200.0,
+  "estimate_cpu_upper": 40.0,
+  "threads": 1
+ }
+}
