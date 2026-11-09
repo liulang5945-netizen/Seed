@@ -1,0 +1,87 @@
+{
+ "schema": "taiji-z-object-r52-v1",
+ "created": "2026-11-09T18:33:13",
+ "seed": 20261109,
+ "estimate_cpu_upper": 20.0,
+ "cpu_cap": 200.0,
+ "lambdas": [
+  0.001,
+  0.1,
+  10.0,
+  1000.0
+ ],
+ "accuracy_gate": 0.75,
+ "runner_sha256": "3ae1f203f969cd6ef486e123e33fd7ed930715b43c07cec6cf23ef83bf5bc2be",
+ "core_sha256": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d"
+ },
+ "definition": {
+  "write": "each describe sentence is written once with a write-enabled observe",
+  "probe": "one step with the sentence's own first patch as the event; z is hooked at expression.z",
+  "task": "4-way object readout from z (128-dim)",
+  "folds": "grouped by place: each test fold holds one place and all four objects",
+  "solve": "ridge in the training-row span (exact for ridge predictions)",
+  "decision": "best accuracy over the lambda grid >= 0.75 -> z_retains_object",
+  "closed_state": "the nine legacy readings on the main subject stay equal before and after"
+ },
+ "criteria": {
+  "features": "20 finite z vectors with 4 objects and 5 places",
+  "shape": "each z is 128-dimensional",
+  "grid": "accuracy is reported for every lambda",
+  "decision": "the frozen 0.75 gate decides retains/destroys",
+  "closed_state": "the nine legacy readings stay equal and the main parameter digest does not move",
+  "rerun": "the R51 anchor carries a commit, a runner blob sha1, a runner sha256 and a core sha256"
+ },
+ "definition_digest": "d1ab74c122d066ff36e318182694ddb8e3e37fd677293a4652f9f5a9c5bb4812",
+ "counts": {
+  "describe_sentences": 20,
+  "lambdas": 4
+ },
+ "inputs": {
+  "goal": "r52",
+  "sentences": [
+   "让圆口的器皿到四方木台。",
+   "让圆口的器皿到靠窗的台面。",
+   "让圆口的器皿到手边的匣子。",
+   "让圆口的器皿到靠墙的层架。",
+   "让圆口的器皿到脚边的毡子。",
+   "让带纹路的方块到四方木台。",
+   "让带纹路的方块到靠窗的台面。",
+   "让带纹路的方块到手边的匣子。",
+   "让带纹路的方块到靠墙的层架。",
+   "让带纹路的方块到脚边的毡子。",
+   "让细长的容器到四方木台。",
+   "让细长的容器到靠窗的台面。",
+   "让细长的容器到手边的匣子。",
+   "让细长的容器到靠墙的层架。",
+   "让细长的容器到脚边的毡子。",
+   "让圆滚滚的东西到四方木台。",
+   "让圆滚滚的东西到靠窗的台面。",
+   "让圆滚滚的东西到手边的匣子。",
+   "让圆滚滚的东西到靠墙的层架。",
+   "让圆滚滚的东西到脚边的毡子。"
+  ],
+  "lambdas": [
+   0.001,
+   0.1,
+   10.0,
+   1000.0
+  ],
+  "rerun_anchors": [
+   {
+    "round": "R51",
+    "runner": "scripts/training/probe_taiji_structure_readout_20261109.py",
+    "rerun_commit": "5862b9313",
+    "runner_blob_sha1": "63dae4cf1c5e3aae3d0cfd33716793fbfe929808",
+    "report_runner_sha256": "520048891654a7fc116f563a85652e783463aaa14e8d101016c799f2ca992c36",
+    "runner_blob_sha256": "520048891654a7fc116f563a85652e783463aaa14e8d101016c799f2ca992c36",
+    "report_core_sha256": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d",
+    "matches_report": true,
+    "note": "R52 does not change living_core; R51 stays runnable at HEAD"
+   }
+  ]
+ }
+}
