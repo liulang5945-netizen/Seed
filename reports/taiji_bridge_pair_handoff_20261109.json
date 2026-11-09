@@ -1,0 +1,2020 @@
+{
+ "schema": "taiji-bridge-pair-handoff-r29-report-v1",
+ "runner_sha256": "b05f8fc2da793b6aecc87e9776009b75665137021600fc1ad36db6f0b0637c3c",
+ "manifest_sha256": "340b2d10effb1515aef33e027a6f552f0158d7769256b9190fe09a5c7d54e90f",
+ "bridge_sha256": "4edf29b22a199c29160523debb8ea23a45e59321f2b0c8dc06da72497672e831",
+ "core_sha256": "9fe7fbf786e900032498b00d6cbeaa600e29e3e14100a625aadbf548629f6d82",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "9fe7fbf786e900032498b00d6cbeaa600e29e3e14100a625aadbf548629f6d82"
+ },
+ "definition": {
+  "child": "a separate process imports the exported table under verifier:v1, expresses the pair template for the 20 describe sentences, corrects the CUP description to GREEN, expresses again, and exports",
+  "before": "the child's 20 before texts must equal '{object}在{place}'",
+  "after": "the child's 20 after texts must substitute GREEN for CUP and keep every place",
+  "handback": "the parent imports the child export; digest, audit entry and the 20 after texts must match",
+  "corrupt": "a second child receives truncated bytes and must reject them with rejected_import_invalid_state and write no output",
+  "closed_state": "the nine legacy closed-state readings stay equal before and after"
+ },
+ "criteria": {
+  "child_import": "child imported digest equals the parent digest",
+  "before": "20/20 before pairs and texts exact",
+  "after": "20/20 after pairs and texts exact; CUP sentences become GREEN; places unchanged",
+  "handback": "parent digest equals child export digest; 20/20 after texts; one audit entry with verifier:v1",
+  "corrupt": "child result error starts with rejected_import_invalid_state and no output exists",
+  "closed_state": "the nine legacy readings stay equal before and after",
+  "rerun": "the R28 anchor carries a commit, a runner blob sha1, a runner sha256 and a core sha256"
+ },
+ "handoff": {
+  "parent_digest": "a4edca3e25551a1b7632dee8f531e7ebb1ab09773d2b4e9a11a8b38e3b86d01f",
+  "state_bytes": 1820,
+  "state_sha256": "eaedca9f9cc1c974389061cf65239238c94b33fa433bd775ee8e2de927ceb075",
+  "child": {
+   "returncode": 0,
+   "stdout": "",
+   "stderr": "",
+   "result": {
+    "imported_digest": "a4edca3e25551a1b7632dee8f531e7ebb1ab09773d2b4e9a11a8b38e3b86d01f",
+    "exported_digest": "79c8351158e23b8970d4a9aabbc0263eaf8d2a861d640f8e9d76dee25f699d4b",
+    "export_sha256": "507c008d1e4e16367b9c168f51bc060c224cac313e8ba7753224b2d276da759c",
+    "before": [
+     {
+      "text": "让圆口的器皿到四方木台。",
+      "decision": "chosen_pair",
+      "object": [
+       "object",
+       "蓝色杯子"
+      ],
+      "place": [
+       "place",
+       "木桌"
+      ],
+      "output": "蓝色杯子在木桌",
+      "reasons": {
+       "object": "chosen",
+       "place": "chosen"
+      }
+     },
+     {
+      "text": "让圆口的器皿到靠窗的台面。",
+      "decision": "chosen_pair",
+      "object": [
+       "object",
+       "蓝色杯子"
+      ],
+      "place": [
+       "place",
+       "窗台"
+      ],
+      "output": "蓝色杯子在窗台",
+      "reasons": {
+       "object": "chosen",
+       "place": "chosen"
+      }
+     },
+     {
+      "text": "让圆口的器皿到手边的匣子。",
+      "decision": "chosen_pair",
+      "object": [
+       "object",
+       "蓝色杯子"
+      ],
+      "place": [
+       "place",
+       "左盒"
+      ],
+      "output": "蓝色杯子在左盒",
+      "reasons": {
+       "object": "chosen",
+       "place": "chosen"
+      }
+     },
+     {
+      "text": "让圆口的器皿到靠墙的层架。",
+      "decision": "chosen_pair",
+      "object": [
+       "object",
+       "蓝色杯子"
+      ],
+      "place": [
+       "place",
+       "书架"
+      ],
+      "output": "蓝色杯子在书架",
+      "reasons": {
+       "object": "chosen",
+       "place": "chosen"
+      }
+     },
+     {
+      "text": "让圆口的器皿到脚边的毡子。",
+      "decision": "chosen_pair",
+      "object": [
+       "object",
+       "蓝色杯子"
+      ],
+      "place": [
+       "place",
+       "地毯"
+      ],
+      "output": "蓝色杯子在地毯",
+      "reasons": {
+       "object": "chosen",
+       "place": "chosen"
+      }
+     },
+     {
+      "text": "让带纹路的方块到四方木台。",
+      "decision": "chosen_pair",
+      "object": [
+       "object",
+       "红色印章"
+      ],
+      "place": [
+       "place",
+       "木桌"
+      ],
+      "output": "红色印章在木桌",
+      "reasons": {
+       "object": "chosen",
+       "place": "chosen"
+      }
+     },
+     {
+      "text": "让带纹路的方块到靠窗的台面。",
+      "decision": "chosen_pair",
+      "object": [
+       "object",
+       "红色印章"
+      ],
+      "place": [
+       "place",
+       "窗台"
+      ],
+      "output": "红色印章在窗台",
+      "reasons": {
+       "object": "chosen",
+       "place": "chosen"
+      }
+     },
+     {
+      "text": "让带纹路的方块到手边的匣子。",
+      "decision": "chosen_pair",
+      "object": [
+       "object",
+       "红色印章"
+      ],
+      "place": [
+       "place",
+       "左盒"
+      ],
+      "output": "红色印章在左盒",
+      "reasons": {
+       "object": "chosen",
+       "place": "chosen"
+      }
+     },
+     {
+      "text": "让带纹路的方块到靠墙的层架。",
+      "decision": "chosen_pair",
+      "object": [
+       "object",
+       "红色印章"
+      ],
+      "place": [
+       "place",
+       "书架"
+      ],
+      "output": "红色印章在书架",
+      "reasons": {
+       "object": "chosen",
+       "place": "chosen"
+      }
+     },
+     {
+      "text": "让带纹路的方块到脚边的毡子。",
+      "decision": "chosen_pair",
+      "object": [
+       "object",
+       "红色印章"
+      ],
+      "place": [
+       "place",
+       "地毯"
+      ],
+      "output": "红色印章在地毯",
+      "reasons": {
+       "object": "chosen",
+       "place": "chosen"
+      }
+     },
+     {
+      "text": "让细长的容器到四方木台。",
+      "decision": "chosen_pair",
+      "object": [
+       "object",
+       "绿色瓶子"
+      ],
+      "place": [
+       "place",
+       "木桌"
+      ],
+      "output": "绿色瓶子在木桌",
+      "reasons": {
+       "object": "chosen",
+       "place": "chosen"
+      }
+     },
+     {
+      "text": "让细长的容器到靠窗的台面。",
+      "decision": "chosen_pair",
+      "object": [
+       "object",
+       "绿色瓶子"
+      ],
+      "place": [
+       "place",
+       "窗台"
+      ],
+      "output": "绿色瓶子在窗台",
+      "reasons": {
+       "object": "chosen",
+       "place": "chosen"
+      }
+     },
+     {
+      "text": "让细长的容器到手边的匣子。",
+      "decision": "chosen_pair",
+      "object": [
+       "object",
+       "绿色瓶子"
+      ],
+      "place": [
+       "place",
+       "左盒"
+      ],
+      "output": "绿色瓶子在左盒",
+      "reasons": {
+       "object": "chosen",
+       "place": "chosen"
+      }
+     },
+     {
+      "text": "让细长的容器到靠墙的层架。",
+      "decision": "chosen_pair",
+      "object": [
+       "object",
+       "绿色瓶子"
+      ],
+      "place": [
+       "place",
+       "书架"
+      ],
+      "output": "绿色瓶子在书架",
+      "reasons": {
+       "object": "chosen",
+       "place": "chosen"
+      }
+     },
+     {
+      "text": "让细长的容器到脚边的毡子。",
+      "decision": "chosen_pair",
+      "object": [
+       "object",
+       "绿色瓶子"
+      ],
+      "place": [
+       "place",
+       "地毯"
+      ],
+      "output": "绿色瓶子在地毯",
+      "reasons": {
+       "object": "chosen",
+       "place": "chosen"
+      }
+     },
+     {
+      "text": "让圆滚滚的东西到四方木台。",
+      "decision": "chosen_pair",
+      "object": [
+       "object",
+       "黄色球"
+      ],
+      "place": [
+       "place",
+       "木桌"
+      ],
+      "output": "黄色球在木桌",
+      "reasons": {
+       "object": "chosen",
+       "place": "chosen"
+      }
+     },
+     {
+      "text": "让圆滚滚的东西到靠窗的台面。",
+      "decision": "chosen_pair",
+      "object": [
+       "object",
+       "黄色球"
+      ],
+      "place": [
+       "place",
+       "窗台"
+      ],
+      "output": "黄色球在窗台",
+      "reasons": {
+       "object": "chosen",
+       "place": "chosen"
+      }
+     },
+     {
+      "text": "让圆滚滚的东西到手边的匣子。",
+      "decision": "chosen_pair",
+      "object": [
+       "object",
+       "黄色球"
+      ],
+      "place": [
+       "place",
+       "左盒"
+      ],
+      "output": "黄色球在左盒",
+      "reasons": {
+       "object": "chosen",
+       "place": "chosen"
+      }
+     },
+     {
+      "text": "让圆滚滚的东西到靠墙的层架。",
+      "decision": "chosen_pair",
+      "object": [
+       "object",
+       "黄色球"
+      ],
+      "place": [
+       "place",
+       "书架"
+      ],
+      "output": "黄色球在书架",
+      "reasons": {
+       "object": "chosen",
+       "place": "chosen"
+      }
+     },
+     {
+      "text": "让圆滚滚的东西到脚边的毡子。",
+      "decision": "chosen_pair",
+      "object": [
+       "object",
+       "黄色球"
+      ],
+      "place": [
+       "place",
+       "地毯"
+      ],
+      "output": "黄色球在地毯",
+      "reasons": {
+       "object": "chosen",
+       "place": "chosen"
+      }
+     }
+    ],
+    "correction": "corrected",
+    "after": [
+     {
+      "text": "让圆口的器皿到四方木台。",
+      "decision": "chosen_pair",
+      "object": [
+       "object",
+       "绿色瓶子"
+      ],
+      "place": [
+       "place",
+       "木桌"
+      ],
+      "output": "绿色瓶子在木桌",
+      "reasons": {
+       "object": "chosen",
+       "place": "chosen"
+      }
+     },
+     {
+      "text": "让圆口的器皿到靠窗的台面。",
+      "decision": "chosen_pair",
+      "object": [
+       "object",
+       "绿色瓶子"
+      ],
+      "place": [
+       "place",
+       "窗台"
+      ],
+      "output": "绿色瓶子在窗台",
+      "reasons": {
+       "object": "chosen",
+       "place": "chosen"
+      }
+     },
+     {
+      "text": "让圆口的器皿到手边的匣子。",
+      "decision": "chosen_pair",
+      "object": [
+       "object",
+       "绿色瓶子"
+      ],
+      "place": [
+       "place",
+       "左盒"
+      ],
+      "output": "绿色瓶子在左盒",
+      "reasons": {
+       "object": "chosen",
+       "place": "chosen"
+      }
+     },
+     {
+      "text": "让圆口的器皿到靠墙的层架。",
+      "decision": "chosen_pair",
+      "object": [
+       "object",
+       "绿色瓶子"
+      ],
+      "place": [
+       "place",
+       "书架"
+      ],
+      "output": "绿色瓶子在书架",
+      "reasons": {
+       "object": "chosen",
+       "place": "chosen"
+      }
+     },
+     {
+      "text": "让圆口的器皿到脚边的毡子。",
+      "decision": "chosen_pair",
+      "object": [
+       "object",
+       "绿色瓶子"
+      ],
+      "place": [
+       "place",
+       "地毯"
+      ],
+      "output": "绿色瓶子在地毯",
+      "reasons": {
+       "object": "chosen",
+       "place": "chosen"
+      }
+     },
+     {
+      "text": "让带纹路的方块到四方木台。",
+      "decision": "chosen_pair",
+      "object": [
+       "object",
+       "红色印章"
+      ],
+      "place": [
+       "place",
+       "木桌"
+      ],
+      "output": "红色印章在木桌",
+      "reasons": {
+       "object": "chosen",
+       "place": "chosen"
+      }
+     },
+     {
+      "text": "让带纹路的方块到靠窗的台面。",
+      "decision": "chosen_pair",
+      "object": [
+       "object",
+       "红色印章"
+      ],
+      "place": [
+       "place",
+       "窗台"
+      ],
+      "output": "红色印章在窗台",
+      "reasons": {
+       "object": "chosen",
+       "place": "chosen"
+      }
+     },
+     {
+      "text": "让带纹路的方块到手边的匣子。",
+      "decision": "chosen_pair",
+      "object": [
+       "object",
+       "红色印章"
+      ],
+      "place": [
+       "place",
+       "左盒"
+      ],
+      "output": "红色印章在左盒",
+      "reasons": {
+       "object": "chosen",
+       "place": "chosen"
+      }
+     },
+     {
+      "text": "让带纹路的方块到靠墙的层架。",
+      "decision": "chosen_pair",
+      "object": [
+       "object",
+       "红色印章"
+      ],
+      "place": [
+       "place",
+       "书架"
+      ],
+      "output": "红色印章在书架",
+      "reasons": {
+       "object": "chosen",
+       "place": "chosen"
+      }
+     },
+     {
+      "text": "让带纹路的方块到脚边的毡子。",
+      "decision": "chosen_pair",
+      "object": [
+       "object",
+       "红色印章"
+      ],
+      "place": [
+       "place",
+       "地毯"
+      ],
+      "output": "红色印章在地毯",
+      "reasons": {
+       "object": "chosen",
+       "place": "chosen"
+      }
+     },
+     {
+      "text": "让细长的容器到四方木台。",
+      "decision": "chosen_pair",
+      "object": [
+       "object",
+       "绿色瓶子"
+      ],
+      "place": [
+       "place",
+       "木桌"
+      ],
+      "output": "绿色瓶子在木桌",
+      "reasons": {
+       "object": "chosen",
+       "place": "chosen"
+      }
+     },
+     {
+      "text": "让细长的容器到靠窗的台面。",
+      "decision": "chosen_pair",
+      "object": [
+       "object",
+       "绿色瓶子"
+      ],
+      "place": [
+       "place",
+       "窗台"
+      ],
+      "output": "绿色瓶子在窗台",
+      "reasons": {
+       "object": "chosen",
+       "place": "chosen"
+      }
+     },
+     {
+      "text": "让细长的容器到手边的匣子。",
+      "decision": "chosen_pair",
+      "object": [
+       "object",
+       "绿色瓶子"
+      ],
+      "place": [
+       "place",
+       "左盒"
+      ],
+      "output": "绿色瓶子在左盒",
+      "reasons": {
+       "object": "chosen",
+       "place": "chosen"
+      }
+     },
+     {
+      "text": "让细长的容器到靠墙的层架。",
+      "decision": "chosen_pair",
+      "object": [
+       "object",
+       "绿色瓶子"
+      ],
+      "place": [
+       "place",
+       "书架"
+      ],
+      "output": "绿色瓶子在书架",
+      "reasons": {
+       "object": "chosen",
+       "place": "chosen"
+      }
+     },
+     {
+      "text": "让细长的容器到脚边的毡子。",
+      "decision": "chosen_pair",
+      "object": [
+       "object",
+       "绿色瓶子"
+      ],
+      "place": [
+       "place",
+       "地毯"
+      ],
+      "output": "绿色瓶子在地毯",
+      "reasons": {
+       "object": "chosen",
+       "place": "chosen"
+      }
+     },
+     {
+      "text": "让圆滚滚的东西到四方木台。",
+      "decision": "chosen_pair",
+      "object": [
+       "object",
+       "黄色球"
+      ],
+      "place": [
+       "place",
+       "木桌"
+      ],
+      "output": "黄色球在木桌",
+      "reasons": {
+       "object": "chosen",
+       "place": "chosen"
+      }
+     },
+     {
+      "text": "让圆滚滚的东西到靠窗的台面。",
+      "decision": "chosen_pair",
+      "object": [
+       "object",
+       "黄色球"
+      ],
+      "place": [
+       "place",
+       "窗台"
+      ],
+      "output": "黄色球在窗台",
+      "reasons": {
+       "object": "chosen",
+       "place": "chosen"
+      }
+     },
+     {
+      "text": "让圆滚滚的东西到手边的匣子。",
+      "decision": "chosen_pair",
+      "object": [
+       "object",
+       "黄色球"
+      ],
+      "place": [
+       "place",
+       "左盒"
+      ],
+      "output": "黄色球在左盒",
+      "reasons": {
+       "object": "chosen",
+       "place": "chosen"
+      }
+     },
+     {
+      "text": "让圆滚滚的东西到靠墙的层架。",
+      "decision": "chosen_pair",
+      "object": [
+       "object",
+       "黄色球"
+      ],
+      "place": [
+       "place",
+       "书架"
+      ],
+      "output": "黄色球在书架",
+      "reasons": {
+       "object": "chosen",
+       "place": "chosen"
+      }
+     },
+     {
+      "text": "让圆滚滚的东西到脚边的毡子。",
+      "decision": "chosen_pair",
+      "object": [
+       "object",
+       "黄色球"
+      ],
+      "place": [
+       "place",
+       "地毯"
+      ],
+      "output": "黄色球在地毯",
+      "reasons": {
+       "object": "chosen",
+       "place": "chosen"
+      }
+     }
+    ],
+    "log": [
+     {
+      "from": [
+       "object",
+       "蓝色杯子"
+      ],
+      "to": [
+       "object",
+       "绿色瓶子"
+      ],
+      "authority": "verifier:v1",
+      "reason": "r29:pair"
+     }
+    ],
+    "policy": [
+     "verifier:v1"
+    ],
+    "wrote_output": true
+   },
+   "out_exists": true
+  },
+  "child_result": {
+   "imported_digest": "a4edca3e25551a1b7632dee8f531e7ebb1ab09773d2b4e9a11a8b38e3b86d01f",
+   "exported_digest": "79c8351158e23b8970d4a9aabbc0263eaf8d2a861d640f8e9d76dee25f699d4b",
+   "export_sha256": "507c008d1e4e16367b9c168f51bc060c224cac313e8ba7753224b2d276da759c",
+   "before": [
+    {
+     "text": "让圆口的器皿到四方木台。",
+     "decision": "chosen_pair",
+     "object": [
+      "object",
+      "蓝色杯子"
+     ],
+     "place": [
+      "place",
+      "木桌"
+     ],
+     "output": "蓝色杯子在木桌",
+     "reasons": {
+      "object": "chosen",
+      "place": "chosen"
+     }
+    },
+    {
+     "text": "让圆口的器皿到靠窗的台面。",
+     "decision": "chosen_pair",
+     "object": [
+      "object",
+      "蓝色杯子"
+     ],
+     "place": [
+      "place",
+      "窗台"
+     ],
+     "output": "蓝色杯子在窗台",
+     "reasons": {
+      "object": "chosen",
+      "place": "chosen"
+     }
+    },
+    {
+     "text": "让圆口的器皿到手边的匣子。",
+     "decision": "chosen_pair",
+     "object": [
+      "object",
+      "蓝色杯子"
+     ],
+     "place": [
+      "place",
+      "左盒"
+     ],
+     "output": "蓝色杯子在左盒",
+     "reasons": {
+      "object": "chosen",
+      "place": "chosen"
+     }
+    },
+    {
+     "text": "让圆口的器皿到靠墙的层架。",
+     "decision": "chosen_pair",
+     "object": [
+      "object",
+      "蓝色杯子"
+     ],
+     "place": [
+      "place",
+      "书架"
+     ],
+     "output": "蓝色杯子在书架",
+     "reasons": {
+      "object": "chosen",
+      "place": "chosen"
+     }
+    },
+    {
+     "text": "让圆口的器皿到脚边的毡子。",
+     "decision": "chosen_pair",
+     "object": [
+      "object",
+      "蓝色杯子"
+     ],
+     "place": [
+      "place",
+      "地毯"
+     ],
+     "output": "蓝色杯子在地毯",
+     "reasons": {
+      "object": "chosen",
+      "place": "chosen"
+     }
+    },
+    {
+     "text": "让带纹路的方块到四方木台。",
+     "decision": "chosen_pair",
+     "object": [
+      "object",
+      "红色印章"
+     ],
+     "place": [
+      "place",
+      "木桌"
+     ],
+     "output": "红色印章在木桌",
+     "reasons": {
+      "object": "chosen",
+      "place": "chosen"
+     }
+    },
+    {
+     "text": "让带纹路的方块到靠窗的台面。",
+     "decision": "chosen_pair",
+     "object": [
+      "object",
+      "红色印章"
+     ],
+     "place": [
+      "place",
+      "窗台"
+     ],
+     "output": "红色印章在窗台",
+     "reasons": {
+      "object": "chosen",
+      "place": "chosen"
+     }
+    },
+    {
+     "text": "让带纹路的方块到手边的匣子。",
+     "decision": "chosen_pair",
+     "object": [
+      "object",
+      "红色印章"
+     ],
+     "place": [
+      "place",
+      "左盒"
+     ],
+     "output": "红色印章在左盒",
+     "reasons": {
+      "object": "chosen",
+      "place": "chosen"
+     }
+    },
+    {
+     "text": "让带纹路的方块到靠墙的层架。",
+     "decision": "chosen_pair",
+     "object": [
+      "object",
+      "红色印章"
+     ],
+     "place": [
+      "place",
+      "书架"
+     ],
+     "output": "红色印章在书架",
+     "reasons": {
+      "object": "chosen",
+      "place": "chosen"
+     }
+    },
+    {
+     "text": "让带纹路的方块到脚边的毡子。",
+     "decision": "chosen_pair",
+     "object": [
+      "object",
+      "红色印章"
+     ],
+     "place": [
+      "place",
+      "地毯"
+     ],
+     "output": "红色印章在地毯",
+     "reasons": {
+      "object": "chosen",
+      "place": "chosen"
+     }
+    },
+    {
+     "text": "让细长的容器到四方木台。",
+     "decision": "chosen_pair",
+     "object": [
+      "object",
+      "绿色瓶子"
+     ],
+     "place": [
+      "place",
+      "木桌"
+     ],
+     "output": "绿色瓶子在木桌",
+     "reasons": {
+      "object": "chosen",
+      "place": "chosen"
+     }
+    },
+    {
+     "text": "让细长的容器到靠窗的台面。",
+     "decision": "chosen_pair",
+     "object": [
+      "object",
+      "绿色瓶子"
+     ],
+     "place": [
+      "place",
+      "窗台"
+     ],
+     "output": "绿色瓶子在窗台",
+     "reasons": {
+      "object": "chosen",
+      "place": "chosen"
+     }
+    },
+    {
+     "text": "让细长的容器到手边的匣子。",
+     "decision": "chosen_pair",
+     "object": [
+      "object",
+      "绿色瓶子"
+     ],
+     "place": [
+      "place",
+      "左盒"
+     ],
+     "output": "绿色瓶子在左盒",
+     "reasons": {
+      "object": "chosen",
+      "place": "chosen"
+     }
+    },
+    {
+     "text": "让细长的容器到靠墙的层架。",
+     "decision": "chosen_pair",
+     "object": [
+      "object",
+      "绿色瓶子"
+     ],
+     "place": [
+      "place",
+      "书架"
+     ],
+     "output": "绿色瓶子在书架",
+     "reasons": {
+      "object": "chosen",
+      "place": "chosen"
+     }
+    },
+    {
+     "text": "让细长的容器到脚边的毡子。",
+     "decision": "chosen_pair",
+     "object": [
+      "object",
+      "绿色瓶子"
+     ],
+     "place": [
+      "place",
+      "地毯"
+     ],
+     "output": "绿色瓶子在地毯",
+     "reasons": {
+      "object": "chosen",
+      "place": "chosen"
+     }
+    },
+    {
+     "text": "让圆滚滚的东西到四方木台。",
+     "decision": "chosen_pair",
+     "object": [
+      "object",
+      "黄色球"
+     ],
+     "place": [
+      "place",
+      "木桌"
+     ],
+     "output": "黄色球在木桌",
+     "reasons": {
+      "object": "chosen",
+      "place": "chosen"
+     }
+    },
+    {
+     "text": "让圆滚滚的东西到靠窗的台面。",
+     "decision": "chosen_pair",
+     "object": [
+      "object",
+      "黄色球"
+     ],
+     "place": [
+      "place",
+      "窗台"
+     ],
+     "output": "黄色球在窗台",
+     "reasons": {
+      "object": "chosen",
+      "place": "chosen"
+     }
+    },
+    {
+     "text": "让圆滚滚的东西到手边的匣子。",
+     "decision": "chosen_pair",
+     "object": [
+      "object",
+      "黄色球"
+     ],
+     "place": [
+      "place",
+      "左盒"
+     ],
+     "output": "黄色球在左盒",
+     "reasons": {
+      "object": "chosen",
+      "place": "chosen"
+     }
+    },
+    {
+     "text": "让圆滚滚的东西到靠墙的层架。",
+     "decision": "chosen_pair",
+     "object": [
+      "object",
+      "黄色球"
+     ],
+     "place": [
+      "place",
+      "书架"
+     ],
+     "output": "黄色球在书架",
+     "reasons": {
+      "object": "chosen",
+      "place": "chosen"
+     }
+    },
+    {
+     "text": "让圆滚滚的东西到脚边的毡子。",
+     "decision": "chosen_pair",
+     "object": [
+      "object",
+      "黄色球"
+     ],
+     "place": [
+      "place",
+      "地毯"
+     ],
+     "output": "黄色球在地毯",
+     "reasons": {
+      "object": "chosen",
+      "place": "chosen"
+     }
+    }
+   ],
+   "correction": "corrected",
+   "after": [
+    {
+     "text": "让圆口的器皿到四方木台。",
+     "decision": "chosen_pair",
+     "object": [
+      "object",
+      "绿色瓶子"
+     ],
+     "place": [
+      "place",
+      "木桌"
+     ],
+     "output": "绿色瓶子在木桌",
+     "reasons": {
+      "object": "chosen",
+      "place": "chosen"
+     }
+    },
+    {
+     "text": "让圆口的器皿到靠窗的台面。",
+     "decision": "chosen_pair",
+     "object": [
+      "object",
+      "绿色瓶子"
+     ],
+     "place": [
+      "place",
+      "窗台"
+     ],
+     "output": "绿色瓶子在窗台",
+     "reasons": {
+      "object": "chosen",
+      "place": "chosen"
+     }
+    },
+    {
+     "text": "让圆口的器皿到手边的匣子。",
+     "decision": "chosen_pair",
+     "object": [
+      "object",
+      "绿色瓶子"
+     ],
+     "place": [
+      "place",
+      "左盒"
+     ],
+     "output": "绿色瓶子在左盒",
+     "reasons": {
+      "object": "chosen",
+      "place": "chosen"
+     }
+    },
+    {
+     "text": "让圆口的器皿到靠墙的层架。",
+     "decision": "chosen_pair",
+     "object": [
+      "object",
+      "绿色瓶子"
+     ],
+     "place": [
+      "place",
+      "书架"
+     ],
+     "output": "绿色瓶子在书架",
+     "reasons": {
+      "object": "chosen",
+      "place": "chosen"
+     }
+    },
+    {
+     "text": "让圆口的器皿到脚边的毡子。",
+     "decision": "chosen_pair",
+     "object": [
+      "object",
+      "绿色瓶子"
+     ],
+     "place": [
+      "place",
+      "地毯"
+     ],
+     "output": "绿色瓶子在地毯",
+     "reasons": {
+      "object": "chosen",
+      "place": "chosen"
+     }
+    },
+    {
+     "text": "让带纹路的方块到四方木台。",
+     "decision": "chosen_pair",
+     "object": [
+      "object",
+      "红色印章"
+     ],
+     "place": [
+      "place",
+      "木桌"
+     ],
+     "output": "红色印章在木桌",
+     "reasons": {
+      "object": "chosen",
+      "place": "chosen"
+     }
+    },
+    {
+     "text": "让带纹路的方块到靠窗的台面。",
+     "decision": "chosen_pair",
+     "object": [
+      "object",
+      "红色印章"
+     ],
+     "place": [
+      "place",
+      "窗台"
+     ],
+     "output": "红色印章在窗台",
+     "reasons": {
+      "object": "chosen",
+      "place": "chosen"
+     }
+    },
+    {
+     "text": "让带纹路的方块到手边的匣子。",
+     "decision": "chosen_pair",
+     "object": [
+      "object",
+      "红色印章"
+     ],
+     "place": [
+      "place",
+      "左盒"
+     ],
+     "output": "红色印章在左盒",
+     "reasons": {
+      "object": "chosen",
+      "place": "chosen"
+     }
+    },
+    {
+     "text": "让带纹路的方块到靠墙的层架。",
+     "decision": "chosen_pair",
+     "object": [
+      "object",
+      "红色印章"
+     ],
+     "place": [
+      "place",
+      "书架"
+     ],
+     "output": "红色印章在书架",
+     "reasons": {
+      "object": "chosen",
+      "place": "chosen"
+     }
+    },
+    {
+     "text": "让带纹路的方块到脚边的毡子。",
+     "decision": "chosen_pair",
+     "object": [
+      "object",
+      "红色印章"
+     ],
+     "place": [
+      "place",
+      "地毯"
+     ],
+     "output": "红色印章在地毯",
+     "reasons": {
+      "object": "chosen",
+      "place": "chosen"
+     }
+    },
+    {
+     "text": "让细长的容器到四方木台。",
+     "decision": "chosen_pair",
+     "object": [
+      "object",
+      "绿色瓶子"
+     ],
+     "place": [
+      "place",
+      "木桌"
+     ],
+     "output": "绿色瓶子在木桌",
+     "reasons": {
+      "object": "chosen",
+      "place": "chosen"
+     }
+    },
+    {
+     "text": "让细长的容器到靠窗的台面。",
+     "decision": "chosen_pair",
+     "object": [
+      "object",
+      "绿色瓶子"
+     ],
+     "place": [
+      "place",
+      "窗台"
+     ],
+     "output": "绿色瓶子在窗台",
+     "reasons": {
+      "object": "chosen",
+      "place": "chosen"
+     }
+    },
+    {
+     "text": "让细长的容器到手边的匣子。",
+     "decision": "chosen_pair",
+     "object": [
+      "object",
+      "绿色瓶子"
+     ],
+     "place": [
+      "place",
+      "左盒"
+     ],
+     "output": "绿色瓶子在左盒",
+     "reasons": {
+      "object": "chosen",
+      "place": "chosen"
+     }
+    },
+    {
+     "text": "让细长的容器到靠墙的层架。",
+     "decision": "chosen_pair",
+     "object": [
+      "object",
+      "绿色瓶子"
+     ],
+     "place": [
+      "place",
+      "书架"
+     ],
+     "output": "绿色瓶子在书架",
+     "reasons": {
+      "object": "chosen",
+      "place": "chosen"
+     }
+    },
+    {
+     "text": "让细长的容器到脚边的毡子。",
+     "decision": "chosen_pair",
+     "object": [
+      "object",
+      "绿色瓶子"
+     ],
+     "place": [
+      "place",
+      "地毯"
+     ],
+     "output": "绿色瓶子在地毯",
+     "reasons": {
+      "object": "chosen",
+      "place": "chosen"
+     }
+    },
+    {
+     "text": "让圆滚滚的东西到四方木台。",
+     "decision": "chosen_pair",
+     "object": [
+      "object",
+      "黄色球"
+     ],
+     "place": [
+      "place",
+      "木桌"
+     ],
+     "output": "黄色球在木桌",
+     "reasons": {
+      "object": "chosen",
+      "place": "chosen"
+     }
+    },
+    {
+     "text": "让圆滚滚的东西到靠窗的台面。",
+     "decision": "chosen_pair",
+     "object": [
+      "object",
+      "黄色球"
+     ],
+     "place": [
+      "place",
+      "窗台"
+     ],
+     "output": "黄色球在窗台",
+     "reasons": {
+      "object": "chosen",
+      "place": "chosen"
+     }
+    },
+    {
+     "text": "让圆滚滚的东西到手边的匣子。",
+     "decision": "chosen_pair",
+     "object": [
+      "object",
+      "黄色球"
+     ],
+     "place": [
+      "place",
+      "左盒"
+     ],
+     "output": "黄色球在左盒",
+     "reasons": {
+      "object": "chosen",
+      "place": "chosen"
+     }
+    },
+    {
+     "text": "让圆滚滚的东西到靠墙的层架。",
+     "decision": "chosen_pair",
+     "object": [
+      "object",
+      "黄色球"
+     ],
+     "place": [
+      "place",
+      "书架"
+     ],
+     "output": "黄色球在书架",
+     "reasons": {
+      "object": "chosen",
+      "place": "chosen"
+     }
+    },
+    {
+     "text": "让圆滚滚的东西到脚边的毡子。",
+     "decision": "chosen_pair",
+     "object": [
+      "object",
+      "黄色球"
+     ],
+     "place": [
+      "place",
+      "地毯"
+     ],
+     "output": "黄色球在地毯",
+     "reasons": {
+      "object": "chosen",
+      "place": "chosen"
+     }
+    }
+   ],
+   "log": [
+    {
+     "from": [
+      "object",
+      "蓝色杯子"
+     ],
+     "to": [
+      "object",
+      "绿色瓶子"
+     ],
+     "authority": "verifier:v1",
+     "reason": "r29:pair"
+    }
+   ],
+   "policy": [
+    "verifier:v1"
+   ],
+   "wrote_output": true
+  },
+  "before_expected": [
+   {
+    "text": "让圆口的器皿到四方木台。",
+    "object": [
+     "object",
+     "蓝色杯子"
+    ],
+    "place": [
+     "place",
+     "木桌"
+    ],
+    "output": "蓝色杯子在木桌"
+   },
+   {
+    "text": "让圆口的器皿到靠窗的台面。",
+    "object": [
+     "object",
+     "蓝色杯子"
+    ],
+    "place": [
+     "place",
+     "窗台"
+    ],
+    "output": "蓝色杯子在窗台"
+   },
+   {
+    "text": "让圆口的器皿到手边的匣子。",
+    "object": [
+     "object",
+     "蓝色杯子"
+    ],
+    "place": [
+     "place",
+     "左盒"
+    ],
+    "output": "蓝色杯子在左盒"
+   },
+   {
+    "text": "让圆口的器皿到靠墙的层架。",
+    "object": [
+     "object",
+     "蓝色杯子"
+    ],
+    "place": [
+     "place",
+     "书架"
+    ],
+    "output": "蓝色杯子在书架"
+   },
+   {
+    "text": "让圆口的器皿到脚边的毡子。",
+    "object": [
+     "object",
+     "蓝色杯子"
+    ],
+    "place": [
+     "place",
+     "地毯"
+    ],
+    "output": "蓝色杯子在地毯"
+   },
+   {
+    "text": "让带纹路的方块到四方木台。",
+    "object": [
+     "object",
+     "红色印章"
+    ],
+    "place": [
+     "place",
+     "木桌"
+    ],
+    "output": "红色印章在木桌"
+   },
+   {
+    "text": "让带纹路的方块到靠窗的台面。",
+    "object": [
+     "object",
+     "红色印章"
+    ],
+    "place": [
+     "place",
+     "窗台"
+    ],
+    "output": "红色印章在窗台"
+   },
+   {
+    "text": "让带纹路的方块到手边的匣子。",
+    "object": [
+     "object",
+     "红色印章"
+    ],
+    "place": [
+     "place",
+     "左盒"
+    ],
+    "output": "红色印章在左盒"
+   },
+   {
+    "text": "让带纹路的方块到靠墙的层架。",
+    "object": [
+     "object",
+     "红色印章"
+    ],
+    "place": [
+     "place",
+     "书架"
+    ],
+    "output": "红色印章在书架"
+   },
+   {
+    "text": "让带纹路的方块到脚边的毡子。",
+    "object": [
+     "object",
+     "红色印章"
+    ],
+    "place": [
+     "place",
+     "地毯"
+    ],
+    "output": "红色印章在地毯"
+   },
+   {
+    "text": "让细长的容器到四方木台。",
+    "object": [
+     "object",
+     "绿色瓶子"
+    ],
+    "place": [
+     "place",
+     "木桌"
+    ],
+    "output": "绿色瓶子在木桌"
+   },
+   {
+    "text": "让细长的容器到靠窗的台面。",
+    "object": [
+     "object",
+     "绿色瓶子"
+    ],
+    "place": [
+     "place",
+     "窗台"
+    ],
+    "output": "绿色瓶子在窗台"
+   },
+   {
+    "text": "让细长的容器到手边的匣子。",
+    "object": [
+     "object",
+     "绿色瓶子"
+    ],
+    "place": [
+     "place",
+     "左盒"
+    ],
+    "output": "绿色瓶子在左盒"
+   },
+   {
+    "text": "让细长的容器到靠墙的层架。",
+    "object": [
+     "object",
+     "绿色瓶子"
+    ],
+    "place": [
+     "place",
+     "书架"
+    ],
+    "output": "绿色瓶子在书架"
+   },
+   {
+    "text": "让细长的容器到脚边的毡子。",
+    "object": [
+     "object",
+     "绿色瓶子"
+    ],
+    "place": [
+     "place",
+     "地毯"
+    ],
+    "output": "绿色瓶子在地毯"
+   },
+   {
+    "text": "让圆滚滚的东西到四方木台。",
+    "object": [
+     "object",
+     "黄色球"
+    ],
+    "place": [
+     "place",
+     "木桌"
+    ],
+    "output": "黄色球在木桌"
+   },
+   {
+    "text": "让圆滚滚的东西到靠窗的台面。",
+    "object": [
+     "object",
+     "黄色球"
+    ],
+    "place": [
+     "place",
+     "窗台"
+    ],
+    "output": "黄色球在窗台"
+   },
+   {
+    "text": "让圆滚滚的东西到手边的匣子。",
+    "object": [
+     "object",
+     "黄色球"
+    ],
+    "place": [
+     "place",
+     "左盒"
+    ],
+    "output": "黄色球在左盒"
+   },
+   {
+    "text": "让圆滚滚的东西到靠墙的层架。",
+    "object": [
+     "object",
+     "黄色球"
+    ],
+    "place": [
+     "place",
+     "书架"
+    ],
+    "output": "黄色球在书架"
+   },
+   {
+    "text": "让圆滚滚的东西到脚边的毡子。",
+    "object": [
+     "object",
+     "黄色球"
+    ],
+    "place": [
+     "place",
+     "地毯"
+    ],
+    "output": "黄色球在地毯"
+   }
+  ],
+  "after_expected": [
+   {
+    "text": "让圆口的器皿到四方木台。",
+    "object": [
+     "object",
+     "绿色瓶子"
+    ],
+    "place": [
+     "place",
+     "木桌"
+    ],
+    "output": "绿色瓶子在木桌"
+   },
+   {
+    "text": "让圆口的器皿到靠窗的台面。",
+    "object": [
+     "object",
+     "绿色瓶子"
+    ],
+    "place": [
+     "place",
+     "窗台"
+    ],
+    "output": "绿色瓶子在窗台"
+   },
+   {
+    "text": "让圆口的器皿到手边的匣子。",
+    "object": [
+     "object",
+     "绿色瓶子"
+    ],
+    "place": [
+     "place",
+     "左盒"
+    ],
+    "output": "绿色瓶子在左盒"
+   },
+   {
+    "text": "让圆口的器皿到靠墙的层架。",
+    "object": [
+     "object",
+     "绿色瓶子"
+    ],
+    "place": [
+     "place",
+     "书架"
+    ],
+    "output": "绿色瓶子在书架"
+   },
+   {
+    "text": "让圆口的器皿到脚边的毡子。",
+    "object": [
+     "object",
+     "绿色瓶子"
+    ],
+    "place": [
+     "place",
+     "地毯"
+    ],
+    "output": "绿色瓶子在地毯"
+   },
+   {
+    "text": "让带纹路的方块到四方木台。",
+    "object": [
+     "object",
+     "红色印章"
+    ],
+    "place": [
+     "place",
+     "木桌"
+    ],
+    "output": "红色印章在木桌"
+   },
+   {
+    "text": "让带纹路的方块到靠窗的台面。",
+    "object": [
+     "object",
+     "红色印章"
+    ],
+    "place": [
+     "place",
+     "窗台"
+    ],
+    "output": "红色印章在窗台"
+   },
+   {
+    "text": "让带纹路的方块到手边的匣子。",
+    "object": [
+     "object",
+     "红色印章"
+    ],
+    "place": [
+     "place",
+     "左盒"
+    ],
+    "output": "红色印章在左盒"
+   },
+   {
+    "text": "让带纹路的方块到靠墙的层架。",
+    "object": [
+     "object",
+     "红色印章"
+    ],
+    "place": [
+     "place",
+     "书架"
+    ],
+    "output": "红色印章在书架"
+   },
+   {
+    "text": "让带纹路的方块到脚边的毡子。",
+    "object": [
+     "object",
+     "红色印章"
+    ],
+    "place": [
+     "place",
+     "地毯"
+    ],
+    "output": "红色印章在地毯"
+   },
+   {
+    "text": "让细长的容器到四方木台。",
+    "object": [
+     "object",
+     "绿色瓶子"
+    ],
+    "place": [
+     "place",
+     "木桌"
+    ],
+    "output": "绿色瓶子在木桌"
+   },
+   {
+    "text": "让细长的容器到靠窗的台面。",
+    "object": [
+     "object",
+     "绿色瓶子"
+    ],
+    "place": [
+     "place",
+     "窗台"
+    ],
+    "output": "绿色瓶子在窗台"
+   },
+   {
+    "text": "让细长的容器到手边的匣子。",
+    "object": [
+     "object",
+     "绿色瓶子"
+    ],
+    "place": [
+     "place",
+     "左盒"
+    ],
+    "output": "绿色瓶子在左盒"
+   },
+   {
+    "text": "让细长的容器到靠墙的层架。",
+    "object": [
+     "object",
+     "绿色瓶子"
+    ],
+    "place": [
+     "place",
+     "书架"
+    ],
+    "output": "绿色瓶子在书架"
+   },
+   {
+    "text": "让细长的容器到脚边的毡子。",
+    "object": [
+     "object",
+     "绿色瓶子"
+    ],
+    "place": [
+     "place",
+     "地毯"
+    ],
+    "output": "绿色瓶子在地毯"
+   },
+   {
+    "text": "让圆滚滚的东西到四方木台。",
+    "object": [
+     "object",
+     "黄色球"
+    ],
+    "place": [
+     "place",
+     "木桌"
+    ],
+    "output": "黄色球在木桌"
+   },
+   {
+    "text": "让圆滚滚的东西到靠窗的台面。",
+    "object": [
+     "object",
+     "黄色球"
+    ],
+    "place": [
+     "place",
+     "窗台"
+    ],
+    "output": "黄色球在窗台"
+   },
+   {
+    "text": "让圆滚滚的东西到手边的匣子。",
+    "object": [
+     "object",
+     "黄色球"
+    ],
+    "place": [
+     "place",
+     "左盒"
+    ],
+    "output": "黄色球在左盒"
+   },
+   {
+    "text": "让圆滚滚的东西到靠墙的层架。",
+    "object": [
+     "object",
+     "黄色球"
+    ],
+    "place": [
+     "place",
+     "书架"
+    ],
+    "output": "黄色球在书架"
+   },
+   {
+    "text": "让圆滚滚的东西到脚边的毡子。",
+    "object": [
+     "object",
+     "黄色球"
+    ],
+    "place": [
+     "place",
+     "地毯"
+    ],
+    "output": "黄色球在地毯"
+   }
+  ],
+  "handback_ok": true,
+  "handback_digest": "79c8351158e23b8970d4a9aabbc0263eaf8d2a861d640f8e9d76dee25f699d4b",
+  "corrupt_child": {
+   "returncode": 0,
+   "stdout": "",
+   "stderr": "",
+   "result": {
+    "error": "rejected_import_invalid_state: not_json",
+    "wrote_output": false
+   },
+   "out_exists": false
+  },
+  "corrupt_ok": true,
+  "ok": true
+ },
+ "rerun_anchors": [
+  {
+   "round": "R28",
+   "runner": "scripts/training/probe_taiji_bridge_pair_20261109.py",
+   "rerun_commit": "5ace4030d",
+   "runner_blob_sha1": "be5266f50e3c93232c1c0526a1d29c62d1db5856",
+   "report_runner_sha256": "baae99d01c70d38bd86373c5df476102078c632cc67336467843a75f732dd0fd",
+   "runner_blob_sha256": "baae99d01c70d38bd86373c5df476102078c632cc67336467843a75f732dd0fd",
+   "report_core_sha256": "9fe7fbf786e900032498b00d6cbeaa600e29e3e14100a625aadbf548629f6d82",
+   "matches_report": true,
+   "note": "R29 did not change living_core; R28 remains runnable at this HEAD; anchor kept for later rounds"
+  }
+ ],
+ "closed_state": {
+  "baseline": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "42e4ac54116d5a296d22c25d7bf3130f5ada83546c36946581bb4a34e4313814",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk_none": true,
+   "sc_bridge_none": true,
+   "battery_sha": "e48753a762d6c8b24b49c59c411b3c8b6b64c00d0241d4bae24c95878cdf29e7",
+   "battery_steps": 20
+  },
+  "after": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "42e4ac54116d5a296d22c25d7bf3130f5ada83546c36946581bb4a34e4313814",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk_none": true,
+   "sc_bridge_none": true,
+   "battery_sha": "e48753a762d6c8b24b49c59c411b3c8b6b64c00d0241d4bae24c95878cdf29e7",
+   "battery_steps": 20
+  },
+  "checks": {
+   "parameters_equal": true,
+   "state_equal": true,
+   "identity_equal": true,
+   "store_equal": true,
+   "battery_equal": true,
+   "steps_equal": true,
+   "sc_sfk_none": true,
+   "flag_disabled": true,
+   "rng_untouched": true
+  }
+ },
+ "bridge_default_none": true,
+ "verdict": {
+  "before": "child_expression_20_20",
+  "corrupt": "corrupt_child_rejected",
+  "closed_state": "closed_state_equal",
+  "bridge_default": "bridge_default_none",
+  "rerun_anchors": "anchors_complete",
+  "overall": "cross_process_pair_expression_clean"
+ },
+ "cost": {
+  "cpu_seconds": 1.59375,
+  "wall_seconds": 14.38443398475647,
+  "cpu_cap": 200.0,
+  "estimate_cpu_upper": 60.0,
+  "threads": 1
+ }
+}
