@@ -1,0 +1,232 @@
+{
+ "schema": "taiji-bridge-handoff-r23-report-v1",
+ "runner_sha256": "aef31556cdda88a5a8e316fdffd718ff780955993d3ea5a22fbb090de33e39d8",
+ "manifest_sha256": "7d8d5fd7da1e22336e047fbee9c9d13123de09653ff6cf021751cdc01b47134f",
+ "bridge_sha256": "4edf29b22a199c29160523debb8ea23a45e59321f2b0c8dc06da72497672e831",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "8fa3aafde38b1cbad3b021dc271abd316c0a265c68870403dd4ca7b0b53e0c6a"
+ },
+ "definition": {
+  "handoff": "parent exports the 18-key table under policy verifier:v1; a separate process imports it under its own policy, reads, attempts one unlisted-authority correction, applies one allowed-authority correction, and exports; parent imports the child export",
+  "child_read": "child must read the 20 describe sentences at 40/40 and the zero lines at 0/0",
+  "child_policy": "child policy is verifier:v1; a correction from verifier:v2 must be rejected_batch_unknown_authority, then verifier:v1 must be accepted",
+  "digest_chain": "child imported digest equals parent digest; child exported digest equals parent-imported digest after the handback",
+  "corrupt_child": "a second child receives truncated bytes and must reject them with a ValueError whose message starts with rejected_import_invalid_state; it must not write an output table",
+  "closed_state": "the nine closed-state readings stay equal before and after"
+ },
+ "criteria": {
+  "child_import": "child imported digest equals the parent digest",
+  "child_reading": "child regression 40/40 with wrong 0; zeros 0/0",
+  "child_policy": "unlisted authority rejected as rejected_batch_unknown_authority; allowed authority accepted with one log entry",
+  "handback": "parent import of the child export has the same digest as the child export; alias reads RED; log authority is verifier:v1 and reason is child:accepted; 40/40 and 0/0",
+  "corrupt_child": "child result carries an error starting with rejected_import_invalid_state and no output bytes",
+  "closed_state": "the nine closed-state readings stay equal before and after",
+  "reporting": "the child runs in a separate Python process; the report records its return code and the sha256 of both state files, so the handoff is not an in-process object copy"
+ },
+ "handoff": {
+  "parent_digest": "a4edca3e25551a1b7632dee8f531e7ebb1ab09773d2b4e9a11a8b38e3b86d01f",
+  "state_bytes": 1820,
+  "state_sha256": "eaedca9f9cc1c974389061cf65239238c94b33fa433bd775ee8e2de927ceb075",
+  "child": {
+   "returncode": 0,
+   "stdout": "",
+   "stderr": "",
+   "result": {
+    "imported_digest": "a4edca3e25551a1b7632dee8f531e7ebb1ab09773d2b4e9a11a8b38e3b86d01f",
+    "exported_digest": "f68bab205519344e96f3b57a753a64c41c0968607ce2f7630a64e5a87bc440df",
+    "export_sha256": "93095facb5d7c06f2550cb50e6d240928208070d123ffb13b057b6257da018b5",
+    "regression": {
+     "entities": 40,
+     "hits": 40,
+     "wrong": 0,
+     "distribution": {
+      "answered_2": 20,
+      "answered_1": 0,
+      "wrong": 0,
+      "abstained": 0
+     },
+     "ok": true
+    },
+    "zeros": {
+     "unknown_answering": 0,
+     "fragment_answering": 0,
+     "ok": true
+    },
+    "before": {
+     "decision": "answered_single",
+     "answers": 1,
+     "values": [
+      [
+       "object",
+       "蓝色杯子"
+      ]
+     ],
+     "stopped_at_pass": 2,
+     "final_exit": "no_match"
+    },
+    "rejected": {
+     "action": "rejected_batch_unknown_authority"
+    },
+    "accepted": {
+     "action": "corrected"
+    },
+    "after": {
+     "decision": "answered_single",
+     "answers": 1,
+     "values": [
+      [
+       "object",
+       "红色印章"
+      ]
+     ],
+     "stopped_at_pass": 2,
+     "final_exit": "no_match"
+    },
+    "log": [
+     {
+      "from": "[\"object\", \"蓝色杯子\"]",
+      "to": "[\"object\", \"红色印章\"]",
+      "authority": "verifier:v1",
+      "reason": "child:accepted"
+     }
+    ],
+    "policy": [
+     "verifier:v1"
+    ],
+    "wrote_output": true
+   },
+   "out_exists": true
+  },
+  "child_result": {
+   "imported_digest": "a4edca3e25551a1b7632dee8f531e7ebb1ab09773d2b4e9a11a8b38e3b86d01f",
+   "exported_digest": "f68bab205519344e96f3b57a753a64c41c0968607ce2f7630a64e5a87bc440df",
+   "export_sha256": "93095facb5d7c06f2550cb50e6d240928208070d123ffb13b057b6257da018b5",
+   "regression": {
+    "entities": 40,
+    "hits": 40,
+    "wrong": 0,
+    "distribution": {
+     "answered_2": 20,
+     "answered_1": 0,
+     "wrong": 0,
+     "abstained": 0
+    },
+    "ok": true
+   },
+   "zeros": {
+    "unknown_answering": 0,
+    "fragment_answering": 0,
+    "ok": true
+   },
+   "before": {
+    "decision": "answered_single",
+    "answers": 1,
+    "values": [
+     [
+      "object",
+      "蓝色杯子"
+     ]
+    ],
+    "stopped_at_pass": 2,
+    "final_exit": "no_match"
+   },
+   "rejected": {
+    "action": "rejected_batch_unknown_authority"
+   },
+   "accepted": {
+    "action": "corrected"
+   },
+   "after": {
+    "decision": "answered_single",
+    "answers": 1,
+    "values": [
+     [
+      "object",
+      "红色印章"
+     ]
+    ],
+    "stopped_at_pass": 2,
+    "final_exit": "no_match"
+   },
+   "log": [
+    {
+     "from": "[\"object\", \"蓝色杯子\"]",
+     "to": "[\"object\", \"红色印章\"]",
+     "authority": "verifier:v1",
+     "reason": "child:accepted"
+    }
+   ],
+   "policy": [
+    "verifier:v1"
+   ],
+   "wrote_output": true
+  },
+  "handback_ok": true,
+  "handback_digest": "f68bab205519344e96f3b57a753a64c41c0968607ce2f7630a64e5a87bc440df",
+  "corrupt_child": {
+   "returncode": 0,
+   "stdout": "",
+   "stderr": "",
+   "result": {
+    "error": "rejected_import_invalid_state: not_json",
+    "wrote_output": false
+   },
+   "out_exists": false
+  },
+  "corrupt_ok": true,
+  "ok": true
+ },
+ "closed_state": {
+  "baseline": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "e743dcc95236872d38e4c3d2a9bcde7062717199fb8bdb88144e5b38c22e57d3",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk_none": true,
+   "battery_sha": "ec5e06e6897a7d3d5da3f409189b5ba15513aa8f55e793b48a34d99345e2f877",
+   "battery_steps": 20
+  },
+  "after": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "e743dcc95236872d38e4c3d2a9bcde7062717199fb8bdb88144e5b38c22e57d3",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk_none": true,
+   "battery_sha": "ec5e06e6897a7d3d5da3f409189b5ba15513aa8f55e793b48a34d99345e2f877",
+   "battery_steps": 20
+  },
+  "checks": {
+   "parameters_equal": true,
+   "state_equal": true,
+   "identity_equal": true,
+   "store_equal": true,
+   "battery_equal": true,
+   "steps_equal": true,
+   "sc_sfk_none": true,
+   "flag_disabled": true,
+   "rng_untouched": true
+  }
+ },
+ "verdict": {
+  "child_import": "child_import_matched",
+  "child_reading": "child_read_40_40",
+  "child_policy": "child_policy_enforced",
+  "handback": "handback_clean",
+  "corrupt_child": "corrupt_child_rejected",
+  "closed_state": "closed_state_equal",
+  "overall": "cross_process_handoff_clean"
+ },
+ "cost": {
+  "cpu_seconds": 1.84375,
+  "wall_seconds": 15.942816734313965,
+  "cpu_cap": 200.0,
+  "estimate_cpu_upper": 60.0,
+  "threads": 1
+ }
+}
