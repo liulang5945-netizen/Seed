@@ -1,0 +1,144 @@
+{
+  "schema": "taiji-object-length-r60-manifest-v1",
+  "step": "R60",
+  "date": "2026-11-09",
+  "definition": {
+    "gate": "R60 frozen-criterion dev probe: object-slot byte-length sweep at fixed place 6 B",
+    "held_constant": {
+      "base_fixture": "dev[0], as in R59 group B",
+      "object_description": "古旧木制器具",
+      "place_description": "旧年石砌场所",
+      "place_name": "井前",
+      "place_bytes": 6,
+      "place_name_rule": "first word in R59's published GROUP_B_WORDS order; not selected on its reading",
+      "goal": "让古旧木制器具到旧年石砌场所。",
+      "template": "2-hop 把{object}放到{place}; records written as {desc}是{name}。 and {desc}对应{name}。"
+    },
+    "sweep": {
+      "object_bytes": [
+        6,
+        9,
+        12,
+        15
+      ],
+      "arms": {
+        "stem_wumu": {
+          "6": "乌木",
+          "9": "乌木罗",
+          "12": "乌木罗盘",
+          "15": "乌木罗盘座"
+        },
+        "stem_glyph": "r58.names_for(1, nbytes)[0] over the same four lengths"
+      },
+      "family_shape": "each arm is a nested prefix family: only the name byte count changes",
+      "answer_bytes": {
+        "6": 21,
+        "9": 24,
+        "12": 27,
+        "15": 30
+      },
+      "cells": 8
+    },
+    "measurements": {
+      "object_edge": "position object_stop = 3 + object_bytes; argmax, EOS probability, EOS rank, copy mass",
+      "place_edge": "position place_stop = object_stop + 6 + place_bytes; same fields",
+      "content": "decoded_text, answer_bytes, zero_extra, byte_exact, field_lengths_ok"
+    },
+    "classifier": {
+      "pattern": "per arm, the four byte_exact booleans in 6/9/12/15 order",
+      "branches_in_order": [
+        "both arms (false,true,true,true) -> object_min_nine_sufficient",
+        "both arms (false,false,true,false) -> exact_twelve_only",
+        "both arms (false,false,true,true) -> object_min_twelve_sufficient",
+        "both arms (true,true,true,true) -> all_lengths_exact_contradicts_r59",
+        "both arms (false,false,false,false) -> no_object_length_exact",
+        "arms disagree -> stem_dependent",
+        "same pattern with a true above a false -> non_monotone_length_effect",
+        "anything else -> unexplained"
+      ],
+      "note": "branches are mutually exclusive and evaluated in this order; every pattern is reported"
+    },
+    "main_task_rule": {
+      "object_min_nine_sufficient": "192/192 may be cited for object >=9 B, limited to these two stems, place 6 B and this description pair",
+      "object_min_twelve_sufficient": "192/192 may be cited for object >=12 B under the same limits",
+      "exact_twelve_only": "192/192 must be cited under the exact trained shape; length variants need retraining",
+      "any_other_class": "the capability limit is not relaxed"
+    },
+    "gates": {
+      "structural_pass": "12 structural cells exact AND every cell field_lengths_ok",
+      "zero_extra_pass": "all 8 cells stop at the declared end with zero extra bytes",
+      "object_edge_measured": "all 8 cells carry a trace at object_stop; missing trace fails closed",
+      "anchor_match": "the stem_wumu 12 B cell equals R59's published 井前 row on every declared field",
+      "failing_axes": "names of failed boolean gates"
+    },
+    "anchor": {
+      "source": "reports\\taiji_stop_shape_r59_20261109.json",
+      "row": "group_b.cells[place_word=井前]",
+      "fields": [
+        "target_text",
+        "decoded_text",
+        "answer_bytes",
+        "zero_extra",
+        "byte_exact",
+        "field_lengths_ok"
+      ],
+      "place_edge_fields": [
+        "argmax_byte",
+        "argmax_label",
+        "masked",
+        "pre_mask_label",
+        "emitted_label",
+        "eos_probability",
+        "eos_rank",
+        "continuation_desire",
+        "copy_mass_total"
+      ],
+      "on_mismatch": "engineering_failure; the sweep is not interpreted"
+    },
+    "scope": "dev/synthetic only; the sealed confirm split and its holdout report are not read; no change to 192/192",
+    "estimate_rule": "D-64: single run x 3 (one run plus two replay margins) + report assembly",
+    "unit_price_source": {
+      "path": "reports/taiji_stop_shape_r59_20261109_progress.jsonl",
+      "setup_structural_and_four_cells_cpu": 7.2969,
+      "group_b_last_cpu": 21.8281,
+      "group_b_first_cpu": 7.75,
+      "group_b_cells_between": 29,
+      "derived_cpu_per_cell": 0.4854,
+      "r60_single_run_derivation": "5.36 setup+structural + 8 x 0.4854 cells = 9.24; declared 15 with margin"
+    }
+  },
+  "definition_digest": "06296f60cd279152e67411dc5bb7f9cd0fab782240c7c939c737b1a48f329074",
+  "frozen_files": {
+    "scripts/training/probe_taiji_object_length_r60_20261109.py": "8f6c518158796d59314a354695e512e37f70964fd692767d864197fd99fa282c",
+    "scripts/training/probe_taiji_stop_shape_r59_20261109.py": "e0bff4c025e221087e51053fe7e2f45b80689751ccb8d1b81fc48e41c79fa08f",
+    "scripts/training/probe_taiji_stop_shape_r58_20261109.py": "b4866f9d77ec28ac59c35788e045241fb5b8cf64c7775b34ea73e2cccfbe4e2a",
+    "scripts/training/probe_taiji_content_transport_18_1.py": "202167c20485af10550a73047f0ce78ad3f7c92da3c5972d2d76c38dcc3b37d4",
+    "taiji/copy_stop_boundary.py": "27e5b9a63be29e98197331d59c5ad471e5ae46fa68921c87ce13b42bf193d702",
+    "taiji/binding_copy.py": "37f4885e8dc33a41f6f701e3d0e87daf15c126be735acceea02098e5e39c045c",
+    "taiji/record_relation_core.py": "8318dde5c3d3b3ff42a2c94e528aec7552363d4f9aef2c11ee95b8e868ef64a2",
+    "taiji/living_core.py": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d",
+    "taiji/data_premise_18_0.py": "b98b68534d26773091b234d5b7c92220def1059be56ab2c2bb0f3f8cc5791204",
+    "taiji/selection_routing.py": "3b80ed033055ed9eb15afc386befae7d6b73ad829844c68a59a89f20b2aa5bde",
+    "taiji/selection_routing_checkpoint.py": "606cc68cf1c5a628d3b91c494258c9f4b20084fa638eb88615e8e60dfcd5ce61",
+    "reports/taiji_stop_shape_r59_20261109.json": "fc0e76fd1802e629afeb1f283d94b491344ad36251792811a6141293010a8c08"
+  },
+  "families": {
+    "problems": [],
+    "ok": true
+  },
+  "bundle": "output\\taiji_package19_compare\\28031-B_stop_lock-step300.pt",
+  "bundle_sha256": "fe04fbfb14aa0390877385a4429f2a851396a6fe6acb3107bae0a5e4e331dfca",
+  "anchor": {
+    "path": "reports\\taiji_stop_shape_r59_20261109.json",
+    "sha256": "fc0e76fd1802e629afeb1f283d94b491344ad36251792811a6141293010a8c08",
+    "place_word": "井前"
+  },
+  "cost": {
+    "single_run_estimate": 15.0,
+    "estimate_with_replays": 45.0,
+    "cpu_cap": 200.0,
+    "wall_cap": 1800.0
+  },
+  "immutability": "written once before the run; never rewritten",
+  "sealed_split": "not read"
+}

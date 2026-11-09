@@ -2962,19 +2962,69 @@ KL(p0‖pk) **9.905408e-05**；KL(pk‖p0) **9.920218e-05**；TV **5.588227e-03*
 
 **F 代价**：**21.91 CPU／23.60 wall**（上限 200／1800；预注册单轮估 45、含 2 次重放余量 135）；`structural_cells_exact 12/12`、`structural_pass=true`、`zero_extra_pass=true`、`failing_axes=[]`。
 
+### §21.69 R60 预注册：物件槽字节长度扫描（6→9→12→15 B，地点固定 6 B）——判据读数前冻结
 
+**A 与主任务的关系**：本节**不改 Task1 的 192/192**，只执行 R59 队首指定的唯一后继：物件名是否必须**精确等于**训练时的 12 B，还是 **≥9 B** 就已逐字节精确。答案决定能力卡 U91 限制⑤能不能放宽。**两向都不读 confirm**（0 次封存集读取、0 次封存 holdout 报告读取）。冻结件：[manifest](../manifests/taiji_object_length_r60_20261109.json)、[runner](../../scripts/training/probe_taiji_object_length_r60_20261109.py)；结果回填见本节 L 段与[报告](../../reports/taiji_object_length_r60_20261109.json)。
 
+**B 冻结面（全程不动）**：base fixture `dev[0]`；物件描述 `古旧木制器具`、地点描述 `旧年石砌场所`（与 R59 B 组同字节）；地点名固定 `井前`（6 B），取法＝R59 已公开 `GROUP_B_WORDS` 的**第 0 个**——**按列表顺序取，不按它的读数挑**（其 R59 已发布读数为 `byte_exact=true`、EOS 名次 1、概率 0.8647，只作事后交叉核对，不参与选词）；goal 45 B；模板两跳 `把{物件}放到{地点}`，记录写作 `{描述}是{名字}。` 与 `{描述}对应{名字}。`。
 
+**C 扫描面（8 格）**：两条词干 × 四个长度，每条词干都是**嵌套前缀族**——沿一条词干只有名字字节数在变，词干本身不变：
 
+| 词干 | 6 B | 9 B | 12 B | 15 B | 答案字节 |
+|---|---|---|---|---|---|
+| `stem_wumu` | `乌木` | `乌木罗` | `乌木罗盘` | `乌木罗盘座` | 21／24／27／30 |
+| `stem_glyph` | `甲乙` | `甲乙丙` | `甲乙丙丁` | `甲乙丙丁戊` | 21／24／27／30 |
 
+`stem_glyph` 由 `r58.names_for(1, n)[0]` 生成（不手抄字形）；`stem_wumu` 的 12 B 成员**就是** R59 B 组的物件名。两条词干是本次的重复样本：R59 已证停止边由**具体名字整串**决定，所以单条词干不足以支撑任何长度结论。**限定**：结论只在这两条词干、地点 6 B、这一对描述上成立。
 
+**D 每格记什么**：物件止边（位置 `3 + 物件 B`）与地点止边（位置 `物件止边 + 6 + 6`）的 `argmax_byte`／`argmax_label`／`masked`／`pre_mask_label`／`emitted_label`／`eos_probability`／`eos_rank`／`continuation_desire`／`copy_mass_total`；内容侧记 `decoded_text`／`answer_bytes`／`zero_extra`／`byte_exact`／`field_lengths_ok`。**物件止边缺 trace ⇒ fail-closed 判 `object_edge_unmeasurable`**，不许静默丢格。
 
+**E 跨 runner 锚点（逐位，先于任何解释）**：`stem_wumu` 的 12 B 格是 R59 B 组 `井前` 那一格的**直接重读**，必须与已发布行在 **15 个字段**上逐项相等（6 个内容字段＋9 个地点止边字段）。不等 ⇒ **`engineering_failure`，扫描结果不解释**。锚点源 `reports/taiji_stop_shape_r59_20261109.json` sha `fc0e76fd1802e629…`；R59 报告只被引用、不被改写。
 
+**F 分类出口（互斥、按此序判；每格模式都如实报告）**：模式＝该词干在 6／9／12／15 上的四个 `byte_exact` 布尔。
 
+| 序 | 条件 | 出口 |
+|---|---|---|
+| 1 | 两臂都 `(false,true,true,true)` | `object_min_nine_sufficient` |
+| 2 | 两臂都 `(false,false,true,false)` | `exact_twelve_only` |
+| 3 | 两臂都 `(false,false,true,true)` | `object_min_twelve_sufficient` |
+| 4 | 两臂都 `(true,true,true,true)` | `all_lengths_exact_contradicts_r59` |
+| 5 | 两臂都 `(false,false,false,false)` | `no_object_length_exact` |
+| 6 | 两臂模式不同 | `stem_dependent` |
+| 7 | 两臂相同但存在“低位 false、高位 true” | `non_monotone_length_effect` |
+| 8 | 其余 | `unexplained` |
 
+工程出口另有三个：`engineering_failure`（锚点不命中或异常）、`budget_stop`（超上限）、`object_edge_unmeasurable`（缺物件止边）。**队首原文写“若 9 B 或 15 B 也精确 ⇒ 可外推到物件 ≥9 B”**；本预注册把它收紧为**单调性要求**：9 B 败而 15 B 过属第 7 支 `non_monotone_length_effect`，**不得**据此放宽到“≥9 B”。这是读数前写死的口径收紧，不是事后改判据。
 
+**G 主任务含义（预注册，一一对应）**：`object_min_nine_sufficient` ⇒ 限制栏可放宽到“物件 ≥9 B”（限 C 段两条词干、地点 6 B、这一对描述）；`object_min_twelve_sufficient` ⇒ 放宽到“物件 ≥12 B”（同限定）；`exact_twelve_only` ⇒ **192/192 必须在精确训练形状下引用，Task1 的任何长度变体都要重训、不得靠改规则外推**；其余出口 ⇒ **限制栏不放宽**。
 
+**H 布尔门**：`structural_pass`（12 个结构格全精确 ∧ 8 格 `field_lengths_ok`）、`zero_extra_pass`（8 格都停在声明终点且零多余字节）、`object_edge_measured`、`anchor_match`；`failing_axes` 只列失败的布尔门，分类出口本身不是 pass/fail。
 
+**I 代价口径（单价只抄同链实测）**：R59 `progress.jsonl` 给出 setup＋structural＋A 组 4 格＝**7.2969 CPU**，B 组首格 **7.75**、末格 **21.8281**，中间 **29 格** ⇒ **0.4854 CPU/格**。R60 单轮推导＝5.36（setup＋structural）＋8×0.4854＝**9.24**，**声明 15**（给 15 B 名字与额外 trace 留余量）；按 D-64 ×3 ＝ **45**；上限 **200 CPU／1800 wall**。
 
+**J 身份与纪律**：manifest `definition_digest = 06296f60cd279152…`、runner sha `8f6c518158796d59…`、bundle `output/taiji_package19_compare/28031-B_stop_lock-step300.pt` sha `fe04fbfb14aa0390…`、冻结文件 **12** 个（含 R59/R58 runner 与 R59 报告）。**0 训练／0 优化器步／0 Adam／0 新参数／0 图改动／0 次封存集读取**；`threads=1`。
 
+**K 判据自证（读数前、进程内、不加载模型读数）**：`classify` 八支各喂合成模式**全命中（0 失配）**；`implication` 四档映射正确；`check_families` 正例 `ok=true`、反例（把 9 B 成员换成非前缀串）报 **3** 条问题、恢复后 `ok=true`；`compare_anchor` 正例 **15** 字段相等、负例（`eos_rank+1`）抓到、`place_edge=None` 时 **9** 字段全不等＝fail-closed。**这组探针只证分类器与比较器接线，不证模型复现**；模型侧锚点命中必须在跑里读。探针另抓到 runner 自身一处真 bug（相邻配对用了 `zip(names, names[1:], strict=True)`，长度 4 对 3 必抛 `ValueError`），**在冻结前**改为 `zip(names[:-1], names[1:], strict=True)`，三条门重跑全绿后才 `--freeze`。
 
+**L 结果（2026-11-09 跑完；判据、出口、冻结面与代价口径均未改）**：出口 **`stem_dependent`** ⇒ 主任务含义 **`limit_not_relaxed`**（U91 限制⑤**不放宽**）。两臂模式：`stem_wumu` = (6 ✗, 9 ✗, 12 ✓, 15 ✓)、`stem_glyph` = (6 ✗, 9 ✓, 12 ✓, 15 ✗)。**队首期望的两种放宽都不成立**：9 B 只在 glyph 词干上过、15 B 只在 wumu 词干上过；而同一词干上 **9 ✓ 而 15 ✗**（glyph）直接否证“物件字段长度是决定量”。门与锚点：`anchor_match=true`（**15/15 字段逐项相等**，含地点止边 EOS 概率 `0.8646805789207526` 逐位）、`structural 12/12`、`structural_pass=true`、`zero_extra_pass=true`、`object_edge_measured=true`、`failing_axes=[]`。成本 **3.31 CPU／4.13 wall**（声明单轮 15、含重放 45、上限 200／1800，`over_budget=false`）。
+
+**M 八格逐格读数**（物件止边＝位置 `3+物件 B`；地点止边＝答案末位）：
+
+| 词干 | 物件 B | 物件名 | 目标 | 实得 | 逐字节 | 答案 B | 物件止边 argmax／EOS 概率／名次 | 地点止边 argmax／EOS 概率／名次 |
+|---|---|---|---|---|---|---|---|---|
+| wumu | 6 | `乌木` | `把乌木放到井前` | `把乌木玉放井前` | ✗ | 21 | `0xe7`／9.27e-9／67 | `0xbe`／0.0645／3 |
+| wumu | 9 | `乌木罗` | `把乌木罗放到井前` | `把乌木罗玉放井前` | ✗ | 24 | `0xe7`／8.89e-8／64 | `<EOS>`／0.3174／1 |
+| wumu | 12 | `乌木罗盘` | `把乌木罗盘放到井前` | 同目标 | ✓ | 27 | `0xe6`／4.19e-8／43 | `<EOS>`／0.8647／1 |
+| wumu | 15 | `乌木罗盘座` | `把乌木罗盘座放到井前` | 同目标 | ✓ | 30 | `0xe6`／4.06e-4／11 | `<EOS>`／0.9539／1 |
+| glyph | 6 | `甲乙` | `把甲乙放到井前` | `把甲乙玉放井前` | ✗ | 21 | `0xe7`／2.81e-8／73 | `0xbe`／0.0901／2 |
+| glyph | 9 | `甲乙丙` | `把甲乙丙放到井前` | 同目标 | ✓ | 24 | `0xe6`／6.13e-7／58 | `<EOS>`／0.8336／1 |
+| glyph | 12 | `甲乙丙丁` | `把甲乙丙丁放到井前` | 同目标 | ✓ | 27 | `0xe6`／7.02e-8／34 | `<EOS>`／0.9392／1 |
+| glyph | 15 | `甲乙丙丁戊` | `把甲乙丙丁戊放到井前` | `把甲乙丙丁戊玉放井前` | ✗ | 30 | `0xe7`／1.22e-3／13 | `<EOS>`／0.9328／1 |
+
+**N 失败形态是同一个，且结构规则仍然切对**：4 个失败格全部在物件名后多吐一个 `玉`、把 `到` 挤掉，**总字节数仍等于声明长度**（21／24／30 B），所以 `zero_extra` 8/8 全过而 `byte_exact` **4/8** ⇒ **结构停止切得对、答案内容错**（与 §21.67“规则可外推、内容不行”同形，并把该结论从“短名字”扩到“15 B 的某条词干”）。物件止边 `copy_mass_total` **8 格全 0.0** ⇒ 多出的 `玉` 来自生成头，不是复制越界（与 U91 限制④同形）。6 B 两格的地点止边也被带歪（argmax `0xbe`＝`放` 末字节、EOS 名次 3／2），其余 6 格地点止边 argmax 全 `<EOS>`、名次全 1。
+
+**O 事后观察（读数后才看到，未预注册 ⇒ 不得当结论或机制引用）**：物件止边 argmax 在 **4 个失败格全是 `0xe7`**（`玉` 首字节）、在 **4 个成功格全是 `0xe6`**（`放` 首字节），n=8 上完全分离；物件止边 EOS 概率 8 格全 ≤1.22e-3、名次 11–73（**模型从来不想在物件槽停**，与 U91 限制③一致）。这条分离只能作为**下一轮预注册闸的假设**（要在新词干上带反例臂测预测力），本轮不据此下任何机制结论、也不写入能力卡。
+
+**P 估值偏差（如实登记，不改上限）**：声明单轮 **15 CPU**、实测 **3.31** ⇒ **高估 4.53 倍**。本轮自测单价：setup＋structural＋首格＝**1.5938 CPU**，其后 7 个间隔 ⇒ **0.2433 CPU/格**；预注册时抄的 R59 同链单价是 **0.4854 CPU/格**（差 **2.0 倍**）。本轮跑前枚举 python 进程为空（无并发训练），R59 跑当时的负载未取到 ⇒ **差异未归因**，两个数都不得当通用单价使用；上限从未受威胁（3.31/200）。
+
+**Q 唯一后继（候选，待准入）**：**R61「物件止边 argmax 预测闸」**——把 O 段的事后分离预注册成判据：在 **≥6 条新词干 × 4 个长度**（地点仍固定 6 B、描述仍固定）上测“物件止边 argmax=`0xe7` ⇒ 内容败”的预测力，**必须带反例臂**（argmax=`0xe6` 却内容败、argmax=`0xe7` 却内容过），判据读数前冻结、0 训练、不读 confirm；若预测力不成立则 O 段假设作废。本轮**不**自动启动 R61。
