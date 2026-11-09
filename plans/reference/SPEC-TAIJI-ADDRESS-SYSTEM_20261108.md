@@ -2061,7 +2061,36 @@ R6b 的 joint 1.0 有两种解释：学会了“描述↔名字”的桥，或�
 
 **边界（与读数一起引用）**：① **整句级选择**：双实体句给出 `ambiguous_read`，本轮**不能**按槽位分别选；② 候选是 `(槽位, 名字)` 的精确匹配，不做同义/模糊匹配；③ 选择是只读侧，**没有**进入 `step` 或表达；④ `no_choice` 是“不知道”，不是“答错”；⑤ 只测 4 个查询、2 张候选表、单条纠正；⑥ 桥**仍不得**接进默认图。
 
-**下一步**：R27“分槽位选择”闸——给 `bridge_choose` 增加可选 `slot`：双实体句按槽位过滤后选择；测①同句 object 选 0、place 选 1，②槽位内未知/歧义弃答，③槽位不匹配 `not_in_candidates`，④纠正后该槽选择改变且另一槽不动，⑤不改变张量，⑥关闭态九项全等。判据读数前冻结。
+**下一步（已于 §21.36 执行）**：R27“分槽位选择”闸——给 `bridge_choose` 增加可选 `slot`：双实体句按槽位过滤后选择；测①同句 object 选 0、place 选 1，②槽位内未知/歧义弃答，③槽位不匹配 `not_in_candidates`，④纠正后该槽选择改变且另一槽不动，⑤不改变张量，⑥关闭态九项全等。判据读数前冻结。
+
+## 21.36 R27 分槽位选择：一句两实体，按槽各选一个（2026-11-09）
+
+**一句话**：`bridge_choose(..., slot="object"|"place")` 先按槽位过滤桥的读结果，再在候选表里选；因此同一句 `喝水的杯子放在方方正正的木桌子上面。` 可以**分别**选出 `object=蓝色杯子`、`place=木桌`，而不必整句弃答。**选择仍不改任何张量**；纠正对象槽不会改变地点槽。
+
+**A 分槽读数（同一句，`read_answers=2`）**
+
+| 查询 | 结果 |
+|---|---|
+| `slot=object`、候选 `[蓝, 红]` | `chosen`，下标 **0** |
+| `slot=object`、候选 `[红, 蓝]` | `chosen`，下标 **1** |
+| `slot=place`、候选 `[木桌, 书架]` | `chosen`，下标 **0** |
+| `slot=place`、候选 `[书架, 木桌]` | `chosen`，下标 **1** |
+| 不带 `slot` | `ambiguous_read`，`answers=2` |
+
+**B 弃答与越界**：句子只有 CUP、却问 `slot=place` ⇒ `no_choice`（`read_answers=1`、`answers=0`）；`slot=object` 但候选只有地点 ⇒ `not_in_candidates`；同一槽有两个对象 ⇒ `ambiguous_read`（`answers=2`）；无桥 ⇒ `no_bridge`。
+
+**C 纠正**：把 CUP 别名改成 `绿色瓶子` ⇒ 对象槽由下标 **0** 翻 **1**，地点槽仍为 **0**；表摘要变化；状态摘要与参数摘要**仍相等**。
+
+**D 关闭态**：九项全等；`sc_bridge` 前后 `None`（单列）。
+
+**E 复跑锚**：R26 → `c3633b4c8`（blob `950eef24…`、runner sha `053b852d…`、core sha `eead9c4a…`），报告 sha 与 blob sha 一致；R26 在当前 HEAD 不可跑（R27 改了 `living_core`），按该提交可复跑。
+
+**判定与成本**：`slot_choice_from_read`／`closed_state_equal`／`bridge_default_none`／`anchors_complete` ⇒ 总判 **`bridge_slot_choice_available`**；成本 **1.781 CPU／2.527 wall**（估 30、上限 200、`threads=1`）。0 训练／0 优化器步／0 Adam／0 confirm。
+
+**边界（与读数一起引用）**：① 只支持 `object`／`place` 两个槽位名；② 候选仍是精确 `(槽位,名字)` 匹配；③ 选择只读，**没有**进入 `step` 或表达；④ 同一槽多答案仍弃答；⑤ 只测 1 句双实体、1 句双对象、1 条纠正；⑥ 桥**仍不得**接进默认图。
+
+**下一步**：R28“双槽组合选择与模板表达”闸——新增 `bridge_choose_pair(state, query, object_candidates, place_candidates)`：两槽都选中才输出 `(object, place)` 与模板串 `"{object}在{place}"`，任一槽弃答则整对弃答；测①20 句精确匹配，②未知/歧义整对弃答，③纠正后文本改变而另一槽不动，④不改变张量，⑤关闭态九项全等。判据读数前冻结。
+
 
 
 

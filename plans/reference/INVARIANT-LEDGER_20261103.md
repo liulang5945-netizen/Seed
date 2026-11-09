@@ -2345,6 +2345,30 @@ owner 2026-11-07 裁定：多模态是整个算法内部系统的一部分，不
 | S-116 | “选择会改动张量” | R-D29-351 | **被取代**：选择前后状态/参数摘要相等。 |
 | S-117 | “纠正后选择不会变” | R-D29-350 | **被取代**：纠正后同一查询的下标由 0 翻到 1。 |
 
+## 74. R27 分槽位选择（2026-11-09）
+
+**74.0 冻结与范围**：同一句双实体、同槽双对象、槽位缺失、候选越界、一条纠正与 R26 复跑锚在读数前写入 [manifest](../manifests/taiji_bridge_slot_choice_20261109.json) 的 `definition_digest`。本轮**修改** `taiji/living_core.py`：`bridge_choose` 增加可选 `slot`；不改 `step`／`observe`。0 训练／0 优化器步／0 Adam／0 confirm。
+
+**74.1 读数**
+
+| 编号 | 读数 | 出处 |
+|---|---|---|
+| R-D29-355 | **分槽单选**：同一句 `read_answers=2`；`slot=object` 候选 `[蓝,红]` ⇒ 下标 0、`[红,蓝]` ⇒ 1；`slot=place` 候选 `[木桌,书架]` ⇒ 0、`[书架,木桌]` ⇒ 1。 | `slot` |
+| R-D29-356 | **不带槽/缺槽/越界/同槽多答/无桥**：不带 `slot` ⇒ `ambiguous_read`（2）；只有 CUP 问 place ⇒ `no_choice`（`read_answers=1`、`answers=0`）；object 槽给地点候选 ⇒ `not_in_candidates`；同槽两对象 ⇒ `ambiguous_read`（2）；无桥 ⇒ `no_bridge`。 | `slot` |
+| R-D29-357 | **纠正只动该槽**：CUP→GREEN 后对象槽 0→1，地点槽仍 0；表摘要变化；状态/参数摘要相等。 | `correction` |
+| R-D29-358 | **关闭态九项全等**；`sc_bridge` 前后 `None`（单列）。 | `closed_state` |
+| R-D29-359 | **复跑锚**：R26→`c3633b4c8`（blob `950eef24…`、runner sha `053b852d…`、core sha `eead9c4a…`），报告 sha 与 blob sha 一致。 | `rerun_anchors` |
+| R-D29-360 | **判定与成本**：`slot_choice_from_read`／`closed_state_equal`／`bridge_default_none`／`anchors_complete` ⇒ 总判 **`bridge_slot_choice_available`**；成本 **1.781 CPU／2.527 wall**（估 30、上限 200）。 | 报告 `verdict`／`cost` |
+
+**74.2 superseded／范围登记**
+
+| 编号 | 被取代／被限定的对象 | 取代者 | 处置与理由 |
+|---|---|---|---|
+| S-118 | “双实体句只能整句弃答” | R-D29-355 | **被取代**：按 `slot` 过滤后可分别选 object 与 place。 |
+| S-119 | “按槽位选会扰动张量” | R-D29-357 | **被取代**：选择前后状态/参数摘要相等。 |
+| S-120 | “纠正对象槽会改变地点槽” | R-D29-357 | **被取代**：对象槽 0→1，地点槽仍 0。 |
+
+
 
 
 
