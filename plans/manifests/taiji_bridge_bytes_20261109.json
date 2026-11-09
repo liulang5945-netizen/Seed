@@ -1,0 +1,107 @@
+{
+ "schema": "taiji-bridge-bytes-r53-v1",
+ "created": "2026-11-09T18:50:22",
+ "seed": 20261109,
+ "estimate_cpu_upper": 30.0,
+ "cpu_cap": 200.0,
+ "runner_sha256": "902cad691bc1a5841237eae74bdb1c99ab0f03f24ddc52a54c2485d8a6c63fbc",
+ "bridge_sha256": "4edf29b22a199c29160523debb8ea23a45e59321f2b0c8dc06da72497672e831",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d"
+ },
+ "definition": {
+  "chain": "one describe sentence -> R15 two-pass read (earliest key first, same-start abstains, first occurrence masked to the same width) -> the matched (slot, name) -> that entity's original corpus record -> one contiguous byte span of it",
+  "unit": "the frozen SPEC 16.2 unit: a complete record or a complete sentence. Every record of this fixture is one sentence, so the emitted span is the record's only span; a record with more than one sentence would emit its first sentence (SPEC 16.2 sentence-order tie-break). No third unit and no new numeric tolerance is introduced",
+  "address_map": "entity -> corpus record indices comes from the fixture metadata (each row carries its object and place), not from text search; when an entity has several records the lowest address wins (SPEC 16.2 address_order). The map is GIVEN, not inferred: this gate measures the handoff from the bridge to the output unit, not retrieval",
+  "L1": "fabricated bytes 0, illegal slices 0, UTF-8 decodable 100%, boundary legal 100% (boundary legal = the emitted span is one of the spans the frozen ``taiji.sc_sfk.sentences`` rule returns for that record)",
+  "L2": "provenance fidelity = the emitted bytes equal record[start:end] byte for byte; must be 1.0",
+  "L3": "four classes per entity slot: answered_correct / pointed_wrong / abstained / should_answer_missing; the entity capability line stays at 40/40 and wrong pointers stay 0",
+  "cost_column": "faithful_but_other_pairing: the slice is faithful and the entity is right, yet the record's (object, place) is not the asked pair. Reported with samples; never folded into 'correct'",
+  "closed_state": "the nine closed-state readings stay equal before and after",
+  "training": "zero training, zero optimizer steps, zero Adam, zero confirm"
+ },
+ "criteria": {
+  "l1": "fabricated 0, illegal 0, utf8 40/40, boundary 40/40",
+  "l2": "provenance fidelity == 1.0 on every emitted output",
+  "l3": "answered_correct 40/40, pointed_wrong 0, abstained 0, should_answer_missing 0; the faithful_but_other_pairing column is reported separately with at least one real sample",
+  "abstain": "an unknown question emits zero bytes (abstain never falls back to a record)",
+  "closed_state": "nine items equal"
+ },
+ "definition_digest": "cdddf3d0dfac90165e8508726f027d17aa133ec3274f31876a0cf0bb09d9bf40",
+ "counts": {
+  "corpus_records": 80,
+  "describe_sentences": 20,
+  "capability_entities": 40,
+  "keys": 18
+ },
+ "inputs": {
+  "authored_aliases": [
+   [
+    "喝水的杯子",
+    [
+     "object",
+     "蓝色杯子"
+    ]
+   ],
+   [
+    "盖章用的印章",
+    [
+     "object",
+     "红色印章"
+    ]
+   ],
+   [
+    "盛水的瓶子",
+    [
+     "object",
+     "绿色瓶子"
+    ]
+   ],
+   [
+    "圆形的皮球",
+    [
+     "object",
+     "黄色球"
+    ]
+   ],
+   [
+    "方方正正的木桌子",
+    [
+     "place",
+     "木桌"
+    ]
+   ],
+   [
+    "窗前的台板",
+    [
+     "place",
+     "窗台"
+    ]
+   ],
+   [
+    "手边的小盒子",
+    [
+     "place",
+     "左盒"
+    ]
+   ],
+   [
+    "墙上的架子",
+    [
+     "place",
+     "书架"
+    ]
+   ],
+   [
+    "脚下的垫子",
+    [
+     "place",
+     "地毯"
+    ]
+   ]
+  ],
+  "unknown_sentence": "让黑色的铁铃到空无一物的地方。"
+ }
+}
