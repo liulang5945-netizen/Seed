@@ -2164,7 +2164,30 @@ R6b 的 joint 1.0 有两种解释：学会了“描述↔名字”的桥，或�
 
 **边界（与读数一起引用）**：① 字段是**只读侧文本**，`step` 不读它，也不因它改变张量；② `no_pair` 清空字段，不保留旧答案；③ 文本仍是固定模板，不是生成；④ 字段不在 `state_dict`／`candidate_sha_v2` 里；⑤ 只测 1 句写入、20 步、1 个未知查询；⑥ 桥**仍不得**接进默认图。
 
-**下一步**：R31“表达随主体步进自动更新”闸——新增 `bridge_observe(state, raw, goal)`：先 `observe` 一步，再对同一 raw 调 `bridge_express`，返回新状态与 info；测①20 句逐步文本 20/20，②张量轨迹与无桥 `observe` 逐位相等，③参数不动、④弃答清空、⑤关闭态九项全等。判据读数前冻结。
+**下一步（已于 §21.40 执行）**：R31“表达随主体步进自动更新”闸——新增 `bridge_observe(state, raw, goal)`：先 `observe` 一步，再对同一 raw 调 `bridge_express`，返回新状态与 info；测①20 句逐步文本 20/20，②张量轨迹与无桥 `observe` 逐位相等，③参数不动、④弃答清空、⑤关闭态九项全等。判据读数前冻结。
+
+## 21.40 R31 表达随主体步进自动更新：20/20 文本、张量轨迹不动（2026-11-09）
+
+**一句话**：`bridge_observe(state, raw, ...)` 先对 raw 走一步 `observe`，再对**同一 raw** 调 `bridge_express`；20 条 describe 句逐步输出 **20/20** 正确模板串，且**张量轨迹与无桥 `observe` 逐位相等**——文本只是侧字段，不进入张量路径。未知输入 `no_pair` 清空字段，张量轨迹仍与无桥一致。
+
+**A 读数**
+
+| 测点 | 结果 |
+|---|---|
+| 20 句表达 | **20/20** `chosen_pair`，文本逐字正确，`last_bridge_text` 同步 |
+| 张量轨迹 | **20/20** 步状态摘要与无桥 `observe` **逐位相等** |
+| 参数/表 | 参数摘要不变；表摘要不变 |
+| 未知输入 | `no_pair`、字段 `None`、张量轨迹仍与无桥相等 |
+| 关闭态 | **九项全等**；`sc_bridge` 前后 `None`（单列） |
+
+**B 复跑锚**：R30 → `d476e1cef`（blob `9215eb7b…`、runner sha `b9b2fe36…`、core sha `ec5c24ec…`），报告 sha 与 blob sha 一致；R30 在当前 HEAD 不可跑（R31 改了 `living_core`），按该提交可复跑。
+
+**判定与成本**：`observe_expression_20_20`／`tensor_trajectory_equal`／`parameters_untouched`／`unknown_clears_text`／`closed_state_equal`／`bridge_default_none`／`anchors_complete` ⇒ 总判 **`bridge_observe_expression_clean`**；成本 **2.984 CPU／3.623 wall**（估 40、上限 200、`threads=1`）。0 训练／0 优化器步／0 Adam／0 confirm。**披露**：首跑两处接线错——`observe` 只收字节而包装传了字符串；`observe` 返回单个状态而 runner 按元组解包。均为包装/调用修正，判据、期望与 20/20 口径未变。
+
+**边界（与读数一起引用）**：① 文本仍是**只读侧**，`step` 不读它；② 轨迹相等是“文本不进入张量”的证据，不是“表达有用”的证据；③ 固定模板、精确候选；④ 只测 20 句 describe 与 1 个未知输入；⑤ 字段不在 `state_dict`／身份里；⑥ 桥**仍不得**接进默认图。
+
+**下一步**：R32“表达状态快照（表＋文本）”闸——新增 `bridge_snapshot(state)` 与 `bridge_restore(bytes, allowed_authorities)`：快照含表状态字节与 `last_bridge_text`；测①快照往返后表摘要、文本、20/20 一致，②导入端策略自定，③损坏快照整批拒绝，④关闭态九项全等。判据读数前冻结。
+
 
 
 

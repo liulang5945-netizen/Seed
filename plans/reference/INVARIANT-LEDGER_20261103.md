@@ -2440,6 +2440,32 @@ owner 2026-11-07 裁定：多模态是整个算法内部系统的一部分，不
 | S-128 | “弃答会保留旧文本” | R-D29-378 | **被取代**：`no_pair` 清空字段。 |
 | S-129 | “清除桥会留下旧文本” | R-D29-379 | **被取代**：`clear_bridge` 同时清空文本。 |
 
+## 78. R31 表达随主体步进自动更新（2026-11-09）
+
+**78.0 冻结与范围**：20 句逐步表达、20 步轨迹对比、未知输入与 R30 复跑锚在读数前写入 [manifest](../manifests/taiji_bridge_observe_20261109.json) 的 `definition_digest`。本轮**修改** `taiji/living_core.py`：新增 `bridge_observe`；`observe`/`step` 的张量路径未改。0 训练／0 优化器步／0 Adam／0 confirm。
+
+**78.1 读数**
+
+| 编号 | 读数 | 出处 |
+|---|---|---|
+| R-D29-382 | **20/20 表达**：20 条 describe 句逐步 `chosen_pair`、文本逐字正确、`last_bridge_text` 同步。 | `expression` |
+| R-D29-383 | **轨迹相等**：20/20 步状态摘要与无桥 `observe` **逐位相等**。 | `trajectory` |
+| R-D29-384 | **参数/表不动**：参数摘要不变；表摘要不变。 | `parameters` |
+| R-D29-385 | **未知清空**：未知输入 `no_pair`、字段 `None`、张量轨迹仍与无桥相等。 | `unknown` |
+| R-D29-386 | **关闭态九项全等**；`sc_bridge` 前后 `None`（单列）。 | `closed_state` |
+| R-D29-387 | **复跑锚**：R30→`d476e1cef`（blob `9215eb7b…`、runner sha `b9b2fe36…`、core sha `ec5c24ec…`），报告 sha 与 blob sha 一致。 | `rerun_anchors` |
+| R-D29-388 | **判定与成本**：`observe_expression_20_20`／`tensor_trajectory_equal`／`parameters_untouched`／`unknown_clears_text`／`closed_state_equal`／`bridge_default_none`／`anchors_complete` ⇒ 总判 **`bridge_observe_expression_clean`**；成本 **2.984 CPU／3.623 wall**（估 40、上限 200）。 | 报告 `verdict`／`cost` |
+| R-D29-389 | **首跑披露**：`observe` 只收字节而包装传字符串；`observe` 返回单状态而 runner 按元组解包；修正后重冻重跑，判据/期望未变。 | 报告 |
+
+**78.2 superseded／范围登记**
+
+| 编号 | 被取代／被限定的对象 | 取代者 | 处置与理由 |
+|---|---|---|---|
+| S-130 | “表达不能随步进自动更新” | R-D29-382 | **被取代**：`bridge_observe` 每步表达 20/20。 |
+| S-131 | “自动表达会改张量轨迹” | R-D29-383 | **被取代**：轨迹 20/20 与无桥逐位相等。 |
+| S-132 | “未知输入会保留旧文本” | R-D29-385 | **被取代**：未知输入清空字段。 |
+
+
 
 
 
