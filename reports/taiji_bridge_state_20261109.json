@@ -1,0 +1,247 @@
+{
+ "schema": "taiji-bridge-state-r22-report-v1",
+ "runner_sha256": "a1d9c5004603b0307afa940ecabcd299b7ae6d28e28d35d3f68e39f5f564fc2f",
+ "manifest_sha256": "0b34042794bc7c5e14cd811b5f8af90671691f84d240e94f78b7b4183073cc5a",
+ "bridge_sha256": "4edf29b22a199c29160523debb8ea23a45e59321f2b0c8dc06da72497672e831",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "8fa3aafde38b1cbad3b021dc271abd316c0a265c68870403dd4ca7b0b53e0c6a"
+ },
+ "definition": {
+  "export": "export_state returns canonical UTF-8 JSON bytes: schema, key kind, read mode, exported policy, capacity, peak capacity, counters, rejected reasons, records and correction log",
+  "import": "BridgeTable.from_state validates the whole payload before constructing; key_fn and allowed_authorities belong to the importing table, not to the payload",
+  "round_trip": "the 18-key table with two audited corrections must round-trip with equal full digest, equal content digest, equal exported bytes, the same authority/reason log, 40/40 and 0/0",
+  "empty": "an empty table must round-trip with the same full digest",
+  "policy": "importing into a stricter table keeps records and the old log, but a new correction with the old authority is rejected and one with the new authority is accepted",
+  "corrupt": "truncated bytes, wrong schema, duplicate key and negative count must each raise ValueError before any table is returned",
+  "closed_state": "the nine closed-state readings stay equal before and after",
+  "rerun_anchors": "R18-R21 carry the commit at which their own runner bytes were last runnable, because R22 changes the bridge module their manifests pin"
+ },
+ "criteria": {
+  "round_trip": "full digest equal, content digest equal, exported bytes equal, log length 2 with the same authorities and reasons, alias reads the original value",
+  "default_table": "regression 40/40 with wrong 0; zeros 0/0",
+  "empty": "full digest before export equals full digest after import",
+  "policy": "content digest equal; records preserved; old authority rejected as rejected_batch_unknown_authority; new authority accepted; old log still carries the old authority",
+  "corrupt": "four payloads each raise ValueError whose message starts with rejected_import_invalid_state",
+  "rerun": "four anchor rows each carry a commit, a runner blob sha1, a runner sha256 and a report bridge sha256",
+  "closed_state": "the nine closed-state readings stay equal before and after",
+  "reporting": "a successful import is evidence of portability, not of semantic understanding; the policy of the importing table is reported separately from the exported policy"
+ },
+ "round_trip": {
+  "bytes": 2081,
+  "full_digest_equal": true,
+  "content_digest_equal": true,
+  "bytes_equal": true,
+  "records": 18,
+  "log_length": 2,
+  "log": [
+   {
+    "from": "[\"object\", \"蓝色杯子\"]",
+    "to": "[\"object\", \"红色印章\"]",
+    "authority": "verifier:v1",
+    "reason": "r22:first"
+   },
+   {
+    "from": "[\"object\", \"红色印章\"]",
+    "to": "[\"object\", \"蓝色杯子\"]",
+    "authority": "verifier:v1",
+    "reason": "r22:second"
+   }
+  ],
+  "alias": {
+   "decision": "answered_single",
+   "answers": 1,
+   "values": [
+    [
+     "object",
+     "蓝色杯子"
+    ]
+   ],
+   "stopped_at_pass": 2,
+   "final_exit": "no_match"
+  },
+  "regression": {
+   "entities": 40,
+   "hits": 40,
+   "wrong": 0,
+   "distribution": {
+    "answered_2": 20,
+    "answered_1": 0,
+    "wrong": 0,
+    "abstained": 0
+   },
+   "ok": true
+  },
+  "zeros": {
+   "unknown_answering": 0,
+   "fragment_answering": 0,
+   "ok": true
+  },
+  "ok": true
+ },
+ "empty": {
+  "bytes": 333,
+  "records": 0,
+  "digest_equal": true,
+  "ok": true
+ },
+ "policy": {
+  "exported_policy": [
+   "verifier:v1"
+  ],
+  "imported_policy": [
+   "verifier:v2"
+  ],
+  "content_digest_equal": true,
+  "old_authority": "rejected_batch_unknown_authority",
+  "new_authority": "corrected",
+  "after": {
+   "decision": "answered_single",
+   "answers": 1,
+   "values": [
+    [
+     "object",
+     "绿色瓶子"
+    ]
+   ],
+   "stopped_at_pass": 2,
+   "final_exit": "no_match"
+  },
+  "log": [
+   {
+    "from": "[\"object\", \"蓝色杯子\"]",
+    "to": "[\"object\", \"红色印章\"]",
+    "authority": "verifier:v1",
+    "reason": "r22:first"
+   },
+   {
+    "from": "[\"object\", \"红色印章\"]",
+    "to": "[\"object\", \"绿色瓶子\"]",
+    "authority": "verifier:v2",
+    "reason": "new"
+   }
+  ],
+  "ok": true
+ },
+ "corrupt": {
+  "rows": {
+   "truncated": {
+    "rejected": true,
+    "message": "rejected_import_invalid_state: not_json"
+   },
+   "wrong_schema": {
+    "rejected": true,
+    "message": "rejected_import_invalid_state: schema"
+   },
+   "duplicate_key": {
+    "rejected": true,
+    "message": "rejected_import_invalid_state: duplicate_key"
+   },
+   "negative_count": {
+    "rejected": true,
+    "message": "rejected_import_invalid_state: count"
+   }
+  },
+  "cases": 4,
+  "ok": true
+ },
+ "rerun_anchors": [
+  {
+   "round": "R18",
+   "runner": "scripts/training/probe_taiji_bridge_correction_20261109.py",
+   "rerun_commit": "64a221f37",
+   "runner_blob_sha1": "93919b40be8891a315100415751b8119365b9668",
+   "report_runner_sha256": "4ba6e0a0331e20f44067abfc537d0e619756ead0bf1400e5fbfc3a58f00652e4",
+   "runner_blob_sha256": "4ba6e0a0331e20f44067abfc537d0e619756ead0bf1400e5fbfc3a58f00652e4",
+   "report_bridge_sha256": "65d86897c25544e683f757d4771f2d7e516476528bafd9520e14bdc59ab1fbd4",
+   "matches_report": true,
+   "note": "current HEAD cannot run it after R22 (bridge sha changed); checkout this commit"
+  },
+  {
+   "round": "R19",
+   "runner": "scripts/training/probe_taiji_bridge_correction_loop_20261109.py",
+   "rerun_commit": "dcda39ca9",
+   "runner_blob_sha1": "a89b1f47b29c66c5f6f1ae11c2ee710e07f921bb",
+   "report_runner_sha256": "bd92a15aec36488ee8f5c7c3e238c31e91aabfab773eee6d155450b1a04bddf8",
+   "runner_blob_sha256": "bd92a15aec36488ee8f5c7c3e238c31e91aabfab773eee6d155450b1a04bddf8",
+   "report_bridge_sha256": "65d86897c25544e683f757d4771f2d7e516476528bafd9520e14bdc59ab1fbd4",
+   "matches_report": true,
+   "note": "current HEAD cannot run it after R22 (bridge sha changed); checkout this commit"
+  },
+  {
+   "round": "R20",
+   "runner": "scripts/training/probe_taiji_bridge_pair_correction_20261109.py",
+   "rerun_commit": "56c87bbd0",
+   "runner_blob_sha1": "9e9e7a5b269a62dd552acd22e5590f4c4fa29797",
+   "report_runner_sha256": "1af43c0b54e92969c1ab8b4784797c4ed303d7f5da323de938e12d0d6997e7a0",
+   "runner_blob_sha256": "1af43c0b54e92969c1ab8b4784797c4ed303d7f5da323de938e12d0d6997e7a0",
+   "report_bridge_sha256": "65d86897c25544e683f757d4771f2d7e516476528bafd9520e14bdc59ab1fbd4",
+   "matches_report": true,
+   "note": "current HEAD cannot run it after R22 (bridge sha changed); checkout this commit"
+  },
+  {
+   "round": "R21",
+   "runner": "scripts/training/probe_taiji_bridge_authority_20261109.py",
+   "rerun_commit": "180ab0f1e",
+   "runner_blob_sha1": "95d710488ef326707d75849a9cb8586551386887",
+   "report_runner_sha256": "9d167ecc1671c6a4e64cbc9fcd5c3a5fac2e02f64d7d6d4154a5b7cae31d4f10",
+   "runner_blob_sha256": "9d167ecc1671c6a4e64cbc9fcd5c3a5fac2e02f64d7d6d4154a5b7cae31d4f10",
+   "report_bridge_sha256": "d31f66f3cca3d6b04bdc46e2f61163c2d5b07a3c604480c31c0e73d1f5a4bbee",
+   "matches_report": true,
+   "note": "current HEAD cannot run it after R22 (bridge sha changed); checkout this commit"
+  }
+ ],
+ "closed_state": {
+  "baseline": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "d6d4e49d069d355990f246faf9564b92fad7a1a4f62681fbb0885d91ba80bf5a",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk_none": true,
+   "battery_sha": "7c847d9a6f0cc494bb32357edbef8e0aeeaf100bfd126600874d505f769c2223",
+   "battery_steps": 20
+  },
+  "after": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "d6d4e49d069d355990f246faf9564b92fad7a1a4f62681fbb0885d91ba80bf5a",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk_none": true,
+   "battery_sha": "7c847d9a6f0cc494bb32357edbef8e0aeeaf100bfd126600874d505f769c2223",
+   "battery_steps": 20
+  },
+  "checks": {
+   "parameters_equal": true,
+   "state_equal": true,
+   "identity_equal": true,
+   "store_equal": true,
+   "battery_equal": true,
+   "steps_equal": true,
+   "sc_sfk_none": true,
+   "flag_disabled": true,
+   "rng_untouched": true
+  }
+ },
+ "verdict": {
+  "round_trip": "state_round_trip_exact",
+  "empty": "empty_table_round_trip",
+  "policy": "importer_decides_policy",
+  "corrupt": "corrupt_state_rejected",
+  "default_table": "default_table_unchanged",
+  "closed_state": "closed_state_equal",
+  "rerun_anchors": "anchors_complete",
+  "overall": "bridge_state_portable"
+ },
+ "cost": {
+  "cpu_seconds": 1.671875,
+  "wall_seconds": 2.3758559226989746,
+  "cpu_cap": 200.0,
+  "estimate_cpu_upper": 30.0,
+  "threads": 1
+ }
+}

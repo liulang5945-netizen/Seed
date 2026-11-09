@@ -151,6 +151,7 @@ def first_occurrence(query: tuple[str, ...], pattern: tuple[str, ...]) -> int | 
 
 
 MASK_CHARACTER = "\x00"
+STATE_SCHEMA = "taiji-bridge-state-v1"
 
 
 class BridgeTable:
@@ -269,6 +270,208 @@ class BridgeTable:
             for record in snapshot["records"]
         ]
         self.appended, self.merged = snapshot["counters"]
+
+    # -- portable state ------------------------------------------------------
+    def export_state(self) -> bytes:
+        """Canonical bytes for the whole table, counters and audit log included."""
+        kinds = {isinstance(record["key"], frozenset) for record in self.records}
+        if len(kinds) > 1:
+            raise ValueError("rejected_export_mixed_key_kinds")
+        key_kind = "set" if kinds == {True} else "sequence"
+        payload = {
+            "schema": STATE_SCHEMA,
+            "key_kind": key_kind,
+            "read_mode": self.read_mode,
+            "allowed_authorities": list(self.allowed_authorities),
+            "capacity": self.capacity,
+            "peak_capacity": self.peak_capacity,
+            "counters": {
+                "batches": self.batches,
+                "appended": self.appended,
+                "merged": self.merged,
+                "rejected_batches": self.rejected_batches,
+                "rollbacks": self.rollbacks,
+                "correction_batches": self.correction_batches,
+                "corrected": self.corrected,
+                "rejected_corrections": self.rejected_corrections,
+            },
+            "rejected_reasons": dict(sorted(self.rejected_reasons.items())),
+            "records": [
+                {
+                    "key": (sorted(record["key"]) if key_kind == "set" else list(record["key"])),
+                    "value": list(record["value"]),
+                    "count": record["count"],
+                }
+                for record in self.records
+            ],
+            "corrections": [
+                {
+                    "key": row["key"],
+                    "from": list(row["from"]),
+                    "to": list(row["to"]),
+                    "authority": row.get("authority", ""),
+                    "reason": row.get("reason", ""),
+                }
+                for row in self.corrections
+            ],
+        }
+        return json.dumps(
+            payload, ensure_ascii=False, sort_keys=True, separators=(",", ":")
+        ).encode("utf-8")
+
+    @classmethod
+    def from_state(
+        cls,
+        data: bytes,
+        *,
+        key_fn: Any = None,
+        read_mode: str | None = None,
+        allowed_authorities: tuple[str, ...] = (),
+    ) -> BridgeTable:
+        """Rebuild a table from ``export_state`` bytes.
+
+        ``key_fn`` and ``allowed_authorities`` belong to the importing table, not
+        to the payload: the caller decides who may correct next.  When ``key_fn``
+        is omitted it is chosen from the exported ``key_kind``.  Any malformed
+        payload is rejected whole with ``ValueError``; no partial table escapes.
+        """
+        payload = cls._decode_state(data)
+        if key_fn is None:
+            key_fn = sequence_key if payload["key_kind"] == "sequence" else phrase_key
+        mode = payload["read_mode"] if read_mode is None else read_mode
+        if mode not in ("token", "sequence"):
+            raise ValueError("rejected_import_invalid_state: read_mode")
+        table = cls(
+            key_fn=key_fn,
+            read_mode=mode,
+            allowed_authorities=allowed_authorities,
+        )
+        table.capacity = payload["capacity"]
+        table.peak_capacity = payload["peak_capacity"]
+        table.records = [
+            {
+                "key": (
+                    tuple(row["key"])
+                    if payload["key_kind"] == "sequence"
+                    else frozenset(row["key"])
+                ),
+                "value": tuple(row["value"]),
+                "count": row["count"],
+            }
+            for row in payload["records"]
+        ]
+        counters = payload["counters"]
+        table.batches = counters["batches"]
+        table.appended = counters["appended"]
+        table.merged = counters["merged"]
+        table.rejected_batches = counters["rejected_batches"]
+        table.rollbacks = counters["rollbacks"]
+        table.correction_batches = counters["correction_batches"]
+        table.corrected = counters["corrected"]
+        table.rejected_corrections = counters["rejected_corrections"]
+        table.rejected_reasons = dict(payload["rejected_reasons"])
+        table.corrections = [
+            {
+                "key": row["key"],
+                "from": tuple(row["from"]),
+                "to": tuple(row["to"]),
+                "authority": row["authority"],
+                "reason": row["reason"],
+            }
+            for row in payload["corrections"]
+        ]
+        return table
+
+    @staticmethod
+    def _decode_state(data: bytes) -> dict[str, Any]:
+        if not isinstance(data, (bytes, bytearray)):
+            raise ValueError("rejected_import_invalid_state: not_bytes")
+        try:
+            payload = json.loads(bytes(data).decode("utf-8"))
+        except (UnicodeDecodeError, json.JSONDecodeError) as error:
+            raise ValueError("rejected_import_invalid_state: not_json") from error
+        if not isinstance(payload, dict) or payload.get("schema") != STATE_SCHEMA:
+            raise ValueError("rejected_import_invalid_state: schema")
+        if payload.get("key_kind") not in ("sequence", "set"):
+            raise ValueError("rejected_import_invalid_state: key_kind")
+        if payload.get("read_mode") not in ("token", "sequence"):
+            raise ValueError("rejected_import_invalid_state: read_mode")
+        records = payload.get("records")
+        if not isinstance(records, list):
+            raise ValueError("rejected_import_invalid_state: records")
+        seen_keys: set[Any] = set()
+        for record in records:
+            if not isinstance(record, dict):
+                raise ValueError("rejected_import_invalid_state: record")
+            key = record.get("key")
+            if not isinstance(key, list) or not key:
+                raise ValueError("rejected_import_invalid_state: key")
+            if not all(isinstance(character, str) and character for character in key):
+                raise ValueError("rejected_import_invalid_state: key_characters")
+            normalized = tuple(key) if payload["key_kind"] == "sequence" else frozenset(key)
+            if normalized in seen_keys:
+                raise ValueError("rejected_import_invalid_state: duplicate_key")
+            seen_keys.add(normalized)
+            value = record.get("value")
+            if (
+                not isinstance(value, list)
+                or len(value) != 2
+                or not all(isinstance(part, str) for part in value)
+            ):
+                raise ValueError("rejected_import_invalid_state: value")
+            count = record.get("count")
+            if not isinstance(count, int) or count < 1:
+                raise ValueError("rejected_import_invalid_state: count")
+        capacity = payload.get("capacity")
+        peak_capacity = payload.get("peak_capacity")
+        if not isinstance(capacity, int) or capacity < START_CAPACITY:
+            raise ValueError("rejected_import_invalid_state: capacity")
+        if not isinstance(peak_capacity, int) or peak_capacity < capacity:
+            raise ValueError("rejected_import_invalid_state: peak_capacity")
+        if len(records) > capacity:
+            raise ValueError("rejected_import_invalid_state: capacity_below_records")
+        counters = payload.get("counters")
+        if not isinstance(counters, dict):
+            raise ValueError("rejected_import_invalid_state: counters")
+        for name in (
+            "batches",
+            "appended",
+            "merged",
+            "rejected_batches",
+            "rollbacks",
+            "correction_batches",
+            "corrected",
+            "rejected_corrections",
+        ):
+            value = counters.get(name)
+            if not isinstance(value, int) or value < 0:
+                raise ValueError(f"rejected_import_invalid_state: counter_{name}")
+        reasons = payload.get("rejected_reasons")
+        if not isinstance(reasons, dict) or not all(
+            isinstance(key, str) and isinstance(value, int) and value >= 0
+            for key, value in reasons.items()
+        ):
+            raise ValueError("rejected_import_invalid_state: rejected_reasons")
+        corrections = payload.get("corrections")
+        if not isinstance(corrections, list):
+            raise ValueError("rejected_import_invalid_state: corrections")
+        for row in corrections:
+            if not isinstance(row, dict):
+                raise ValueError("rejected_import_invalid_state: correction")
+            if not isinstance(row.get("key"), str) or not row["key"]:
+                raise ValueError("rejected_import_invalid_state: correction_key")
+            for field in ("from", "to"):
+                value = row.get(field)
+                if (
+                    not isinstance(value, list)
+                    or len(value) != 2
+                    or not all(isinstance(part, str) for part in value)
+                ):
+                    raise ValueError(f"rejected_import_invalid_state: correction_{field}")
+            for field in ("authority", "reason"):
+                if not isinstance(row.get(field), str):
+                    raise ValueError(f"rejected_import_invalid_state: correction_{field}")
+        return payload
 
     # -- write ---------------------------------------------------------------
     def find(self, key: Any) -> int | None:
