@@ -1,0 +1,89 @@
+{
+ "schema": "taiji-write-fidelity-r48-v1",
+ "created": "2026-11-09T18:20:25",
+ "seed": 20261109,
+ "estimate_cpu_upper": 30.0,
+ "cpu_cap": 200.0,
+ "lambdas": [
+  0.001,
+  0.1,
+  10.0,
+  1000.0
+ ],
+ "folds": 5,
+ "accuracy_gate": 0.5,
+ "control_gate": 0.2,
+ "runner_sha256": "7650ddc50ec19cd172183b06bbb9474d773a153f3f898d9df8566732bed51c88",
+ "core_sha256": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d"
+ },
+ "definition": {
+  "write": "each of the 20 describe sentences is written once with a write-enabled observe",
+  "features": "state.fast flattened, float64, centred per fold with an appended bias column",
+  "readout": "closed-form ridge W=(XtX+lI)^-1 XtY over the 20-way one-hot sentence label",
+  "folds": "fixed index % 5; 16 train, 4 test per fold",
+  "control": "the same pipeline with permuted labels (fixed seed) must stay near chance",
+  "decision": "best accuracy over the lambda grid >= 0.5 -> write_path_retains_content",
+  "closed_state": "the nine legacy readings on the main subject stay equal before and after"
+ },
+ "criteria": {
+  "features": "20 finite feature vectors with matching label count",
+  "grid": "accuracy is reported for every lambda",
+  "control": "the permuted-label control is <= 0.2, otherwise inconclusive",
+  "decision": "the frozen 0.5 gate decides retains/discards",
+  "closed_state": "the nine legacy readings stay equal and the main parameter digest does not move",
+  "rerun": "the R47 anchor carries a commit, a runner blob sha1, a runner sha256 and a core sha256"
+ },
+ "definition_digest": "abf4e4a1dce01f4373271cfbc52507be669cf1ef08828f9138908d1e95c8071d",
+ "counts": {
+  "describe_sentences": 20,
+  "lambdas": 4
+ },
+ "inputs": {
+  "goal": "r48",
+  "sentences": [
+   "让圆口的器皿到四方木台。",
+   "让圆口的器皿到靠窗的台面。",
+   "让圆口的器皿到手边的匣子。",
+   "让圆口的器皿到靠墙的层架。",
+   "让圆口的器皿到脚边的毡子。",
+   "让带纹路的方块到四方木台。",
+   "让带纹路的方块到靠窗的台面。",
+   "让带纹路的方块到手边的匣子。",
+   "让带纹路的方块到靠墙的层架。",
+   "让带纹路的方块到脚边的毡子。",
+   "让细长的容器到四方木台。",
+   "让细长的容器到靠窗的台面。",
+   "让细长的容器到手边的匣子。",
+   "让细长的容器到靠墙的层架。",
+   "让细长的容器到脚边的毡子。",
+   "让圆滚滚的东西到四方木台。",
+   "让圆滚滚的东西到靠窗的台面。",
+   "让圆滚滚的东西到手边的匣子。",
+   "让圆滚滚的东西到靠墙的层架。",
+   "让圆滚滚的东西到脚边的毡子。"
+  ],
+  "lambdas": [
+   0.001,
+   0.1,
+   10.0,
+   1000.0
+  ],
+  "rerun_anchors": [
+   {
+    "round": "R47",
+    "runner": "scripts/training/probe_taiji_channel_content_20261109.py",
+    "rerun_commit": "09ef04e6f",
+    "runner_blob_sha1": "8e71e998c6eead3bc180a61719d6a0c610b095f3",
+    "report_runner_sha256": "61a5e0aea2e41f0ffbb4b110e48883e8d3152cb817ea29c323d44c5228cfd2f5",
+    "runner_blob_sha256": "61a5e0aea2e41f0ffbb4b110e48883e8d3152cb817ea29c323d44c5228cfd2f5",
+    "report_core_sha256": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d",
+    "matches_report": true,
+    "note": "R48 does not change living_core; R47 stays runnable at HEAD"
+   }
+  ]
+ }
+}
