@@ -2152,5 +2152,31 @@ owner 2026-11-07 裁定：多模态是整个算法内部系统的一部分，不
 | S-92 | “纠正等于恢复后写者赢／恢复 `replace`” | R-D29-290 | **被取代**：`correct` 是独立方法、必须出示当前值；盲写仍 `rejected_batch_address_already_bound`。 |
 | S-93 | “纠正协议能判断纠正得对不对” | R-D29-291 | **限定**：协议只校验“你给的旧值是否当前值”，不校验新值；**错误的核对器给出的新值仍会被接受**，对错由外部负责。 |
 
+## 66. R19 读—核验—纠正闭环（2026-11-09）
+
+**66.0 冻结与范围**：闭环算例、默认表往返、12 条未写候选、18 条碎片在读数前写入 [manifest](../manifests/taiji_bridge_correction_loop_20261109.json) 的 `definition_digest`。本轮**不修改** `taiji/address_bridge.py`，闭环算法只在 runner 内运行。0 训练／0 优化器步／0 Adam／0 confirm。
+
+**66.1 读数**
+
+| 编号 | 读数 | 出处 |
+|---|---|---|
+| R-D29-298 | **一步纠正**：表 `蓝色杯子`、核对器 `红色印章` ⇒ 读出 `蓝色杯子`、`corrected`、读回 `红色印章`，日志 1 条。 | `one_step` |
+| R-D29-299 | **用读到的值作凭据**：表 `红色印章`、核对器 `绿色瓶子` ⇒ 读出 `红色印章`、`corrected`、读回 `绿色瓶子`，日志 `红→绿`；不是硬编码的 `蓝→绿`。 | `read_credential` |
+| R-D29-300 | **已经一致不写**：表与核对器都是 `蓝色杯子` ⇒ `agreed`、日志 0、内容摘要不变。 | `no_op` |
+| R-D29-301 | **过期读被拒**：先读到 `蓝色杯子`，另一调用方改成 `红色印章`，再用旧读纠正 ⇒ `rejected_batch_correction_mismatch`、读回 `红色印章`、日志仍 1 条。 | `stale_read` |
+| R-D29-302 | **核对器给错时协议接受**：表 `蓝色杯子`（真值）、核对器 `绿色瓶子` ⇒ `corrected`、读回 `绿色瓶子`、`verifier_error_accepted=true`、`final_matches_ground_truth=false`。**这是已声明的边界**，不得写成“循环能判断对错”。 | `wrong_verifier` |
+| R-D29-303 | **普通冲突写仍拒**：表 `蓝色杯子`、`write` 到 `红色印章` ⇒ `rejected_batch_address_already_bound`、读回原值、日志 0。 | `plain_write` |
+| R-D29-304 | **两轮收敛**：第一轮 `corrected`、第二轮 `agreed`，日志恰好 1 条，读回 `红色印章`。 | `convergence` |
+| R-D29-305 | **默认表往返与总判**：18 键表别名 `蓝色杯子→红色印章→蓝色杯子`，`content_digest` **前后相等**、读回原值、日志 2 条；R15 **40/40**、12 未写候选 **0**、18 碎片 **0**、关闭态**九项全等**。判定 `one_step_correction`／`read_value_used_as_credential`／`no_op_when_agree`／`stale_read_rejected`／`verifier_error_accepted`／`plain_write_still_rejected`／`loop_converges`／`default_table_unchanged`／`closed_state_equal` ⇒ 总判 **`read_verify_correct_loop_available`**；成本 **1.766 CPU／2.592 wall**（估 30、上限 200）。 | `verdict`／`cost` |
+
+**66.2 superseded／范围登记**
+
+| 编号 | 被取代／被限定的对象 | 取代者 | 处置与理由 |
+|---|---|---|---|
+| S-94 | “纠正闭环能判断纠正得对不对” | R-D29-302 | **限定**：协议只校验旧值；核对器给错时循环照样接受，对错由外部负责。 |
+| S-95 | “闭环会反复写入/不收敛” | R-D29-300 | **被取代**：读到一致即 `agreed`、不写；两轮内收敛，日志恰好 1 条。 |
+| S-96 | “单键闭环等于句级能力” | R-D29-305 | **限定**：只在单键上测；一句两实体的子集纠正、另一槽不动、过期子集拒绝均未测，留给 R20。 |
+
+
 
 
