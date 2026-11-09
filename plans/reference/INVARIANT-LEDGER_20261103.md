@@ -2515,6 +2515,32 @@ owner 2026-11-07 裁定：多模态是整个算法内部系统的一部分，不
 | S-137 | “子进程恢复后文本会丢” | R-D29-401 | **被取代**：交回文本 `"黄色球在地毯"` 相等。 |
 | S-138 | “截断快照子进程会半途写输出” | R-D29-402 | **被取代**：无输出。 |
 
+## 81. R34 文本回授为下一步输入（2026-11-09）
+
+**81.0 冻结与范围**：20 句带前缀表达、两种控制轨迹、未知输入与 R33 复跑锚在读数前写入 [manifest](../manifests/taiji_bridge_prefix_20261109.json) 的 `definition_digest`。本轮**修改** `taiji/living_core.py`：`bridge_observe` 增加 `use_text_prefix`；`observe`/`step` 未改。0 训练／0 优化器步／0 Adam／0 confirm。
+
+**81.1 读数**
+
+| 编号 | 读数 | 出处 |
+|---|---|---|
+| R-D29-406 | **表达**：20 条 describe 句 **20/20** 文本逐字正确。 | `expression` |
+| R-D29-407 | **前缀**：**19/20** 步带前缀；第 1 步 `None`；每个前缀等于上一步文本。 | `prefix` |
+| R-D29-408 | **前缀控制**：与同前缀普通 `observe` **20/20** 状态摘要相等。 | `control` |
+| R-D29-409 | **无前缀对照**：仅 **1/20** 步相同（第 1 步），其余 **19/20** 不同 ⇒ 前缀进入输入。 | `difference` |
+| R-D29-410 | **未知清空**：前缀 `"黄色球在地毯"`、`no_pair`、字段 `None`、下一步前缀 `None`。 | `unknown` |
+| R-D29-411 | **参数/表不动**；关闭态**九项全等**、`sc_bridge` 前后 `None`（单列）。 | `parameters`／`closed_state` |
+| R-D29-412 | **复跑锚**：R33→`205c748a5`（blob `24a9aac5…`、runner sha `bb5fbb28…`、core sha `d5ccb13b…`），报告 sha 与 blob sha 一致。 | `rerun_anchors` |
+| R-D29-413 | **判定与成本**：`prefix_expression_20_20`／`prefix_used_19_20`／`prefix_control_equal`／`prefix_changes_input`／`unknown_clears_prefix`／`parameters_untouched`／`closed_state_equal`／`bridge_default_none`／`anchors_complete` ⇒ 总判 **`text_prefix_feedback_clean`**；成本 **4.125 CPU／4.632 wall**（估 40、上限 200）。 | 报告 `verdict`／`cost` |
+
+**81.2 superseded／范围登记**
+
+| 编号 | 被取代／被限定的对象 | 取代者 | 处置与理由 |
+|---|---|---|---|
+| S-139 | “表达文本不能影响下一步输入” | R-D29-409 | **被取代**：19/20 步轨迹因前缀不同。 |
+| S-140 | “文本前缀会改参数” | R-D29-411 | **被取代**：参数摘要不变。 |
+| S-141 | “弃答后下一步仍带旧前缀” | R-D29-410 | **被取代**：下一步前缀 `None`。 |
+
+
 
 
 
