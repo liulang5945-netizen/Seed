@@ -612,6 +612,47 @@ class LivingCoreReference(nn.Module):
             }
         return table.read_sentence(sentence)
 
+    def bridge_choose(
+        self,
+        state: LivingState,
+        query: str | bytes,
+        candidates: list[tuple[str, str]] | tuple[tuple[str, str], ...],
+    ) -> dict:
+        """Choose exactly one candidate, or abstain; never touches a tensor.
+
+        The bridge read must yield exactly one entity and that entity must be in
+        ``candidates``.  Otherwise the result says why: ``no_bridge``,
+        ``no_choice`` (the read answered nothing), ``ambiguous_read`` (the read
+        yielded more than one entity) or ``not_in_candidates``.
+        """
+        choices = [tuple(candidate) for candidate in candidates]
+        read = self.bridge_read(state, query)
+        values = [tuple(row["value"]) for row in read["answers"]]
+        result = {
+            "decision": "",
+            "choice": None,
+            "index": None,
+            "read_decision": read["decision"],
+            "answers": len(values),
+        }
+        if state.sc_bridge is None:
+            result["decision"] = "no_bridge"
+            return result
+        if not values:
+            result["decision"] = "no_choice"
+            return result
+        if len(values) != 1:
+            result["decision"] = "ambiguous_read"
+            return result
+        value = values[0]
+        if value not in choices:
+            result["decision"] = "not_in_candidates"
+            return result
+        result["decision"] = "chosen"
+        result["choice"] = value
+        result["index"] = choices.index(value)
+        return result
+
     def store_query_key(self, state: LivingState, raw: bytes) -> torch.Tensor:
         context = self.encoder.context(raw)
         if context.numel() == 0:

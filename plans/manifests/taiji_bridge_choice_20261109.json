@@ -1,0 +1,175 @@
+{
+ "schema": "taiji-bridge-choice-r26-v1",
+ "created": "2026-11-09T16:59:23",
+ "seed": 20261109,
+ "estimate_cpu_upper": 30.0,
+ "cpu_cap": 200.0,
+ "runner_sha256": "053b852dbfe9dcc845b57f6106799d00419f014aed8b0e656f5050bdf1396426",
+ "bridge_sha256": "4edf29b22a199c29160523debb8ea23a45e59321f2b0c8dc06da72497672e831",
+ "core_sha256": "eead9c4af475ccd7c74c7260d60c2d035a37aabf2445442a0db7bc36cacb4c4a",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "eead9c4af475ccd7c74c7260d60c2d035a37aabf2445442a0db7bc36cacb4c4a"
+ },
+ "definition": {
+  "choose": "bridge_choose(state, query, candidates) reads the query through the attached bridge; it chooses only when exactly one entity is read and that entity is in candidates",
+  "exits": "no_bridge (no table), no_choice (no answer), ambiguous_read (more than one answer), not_in_candidates (one answer outside the candidate list), chosen",
+  "inert": "no choice path changes any parameter, h, fast, nu_ema, coverage, prior or sc_sfk",
+  "correction": "correcting the RED alias to GREEN flips its choice in [RED, GREEN] from index 0 to 1; the table digest moves and the subject hashes do not",
+  "closed_state": "the nine legacy closed-state readings stay equal before and after"
+ },
+ "criteria": {
+  "chosen": "CUP->0 and RED->1 in [CUP, RED]; RED->0 in [RED, GREEN]",
+  "no_choice": "unknown query gives no_choice with read_decision=no_match",
+  "ambiguous": "two-entity query gives ambiguous_read and answers=2",
+  "not_in_candidates": "CUP read with [RED, GREEN] gives not_in_candidates",
+  "no_bridge": "a state without a table gives no_bridge",
+  "correction": "before correction RED->0; after RED->1; table digest changes; subject hashes equal",
+  "inert": "parameter and state hashes equal before and after all choices",
+  "closed_state": "the nine legacy readings stay equal before and after",
+  "rerun": "R24 and R25 each carry a commit, a runner blob sha1, a runner sha256 and a core sha256"
+ },
+ "definition_digest": "9ce9207c795183e34049d465a28861a150a489256fa9a11e7331d085e2bb8ab1",
+ "counts": {
+  "choice_cases": 6,
+  "regression_sentences": 20,
+  "unknown_candidates": 12,
+  "rerun_anchors": 2
+ },
+ "inputs": {
+  "queries": [
+   "喝水的杯子",
+   "盖章用的印章",
+   "黑色铁铃",
+   "喝水的杯子和盖章用的印章都在。"
+  ],
+  "values": [
+   [
+    "object",
+    "蓝色杯子"
+   ],
+   [
+    "object",
+    "红色印章"
+   ],
+   [
+    "object",
+    "绿色瓶子"
+   ],
+   [
+    "place",
+    "木桌"
+   ],
+   [
+    "place",
+    "书架"
+   ]
+  ],
+  "authority": "verifier:v1",
+  "reason": "r26:choose",
+  "aliases": [
+   [
+    "喝水的杯子",
+    [
+     "object",
+     "蓝色杯子"
+    ]
+   ],
+   [
+    "盖章用的印章",
+    [
+     "object",
+     "红色印章"
+    ]
+   ],
+   [
+    "盛水的瓶子",
+    [
+     "object",
+     "绿色瓶子"
+    ]
+   ],
+   [
+    "圆形的皮球",
+    [
+     "object",
+     "黄色球"
+    ]
+   ],
+   [
+    "方方正正的木桌子",
+    [
+     "place",
+     "木桌"
+    ]
+   ],
+   [
+    "窗前的台板",
+    [
+     "place",
+     "窗台"
+    ]
+   ],
+   [
+    "手边的小盒子",
+    [
+     "place",
+     "左盒"
+    ]
+   ],
+   [
+    "墙上的架子",
+    [
+     "place",
+     "书架"
+    ]
+   ],
+   [
+    "脚下的垫子",
+    [
+     "place",
+     "地毯"
+    ]
+   ]
+  ],
+  "unknown_candidates": [
+   "黑色铁铃",
+   "白色帆布",
+   "长柄铜勺",
+   "软木瓶塞",
+   "蓝色毛巾",
+   "银质圆镜",
+   "棕色皮箱",
+   "青色陶罐",
+   "灰色石阶",
+   "紫色绸带",
+   "金色烛台",
+   "深红木箱"
+  ],
+  "rerun_anchors": [
+   {
+    "round": "R24",
+    "runner": "scripts/training/probe_taiji_bridge_attach_20261109.py",
+    "rerun_commit": "2556d166f",
+    "runner_blob_sha1": "cb261ed9dc6d0c4e2c067952cbf8aa8c0a0d44ba",
+    "report_runner_sha256": "3185eed3dec783d9fe1c8c59c80aeceb191fb3310ccce62dc3f5d1456824671d",
+    "runner_blob_sha256": "3185eed3dec783d9fe1c8c59c80aeceb191fb3310ccce62dc3f5d1456824671d",
+    "report_core_sha256": "d1d8fb7a219d79fd92e22b30572c561b7e0ce3500d0a71f09824874813c6bd30",
+    "matches_report": true,
+    "note": "current HEAD cannot run it after R26 (core sha changed); checkout this commit"
+   },
+   {
+    "round": "R25",
+    "runner": "scripts/training/probe_taiji_bridge_step_20261109.py",
+    "rerun_commit": "eb970f4f7",
+    "runner_blob_sha1": "72ccafa522fe26461bdc14effca919f209ee61f5",
+    "report_runner_sha256": "e829326eb94baa39e839752134c90b72effd5d5a77f70256f0b235b419bb4962",
+    "runner_blob_sha256": "e829326eb94baa39e839752134c90b72effd5d5a77f70256f0b235b419bb4962",
+    "report_core_sha256": "d1d8fb7a219d79fd92e22b30572c561b7e0ce3500d0a71f09824874813c6bd30",
+    "matches_report": true,
+    "note": "current HEAD cannot run it after R26 (core sha changed); checkout this commit"
+   }
+  ]
+ }
+}

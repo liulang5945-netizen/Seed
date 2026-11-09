@@ -1,0 +1,181 @@
+{
+ "schema": "taiji-bridge-choice-r26-report-v1",
+ "runner_sha256": "053b852dbfe9dcc845b57f6106799d00419f014aed8b0e656f5050bdf1396426",
+ "manifest_sha256": "286cd7009167443e826c14f52322ec59b8c217e3faa913d22179d6cff5744672",
+ "bridge_sha256": "4edf29b22a199c29160523debb8ea23a45e59321f2b0c8dc06da72497672e831",
+ "core_sha256": "eead9c4af475ccd7c74c7260d60c2d035a37aabf2445442a0db7bc36cacb4c4a",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "eead9c4af475ccd7c74c7260d60c2d035a37aabf2445442a0db7bc36cacb4c4a"
+ },
+ "definition": {
+  "choose": "bridge_choose(state, query, candidates) reads the query through the attached bridge; it chooses only when exactly one entity is read and that entity is in candidates",
+  "exits": "no_bridge (no table), no_choice (no answer), ambiguous_read (more than one answer), not_in_candidates (one answer outside the candidate list), chosen",
+  "inert": "no choice path changes any parameter, h, fast, nu_ema, coverage, prior or sc_sfk",
+  "correction": "correcting the RED alias to GREEN flips its choice in [RED, GREEN] from index 0 to 1; the table digest moves and the subject hashes do not",
+  "closed_state": "the nine legacy closed-state readings stay equal before and after"
+ },
+ "criteria": {
+  "chosen": "CUP->0 and RED->1 in [CUP, RED]; RED->0 in [RED, GREEN]",
+  "no_choice": "unknown query gives no_choice with read_decision=no_match",
+  "ambiguous": "two-entity query gives ambiguous_read and answers=2",
+  "not_in_candidates": "CUP read with [RED, GREEN] gives not_in_candidates",
+  "no_bridge": "a state without a table gives no_bridge",
+  "correction": "before correction RED->0; after RED->1; table digest changes; subject hashes equal",
+  "inert": "parameter and state hashes equal before and after all choices",
+  "closed_state": "the nine legacy readings stay equal before and after",
+  "rerun": "R24 and R25 each carry a commit, a runner blob sha1, a runner sha256 and a core sha256"
+ },
+ "choice": {
+  "cup": {
+   "decision": "chosen",
+   "choice": [
+    "object",
+    "蓝色杯子"
+   ],
+   "index": 0,
+   "read_decision": "answered_single",
+   "answers": 1
+  },
+  "red": {
+   "decision": "chosen",
+   "choice": [
+    "object",
+    "红色印章"
+   ],
+   "index": 1,
+   "read_decision": "answered_single",
+   "answers": 1
+  },
+  "red_pair": {
+   "decision": "chosen",
+   "choice": [
+    "object",
+    "红色印章"
+   ],
+   "index": 0,
+   "read_decision": "answered_single",
+   "answers": 1
+  },
+  "unknown": {
+   "decision": "no_choice",
+   "choice": null,
+   "index": null,
+   "read_decision": "no_match",
+   "answers": 0
+  },
+  "ambiguous": {
+   "decision": "ambiguous_read",
+   "choice": null,
+   "index": null,
+   "read_decision": "answered_pair",
+   "answers": 2
+  },
+  "outside": {
+   "decision": "not_in_candidates",
+   "choice": null,
+   "index": null,
+   "read_decision": "answered_single",
+   "answers": 1
+  },
+  "no_bridge": {
+   "decision": "no_bridge",
+   "choice": null,
+   "index": null,
+   "read_decision": "no_bridge",
+   "answers": 0
+  },
+  "correction": "corrected",
+  "after_red": {
+   "decision": "chosen",
+   "choice": [
+    "object",
+    "绿色瓶子"
+   ],
+   "index": 1,
+   "read_decision": "answered_single",
+   "answers": 1
+  },
+  "table_digest_changed": true,
+  "state_sha_equal": true,
+  "parameter_sha_equal": true,
+  "ok": true
+ },
+ "rerun_anchors": [
+  {
+   "round": "R24",
+   "runner": "scripts/training/probe_taiji_bridge_attach_20261109.py",
+   "rerun_commit": "2556d166f",
+   "runner_blob_sha1": "cb261ed9dc6d0c4e2c067952cbf8aa8c0a0d44ba",
+   "report_runner_sha256": "3185eed3dec783d9fe1c8c59c80aeceb191fb3310ccce62dc3f5d1456824671d",
+   "runner_blob_sha256": "3185eed3dec783d9fe1c8c59c80aeceb191fb3310ccce62dc3f5d1456824671d",
+   "report_core_sha256": "d1d8fb7a219d79fd92e22b30572c561b7e0ce3500d0a71f09824874813c6bd30",
+   "matches_report": true,
+   "note": "current HEAD cannot run it after R26 (core sha changed); checkout this commit"
+  },
+  {
+   "round": "R25",
+   "runner": "scripts/training/probe_taiji_bridge_step_20261109.py",
+   "rerun_commit": "eb970f4f7",
+   "runner_blob_sha1": "72ccafa522fe26461bdc14effca919f209ee61f5",
+   "report_runner_sha256": "e829326eb94baa39e839752134c90b72effd5d5a77f70256f0b235b419bb4962",
+   "runner_blob_sha256": "e829326eb94baa39e839752134c90b72effd5d5a77f70256f0b235b419bb4962",
+   "report_core_sha256": "d1d8fb7a219d79fd92e22b30572c561b7e0ce3500d0a71f09824874813c6bd30",
+   "matches_report": true,
+   "note": "current HEAD cannot run it after R26 (core sha changed); checkout this commit"
+  }
+ ],
+ "closed_state": {
+  "baseline": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "b0b3caf95425f809e116553bcad652ebfed910e3ca3357915259b42b332cc9bc",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk_none": true,
+   "sc_bridge_none": true,
+   "battery_sha": "ac418e7530ce368c31821bf95a1eb063ca8aa376fc2689fd35f99891299b289d",
+   "battery_steps": 20
+  },
+  "after": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "b0b3caf95425f809e116553bcad652ebfed910e3ca3357915259b42b332cc9bc",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk_none": true,
+   "sc_bridge_none": true,
+   "battery_sha": "ac418e7530ce368c31821bf95a1eb063ca8aa376fc2689fd35f99891299b289d",
+   "battery_steps": 20
+  },
+  "checks": {
+   "parameters_equal": true,
+   "state_equal": true,
+   "identity_equal": true,
+   "store_equal": true,
+   "battery_equal": true,
+   "steps_equal": true,
+   "sc_sfk_none": true,
+   "flag_disabled": true,
+   "rng_untouched": true
+  }
+ },
+ "bridge_default_none": true,
+ "verdict": {
+  "chosen": "choice_from_read",
+  "closed_state": "closed_state_equal",
+  "bridge_default": "bridge_default_none",
+  "rerun_anchors": "anchors_complete",
+  "overall": "bridge_choice_available"
+ },
+ "cost": {
+  "cpu_seconds": 1.859375,
+  "wall_seconds": 2.7361905574798584,
+  "cpu_cap": 200.0,
+  "estimate_cpu_upper": 30.0,
+  "threads": 1
+ }
+}
