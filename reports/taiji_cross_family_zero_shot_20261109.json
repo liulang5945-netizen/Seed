@@ -1,0 +1,240 @@
+{
+ "schema": "taiji-cross-family-zero-shot-v1",
+ "date": "2026-11-09",
+ "runner_sha256": "08b05cbb4adfb4b137802550eb80d7115b076bf60e15db54f6e660646277e310",
+ "manifest_sha256": "9dde0fd2abbb89f2143a7f65ceb17ac518ef38a47edc4073d92f3a105d0daebc",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "8fa3aafde38b1cbad3b021dc271abd316c0a265c68870403dd4ca7b0b53e0c6a"
+ },
+ "counts": {
+  "sentences": 80,
+  "train": 20,
+  "test": 60,
+  "variants_test": [
+   "hope",
+   "needs",
+   "state"
+  ]
+ },
+ "leak_check": {
+  "names_checked": [
+   "蓝色杯子",
+   "红色印章",
+   "绿色瓶子",
+   "黄色球",
+   "木桌",
+   "窗台",
+   "左盒",
+   "书架",
+   "地毯"
+  ],
+  "names_in_training": [],
+  "test_rows": 60,
+  "test_rows_containing_object_name": 60,
+  "test_rows_containing_place_name": 60
+ },
+ "definition": {
+  "train": "the 20 describe sentences, one per (object, place) goal; no paraphrase.",
+  "test": "the 60 needs / hope / state sentences (3 per goal).  No test sentence has a training counterpart and the split is by variant, not by fold.",
+  "leak_check": "for every object and place name, assert the name string does not occur in any of the 20 training sentences; the count of test sentences that do contain their own name is reported so the mapping is verifiable rather than assumed.",
+  "readout": "closed form ridge W = (X^T X + lambda I)^-1 X^T Y; prediction is the arg-max over the held-out rows.  One matrix solve per (arm, lambda, fold, target); no gradient step.",
+  "lambdas": [
+   0.001,
+   0.1,
+   10.0,
+   1000.0
+  ],
+  "arms": [
+   "R1",
+   "R2",
+   "R3"
+  ],
+  "joint": "fraction of the 60 held-out rows where object AND place are both correct."
+ },
+ "criteria": {
+  "per_arm": "readable iff joint >= 0.75 and object >= 0.85 and place >= 0.80; not_readable iff joint <= chance + 0.10; otherwise inconclusive.  A degenerate read-out (one predicted class for object or for place) is inconclusive, never not_readable.",
+  "overall": "cross_family_semantic_bridge if any arm is readable; cross_family_zero_shot_fails if every available arm is not_readable; otherwise inconclusive.",
+  "lambda": "the reported reading is the best joint accuracy over the four lambdas.",
+  "no_fit": "0 training, 0 optimizer steps, 0 Adam, 0 confirm, 0 new parameters.",
+  "frozen": "thresholds and both splits are fixed before the first reading."
+ },
+ "chance": {
+  "object": 0.25,
+  "place": 0.2,
+  "joint": 0.05
+ },
+ "model": {
+  "model_id": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+  "status": "available",
+  "payload": {
+   "format": "taiji-document-embedder-v1",
+   "version": 1,
+   "model_id": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+   "revision": "e8f8c211226b894fcb81acc59f3b34ba3efd5f42",
+   "config_digest": "584d721354a4443103960a80b1a3a61226765bc470bd4077d96e37beb85b433f",
+   "dimension": 384,
+   "max_length": 256,
+   "batch_size": 32,
+   "pooling": "mean",
+   "normalized": true
+  }
+ },
+ "arms": {
+  "R1": {
+   "per_lambda": [
+    {
+     "lambda": 0.001,
+     "object_accuracy": 0.3,
+     "place_accuracy": 0.45,
+     "joint_accuracy": 0.133333,
+     "distinct_object_predictions": 4,
+     "distinct_place_predictions": 5
+    },
+    {
+     "lambda": 0.1,
+     "object_accuracy": 0.316667,
+     "place_accuracy": 0.483333,
+     "joint_accuracy": 0.15,
+     "distinct_object_predictions": 4,
+     "distinct_place_predictions": 5
+    },
+    {
+     "lambda": 10.0,
+     "object_accuracy": 0.3,
+     "place_accuracy": 0.383333,
+     "joint_accuracy": 0.1,
+     "distinct_object_predictions": 4,
+     "distinct_place_predictions": 5
+    },
+    {
+     "lambda": 1000.0,
+     "object_accuracy": 0.3,
+     "place_accuracy": 0.416667,
+     "joint_accuracy": 0.116667,
+     "distinct_object_predictions": 4,
+     "distinct_place_predictions": 5
+    }
+   ],
+   "best": {
+    "lambda": 0.1,
+    "object_accuracy": 0.316667,
+    "place_accuracy": 0.483333,
+    "joint_accuracy": 0.15,
+    "distinct_object_predictions": 4,
+    "distinct_place_predictions": 5
+   },
+   "degenerate": false,
+   "verdict": "not_readable",
+   "train_rows": 20,
+   "test_rows": 60,
+   "dimensions": 128
+  },
+  "R2": {
+   "per_lambda": [
+    {
+     "lambda": 0.001,
+     "object_accuracy": 0.283333,
+     "place_accuracy": 0.383333,
+     "joint_accuracy": 0.1,
+     "distinct_object_predictions": 4,
+     "distinct_place_predictions": 4
+    },
+    {
+     "lambda": 0.1,
+     "object_accuracy": 0.25,
+     "place_accuracy": 0.316667,
+     "joint_accuracy": 0.116667,
+     "distinct_object_predictions": 4,
+     "distinct_place_predictions": 4
+    },
+    {
+     "lambda": 10.0,
+     "object_accuracy": 0.266667,
+     "place_accuracy": 0.283333,
+     "joint_accuracy": 0.116667,
+     "distinct_object_predictions": 4,
+     "distinct_place_predictions": 4
+    },
+    {
+     "lambda": 1000.0,
+     "object_accuracy": 0.233333,
+     "place_accuracy": 0.25,
+     "joint_accuracy": 0.05,
+     "distinct_object_predictions": 4,
+     "distinct_place_predictions": 4
+    }
+   ],
+   "best": {
+    "lambda": 0.1,
+    "object_accuracy": 0.25,
+    "place_accuracy": 0.316667,
+    "joint_accuracy": 0.116667,
+    "distinct_object_predictions": 4,
+    "distinct_place_predictions": 4
+   },
+   "degenerate": false,
+   "verdict": "not_readable",
+   "train_rows": 20,
+   "test_rows": 60,
+   "dimensions": 128
+  },
+  "R3": {
+   "per_lambda": [
+    {
+     "lambda": 0.001,
+     "object_accuracy": 0.983333,
+     "place_accuracy": 0.583333,
+     "joint_accuracy": 0.583333,
+     "distinct_object_predictions": 4,
+     "distinct_place_predictions": 4
+    },
+    {
+     "lambda": 0.1,
+     "object_accuracy": 0.883333,
+     "place_accuracy": 0.6,
+     "joint_accuracy": 0.566667,
+     "distinct_object_predictions": 4,
+     "distinct_place_predictions": 4
+    },
+    {
+     "lambda": 10.0,
+     "object_accuracy": 0.816667,
+     "place_accuracy": 0.633333,
+     "joint_accuracy": 0.533333,
+     "distinct_object_predictions": 4,
+     "distinct_place_predictions": 5
+    },
+    {
+     "lambda": 1000.0,
+     "object_accuracy": 0.766667,
+     "place_accuracy": 0.616667,
+     "joint_accuracy": 0.466667,
+     "distinct_object_predictions": 4,
+     "distinct_place_predictions": 5
+    }
+   ],
+   "best": {
+    "lambda": 0.001,
+    "object_accuracy": 0.983333,
+    "place_accuracy": 0.583333,
+    "joint_accuracy": 0.583333,
+    "distinct_object_predictions": 4,
+    "distinct_place_predictions": 4
+   },
+   "degenerate": false,
+   "verdict": "inconclusive",
+   "train_rows": 20,
+   "test_rows": 60,
+   "dimensions": 384
+  }
+ },
+ "verdict": "inconclusive",
+ "cost": {
+  "cpu_seconds": 15.375,
+  "wall_seconds": 18.64,
+  "cpu_cap": 200.0,
+  "threads": 1
+ }
+}

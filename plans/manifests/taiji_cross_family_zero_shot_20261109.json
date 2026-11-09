@@ -1,0 +1,69 @@
+{
+ "schema": "taiji-cross-family-zero-shot-v1",
+ "date": "2026-11-09",
+ "frozen_at": "2026-11-09T12:32:47",
+ "runner_sha256": "08b05cbb4adfb4b137802550eb80d7115b076bf60e15db54f6e660646277e310",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "8fa3aafde38b1cbad3b021dc271abd316c0a265c68870403dd4ca7b0b53e0c6a"
+ },
+ "fixture_files": [
+  "taiji/native_goal_world_wide.py",
+  "taiji/goal_paraphrase.py",
+  "taiji/living_core.py"
+ ],
+ "question": "with only the 20 describe sentences in training, can the read-out recover object and place on the 60 paraphrase sentences whose entity names never occur in training?",
+ "counts": {
+  "sentences": 80,
+  "train": 20,
+  "test": 60,
+  "variants_test": [
+   "hope",
+   "needs",
+   "state"
+  ]
+ },
+ "leak_check": {
+  "names_checked": [
+   "蓝色杯子",
+   "红色印章",
+   "绿色瓶子",
+   "黄色球",
+   "木桌",
+   "窗台",
+   "左盒",
+   "书架",
+   "地毯"
+  ],
+  "names_in_training": [],
+  "test_rows": 60,
+  "test_rows_containing_object_name": 60,
+  "test_rows_containing_place_name": 60
+ },
+ "definition": {
+  "train": "the 20 describe sentences, one per (object, place) goal; no paraphrase.",
+  "test": "the 60 needs / hope / state sentences (3 per goal).  No test sentence has a training counterpart and the split is by variant, not by fold.",
+  "leak_check": "for every object and place name, assert the name string does not occur in any of the 20 training sentences; the count of test sentences that do contain their own name is reported so the mapping is verifiable rather than assumed.",
+  "readout": "closed form ridge W = (X^T X + lambda I)^-1 X^T Y; prediction is the arg-max over the held-out rows.  One matrix solve per (arm, lambda, fold, target); no gradient step.",
+  "lambdas": [
+   0.001,
+   0.1,
+   10.0,
+   1000.0
+  ],
+  "arms": [
+   "R1",
+   "R2",
+   "R3"
+  ],
+  "joint": "fraction of the 60 held-out rows where object AND place are both correct."
+ },
+ "criteria": {
+  "per_arm": "readable iff joint >= 0.75 and object >= 0.85 and place >= 0.80; not_readable iff joint <= chance + 0.10; otherwise inconclusive.  A degenerate read-out (one predicted class for object or for place) is inconclusive, never not_readable.",
+  "overall": "cross_family_semantic_bridge if any arm is readable; cross_family_zero_shot_fails if every available arm is not_readable; otherwise inconclusive.",
+  "lambda": "the reported reading is the best joint accuracy over the four lambdas.",
+  "no_fit": "0 training, 0 optimizer steps, 0 Adam, 0 confirm, 0 new parameters.",
+  "frozen": "thresholds and both splits are fixed before the first reading."
+ }
+}
