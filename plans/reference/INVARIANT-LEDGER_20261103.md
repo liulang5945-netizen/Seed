@@ -2127,4 +2127,30 @@ owner 2026-11-07 裁定：多模态是整个算法内部系统的一部分，不
 | S-89 | “值级去重能降低键/实体比值” | R-D29-283 | **被取代**：值可以只存一份，键减少量为 **0**；键数由说法数决定。 |
 | S-90 | “桥可以自行决定压缩” | R-D29-289 | **限定**：默认写路径不压缩；键级压缩必须由外部限定查询集或给出“可安全删除”的标注。 |
 
+## 65. R18 显式纠正协议（2026-11-09）
+
+**65.0 冻结与范围**：纠正算例、默认表往返、12 条未写候选、18 条碎片与两行复跑锚在读数前写入 [manifest](../manifests/taiji_bridge_correction_20261109.json) 的 `definition_digest`。本轮**修改** `taiji/address_bridge.py`：新增 `correct` 比较并交换方法与只增审计日志；普通 `write` 的冲突规则未动。0 训练／0 优化器步／0 Adam／0 confirm。R16／R17 的 manifest 固定了旧模块 sha，故两轮在当前 HEAD 不可跑、按各自提交可复跑。
+
+**65.1 读数**
+
+| 编号 | 读数 | 出处 |
+|---|---|---|
+| R-D29-290 | **普通冲突写仍拒**：已绑 `蓝色杯子`，同键 `write` 到 `红色印章` ⇒ `rejected_batch_address_already_bound`、`content_digest` 不变、读回仍 `蓝色杯子`、审计日志 0 条。盲写者不能改地址。 | `plain_conflict` |
+| R-D29-291 | **CAS 纠正生效**：`correct(键, 蓝色杯子 → 红色印章)` ⇒ `corrected`、读回 `红色印章`、日志 **1** 条（`蓝→红`）、`corrected=1`。凭据就是当前值。 | `cas_correction` |
+| R-D29-292 | **过期凭据被拒**：当前已是 `红色印章`，再传 `蓝色杯子 → 绿色瓶子` ⇒ `rejected_batch_correction_mismatch`、内容摘要不变、读回仍 `红色印章`、日志仍 1 条。 | `stale_credential` |
+| R-D29-293 | **未写地址被拒**：`correct(未写键, …)` ⇒ `rejected_batch_unknown_address`、内容摘要不变、日志 0 条。 | `unknown_address` |
+| R-D29-294 | **批内撞键整批拒绝**：同一批同键给出两个新值 ⇒ `rejected_batch_address_collision`、读回原值、日志 0 条；没有半批落盘。 | `batch_collision` |
+| R-D29-295 | **纠正链可审计**：`蓝→红`、`红→绿` 两次 `corrected`，读回 `绿色瓶子`，日志 **2** 条且顺序正确。 | `correction_chain` |
+| R-D29-296 | **默认表往返干净**：18 键表上别名 `喝水的杯子` `蓝→红→蓝`，`content_digest` **前后相等**、读回原值、日志 2 条；R15 仍 **40/40**、12 未写候选 **0**、18 碎片 **0**、关闭态**九项全等**。 | `round_trip`／`closed_state` |
+| R-D29-297 | **判定、成本与复跑锚**：`plain_conflict_still_rejected`／`cas_correction_applied`／`stale_credential_rejected`／`unknown_address_rejected`／`correction_batch_collision_rejected`／`correction_chain_audited`／`round_trip_clean`／`closed_state_equal`／`anchors_complete` ⇒ 总判 **`explicit_correction_available`**；成本 **1.703 CPU／2.541 wall**（估 30、上限 200）。R16 → `93e292840`（blob `e4e32b19…`、sha256 `50768070…`），R17 → `f6b627fd8`（blob `1d61b6a9…`、sha256 `9a40229f…`）；两行报告 sha 与 blob sha 完全一致，均“在当前 HEAD 不可跑、按提交 X 可复跑”。 | 报告 `verdict`／`cost`／`rerun_anchors` |
+
+**65.2 superseded／范围登记**
+
+| 编号 | 被取代／被限定的对象 | 取代者 | 处置与理由 |
+|---|---|---|---|
+| S-91 | “先写者保留使第一次写错永久错” | R-D29-291 | **收窄**：新增显式 CAS 纠正；知道当前值的调用方可以一步纠正，普通冲突写仍拒。 |
+| S-92 | “纠正等于恢复后写者赢／恢复 `replace`” | R-D29-290 | **被取代**：`correct` 是独立方法、必须出示当前值；盲写仍 `rejected_batch_address_already_bound`。 |
+| S-93 | “纠正协议能判断纠正得对不对” | R-D29-291 | **限定**：协议只校验“你给的旧值是否当前值”，不校验新值；**错误的核对器给出的新值仍会被接受**，对错由外部负责。 |
+
+
 
