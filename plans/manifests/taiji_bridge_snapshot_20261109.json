@@ -1,0 +1,160 @@
+{
+ "schema": "taiji-bridge-snapshot-r32-v1",
+ "created": "2026-11-09T17:26:56",
+ "seed": 20261109,
+ "estimate_cpu_upper": 30.0,
+ "cpu_cap": 200.0,
+ "runner_sha256": "9f27b956b2078dcee39b6c3c56ae8ed32bd6141bf1942eed560ed5c08fadf954",
+ "bridge_sha256": "4edf29b22a199c29160523debb8ea23a45e59321f2b0c8dc06da72497672e831",
+ "core_sha256": "d5ccb13bcf15636c400a45655dc7253f60e003d177044d54248e44814d2ee78b",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "d5ccb13bcf15636c400a45655dc7253f60e003d177044d54248e44814d2ee78b"
+ },
+ "definition": {
+  "snapshot": "bridge_snapshot serializes the attached table bytes and last_bridge_text",
+  "restore": "bridge_restore rebuilds the table with the caller's authority policy and restores the text; the 20 describe sentences must still yield 20/20 pairs",
+  "policy": "a snapshot restored under verifier:v2 rejects a v1 correction and accepts v2",
+  "empty": "a snapshot with no table restores to sc_bridge=None and last_bridge_text=None",
+  "corrupt": "truncated, wrong-schema, bad-base64 and text-without-bridge snapshots are rejected whole",
+  "closed_state": "the nine legacy closed-state readings stay equal before and after"
+ },
+ "criteria": {
+  "round_trip": "restored table digest and text equal; 20/20 pairs exact",
+  "policy": "v1 correction rejected and content digest unchanged; v2 correction accepted and content digest changes",
+  "empty": "empty snapshot restores both fields to None",
+  "corrupt": "4/4 rejected with ValueError; no partial table",
+  "closed_state": "the nine legacy readings stay equal before and after",
+  "rerun": "the R31 anchor carries a commit, a runner blob sha1, a runner sha256 and a core sha256"
+ },
+ "definition_digest": "396a0053564804828098c73134d7c95286be5c7f4b71b080c2e01f4eb37d537d",
+ "counts": {
+  "describe_sentences": 20,
+  "corrupt_snapshots": 4,
+  "unknown_candidates": 12,
+  "rerun_anchors": 1
+ },
+ "inputs": {
+  "query": "喝水的杯子放在方方正正的木桌子上面。",
+  "authorities": [
+   "verifier:v1",
+   "verifier:v2"
+  ],
+  "reason": "r32:snapshot",
+  "values": [
+   [
+    "object",
+    "蓝色杯子"
+   ],
+   [
+    "object",
+    "红色印章"
+   ],
+   [
+    "object",
+    "绿色瓶子"
+   ],
+   [
+    "place",
+    "木桌"
+   ],
+   [
+    "place",
+    "书架"
+   ]
+  ],
+  "aliases": [
+   [
+    "喝水的杯子",
+    [
+     "object",
+     "蓝色杯子"
+    ]
+   ],
+   [
+    "盖章用的印章",
+    [
+     "object",
+     "红色印章"
+    ]
+   ],
+   [
+    "盛水的瓶子",
+    [
+     "object",
+     "绿色瓶子"
+    ]
+   ],
+   [
+    "圆形的皮球",
+    [
+     "object",
+     "黄色球"
+    ]
+   ],
+   [
+    "方方正正的木桌子",
+    [
+     "place",
+     "木桌"
+    ]
+   ],
+   [
+    "窗前的台板",
+    [
+     "place",
+     "窗台"
+    ]
+   ],
+   [
+    "手边的小盒子",
+    [
+     "place",
+     "左盒"
+    ]
+   ],
+   [
+    "墙上的架子",
+    [
+     "place",
+     "书架"
+    ]
+   ],
+   [
+    "脚下的垫子",
+    [
+     "place",
+     "地毯"
+    ]
+   ]
+  ],
+  "unknown_candidates": [
+   "黑色铁铃",
+   "白色帆布",
+   "长柄铜勺",
+   "软木瓶塞",
+   "蓝色毛巾",
+   "银质圆镜",
+   "棕色皮箱",
+   "青色陶罐",
+   "灰色石阶",
+   "紫色绸带",
+   "金色烛台",
+   "深红木箱"
+  ],
+  "rerun_anchors": [
+   {
+    "round": "R31",
+    "runner": "scripts/training/probe_taiji_bridge_observe_20261109.py",
+    "rerun_commit": "62394837e",
+    "runner_blob_sha1": "eef7cafd2254aee9805956fe1d1b563dbd34b29c",
+    "report_runner_sha256": "c7826323a0b7592b903bfcc0fc14c3eba83ffea67082fc60e1a429a53f02d5f6",
+    "runner_blob_sha256": "c7826323a0b7592b903bfcc0fc14c3eba83ffea67082fc60e1a429a53f02d5f6",
+    "report_core_sha256": "f1725d42b3c91fc8c727c7afadaa45c8a4c4c376dec84e9466a1b72a1c0f1701",
+    "matches_report": true,
+    "note": "current HEAD cannot run it after R32 (core sha changed); checkout this commit"
+   }
+  ]
+ }
+}

@@ -6,6 +6,8 @@ Persistent tensors are caller-owned. No serialized latent or parser selects an a
 
 from __future__ import annotations
 
+import base64
+import json
 import math
 from dataclasses import dataclass, replace
 
@@ -13,9 +15,11 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 
+from taiji.address_bridge import BridgeTable
 from taiji.sc_sfk import AddressTable
 
 R021_SCHEMA = "taiji-living-core-r021-v1"
+BRIDGE_SNAPSHOT_SCHEMA = "taiji-bridge-snapshot-v1"
 EOS = 256
 ADDRESSED_SLOTS = 32
 ADDRESSED_TEMPERATURE = 0.1
@@ -735,6 +739,48 @@ class LivingCoreReference(nn.Module):
         state = self.observe(state, raw_bytes, goal=goal)
         state, expression = self.bridge_express(state, raw, object_candidates, place_candidates)
         return state, {"bridge_expression": expression, "step": int(state.step)}
+
+    def bridge_snapshot(self, state: LivingState) -> bytes:
+        """Serialize the attached table plus the read-side text into bytes."""
+        table = state.sc_bridge
+        payload = {
+            "schema": BRIDGE_SNAPSHOT_SCHEMA,
+            "bridge": (
+                None if table is None else base64.b64encode(table.export_state()).decode("ascii")
+            ),
+            "text": state.last_bridge_text,
+        }
+        return json.dumps(payload, ensure_ascii=False, sort_keys=True).encode("utf-8")
+
+    def bridge_restore(
+        self,
+        state: LivingState,
+        blob: bytes,
+        allowed_authorities: tuple[str, ...] = (),
+    ) -> LivingState:
+        """Restore table and text from ``bridge_snapshot``; reject anything else."""
+        try:
+            payload = json.loads(blob.decode("utf-8"))
+        except (UnicodeDecodeError, json.JSONDecodeError) as error:
+            raise ValueError(f"rejected_snapshot_invalid_json: {error}") from error
+        if not isinstance(payload, dict) or payload.get("schema") != BRIDGE_SNAPSHOT_SCHEMA:
+            raise ValueError("rejected_snapshot_schema")
+        if set(payload) != {"schema", "bridge", "text"}:
+            raise ValueError("rejected_snapshot_fields")
+        bridge = payload["bridge"]
+        text = payload["text"]
+        if bridge is None:
+            if text is not None:
+                raise ValueError("rejected_snapshot_text_without_bridge")
+            return replace(state, sc_bridge=None, last_bridge_text=None)
+        if not isinstance(bridge, str) or not isinstance(text, (str, type(None))):
+            raise ValueError("rejected_snapshot_types")
+        try:
+            raw = base64.b64decode(bridge.encode("ascii"), validate=True)
+        except (ValueError, UnicodeEncodeError) as error:
+            raise ValueError(f"rejected_snapshot_invalid_base64: {error}") from error
+        table = BridgeTable.from_state(raw, allowed_authorities=allowed_authorities)
+        return replace(state, sc_bridge=table, last_bridge_text=text)
 
     def store_query_key(self, state: LivingState, raw: bytes) -> torch.Tensor:
         context = self.encoder.context(raw)

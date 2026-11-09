@@ -1,0 +1,121 @@
+{
+ "schema": "taiji-bridge-snapshot-r32-report-v1",
+ "runner_sha256": "9f27b956b2078dcee39b6c3c56ae8ed32bd6141bf1942eed560ed5c08fadf954",
+ "manifest_sha256": "7a853a8761d660d25f75d23a8c69573f8cd81f4efd5805e681c6253ba2239d2f",
+ "bridge_sha256": "4edf29b22a199c29160523debb8ea23a45e59321f2b0c8dc06da72497672e831",
+ "core_sha256": "d5ccb13bcf15636c400a45655dc7253f60e003d177044d54248e44814d2ee78b",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "d5ccb13bcf15636c400a45655dc7253f60e003d177044d54248e44814d2ee78b"
+ },
+ "definition": {
+  "snapshot": "bridge_snapshot serializes the attached table bytes and last_bridge_text",
+  "restore": "bridge_restore rebuilds the table with the caller's authority policy and restores the text; the 20 describe sentences must still yield 20/20 pairs",
+  "policy": "a snapshot restored under verifier:v2 rejects a v1 correction and accepts v2",
+  "empty": "a snapshot with no table restores to sc_bridge=None and last_bridge_text=None",
+  "corrupt": "truncated, wrong-schema, bad-base64 and text-without-bridge snapshots are rejected whole",
+  "closed_state": "the nine legacy closed-state readings stay equal before and after"
+ },
+ "criteria": {
+  "round_trip": "restored table digest and text equal; 20/20 pairs exact",
+  "policy": "v1 correction rejected and content digest unchanged; v2 correction accepted and content digest changes",
+  "empty": "empty snapshot restores both fields to None",
+  "corrupt": "4/4 rejected with ValueError; no partial table",
+  "closed_state": "the nine legacy readings stay equal before and after",
+  "rerun": "the R31 anchor carries a commit, a runner blob sha1, a runner sha256 and a core sha256"
+ },
+ "snapshot": {
+  "snapshot_bytes": 2513,
+  "snapshot_sha256": "5f75d0c618879ae9eae281de6e3cce66ffb989bb39fa3524a00f2eaefcbe9aa2",
+  "source_text": "蓝色杯子在木桌",
+  "restored_text": "蓝色杯子在木桌",
+  "restored_digest": "a4edca3e25551a1b7632dee8f531e7ebb1ab09773d2b4e9a11a8b38e3b86d01f",
+  "table_digest": "a4edca3e25551a1b7632dee8f531e7ebb1ab09773d2b4e9a11a8b38e3b86d01f",
+  "exact": 20,
+  "of": 20,
+  "policy": {
+   "v1": "rejected_batch_unknown_authority",
+   "v2": "corrected",
+   "digest_before": "17f0aeab88b0a802a2573ecdf9bd80b887d34528b80d02b0bf3e220ba3a8a41c",
+   "digest_after_v1": "17f0aeab88b0a802a2573ecdf9bd80b887d34528b80d02b0bf3e220ba3a8a41c",
+   "digest_after_v2": "63b7f398f999dbaa6e5f817d6fd25d895da5bdcad7670d6989f2a145919ce4f9"
+  },
+  "empty_ok": true,
+  "rejected": [
+   "rejected_snapshot_invalid_json: Unterminated string starting at: line 1 column 12 (char 11)",
+   "rejected_snapshot_schema",
+   "rejected_snapshot_invalid_base64: Only base64 data is allowed",
+   "rejected_snapshot_text_without_bridge"
+  ],
+  "ok": true
+ },
+ "rerun_anchors": [
+  {
+   "round": "R31",
+   "runner": "scripts/training/probe_taiji_bridge_observe_20261109.py",
+   "rerun_commit": "62394837e",
+   "runner_blob_sha1": "eef7cafd2254aee9805956fe1d1b563dbd34b29c",
+   "report_runner_sha256": "c7826323a0b7592b903bfcc0fc14c3eba83ffea67082fc60e1a429a53f02d5f6",
+   "runner_blob_sha256": "c7826323a0b7592b903bfcc0fc14c3eba83ffea67082fc60e1a429a53f02d5f6",
+   "report_core_sha256": "f1725d42b3c91fc8c727c7afadaa45c8a4c4c376dec84e9466a1b72a1c0f1701",
+   "matches_report": true,
+   "note": "current HEAD cannot run it after R32 (core sha changed); checkout this commit"
+  }
+ ],
+ "closed_state": {
+  "baseline": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "ee8674523cf7927863f43288fbf1b8e3be8998867fac7f3d5fd489eadd992e7d",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk_none": true,
+   "sc_bridge_none": true,
+   "battery_sha": "deb182e0238b63cba642bfba9662b7f11bf144d68307d49ef8ae305b1cddb065",
+   "battery_steps": 20
+  },
+  "after": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "ee8674523cf7927863f43288fbf1b8e3be8998867fac7f3d5fd489eadd992e7d",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk_none": true,
+   "sc_bridge_none": true,
+   "battery_sha": "deb182e0238b63cba642bfba9662b7f11bf144d68307d49ef8ae305b1cddb065",
+   "battery_steps": 20
+  },
+  "checks": {
+   "parameters_equal": true,
+   "state_equal": true,
+   "identity_equal": true,
+   "store_equal": true,
+   "battery_equal": true,
+   "steps_equal": true,
+   "sc_sfk_none": true,
+   "flag_disabled": true,
+   "rng_untouched": true
+  }
+ },
+ "bridge_default_none": true,
+ "verdict": {
+  "round_trip": "snapshot_round_trip_exact",
+  "policy": "importer_decides_policy",
+  "empty": "empty_snapshot_restores_none",
+  "corrupt": "corrupt_snapshot_rejected",
+  "closed_state": "closed_state_equal",
+  "bridge_default": "bridge_default_none",
+  "rerun_anchors": "anchors_complete",
+  "overall": "bridge_snapshot_round_trip_clean"
+ },
+ "cost": {
+  "cpu_seconds": 1.328125,
+  "wall_seconds": 2.069342851638794,
+  "cpu_cap": 200.0,
+  "estimate_cpu_upper": 30.0,
+  "threads": 1
+ }
+}
