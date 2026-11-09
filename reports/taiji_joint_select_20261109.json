@@ -1,0 +1,4596 @@
+{
+ "schema": "taiji-joint-select-r54-report-v1",
+ "runner_sha256": "acc766dc7b0aaebcbcce15655cd4004bac71122a0dcbac26ea592903b5dc060e",
+ "manifest_sha256": "cd04f0af1c06836b8667d5acb475c04f430c6e1094f7937a597df442ebffd47e",
+ "bridge_sha256": "4edf29b22a199c29160523debb8ea23a45e59321f2b0c8dc06da72497672e831",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d"
+ },
+ "definition": {
+  "question": "does a joint hit over all keys of one sentence fix the record choice?",
+  "selection_rule": "candidate = every corpus record that contains ALL literal byte spans the R15 read matched in the question; exactly one candidate -> emit it; zero -> no_match, no bytes; two or more -> ambiguous_multiple_records, no bytes",
+  "deleted_fallback": "the lowest-address path (SPEC 16.2 address_order) is deleted from selection; it is not reachable by any flag, and no default address is returned",
+  "groups": {
+   "primary": "the 20 describe sentences (4 objects x 5 places x 1 variant); 40 entity slots",
+   "names": "20 authored name-worded questions 让{object}到{place}。 (secondary, not judged)",
+   "aliases": "9 authored aliases alone, one per entity (secondary, not judged)"
+  },
+  "unit": "frozen SPEC 16.2 unit: a complete record or a complete sentence; no third unit",
+  "L1": "fabricated 0, illegal 0, UTF-8 decodable 100%, boundary legal 100%",
+  "L2": "emitted bytes equal record[start:end] byte for byte; must be 1.0",
+  "L3": "four classes per entity slot: answered_correct / pointed_wrong / abstained / should_answer_missing; ambiguous_multiple_records counts as abstained and no_match as should_answer_missing, each also reported by name",
+  "paired_numbers": "pairing_matches and answers_lost are reported side by side; answers_lost = 40 minus the slots that emitted bytes, i.e. what was paid to remove wrong pairings",
+  "closed_state": "the nine closed-state readings stay equal before and after",
+  "training": "zero training, zero optimizer steps, zero Adam, zero confirm",
+  "diagnostics": "two extra groups were added AFTER the first pass, when the name group turned out to have no keys at all: paraphrase = the 60 name-worded records, mixed = 9 alias + description questions.  They are reported for the cost column only and never enter the verdict"
+ },
+ "prediction": {
+  "primary": {
+   "sentences": 20,
+   "selected": 20,
+   "pairing_matches": 40,
+   "answers_lost": 0,
+   "why": "a describe sentence's two key spans only co-occur in that pair's describe record, so the joint hit is a singleton and the record is the asked one"
+  },
+  "names": {
+   "sentences": 20,
+   "selected": 0,
+   "ambiguous": 20,
+   "candidates_per_sentence": 3,
+   "why": "names appear in the needs / hope / state records of the same pair: three records"
+  },
+  "aliases": {
+   "sentences": 9,
+   "selected": 0,
+   "no_match": 9,
+   "why": "the alias wording is not in the corpus at all"
+  }
+ },
+ "diagnostic_prediction": {
+  "paraphrase": {
+   "sentences": 60,
+   "selected": 0,
+   "no_keys": 60,
+   "why": "needs / hope / state sentences are name-worded and names are not keys"
+  },
+  "mixed": {
+   "sentences": 9,
+   "selected": 0,
+   "no_match": 9,
+   "why": "one key is an alias (absent from the corpus), so a joint hit cannot exist"
+  }
+ },
+ "criteria": {
+  "structural": "signature, literal, AST and behaviour checks all report the fallback unreachable; any one failing blocks the verdict",
+  "l1": "fabricated 0, illegal 0, utf8 all, boundary all",
+  "l2": "provenance fidelity == 1.0",
+  "loss": "pairing_matches and answers_lost both reported, never only the first",
+  "samples": "at least 3 real outputs, including one wrong->correct and one wrong->uncertain",
+  "closed_state": "nine items equal"
+ },
+ "prediction_holds": {
+  "primary": true,
+  "names": false,
+  "aliases": true
+ },
+ "diagnostic_prediction_holds": {
+  "paraphrase": true,
+  "mixed": true
+ },
+ "structural": {
+  "signature": {
+   "parameters": [
+    "records",
+    "keys"
+   ],
+   "return": "tuple[str, tuple[int, ...]]",
+   "passed": true
+  },
+  "literal": {
+   "forbidden": [
+    "min(",
+    "max(",
+    "address_order",
+    "[0]"
+   ],
+   "found": [],
+   "passed": true
+  },
+  "ast": {
+   "calls": [
+    "all",
+    "enumerate",
+    "len",
+    "list",
+    "tuple"
+   ],
+   "subscripts": [
+    "tuple[str, tuple[int, ...]]",
+    "list[bytes]",
+    "tuple[bytes, ...]",
+    "tuple[int, ...]",
+    "tuple[dict[str, Any], tuple[bytes, ...]]",
+    "dict[str, Any]",
+    "tuple[bytes, ...]",
+    "result['answers']",
+    "characters[row['span_start']:row['span_end']]",
+    "row['span_start']",
+    "row['span_end']"
+   ],
+   "attributes": [
+    "encode",
+    "fromkeys",
+    "join",
+    "read_sentence"
+   ],
+   "bad_calls": [],
+   "bad_subscripts": [],
+   "bad_attributes": [],
+   "passed": true
+  },
+  "behavior": {
+   "fixture": [
+    "alpha beta.",
+    "alpha gamma."
+   ],
+   "cases": {
+    "single_hit": [
+     "selected",
+     [
+      0
+     ]
+    ],
+    "multi_hit": [
+     "ambiguous_multiple_records",
+     [
+      0,
+      1
+     ]
+    ],
+    "no_hit": [
+     "no_match",
+     []
+    ],
+    "no_keys": [
+     "no_keys",
+     []
+    ]
+   },
+   "passed": true
+  }
+ },
+ "primary": {
+  "sentences": 20,
+  "entity_slots": 40,
+  "statuses": {
+   "selected": 20,
+   "ambiguous_multiple_records": 0,
+   "no_match": 0,
+   "no_keys": 0
+  },
+  "outcomes": {
+   "answered_correct": 40,
+   "pointed_wrong": 0,
+   "abstained": 0,
+   "should_answer_missing": 0
+  },
+  "l1": {
+   "fabricated": 0,
+   "illegal_slices": 0,
+   "utf8_valid": 20,
+   "boundary_legal": 20,
+   "outputs": 20
+  },
+  "l2": {
+   "faithful": 20,
+   "outputs": 20,
+   "fidelity": 1.0
+  },
+  "answered_sentences": 20,
+  "pairing_matches": 40,
+  "answers_lost": 0,
+  "rows": [
+   {
+    "sentence": "让圆口的器皿到四方木台。",
+    "decision": "answered_pair",
+    "keys": [
+     "圆口的器皿",
+     "四方木台"
+    ],
+    "answers": [
+     [
+      "object",
+      "蓝色杯子"
+     ],
+     [
+      "place",
+      "木桌"
+     ]
+    ],
+    "status": "selected",
+    "candidate_count": 1,
+    "candidates": [
+     0
+    ],
+    "asked_pair": [
+     "蓝色杯子",
+     "木桌"
+    ],
+    "slots": {
+     "object": "answered_correct",
+     "place": "answered_correct"
+    },
+    "address": 0,
+    "unit": "record",
+    "span": [
+     0,
+     36
+    ],
+    "record_pair": [
+     "蓝色杯子",
+     "木桌"
+    ],
+    "pairing_matches": true,
+    "utf8_ok": true,
+    "fabricated": false,
+    "illegal_slice": false,
+    "boundary_legal": true,
+    "faithful": true,
+    "text": "让圆口的器皿到四方木台。"
+   },
+   {
+    "sentence": "让圆口的器皿到靠窗的台面。",
+    "decision": "answered_pair",
+    "keys": [
+     "圆口的器皿",
+     "靠窗的台面"
+    ],
+    "answers": [
+     [
+      "object",
+      "蓝色杯子"
+     ],
+     [
+      "place",
+      "窗台"
+     ]
+    ],
+    "status": "selected",
+    "candidate_count": 1,
+    "candidates": [
+     4
+    ],
+    "asked_pair": [
+     "蓝色杯子",
+     "窗台"
+    ],
+    "slots": {
+     "object": "answered_correct",
+     "place": "answered_correct"
+    },
+    "address": 4,
+    "unit": "record",
+    "span": [
+     0,
+     39
+    ],
+    "record_pair": [
+     "蓝色杯子",
+     "窗台"
+    ],
+    "pairing_matches": true,
+    "utf8_ok": true,
+    "fabricated": false,
+    "illegal_slice": false,
+    "boundary_legal": true,
+    "faithful": true,
+    "text": "让圆口的器皿到靠窗的台面。"
+   },
+   {
+    "sentence": "让圆口的器皿到手边的匣子。",
+    "decision": "answered_pair",
+    "keys": [
+     "圆口的器皿",
+     "手边的匣子"
+    ],
+    "answers": [
+     [
+      "object",
+      "蓝色杯子"
+     ],
+     [
+      "place",
+      "左盒"
+     ]
+    ],
+    "status": "selected",
+    "candidate_count": 1,
+    "candidates": [
+     8
+    ],
+    "asked_pair": [
+     "蓝色杯子",
+     "左盒"
+    ],
+    "slots": {
+     "object": "answered_correct",
+     "place": "answered_correct"
+    },
+    "address": 8,
+    "unit": "record",
+    "span": [
+     0,
+     39
+    ],
+    "record_pair": [
+     "蓝色杯子",
+     "左盒"
+    ],
+    "pairing_matches": true,
+    "utf8_ok": true,
+    "fabricated": false,
+    "illegal_slice": false,
+    "boundary_legal": true,
+    "faithful": true,
+    "text": "让圆口的器皿到手边的匣子。"
+   },
+   {
+    "sentence": "让圆口的器皿到靠墙的层架。",
+    "decision": "answered_pair",
+    "keys": [
+     "圆口的器皿",
+     "靠墙的层架"
+    ],
+    "answers": [
+     [
+      "object",
+      "蓝色杯子"
+     ],
+     [
+      "place",
+      "书架"
+     ]
+    ],
+    "status": "selected",
+    "candidate_count": 1,
+    "candidates": [
+     12
+    ],
+    "asked_pair": [
+     "蓝色杯子",
+     "书架"
+    ],
+    "slots": {
+     "object": "answered_correct",
+     "place": "answered_correct"
+    },
+    "address": 12,
+    "unit": "record",
+    "span": [
+     0,
+     39
+    ],
+    "record_pair": [
+     "蓝色杯子",
+     "书架"
+    ],
+    "pairing_matches": true,
+    "utf8_ok": true,
+    "fabricated": false,
+    "illegal_slice": false,
+    "boundary_legal": true,
+    "faithful": true,
+    "text": "让圆口的器皿到靠墙的层架。"
+   },
+   {
+    "sentence": "让圆口的器皿到脚边的毡子。",
+    "decision": "answered_pair",
+    "keys": [
+     "圆口的器皿",
+     "脚边的毡子"
+    ],
+    "answers": [
+     [
+      "object",
+      "蓝色杯子"
+     ],
+     [
+      "place",
+      "地毯"
+     ]
+    ],
+    "status": "selected",
+    "candidate_count": 1,
+    "candidates": [
+     16
+    ],
+    "asked_pair": [
+     "蓝色杯子",
+     "地毯"
+    ],
+    "slots": {
+     "object": "answered_correct",
+     "place": "answered_correct"
+    },
+    "address": 16,
+    "unit": "record",
+    "span": [
+     0,
+     39
+    ],
+    "record_pair": [
+     "蓝色杯子",
+     "地毯"
+    ],
+    "pairing_matches": true,
+    "utf8_ok": true,
+    "fabricated": false,
+    "illegal_slice": false,
+    "boundary_legal": true,
+    "faithful": true,
+    "text": "让圆口的器皿到脚边的毡子。"
+   },
+   {
+    "sentence": "让带纹路的方块到四方木台。",
+    "decision": "answered_pair",
+    "keys": [
+     "带纹路的方块",
+     "四方木台"
+    ],
+    "answers": [
+     [
+      "object",
+      "红色印章"
+     ],
+     [
+      "place",
+      "木桌"
+     ]
+    ],
+    "status": "selected",
+    "candidate_count": 1,
+    "candidates": [
+     20
+    ],
+    "asked_pair": [
+     "红色印章",
+     "木桌"
+    ],
+    "slots": {
+     "object": "answered_correct",
+     "place": "answered_correct"
+    },
+    "address": 20,
+    "unit": "record",
+    "span": [
+     0,
+     39
+    ],
+    "record_pair": [
+     "红色印章",
+     "木桌"
+    ],
+    "pairing_matches": true,
+    "utf8_ok": true,
+    "fabricated": false,
+    "illegal_slice": false,
+    "boundary_legal": true,
+    "faithful": true,
+    "text": "让带纹路的方块到四方木台。"
+   },
+   {
+    "sentence": "让带纹路的方块到靠窗的台面。",
+    "decision": "answered_pair",
+    "keys": [
+     "带纹路的方块",
+     "靠窗的台面"
+    ],
+    "answers": [
+     [
+      "object",
+      "红色印章"
+     ],
+     [
+      "place",
+      "窗台"
+     ]
+    ],
+    "status": "selected",
+    "candidate_count": 1,
+    "candidates": [
+     24
+    ],
+    "asked_pair": [
+     "红色印章",
+     "窗台"
+    ],
+    "slots": {
+     "object": "answered_correct",
+     "place": "answered_correct"
+    },
+    "address": 24,
+    "unit": "record",
+    "span": [
+     0,
+     42
+    ],
+    "record_pair": [
+     "红色印章",
+     "窗台"
+    ],
+    "pairing_matches": true,
+    "utf8_ok": true,
+    "fabricated": false,
+    "illegal_slice": false,
+    "boundary_legal": true,
+    "faithful": true,
+    "text": "让带纹路的方块到靠窗的台面。"
+   },
+   {
+    "sentence": "让带纹路的方块到手边的匣子。",
+    "decision": "answered_pair",
+    "keys": [
+     "带纹路的方块",
+     "手边的匣子"
+    ],
+    "answers": [
+     [
+      "object",
+      "红色印章"
+     ],
+     [
+      "place",
+      "左盒"
+     ]
+    ],
+    "status": "selected",
+    "candidate_count": 1,
+    "candidates": [
+     28
+    ],
+    "asked_pair": [
+     "红色印章",
+     "左盒"
+    ],
+    "slots": {
+     "object": "answered_correct",
+     "place": "answered_correct"
+    },
+    "address": 28,
+    "unit": "record",
+    "span": [
+     0,
+     42
+    ],
+    "record_pair": [
+     "红色印章",
+     "左盒"
+    ],
+    "pairing_matches": true,
+    "utf8_ok": true,
+    "fabricated": false,
+    "illegal_slice": false,
+    "boundary_legal": true,
+    "faithful": true,
+    "text": "让带纹路的方块到手边的匣子。"
+   },
+   {
+    "sentence": "让带纹路的方块到靠墙的层架。",
+    "decision": "answered_pair",
+    "keys": [
+     "带纹路的方块",
+     "靠墙的层架"
+    ],
+    "answers": [
+     [
+      "object",
+      "红色印章"
+     ],
+     [
+      "place",
+      "书架"
+     ]
+    ],
+    "status": "selected",
+    "candidate_count": 1,
+    "candidates": [
+     32
+    ],
+    "asked_pair": [
+     "红色印章",
+     "书架"
+    ],
+    "slots": {
+     "object": "answered_correct",
+     "place": "answered_correct"
+    },
+    "address": 32,
+    "unit": "record",
+    "span": [
+     0,
+     42
+    ],
+    "record_pair": [
+     "红色印章",
+     "书架"
+    ],
+    "pairing_matches": true,
+    "utf8_ok": true,
+    "fabricated": false,
+    "illegal_slice": false,
+    "boundary_legal": true,
+    "faithful": true,
+    "text": "让带纹路的方块到靠墙的层架。"
+   },
+   {
+    "sentence": "让带纹路的方块到脚边的毡子。",
+    "decision": "answered_pair",
+    "keys": [
+     "带纹路的方块",
+     "脚边的毡子"
+    ],
+    "answers": [
+     [
+      "object",
+      "红色印章"
+     ],
+     [
+      "place",
+      "地毯"
+     ]
+    ],
+    "status": "selected",
+    "candidate_count": 1,
+    "candidates": [
+     36
+    ],
+    "asked_pair": [
+     "红色印章",
+     "地毯"
+    ],
+    "slots": {
+     "object": "answered_correct",
+     "place": "answered_correct"
+    },
+    "address": 36,
+    "unit": "record",
+    "span": [
+     0,
+     42
+    ],
+    "record_pair": [
+     "红色印章",
+     "地毯"
+    ],
+    "pairing_matches": true,
+    "utf8_ok": true,
+    "fabricated": false,
+    "illegal_slice": false,
+    "boundary_legal": true,
+    "faithful": true,
+    "text": "让带纹路的方块到脚边的毡子。"
+   },
+   {
+    "sentence": "让细长的容器到四方木台。",
+    "decision": "answered_pair",
+    "keys": [
+     "细长的容器",
+     "四方木台"
+    ],
+    "answers": [
+     [
+      "object",
+      "绿色瓶子"
+     ],
+     [
+      "place",
+      "木桌"
+     ]
+    ],
+    "status": "selected",
+    "candidate_count": 1,
+    "candidates": [
+     40
+    ],
+    "asked_pair": [
+     "绿色瓶子",
+     "木桌"
+    ],
+    "slots": {
+     "object": "answered_correct",
+     "place": "answered_correct"
+    },
+    "address": 40,
+    "unit": "record",
+    "span": [
+     0,
+     36
+    ],
+    "record_pair": [
+     "绿色瓶子",
+     "木桌"
+    ],
+    "pairing_matches": true,
+    "utf8_ok": true,
+    "fabricated": false,
+    "illegal_slice": false,
+    "boundary_legal": true,
+    "faithful": true,
+    "text": "让细长的容器到四方木台。"
+   },
+   {
+    "sentence": "让细长的容器到靠窗的台面。",
+    "decision": "answered_pair",
+    "keys": [
+     "细长的容器",
+     "靠窗的台面"
+    ],
+    "answers": [
+     [
+      "object",
+      "绿色瓶子"
+     ],
+     [
+      "place",
+      "窗台"
+     ]
+    ],
+    "status": "selected",
+    "candidate_count": 1,
+    "candidates": [
+     44
+    ],
+    "asked_pair": [
+     "绿色瓶子",
+     "窗台"
+    ],
+    "slots": {
+     "object": "answered_correct",
+     "place": "answered_correct"
+    },
+    "address": 44,
+    "unit": "record",
+    "span": [
+     0,
+     39
+    ],
+    "record_pair": [
+     "绿色瓶子",
+     "窗台"
+    ],
+    "pairing_matches": true,
+    "utf8_ok": true,
+    "fabricated": false,
+    "illegal_slice": false,
+    "boundary_legal": true,
+    "faithful": true,
+    "text": "让细长的容器到靠窗的台面。"
+   },
+   {
+    "sentence": "让细长的容器到手边的匣子。",
+    "decision": "answered_pair",
+    "keys": [
+     "细长的容器",
+     "手边的匣子"
+    ],
+    "answers": [
+     [
+      "object",
+      "绿色瓶子"
+     ],
+     [
+      "place",
+      "左盒"
+     ]
+    ],
+    "status": "selected",
+    "candidate_count": 1,
+    "candidates": [
+     48
+    ],
+    "asked_pair": [
+     "绿色瓶子",
+     "左盒"
+    ],
+    "slots": {
+     "object": "answered_correct",
+     "place": "answered_correct"
+    },
+    "address": 48,
+    "unit": "record",
+    "span": [
+     0,
+     39
+    ],
+    "record_pair": [
+     "绿色瓶子",
+     "左盒"
+    ],
+    "pairing_matches": true,
+    "utf8_ok": true,
+    "fabricated": false,
+    "illegal_slice": false,
+    "boundary_legal": true,
+    "faithful": true,
+    "text": "让细长的容器到手边的匣子。"
+   },
+   {
+    "sentence": "让细长的容器到靠墙的层架。",
+    "decision": "answered_pair",
+    "keys": [
+     "细长的容器",
+     "靠墙的层架"
+    ],
+    "answers": [
+     [
+      "object",
+      "绿色瓶子"
+     ],
+     [
+      "place",
+      "书架"
+     ]
+    ],
+    "status": "selected",
+    "candidate_count": 1,
+    "candidates": [
+     52
+    ],
+    "asked_pair": [
+     "绿色瓶子",
+     "书架"
+    ],
+    "slots": {
+     "object": "answered_correct",
+     "place": "answered_correct"
+    },
+    "address": 52,
+    "unit": "record",
+    "span": [
+     0,
+     39
+    ],
+    "record_pair": [
+     "绿色瓶子",
+     "书架"
+    ],
+    "pairing_matches": true,
+    "utf8_ok": true,
+    "fabricated": false,
+    "illegal_slice": false,
+    "boundary_legal": true,
+    "faithful": true,
+    "text": "让细长的容器到靠墙的层架。"
+   },
+   {
+    "sentence": "让细长的容器到脚边的毡子。",
+    "decision": "answered_pair",
+    "keys": [
+     "细长的容器",
+     "脚边的毡子"
+    ],
+    "answers": [
+     [
+      "object",
+      "绿色瓶子"
+     ],
+     [
+      "place",
+      "地毯"
+     ]
+    ],
+    "status": "selected",
+    "candidate_count": 1,
+    "candidates": [
+     56
+    ],
+    "asked_pair": [
+     "绿色瓶子",
+     "地毯"
+    ],
+    "slots": {
+     "object": "answered_correct",
+     "place": "answered_correct"
+    },
+    "address": 56,
+    "unit": "record",
+    "span": [
+     0,
+     39
+    ],
+    "record_pair": [
+     "绿色瓶子",
+     "地毯"
+    ],
+    "pairing_matches": true,
+    "utf8_ok": true,
+    "fabricated": false,
+    "illegal_slice": false,
+    "boundary_legal": true,
+    "faithful": true,
+    "text": "让细长的容器到脚边的毡子。"
+   },
+   {
+    "sentence": "让圆滚滚的东西到四方木台。",
+    "decision": "answered_pair",
+    "keys": [
+     "圆滚滚的东西",
+     "四方木台"
+    ],
+    "answers": [
+     [
+      "object",
+      "黄色球"
+     ],
+     [
+      "place",
+      "木桌"
+     ]
+    ],
+    "status": "selected",
+    "candidate_count": 1,
+    "candidates": [
+     60
+    ],
+    "asked_pair": [
+     "黄色球",
+     "木桌"
+    ],
+    "slots": {
+     "object": "answered_correct",
+     "place": "answered_correct"
+    },
+    "address": 60,
+    "unit": "record",
+    "span": [
+     0,
+     39
+    ],
+    "record_pair": [
+     "黄色球",
+     "木桌"
+    ],
+    "pairing_matches": true,
+    "utf8_ok": true,
+    "fabricated": false,
+    "illegal_slice": false,
+    "boundary_legal": true,
+    "faithful": true,
+    "text": "让圆滚滚的东西到四方木台。"
+   },
+   {
+    "sentence": "让圆滚滚的东西到靠窗的台面。",
+    "decision": "answered_pair",
+    "keys": [
+     "圆滚滚的东西",
+     "靠窗的台面"
+    ],
+    "answers": [
+     [
+      "object",
+      "黄色球"
+     ],
+     [
+      "place",
+      "窗台"
+     ]
+    ],
+    "status": "selected",
+    "candidate_count": 1,
+    "candidates": [
+     64
+    ],
+    "asked_pair": [
+     "黄色球",
+     "窗台"
+    ],
+    "slots": {
+     "object": "answered_correct",
+     "place": "answered_correct"
+    },
+    "address": 64,
+    "unit": "record",
+    "span": [
+     0,
+     42
+    ],
+    "record_pair": [
+     "黄色球",
+     "窗台"
+    ],
+    "pairing_matches": true,
+    "utf8_ok": true,
+    "fabricated": false,
+    "illegal_slice": false,
+    "boundary_legal": true,
+    "faithful": true,
+    "text": "让圆滚滚的东西到靠窗的台面。"
+   },
+   {
+    "sentence": "让圆滚滚的东西到手边的匣子。",
+    "decision": "answered_pair",
+    "keys": [
+     "圆滚滚的东西",
+     "手边的匣子"
+    ],
+    "answers": [
+     [
+      "object",
+      "黄色球"
+     ],
+     [
+      "place",
+      "左盒"
+     ]
+    ],
+    "status": "selected",
+    "candidate_count": 1,
+    "candidates": [
+     68
+    ],
+    "asked_pair": [
+     "黄色球",
+     "左盒"
+    ],
+    "slots": {
+     "object": "answered_correct",
+     "place": "answered_correct"
+    },
+    "address": 68,
+    "unit": "record",
+    "span": [
+     0,
+     42
+    ],
+    "record_pair": [
+     "黄色球",
+     "左盒"
+    ],
+    "pairing_matches": true,
+    "utf8_ok": true,
+    "fabricated": false,
+    "illegal_slice": false,
+    "boundary_legal": true,
+    "faithful": true,
+    "text": "让圆滚滚的东西到手边的匣子。"
+   },
+   {
+    "sentence": "让圆滚滚的东西到靠墙的层架。",
+    "decision": "answered_pair",
+    "keys": [
+     "圆滚滚的东西",
+     "靠墙的层架"
+    ],
+    "answers": [
+     [
+      "object",
+      "黄色球"
+     ],
+     [
+      "place",
+      "书架"
+     ]
+    ],
+    "status": "selected",
+    "candidate_count": 1,
+    "candidates": [
+     72
+    ],
+    "asked_pair": [
+     "黄色球",
+     "书架"
+    ],
+    "slots": {
+     "object": "answered_correct",
+     "place": "answered_correct"
+    },
+    "address": 72,
+    "unit": "record",
+    "span": [
+     0,
+     42
+    ],
+    "record_pair": [
+     "黄色球",
+     "书架"
+    ],
+    "pairing_matches": true,
+    "utf8_ok": true,
+    "fabricated": false,
+    "illegal_slice": false,
+    "boundary_legal": true,
+    "faithful": true,
+    "text": "让圆滚滚的东西到靠墙的层架。"
+   },
+   {
+    "sentence": "让圆滚滚的东西到脚边的毡子。",
+    "decision": "answered_pair",
+    "keys": [
+     "圆滚滚的东西",
+     "脚边的毡子"
+    ],
+    "answers": [
+     [
+      "object",
+      "黄色球"
+     ],
+     [
+      "place",
+      "地毯"
+     ]
+    ],
+    "status": "selected",
+    "candidate_count": 1,
+    "candidates": [
+     76
+    ],
+    "asked_pair": [
+     "黄色球",
+     "地毯"
+    ],
+    "slots": {
+     "object": "answered_correct",
+     "place": "answered_correct"
+    },
+    "address": 76,
+    "unit": "record",
+    "span": [
+     0,
+     42
+    ],
+    "record_pair": [
+     "黄色球",
+     "地毯"
+    ],
+    "pairing_matches": true,
+    "utf8_ok": true,
+    "fabricated": false,
+    "illegal_slice": false,
+    "boundary_legal": true,
+    "faithful": true,
+    "text": "让圆滚滚的东西到脚边的毡子。"
+   }
+  ],
+  "outputs": [
+   {
+    "sentence": "让圆口的器皿到四方木台。",
+    "decision": "answered_pair",
+    "keys": [
+     "圆口的器皿",
+     "四方木台"
+    ],
+    "answers": [
+     [
+      "object",
+      "蓝色杯子"
+     ],
+     [
+      "place",
+      "木桌"
+     ]
+    ],
+    "status": "selected",
+    "candidate_count": 1,
+    "candidates": [
+     0
+    ],
+    "asked_pair": [
+     "蓝色杯子",
+     "木桌"
+    ],
+    "slots": {
+     "object": "answered_correct",
+     "place": "answered_correct"
+    },
+    "address": 0,
+    "unit": "record",
+    "span": [
+     0,
+     36
+    ],
+    "record_pair": [
+     "蓝色杯子",
+     "木桌"
+    ],
+    "pairing_matches": true,
+    "utf8_ok": true,
+    "fabricated": false,
+    "illegal_slice": false,
+    "boundary_legal": true,
+    "faithful": true
+   },
+   {
+    "sentence": "让圆口的器皿到靠窗的台面。",
+    "decision": "answered_pair",
+    "keys": [
+     "圆口的器皿",
+     "靠窗的台面"
+    ],
+    "answers": [
+     [
+      "object",
+      "蓝色杯子"
+     ],
+     [
+      "place",
+      "窗台"
+     ]
+    ],
+    "status": "selected",
+    "candidate_count": 1,
+    "candidates": [
+     4
+    ],
+    "asked_pair": [
+     "蓝色杯子",
+     "窗台"
+    ],
+    "slots": {
+     "object": "answered_correct",
+     "place": "answered_correct"
+    },
+    "address": 4,
+    "unit": "record",
+    "span": [
+     0,
+     39
+    ],
+    "record_pair": [
+     "蓝色杯子",
+     "窗台"
+    ],
+    "pairing_matches": true,
+    "utf8_ok": true,
+    "fabricated": false,
+    "illegal_slice": false,
+    "boundary_legal": true,
+    "faithful": true
+   },
+   {
+    "sentence": "让圆口的器皿到手边的匣子。",
+    "decision": "answered_pair",
+    "keys": [
+     "圆口的器皿",
+     "手边的匣子"
+    ],
+    "answers": [
+     [
+      "object",
+      "蓝色杯子"
+     ],
+     [
+      "place",
+      "左盒"
+     ]
+    ],
+    "status": "selected",
+    "candidate_count": 1,
+    "candidates": [
+     8
+    ],
+    "asked_pair": [
+     "蓝色杯子",
+     "左盒"
+    ],
+    "slots": {
+     "object": "answered_correct",
+     "place": "answered_correct"
+    },
+    "address": 8,
+    "unit": "record",
+    "span": [
+     0,
+     39
+    ],
+    "record_pair": [
+     "蓝色杯子",
+     "左盒"
+    ],
+    "pairing_matches": true,
+    "utf8_ok": true,
+    "fabricated": false,
+    "illegal_slice": false,
+    "boundary_legal": true,
+    "faithful": true
+   },
+   {
+    "sentence": "让圆口的器皿到靠墙的层架。",
+    "decision": "answered_pair",
+    "keys": [
+     "圆口的器皿",
+     "靠墙的层架"
+    ],
+    "answers": [
+     [
+      "object",
+      "蓝色杯子"
+     ],
+     [
+      "place",
+      "书架"
+     ]
+    ],
+    "status": "selected",
+    "candidate_count": 1,
+    "candidates": [
+     12
+    ],
+    "asked_pair": [
+     "蓝色杯子",
+     "书架"
+    ],
+    "slots": {
+     "object": "answered_correct",
+     "place": "answered_correct"
+    },
+    "address": 12,
+    "unit": "record",
+    "span": [
+     0,
+     39
+    ],
+    "record_pair": [
+     "蓝色杯子",
+     "书架"
+    ],
+    "pairing_matches": true,
+    "utf8_ok": true,
+    "fabricated": false,
+    "illegal_slice": false,
+    "boundary_legal": true,
+    "faithful": true
+   },
+   {
+    "sentence": "让圆口的器皿到脚边的毡子。",
+    "decision": "answered_pair",
+    "keys": [
+     "圆口的器皿",
+     "脚边的毡子"
+    ],
+    "answers": [
+     [
+      "object",
+      "蓝色杯子"
+     ],
+     [
+      "place",
+      "地毯"
+     ]
+    ],
+    "status": "selected",
+    "candidate_count": 1,
+    "candidates": [
+     16
+    ],
+    "asked_pair": [
+     "蓝色杯子",
+     "地毯"
+    ],
+    "slots": {
+     "object": "answered_correct",
+     "place": "answered_correct"
+    },
+    "address": 16,
+    "unit": "record",
+    "span": [
+     0,
+     39
+    ],
+    "record_pair": [
+     "蓝色杯子",
+     "地毯"
+    ],
+    "pairing_matches": true,
+    "utf8_ok": true,
+    "fabricated": false,
+    "illegal_slice": false,
+    "boundary_legal": true,
+    "faithful": true
+   },
+   {
+    "sentence": "让带纹路的方块到四方木台。",
+    "decision": "answered_pair",
+    "keys": [
+     "带纹路的方块",
+     "四方木台"
+    ],
+    "answers": [
+     [
+      "object",
+      "红色印章"
+     ],
+     [
+      "place",
+      "木桌"
+     ]
+    ],
+    "status": "selected",
+    "candidate_count": 1,
+    "candidates": [
+     20
+    ],
+    "asked_pair": [
+     "红色印章",
+     "木桌"
+    ],
+    "slots": {
+     "object": "answered_correct",
+     "place": "answered_correct"
+    },
+    "address": 20,
+    "unit": "record",
+    "span": [
+     0,
+     39
+    ],
+    "record_pair": [
+     "红色印章",
+     "木桌"
+    ],
+    "pairing_matches": true,
+    "utf8_ok": true,
+    "fabricated": false,
+    "illegal_slice": false,
+    "boundary_legal": true,
+    "faithful": true
+   },
+   {
+    "sentence": "让带纹路的方块到靠窗的台面。",
+    "decision": "answered_pair",
+    "keys": [
+     "带纹路的方块",
+     "靠窗的台面"
+    ],
+    "answers": [
+     [
+      "object",
+      "红色印章"
+     ],
+     [
+      "place",
+      "窗台"
+     ]
+    ],
+    "status": "selected",
+    "candidate_count": 1,
+    "candidates": [
+     24
+    ],
+    "asked_pair": [
+     "红色印章",
+     "窗台"
+    ],
+    "slots": {
+     "object": "answered_correct",
+     "place": "answered_correct"
+    },
+    "address": 24,
+    "unit": "record",
+    "span": [
+     0,
+     42
+    ],
+    "record_pair": [
+     "红色印章",
+     "窗台"
+    ],
+    "pairing_matches": true,
+    "utf8_ok": true,
+    "fabricated": false,
+    "illegal_slice": false,
+    "boundary_legal": true,
+    "faithful": true
+   },
+   {
+    "sentence": "让带纹路的方块到手边的匣子。",
+    "decision": "answered_pair",
+    "keys": [
+     "带纹路的方块",
+     "手边的匣子"
+    ],
+    "answers": [
+     [
+      "object",
+      "红色印章"
+     ],
+     [
+      "place",
+      "左盒"
+     ]
+    ],
+    "status": "selected",
+    "candidate_count": 1,
+    "candidates": [
+     28
+    ],
+    "asked_pair": [
+     "红色印章",
+     "左盒"
+    ],
+    "slots": {
+     "object": "answered_correct",
+     "place": "answered_correct"
+    },
+    "address": 28,
+    "unit": "record",
+    "span": [
+     0,
+     42
+    ],
+    "record_pair": [
+     "红色印章",
+     "左盒"
+    ],
+    "pairing_matches": true,
+    "utf8_ok": true,
+    "fabricated": false,
+    "illegal_slice": false,
+    "boundary_legal": true,
+    "faithful": true
+   },
+   {
+    "sentence": "让带纹路的方块到靠墙的层架。",
+    "decision": "answered_pair",
+    "keys": [
+     "带纹路的方块",
+     "靠墙的层架"
+    ],
+    "answers": [
+     [
+      "object",
+      "红色印章"
+     ],
+     [
+      "place",
+      "书架"
+     ]
+    ],
+    "status": "selected",
+    "candidate_count": 1,
+    "candidates": [
+     32
+    ],
+    "asked_pair": [
+     "红色印章",
+     "书架"
+    ],
+    "slots": {
+     "object": "answered_correct",
+     "place": "answered_correct"
+    },
+    "address": 32,
+    "unit": "record",
+    "span": [
+     0,
+     42
+    ],
+    "record_pair": [
+     "红色印章",
+     "书架"
+    ],
+    "pairing_matches": true,
+    "utf8_ok": true,
+    "fabricated": false,
+    "illegal_slice": false,
+    "boundary_legal": true,
+    "faithful": true
+   },
+   {
+    "sentence": "让带纹路的方块到脚边的毡子。",
+    "decision": "answered_pair",
+    "keys": [
+     "带纹路的方块",
+     "脚边的毡子"
+    ],
+    "answers": [
+     [
+      "object",
+      "红色印章"
+     ],
+     [
+      "place",
+      "地毯"
+     ]
+    ],
+    "status": "selected",
+    "candidate_count": 1,
+    "candidates": [
+     36
+    ],
+    "asked_pair": [
+     "红色印章",
+     "地毯"
+    ],
+    "slots": {
+     "object": "answered_correct",
+     "place": "answered_correct"
+    },
+    "address": 36,
+    "unit": "record",
+    "span": [
+     0,
+     42
+    ],
+    "record_pair": [
+     "红色印章",
+     "地毯"
+    ],
+    "pairing_matches": true,
+    "utf8_ok": true,
+    "fabricated": false,
+    "illegal_slice": false,
+    "boundary_legal": true,
+    "faithful": true
+   },
+   {
+    "sentence": "让细长的容器到四方木台。",
+    "decision": "answered_pair",
+    "keys": [
+     "细长的容器",
+     "四方木台"
+    ],
+    "answers": [
+     [
+      "object",
+      "绿色瓶子"
+     ],
+     [
+      "place",
+      "木桌"
+     ]
+    ],
+    "status": "selected",
+    "candidate_count": 1,
+    "candidates": [
+     40
+    ],
+    "asked_pair": [
+     "绿色瓶子",
+     "木桌"
+    ],
+    "slots": {
+     "object": "answered_correct",
+     "place": "answered_correct"
+    },
+    "address": 40,
+    "unit": "record",
+    "span": [
+     0,
+     36
+    ],
+    "record_pair": [
+     "绿色瓶子",
+     "木桌"
+    ],
+    "pairing_matches": true,
+    "utf8_ok": true,
+    "fabricated": false,
+    "illegal_slice": false,
+    "boundary_legal": true,
+    "faithful": true
+   },
+   {
+    "sentence": "让细长的容器到靠窗的台面。",
+    "decision": "answered_pair",
+    "keys": [
+     "细长的容器",
+     "靠窗的台面"
+    ],
+    "answers": [
+     [
+      "object",
+      "绿色瓶子"
+     ],
+     [
+      "place",
+      "窗台"
+     ]
+    ],
+    "status": "selected",
+    "candidate_count": 1,
+    "candidates": [
+     44
+    ],
+    "asked_pair": [
+     "绿色瓶子",
+     "窗台"
+    ],
+    "slots": {
+     "object": "answered_correct",
+     "place": "answered_correct"
+    },
+    "address": 44,
+    "unit": "record",
+    "span": [
+     0,
+     39
+    ],
+    "record_pair": [
+     "绿色瓶子",
+     "窗台"
+    ],
+    "pairing_matches": true,
+    "utf8_ok": true,
+    "fabricated": false,
+    "illegal_slice": false,
+    "boundary_legal": true,
+    "faithful": true
+   },
+   {
+    "sentence": "让细长的容器到手边的匣子。",
+    "decision": "answered_pair",
+    "keys": [
+     "细长的容器",
+     "手边的匣子"
+    ],
+    "answers": [
+     [
+      "object",
+      "绿色瓶子"
+     ],
+     [
+      "place",
+      "左盒"
+     ]
+    ],
+    "status": "selected",
+    "candidate_count": 1,
+    "candidates": [
+     48
+    ],
+    "asked_pair": [
+     "绿色瓶子",
+     "左盒"
+    ],
+    "slots": {
+     "object": "answered_correct",
+     "place": "answered_correct"
+    },
+    "address": 48,
+    "unit": "record",
+    "span": [
+     0,
+     39
+    ],
+    "record_pair": [
+     "绿色瓶子",
+     "左盒"
+    ],
+    "pairing_matches": true,
+    "utf8_ok": true,
+    "fabricated": false,
+    "illegal_slice": false,
+    "boundary_legal": true,
+    "faithful": true
+   },
+   {
+    "sentence": "让细长的容器到靠墙的层架。",
+    "decision": "answered_pair",
+    "keys": [
+     "细长的容器",
+     "靠墙的层架"
+    ],
+    "answers": [
+     [
+      "object",
+      "绿色瓶子"
+     ],
+     [
+      "place",
+      "书架"
+     ]
+    ],
+    "status": "selected",
+    "candidate_count": 1,
+    "candidates": [
+     52
+    ],
+    "asked_pair": [
+     "绿色瓶子",
+     "书架"
+    ],
+    "slots": {
+     "object": "answered_correct",
+     "place": "answered_correct"
+    },
+    "address": 52,
+    "unit": "record",
+    "span": [
+     0,
+     39
+    ],
+    "record_pair": [
+     "绿色瓶子",
+     "书架"
+    ],
+    "pairing_matches": true,
+    "utf8_ok": true,
+    "fabricated": false,
+    "illegal_slice": false,
+    "boundary_legal": true,
+    "faithful": true
+   },
+   {
+    "sentence": "让细长的容器到脚边的毡子。",
+    "decision": "answered_pair",
+    "keys": [
+     "细长的容器",
+     "脚边的毡子"
+    ],
+    "answers": [
+     [
+      "object",
+      "绿色瓶子"
+     ],
+     [
+      "place",
+      "地毯"
+     ]
+    ],
+    "status": "selected",
+    "candidate_count": 1,
+    "candidates": [
+     56
+    ],
+    "asked_pair": [
+     "绿色瓶子",
+     "地毯"
+    ],
+    "slots": {
+     "object": "answered_correct",
+     "place": "answered_correct"
+    },
+    "address": 56,
+    "unit": "record",
+    "span": [
+     0,
+     39
+    ],
+    "record_pair": [
+     "绿色瓶子",
+     "地毯"
+    ],
+    "pairing_matches": true,
+    "utf8_ok": true,
+    "fabricated": false,
+    "illegal_slice": false,
+    "boundary_legal": true,
+    "faithful": true
+   },
+   {
+    "sentence": "让圆滚滚的东西到四方木台。",
+    "decision": "answered_pair",
+    "keys": [
+     "圆滚滚的东西",
+     "四方木台"
+    ],
+    "answers": [
+     [
+      "object",
+      "黄色球"
+     ],
+     [
+      "place",
+      "木桌"
+     ]
+    ],
+    "status": "selected",
+    "candidate_count": 1,
+    "candidates": [
+     60
+    ],
+    "asked_pair": [
+     "黄色球",
+     "木桌"
+    ],
+    "slots": {
+     "object": "answered_correct",
+     "place": "answered_correct"
+    },
+    "address": 60,
+    "unit": "record",
+    "span": [
+     0,
+     39
+    ],
+    "record_pair": [
+     "黄色球",
+     "木桌"
+    ],
+    "pairing_matches": true,
+    "utf8_ok": true,
+    "fabricated": false,
+    "illegal_slice": false,
+    "boundary_legal": true,
+    "faithful": true
+   },
+   {
+    "sentence": "让圆滚滚的东西到靠窗的台面。",
+    "decision": "answered_pair",
+    "keys": [
+     "圆滚滚的东西",
+     "靠窗的台面"
+    ],
+    "answers": [
+     [
+      "object",
+      "黄色球"
+     ],
+     [
+      "place",
+      "窗台"
+     ]
+    ],
+    "status": "selected",
+    "candidate_count": 1,
+    "candidates": [
+     64
+    ],
+    "asked_pair": [
+     "黄色球",
+     "窗台"
+    ],
+    "slots": {
+     "object": "answered_correct",
+     "place": "answered_correct"
+    },
+    "address": 64,
+    "unit": "record",
+    "span": [
+     0,
+     42
+    ],
+    "record_pair": [
+     "黄色球",
+     "窗台"
+    ],
+    "pairing_matches": true,
+    "utf8_ok": true,
+    "fabricated": false,
+    "illegal_slice": false,
+    "boundary_legal": true,
+    "faithful": true
+   },
+   {
+    "sentence": "让圆滚滚的东西到手边的匣子。",
+    "decision": "answered_pair",
+    "keys": [
+     "圆滚滚的东西",
+     "手边的匣子"
+    ],
+    "answers": [
+     [
+      "object",
+      "黄色球"
+     ],
+     [
+      "place",
+      "左盒"
+     ]
+    ],
+    "status": "selected",
+    "candidate_count": 1,
+    "candidates": [
+     68
+    ],
+    "asked_pair": [
+     "黄色球",
+     "左盒"
+    ],
+    "slots": {
+     "object": "answered_correct",
+     "place": "answered_correct"
+    },
+    "address": 68,
+    "unit": "record",
+    "span": [
+     0,
+     42
+    ],
+    "record_pair": [
+     "黄色球",
+     "左盒"
+    ],
+    "pairing_matches": true,
+    "utf8_ok": true,
+    "fabricated": false,
+    "illegal_slice": false,
+    "boundary_legal": true,
+    "faithful": true
+   },
+   {
+    "sentence": "让圆滚滚的东西到靠墙的层架。",
+    "decision": "answered_pair",
+    "keys": [
+     "圆滚滚的东西",
+     "靠墙的层架"
+    ],
+    "answers": [
+     [
+      "object",
+      "黄色球"
+     ],
+     [
+      "place",
+      "书架"
+     ]
+    ],
+    "status": "selected",
+    "candidate_count": 1,
+    "candidates": [
+     72
+    ],
+    "asked_pair": [
+     "黄色球",
+     "书架"
+    ],
+    "slots": {
+     "object": "answered_correct",
+     "place": "answered_correct"
+    },
+    "address": 72,
+    "unit": "record",
+    "span": [
+     0,
+     42
+    ],
+    "record_pair": [
+     "黄色球",
+     "书架"
+    ],
+    "pairing_matches": true,
+    "utf8_ok": true,
+    "fabricated": false,
+    "illegal_slice": false,
+    "boundary_legal": true,
+    "faithful": true
+   },
+   {
+    "sentence": "让圆滚滚的东西到脚边的毡子。",
+    "decision": "answered_pair",
+    "keys": [
+     "圆滚滚的东西",
+     "脚边的毡子"
+    ],
+    "answers": [
+     [
+      "object",
+      "黄色球"
+     ],
+     [
+      "place",
+      "地毯"
+     ]
+    ],
+    "status": "selected",
+    "candidate_count": 1,
+    "candidates": [
+     76
+    ],
+    "asked_pair": [
+     "黄色球",
+     "地毯"
+    ],
+    "slots": {
+     "object": "answered_correct",
+     "place": "answered_correct"
+    },
+    "address": 76,
+    "unit": "record",
+    "span": [
+     0,
+     42
+    ],
+    "record_pair": [
+     "黄色球",
+     "地毯"
+    ],
+    "pairing_matches": true,
+    "utf8_ok": true,
+    "fabricated": false,
+    "illegal_slice": false,
+    "boundary_legal": true,
+    "faithful": true
+   }
+  ]
+ },
+ "names": {
+  "sentences": 20,
+  "entity_slots": 40,
+  "statuses": {
+   "selected": 0,
+   "ambiguous_multiple_records": 0,
+   "no_match": 0,
+   "no_keys": 20
+  },
+  "outcomes": {
+   "answered_correct": 0,
+   "pointed_wrong": 0,
+   "abstained": 0,
+   "should_answer_missing": 40
+  },
+  "l1": {
+   "fabricated": 0,
+   "illegal_slices": 0,
+   "utf8_valid": 0,
+   "boundary_legal": 0,
+   "outputs": 0
+  },
+  "l2": {
+   "faithful": 0,
+   "outputs": 0,
+   "fidelity": 0.0
+  },
+  "answered_sentences": 0,
+  "pairing_matches": 0,
+  "answers_lost": 40,
+  "rows": [
+   {
+    "sentence": "让蓝色杯子到木桌。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "蓝色杯子",
+     "木桌"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "让蓝色杯子到窗台。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "蓝色杯子",
+     "窗台"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "让蓝色杯子到左盒。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "蓝色杯子",
+     "左盒"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "让蓝色杯子到书架。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "蓝色杯子",
+     "书架"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "让蓝色杯子到地毯。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "蓝色杯子",
+     "地毯"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "让红色印章到木桌。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "红色印章",
+     "木桌"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "让红色印章到窗台。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "红色印章",
+     "窗台"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "让红色印章到左盒。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "红色印章",
+     "左盒"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "让红色印章到书架。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "红色印章",
+     "书架"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "让红色印章到地毯。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "红色印章",
+     "地毯"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "让绿色瓶子到木桌。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "绿色瓶子",
+     "木桌"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "让绿色瓶子到窗台。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "绿色瓶子",
+     "窗台"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "让绿色瓶子到左盒。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "绿色瓶子",
+     "左盒"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "让绿色瓶子到书架。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "绿色瓶子",
+     "书架"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "让绿色瓶子到地毯。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "绿色瓶子",
+     "地毯"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "让黄色球到木桌。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "黄色球",
+     "木桌"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "让黄色球到窗台。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "黄色球",
+     "窗台"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "让黄色球到左盒。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "黄色球",
+     "左盒"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "让黄色球到书架。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "黄色球",
+     "书架"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "让黄色球到地毯。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "黄色球",
+     "地毯"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   }
+  ],
+  "outputs": []
+ },
+ "aliases": {
+  "sentences": 9,
+  "entity_slots": 1,
+  "statuses": {
+   "selected": 0,
+   "ambiguous_multiple_records": 0,
+   "no_match": 9,
+   "no_keys": 0
+  },
+  "outcomes": {
+   "answered_correct": 0,
+   "pointed_wrong": 0,
+   "abstained": 0,
+   "should_answer_missing": 1
+  },
+  "l1": {
+   "fabricated": 0,
+   "illegal_slices": 0,
+   "utf8_valid": 0,
+   "boundary_legal": 0,
+   "outputs": 0
+  },
+  "l2": {
+   "faithful": 0,
+   "outputs": 0,
+   "fidelity": 0.0
+  },
+  "answered_sentences": 0,
+  "pairing_matches": 0,
+  "answers_lost": 1,
+  "rows": [
+   {
+    "sentence": "喝水的杯子",
+    "decision": "answered_single",
+    "keys": [
+     "喝水的杯子"
+    ],
+    "answers": [
+     [
+      "object",
+      "蓝色杯子"
+     ]
+    ],
+    "status": "no_match",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     null,
+     null
+    ],
+    "slots": {}
+   },
+   {
+    "sentence": "盖章用的印章",
+    "decision": "answered_single",
+    "keys": [
+     "盖章用的印章"
+    ],
+    "answers": [
+     [
+      "object",
+      "红色印章"
+     ]
+    ],
+    "status": "no_match",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     null,
+     null
+    ],
+    "slots": {}
+   },
+   {
+    "sentence": "盛水的瓶子",
+    "decision": "answered_single",
+    "keys": [
+     "盛水的瓶子"
+    ],
+    "answers": [
+     [
+      "object",
+      "绿色瓶子"
+     ]
+    ],
+    "status": "no_match",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     null,
+     null
+    ],
+    "slots": {}
+   },
+   {
+    "sentence": "圆形的皮球",
+    "decision": "answered_single",
+    "keys": [
+     "圆形的皮球"
+    ],
+    "answers": [
+     [
+      "object",
+      "黄色球"
+     ]
+    ],
+    "status": "no_match",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     null,
+     null
+    ],
+    "slots": {}
+   },
+   {
+    "sentence": "方方正正的木桌子",
+    "decision": "answered_single",
+    "keys": [
+     "方方正正的木桌子"
+    ],
+    "answers": [
+     [
+      "place",
+      "木桌"
+     ]
+    ],
+    "status": "no_match",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     null,
+     "木桌"
+    ],
+    "slots": {
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "窗前的台板",
+    "decision": "answered_single",
+    "keys": [
+     "窗前的台板"
+    ],
+    "answers": [
+     [
+      "place",
+      "窗台"
+     ]
+    ],
+    "status": "no_match",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     null,
+     null
+    ],
+    "slots": {}
+   },
+   {
+    "sentence": "手边的小盒子",
+    "decision": "answered_single",
+    "keys": [
+     "手边的小盒子"
+    ],
+    "answers": [
+     [
+      "place",
+      "左盒"
+     ]
+    ],
+    "status": "no_match",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     null,
+     null
+    ],
+    "slots": {}
+   },
+   {
+    "sentence": "墙上的架子",
+    "decision": "answered_single",
+    "keys": [
+     "墙上的架子"
+    ],
+    "answers": [
+     [
+      "place",
+      "书架"
+     ]
+    ],
+    "status": "no_match",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     null,
+     null
+    ],
+    "slots": {}
+   },
+   {
+    "sentence": "脚下的垫子",
+    "decision": "answered_single",
+    "keys": [
+     "脚下的垫子"
+    ],
+    "answers": [
+     [
+      "place",
+      "地毯"
+     ]
+    ],
+    "status": "no_match",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     null,
+     null
+    ],
+    "slots": {}
+   }
+  ],
+  "outputs": []
+ },
+ "paraphrase": {
+  "sentences": 60,
+  "entity_slots": 120,
+  "statuses": {
+   "selected": 0,
+   "ambiguous_multiple_records": 0,
+   "no_match": 0,
+   "no_keys": 60
+  },
+  "outcomes": {
+   "answered_correct": 0,
+   "pointed_wrong": 0,
+   "abstained": 0,
+   "should_answer_missing": 120
+  },
+  "l1": {
+   "fabricated": 0,
+   "illegal_slices": 0,
+   "utf8_valid": 0,
+   "boundary_legal": 0,
+   "outputs": 0
+  },
+  "l2": {
+   "faithful": 0,
+   "outputs": 0,
+   "fidelity": 0.0
+  },
+  "answered_sentences": 0,
+  "pairing_matches": 0,
+  "answers_lost": 120,
+  "rows": [
+   {
+    "sentence": "蓝色杯子该待在木桌。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "蓝色杯子",
+     "木桌"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "我希望蓝色杯子出现在木桌。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "蓝色杯子",
+     "木桌"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "目标状态：蓝色杯子在木桌。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "蓝色杯子",
+     "木桌"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "蓝色杯子该待在窗台。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "蓝色杯子",
+     "窗台"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "我希望蓝色杯子出现在窗台。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "蓝色杯子",
+     "窗台"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "目标状态：蓝色杯子在窗台。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "蓝色杯子",
+     "窗台"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "蓝色杯子该待在左盒。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "蓝色杯子",
+     "左盒"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "我希望蓝色杯子出现在左盒。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "蓝色杯子",
+     "左盒"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "目标状态：蓝色杯子在左盒。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "蓝色杯子",
+     "左盒"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "蓝色杯子该待在书架。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "蓝色杯子",
+     "书架"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "我希望蓝色杯子出现在书架。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "蓝色杯子",
+     "书架"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "目标状态：蓝色杯子在书架。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "蓝色杯子",
+     "书架"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "蓝色杯子该待在地毯。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "蓝色杯子",
+     "地毯"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "我希望蓝色杯子出现在地毯。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "蓝色杯子",
+     "地毯"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "目标状态：蓝色杯子在地毯。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "蓝色杯子",
+     "地毯"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "红色印章该待在木桌。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "红色印章",
+     "木桌"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "我希望红色印章出现在木桌。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "红色印章",
+     "木桌"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "目标状态：红色印章在木桌。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "红色印章",
+     "木桌"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "红色印章该待在窗台。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "红色印章",
+     "窗台"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "我希望红色印章出现在窗台。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "红色印章",
+     "窗台"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "目标状态：红色印章在窗台。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "红色印章",
+     "窗台"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "红色印章该待在左盒。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "红色印章",
+     "左盒"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "我希望红色印章出现在左盒。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "红色印章",
+     "左盒"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "目标状态：红色印章在左盒。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "红色印章",
+     "左盒"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "红色印章该待在书架。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "红色印章",
+     "书架"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "我希望红色印章出现在书架。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "红色印章",
+     "书架"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "目标状态：红色印章在书架。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "红色印章",
+     "书架"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "红色印章该待在地毯。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "红色印章",
+     "地毯"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "我希望红色印章出现在地毯。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "红色印章",
+     "地毯"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "目标状态：红色印章在地毯。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "红色印章",
+     "地毯"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "绿色瓶子该待在木桌。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "绿色瓶子",
+     "木桌"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "我希望绿色瓶子出现在木桌。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "绿色瓶子",
+     "木桌"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "目标状态：绿色瓶子在木桌。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "绿色瓶子",
+     "木桌"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "绿色瓶子该待在窗台。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "绿色瓶子",
+     "窗台"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "我希望绿色瓶子出现在窗台。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "绿色瓶子",
+     "窗台"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "目标状态：绿色瓶子在窗台。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "绿色瓶子",
+     "窗台"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "绿色瓶子该待在左盒。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "绿色瓶子",
+     "左盒"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "我希望绿色瓶子出现在左盒。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "绿色瓶子",
+     "左盒"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "目标状态：绿色瓶子在左盒。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "绿色瓶子",
+     "左盒"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "绿色瓶子该待在书架。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "绿色瓶子",
+     "书架"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "我希望绿色瓶子出现在书架。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "绿色瓶子",
+     "书架"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "目标状态：绿色瓶子在书架。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "绿色瓶子",
+     "书架"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "绿色瓶子该待在地毯。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "绿色瓶子",
+     "地毯"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "我希望绿色瓶子出现在地毯。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "绿色瓶子",
+     "地毯"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "目标状态：绿色瓶子在地毯。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "绿色瓶子",
+     "地毯"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "黄色球该待在木桌。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "黄色球",
+     "木桌"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "我希望黄色球出现在木桌。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "黄色球",
+     "木桌"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "目标状态：黄色球在木桌。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "黄色球",
+     "木桌"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "黄色球该待在窗台。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "黄色球",
+     "窗台"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "我希望黄色球出现在窗台。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "黄色球",
+     "窗台"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "目标状态：黄色球在窗台。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "黄色球",
+     "窗台"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "黄色球该待在左盒。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "黄色球",
+     "左盒"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "我希望黄色球出现在左盒。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "黄色球",
+     "左盒"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "目标状态：黄色球在左盒。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "黄色球",
+     "左盒"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "黄色球该待在书架。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "黄色球",
+     "书架"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "我希望黄色球出现在书架。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "黄色球",
+     "书架"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "目标状态：黄色球在书架。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "黄色球",
+     "书架"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "黄色球该待在地毯。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "黄色球",
+     "地毯"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "我希望黄色球出现在地毯。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "黄色球",
+     "地毯"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "目标状态：黄色球在地毯。",
+    "decision": "no_match",
+    "keys": [],
+    "answers": [],
+    "status": "no_keys",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "黄色球",
+     "地毯"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   }
+  ],
+  "outputs": []
+ },
+ "mixed": {
+  "sentences": 9,
+  "entity_slots": 10,
+  "statuses": {
+   "selected": 0,
+   "ambiguous_multiple_records": 0,
+   "no_match": 9,
+   "no_keys": 0
+  },
+  "outcomes": {
+   "answered_correct": 0,
+   "pointed_wrong": 0,
+   "abstained": 0,
+   "should_answer_missing": 10
+  },
+  "l1": {
+   "fabricated": 0,
+   "illegal_slices": 0,
+   "utf8_valid": 0,
+   "boundary_legal": 0,
+   "outputs": 0
+  },
+  "l2": {
+   "faithful": 0,
+   "outputs": 0,
+   "fidelity": 0.0
+  },
+  "answered_sentences": 0,
+  "pairing_matches": 0,
+  "answers_lost": 10,
+  "rows": [
+   {
+    "sentence": "让喝水的杯子到四方木台。",
+    "decision": "answered_pair",
+    "keys": [
+     "喝水的杯子",
+     "四方木台"
+    ],
+    "answers": [
+     [
+      "object",
+      "蓝色杯子"
+     ],
+     [
+      "place",
+      "木桌"
+     ]
+    ],
+    "status": "no_match",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "蓝色杯子",
+     "木桌"
+    ],
+    "slots": {
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "让盖章用的印章到靠窗的台面。",
+    "decision": "answered_pair",
+    "keys": [
+     "盖章用的印章",
+     "靠窗的台面"
+    ],
+    "answers": [
+     [
+      "object",
+      "红色印章"
+     ],
+     [
+      "place",
+      "窗台"
+     ]
+    ],
+    "status": "no_match",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "红色印章",
+     "窗台"
+    ],
+    "slots": {
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "让盛水的瓶子到手边的匣子。",
+    "decision": "answered_pair",
+    "keys": [
+     "盛水的瓶子",
+     "手边的匣子"
+    ],
+    "answers": [
+     [
+      "object",
+      "绿色瓶子"
+     ],
+     [
+      "place",
+      "左盒"
+     ]
+    ],
+    "status": "no_match",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "绿色瓶子",
+     "左盒"
+    ],
+    "slots": {
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "让圆形的皮球到靠墙的层架。",
+    "decision": "answered_pair",
+    "keys": [
+     "圆形的皮球",
+     "靠墙的层架"
+    ],
+    "answers": [
+     [
+      "object",
+      "黄色球"
+     ],
+     [
+      "place",
+      "书架"
+     ]
+    ],
+    "status": "no_match",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "黄色球",
+     "书架"
+    ],
+    "slots": {
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "让圆口的器皿到方方正正的木桌子。",
+    "decision": "answered_pair",
+    "keys": [
+     "圆口的器皿",
+     "方方正正的木桌子"
+    ],
+    "answers": [
+     [
+      "object",
+      "蓝色杯子"
+     ],
+     [
+      "place",
+      "木桌"
+     ]
+    ],
+    "status": "no_match",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "蓝色杯子",
+     "木桌"
+    ],
+    "slots": {
+     "object": "should_answer_missing",
+     "place": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "让带纹路的方块到窗前的台板。",
+    "decision": "answered_pair",
+    "keys": [
+     "带纹路的方块",
+     "窗前的台板"
+    ],
+    "answers": [
+     [
+      "object",
+      "红色印章"
+     ],
+     [
+      "place",
+      "窗台"
+     ]
+    ],
+    "status": "no_match",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "红色印章",
+     "窗台"
+    ],
+    "slots": {
+     "object": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "让细长的容器到手边的小盒子。",
+    "decision": "answered_pair",
+    "keys": [
+     "细长的容器",
+     "手边的小盒子"
+    ],
+    "answers": [
+     [
+      "object",
+      "绿色瓶子"
+     ],
+     [
+      "place",
+      "左盒"
+     ]
+    ],
+    "status": "no_match",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "绿色瓶子",
+     "左盒"
+    ],
+    "slots": {
+     "object": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "让圆滚滚的东西到墙上的架子。",
+    "decision": "answered_pair",
+    "keys": [
+     "圆滚滚的东西",
+     "墙上的架子"
+    ],
+    "answers": [
+     [
+      "object",
+      "黄色球"
+     ],
+     [
+      "place",
+      "书架"
+     ]
+    ],
+    "status": "no_match",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "黄色球",
+     "书架"
+    ],
+    "slots": {
+     "object": "should_answer_missing"
+    }
+   },
+   {
+    "sentence": "让圆口的器皿到脚下的垫子。",
+    "decision": "answered_pair",
+    "keys": [
+     "圆口的器皿",
+     "脚下的垫子"
+    ],
+    "answers": [
+     [
+      "object",
+      "蓝色杯子"
+     ],
+     [
+      "place",
+      "地毯"
+     ]
+    ],
+    "status": "no_match",
+    "candidate_count": 0,
+    "candidates": [],
+    "asked_pair": [
+     "蓝色杯子",
+     "地毯"
+    ],
+    "slots": {
+     "object": "should_answer_missing"
+    }
+   }
+  ],
+  "outputs": []
+ },
+ "samples": [
+  {
+   "kind": "same",
+   "question": "让圆口的器皿到四方木台。",
+   "old_rule_pair": [
+    "蓝色杯子",
+    "木桌"
+   ],
+   "new_pair": [
+    "蓝色杯子",
+    "木桌"
+   ],
+   "asked_pair": [
+    "蓝色杯子",
+    "木桌"
+   ],
+   "emitted": "让圆口的器皿到四方木台。"
+  },
+  {
+   "kind": "wrong->correct",
+   "question": "让圆口的器皿到靠窗的台面。",
+   "old_rule_pair": [
+    "蓝色杯子",
+    "木桌"
+   ],
+   "new_pair": [
+    "蓝色杯子",
+    "窗台"
+   ],
+   "asked_pair": [
+    "蓝色杯子",
+    "窗台"
+   ],
+   "emitted": "让圆口的器皿到靠窗的台面。"
+  },
+  {
+   "kind": "wrong->correct",
+   "question": "让圆口的器皿到手边的匣子。",
+   "old_rule_pair": [
+    "蓝色杯子",
+    "木桌"
+   ],
+   "new_pair": [
+    "蓝色杯子",
+    "左盒"
+   ],
+   "asked_pair": [
+    "蓝色杯子",
+    "左盒"
+   ],
+   "emitted": "让圆口的器皿到手边的匣子。"
+  },
+  {
+   "kind": "wrong->correct",
+   "question": "让圆口的器皿到靠墙的层架。",
+   "old_rule_pair": [
+    "蓝色杯子",
+    "木桌"
+   ],
+   "new_pair": [
+    "蓝色杯子",
+    "书架"
+   ],
+   "asked_pair": [
+    "蓝色杯子",
+    "书架"
+   ],
+   "emitted": "让圆口的器皿到靠墙的层架。"
+  },
+  {
+   "kind": "wrong->correct",
+   "question": "让圆口的器皿到脚边的毡子。",
+   "old_rule_pair": [
+    "蓝色杯子",
+    "木桌"
+   ],
+   "new_pair": [
+    "蓝色杯子",
+    "地毯"
+   ],
+   "asked_pair": [
+    "蓝色杯子",
+    "地毯"
+   ],
+   "emitted": "让圆口的器皿到脚边的毡子。"
+  },
+  {
+   "kind": "same",
+   "question": "让带纹路的方块到四方木台。",
+   "old_rule_pair": [
+    "红色印章",
+    "木桌"
+   ],
+   "new_pair": [
+    "红色印章",
+    "木桌"
+   ],
+   "asked_pair": [
+    "红色印章",
+    "木桌"
+   ],
+   "emitted": "让带纹路的方块到四方木台。"
+  },
+  {
+   "kind": "wrong->correct",
+   "question": "让带纹路的方块到靠窗的台面。",
+   "old_rule_pair": [
+    "红色印章",
+    "木桌"
+   ],
+   "new_pair": [
+    "红色印章",
+    "窗台"
+   ],
+   "asked_pair": [
+    "红色印章",
+    "窗台"
+   ],
+   "emitted": "让带纹路的方块到靠窗的台面。"
+  },
+  {
+   "kind": "wrong->correct",
+   "question": "让带纹路的方块到手边的匣子。",
+   "old_rule_pair": [
+    "红色印章",
+    "木桌"
+   ],
+   "new_pair": [
+    "红色印章",
+    "左盒"
+   ],
+   "asked_pair": [
+    "红色印章",
+    "左盒"
+   ],
+   "emitted": "让带纹路的方块到手边的匣子。"
+  },
+  {
+   "kind": "wrong->correct",
+   "question": "让带纹路的方块到靠墙的层架。",
+   "old_rule_pair": [
+    "红色印章",
+    "木桌"
+   ],
+   "new_pair": [
+    "红色印章",
+    "书架"
+   ],
+   "asked_pair": [
+    "红色印章",
+    "书架"
+   ],
+   "emitted": "让带纹路的方块到靠墙的层架。"
+  },
+  {
+   "kind": "wrong->correct",
+   "question": "让带纹路的方块到脚边的毡子。",
+   "old_rule_pair": [
+    "红色印章",
+    "木桌"
+   ],
+   "new_pair": [
+    "红色印章",
+    "地毯"
+   ],
+   "asked_pair": [
+    "红色印章",
+    "地毯"
+   ],
+   "emitted": "让带纹路的方块到脚边的毡子。"
+  },
+  {
+   "kind": "same",
+   "question": "让细长的容器到四方木台。",
+   "old_rule_pair": [
+    "绿色瓶子",
+    "木桌"
+   ],
+   "new_pair": [
+    "绿色瓶子",
+    "木桌"
+   ],
+   "asked_pair": [
+    "绿色瓶子",
+    "木桌"
+   ],
+   "emitted": "让细长的容器到四方木台。"
+  },
+  {
+   "kind": "wrong->correct",
+   "question": "让细长的容器到靠窗的台面。",
+   "old_rule_pair": [
+    "绿色瓶子",
+    "木桌"
+   ],
+   "new_pair": [
+    "绿色瓶子",
+    "窗台"
+   ],
+   "asked_pair": [
+    "绿色瓶子",
+    "窗台"
+   ],
+   "emitted": "让细长的容器到靠窗的台面。"
+  },
+  {
+   "kind": "wrong->correct",
+   "question": "让细长的容器到手边的匣子。",
+   "old_rule_pair": [
+    "绿色瓶子",
+    "木桌"
+   ],
+   "new_pair": [
+    "绿色瓶子",
+    "左盒"
+   ],
+   "asked_pair": [
+    "绿色瓶子",
+    "左盒"
+   ],
+   "emitted": "让细长的容器到手边的匣子。"
+  },
+  {
+   "kind": "wrong->correct",
+   "question": "让细长的容器到靠墙的层架。",
+   "old_rule_pair": [
+    "绿色瓶子",
+    "木桌"
+   ],
+   "new_pair": [
+    "绿色瓶子",
+    "书架"
+   ],
+   "asked_pair": [
+    "绿色瓶子",
+    "书架"
+   ],
+   "emitted": "让细长的容器到靠墙的层架。"
+  },
+  {
+   "kind": "wrong->correct",
+   "question": "让细长的容器到脚边的毡子。",
+   "old_rule_pair": [
+    "绿色瓶子",
+    "木桌"
+   ],
+   "new_pair": [
+    "绿色瓶子",
+    "地毯"
+   ],
+   "asked_pair": [
+    "绿色瓶子",
+    "地毯"
+   ],
+   "emitted": "让细长的容器到脚边的毡子。"
+  },
+  {
+   "kind": "same",
+   "question": "让圆滚滚的东西到四方木台。",
+   "old_rule_pair": [
+    "黄色球",
+    "木桌"
+   ],
+   "new_pair": [
+    "黄色球",
+    "木桌"
+   ],
+   "asked_pair": [
+    "黄色球",
+    "木桌"
+   ],
+   "emitted": "让圆滚滚的东西到四方木台。"
+  },
+  {
+   "kind": "wrong->correct",
+   "question": "让圆滚滚的东西到靠窗的台面。",
+   "old_rule_pair": [
+    "黄色球",
+    "木桌"
+   ],
+   "new_pair": [
+    "黄色球",
+    "窗台"
+   ],
+   "asked_pair": [
+    "黄色球",
+    "窗台"
+   ],
+   "emitted": "让圆滚滚的东西到靠窗的台面。"
+  },
+  {
+   "kind": "wrong->correct",
+   "question": "让圆滚滚的东西到手边的匣子。",
+   "old_rule_pair": [
+    "黄色球",
+    "木桌"
+   ],
+   "new_pair": [
+    "黄色球",
+    "左盒"
+   ],
+   "asked_pair": [
+    "黄色球",
+    "左盒"
+   ],
+   "emitted": "让圆滚滚的东西到手边的匣子。"
+  },
+  {
+   "kind": "wrong->correct",
+   "question": "让圆滚滚的东西到靠墙的层架。",
+   "old_rule_pair": [
+    "黄色球",
+    "木桌"
+   ],
+   "new_pair": [
+    "黄色球",
+    "书架"
+   ],
+   "asked_pair": [
+    "黄色球",
+    "书架"
+   ],
+   "emitted": "让圆滚滚的东西到靠墙的层架。"
+  },
+  {
+   "kind": "wrong->correct",
+   "question": "让圆滚滚的东西到脚边的毡子。",
+   "old_rule_pair": [
+    "黄色球",
+    "木桌"
+   ],
+   "new_pair": [
+    "黄色球",
+    "地毯"
+   ],
+   "asked_pair": [
+    "黄色球",
+    "地毯"
+   ],
+   "emitted": "让圆滚滚的东西到脚边的毡子。"
+  }
+ ],
+ "uncertain": [
+  {
+   "kind": "wrong->no_bytes",
+   "question": "让喝水的杯子到四方木台。",
+   "keys": [
+    "喝水的杯子",
+    "四方木台"
+   ],
+   "old_rule_pair": [
+    "蓝色杯子",
+    "木桌"
+   ],
+   "new_status": "no_match",
+   "candidate_count": 0,
+   "asked_pair": [
+    "蓝色杯子",
+    "木桌"
+   ]
+  },
+  {
+   "kind": "wrong->no_bytes",
+   "question": "让盖章用的印章到靠窗的台面。",
+   "keys": [
+    "盖章用的印章",
+    "靠窗的台面"
+   ],
+   "old_rule_pair": [
+    "红色印章",
+    "木桌"
+   ],
+   "new_status": "no_match",
+   "candidate_count": 0,
+   "asked_pair": [
+    "红色印章",
+    "窗台"
+   ]
+  },
+  {
+   "kind": "wrong->no_bytes",
+   "question": "让盛水的瓶子到手边的匣子。",
+   "keys": [
+    "盛水的瓶子",
+    "手边的匣子"
+   ],
+   "old_rule_pair": [
+    "绿色瓶子",
+    "木桌"
+   ],
+   "new_status": "no_match",
+   "candidate_count": 0,
+   "asked_pair": [
+    "绿色瓶子",
+    "左盒"
+   ]
+  },
+  {
+   "kind": "wrong->no_bytes",
+   "question": "让圆形的皮球到靠墙的层架。",
+   "keys": [
+    "圆形的皮球",
+    "靠墙的层架"
+   ],
+   "old_rule_pair": [
+    "黄色球",
+    "木桌"
+   ],
+   "new_status": "no_match",
+   "candidate_count": 0,
+   "asked_pair": [
+    "黄色球",
+    "书架"
+   ]
+  },
+  {
+   "kind": "wrong->no_bytes",
+   "question": "让圆口的器皿到方方正正的木桌子。",
+   "keys": [
+    "圆口的器皿",
+    "方方正正的木桌子"
+   ],
+   "old_rule_pair": [
+    "蓝色杯子",
+    "木桌"
+   ],
+   "new_status": "no_match",
+   "candidate_count": 0,
+   "asked_pair": [
+    "蓝色杯子",
+    "木桌"
+   ]
+  },
+  {
+   "kind": "wrong->no_bytes",
+   "question": "让带纹路的方块到窗前的台板。",
+   "keys": [
+    "带纹路的方块",
+    "窗前的台板"
+   ],
+   "old_rule_pair": [
+    "红色印章",
+    "木桌"
+   ],
+   "new_status": "no_match",
+   "candidate_count": 0,
+   "asked_pair": [
+    "红色印章",
+    "窗台"
+   ]
+  },
+  {
+   "kind": "wrong->no_bytes",
+   "question": "让细长的容器到手边的小盒子。",
+   "keys": [
+    "细长的容器",
+    "手边的小盒子"
+   ],
+   "old_rule_pair": [
+    "绿色瓶子",
+    "木桌"
+   ],
+   "new_status": "no_match",
+   "candidate_count": 0,
+   "asked_pair": [
+    "绿色瓶子",
+    "左盒"
+   ]
+  },
+  {
+   "kind": "wrong->no_bytes",
+   "question": "让圆滚滚的东西到墙上的架子。",
+   "keys": [
+    "圆滚滚的东西",
+    "墙上的架子"
+   ],
+   "old_rule_pair": [
+    "黄色球",
+    "木桌"
+   ],
+   "new_status": "no_match",
+   "candidate_count": 0,
+   "asked_pair": [
+    "黄色球",
+    "书架"
+   ]
+  },
+  {
+   "kind": "wrong->no_bytes",
+   "question": "让圆口的器皿到脚下的垫子。",
+   "keys": [
+    "圆口的器皿",
+    "脚下的垫子"
+   ],
+   "old_rule_pair": [
+    "蓝色杯子",
+    "木桌"
+   ],
+   "new_status": "no_match",
+   "candidate_count": 0,
+   "asked_pair": [
+    "蓝色杯子",
+    "地毯"
+   ]
+  }
+ ],
+ "closed_state": {
+  "baseline": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "f8ceb01734a1f00b0727f5d0c338145a2d6ec1de4149d9450d8609c87b44e1db",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk_none": true,
+   "battery_sha": "3f3c0e0ad7b1085cd0e6ffcb8ac46457fe3f177c499d472f6b6e85ccb7888d44",
+   "battery_steps": 20
+  },
+  "after": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "f8ceb01734a1f00b0727f5d0c338145a2d6ec1de4149d9450d8609c87b44e1db",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk_none": true,
+   "battery_sha": "3f3c0e0ad7b1085cd0e6ffcb8ac46457fe3f177c499d472f6b6e85ccb7888d44",
+   "battery_steps": 20
+  },
+  "checks": {
+   "parameters_equal": true,
+   "state_equal": true,
+   "identity_equal": true,
+   "store_equal": true,
+   "battery_equal": true,
+   "steps_equal": true,
+   "sc_sfk_none": true,
+   "flag_disabled": true,
+   "rng_untouched": true
+  }
+ },
+ "verdict": {
+  "structural": "fallback_unreachable",
+  "l1": "l1_clean",
+  "l2": "provenance_faithful",
+  "primary": "joint_select_resolves",
+  "loss": "zero_loss",
+  "closed_state": "closed_state_equal",
+  "diagnostics": "reach_limited_to_verbatim_questions"
+ },
+ "cost": {
+  "cpu_seconds": 2.046875,
+  "wall_seconds": 2.773721218109131,
+  "cpu_cap": 200.0,
+  "estimate_cpu_upper": 30.0,
+  "threads": 1
+ }
+}

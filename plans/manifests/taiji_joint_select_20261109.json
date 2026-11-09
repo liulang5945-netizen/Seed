@@ -1,0 +1,85 @@
+{
+ "schema": "taiji-joint-select-r54-v1",
+ "created": "2026-11-09T19:00:46",
+ "seed": 20261109,
+ "estimate_cpu_upper": 30.0,
+ "cpu_cap": 200.0,
+ "runner_sha256": "acc766dc7b0aaebcbcce15655cd4004bac71122a0dcbac26ea592903b5dc060e",
+ "bridge_sha256": "4edf29b22a199c29160523debb8ea23a45e59321f2b0c8dc06da72497672e831",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d"
+ },
+ "definition": {
+  "question": "does a joint hit over all keys of one sentence fix the record choice?",
+  "selection_rule": "candidate = every corpus record that contains ALL literal byte spans the R15 read matched in the question; exactly one candidate -> emit it; zero -> no_match, no bytes; two or more -> ambiguous_multiple_records, no bytes",
+  "deleted_fallback": "the lowest-address path (SPEC 16.2 address_order) is deleted from selection; it is not reachable by any flag, and no default address is returned",
+  "groups": {
+   "primary": "the 20 describe sentences (4 objects x 5 places x 1 variant); 40 entity slots",
+   "names": "20 authored name-worded questions 让{object}到{place}。 (secondary, not judged)",
+   "aliases": "9 authored aliases alone, one per entity (secondary, not judged)"
+  },
+  "unit": "frozen SPEC 16.2 unit: a complete record or a complete sentence; no third unit",
+  "L1": "fabricated 0, illegal 0, UTF-8 decodable 100%, boundary legal 100%",
+  "L2": "emitted bytes equal record[start:end] byte for byte; must be 1.0",
+  "L3": "four classes per entity slot: answered_correct / pointed_wrong / abstained / should_answer_missing; ambiguous_multiple_records counts as abstained and no_match as should_answer_missing, each also reported by name",
+  "paired_numbers": "pairing_matches and answers_lost are reported side by side; answers_lost = 40 minus the slots that emitted bytes, i.e. what was paid to remove wrong pairings",
+  "closed_state": "the nine closed-state readings stay equal before and after",
+  "training": "zero training, zero optimizer steps, zero Adam, zero confirm",
+  "diagnostics": "two extra groups were added AFTER the first pass, when the name group turned out to have no keys at all: paraphrase = the 60 name-worded records, mixed = 9 alias + description questions.  They are reported for the cost column only and never enter the verdict"
+ },
+ "prediction": {
+  "primary": {
+   "sentences": 20,
+   "selected": 20,
+   "pairing_matches": 40,
+   "answers_lost": 0,
+   "why": "a describe sentence's two key spans only co-occur in that pair's describe record, so the joint hit is a singleton and the record is the asked one"
+  },
+  "names": {
+   "sentences": 20,
+   "selected": 0,
+   "ambiguous": 20,
+   "candidates_per_sentence": 3,
+   "why": "names appear in the needs / hope / state records of the same pair: three records"
+  },
+  "aliases": {
+   "sentences": 9,
+   "selected": 0,
+   "no_match": 9,
+   "why": "the alias wording is not in the corpus at all"
+  }
+ },
+ "diagnostic_prediction": {
+  "paraphrase": {
+   "sentences": 60,
+   "selected": 0,
+   "no_keys": 60,
+   "why": "needs / hope / state sentences are name-worded and names are not keys"
+  },
+  "mixed": {
+   "sentences": 9,
+   "selected": 0,
+   "no_match": 9,
+   "why": "one key is an alias (absent from the corpus), so a joint hit cannot exist"
+  }
+ },
+ "criteria": {
+  "structural": "signature, literal, AST and behaviour checks all report the fallback unreachable; any one failing blocks the verdict",
+  "l1": "fabricated 0, illegal 0, utf8 all, boundary all",
+  "l2": "provenance fidelity == 1.0",
+  "loss": "pairing_matches and answers_lost both reported, never only the first",
+  "samples": "at least 3 real outputs, including one wrong->correct and one wrong->uncertain",
+  "closed_state": "nine items equal"
+ },
+ "definition_digest": "d8eabd2e3e3f0af107db6cd6aaf1ae96048591da14f50839baee5f3c01dae89a",
+ "counts": {
+  "corpus_records": 80,
+  "describe_sentences": 20,
+  "names_sentences": 20,
+  "alias_sentences": 9,
+  "paraphrase_sentences": 60,
+  "mixed_sentences": 9
+ }
+}
