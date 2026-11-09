@@ -2264,7 +2264,60 @@ R6b 的 joint 1.0 有两种解释：学会了“描述↔名字”的桥，或�
 
 **边界（与读数一起引用）**：① 前缀是**上一步表达文本**，不是生成；② 前缀拼接只用 `"\n"`，不判断语义是否连贯；③ “与无前缀不同”只证前缀进入输入，**不证**前缀有用；④ 文本仍不在 `state_dict`／身份里；⑤ 只测 20 句 describe 与 1 个未知输入；⑥ 桥**仍不得**接进默认图。
 
-**下一步**：R35“前缀使用策略”闸——给 `bridge_observe` 增加 `prefix_policy`（`always`／`never`／`on_match`）：`on_match` 只在本句能命中已写键时才用前缀；测①20 句 `on_match` 前缀 19、②未知句 `on_match` 无前缀、③三种策略轨迹各自与对应控制相等、④参数不动、⑤关闭态九项全等。判据读数前冻结。
+**下一步（已于 §21.44 执行）**：R35“前缀使用策略”闸——给 `bridge_observe` 增加 `prefix_policy`（`always`／`never`／`on_match`）：`on_match` 只在本句能命中已写键时才用前缀；测①20 句 `on_match` 前缀 19、②未知句 `on_match` 无前缀、③三种策略轨迹各自与对应控制相等、④参数不动、⑤关闭态九项全等。判据读数前冻结。
+
+## 21.44 R35 前缀使用策略：`never`／`always`／`on_match` 三值显式（2026-11-09）
+
+**一句话**：`use_text_prefix` 布尔换成 `prefix_policy` 三值，`on_match` 只在**本句能命中已写键**时用上一步文本作前缀。三种策略各自 **20/20** 表达、与各自控制轨迹 **20/20** 逐位相等；`never` 0/20、`always` 19/20、`on_match` 19/20 步带前缀；`never` 与 `always` 在 **19/19** 个非首步上轨迹不同。诚实的负结果：`on_match` 与 `always` 在 **20/20** 个命中句上逐位相同，**只在未知句分叉**——在“表内全是已写键”的输入上，策略只值一个“不拿旧文本去污染未命中句”。
+
+**A 读数**
+
+| 测点 | 结果 |
+|---|---|
+| 表达 | 三策略各 **20/20**（合计 **60/60**）文本逐字正确 |
+| 前缀计数 | `never` **0/20**、`always` **19/20**、`on_match` **19/20** |
+| 命中 | 20 条 describe 句 **20/20** 命中已写键（`on_match` 的门输入全开） |
+| 门控 | `on_match` 每步 `prefix_used == (上一步文本 if 命中 else None)`：**20/20** |
+| 轨迹控制 | 每策略与其自身输入字节的普通 `observe` **20/20** 状态摘要相等 |
+| 策略区分 | `never` vs `always` 非首步 **19/19** 不同；`on_match` vs `always` **20/20** 相同 |
+| 未知句前缀 | `always` = `"黄色球在地毯"`；`never`／`on_match` = `None`；该步状态分叉 |
+| 未知句出口 | 三策略均 `no_pair`、字段 `None`、下一步前缀 `None` |
+| 非法策略名 | `ValueError`，`state.step` 仍 **0**（未跑任何一步） |
+| 参数/表 | 参数摘要不变；表摘要不变 |
+| 关闭态 | **九项全等**；`sc_bridge` 前后 `None` |
+
+**B 复跑锚**：R34 → `6e3988177`（blob `98fe5b0d…`、runner sha `ebb80205…`、core sha `ca6422fe…`），报告 sha 与 blob sha 一致；R34 在当前 HEAD 不可跑（R35 改了 `living_core`），按该提交可复跑。
+
+**判定与成本**：`policy_expression_60_60`／`policy_prefix_counts_0_19_19`／`policy_all_sentences_hit`／`policy_controls_equal`／`policy_discriminates_trajectory`／`policy_discriminates_unknown`／`policy_unknown_clean`／`policy_name_rejected`／`parameters_untouched`／`closed_state_equal`／`bridge_default_none`／`anchors_complete` ⇒ 总判 **`prefix_policy_explicit`**；成本 **5.359 CPU／5.937 wall**（估 30、上限 200、`threads=1`）。0 训练／0 优化器步／0 Adam／0 confirm。
+
+**边界（与读数一起引用）**：① `on_match` 的“命中”只看 `read_sentence` 有没有答案，不看答案是否在候选里；② 在 20 条命中句上 `on_match` 与 `always` 完全等价，本轮证明的区分力只覆盖“未命中句不拿旧文本”；③ 策略只决定**输入前缀**，表达仍读未加前缀的当前句；④ 策略不进 `state_dict`／快照／身份，是调用参数；⑤ 非法策略在任何一步之前拒绝；⑥ 桥**仍不得**接进默认图。
+
+**下一步（已于 §21.45 执行）**：R36“前缀是否有用”闸——用 `score_targets` 做教师强制下一字节，在同一 `S0` 下比 `none`／`self`／`shuffled`（同字节倒序）／`foreign`（另一步等长表达）四种提示，按 bits/byte 与预声明效应量判定 `prefix_useful`／`prefix_harmful`／`prefix_not_useful_yet`。判据读数前冻结。
+
+## 21.45 R36 前缀是否有用：教师强制读数判 `prefix_not_useful_yet`（2026-11-09）
+
+**一句话**：R34／R35 只证“前缀进入输入、策略可切”，本轮测它**有没有用**。同一 `S0` 下对第 2–20 步，用 `score_targets` 对当前句做教师强制，比较四种提示：`none`（空）／`self`（上一步表达）／`shuffled`（同字节倒序，等长同多重集）／`foreign`（另一步同字节长表达）。**19/19** 对全部可比；`self` 相对两个等长对照的差值都在 **1e-4 bits/byte** 量级、方向不稳（中位 **−0.00003** 与 **+0.000036**、胜 **6/19** 与 **17/19**），未达预声明的 **0.1 bits/byte 且 14/19** ⇒ **`prefix_not_useful_yet`**。这不是“前缀有害”，是“**在未训练的模型上，自产文本对下一字节预测没有可测增益**”。
+
+**A 读数**
+
+| 测点 | 结果 |
+|---|---|
+| 配对步 | **19/19**；每步 `self`＝`shuffled`＝`foreign` 字节长 |
+| 均值 bits/byte | `none` **8.050105**／`self` **8.049847**／`shuffled` **8.049892**／`foreign` **8.049812** |
+| `self − foreign` | 中位 **−0.00003**、胜 **6/19** |
+| `self − shuffled` | 中位 **+0.000036**、胜 **17/19** |
+| `self − none`（仅报告） | 中位 **+0.000215**、胜 **17/19**；长度不同，不参与判定 |
+| 参数/表 | 参数摘要不变；表摘要不变 |
+| 关闭态 | **九项全等**；`sc_bridge` 前后 `None` |
+| 非法策略名 | 本轮未复测（R35 已测）；无模块改动 |
+
+**B 复跑锚**：R35 → `d4dba0069`（blob `4b8a0b9f…`、runner sha `e59f869d…`、core sha `6c0c53a2…`），报告 sha 与 blob sha 一致；**R36 未改模块，R35 在当前 HEAD 仍可复跑**。
+
+**判定与成本**：`prefix_use_rows_19_19`／`prefix_not_useful_yet`／`parameters_untouched`／`closed_state_equal`／`bridge_default_none`／`anchors_complete` ⇒ 总判 **`prefix_use_measured`**（机制读数如实为负）；成本 **14.359 CPU／14.908 wall**（估 60、上限 200、`threads=1`）。0 训练／0 优化器步／0 Adam／0 confirm。
+
+**边界（与读数一起引用）**：① 只测“未训练模型＋20 句＋单步隔离”，**不代表**训练后仍无用；② `self` 是上一句表达，与当前句只有表内实体层面的关联；③ `shuffled` 只控长度与字节多重集，不控字符频率；④ 均值 8.05 > 均匀 8.0，说明未训练模型对字节分布**略反校准**，这是事实读数；⑤ 判定门是预声明效应量＋胜场计数，未做显著性检验；⑥ 桥**仍不得**接进默认图。
+
+**下一步**：R37“训练前置：checkpoint 往返闸”——在**独立 scratch 模型**上做 **1 个**优化器步（不是训练轮，只验证保存/恢复），保存参数／优化器／步数，由**新进程**加载并核对参数摘要逐位相等、同一输入轨迹逐位相等、缺键／多键／坏字节分别拒绝；主体关闭态仍测九项全等。先证明“能正确保存与恢复”，再谈任何用前缀学习的轮次。判据读数前冻结。
 
 
 

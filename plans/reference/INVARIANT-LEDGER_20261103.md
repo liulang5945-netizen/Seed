@@ -2540,6 +2540,37 @@ owner 2026-11-07 裁定：多模态是整个算法内部系统的一部分，不
 | S-140 | “文本前缀会改参数” | R-D29-411 | **被取代**：参数摘要不变。 |
 | S-141 | “弃答后下一步仍带旧前缀” | R-D29-410 | **被取代**：下一步前缀 `None`。 |
 
+## 82. R35 前缀使用策略／R36 前缀是否有用（2026-11-09）
+
+**82.0 冻结与范围**：三策略前缀计数、三组控制轨迹、未知句分叉、非法策略名与 R34 复跑锚在读数前写入 [manifest R35](../manifests/taiji_bridge_policy_20261109.json)；四种提示的条件、效应量 0.1 bits/byte、14/19 胜场与 R35 复跑锚写入 [manifest R36](../manifests/taiji_bridge_prefix_use_20261109.json) 的 `definition_digest`。R35 **修改** `taiji/living_core.py`：`use_text_prefix` 换成 `prefix_policy`，`observe`/`step` 未改；R36 **未改模块**，只用既有 `score_targets`。两轮均 0 训练／0 优化器步／0 Adam／0 confirm。
+
+**82.1 读数**
+
+| 编号 | 读数 | 出处 |
+|---|---|---|
+| R-D30-414 | **R35 表达**：三策略各 **20/20**（合计 **60/60**）。 | `policies.*.exact` |
+| R-D30-415 | **R35 前缀计数**：`never` **0/20**、`always` **19/20**、`on_match` **19/20**；门控 **20/20**。 | `prefixed`／`gate_correct` |
+| R-D30-416 | **R35 轨迹**：三策略各自与自身控制 **20/20** 相等；`never` vs `always` 非首步 **19/19** 不同；`on_match` vs `always` **20/20** 相同。 | `control_equal`／`cross_policy` |
+| R-D30-417 | **R35 未知句**：`always` 前缀 `"黄色球在地毯"`；`never`／`on_match` 为 `None`；该步状态分叉；三策略均 `no_pair`／字段 `None`／下一步无前缀。 | `unknown` |
+| R-D30-418 | **R35 非法策略名**：`ValueError`，`state.step` 仍 **0**。 | `invalid_policy` |
+| R-D30-419 | **R35 判定与成本**：⇒ 总判 **`prefix_policy_explicit`**；**5.359 CPU／5.937 wall**（估 30、上限 200）。 | 报告 `verdict`／`cost` |
+| R-D30-420 | **R36 配对**：**19/19** 步四条件同长可比，`unmatched_foreign` **0**。 | `reading.paired` |
+| R-D30-421 | **R36 均值**：`none` **8.050105**／`self` **8.049847**／`shuffled` **8.049892**／`foreign` **8.049812** bits/byte。 | `mean_bits` |
+| R-D30-422 | **R36 差值**：`self−foreign` 中位 **−0.00003**、胜 **6/19**；`self−shuffled` 中位 **+0.000036**、胜 **17/19**；`self−none` 中位 **+0.000215**、胜 **17/19**（仅报告）。 | `median_*`／`wins_*` |
+| R-D30-423 | **R36 判定**：未达 0.1 bits/byte 且 14/19 ⇒ **`prefix_not_useful_yet`**；总判 **`prefix_use_measured`**；**14.359 CPU／14.908 wall**（估 60、上限 200）。 | 报告 `verdict`／`cost` |
+| R-D30-424 | **复跑锚**：R34→`6e3988177`（blob `98fe5b0d…`、runner `ebb80205…`、core `ca6422fe…`）；R35→`d4dba0069`（blob `4b8a0b9f…`、runner `e59f869d…`、core `6c0c53a2…`）；报告 sha 与 blob sha 一致。 | `rerun_anchors` |
+| R-D30-425 | **两轮参数/表与关闭态**：参数摘要不变、表摘要不变；九项全等；`sc_bridge` 前后 `None`。 | `parameters`／`closed_state` |
+
+**82.2 superseded／范围登记**
+
+| 编号 | 被取代／被限定的对象 | 取代者 | 处置与理由 |
+|---|---|---|---|
+| S-142 | “前缀只能开/关，不能按输入决定” | R-D30-415 | **被取代**：三值策略，`on_match` 按命中门控。 |
+| S-143 | “策略在命中句上也会改变轨迹” | R-D30-416 | **被限定**：命中句上 `on_match` ≡ `always`，只在未命中句分叉。 |
+| S-144 | “前缀既然进入输入就会有用” | R-D30-422 | **被证伪**：未训练模型上无 0.1 bits/byte 级增益，判 `prefix_not_useful_yet`。 |
+
+
+
 
 
 
