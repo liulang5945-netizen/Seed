@@ -137,6 +137,9 @@ class LivingState:
     # SC-SFK address table (pure Python, no tensor).  Only
     # ``sc_sfk_enabled`` allocates it; every other assembly keeps ``None``.
     sc_sfk: object | None = None
+    # Optional written bridge (pure Python, no tensor).  It is attached
+    # explicitly by ``attach_bridge`` and is ``None`` in every closed state.
+    sc_bridge: object | None = None
 
 
 @dataclass(frozen=True)
@@ -584,6 +587,30 @@ class LivingCoreReference(nn.Module):
         return replace(
             state, store_keys=keys, store_values=values, store_age=age, store_count=count
         )
+
+    def attach_bridge(self, state: LivingState, table: object) -> LivingState:
+        """Attach a written bridge to the subject state without touching tensors."""
+        if state.sc_bridge is table:
+            return state
+        return replace(state, sc_bridge=table)
+
+    def clear_bridge(self, state: LivingState) -> LivingState:
+        if state.sc_bridge is None:
+            return state
+        return replace(state, sc_bridge=None)
+
+    def bridge_read(self, state: LivingState, sentence: str | bytes) -> dict:
+        """Read through the attached bridge; no side effect on any tensor."""
+        table = state.sc_bridge
+        if table is None:
+            return {
+                "decision": "no_bridge",
+                "answers": [],
+                "masks": [],
+                "stopped_at_pass": 0,
+                "final_exit": "no_bridge",
+            }
+        return table.read_sentence(sentence)
 
     def store_query_key(self, state: LivingState, raw: bytes) -> torch.Tensor:
         context = self.encoder.context(raw)

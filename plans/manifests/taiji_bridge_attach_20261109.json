@@ -1,0 +1,145 @@
+{
+ "schema": "taiji-bridge-attach-r24-v1",
+ "created": "2026-11-09T16:51:04",
+ "seed": 20261109,
+ "estimate_cpu_upper": 30.0,
+ "cpu_cap": 200.0,
+ "runner_sha256": "3185eed3dec783d9fe1c8c59c80aeceb191fb3310ccce62dc3f5d1456824671d",
+ "bridge_sha256": "4edf29b22a199c29160523debb8ea23a45e59321f2b0c8dc06da72497672e831",
+ "core_sha256": "d1d8fb7a219d79fd92e22b30572c561b7e0ce3500d0a71f09824874813c6bd30",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "d1d8fb7a219d79fd92e22b30572c561b7e0ce3500d0a71f09824874813c6bd30"
+ },
+ "definition": {
+  "attach": "LivingState gains an optional sc_bridge field (default None); attach_bridge replaces the state with the table, clear_bridge removes it",
+  "read": "bridge_read delegates to table.read_sentence; with no table it returns decision=no_bridge and no answers",
+  "read_side": "attach, read and correct must not change any parameter, h, fast, nu_ema, coverage, prior, sc_sfk or the closed-state flags",
+  "correction": "one correction through the attached table changes the alias to RED; the table digest moves, the subject hashes do not",
+  "clear": "clear_bridge returns sc_bridge to None and bridge_read answers no_bridge",
+  "handback": "the table exported after the correction is imported into a fresh state and attached; it reads RED and 40/40",
+  "closed_state": "the nine legacy closed-state readings stay equal before and after"
+ },
+ "criteria": {
+  "attach": "sc_bridge is the same object; 20 describe sentences at 40/40; zeros 0/0; parameter and state hashes equal to the baseline",
+  "correction": "table digest changes; alias reads RED; parameter and state hashes still equal; 40/40",
+  "clear": "sc_bridge is None; bridge_read decision is no_bridge; state hash equals the baseline",
+  "handback": "imported table digest equals the corrected table; attached read is RED; 40/40; 0/0",
+  "closed_state": "the nine legacy readings stay equal before and after",
+  "reporting": "the bridge is a Python side table; the report keeps table digest, parameter hash and state hash in separate columns so 'no tensor moved' is visible"
+ },
+ "definition_digest": "a1dffbb64925655c33beda5afa154a9fb4b6e9eeeb5ba790aca10cd4a3513c7e",
+ "counts": {
+  "attach_cases": 4,
+  "regression_sentences": 20,
+  "unknown_candidates": 12,
+  "fragments": 18
+ },
+ "inputs": {
+  "alias_key": "喝水的杯子",
+  "authority": "verifier:v1",
+  "reason": "r24:attach",
+  "values": [
+   [
+    "object",
+    "蓝色杯子"
+   ],
+   [
+    "object",
+    "红色印章"
+   ],
+   [
+    "object",
+    "绿色瓶子"
+   ],
+   [
+    "place",
+    "木桌"
+   ],
+   [
+    "place",
+    "书架"
+   ]
+  ],
+  "aliases": [
+   [
+    "喝水的杯子",
+    [
+     "object",
+     "蓝色杯子"
+    ]
+   ],
+   [
+    "盖章用的印章",
+    [
+     "object",
+     "红色印章"
+    ]
+   ],
+   [
+    "盛水的瓶子",
+    [
+     "object",
+     "绿色瓶子"
+    ]
+   ],
+   [
+    "圆形的皮球",
+    [
+     "object",
+     "黄色球"
+    ]
+   ],
+   [
+    "方方正正的木桌子",
+    [
+     "place",
+     "木桌"
+    ]
+   ],
+   [
+    "窗前的台板",
+    [
+     "place",
+     "窗台"
+    ]
+   ],
+   [
+    "手边的小盒子",
+    [
+     "place",
+     "左盒"
+    ]
+   ],
+   [
+    "墙上的架子",
+    [
+     "place",
+     "书架"
+    ]
+   ],
+   [
+    "脚下的垫子",
+    [
+     "place",
+     "地毯"
+    ]
+   ]
+  ],
+  "unknown_candidates": [
+   "黑色铁铃",
+   "白色帆布",
+   "长柄铜勺",
+   "软木瓶塞",
+   "蓝色毛巾",
+   "银质圆镜",
+   "棕色皮箱",
+   "青色陶罐",
+   "灰色石阶",
+   "紫色绸带",
+   "金色烛台",
+   "深红木箱"
+  ]
+ }
+}

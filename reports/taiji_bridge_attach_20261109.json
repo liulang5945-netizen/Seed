@@ -1,0 +1,178 @@
+{
+ "schema": "taiji-bridge-attach-r24-report-v1",
+ "runner_sha256": "3185eed3dec783d9fe1c8c59c80aeceb191fb3310ccce62dc3f5d1456824671d",
+ "manifest_sha256": "2a39eb281fee2404aa5491548d8741304e0e8a6dc33d2b8945ba2ae60635e1f4",
+ "bridge_sha256": "4edf29b22a199c29160523debb8ea23a45e59321f2b0c8dc06da72497672e831",
+ "core_sha256": "d1d8fb7a219d79fd92e22b30572c561b7e0ce3500d0a71f09824874813c6bd30",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "d1d8fb7a219d79fd92e22b30572c561b7e0ce3500d0a71f09824874813c6bd30"
+ },
+ "definition": {
+  "attach": "LivingState gains an optional sc_bridge field (default None); attach_bridge replaces the state with the table, clear_bridge removes it",
+  "read": "bridge_read delegates to table.read_sentence; with no table it returns decision=no_bridge and no answers",
+  "read_side": "attach, read and correct must not change any parameter, h, fast, nu_ema, coverage, prior, sc_sfk or the closed-state flags",
+  "correction": "one correction through the attached table changes the alias to RED; the table digest moves, the subject hashes do not",
+  "clear": "clear_bridge returns sc_bridge to None and bridge_read answers no_bridge",
+  "handback": "the table exported after the correction is imported into a fresh state and attached; it reads RED and 40/40",
+  "closed_state": "the nine legacy closed-state readings stay equal before and after"
+ },
+ "criteria": {
+  "attach": "sc_bridge is the same object; 20 describe sentences at 40/40; zeros 0/0; parameter and state hashes equal to the baseline",
+  "correction": "table digest changes; alias reads RED; parameter and state hashes still equal; 40/40",
+  "clear": "sc_bridge is None; bridge_read decision is no_bridge; state hash equals the baseline",
+  "handback": "imported table digest equals the corrected table; attached read is RED; 40/40; 0/0",
+  "closed_state": "the nine legacy readings stay equal before and after",
+  "reporting": "the bridge is a Python side table; the report keeps table digest, parameter hash and state hash in separate columns so 'no tensor moved' is visible"
+ },
+ "attach": {
+  "attached": true,
+  "regression": {
+   "entities": 40,
+   "hits": 40,
+   "wrong": 0,
+   "distribution": {
+    "answered_2": 20,
+    "answered_1": 0,
+    "wrong": 0,
+    "abstained": 0
+   },
+   "ok": true
+  },
+  "zeros": {
+   "unknown_answering": 0,
+   "fragment_answering": 0,
+   "ok": true
+  },
+  "state_sha_equal": true,
+  "parameter_sha_equal": true,
+  "sc_sfk_none": true,
+  "table_digest_equal": true,
+  "ok": true
+ },
+ "correction": {
+  "action": "corrected",
+  "alias": {
+   "decision": "answered_single",
+   "answers": 1,
+   "values": [
+    [
+     "object",
+     "红色印章"
+    ]
+   ],
+   "final_exit": "no_match"
+  },
+  "table_digest_changed": true,
+  "state_sha_equal": true,
+  "parameter_sha_equal": true,
+  "log": [
+   {
+    "from": "[\"object\", \"蓝色杯子\"]",
+    "to": "[\"object\", \"红色印章\"]",
+    "authority": "verifier:v1",
+    "reason": "r24:attach"
+   }
+  ],
+  "ok": true
+ },
+ "clear": {
+  "sc_bridge_none": true,
+  "read": {
+   "decision": "no_bridge",
+   "answers": 0,
+   "values": [],
+   "final_exit": "no_bridge"
+  },
+  "state_sha_equal": true,
+  "parameter_sha_equal": true,
+  "ok": true
+ },
+ "handback": {
+  "digest_equal": true,
+  "alias": {
+   "decision": "answered_single",
+   "answers": 1,
+   "values": [
+    [
+     "object",
+     "红色印章"
+    ]
+   ],
+   "final_exit": "no_match"
+  },
+  "regression": {
+   "entities": 40,
+   "hits": 40,
+   "wrong": 0,
+   "distribution": {
+    "answered_2": 20,
+    "answered_1": 0,
+    "wrong": 0,
+    "abstained": 0
+   },
+   "ok": true
+  },
+  "zeros": {
+   "unknown_answering": 0,
+   "fragment_answering": 0,
+   "ok": true
+  },
+  "ok": true
+ },
+ "closed_state": {
+  "baseline": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "b2d39fa8987eca62db6a9a12772e1f2c66a4c56c2517d2e10b9a214d1e9db1d1",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk_none": true,
+   "sc_bridge_none": true,
+   "battery_sha": "689ed9e5fb92108c66ed93c99f4d26b9c748c16ac27f218269bde79bed8e58a3",
+   "battery_steps": 20
+  },
+  "after": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "b2d39fa8987eca62db6a9a12772e1f2c66a4c56c2517d2e10b9a214d1e9db1d1",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk_none": true,
+   "sc_bridge_none": true,
+   "battery_sha": "689ed9e5fb92108c66ed93c99f4d26b9c748c16ac27f218269bde79bed8e58a3",
+   "battery_steps": 20
+  },
+  "checks": {
+   "parameters_equal": true,
+   "state_equal": true,
+   "identity_equal": true,
+   "store_equal": true,
+   "battery_equal": true,
+   "steps_equal": true,
+   "sc_sfk_none": true,
+   "flag_disabled": true,
+   "rng_untouched": true
+  }
+ },
+ "bridge_default_none": true,
+ "verdict": {
+  "attach": "bridge_attached_read_side",
+  "correction": "bridge_correction_read_side",
+  "clear": "bridge_cleared",
+  "handback": "bridge_handback_attached",
+  "closed_state": "closed_state_equal",
+  "bridge_default": "bridge_default_none",
+  "overall": "bridge_read_side_attached"
+ },
+ "cost": {
+  "cpu_seconds": 1.84375,
+  "wall_seconds": 2.4773871898651123,
+  "cpu_cap": 200.0,
+  "estimate_cpu_upper": 30.0,
+  "threads": 1
+ }
+}
