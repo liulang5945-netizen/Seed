@@ -1,0 +1,102 @@
+{
+ "schema": "taiji-gradient-coverage-r38-v1",
+ "created": "2026-11-09T17:54:28",
+ "seed": 20261109,
+ "estimate_cpu_upper": 40.0,
+ "cpu_cap": 200.0,
+ "runner_sha256": "9bef8abb4c5f87b2b6229e528bd0426b894a24d7bca249dfdd359947dce1ae6f",
+ "core_sha256": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d"
+ },
+ "definition": {
+  "arm_a": "no records, one sentence; must reproduce R37's 95/61/40 split",
+  "arm_b": "one source record, one sentence; the copy branch of CopyExpression runs",
+  "arm_c": "no records, two sentences chained on the same state; the write heads see a second step",
+  "classes": "each parameter is nonzero (|grad| sum > 0), zero_only (grad present, sum 0) or none (no grad)",
+  "world": "the three prediction heads are expected to stay dark in all three arms",
+  "closed_state": "the nine legacy readings on the main subject stay equal before and after"
+ },
+ "criteria": {
+  "classification": "each arm classifies all 135 parameters; the three counts sum to 135",
+  "arm_a": "arm A reproduces R37: 95 with grad, 61 non-zero, 40 none and the same 40 names",
+  "arm_b": "all 12 expression copy-branch parameters leave the none set in arm B",
+  "arm_c": "all 16 write_heads parameters leave the none set in arm C",
+  "world": "all 12 world parameters stay in the none set in all three arms",
+  "closed_state": "the nine legacy readings stay equal and the main parameter digest does not move",
+  "rerun": "the R37 anchor carries a commit, a runner blob sha1, a runner sha256 and a core sha256"
+ },
+ "definition_digest": "966c7734ba139cf2b02c0c6f7639a3b09885f4e5a94c48f6cd0898bbc8dafbf7",
+ "counts": {
+  "describe_sentences": 20,
+  "r37_no_grad": 40,
+  "expression_copy": 12,
+  "world_heads": 12,
+  "write_heads": 16
+ },
+ "inputs": {
+  "goal": "r38",
+  "sentences": [
+   "让圆口的器皿到四方木台。",
+   "让圆口的器皿到靠窗的台面。"
+  ],
+  "source_text": "圆口的器皿放在木桌子上",
+  "r37_no_grad": [
+   "expression.a.weight",
+   "expression.continuation.bias",
+   "expression.continuation.weight",
+   "expression.coverage",
+   "expression.goal.bias",
+   "expression.goal.weight",
+   "expression.meta.weight",
+   "expression.mix.bias",
+   "expression.mix.weight",
+   "expression.position.weight",
+   "expression.score.weight",
+   "expression.z.weight",
+   "world.0.0.bias",
+   "world.0.0.weight",
+   "world.0.2.bias",
+   "world.0.2.weight",
+   "world.1.0.bias",
+   "world.1.0.weight",
+   "world.1.2.bias",
+   "world.1.2.weight",
+   "world.2.0.bias",
+   "world.2.0.weight",
+   "world.2.2.bias",
+   "world.2.2.weight",
+   "write_heads.0.0.bias",
+   "write_heads.0.0.weight",
+   "write_heads.0.2.bias",
+   "write_heads.0.2.weight",
+   "write_heads.1.0.bias",
+   "write_heads.1.0.weight",
+   "write_heads.1.2.bias",
+   "write_heads.1.2.weight",
+   "write_heads.2.0.bias",
+   "write_heads.2.0.weight",
+   "write_heads.2.2.bias",
+   "write_heads.2.2.weight",
+   "write_heads.3.0.bias",
+   "write_heads.3.0.weight",
+   "write_heads.3.2.bias",
+   "write_heads.3.2.weight"
+  ],
+  "rerun_anchors": [
+   {
+    "round": "R37",
+    "runner": "scripts/training/probe_taiji_checkpoint_20261109.py",
+    "rerun_commit": "842ecb094",
+    "runner_blob_sha1": "3f9c482e1f94d939c0461c688fd30ca2a2f988ae",
+    "report_runner_sha256": "9b7b26b0cd94a0bb69d30d5e8492d23f03e313aaa0b6083bfb1deb0550afb728",
+    "runner_blob_sha256": "9b7b26b0cd94a0bb69d30d5e8492d23f03e313aaa0b6083bfb1deb0550afb728",
+    "report_core_sha256": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d",
+    "matches_report": true,
+    "note": "R38 does not change living_core; R37 stays runnable at HEAD"
+   }
+  ]
+ }
+}
