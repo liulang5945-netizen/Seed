@@ -1,0 +1,151 @@
+{
+ "schema": "taiji-structure-readout-r51-report-v1",
+ "runner_sha256": "7a7a7be6052491bda6e8571179b6e420f4fcc11e166511d3047577aaee9c5436",
+ "manifest_sha256": "6db51f9e8efb57b82615b1da0adbc34ce03ffa1c76232f50a878d96aec620fc7",
+ "core_sha256": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d"
+ },
+ "definition": {
+  "write": "each describe sentence is written once with a write-enabled observe",
+  "task": "4-way object readout from the written fast",
+  "folds": "grouped by place: each test fold holds one place and all four objects",
+  "solve": "ridge in the training-row span (exact for ridge predictions), 16x16 not 8193x8193",
+  "decision": "best accuracy over the lambda grid >= 0.75 -> structure_linearly_readable",
+  "closed_state": "the nine legacy readings on the main subject stay equal before and after"
+ },
+ "criteria": {
+  "features": "20 finite feature vectors with 4 objects and 5 places",
+  "folds": "5 place folds, each test fold covers all four objects",
+  "grid": "accuracy is reported for every lambda",
+  "decision": "the frozen 0.75 gate decides readable/not",
+  "closed_state": "the nine legacy readings stay equal and the main parameter digest does not move",
+  "rerun": "the R50 anchor carries a commit, a runner blob sha1, a runner sha256 and a core sha256"
+ },
+ "reading": {
+  "samples": 20,
+  "dim": 8192,
+  "objects": [
+   "红色印章",
+   "绿色瓶子",
+   "蓝色杯子",
+   "黄色球"
+  ],
+  "folds": 5,
+  "rows": [
+   {
+    "lambda": 0.001,
+    "accuracy": 0.95
+   },
+   {
+    "lambda": 0.1,
+    "accuracy": 0.75
+   },
+   {
+    "lambda": 10.0,
+    "accuracy": 0.75
+   },
+   {
+    "lambda": 1000.0,
+    "accuracy": 0.75
+   }
+  ],
+  "best_accuracy": 0.95,
+  "chance": 0.25,
+  "predictions_last_lambda": [
+   1,
+   0,
+   1,
+   3,
+   2,
+   0,
+   2,
+   3,
+   2,
+   0,
+   1,
+   3,
+   2,
+   1,
+   1,
+   2,
+   1,
+   0,
+   1,
+   3
+  ],
+  "finite": true,
+  "linearly_readable": true,
+  "ok": true
+ },
+ "rerun_anchors": [
+  {
+   "round": "R50",
+   "runner": "scripts/training/probe_taiji_write_structure_20261109.py",
+   "rerun_commit": "d69a660bc",
+   "runner_blob_sha1": "86c924d057c6e22e14ddd1e41f38cffb71fc8502",
+   "report_runner_sha256": "4e9f1982502aa38b907ae965fd8d5786715e3347b6a772421c467a1876f8260a",
+   "runner_blob_sha256": "4e9f1982502aa38b907ae965fd8d5786715e3347b6a772421c467a1876f8260a",
+   "report_core_sha256": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d",
+   "matches_report": true,
+   "note": "R51 does not change living_core; R50 stays runnable at HEAD"
+  }
+ ],
+ "closed_state": {
+  "baseline": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "83fd9c8026855f72b9ec91330b73d83a26fd89baee97106037f08bd6f85c24b0",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk_none": true,
+   "sc_bridge_none": true,
+   "battery_sha": "6e97b9eb4dbc160b6143fdd9d523180b4c73e64a3ef8e8787e7d58a776353e14",
+   "battery_steps": 20
+  },
+  "after": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "83fd9c8026855f72b9ec91330b73d83a26fd89baee97106037f08bd6f85c24b0",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk_none": true,
+   "sc_bridge_none": true,
+   "battery_sha": "6e97b9eb4dbc160b6143fdd9d523180b4c73e64a3ef8e8787e7d58a776353e14",
+   "battery_steps": 20
+  },
+  "checks": {
+   "parameters_equal": true,
+   "state_equal": true,
+   "identity_equal": true,
+   "store_equal": true,
+   "battery_equal": true,
+   "steps_equal": true,
+   "sc_sfk_none": true,
+   "flag_disabled": true,
+   "rng_untouched": true
+  }
+ },
+ "main_parameter_sha_equal": true,
+ "bridge_default_none": true,
+ "verdict": {
+  "features": "features_finite",
+  "decision": "structure_linearly_readable",
+  "closed_state": "closed_state_equal",
+  "main_untouched": "main_subject_untouched",
+  "bridge_default": "bridge_default_none",
+  "rerun_anchors": "anchors_complete",
+  "overall": "structure_readout_measured"
+ },
+ "cost": {
+  "cpu_seconds": 1.46875,
+  "wall_seconds": 1.9633698463439941,
+  "cpu_cap": 200.0,
+  "estimate_cpu_upper": 20.0,
+  "threads": 1
+ }
+}
