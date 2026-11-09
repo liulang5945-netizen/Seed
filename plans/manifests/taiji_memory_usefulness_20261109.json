@@ -1,0 +1,71 @@
+{
+ "schema": "taiji-memory-usefulness-r46-v1",
+ "created": "2026-11-09T18:15:33",
+ "seed": 20261109,
+ "estimate_cpu_upper": 40.0,
+ "cpu_cap": 200.0,
+ "dose": 1000,
+ "target_shares": [
+  0.05,
+  0.2,
+  0.5,
+  0.8
+ ],
+ "confirm_share": 0.5,
+ "useful_delta": -0.05,
+ "runner_sha256": "fef08670383be3d8e00e4f0da610f5e4a05d16087444fab7ef38a934817e15ba",
+ "core_sha256": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d"
+ },
+ "definition": {
+  "write": "one write-enabled observe pass on sentence 0 produces the fast memory",
+  "scoring": "sentence 1 is scored teacher-forced, fast x1000 vs fast x0, same input scaling",
+  "shares": "target z shares 0.05, 0.2, 0.5, 0.8; the same s is used for both memory states",
+  "metric": "delta_nll = NLL(with memory) - NLL(without memory), nats/byte",
+  "baseline": "share 0.05 must reproduce the R45 influence direction (rel_logits > 0)",
+  "useful": "delta_nll <= -0.05 at share 0.5",
+  "closed_state": "the nine legacy readings on the main subject stay equal before and after"
+ },
+ "criteria": {
+  "write": "the written fast has abs sum > 0",
+  "baseline": "the share-0.05 row has rel_logits > 0",
+  "rows": "all four shares report NLL(with), NLL(without) and delta_nll",
+  "useful": "delta_nll <= -0.05 at share 0.5 decides the useful exit",
+  "closed_state": "the nine legacy readings stay equal and the main parameter digest does not move",
+  "rerun": "the R45 anchor carries a commit, a runner blob sha1, a runner sha256 and a core sha256"
+ },
+ "definition_digest": "221251b9273b48fca6cb06351cea150deee9ce3b65f77a6b7009c6ba15e2c0bd",
+ "counts": {
+  "describe_sentences": 20,
+  "shares": 4
+ },
+ "inputs": {
+  "goal": "r46",
+  "sentences": [
+   "让圆口的器皿到四方木台。",
+   "让圆口的器皿到靠窗的台面。"
+  ],
+  "target_shares": [
+   0.05,
+   0.2,
+   0.5,
+   0.8
+  ],
+  "rerun_anchors": [
+   {
+    "round": "R45",
+    "runner": "scripts/training/probe_taiji_rebalance_20261109.py",
+    "rerun_commit": "eba13a422",
+    "runner_blob_sha1": "950ee0ed2929505373c4eccc474c07101a8a07dd",
+    "report_runner_sha256": "b156ee9c649e16b3066d99b300e6a02f3c6b10c824a249cae4dff6e72233c9fb",
+    "runner_blob_sha256": "b156ee9c649e16b3066d99b300e6a02f3c6b10c824a249cae4dff6e72233c9fb",
+    "report_core_sha256": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d",
+    "matches_report": true,
+    "note": "R46 does not change living_core; R45 stays runnable at HEAD"
+   }
+  ]
+ }
+}

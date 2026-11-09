@@ -1,0 +1,143 @@
+{
+ "schema": "taiji-memory-usefulness-r46-report-v1",
+ "runner_sha256": "fef08670383be3d8e00e4f0da610f5e4a05d16087444fab7ef38a934817e15ba",
+ "manifest_sha256": "cdbdb256e713100d0cb185bc5d9a8630b3f1f56e03c94de63afdb4d731e92f24",
+ "core_sha256": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d"
+ },
+ "definition": {
+  "write": "one write-enabled observe pass on sentence 0 produces the fast memory",
+  "scoring": "sentence 1 is scored teacher-forced, fast x1000 vs fast x0, same input scaling",
+  "shares": "target z shares 0.05, 0.2, 0.5, 0.8; the same s is used for both memory states",
+  "metric": "delta_nll = NLL(with memory) - NLL(without memory), nats/byte",
+  "baseline": "share 0.05 must reproduce the R45 influence direction (rel_logits > 0)",
+  "useful": "delta_nll <= -0.05 at share 0.5",
+  "closed_state": "the nine legacy readings on the main subject stay equal before and after"
+ },
+ "criteria": {
+  "write": "the written fast has abs sum > 0",
+  "baseline": "the share-0.05 row has rel_logits > 0",
+  "rows": "all four shares report NLL(with), NLL(without) and delta_nll",
+  "useful": "delta_nll <= -0.05 at share 0.5 decides the useful exit",
+  "closed_state": "the nine legacy readings stay equal and the main parameter digest does not move",
+  "rerun": "the R45 anchor carries a commit, a runner blob sha1, a runner sha256 and a core sha256"
+ },
+ "reading": {
+  "fast_abs_sum": 12.10438346862793,
+  "dose": 1000,
+  "rows": [
+   {
+    "share": 0.05,
+    "scale": 0.7630120474102695,
+    "z_share": 0.05,
+    "nll_with": 5.596773147583008,
+    "nll_without": 5.597141742706299,
+    "delta_nll": -0.0003685951232910156,
+    "rel_logits": 0.01865828691529279
+   },
+   {
+    "share": 0.2,
+    "scale": 3.62430722519878,
+    "z_share": 0.2,
+    "nll_with": 5.600009441375732,
+    "nll_without": 5.601681232452393,
+    "delta_nll": -0.0016717910766601562,
+    "rel_logits": 0.08761372800885558
+   },
+   {
+    "share": 0.5,
+    "scale": 14.49722890079512,
+    "z_share": 0.5,
+    "nll_with": 5.637343406677246,
+    "nll_without": 5.642892837524414,
+    "delta_nll": -0.005549430847167969,
+    "rel_logits": 0.29975029412188675
+   },
+   {
+    "share": 0.8,
+    "scale": 57.988915603180494,
+    "z_share": 0.8000000000000002,
+    "nll_with": 6.164469242095947,
+    "nll_without": 6.176928997039795,
+    "delta_nll": -0.012459754943847656,
+    "rel_logits": 0.5196704090689872
+   }
+  ],
+  "baseline_rel_logits": 0.01865828691529279,
+  "confirm_delta_nll": -0.005549430847167969,
+  "useful": false,
+  "ok": true
+ },
+ "rerun_anchors": [
+  {
+   "round": "R45",
+   "runner": "scripts/training/probe_taiji_rebalance_20261109.py",
+   "rerun_commit": "eba13a422",
+   "runner_blob_sha1": "950ee0ed2929505373c4eccc474c07101a8a07dd",
+   "report_runner_sha256": "b156ee9c649e16b3066d99b300e6a02f3c6b10c824a249cae4dff6e72233c9fb",
+   "runner_blob_sha256": "b156ee9c649e16b3066d99b300e6a02f3c6b10c824a249cae4dff6e72233c9fb",
+   "report_core_sha256": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d",
+   "matches_report": true,
+   "note": "R46 does not change living_core; R45 stays runnable at HEAD"
+  }
+ ],
+ "closed_state": {
+  "baseline": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "83fd9c8026855f72b9ec91330b73d83a26fd89baee97106037f08bd6f85c24b0",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk_none": true,
+   "sc_bridge_none": true,
+   "battery_sha": "6e97b9eb4dbc160b6143fdd9d523180b4c73e64a3ef8e8787e7d58a776353e14",
+   "battery_steps": 20
+  },
+  "after": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "83fd9c8026855f72b9ec91330b73d83a26fd89baee97106037f08bd6f85c24b0",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk_none": true,
+   "sc_bridge_none": true,
+   "battery_sha": "6e97b9eb4dbc160b6143fdd9d523180b4c73e64a3ef8e8787e7d58a776353e14",
+   "battery_steps": 20
+  },
+  "checks": {
+   "parameters_equal": true,
+   "state_equal": true,
+   "identity_equal": true,
+   "store_equal": true,
+   "battery_equal": true,
+   "steps_equal": true,
+   "sc_sfk_none": true,
+   "flag_disabled": true,
+   "rng_untouched": true
+  }
+ },
+ "main_parameter_sha_equal": true,
+ "bridge_default_none": true,
+ "verdict": {
+  "write": "memory_written",
+  "baseline": "baseline_reproduces_r45",
+  "useful": "memory_not_predictive",
+  "closed_state": "closed_state_equal",
+  "main_untouched": "main_subject_untouched",
+  "bridge_default": "bridge_default_none",
+  "rerun_anchors": "anchors_complete",
+  "overall": "memory_usefulness_measured"
+ },
+ "cost": {
+  "cpu_seconds": 2.640625,
+  "wall_seconds": 3.0987603664398193,
+  "cpu_cap": 200.0,
+  "estimate_cpu_upper": 40.0,
+  "threads": 1
+ }
+}
