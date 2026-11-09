@@ -161,9 +161,11 @@ class BridgeTable:
         start_capacity: int = START_CAPACITY,
         key_fn: Any = phrase_key,
         read_mode: str = "token",
+        allowed_authorities: tuple[str, ...] = (),
     ) -> None:
         self.key_fn = key_fn
         self.read_mode = read_mode
+        self.allowed_authorities = tuple(allowed_authorities)
         self.capacity = int(start_capacity)
         self.peak_capacity = int(start_capacity)
         self.records: list[dict[str, Any]] = []
@@ -200,6 +202,7 @@ class BridgeTable:
             "correction_batches": self.correction_batches,
             "corrected": self.corrected,
             "rejected_corrections": self.rejected_corrections,
+            "allowed_authorities": list(self.allowed_authorities),
             "corrections": self._correction_payload(),
             "records": self._record_payload(),
         }
@@ -241,6 +244,8 @@ class BridgeTable:
                 "key": row["key"],
                 "from": value_key(row["from"]),
                 "to": value_key(row["to"]),
+                "authority": row.get("authority", ""),
+                "reason": row.get("reason", ""),
             }
             for row in self.corrections
         ]
@@ -361,7 +366,13 @@ class BridgeTable:
             "items_detail": planned,
         }
 
-    def correct(self, items: Iterable[tuple[str | bytes, Any, Any]]) -> dict[str, Any]:
+    def correct(
+        self,
+        items: Iterable[tuple[str | bytes, Any, Any]],
+        *,
+        authority: str = "",
+        reason: str = "",
+    ) -> dict[str, Any]:
         """Explicit compare-and-swap correction, appended to an audit log.
 
         ``items`` are ``(text, expected_value, new_value)``.  The whole batch is
@@ -377,14 +388,39 @@ class BridgeTable:
           different new values, ``rejected_batch_correction_duplicate_key`` for
           the same one).
 
-        On acceptance every row appends ``{key, from, to}`` to ``corrections``
-        and the current value becomes ``new_value``.  ``count`` is not touched:
-        a correction is not an observation.  The old value is never readable
-        again; it survives only in the log.
+        ``authority`` and ``reason`` are provenance, not a second credential.
+        When ``allowed_authorities`` is non-empty, a missing authority is
+        rejected as ``rejected_batch_missing_authority`` and an unlisted one as
+        ``rejected_batch_unknown_authority``; both reject before any row is
+        planned.  An empty allow-list keeps the earlier behaviour (any caller
+        may correct) and records the empty provenance.
+
+        On acceptance every row appends ``{key, from, to, authority, reason}`` to
+        ``corrections`` and the current value becomes ``new_value``.  ``count``
+        is not touched: a correction is not an observation.  The old value is
+        never readable again; it survives only in the log.
         """
         items = list(items)
         self.correction_batches += 1
         digest_before = self.content_digest()
+        if self.allowed_authorities:
+            if not authority:
+                self.rejected_corrections += 1
+                return {
+                    "action": "rejected_batch_missing_authority",
+                    "items": len(items),
+                    "batch": self.correction_batches,
+                    "digest_unchanged": self.content_digest() == digest_before,
+                }
+            if authority not in self.allowed_authorities:
+                self.rejected_corrections += 1
+                return {
+                    "action": "rejected_batch_unknown_authority",
+                    "items": len(items),
+                    "authority": authority,
+                    "batch": self.correction_batches,
+                    "digest_unchanged": self.content_digest() == digest_before,
+                }
         planned: list[dict[str, Any]] = []
         seen: dict[Any, str] = {}
         for position, (text, expected, new_value) in enumerate(items):
@@ -457,7 +493,15 @@ class BridgeTable:
             )
         for row in planned:
             self.records[row["address"]]["value"] = row["to"]
-            self.corrections.append({"key": row["key"], "from": row["from"], "to": row["to"]})
+            self.corrections.append(
+                {
+                    "key": row["key"],
+                    "from": row["from"],
+                    "to": row["to"],
+                    "authority": authority,
+                    "reason": reason,
+                }
+            )
             self.corrected += 1
         return {
             "action": "corrected",

@@ -1,0 +1,191 @@
+{
+ "schema": "taiji-bridge-authority-r21-v1",
+ "created": "2026-11-09T16:37:05",
+ "seed": 20261109,
+ "estimate_cpu_upper": 30.0,
+ "cpu_cap": 200.0,
+ "runner_sha256": "9d167ecc1671c6a4e64cbc9fcd5c3a5fac2e02f64d7d6d4154a5b7cae31d4f10",
+ "bridge_sha256": "d31f66f3cca3d6b04bdc46e2f61163c2d5b07a3c604480c31c0e73d1f5a4bbee",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "8fa3aafde38b1cbad3b021dc271abd316c0a265c68870403dd4ca7b0b53e0c6a"
+ },
+ "definition": {
+  "provenance": "correct(items, authority=..., reason=...) records authority and reason in the audit log; provenance is not a second credential",
+  "policy": "BridgeTable(allowed_authorities=(...)); empty means no policy and keeps the earlier behaviour; non-empty requires an authority from the list",
+  "missing_authority": "with a non-empty policy, a correction without authority is rejected as rejected_batch_missing_authority before any row is planned",
+  "unknown_authority": "with a non-empty policy, an authority not in the list is rejected as rejected_batch_unknown_authority",
+  "allowed": "an allowed authority plus a reason is accepted and both are logged",
+  "stale": "an allowed authority with a stale credential is still rejected as rejected_batch_correction_mismatch; provenance does not replace the CAS",
+  "plain_write": "a plain conflicting write is still rejected; the policy does not change the write path",
+  "default_table": "the 18-key table keeps the empty policy: alias round-trip returns the content digest, R15 stays 40/40, zeros stay 0/0, and the log authorities are empty",
+  "chain": "a two-step chain under one allowed authority logs both steps with authority and reason",
+  "rerun_anchors": "R18, R19 and R20 carry the commit at which their own runner bytes were last runnable, because R21 changes the bridge module their manifests pin",
+  "closed_state": "the nine closed-state readings stay equal before and after"
+ },
+ "criteria": {
+  "backward": "action corrected; one log entry with empty authority and reason",
+  "missing": "action rejected_batch_missing_authority; content digest unchanged; log empty",
+  "unknown": "action rejected_batch_unknown_authority; content digest unchanged; log empty",
+  "allowed": "action corrected; one log entry with authority=verifier:v1 and reason=evidence:r21",
+  "stale": "action rejected_batch_correction_mismatch; content digest unchanged; log empty",
+  "plain_write": "action rejected_batch_address_already_bound; read CUP; log empty; content digest unchanged",
+  "default_table": "content digest equal after the round trip; regression 40/40 with wrong 0; zeros 0/0; log length 2 and both authorities empty",
+  "chain": "two corrected actions; read GREEN; log length 2; both authorities verifier:v1; reasons step1 and step2",
+  "rerun": "every row names a commit, a runner blob sha1, a runner sha256 and the bridge sha256 used by the report",
+  "closed_state": "the nine closed-state readings stay equal before and after",
+  "reporting": "segments are reported separately; a policy rejection is evidence that the authority is checked, not evidence that the new value is correct"
+ },
+ "definition_digest": "ecabae359405f2719e775cf7f605a264c834ed4b85f610ccbd9650871f8b142f",
+ "counts": {
+  "authority_cases": 7,
+  "default_table_round_trip": 1,
+  "regression_sentences": 20,
+  "unknown_candidates": 12,
+  "fragments": 18,
+  "rerun_anchors": 3
+ },
+ "inputs": {
+  "base_key": "甲乙",
+  "alias_key": "喝水的杯子",
+  "authority": "verifier:v1",
+  "reason": "evidence:r21",
+  "values": [
+   [
+    "object",
+    "蓝色杯子"
+   ],
+   [
+    "object",
+    "红色印章"
+   ],
+   [
+    "object",
+    "绿色瓶子"
+   ],
+   [
+    "place",
+    "木桌"
+   ],
+   [
+    "place",
+    "书架"
+   ]
+  ],
+  "aliases": [
+   [
+    "喝水的杯子",
+    [
+     "object",
+     "蓝色杯子"
+    ]
+   ],
+   [
+    "盖章用的印章",
+    [
+     "object",
+     "红色印章"
+    ]
+   ],
+   [
+    "盛水的瓶子",
+    [
+     "object",
+     "绿色瓶子"
+    ]
+   ],
+   [
+    "圆形的皮球",
+    [
+     "object",
+     "黄色球"
+    ]
+   ],
+   [
+    "方方正正的木桌子",
+    [
+     "place",
+     "木桌"
+    ]
+   ],
+   [
+    "窗前的台板",
+    [
+     "place",
+     "窗台"
+    ]
+   ],
+   [
+    "手边的小盒子",
+    [
+     "place",
+     "左盒"
+    ]
+   ],
+   [
+    "墙上的架子",
+    [
+     "place",
+     "书架"
+    ]
+   ],
+   [
+    "脚下的垫子",
+    [
+     "place",
+     "地毯"
+    ]
+   ]
+  ],
+  "unknown_candidates": [
+   "黑色铁铃",
+   "白色帆布",
+   "长柄铜勺",
+   "软木瓶塞",
+   "蓝色毛巾",
+   "银质圆镜",
+   "棕色皮箱",
+   "青色陶罐",
+   "灰色石阶",
+   "紫色绸带",
+   "金色烛台",
+   "深红木箱"
+  ],
+  "rerun_anchors": [
+   {
+    "round": "R18",
+    "runner": "scripts/training/probe_taiji_bridge_correction_20261109.py",
+    "rerun_commit": "64a221f37",
+    "runner_blob_sha1": "93919b40be8891a315100415751b8119365b9668",
+    "report_runner_sha256": "4ba6e0a0331e20f44067abfc537d0e619756ead0bf1400e5fbfc3a58f00652e4",
+    "runner_blob_sha256": "4ba6e0a0331e20f44067abfc537d0e619756ead0bf1400e5fbfc3a58f00652e4",
+    "report_bridge_sha256": "65d86897c25544e683f757d4771f2d7e516476528bafd9520e14bdc59ab1fbd4",
+    "matches_report": true,
+    "note": "current HEAD cannot run it after R21 (bridge sha changed); checkout this commit"
+   },
+   {
+    "round": "R19",
+    "runner": "scripts/training/probe_taiji_bridge_correction_loop_20261109.py",
+    "rerun_commit": "dcda39ca9",
+    "runner_blob_sha1": "a89b1f47b29c66c5f6f1ae11c2ee710e07f921bb",
+    "report_runner_sha256": "bd92a15aec36488ee8f5c7c3e238c31e91aabfab773eee6d155450b1a04bddf8",
+    "runner_blob_sha256": "bd92a15aec36488ee8f5c7c3e238c31e91aabfab773eee6d155450b1a04bddf8",
+    "report_bridge_sha256": "65d86897c25544e683f757d4771f2d7e516476528bafd9520e14bdc59ab1fbd4",
+    "matches_report": true,
+    "note": "current HEAD cannot run it after R21 (bridge sha changed); checkout this commit"
+   },
+   {
+    "round": "R20",
+    "runner": "scripts/training/probe_taiji_bridge_pair_correction_20261109.py",
+    "rerun_commit": "56c87bbd0",
+    "runner_blob_sha1": "9e9e7a5b269a62dd552acd22e5590f4c4fa29797",
+    "report_runner_sha256": "1af43c0b54e92969c1ab8b4784797c4ed303d7f5da323de938e12d0d6997e7a0",
+    "runner_blob_sha256": "1af43c0b54e92969c1ab8b4784797c4ed303d7f5da323de938e12d0d6997e7a0",
+    "report_bridge_sha256": "65d86897c25544e683f757d4771f2d7e516476528bafd9520e14bdc59ab1fbd4",
+    "matches_report": true,
+    "note": "current HEAD cannot run it after R21 (bridge sha changed); checkout this commit"
+   }
+  ]
+ }
+}
