@@ -11,6 +11,8 @@
 |---|---|---|---|
 | D-20261109-01 | 判据改写（冻结记录事后修正，判据本身未变） | 仅格式重跑后改写 manifest 的 `runner_sha256`／`freeze_note`，判据与语料未动、读数逐项相同 | 7c8eb0646 |
 | D-20261109-02 | 方向取舍（四选一） | 队首定为“表示层”，放弃“训练合流／更短地址／外部语料” | 2d88d0ddc |
+| D-20261109-03 | 判据改写（读数前口径修正） | 无关对由文字“120”更正为完整枚举 1,920（120 个无关 goal 对 × 16 句对），首份未入库 manifest 删除重冻 | 见本笔提交 |
+| D-20261109-04 | 判据改写（读数后夹具字面修正，重跑读数逐项相同） | 夹具 `native_goal_world_wide.states` 的 `zip` 补 `strict=True` 以满足仓库 B905 闸；夹具 sha 变更、重冻重跑，全部读数相同 | 见本笔提交 |
 
 ---
 
@@ -85,3 +87,76 @@
 
 **8. 对已有结论的影响**：**无读数作废**；地址层 U35／§20／§47 结论与全部读数仍可比。本笔只改“下一步做什么”，不改“已经测到什么”。
 
+---
+
+## D-20261109-03 表示层预注册：无关对的口径修正（读数前）
+
+**1. 编号／时间／类型**：D-20261109-03｜2026-11-09｜判据改写类——**首个读数之前**的口径修正（分母枚举粒度），没有任何读数被覆盖或作废。
+
+**2. 动了什么（逐字）**：文件 `plans/manifests/taiji_representation_20261109.json`，第一次 `--freeze` 写出的版本（**从未入库**，已删除）与第二次 `--freeze` 的版本对照。
+
+- `definition.unrelated_pair`
+  - 原值（逐字）：`two goals with a different object AND a different place: 120. A cross-goal pair that shares exactly one entity is a near pair (70); near pairs are printed and excluded from the verdict.`
+  - 新值（逐字）：`two sentences whose goals differ in object AND place: 120 unrelated goal pairs x 16 sentence pairs = 1,920. Enumerated completely, not subsampled: picking one rendering per goal would be a template choice made after seeing the fixture. A cross-goal pair that shares exactly one entity is a near pair (70 goal pairs, 1,120 sentence pairs); near pairs are printed and excluded from the distributions and the verdict.`
+  - 同时新增 `definition.imbalance`：`same 120 vs unrelated 1,920. The AUC and the per-distribution quantiles are defined for unequal counts, and no verdict threshold is applied to the counts themselves.`
+- `criteria.C2_counts`
+  - 原值（逐字）：`80 sentences, 120 same pairs, 120 unrelated pairs, 70 near pairs; every pair is flagged same, unrelated or near before any distance is computed.`
+  - 新值（逐字）：`80 sentences, 120 same pairs, 1,920 unrelated pairs, 1,120 near pairs; every pair is flagged same, unrelated or near before any distance is computed.`
+- `counts.unrelated_pairs`／`counts.near_pairs_excluded_from_verdict`：两次冻结均为 **1,920／1,120**，**未变**。
+- runner 文档串同步（`120 unrelated` → `1,920`，并写明“完整枚举、不抽样”）。
+
+**3. 触发原因**：第一次 `--freeze` 回显 `unrelated_pairs=1920`、`near_pairs=1120`，与同一次冻结写入的文字“120／70”自相矛盾。矛盾在**计算任何距离之前**发现（当时只有 freeze 回显，无任何读数），故删除未入库的 manifest、修正文字后重冻。读数出处：`plans/manifests/taiji_representation_20261109.json` 的 `counts`。
+
+**4. 代价**：
+
+- 失去的保证：manifest“一次写成不再删除”的形式保证被打破一次（首版未入库，无外部引用）。
+- 变化的分母／分类：无关对由设计文字的 120 变为完整枚举 1,920；near 由 70 变为 1,120。same 仍 120。
+- 旧结论可比性：本笔发生在首个读数之前，**无可比的旧读数**；地址层线的全部读数不受影响。
+- 预算：两次 freeze 各 <0.2 CPU，正式读数 1.5 CPU，未超限。
+
+**5. 替代方案（及否掉理由）**：
+
+- 按文字把无关对压到 120（每个 goal 只取一句渲染）：**否决**——选哪一句必须看夹具后决定（模板偏置），且会让 same／unrelated 的模板分布不对称，是典型的“先看数据再定口径”。
+- 保留 1,920 但让文字保持含糊：**否决**——预注册内部自相矛盾，事后无法复核。
+
+**6. 撤回路径**：删除 `plans/manifests/taiji_representation_20261109.json` 与 `reports/taiji_representation_20261109*.json*`，把 runner 的 `definition.unrelated_pair`／`criteria.C2_counts`／文档串改回 `120／120／70`，重新 `--freeze` 后重跑；无代码路径、无地址层、无语料改动。
+
+**7. 授权来源**：用户 2026-11-09 授权（放权，须留档）。
+
+**8. 对已有结论的影响**：**无读数作废**（本笔早于首个读数）。本轮报告与 manifest 在 1,920／1,120 上一致；地址层 U35／§20／§47 与全部旧读数仍可比。
+
+---
+
+## D-20261109-04 夹具字面修正后重冻重跑（读数逐项相同）
+
+**1. 编号／时间／类型**：D-20261109-04｜2026-11-09｜判据改写类——**读数之后**对夹具文件做 lint 字面修正（不加 `strict=True` 无法通过仓库的 B905 闸），因此按“不覆盖原判据、并列保留新旧读数”的方式重冻重跑。
+
+**2. 动了什么（逐字）**：文件 `taiji/native_goal_world_wide.py`，函数 `states()`。
+
+- 原值（逐字）：`tuple(zip(OBJECTS, placement)) for placement in itertools.permutations(PLACES, len(OBJECTS))`
+- 新值（逐字）：
+  `tuple(zip(OBJECTS, placement, strict=True))`
+  `for placement in itertools.permutations(PLACES, len(OBJECTS))`
+- 该文件此前**从未入库**（本轮首次提交），`B905` 是 pre-commit 的唯一阻塞项。`strict=True` 只断言两个等长可迭代的长度一致，**不改变任何数据**（`OBJECTS` 恒为 4 项，`placement` 恒为 4 项）。
+- 连带：`plans/manifests/taiji_representation_20261109.json` 重写（`fixture_sha256` 中该文件 `3ebe92fb36f4…` → `01ef1914a576…`，另两个夹具文件哈希未变），报告重跑，`fixture_sha256` 同步。
+
+**3. 触发原因**：首次提交被 pre-commit 的 ruff `B905` 拦下（“zip() without an explicit strict= parameter”），且纪律禁止 `--no-verify`。夹具文件字节一变，manifest 的 `fixture_sha256` 就不再描述将入库的文件，故必须重冻重跑。读数出处：原报告（staged，未入库）与新报告 `reports/taiji_representation_20261109.json`。
+
+**4. 代价**：
+
+- 失去的保证：夹具字节在冻结后被改过一次（虽为 lint 字面、无行为变化）。
+- 变化的分母／分类：**无**。80 句／same 120／unrelated 1,920／near 1,120 全部不变。
+- 旧结论可比性：**全部可比**。逐项比对 `readings`／`verdict`／`decision_arms`／`counts`／`sentences`／`thresholds`／`definition`／`criteria` 八个子树，**完全相同**；runner 双列 sha 仍为 `b04ef3de…`（runner 未改）。
+- 预算：重跑 **1.922 CPU／0.605 wall**（上限 200），未超限；该次属“作废重跑”，**不计入有效预算**（有效预算为首次 1.5 CPU），单列于此。
+
+**5. 替代方案（及否掉理由）**：
+
+- `# noqa: B905` 挂在该行——**否决**：同样改夹具字节、同样要重冻重跑，却把 lint 抑制写进数据文件，且遮蔽了真实可加的断言。
+- `git commit --no-verify`——**否决**：纪律明令禁止跳过 hook。
+- 不提交夹具、只提交 runner 与报告——**否决**：manifest 引用的夹具文件不在仓库里，证据链断裂。
+
+**6. 撤回路径**：把 `taiji/native_goal_world_wide.py` 的 `strict=True` 去掉、恢复 `zip(OBJECTS, placement)`，删除 manifest 与报告后重新 `--freeze` 重跑；或 `git revert` 本笔提交（会同时撤回表示层闸的其余文档与读数）。无地址层、无语料、无判据改动。
+
+**7. 授权来源**：用户 2026-11-09 授权（放权，须留档）。
+
+**8. 对已有结论的影响**：**无读数作废**——新旧读数逐项相同，判定仍为 `representation_not_supported`。唯一变化是夹具文件 sha；地址层线（U35／§20／§47）与全部旧读数不受影响。

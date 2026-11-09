@@ -1339,3 +1339,44 @@ manifest：`plans/manifests/taiji_a1_offfixture_20261108.json`（`freeze_revisio
 **收束**：连续性子序列线到此关闭，后续只在四个方向之一继续（默认建议见队首）：① 表示层（语义匹配）；② 训练合流；③ 更短地址（<16 B）；④ 外部语料复核。本轮不启动任何新方向。
 
 **回执（2026-11-09，0 训练／0 优化器步／0 Adam／0 confirm／0 新容差）**：[开启态报告](../../reports/taiji_contig_20261109.json)＋[全量输出](../../reports/taiji_contig_20261109_outputs.jsonl)＋[关闭态](../../reports/taiji_contig_20261109_closed.json)＋[人工打分](../../reports/taiji_contig_20261109_scores.json)（census 9 条）＋[manifest](../manifests/taiji_contig_20261109.json)（freeze_revision 4）＋runner [probe_taiji_contig_20261109.py](../../scripts/training/probe_taiji_contig_20261109.py)（双列 sha `b804a5d4…`）＋能力卡 U35＋账本 §47。判定 **`continuity_restored`**。
+
+---
+
+## 21. 表示层：同内容异说法 vs 无关内容（2026-11-09，**0 训练／0 优化器步／0 Adam／0 confirm／0 新参数**；§20 的唯一后继已执行）
+
+**21.1 问题**。§20 收口后，字节级锚定线只剩一句话：**锚定当且仅当原样出现**。它没有可训练自由度，也不证明语义匹配。要让地址层接进训练图，先得回答：**项目现有的文本表示，能不能把“同一内容的不同说法”从“无关内容”里分出来？** 这一节只测这一件事，不训练、不加参数。
+
+**21.2 夹具（冻结前写入 manifest）**。世界取 `taiji/native_goal_world_wide.py`：4 物件 × 5 地点＝**20 goals**。每个 goal 写四种说法——`describe_goal`（实体描述，如“让圆口的器皿到四方木台。”）与 `paraphrase_goal` 的 `needs`／`hope`／`state`（用实体名，如“蓝色杯子该待在木桌。”）——共 **80 句**。
+- **same 对**：同一 goal 的两种说法，20 × C(4,2) = **120**。
+- **unrelated 对**：两个 goal 的物件与地点都不同。**完整枚举**为 120 个无关 goal 对 × 16 句对 = **1,920**；不抽一句代表，因为“选哪一句”会是看过夹具后的模板选择。不平衡由 AUC 与逐分布分位数处理，判定不对计数设阈值。
+- **near 对**：跨 goal 但恰好共享一个实体，70 个 goal 对 × 16 = **1,120**；只打印距离，不进分布、不进判定。
+- 距离＝1 − 余弦；R1／R3 已是单位向量，R2 在比较前归一化。
+
+**21.3 表示（全部只读）**。
+| 代号 | 表示 | 说明 |
+|---|---|---|
+| R1 | `LivingCoreReference.content_feature` | 128 桶字节直方图、L2 归一化、`content_centered` 保持默认 False。**与顺序无关**。 |
+| R2 | `reference.encoder.context(raw).mean(0)` | 128 维；权重是 `LivingCoreReference(seed=20261031)` 的随机初始化，**未训练**。 |
+| R3 | `instruments.document_embedding.DocumentEmbedder` | `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2`，384 维、mean pooling、L2。**仅上界对照**；只在本机缓存已存在时使用，否则 `unavailable`，不下载、不改判据。 |
+| B | 字符 bigram Jaccard | 词法基线，同配对口径。 |
+
+**21.4 判据（冻结后不改）**。每个表示：`separates` 当且仅当 gap>0 且 AUC≥0.95 且 1-NN≥0.90；`overlaps` 当 gap≤0 或 AUC<0.90；否则 `inconclusive`。总判定：R1／R2／B 三臂全 `overlaps` ⇒ `representation_not_supported`；R1 `separates` 且 R2 `overlaps` ⇒ `lexical_overlap_only`；R2 `separates` ⇒ `representation_supported_without_training`；其余 `inconclusive`。R3 不进判定。
+
+**21.5 读数（两分布并排，完整分位数见报告）**。
+
+| 表示 | same 中位（p10／p90／max） | unrelated 中位（p10／p90） | gap | AUC | 直方重叠 | unrelated≤p90(same) | 1-NN | 判定 |
+|---|---|---|---|---|---|---|---|---|
+|---|---|---|---|---|---|---|---|---|
+| R1 | **0.2697**（0.1393／0.3891／0.4893） | **0.3520**（0.1915／0.4596） | **−0.1976** | **0.697** | **0.675** | **66.4%**（1,275/1,920） | **0/80** | `overlaps` |
+| R2 | **0.2255**（0.1028／0.3593／0.4579） | **0.2842**（0.1453／0.4065） | **−0.2140** | **0.662** | **0.753** | **78.1%**（1,500/1,920） | **0/80** | `overlaps` |
+| B | **0.8279**（0.6000／1.0000／1.0000） | **1.0000**（0.8000／1.0000） | **−0.2000** | **0.734** | 0.431 | **100%**（1,920/1,920） | **0/80** | `overlaps` |
+
+**21.6 判定：`representation_not_supported`**。三臂全 `overlaps`。两分布的中央带互相压住：R1 的 p90(same)=0.3891 高于 unrelated 的 p10=0.1915，R2 与 B 同向；把 unrelated 的 66.4%（R1）／78.1%（R2）都放进 same 的 p90 以内。**没有任何阈值能把这当作“表征已分开”**——所以不调阈值。
+
+**21.7 1-NN 为什么全灭（逐条复核）**。夹具里 `describe` 用实体描述、三种 paraphrase 用实体名；而“同物件换地点”的 near 对在词法上总比“同 goal 跨家族”更近。于是每一句的最近邻都落到 near 对，same-goal 从未成为最近邻。独立用 bigram 重算 80/80 判错，与报告一致。
+
+**21.8 诊断：名内可分、跨家族不可分（事后拆分，不改判定）**。把 120 个 same 对按词法家族拆开：R1 名内 paraphrase 60 条 min 0.1258／中位 **0.1704**／p90 0.2190／max 0.2777；`describe`↔paraphrase 60 条 0.2569／**0.3517**／0.4089／0.4893。对照 unrelated 的 p25 **0.2765**、中位 **0.3520** ⇒ 名内 paraphrase 全部低于 unrelated 的 p25（**可分**），跨家族与 unrelated 中位重合（**不可分**）。
+
+**21.9 它证明什么／不能证明什么**。证明：在 20-goal 夹具上，现有表示对“同内容同族改写”有弱信号，但对“同内容跨词法家族”没有；三臂的 1-NN 与重叠读数都不支持“表征已分开”。不能证明：任何语义匹配能力（无可训练自由度、未与训练图合流）；不能回答“这个夹具是否存在可分上界”——R3 本机无缓存、本轮未下载，留待下一臂。
+
+**21.10 证据**。[manifest](../manifests/taiji_representation_20261109.json)（`--freeze` 写入，含 3 个夹具文件哈希与判据）＋[正式读数](../../reports/taiji_representation_20261109.json)＋[家族拆分](../../reports/taiji_representation_20261109_split.json)＋runner [probe_taiji_representation_20261109.py](../../scripts/training/probe_taiji_representation_20261109.py)（双列 sha `b04ef3de…`）＋能力卡 U36＋账本 §48；口径修正 D-20261109-03。成本 **1.9 CPU／0.605 wall**（上限 200）。**下一唯一动作＝R3 上界臂**：冻结句向量取到本机缓存后，用同一 80 句／配对／分布读数测上界；不进判定、不改判据、不开训练窗。

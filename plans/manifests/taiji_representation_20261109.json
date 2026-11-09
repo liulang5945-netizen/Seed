@@ -1,0 +1,72 @@
+{
+ "schema": "taiji-representation-v1",
+ "date": "2026-11-09",
+ "frozen_at": "2026-11-09T10:28:32",
+ "runner_sha256": "b04ef3def50f13622e728f0131bd4b55650d2538b6c7b6460fc7559df3733850",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "8fa3aafde38b1cbad3b021dc271abd316c0a265c68870403dd4ca7b0b53e0c6a"
+ },
+ "fixture_files": [
+  "taiji/native_goal_world_wide.py",
+  "taiji/goal_paraphrase.py",
+  "taiji/living_core.py"
+ ],
+ "question": "with 20 goals written four ways each, does an existing text representation put the 120 same-content pairs closer than the 120 unrelated pairs -- and do the two distance distributions actually separate, or only look separated under a threshold?",
+ "counts": {
+  "goals": 20,
+  "variants": [
+   "describe",
+   "needs",
+   "hope",
+   "state"
+  ],
+  "sentences": 80,
+  "same_pairs": 120,
+  "unrelated_pairs": 1920,
+  "near_pairs_excluded_from_verdict": 1120
+ },
+ "thresholds": {
+  "auc_separates": 0.95,
+  "auc_overlap": 0.9,
+  "nn_separates": 0.9,
+  "histogram_bins": 15
+ },
+ "representation_config": {
+  "reference_seed": 20261031,
+  "content_centered": false,
+  "sc_sfk_enabled": false,
+  "torch_version": "2.13.0+cpu",
+  "R3_policy": "used iff the weights are already in the local HuggingFace cache; otherwise unavailable and excluded from the verdict"
+ },
+ "definition": {
+  "fixture": "OBJECTS x PLACES = 4 x 5 = 20 goals.  Each goal is rendered four ways: describe_goal (entity descriptions) and the three paraphrases needs / hope / state. 80 sentences, 4 per goal, no sentence reused.",
+  "same_pair": "two distinct wordings of the same (object, place) goal: 20 x C(4,2) = 120.",
+  "unrelated_pair": "two sentences whose goals differ in object AND place: 120 unrelated goal pairs x 16 sentence pairs = 1,920.  Enumerated completely, not subsampled: picking one rendering per goal would be a template choice made after seeing the fixture.  A cross-goal pair that shares exactly one entity is a near pair (70 goal pairs, 1,120 sentence pairs); near pairs are printed and excluded from the distributions and the verdict.",
+  "imbalance": "same 120 vs unrelated 1,920.  The AUC and the per-distribution quantiles are defined for unequal counts, and no verdict threshold is applied to the counts themselves.",
+  "distance": "1 - cosine for R1/R2/R3 (R1 and R3 are unit vectors; R2 is normalised here).",
+  "R1": "LivingCoreReference.content_feature: 128-bin byte histogram, L2-normalised, content_centered kept at its default False.  Order-free by construction.",
+  "R2": "mean over positions of reference.encoder.context(raw), 128 dims.  Weights are the random initialisation of LivingCoreReference(seed=20261031); no gradient step is taken, so this is the untrained encoder, not a learned representation.",
+  "R3": "instruments.document_embedding.DocumentEmbedder (sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2, mean pooling, L2-normalised). Upper bound only.  It is used iff the weights are already in the local HuggingFace cache; no download is attempted and the criteria do not depend on it.",
+  "B": "character-bigram Jaccard distance, 1 - |A & B| / |A | B|, same pair protocol.",
+  "distribution": "for each representation both distributions are reported in full: min, p10, p25, median, p75, p90, max, mean, over the frozen 120 same pairs and 120 unrelated pairs.",
+  "overlap": "three readings per representation: unrelated pairs at or below p90(same); same pairs at or above p10(unrelated); histogram overlap coefficient sum_i min(s_i/n_s, u_i/n_u) over 15 equal-width bins spanning the pooled range.  Overlap is reported next to accuracy because a high accuracy can come from a threshold that happens to sit in the middle.",
+  "classification": "leave-one-out 1-NN over the 80 sentences: a sentence is correct iff its nearest other sentence belongs to the same goal.  Cosine distance, ties broken by smaller index.",
+  "gap": "p10(unrelated) - p90(same); positive means the central bands do not overlap.",
+  "auc": "Mann-Whitney P(distance(same) < distance(unrelated)), ties counted as 0.5.",
+  "verdict_order": "R1, R2 and B decide the overall verdict; R3 is an upper bound and never decides it.  All three overlaps -> representation_not_supported; R1 separates and R2 overlaps -> lexical_overlap_only; R2 separates -> representation_supported_without_training; otherwise inconclusive."
+ },
+ "criteria": {
+  "C1_freeze": "the manifest is written before the first reading with the runner sha, the three fixture file hashes, the pair definitions and the verdict thresholds; the run refuses to start if a fixture file changed after the freeze.",
+  "C2_counts": "80 sentences, 120 same pairs, 1,920 unrelated pairs, 1,120 near pairs; every pair is flagged same, unrelated or near before any distance is computed.",
+  "C3_distributions": "for R1, R2, B and (when cached) R3 both distributions are printed with the seven quantiles, the AUC, the gap and the three overlap readings.",
+  "C4_classification": "leave-one-out 1-NN accuracy is reported on the same 80 sentences.",
+  "C5_verdict": "per representation separates iff gap > 0 and AUC >= 0.95 and 1-NN >= 0.90; overlaps iff gap <= 0 or AUC < 0.90; otherwise inconclusive.  The overall verdict follows the frozen order and is not revisited after the reading.",
+  "C6_no_fit": "0 training, 0 optimizer steps, 0 Adam, 0 confirm, 0 new parameters; the only tensors allocated are the random-initialised reference and the frozen cached model."
+ },
+ "cost_estimate": {
+  "estimate_cpu_seconds": 30.0,
+  "note": "80 sentences x 2 encoders (128 dims, ~20 bytes each) + 3,160 pair distances + 4 x 80x80 matrices; the reference is constructed once.  Below the 200 CPU cap."
+ }
+}

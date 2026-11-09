@@ -1,0 +1,54 @@
+{
+ "schema": "taiji-representation-split-v1",
+ "date": "2026-11-09",
+ "note": "post-reading split of the frozen same-pair distances by lexical family; derived read-only from reports/taiji_representation_20261109.json (pairs + sentence variants); the frozen verdict is unchanged",
+ "source": "reports/taiji_representation_20261109.json",
+ "arms": {
+  "R1": {
+   "rule": "within = both variants are name-based paraphrases; cross = one describe and one paraphrase",
+   "within_paraphrase": {
+    "n": 60,
+    "min": 0.125806,
+    "median": 0.170434,
+    "p90": 0.219037,
+    "max": 0.277704
+   },
+   "describe_cross": {
+    "n": 60,
+    "min": 0.256892,
+    "median": 0.351677,
+    "p90": 0.408916,
+    "max": 0.489338
+   },
+   "unrelated_reference": {
+    "p10": 0.191483,
+    "p25": 0.276479,
+    "median": 0.351976,
+    "p90": 0.459645
+   }
+  },
+  "R2": {
+   "rule": "within = both variants are name-based paraphrases; cross = one describe and one paraphrase",
+   "within_paraphrase": {
+    "n": 60,
+    "min": 0.084064,
+    "median": 0.136912,
+    "p90": 0.225044,
+    "max": 0.258487
+   },
+   "describe_cross": {
+    "n": 60,
+    "min": 0.132265,
+    "median": 0.300255,
+    "p90": 0.384399,
+    "max": 0.45788
+   },
+   "unrelated_reference": {
+    "p10": 0.145313,
+    "p25": 0.217183,
+    "median": 0.284181,
+    "p90": 0.406512
+   }
+  }
+ }
+}
