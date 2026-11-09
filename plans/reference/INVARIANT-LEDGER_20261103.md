@@ -2228,6 +2228,31 @@ owner 2026-11-07 裁定：多模态是整个算法内部系统的一部分，不
 | S-101 | “所有调用方都能纠正” | R-D29-315 | **限定**：非空允许集下缺来源/未知来源整批拒绝；空集保持旧行为。 |
 | S-102 | “来源能替代 CAS 或校验新值” | R-D29-318 | **被取代**：来源不替代当前值凭据，也不校验新值；错误核对器仍被接受。 |
 
+## 69. R22 桥状态导出/导入（2026-11-09）
+
+**69.0 冻结与范围**：整表往返、空表、导入端策略、四种损坏输入、12 条未写候选、18 条碎片与四行复跑锚在读数前写入 [manifest](../manifests/taiji_bridge_state_20261109.json) 的 `definition_digest`。本轮**修改** `taiji/address_bridge.py`：新增 `export_state`／`from_state` 与整包校验；导入端的 `allowed_authorities` 由构造决定。0 训练／0 优化器步／0 Adam／0 confirm。
+
+**69.1 读数**
+
+| 编号 | 读数 | 出处 |
+|---|---|---|
+| R-D29-323 | **整表逐字往返**：18 键＋2 条审计纠正导出 **2,081 B**；导入后完整摘要、内容摘要、再次导出字节三者相等；日志 2 条来源/理由保留；别名读回 `蓝色杯子`；R15 **40/40**、零线 **0/0**。 | `round_trip` |
+| R-D29-324 | **空表往返**：完整摘要相等。 | `empty` |
+| R-D29-325 | **导入端决定策略**：源策略 `v1`、导入策略 `v2` ⇒ 记录与旧日志保留、内容摘要相等；`v1` 再纠正 `rejected_batch_unknown_authority`、`v2` `corrected`；旧日志仍保留 `v1`。 | `policy` |
+| R-D29-326 | **损坏输入整批拒绝**：截断、错误 schema、重复键、负计数 **4/4** 抛 `ValueError`（前缀 `rejected_import_invalid_state`），无半张表逃出。 | `corrupt` |
+| R-D29-327 | **关闭态九项全等**。 | `closed_state` |
+| R-D29-328 | **复跑锚**：R18→`64a221f37`、R19→`dcda39ca9`、R20→`56c87bbd0`、R21→`180ab0f1e`；四行 blob sha1／sha256 与报告 sha 完全一致，均“在当前 HEAD 不可跑、按提交 X 可复跑”。 | `rerun_anchors` |
+| R-D29-329 | **判定与成本**：`state_round_trip_exact`／`empty_table_round_trip`／`importer_decides_policy`／`corrupt_state_rejected`／`default_table_unchanged`／`closed_state_equal`／`anchors_complete` ⇒ 总判 **`bridge_state_portable`**；成本 **1.672 CPU／2.376 wall**（估 30、上限 200）。 | 报告 `verdict`／`cost` |
+
+**69.2 superseded／范围登记**
+
+| 编号 | 被取代／被限定的对象 | 取代者 | 处置与理由 |
+|---|---|---|---|
+| S-103 | “桥状态只活在 Python 对象里” | R-D29-323 | **被取代**：整表可导出为规范字节并逐字导入。 |
+| S-104 | “导入端沿用导出端的允许来源策略” | R-D29-325 | **被取代**：策略属于导入端构造，导出端策略只是元数据。 |
+| S-105 | “损坏输入可以部分导入” | R-D29-326 | **被取代**：整包校验，任一损坏整批拒绝。 |
+
+
 
 
 
