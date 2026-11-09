@@ -1964,3 +1964,25 @@ owner 2026-11-07 裁定：多模态是整个算法内部系统的一部分，不
 | S-69 | “R10 的 0.00 证明桥不会泛化” | R-D29-242 | **不成立**：R10b 删的只是**一种说法**，`after` 并未全网格落在 chance；但也没有达到 0.80，故中区即结论——**两个方向都不能声称**。 |
 | S-70 | “桥层可以靠拟合从一种说法外推到另一种说法” | R-D29-243 | **无证据**：信号只在地点槽、只在 λ≤1e-1 上出现，λ=1 上 0.40、λ≥1e1 回落到 chance，不可作为能力。架构上仍取写入式桥（§21.18）。 |
 
+---
+
+## 58. R11 写入式桥最小实现：三写结局各有读数、两不知出口不返回值（2026-11-09；**0 训练／0 优化器步／0 Adam／0 新参数**）
+
+| 编号 | 断言 | 证据 |
+|---|---|---|
+| R-D29-244 | 桥是**新模块** `taiji/address_bridge.py`（sha `ddb5a48b…`）；`taiji/sc_sfk.py` 的 `AddressTable` **未改**、`LivingCoreReference` **未改**；默认图不导入桥，关闭态无表 | [报告](../../reports/taiji_written_bridge_20261109.json) `bridge_sha256`；[runner](../../scripts/training/probe_taiji_written_bridge_20261109.py) |
+| R-D29-245 | 键＝短语 UTF-8 字节上步长 2 的 2 字节窗口集合（hex、无序去重），值＝`(slot,name)`；9 条记录 9 键；名字不进键 | 同上 `definition`／`counts.records` |
+| R-D29-246 | 能力：20 条 `describe` 句先定位短语再读，**40/40＝1.00**、错指 **0**、弃答 **0**、两句皆定位到（`located_both_slots=true`） | 同上 `capability` |
+| R-D29-247 | 三写结局各有读数：**merge** 批 1 `appended=9`／批 2 `merged=9`、`counts=[2]×9`、9 槽读回原值；**replace** `appended=9`＋`replaced=9`、`history` 9/9 留旧值、读回 9/9 新值；**conflict** 第 2 批 4 条 `conflict_items=[1]`、`rejected_batches=1`／`rollbacks=1`、`content_digest` 前后同为 `f5cac5bd…`、槽数 9→9、新键未落盘 | 同上 `mechanism` |
+| R-D29-248 | 两不知出口：5 条 token 不相交的未写短语全 `no_match`／`unknown_token`、value=None；只共享高频 token `84e5`（df=5，记录 0/2/5/6/7）时 `no_match`／`no_unique_token`；36 对并集 36/36、20 条整句 20/20 全 `ambiguous_multiple_anchors`；`false_answers=0` | 同上 `abstention` |
+| R-D29-249 | 关闭态九项全等：参数 `e0fb5deb…`、状态 `3ef84644…`、身份 `7504ba2e…`、store `f1ae6957…`、电池字节 `4908a35e…`、步数 108、`sc_sfk=None`、开关 False、rng 未动 | 同上 `closed_state.checks`／`baseline`／`after` |
+| R-D29-250 | 判定 **`written_bridge_operational`**；成本 **1.672 CPU／1.68 wall**（跑前上限估 60、上限 200、`threads=1`） | 同上 `verdict`／`cost` |
+
+**58.1 superseded／范围登记**
+
+| 编号 | 被取代／被限定的对象 | 取代者 | 处置与理由 |
+|---|---|---|---|
+| S-71 | “地址层读必须永远返回 top-1” | R-D29-248 | **被限定**：本轮读出改为“恰好 1 锚才回答、≥2 记 `ambiguous_multiple_anchors`、0 记 `no_match`”，非回答分支 **value=None**；`AddressTable.read` 的 top-1 行为未改（它是另一套内容分块身份）。 |
+| S-72 | “未写短语一定拒答” | R-D29-248 | **只在 token 不相交时成立**：2 字节窗口跨 UTF-8 字符边界，语义无关短语可继承邻居尾字节；4 个候选因此被剔（`白色帆布` `86e5/e5b8`、`银质圆镜` `86e9/e59c`、`棕色皮箱` `e79a`、`青色陶罐` `e99d`）。 |
+| S-73 | “可以直接拿整句当查询键” | R-D29-246 | **不成立**：直接读整句 16/20 判多锚、**4/20 返错指**（首字“让”占 3 字节使滑窗左偏 1 字节）；必须先做短语定位（R9）。 |
+

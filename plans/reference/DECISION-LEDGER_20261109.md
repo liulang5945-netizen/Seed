@@ -411,3 +411,29 @@ reading["pairs"] = {
 
 **8. 对已有结论的影响**：R9 的 `phrase_survives_name_link_absent`、R8 的 `control_failed`、R7 的 `inconclusive`、R10 的 `phrase_name_bridge_memorised` **全部不变**。**新增可信事实**：两说法词表在样本内仍可表示（λ=1 三臂 1.00／1.00）。**被降级**的读法：①“R10b 证明了背诵”（不成立）；②“R10b 证明了泛化”（不成立）。**报告字段缺陷登记**：`contrast.r10b_R3.<slot>.sentence_after_worst_lambda` 实际取的是网格**最小**值（`min`），而判定用的是网格**最大**值；该字段只作展示、不参与判定，此处登记以免后续被误读，报告本身不改。
 
+---
+
+## D-20261109-13 R11 读数前修正两处“证据口径”：回滚证据改用内容摘要、未知短语改用 token 不相交筛选
+
+**1. 编号／时间／类型**：D-20261109-13｜2026-11-09（首跑之后、正式冻结之前）｜**度量口径修正 ＋ 构造性缺陷登记**：只改 runner 与桥模块的“证据怎么算”，**不改判据、阈值、夹具、语料、电池**。
+
+**2. 决策内容**：R11 首跑判 `written_bridge_mechanism_failed`，根因不是机制，是两处口径写错：
+
+- **回滚证据用了含计数器的摘要**：`write()` 一进批就 `batches += 1`，冲突还会 `rejected_batches += 1`／`rollbacks += 1`；而 `digest()` 包含这些计数器 ⇒ 冲突批必然“前后不等”，`digest_unchanged=false`。改为新增 `content_digest()`（只含 `capacity/peak_capacity/records`），用它比较回滚前后；计数器本来就应当变。
+- **“未知短语”是手工挑的语义无关词**：2 字节窗口会跨 UTF-8 字符边界，这些词继承了邻居字符的尾字节，实际与已写键共享 token——首跑 `unknown_tally={"ambiguous_multiple_anchors":1,"no_match":4}`。改为从 12 个候选里按“token 与全表完全不相交”自动挑前 5 条，并把被拒候选连同共享 token 写进 manifest 的 `unknown_selection.rejected`；冻结时选出、运行时断言一致。
+
+**可引用**：①判据（≥0.95 且零错指）与机制/弃答/关闭态四组条件**一字未改**，重冻后正式读数 `written_bridge_operational`；②正式 runner sha `8be1bef0…`、桥 sha `ddb5a48b…`；③R11 关于“键对偏移敏感”的结论由这次缺陷直接暴露，属架构级限制。
+**禁引用**：①把首跑 `written_bridge_mechanism_failed` 当作机制失败（它测的是计数器）；②把“手工挑的语义无关短语”当作“任意新短语都会被拒答”。
+
+**3. 触发原因与读数出处**：首跑 `verdict=written_bridge_mechanism_failed`、`mechanism.conflict.digest_unchanged=false`、`abstention.unknown_tally={"ambiguous_multiple_anchors":1,"no_match":4}`；修正后 [manifest](../manifests/taiji_written_bridge_20261109.json) 的 runner／bridge 双列 sha 与 [报告](../../reports/taiji_written_bridge_20261109.json) 一致，`verdict=written_bridge_operational`。
+
+**4. 代价**：修正本身 **0 新训练／0 新参数**；重跑成本 **1.672 CPU／1.68 wall**（估 60、上限 200）。
+
+**5. 替代方案**：①保留旧 digest 并放宽机制判据——**否决**（等于按结果改判据，且旧口径测的是计数器不是地址内容）；②继续手工挑未知短语——**否决**（会重复“共享 token”的构造性污染，把构造缺陷当成机制读数）；③只报 5 条成功、隐去 4 条被剔候选——**否决**（隐去机制，违反“报不知道”的要求）。
+
+**6. 撤回路径**：删除 §21.20／§58／U46 与三处队首的 R11 段，恢复“下一动作＝R11”；正式报告与 manifest 随之作废（首跑已不可引用，无需回滚判据）。
+
+**7. 授权来源**：用户 2026-11-09 授权（“判据冻结后直接跑”“跑前估 CPU”“三条写结局各有读数”“同时报该说不知道的情形”）。
+
+**8. 对已有结论的影响**：R9／R10／R10b **全部不变**。**新增可信事实**：9 条写入式记录在定位后可读回 **40/40**，且三写结局与两不知出口行为正确。**新增范围限制**：①键为 2 字节滑窗 token 集合，拒答保证只对 token 不相交成立；②`mechanism.conflict.digest_unchanged` 的正式口径是 `content_digest`；③`sentence_direct_wrong_pointers=4` 为诊断字段，不参与判定。
+
