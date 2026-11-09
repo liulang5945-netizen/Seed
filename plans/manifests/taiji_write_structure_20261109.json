@@ -1,0 +1,133 @@
+{
+ "schema": "taiji-write-structure-r50-v1",
+ "created": "2026-11-09T18:27:44",
+ "seed": 20261109,
+ "estimate_cpu_upper": 20.0,
+ "cpu_cap": 200.0,
+ "object_gate": 0.5,
+ "runner_sha256": "14ee7d257d055ee7c89db0e0d4c1e37bb09ab321fee47b3bd6cff34845bc32b6",
+ "core_sha256": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d"
+ },
+ "definition": {
+  "write": "each describe sentence is written once with a write-enabled observe",
+  "labels": "the fixture gives one object and one place per describe sentence (4 x 5)",
+  "readout": "1-NN over the 20 written fast vectors, self excluded, scale-free distance",
+  "readings": "same-object and same-place 1-NN accuracy plus within/between mean distances",
+  "decision": "same-object 1-NN >= 0.5 -> write_structure_present, else write_structure_scrambled",
+  "closed_state": "the nine legacy readings on the main subject stay equal before and after"
+ },
+ "criteria": {
+  "labels": "20 describe sentences with 4 distinct objects and 5 distinct places",
+  "readings": "object and place 1-NN accuracy, chance, and within/between distances are reported",
+  "decision": "the frozen 0.5 object gate decides present/scrambled",
+  "closed_state": "the nine legacy readings stay equal and the main parameter digest does not move",
+  "rerun": "the R49 anchor carries a commit, a runner blob sha1, a runner sha256 and a core sha256"
+ },
+ "definition_digest": "3e617b3dade86ed8e5a4b9db71e3b6e6df4c4268526fa16d2cf0beabeae184d4",
+ "counts": {
+  "describe_sentences": 20,
+  "writes": 20
+ },
+ "inputs": {
+  "goal": "r50",
+  "labels": [
+   {
+    "object": "蓝色杯子",
+    "place": "木桌"
+   },
+   {
+    "object": "蓝色杯子",
+    "place": "窗台"
+   },
+   {
+    "object": "蓝色杯子",
+    "place": "左盒"
+   },
+   {
+    "object": "蓝色杯子",
+    "place": "书架"
+   },
+   {
+    "object": "蓝色杯子",
+    "place": "地毯"
+   },
+   {
+    "object": "红色印章",
+    "place": "木桌"
+   },
+   {
+    "object": "红色印章",
+    "place": "窗台"
+   },
+   {
+    "object": "红色印章",
+    "place": "左盒"
+   },
+   {
+    "object": "红色印章",
+    "place": "书架"
+   },
+   {
+    "object": "红色印章",
+    "place": "地毯"
+   },
+   {
+    "object": "绿色瓶子",
+    "place": "木桌"
+   },
+   {
+    "object": "绿色瓶子",
+    "place": "窗台"
+   },
+   {
+    "object": "绿色瓶子",
+    "place": "左盒"
+   },
+   {
+    "object": "绿色瓶子",
+    "place": "书架"
+   },
+   {
+    "object": "绿色瓶子",
+    "place": "地毯"
+   },
+   {
+    "object": "黄色球",
+    "place": "木桌"
+   },
+   {
+    "object": "黄色球",
+    "place": "窗台"
+   },
+   {
+    "object": "黄色球",
+    "place": "左盒"
+   },
+   {
+    "object": "黄色球",
+    "place": "书架"
+   },
+   {
+    "object": "黄色球",
+    "place": "地毯"
+   }
+  ],
+  "rerun_anchors": [
+   {
+    "round": "R49",
+    "runner": "scripts/training/probe_taiji_write_dependence_20261109.py",
+    "rerun_commit": "d15dc0d2e",
+    "runner_blob_sha1": "0b01197dba556be5a66e04697eed1f42673c7a6b",
+    "report_runner_sha256": "e002adad9659340096e0d291b647fd3e0f3ca8a03b765969eac8a5bf4f001752",
+    "runner_blob_sha256": "e002adad9659340096e0d291b647fd3e0f3ca8a03b765969eac8a5bf4f001752",
+    "report_core_sha256": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d",
+    "matches_report": true,
+    "note": "R50 does not change living_core; R49 stays runnable at HEAD"
+   }
+  ]
+ }
+}
