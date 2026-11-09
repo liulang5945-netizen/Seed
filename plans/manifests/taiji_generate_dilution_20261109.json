@@ -1,0 +1,60 @@
+{
+ "schema": "taiji-generate-dilution-r44-v1",
+ "created": "2026-11-09T18:10:52",
+ "seed": 20261109,
+ "estimate_cpu_upper": 20.0,
+ "cpu_cap": 200.0,
+ "dose": 1000,
+ "dilution_floor": 0.5,
+ "gain_floor": 0.1,
+ "runner_sha256": "6ee09b5fb3164bad2ab22e14fbd9eb80778a632dcccf8ff487c5d28be96617dd",
+ "core_sha256": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d"
+ },
+ "definition": {
+  "dose": "the same written state is stepped with fast x0 and fast x1000",
+  "capture": "a pre-hook on expression.generate records its input cat([z, previous])",
+  "split": "the first width entries are the z slice; the rest is the previous-byte slice",
+  "readings": "z_share, rel_input, rel_z, rel_prev, dilution, layer_gain",
+  "decision": "dilution < 0.5 -> diluted_by_previous; else layer_gain < 0.1 -> weight_compressed",
+  "closed_state": "the nine legacy readings on the main subject stay equal before and after"
+ },
+ "criteria": {
+  "write": "the written fast has abs sum > 0",
+  "capture": "the generate input is captured once per run with the frozen shape",
+  "reach": "rel_z, rel_input and rel_logits are all > 0",
+  "readings": "z_share, dilution and layer_gain are reported",
+  "decision": "the site follows the frozen dilution/gain rule and is reported with its exit name",
+  "closed_state": "the nine legacy readings stay equal and the main parameter digest does not move",
+  "rerun": "the R43 anchor carries a commit, a runner blob sha1, a runner sha256 and a core sha256"
+ },
+ "definition_digest": "8ad8c71ac1718b50ddeb49e64baeb9d9c53d657747fb6d7466a9c52b021dcb18",
+ "counts": {
+  "describe_sentences": 20,
+  "stages": 2
+ },
+ "inputs": {
+  "goal": "r44",
+  "sentences": [
+   "让圆口的器皿到四方木台。",
+   "让圆口的器皿到靠窗的台面。"
+  ],
+  "dose": 1000,
+  "rerun_anchors": [
+   {
+    "round": "R43",
+    "runner": "scripts/training/probe_taiji_scale_free_damping_20261109.py",
+    "rerun_commit": "5ef33910e",
+    "runner_blob_sha1": "500950cf5d063c2e8fd0a60cefb0a2d2c54c4d6c",
+    "report_runner_sha256": "da886d3a16b932817b1dbd4208352aca14e214cd183777e5a5865a23031e4f22",
+    "runner_blob_sha256": "da886d3a16b932817b1dbd4208352aca14e214cd183777e5a5865a23031e4f22",
+    "report_core_sha256": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d",
+    "matches_report": true,
+    "note": "R44 does not change living_core; R43 stays runnable at HEAD"
+   }
+  ]
+ }
+}
