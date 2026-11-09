@@ -1,0 +1,849 @@
+{
+ "schema": "taiji-bridge-policy-r35-report-v1",
+ "runner_sha256": "e59f869d625233b5dd5a6137f821e79dcdfa8309f1d898e4360f0a41df5dce29",
+ "manifest_sha256": "58482c8ff5dc42b80e3606fe48116cb24133b7e2b1adf7d422e1cac9a26336a3",
+ "bridge_sha256": "4edf29b22a199c29160523debb8ea23a45e59321f2b0c8dc06da72497672e831",
+ "core_sha256": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d"
+ },
+ "definition": {
+  "never": "prefix_policy='never' never prefixes; trajectory equals a plain run on raw bytes",
+  "always": "prefix_policy='always' prefixes 19/20 steps with the previous text",
+  "on_match": "prefix_policy='on_match' prefixes only when the sentence hits a written key",
+  "control": "each policy's bridged trajectory equals a plain observe run on its own input bytes",
+  "policy_effect": "never vs always differ on all 19 post-first steps; on_match equals always on hitting sentences",
+  "discriminate": "on the unknown sentence always prefixes the stale text and on_match does not",
+  "unknown": "the unknown sentence answers no_pair, stores None, and the next step carries no prefix",
+  "invalid_policy": "an unknown policy name raises ValueError before any step",
+  "closed_state": "the nine legacy closed-state readings stay equal before and after"
+ },
+ "criteria": {
+  "expression": "each of the three policies expresses 20/20 exact paired texts",
+  "prefix_counts": "never 0/20, always 19/20, on_match 19/20",
+  "match_counts": "all 20 describe sentences hit a written key (the on_match gate input)",
+  "controls": "each policy's bridged trajectory equals its own plain control 20/20",
+  "policy_effect": "never vs always differ 19/19 post-first steps; on_match equals always 20/20",
+  "discriminate": "unknown-step prefix is not None under always and None under never/on_match; the unknown step state differs",
+  "unknown": "all policies: no_pair, stored None, next prefix None",
+  "invalid_policy": "ValueError raised, no state produced",
+  "parameters": "parameter hash and table digest unchanged",
+  "closed_state": "the nine legacy readings stay equal before and after",
+  "rerun": "the R34 anchor carries a commit, a runner blob sha1, a runner sha256 and a core sha256"
+ },
+ "policies": {
+  "never": {
+   "policy": "never",
+   "exact": 20,
+   "of": 20,
+   "prefixed": 0,
+   "matched": 20,
+   "gate_correct": 20,
+   "control_equal": 20,
+   "state_hashes": [
+    "a3e7161b88e5a305c0eb1b35a8340d63dd5b5a0c4d4f36fd39418405187e5b24",
+    "274d877c3f00b484b01da3920ec31403c1be7fad29ed5e341aacffdc9b2c85d0",
+    "e92eb15eee1769c7e7e5fc05fc147261f9a50b37b2b7e7276b326684e4c3920e",
+    "2d11c3b5f44b84e70362896b74b4bb094e7690d8713799c8699f6b4babfc65fd",
+    "b712acd56dfd35b92d31b200adc286ece0d89da643efaade07e647b0c7ec3480",
+    "b482ec18e878ca466be4fabf9a79414fb37ae37a8b31aa2d74166e21baea6450",
+    "db27bd77692407bd761f8b9321ba8f0d1f3f39d1c9617b0576701f60a19f707d",
+    "0e098091ab4b076bbc0099ba7858ed2e1226874d16936c7359fe87597453e620",
+    "15b4de794f399053279b91c43da0f814b6e86a60b1fac20c64f4efa6637efe05",
+    "43a43183872a9c91721c6a48e7cf8ac43240ed6ac6c47b2433d8b6e0f78a6810",
+    "007b9eac83a5baee86c1d638aa26f66bf761c2a4035f59491ee41b0a77e10090",
+    "3728666df7653b5097fdf6fca4f311d202738a5f5f45fc61e6ed7aecc318fe82",
+    "61f0259bf455c7e9b4d56b3b0d44630ddf41cad37013448d29e1534d74dda9e6",
+    "f41213db87121f7f84acadd2a3487e3217f32b1bad00a0299b03060ac99a29ac",
+    "c2a1f3aa0103cf644cb5e44cc9ddc18e6c823c0fd35efccdc81957647da332c3",
+    "dd524212c00e9e381a368a8476565b36002dc0b094b080d89e57eb65a6f17dfc",
+    "9dd71b783a22906b4f54e9d4c1c79809c2317208a92b6acc6a4054dc49ac7fb2",
+    "ec973969a26956c5e7818b3e311a185d6ddc8fbfbe587222ae652cd8ead00f9a",
+    "efc99faab81176cc3d0cb4e54e02ac2811ec720dc06ce0b28b464b39fb997550",
+    "2775edfb7640d6e0e233f98bb135e4628b3d489a3151ac2a69ac1b6cb56b35e4"
+   ],
+   "unknown_state_sha": "26b6ed6ad7083ab47aa6f6cf44d389aa866c570a9d16b65d25e8781b4103f4e8",
+   "rows": [
+    {
+     "step": 1,
+     "hit": true,
+     "prefix": null,
+     "expected_prefix": null,
+     "expected": "蓝色杯子在木桌",
+     "got": "蓝色杯子在木桌",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 2,
+     "hit": true,
+     "prefix": null,
+     "expected_prefix": null,
+     "expected": "蓝色杯子在窗台",
+     "got": "蓝色杯子在窗台",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 3,
+     "hit": true,
+     "prefix": null,
+     "expected_prefix": null,
+     "expected": "蓝色杯子在左盒",
+     "got": "蓝色杯子在左盒",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 4,
+     "hit": true,
+     "prefix": null,
+     "expected_prefix": null,
+     "expected": "蓝色杯子在书架",
+     "got": "蓝色杯子在书架",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 5,
+     "hit": true,
+     "prefix": null,
+     "expected_prefix": null,
+     "expected": "蓝色杯子在地毯",
+     "got": "蓝色杯子在地毯",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 6,
+     "hit": true,
+     "prefix": null,
+     "expected_prefix": null,
+     "expected": "红色印章在木桌",
+     "got": "红色印章在木桌",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 7,
+     "hit": true,
+     "prefix": null,
+     "expected_prefix": null,
+     "expected": "红色印章在窗台",
+     "got": "红色印章在窗台",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 8,
+     "hit": true,
+     "prefix": null,
+     "expected_prefix": null,
+     "expected": "红色印章在左盒",
+     "got": "红色印章在左盒",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 9,
+     "hit": true,
+     "prefix": null,
+     "expected_prefix": null,
+     "expected": "红色印章在书架",
+     "got": "红色印章在书架",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 10,
+     "hit": true,
+     "prefix": null,
+     "expected_prefix": null,
+     "expected": "红色印章在地毯",
+     "got": "红色印章在地毯",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 11,
+     "hit": true,
+     "prefix": null,
+     "expected_prefix": null,
+     "expected": "绿色瓶子在木桌",
+     "got": "绿色瓶子在木桌",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 12,
+     "hit": true,
+     "prefix": null,
+     "expected_prefix": null,
+     "expected": "绿色瓶子在窗台",
+     "got": "绿色瓶子在窗台",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 13,
+     "hit": true,
+     "prefix": null,
+     "expected_prefix": null,
+     "expected": "绿色瓶子在左盒",
+     "got": "绿色瓶子在左盒",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 14,
+     "hit": true,
+     "prefix": null,
+     "expected_prefix": null,
+     "expected": "绿色瓶子在书架",
+     "got": "绿色瓶子在书架",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 15,
+     "hit": true,
+     "prefix": null,
+     "expected_prefix": null,
+     "expected": "绿色瓶子在地毯",
+     "got": "绿色瓶子在地毯",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 16,
+     "hit": true,
+     "prefix": null,
+     "expected_prefix": null,
+     "expected": "黄色球在木桌",
+     "got": "黄色球在木桌",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 17,
+     "hit": true,
+     "prefix": null,
+     "expected_prefix": null,
+     "expected": "黄色球在窗台",
+     "got": "黄色球在窗台",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 18,
+     "hit": true,
+     "prefix": null,
+     "expected_prefix": null,
+     "expected": "黄色球在左盒",
+     "got": "黄色球在左盒",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 19,
+     "hit": true,
+     "prefix": null,
+     "expected_prefix": null,
+     "expected": "黄色球在书架",
+     "got": "黄色球在书架",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 20,
+     "hit": true,
+     "prefix": null,
+     "expected_prefix": null,
+     "expected": "黄色球在地毯",
+     "got": "黄色球在地毯",
+     "control_equal": true,
+     "ok": true
+    }
+   ],
+   "unknown": {
+    "prefix": null,
+    "decision": "no_pair",
+    "stored": null,
+    "next_prefix": null,
+    "after_steps": 115
+   },
+   "ok": true
+  },
+  "always": {
+   "policy": "always",
+   "exact": 20,
+   "of": 20,
+   "prefixed": 19,
+   "matched": 20,
+   "gate_correct": 20,
+   "control_equal": 20,
+   "state_hashes": [
+    "a3e7161b88e5a305c0eb1b35a8340d63dd5b5a0c4d4f36fd39418405187e5b24",
+    "b5991c28c674514f47dd48f2ad464cfddc36c30ebd09e735d7390f275ee46123",
+    "78b0df4822dcda29026de0fd4d1a311ea9555542073b821d2a85f07e4fafecb4",
+    "255994834c8d3bf305b90d200eece560c3a1493ff4d08a5d03977ee0eb38fa5e",
+    "92d4ff2a753c62ff11f6328268e88e006dabdbf2be60fdd3ad09a99c187103cc",
+    "726a66a4462f4e09faa76a6e5d2514fd95be72291ab11a24588b1dc94f770a85",
+    "265ba997fa1bcfa132de1726b2ca617c26a2317d6938c7698b09031d4a7e0c55",
+    "c16a267728046f89267375228f0ffcb35f06fec26beef9d2e997c46d6eb177b9",
+    "2087e433b8628cf6b506c1742dd63321853be121f550979f3c5c96f5e67c9e0a",
+    "eb40a5e17f2f8cf88a324db4adde3ac85d680f0a5057af327e16a57b9cdb69b5",
+    "efa826f90e6c7bf675d68661e8cd70e1592cddfc3990b3d8d7f54ce7b055c15e",
+    "19fca5c49f8174301ff861ded499ceede1f6f1b08bb404e2b96768a3bbbe33de",
+    "6b6381f152cde4fdcc2673c70113146dddd987c63bc72c1281dc1731b3bc6334",
+    "71aa36036eb2ea17b0f75c4156d824d091aaaae7661aaac210843751c69ef528",
+    "598bbab4f16947e438c03e92508ba0f8fd266a7e2214f9cab93c4ee97f80044d",
+    "db781b6c39ca3e2fd2f2565eff4cf77fc57f19631e84b1477ba8cb26945329c9",
+    "07ac522c02cd54b0de94a0b64353f8580de570a7a2de8c0b97c0d024d4d52cb2",
+    "26a255e53555c73875c68675b0b86bf83651f32fbc9a46c67bdc6499f1b690a4",
+    "f8cb454899ec2dcce9ccb000f7321d8dd1f146a0f0072bf6c9b7b0b5ca108ad5",
+    "ab4e6fe613029d334486f38e9f06ce3eafcba3d5f1311bf6de6e0b5efd45bba5"
+   ],
+   "unknown_state_sha": "cd29fdffe0c27b93826a2100422f6b33345591c2942ff56b17947fad3f7e3c80",
+   "rows": [
+    {
+     "step": 1,
+     "hit": true,
+     "prefix": null,
+     "expected_prefix": null,
+     "expected": "蓝色杯子在木桌",
+     "got": "蓝色杯子在木桌",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 2,
+     "hit": true,
+     "prefix": "蓝色杯子在木桌",
+     "expected_prefix": "蓝色杯子在木桌",
+     "expected": "蓝色杯子在窗台",
+     "got": "蓝色杯子在窗台",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 3,
+     "hit": true,
+     "prefix": "蓝色杯子在窗台",
+     "expected_prefix": "蓝色杯子在窗台",
+     "expected": "蓝色杯子在左盒",
+     "got": "蓝色杯子在左盒",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 4,
+     "hit": true,
+     "prefix": "蓝色杯子在左盒",
+     "expected_prefix": "蓝色杯子在左盒",
+     "expected": "蓝色杯子在书架",
+     "got": "蓝色杯子在书架",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 5,
+     "hit": true,
+     "prefix": "蓝色杯子在书架",
+     "expected_prefix": "蓝色杯子在书架",
+     "expected": "蓝色杯子在地毯",
+     "got": "蓝色杯子在地毯",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 6,
+     "hit": true,
+     "prefix": "蓝色杯子在地毯",
+     "expected_prefix": "蓝色杯子在地毯",
+     "expected": "红色印章在木桌",
+     "got": "红色印章在木桌",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 7,
+     "hit": true,
+     "prefix": "红色印章在木桌",
+     "expected_prefix": "红色印章在木桌",
+     "expected": "红色印章在窗台",
+     "got": "红色印章在窗台",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 8,
+     "hit": true,
+     "prefix": "红色印章在窗台",
+     "expected_prefix": "红色印章在窗台",
+     "expected": "红色印章在左盒",
+     "got": "红色印章在左盒",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 9,
+     "hit": true,
+     "prefix": "红色印章在左盒",
+     "expected_prefix": "红色印章在左盒",
+     "expected": "红色印章在书架",
+     "got": "红色印章在书架",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 10,
+     "hit": true,
+     "prefix": "红色印章在书架",
+     "expected_prefix": "红色印章在书架",
+     "expected": "红色印章在地毯",
+     "got": "红色印章在地毯",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 11,
+     "hit": true,
+     "prefix": "红色印章在地毯",
+     "expected_prefix": "红色印章在地毯",
+     "expected": "绿色瓶子在木桌",
+     "got": "绿色瓶子在木桌",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 12,
+     "hit": true,
+     "prefix": "绿色瓶子在木桌",
+     "expected_prefix": "绿色瓶子在木桌",
+     "expected": "绿色瓶子在窗台",
+     "got": "绿色瓶子在窗台",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 13,
+     "hit": true,
+     "prefix": "绿色瓶子在窗台",
+     "expected_prefix": "绿色瓶子在窗台",
+     "expected": "绿色瓶子在左盒",
+     "got": "绿色瓶子在左盒",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 14,
+     "hit": true,
+     "prefix": "绿色瓶子在左盒",
+     "expected_prefix": "绿色瓶子在左盒",
+     "expected": "绿色瓶子在书架",
+     "got": "绿色瓶子在书架",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 15,
+     "hit": true,
+     "prefix": "绿色瓶子在书架",
+     "expected_prefix": "绿色瓶子在书架",
+     "expected": "绿色瓶子在地毯",
+     "got": "绿色瓶子在地毯",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 16,
+     "hit": true,
+     "prefix": "绿色瓶子在地毯",
+     "expected_prefix": "绿色瓶子在地毯",
+     "expected": "黄色球在木桌",
+     "got": "黄色球在木桌",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 17,
+     "hit": true,
+     "prefix": "黄色球在木桌",
+     "expected_prefix": "黄色球在木桌",
+     "expected": "黄色球在窗台",
+     "got": "黄色球在窗台",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 18,
+     "hit": true,
+     "prefix": "黄色球在窗台",
+     "expected_prefix": "黄色球在窗台",
+     "expected": "黄色球在左盒",
+     "got": "黄色球在左盒",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 19,
+     "hit": true,
+     "prefix": "黄色球在左盒",
+     "expected_prefix": "黄色球在左盒",
+     "expected": "黄色球在书架",
+     "got": "黄色球在书架",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 20,
+     "hit": true,
+     "prefix": "黄色球在书架",
+     "expected_prefix": "黄色球在书架",
+     "expected": "黄色球在地毯",
+     "got": "黄色球在地毯",
+     "control_equal": true,
+     "ok": true
+    }
+   ],
+   "unknown": {
+    "prefix": "黄色球在地毯",
+    "decision": "no_pair",
+    "stored": null,
+    "next_prefix": null,
+    "after_steps": 166
+   },
+   "ok": true
+  },
+  "on_match": {
+   "policy": "on_match",
+   "exact": 20,
+   "of": 20,
+   "prefixed": 19,
+   "matched": 20,
+   "gate_correct": 20,
+   "control_equal": 20,
+   "state_hashes": [
+    "a3e7161b88e5a305c0eb1b35a8340d63dd5b5a0c4d4f36fd39418405187e5b24",
+    "b5991c28c674514f47dd48f2ad464cfddc36c30ebd09e735d7390f275ee46123",
+    "78b0df4822dcda29026de0fd4d1a311ea9555542073b821d2a85f07e4fafecb4",
+    "255994834c8d3bf305b90d200eece560c3a1493ff4d08a5d03977ee0eb38fa5e",
+    "92d4ff2a753c62ff11f6328268e88e006dabdbf2be60fdd3ad09a99c187103cc",
+    "726a66a4462f4e09faa76a6e5d2514fd95be72291ab11a24588b1dc94f770a85",
+    "265ba997fa1bcfa132de1726b2ca617c26a2317d6938c7698b09031d4a7e0c55",
+    "c16a267728046f89267375228f0ffcb35f06fec26beef9d2e997c46d6eb177b9",
+    "2087e433b8628cf6b506c1742dd63321853be121f550979f3c5c96f5e67c9e0a",
+    "eb40a5e17f2f8cf88a324db4adde3ac85d680f0a5057af327e16a57b9cdb69b5",
+    "efa826f90e6c7bf675d68661e8cd70e1592cddfc3990b3d8d7f54ce7b055c15e",
+    "19fca5c49f8174301ff861ded499ceede1f6f1b08bb404e2b96768a3bbbe33de",
+    "6b6381f152cde4fdcc2673c70113146dddd987c63bc72c1281dc1731b3bc6334",
+    "71aa36036eb2ea17b0f75c4156d824d091aaaae7661aaac210843751c69ef528",
+    "598bbab4f16947e438c03e92508ba0f8fd266a7e2214f9cab93c4ee97f80044d",
+    "db781b6c39ca3e2fd2f2565eff4cf77fc57f19631e84b1477ba8cb26945329c9",
+    "07ac522c02cd54b0de94a0b64353f8580de570a7a2de8c0b97c0d024d4d52cb2",
+    "26a255e53555c73875c68675b0b86bf83651f32fbc9a46c67bdc6499f1b690a4",
+    "f8cb454899ec2dcce9ccb000f7321d8dd1f146a0f0072bf6c9b7b0b5ca108ad5",
+    "ab4e6fe613029d334486f38e9f06ce3eafcba3d5f1311bf6de6e0b5efd45bba5"
+   ],
+   "unknown_state_sha": "999701b09b80f6abdbf16b335b07a4c0c5c239e6cc9d716e04cf814ef5aefbe5",
+   "rows": [
+    {
+     "step": 1,
+     "hit": true,
+     "prefix": null,
+     "expected_prefix": null,
+     "expected": "蓝色杯子在木桌",
+     "got": "蓝色杯子在木桌",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 2,
+     "hit": true,
+     "prefix": "蓝色杯子在木桌",
+     "expected_prefix": "蓝色杯子在木桌",
+     "expected": "蓝色杯子在窗台",
+     "got": "蓝色杯子在窗台",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 3,
+     "hit": true,
+     "prefix": "蓝色杯子在窗台",
+     "expected_prefix": "蓝色杯子在窗台",
+     "expected": "蓝色杯子在左盒",
+     "got": "蓝色杯子在左盒",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 4,
+     "hit": true,
+     "prefix": "蓝色杯子在左盒",
+     "expected_prefix": "蓝色杯子在左盒",
+     "expected": "蓝色杯子在书架",
+     "got": "蓝色杯子在书架",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 5,
+     "hit": true,
+     "prefix": "蓝色杯子在书架",
+     "expected_prefix": "蓝色杯子在书架",
+     "expected": "蓝色杯子在地毯",
+     "got": "蓝色杯子在地毯",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 6,
+     "hit": true,
+     "prefix": "蓝色杯子在地毯",
+     "expected_prefix": "蓝色杯子在地毯",
+     "expected": "红色印章在木桌",
+     "got": "红色印章在木桌",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 7,
+     "hit": true,
+     "prefix": "红色印章在木桌",
+     "expected_prefix": "红色印章在木桌",
+     "expected": "红色印章在窗台",
+     "got": "红色印章在窗台",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 8,
+     "hit": true,
+     "prefix": "红色印章在窗台",
+     "expected_prefix": "红色印章在窗台",
+     "expected": "红色印章在左盒",
+     "got": "红色印章在左盒",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 9,
+     "hit": true,
+     "prefix": "红色印章在左盒",
+     "expected_prefix": "红色印章在左盒",
+     "expected": "红色印章在书架",
+     "got": "红色印章在书架",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 10,
+     "hit": true,
+     "prefix": "红色印章在书架",
+     "expected_prefix": "红色印章在书架",
+     "expected": "红色印章在地毯",
+     "got": "红色印章在地毯",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 11,
+     "hit": true,
+     "prefix": "红色印章在地毯",
+     "expected_prefix": "红色印章在地毯",
+     "expected": "绿色瓶子在木桌",
+     "got": "绿色瓶子在木桌",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 12,
+     "hit": true,
+     "prefix": "绿色瓶子在木桌",
+     "expected_prefix": "绿色瓶子在木桌",
+     "expected": "绿色瓶子在窗台",
+     "got": "绿色瓶子在窗台",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 13,
+     "hit": true,
+     "prefix": "绿色瓶子在窗台",
+     "expected_prefix": "绿色瓶子在窗台",
+     "expected": "绿色瓶子在左盒",
+     "got": "绿色瓶子在左盒",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 14,
+     "hit": true,
+     "prefix": "绿色瓶子在左盒",
+     "expected_prefix": "绿色瓶子在左盒",
+     "expected": "绿色瓶子在书架",
+     "got": "绿色瓶子在书架",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 15,
+     "hit": true,
+     "prefix": "绿色瓶子在书架",
+     "expected_prefix": "绿色瓶子在书架",
+     "expected": "绿色瓶子在地毯",
+     "got": "绿色瓶子在地毯",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 16,
+     "hit": true,
+     "prefix": "绿色瓶子在地毯",
+     "expected_prefix": "绿色瓶子在地毯",
+     "expected": "黄色球在木桌",
+     "got": "黄色球在木桌",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 17,
+     "hit": true,
+     "prefix": "黄色球在木桌",
+     "expected_prefix": "黄色球在木桌",
+     "expected": "黄色球在窗台",
+     "got": "黄色球在窗台",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 18,
+     "hit": true,
+     "prefix": "黄色球在窗台",
+     "expected_prefix": "黄色球在窗台",
+     "expected": "黄色球在左盒",
+     "got": "黄色球在左盒",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 19,
+     "hit": true,
+     "prefix": "黄色球在左盒",
+     "expected_prefix": "黄色球在左盒",
+     "expected": "黄色球在书架",
+     "got": "黄色球在书架",
+     "control_equal": true,
+     "ok": true
+    },
+    {
+     "step": 20,
+     "hit": true,
+     "prefix": "黄色球在书架",
+     "expected_prefix": "黄色球在书架",
+     "expected": "黄色球在地毯",
+     "got": "黄色球在地毯",
+     "control_equal": true,
+     "ok": true
+    }
+   ],
+   "unknown": {
+    "prefix": null,
+    "decision": "no_pair",
+    "stored": null,
+    "next_prefix": null,
+    "after_steps": 164
+   },
+   "ok": true
+  }
+ },
+ "cross_policy": {
+  "never_always_differ_steps": 19,
+  "on_match_always_same_steps": 20,
+  "unknown_step_differs": true
+ },
+ "invalid_policy": {
+  "raised": true,
+  "error": "unknown prefix policy: 'sometimes'",
+  "state_step": 0
+ },
+ "parameter_sha_equal": true,
+ "table_digest_unchanged": true,
+ "rerun_anchors": [
+  {
+   "round": "R34",
+   "runner": "scripts/training/probe_taiji_bridge_prefix_20261109.py",
+   "rerun_commit": "6e3988177",
+   "runner_blob_sha1": "98fe5b0d5481d4debafd7c5e72fad05f0ab42b89",
+   "report_runner_sha256": "ebb80205188b2c452b56f2da4c393914527a0bd0b9cd85fd7b80375117c2445c",
+   "runner_blob_sha256": "ebb80205188b2c452b56f2da4c393914527a0bd0b9cd85fd7b80375117c2445c",
+   "report_core_sha256": "ca6422fef7929f4bc5771798668458da33dabfa84d73edd275bc135a8d272b9c",
+   "matches_report": true,
+   "note": "current HEAD cannot run it after R35 (core sha changed); checkout this commit"
+  }
+ ],
+ "closed_state": {
+  "baseline": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "2775edfb7640d6e0e233f98bb135e4628b3d489a3151ac2a69ac1b6cb56b35e4",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk_none": true,
+   "sc_bridge_none": true,
+   "battery_sha": "646de7a1aee1f87d2e5fecbde899f4d7b6c678d618f5858e0eb6bf01837417e8",
+   "battery_steps": 20
+  },
+  "after": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "2775edfb7640d6e0e233f98bb135e4628b3d489a3151ac2a69ac1b6cb56b35e4",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk_none": true,
+   "sc_bridge_none": true,
+   "battery_sha": "646de7a1aee1f87d2e5fecbde899f4d7b6c678d618f5858e0eb6bf01837417e8",
+   "battery_steps": 20
+  },
+  "checks": {
+   "parameters_equal": true,
+   "state_equal": true,
+   "identity_equal": true,
+   "store_equal": true,
+   "battery_equal": true,
+   "steps_equal": true,
+   "sc_sfk_none": true,
+   "flag_disabled": true,
+   "rng_untouched": true
+  }
+ },
+ "bridge_default_none": true,
+ "verdict": {
+  "expression": "policy_expression_60_60",
+  "prefix_counts": "policy_prefix_counts_0_19_19",
+  "match_counts": "policy_all_sentences_hit",
+  "controls": "policy_controls_equal",
+  "policy_effect": "policy_discriminates_trajectory",
+  "discriminate": "policy_discriminates_unknown",
+  "unknown": "policy_unknown_clean",
+  "invalid_policy": "policy_name_rejected",
+  "parameters": "parameters_untouched",
+  "closed_state": "closed_state_equal",
+  "bridge_default": "bridge_default_none",
+  "rerun_anchors": "anchors_complete",
+  "overall": "prefix_policy_explicit"
+ },
+ "cost": {
+  "cpu_seconds": 5.359375,
+  "wall_seconds": 5.9372031688690186,
+  "cpu_cap": 200.0,
+  "estimate_cpu_upper": 30.0,
+  "threads": 1
+ }
+}

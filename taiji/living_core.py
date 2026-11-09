@@ -20,6 +20,7 @@ from taiji.sc_sfk import AddressTable
 
 R021_SCHEMA = "taiji-living-core-r021-v1"
 BRIDGE_SNAPSHOT_SCHEMA = "taiji-bridge-snapshot-v1"
+BRIDGE_PREFIX_POLICIES = ("never", "always", "on_match")
 EOS = 256
 ADDRESSED_SLOTS = 32
 ADDRESSED_TEMPERATURE = 0.1
@@ -729,24 +730,39 @@ class LivingCoreReference(nn.Module):
         place_candidates: list[tuple[str, str]] | tuple[tuple[str, str], ...],
         goal: str | bytes = b"",
         *,
-        use_text_prefix: bool = False,
+        prefix_policy: str = "never",
     ) -> tuple[LivingState, dict]:
         """One subject step plus one paired expression on the same input.
 
         The tensor path is exactly ``observe``; the expression only writes the
-        read-side ``last_bridge_text``.  With ``use_text_prefix`` the previous
-        text (if any) is prepended to the step input as a read-only prefix; the
-        expression itself still reads the unprefixed ``raw``.  ``info`` records
-        the prefix, the expression and the resulting step count.
+        read-side ``last_bridge_text``.  ``prefix_policy`` decides whether the
+        previous text is prepended to this step's input:
+
+        - ``never``: never prefix (the default; unchanged closed behaviour);
+        - ``always``: prefix whenever a previous text exists;
+        - ``on_match``: prefix only when this sentence hits a written key.
+
+        The expression itself still reads the unprefixed ``raw``.  ``info``
+        records the policy, the prefix actually used, the expression and the
+        resulting step count.
         """
-        prefix = state.last_bridge_text if use_text_prefix else None
+        if prefix_policy not in BRIDGE_PREFIX_POLICIES:
+            raise ValueError(f"unknown prefix policy: {prefix_policy!r}")
         raw_bytes = raw.encode("utf-8") if isinstance(raw, str) else raw
+        prefix = state.last_bridge_text
+        if prefix_policy == "never" or prefix is None:
+            prefix = None
+        elif prefix_policy == "on_match":
+            table = state.sc_bridge
+            hit = table is not None and bool(table.read_sentence(raw)["answers"])
+            prefix = prefix if hit else None
         input_bytes = prefix.encode("utf-8") + b"\n" + raw_bytes if prefix else raw_bytes
         state = self.observe(state, input_bytes, goal=goal)
         state, expression = self.bridge_express(state, raw, object_candidates, place_candidates)
         return state, {
             "bridge_expression": expression,
             "step": int(state.step),
+            "prefix_policy": prefix_policy,
             "prefix_used": prefix,
             "input_bytes": len(input_bytes),
         }
