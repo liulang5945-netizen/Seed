@@ -2368,6 +2368,30 @@ owner 2026-11-07 裁定：多模态是整个算法内部系统的一部分，不
 | S-119 | “按槽位选会扰动张量” | R-D29-357 | **被取代**：选择前后状态/参数摘要相等。 |
 | S-120 | “纠正对象槽会改变地点槽” | R-D29-357 | **被取代**：对象槽 0→1，地点槽仍 0。 |
 
+## 75. R28 双槽组合选择与模板表达（2026-11-09）
+
+**75.0 冻结与范围**：20 条 describe 句、3 个弃答例、1 条纠正与 R27 复跑锚在读数前写入 [manifest](../manifests/taiji_bridge_pair_20261109.json) 的 `definition_digest`。本轮**修改** `taiji/living_core.py`：新增 `bridge_choose_pair`；不改 `step`／`observe`。0 训练／0 优化器步／0 Adam／0 confirm。
+
+**75.1 读数**
+
+| 编号 | 读数 | 出处 |
+|---|---|---|
+| R-D29-361 | **20/20 成对输出**：20 条 describe 句逐句 `bridge_choose_pair`，对象与地点都对，模板串逐字等于 `"{物件}在{地点}"`。 | `pair` |
+| R-D29-362 | **整对弃答**：未知查询 `no_pair`（`no_choice`／`no_choice`）；双对象句 `no_pair`（`ambiguous_read`／`no_choice`）；无桥 `no_pair`（`no_bridge`／`no_bridge`）。 | `pair` |
+| R-D29-363 | **纠正只动对象槽**：纠正前 `(蓝色杯子, 木桌)`／`"蓝色杯子在木桌"`；CUP→GREEN 后 `(绿色瓶子, 木桌)`／`"绿色瓶子在木桌"`；表摘要变化；状态/参数摘要相等。 | `correction` |
+| R-D29-364 | **关闭态九项全等**；`sc_bridge` 前后 `None`（单列）。 | `closed_state` |
+| R-D29-365 | **复跑锚**：R27→`accfcf984`（blob `29041a8d…`、runner sha `54f07049…`、core sha `76936e0e…`），报告 sha 与 blob sha 一致。 | `rerun_anchors` |
+| R-D29-366 | **判定与成本**：`pair_from_read`／`closed_state_equal`／`bridge_default_none`／`anchors_complete` ⇒ 总判 **`bridge_pair_expression_available`**；成本 **2.156 CPU／3.119 wall**（估 30、上限 200）。 | 报告 `verdict`／`cost` |
+
+**75.2 superseded／范围登记**
+
+| 编号 | 被取代／被限定的对象 | 取代者 | 处置与理由 |
+|---|---|---|---|
+| S-121 | “两槽只能分开返回” | R-D29-361 | **被取代**：`bridge_choose_pair` 返回成对选择与模板串。 |
+| S-122 | “模板表达会扰动张量” | R-D29-363 | **被取代**：成对输出前后状态/参数摘要相等。 |
+| S-123 | “纠正对象槽会连地点槽一起改” | R-D29-363 | **被限定**：文本随对象槽改变，地点槽保持 `木桌`。 |
+
+
 
 
 
