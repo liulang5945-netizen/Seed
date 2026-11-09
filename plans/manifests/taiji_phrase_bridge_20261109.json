@@ -1,0 +1,70 @@
+{
+ "schema": "taiji-phrase-bridge-v1",
+ "date": "2026-11-09",
+ "frozen_at": "2026-11-09T14:20:25",
+ "runner_sha256": "ca79611eba93d45e5b58ece613f6511a8a3662ebd3a970ddcc1a675e68cddbe1",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "8fa3aafde38b1cbad3b021dc271abd316c0a265c68870403dd4ca7b0b53e0c6a"
+ },
+ "fixture_files": [
+  "taiji/native_goal_world_wide.py",
+  "taiji/goal_paraphrase.py",
+  "taiji/living_core.py"
+ ],
+ "question": "R9 说短语在句内、名字接不上：这条“短语→名字”是可外推的映射，还是只有背过的词条？",
+ "counts": {
+  "describe_sentences": 20,
+  "object_phrases": 4,
+  "place_phrases": 5,
+  "bank_before": {
+   "object": 4,
+   "place": 5
+  },
+  "bank_after": {
+   "object": 3,
+   "place": 4
+  },
+  "deleted_per_held_out": 1,
+  "texts_per_arm": 38
+ },
+ "lambda_grid": [
+  0.001,
+  0.1,
+  1.0,
+  10.0,
+  1000.0
+ ],
+ "primary_lambda": 1.0,
+ "cost_estimate_cpu_upper": 50.0,
+ "header_note": "R3 使用外部冻结句向量，只作上界；它的读数不进能力账，也不升级/降级任何既有判定。",
+ "definition": {
+  "bank": "the 9 (phrase, name) pairs from OBJECT_DESCRIPTIONS (4) and PLACE_DESCRIPTIONS (5).  Names are never bridge input: they are the regression target and the candidate set.",
+  "bridge": "closed-form ridge W = (X^T X + lambda I)^-1 X^T N, where N holds the slot's name embeddings; the read-out is x W, classified by nearest name by cosine.",
+  "column_before": "fit on all n rows and read every row back (in-sample).  Establishes that the table itself is representable; it is not a generalisation reading.",
+  "column_after": "leave-one-out: for each held-out row fit on the other n-1 rows and read that row.  The bank therefore drops 4->3 (object) or 5->4 (place): one entry removed per item.  The removed name stays a candidate, so the answer is not excluded by construction.",
+  "modes": {
+   "phrase": "fit and test on the phrase vectors (same-domain phrase->name arrow).",
+   "sentence": "fit on the phrase bank and read the describe sentence (cross-domain: this is the pipeline R9 makes possible).  Runs at the primary lambda only."
+  },
+  "lambda": "verdict at lambda = 1.0, fixed before the first reading.  The grid {1e-3, 1e-1, 1, 1e1, 1e3} is reported as robustness and is used only to reject the memorised claim.",
+  "arms": {
+   "R1": "LivingCoreReference.content_feature (128-bin byte histogram, L2-normalised).",
+   "R2": "mean of reference.encoder.context(raw) over positions (128 dims), untrained weights.",
+   "R3": "DocumentEmbedder on the frozen sentence-transformer; upper bound only."
+  },
+  "chance": {
+   "object": 0.25,
+   "place": 0.2
+  }
+ },
+ "criteria": {
+  "control": "machinery control: R1 in-sample accuracy must be >= 0.95 on both slots at lambda 1.0.  If it is not, the closed-form path is broken and the round is control_failed.",
+  "generalises": "phrase_name_bridge_generalises iff R3 place leave-one-out >= 0.80 at lambda 1.0.",
+  "memorised": "phrase_name_bridge_memorised iff R3 place leave-one-out <= 0.60 at every lambda in the grid; otherwise bridge_inconclusive.",
+  "project_side": "computed on R2 only (D-20261109-10): project_bridge_generalises iff R2 place leave-one-out >= 0.80, project_bridge_memorised iff <= 0.60, else inconclusive.",
+  "r3_unavailable": "if the R3 weights are not cached the verdict is r3_unavailable.",
+  "no_fit": "0 training, 0 optimizer steps, 0 Adam, 0 confirm, 0 new parameters."
+ }
+}
