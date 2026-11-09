@@ -1,0 +1,527 @@
+{
+ "schema": "taiji-bridge-compression-r17-report-v1",
+ "runner_sha256": "9a40229fa6fd9d01dcece65b2f67aea37ecb6443033355e376047fd93e47cca8",
+ "manifest_sha256": "60c0b2476089742a8dad47c561d537f9b1112ab21b1a4bb068bca19fef092691",
+ "bridge_sha256": "e680d69d6ae8b05b3b0e6d9d3d22e29e1d38d48d067c1626ce54264196fb2d5b",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "8fa3aafde38b1cbad3b021dc271abd316c0a265c68870403dd4ca7b0b53e0c6a"
+ },
+ "definition": {
+  "value_dedup": "three keys bound to one value: the value is one object, but every key still occupies an address, so this segment reports keys, distinct values and key reduction separately",
+  "same_value_containment": "a longer key is dropped only when a shorter key of the SAME value occurs contiguously inside it and no other record's whole key sits inside the longer key outside the kept span",
+  "residual_guard": "the guard refuses the drop when another key (any value) is entirely inside the longer key but outside the kept span; the unguarded simulation is reported to show what it prevented",
+  "boundary_leak": "a key that straddles the boundary of the dropped wording is not inside it, so the guard passes; the read then answers one extra value -- this is the measured blind spot",
+  "cross_value": "containment across different values is excluded by rule; compressing there would answer the short key's value for a query written as the long key's wording",
+  "default_path": "the 18-key table (9 corpus + 9 aliases) is compressed as well; nothing may be removed, the content digest must not move, and the R15 reading must stay 40/40",
+  "zeros": "12 unknown candidates and 18 byte fragments must answer 0 on the default table",
+  "closed_state": "the nine closed-state readings stay equal before and after"
+ },
+ "criteria": {
+  "value_dedup": "three keys, one distinct value, three addresses, key reduction 0, and each key answers the same value",
+  "safe_containment": "the nested pair goes 2 -> 1 record; before the drop the longer wording abstains at pass 1 (same-start tie), after the drop it answers the value at pass 2; the kept key still answers",
+  "residual_guard": "the drop is blocked (3 -> 3 records, blocked key named); the reading still abstains; the unguarded simulation answers both values, which is what the guard prevented",
+  "boundary_leak": "the drop happens (3 -> 2 records) and the read answers both values, including the value that the dropped wording was meant to cover -- the guard is table-local, not query-universal",
+  "cross_value": "no record is removed, the cross-value pair is listed, and the hypothetical drop would answer the short key's value -- therefore the same-value condition is required",
+  "default_path": "zero records removed, content digest unchanged, regression 40/40 with wrong 0, zeros 0/0",
+  "closed_state": "the nine closed-state readings stay equal before and after",
+  "reporting": "segments are reported separately; a safe nested pair does not carry the boundary segment, and the boundary segment is evidence against default compression, not for it"
+ },
+ "value_dedup": {
+  "keys": [
+   "甲乙",
+   "丙丁",
+   "戊己"
+  ],
+  "reads": {
+   "甲乙": {
+    "decision": "answered_single",
+    "answers": 1,
+    "values": [
+     [
+      "object",
+      "蓝色杯子"
+     ]
+    ],
+    "stopped_at_pass": 2,
+    "final_exit": "no_match",
+    "final_reason": "masked_no_match"
+   },
+   "丙丁": {
+    "decision": "answered_single",
+    "answers": 1,
+    "values": [
+     [
+      "object",
+      "蓝色杯子"
+     ]
+    ],
+    "stopped_at_pass": 2,
+    "final_exit": "no_match",
+    "final_reason": "masked_no_match"
+   },
+   "戊己": {
+    "decision": "answered_single",
+    "answers": 1,
+    "values": [
+     [
+      "object",
+      "蓝色杯子"
+     ]
+    ],
+    "stopped_at_pass": 2,
+    "final_exit": "no_match",
+    "final_reason": "masked_no_match"
+   }
+  },
+  "records": 3,
+  "distinct_values": 1,
+  "key_reduction": 0,
+  "ok": true
+ },
+ "same_value_containment": {
+  "before": {
+   "decision": "ambiguous_same_start",
+   "answers": 0,
+   "values": [],
+   "stopped_at_pass": 1,
+   "final_exit": "ambiguous_same_start",
+   "final_reason": "two_records_share_the_earliest_start"
+  },
+  "after": {
+   "decision": "answered_single",
+   "answers": 1,
+   "values": [
+    [
+     "object",
+     "蓝色杯子"
+    ]
+   ],
+   "stopped_at_pass": 2,
+   "final_exit": "no_match",
+   "final_reason": "masked_no_match"
+  },
+  "keeper": {
+   "decision": "answered_single",
+   "answers": 1,
+   "values": [
+    [
+     "object",
+     "蓝色杯子"
+    ]
+   ],
+   "stopped_at_pass": 2,
+   "final_exit": "no_match",
+   "final_reason": "masked_no_match"
+  },
+  "compression": {
+   "removed": [
+    {
+     "key": "甲乙丙",
+     "keeper": "甲乙",
+     "value": [
+      "object",
+      "蓝色杯子"
+     ]
+    }
+   ],
+   "blocked": [],
+   "records_before": 2,
+   "records_after": 1
+  },
+  "ok": true
+ },
+ "residual_guard": {
+  "before": {
+   "decision": "ambiguous_same_start",
+   "answers": 0,
+   "values": [],
+   "stopped_at_pass": 1,
+   "final_exit": "ambiguous_same_start",
+   "final_reason": "two_records_share_the_earliest_start"
+  },
+  "after": {
+   "decision": "ambiguous_same_start",
+   "answers": 0,
+   "values": [],
+   "stopped_at_pass": 1,
+   "final_exit": "ambiguous_same_start",
+   "final_reason": "two_records_share_the_earliest_start"
+  },
+  "compression": {
+   "removed": [],
+   "blocked": [
+    {
+     "key": "甲乙丙丁",
+     "keeper": "甲乙",
+     "conflict": {
+      "key": "丙丁",
+      "position": 2,
+      "value": [
+       "place",
+       "木桌"
+      ]
+     }
+    }
+   ],
+   "records_before": 3,
+   "records_after": 3
+  },
+  "unguarded_simulation": {
+   "decision": "answered_pair",
+   "answers": 2,
+   "values": [
+    [
+     "object",
+     "蓝色杯子"
+    ],
+    [
+     "place",
+     "木桌"
+    ]
+   ],
+   "stopped_at_pass": 3,
+   "final_exit": "no_match",
+   "final_reason": "masked_no_match"
+  },
+  "ok": true
+ },
+ "boundary": {
+  "before": {
+   "decision": "ambiguous_same_start",
+   "answers": 0,
+   "values": [],
+   "stopped_at_pass": 1,
+   "final_exit": "ambiguous_same_start",
+   "final_reason": "two_records_share_the_earliest_start"
+  },
+  "after": {
+   "decision": "answered_pair",
+   "answers": 2,
+   "values": [
+    [
+     "object",
+     "蓝色杯子"
+    ],
+    [
+     "place",
+     "木桌"
+    ]
+   ],
+   "stopped_at_pass": 3,
+   "final_exit": "no_match",
+   "final_reason": "masked_no_match"
+  },
+  "compression": {
+   "removed": [
+    {
+     "key": "甲乙丙",
+     "keeper": "甲乙",
+     "value": [
+      "object",
+      "蓝色杯子"
+     ]
+    }
+   ],
+   "blocked": [],
+   "records_before": 3,
+   "records_after": 2
+  },
+  "extra_values": [
+   [
+    "object",
+    "蓝色杯子"
+   ],
+   [
+    "place",
+    "木桌"
+   ]
+  ],
+  "ok": true
+ },
+ "cross_value": {
+  "before": {
+   "decision": "ambiguous_same_start",
+   "answers": 0,
+   "values": [],
+   "stopped_at_pass": 1,
+   "final_exit": "ambiguous_same_start",
+   "final_reason": "two_records_share_the_earliest_start"
+  },
+  "after": {
+   "decision": "ambiguous_same_start",
+   "answers": 0,
+   "values": [],
+   "stopped_at_pass": 1,
+   "final_exit": "ambiguous_same_start",
+   "final_reason": "two_records_share_the_earliest_start"
+  },
+  "compression": {
+   "removed": [],
+   "blocked": [],
+   "records_before": 2,
+   "records_after": 2
+  },
+  "cross_value_pairs": [
+   {
+    "long": "甲乙丙",
+    "long_value": [
+     "object",
+     "蓝色杯子"
+    ],
+    "short": "甲乙",
+    "short_value": [
+     "place",
+     "木桌"
+    ]
+   }
+  ],
+  "hypothetical_simulation": {
+   "decision": "answered_single",
+   "answers": 1,
+   "values": [
+    [
+     "place",
+     "木桌"
+    ]
+   ],
+   "stopped_at_pass": 2,
+   "final_exit": "no_match",
+   "final_reason": "masked_no_match"
+  },
+  "ok": true
+ },
+ "default_path": {
+  "records": 18,
+  "compression": {
+   "removed": [],
+   "blocked": [],
+   "records_before": 18,
+   "records_after": 18
+  },
+  "digest_before": "17f0aeab88b0a802a2573ecdf9bd80b887d34528b80d02b0bf3e220ba3a8a41c",
+  "digest_after": "17f0aeab88b0a802a2573ecdf9bd80b887d34528b80d02b0bf3e220ba3a8a41c",
+  "digest_unchanged": true,
+  "regression": {
+   "entities": 40,
+   "hits": 40,
+   "wrong": 0,
+   "distribution": {
+    "answered_2": 20,
+    "answered_1": 0,
+    "wrong": 0,
+    "abstained": 0
+   },
+   "ok": true
+  },
+  "zeros": {
+   "unknown": {
+    "rows": [
+     {
+      "phrase": "黑色铁铃",
+      "decision": "no_match"
+     },
+     {
+      "phrase": "白色帆布",
+      "decision": "no_match"
+     },
+     {
+      "phrase": "长柄铜勺",
+      "decision": "no_match"
+     },
+     {
+      "phrase": "软木瓶塞",
+      "decision": "no_match"
+     },
+     {
+      "phrase": "蓝色毛巾",
+      "decision": "no_match"
+     },
+     {
+      "phrase": "银质圆镜",
+      "decision": "no_match"
+     },
+     {
+      "phrase": "棕色皮箱",
+      "decision": "no_match"
+     },
+     {
+      "phrase": "青色陶罐",
+      "decision": "no_match"
+     },
+     {
+      "phrase": "灰色石阶",
+      "decision": "no_match"
+     },
+     {
+      "phrase": "紫色绸带",
+      "decision": "no_match"
+     },
+     {
+      "phrase": "金色烛台",
+      "decision": "no_match"
+     },
+     {
+      "phrase": "深红木箱",
+      "decision": "no_match"
+     }
+    ],
+    "candidates": 12,
+    "answering": 0,
+    "zero_ok": true
+   },
+   "fragments": {
+    "rows": [
+     {
+      "phrase": "圆口的器皿",
+      "byte_offset": 1,
+      "decision": "empty_key"
+     },
+     {
+      "phrase": "圆口的器皿",
+      "byte_offset": 2,
+      "decision": "empty_key"
+     },
+     {
+      "phrase": "带纹路的方块",
+      "byte_offset": 1,
+      "decision": "empty_key"
+     },
+     {
+      "phrase": "带纹路的方块",
+      "byte_offset": 2,
+      "decision": "empty_key"
+     },
+     {
+      "phrase": "细长的容器",
+      "byte_offset": 1,
+      "decision": "empty_key"
+     },
+     {
+      "phrase": "细长的容器",
+      "byte_offset": 2,
+      "decision": "empty_key"
+     },
+     {
+      "phrase": "圆滚滚的东西",
+      "byte_offset": 1,
+      "decision": "empty_key"
+     },
+     {
+      "phrase": "圆滚滚的东西",
+      "byte_offset": 2,
+      "decision": "empty_key"
+     },
+     {
+      "phrase": "四方木台",
+      "byte_offset": 1,
+      "decision": "empty_key"
+     },
+     {
+      "phrase": "四方木台",
+      "byte_offset": 2,
+      "decision": "empty_key"
+     },
+     {
+      "phrase": "靠窗的台面",
+      "byte_offset": 1,
+      "decision": "empty_key"
+     },
+     {
+      "phrase": "靠窗的台面",
+      "byte_offset": 2,
+      "decision": "empty_key"
+     },
+     {
+      "phrase": "手边的匣子",
+      "byte_offset": 1,
+      "decision": "empty_key"
+     },
+     {
+      "phrase": "手边的匣子",
+      "byte_offset": 2,
+      "decision": "empty_key"
+     },
+     {
+      "phrase": "靠墙的层架",
+      "byte_offset": 1,
+      "decision": "empty_key"
+     },
+     {
+      "phrase": "靠墙的层架",
+      "byte_offset": 2,
+      "decision": "empty_key"
+     },
+     {
+      "phrase": "脚边的毡子",
+      "byte_offset": 1,
+      "decision": "empty_key"
+     },
+     {
+      "phrase": "脚边的毡子",
+      "byte_offset": 2,
+      "decision": "empty_key"
+     }
+    ],
+    "inputs": 18,
+    "answering": 0,
+    "zero_ok": true
+   },
+   "ok": true
+  },
+  "ok": true
+ },
+ "closed_state": {
+  "baseline": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "7b06e5faf6d8a7b6066a0fa6da0812e2ef58b43702c4fb8a3c40f68fb3e62622",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk_none": true,
+   "battery_sha": "c5c1387a56f4244534df7b0c475815d5ed9a7c679c2b009ccf4fa1325978febb",
+   "battery_steps": 20
+  },
+  "after": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "7b06e5faf6d8a7b6066a0fa6da0812e2ef58b43702c4fb8a3c40f68fb3e62622",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk_none": true,
+   "battery_sha": "c5c1387a56f4244534df7b0c475815d5ed9a7c679c2b009ccf4fa1325978febb",
+   "battery_steps": 20
+  },
+  "checks": {
+   "parameters_equal": true,
+   "state_equal": true,
+   "identity_equal": true,
+   "store_equal": true,
+   "battery_equal": true,
+   "steps_equal": true,
+   "sc_sfk_none": true,
+   "flag_disabled": true,
+   "rng_untouched": true
+  }
+ },
+ "verdict": {
+  "value_dedup": "value_dedup_visible",
+  "safe_containment": "same_value_containment_safe",
+  "residual_guard": "residual_guard_blocks",
+  "boundary": "boundary_leak_confirmed",
+  "cross_value": "cross_value_forbidden",
+  "default_path": "default_path_unchanged",
+  "zeros": "zeros_clean",
+  "overall": "compression_value_level_only"
+ },
+ "cost": {
+  "cpu_seconds": 1.78125,
+  "wall_seconds": 2.648306131362915,
+  "cpu_cap": 200.0,
+  "estimate_cpu_upper": 30.0,
+  "threads": 1
+ }
+}
