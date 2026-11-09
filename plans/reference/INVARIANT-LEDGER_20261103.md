@@ -2202,6 +2202,33 @@ owner 2026-11-07 裁定：多模态是整个算法内部系统的一部分，不
 | S-98 | “过期子集只回滚出错的那一项” | R-D29-308 | **被取代**：整批先校验后应用，过期子集导致整批拒绝，有效项也不落盘（原子性）。 |
 | S-99 | “双槽纠正必须分两批” | R-D29-307 | **被取代**：两个键可以在同一批纠正，日志两条、读回新对。 |
 
+## 68. R21 纠正来源与授权（2026-11-09）
+
+**68.0 冻结与范围**：七个来源算例、默认表往返、12 条未写候选、18 条碎片与三行复跑锚在读数前写入 [manifest](../manifests/taiji_bridge_authority_20261109.json) 的 `definition_digest`。本轮**修改** `taiji/address_bridge.py`：`correct` 增加可选 `authority`／`reason`，构造增加可选 `allowed_authorities`；默认空策略保持 R18–R20 行为。0 训练／0 优化器步／0 Adam／0 confirm。
+
+**68.1 读数**
+
+| 编号 | 读数 | 出处 |
+|---|---|---|
+| R-D29-314 | **向后兼容**：空策略、`correct(items)` ⇒ `corrected`，日志 1 条且 `authority=""`、`reason=""`。 | `backward` |
+| R-D29-315 | **缺来源被拒**：允许集 `("verifier:v1",)`、无来源 ⇒ `rejected_batch_missing_authority`，内容摘要不变，日志 0。 | `missing_authority` |
+| R-D29-316 | **未知来源被拒**：同一允许集、`verifier:v2` ⇒ `rejected_batch_unknown_authority`，内容摘要不变，日志 0。 | `unknown_authority` |
+| R-D29-317 | **允许来源生效**：`verifier:v1`＋`reason="evidence:r21"` ⇒ `corrected`，日志 1 条逐字记录来源与理由。 | `allowed_authority` |
+| R-D29-318 | **来源不替代 CAS**：允许来源但旧值过期 ⇒ 仍 `rejected_batch_correction_mismatch`，内容摘要不变，日志 0。 | `stale_credential` |
+| R-D29-319 | **普通冲突写仍拒**：有策略的表上 `write` 同键异值 ⇒ `rejected_batch_address_already_bound`，日志 0。 | `plain_write` |
+| R-D29-320 | **两步链可归因**：同一允许来源、`step1`／`step2` ⇒ 两次 `corrected`，读回最终值，日志 2 条均带 `verifier:v1` 与对应理由。 | `authority_chain` |
+| R-D29-321 | **默认表不移动**：空策略下别名 `蓝→红→蓝` 往返后 `content_digest` 复原、读回原值、日志 2 条来源为空；R15 **40/40**、12 未写候选 **0**、18 碎片 **0**、关闭态**九项全等**。 | `default_table`／`closed_state` |
+| R-D29-322 | **判定、成本与复跑锚**：`backward_compatible`／`missing_authority_rejected`／`unknown_authority_rejected`／`allowed_authority_applied`／`stale_credential_still_rejected`／`plain_write_still_rejected`／`default_table_unchanged`／`authority_chain_attributed`／`anchors_complete`／`closed_state_equal` ⇒ 总判 **`correction_authority_attributed`**；成本 **1.766 CPU／2.654 wall**（估 30、上限 200）。R18 → `64a221f37`（blob `93919b40…`、sha256 `4ba6e0a0…`），R19 → `dcda39ca9`（blob `a89b1f47…`、sha256 `bd92a15a…`），R20 → `56c87bbd0`（blob `9e9e7a5b…`、sha256 `1af43c0b…`）；三行报告 sha 与 blob sha 完全一致，均“在当前 HEAD 不可跑、按提交 X 可复跑”。 | 报告 `verdict`／`cost`／`rerun_anchors` |
+
+**68.2 superseded／范围登记**
+
+| 编号 | 被取代／被限定的对象 | 取代者 | 处置与理由 |
+|---|---|---|---|
+| S-100 | “纠正日志无法说明谁改的/为什么” | R-D29-317 | **收窄**：日志新增 `authority`／`reason`；空策略仍记空来源。 |
+| S-101 | “所有调用方都能纠正” | R-D29-315 | **限定**：非空允许集下缺来源/未知来源整批拒绝；空集保持旧行为。 |
+| S-102 | “来源能替代 CAS 或校验新值” | R-D29-318 | **被取代**：来源不替代当前值凭据，也不校验新值；错误核对器仍被接受。 |
+
+
 
 
 
