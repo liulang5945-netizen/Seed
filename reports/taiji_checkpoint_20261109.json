@@ -1,0 +1,176 @@
+{
+ "schema": "taiji-checkpoint-r37-report-v1",
+ "runner_sha256": "3402bd884dba5ad5a2cb0f397f99dfdd76aacb0157dc5d0b088fbf56abce0eae",
+ "manifest_sha256": "df60529017e0cdfaff3175a9c0a84b65c2332b3b54290db75b8a2e12b6386167",
+ "core_sha256": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d"
+ },
+ "definition": {
+  "step": "exactly one Adam step on an independent scratch model over sentence 0",
+  "checkpoint": "model state, optimizer state and global step in one file",
+  "load": "a child process restores all three and reports digests",
+  "forward": "the teacher-forced distribution digest after the load equals the parent's",
+  "resume": "one more Adam step in the child equals the parent's own second step bit for bit",
+  "reject": "missing key, unexpected key, random bytes and a truncated file each raise",
+  "closed_state": "the nine legacy readings on the main subject stay equal before and after"
+ },
+ "criteria": {
+  "gradients": "every parameter Adam updates has a finite gradient; the one step changes parameters",
+  "checkpoint_file": "the checkpoint exists, is non-trivial and carries schema/config/lr/global_step",
+  "child_load": "child return code 0; loaded parameter digest equals the parent's after-step digest",
+  "child_forward": "child forward digest equals the parent's after-step forward digest",
+  "child_resume": "child second-step parameter digest equals the parent's second-step digest",
+  "adam_step": "the restored Adam state reports step 1 before the child's second step",
+  "rejections": "4/4 rejection cases raise (missing, unexpected, random bytes, truncated)",
+  "closed_state": "the nine legacy readings stay equal and the main parameter digest does not move",
+  "rerun": "the R36 anchor carries a commit, a runner blob sha1, a runner sha256 and a core sha256"
+ },
+ "checkpoint": {
+  "bytes": 34664875,
+  "sha256": "fbe1ca768e305a325fcb354eccf93ab706cf239f55a644a4456ce044472976e9",
+  "schema": "taiji-lived-checkpoint-v1",
+  "global_step": 1,
+  "learning_rate": 0.001
+ },
+ "scratch": {
+  "initial_parameter_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+  "after_first_parameter_sha": "780ecf5ca4c7aa5356cff8418a17c9867b42f29eb4dad1be7f6f62be77453708",
+  "second_parameter_sha": "7d20162461924ba3aa2b2e15c0c4b3d4dc3dde038c8a05176224829a395b9da1",
+  "forward_after_first": "90dd2441c9db1ac2c94e676f07de8db6e5a0fbe2f9fd28020289ae5ddb095254",
+  "second_forward": "53c679ebfc7cbba47b5b1036e7c306629fa5175b4a0f4673757ec00a7b051d01",
+  "first_step": {
+   "loss": 5.523617267608643,
+   "parameters": 135,
+   "with_grad": 95,
+   "gradients_finite": true,
+   "grad_norm": 1.4140491485595703
+  },
+  "second_step": {
+   "loss": 5.351278305053711,
+   "parameters": 135,
+   "with_grad": 95,
+   "gradients_finite": true,
+   "grad_norm": 1.451242446899414
+  }
+ },
+ "child": {
+  "returncode": 0,
+  "stdout": "",
+  "stderr": "",
+  "result": {
+   "config_matches": true,
+   "lr_matches": true,
+   "global_step": 1,
+   "loaded_parameter_sha": "780ecf5ca4c7aa5356cff8418a17c9867b42f29eb4dad1be7f6f62be77453708",
+   "forward_sha": "90dd2441c9db1ac2c94e676f07de8db6e5a0fbe2f9fd28020289ae5ddb095254",
+   "adam_step": 1,
+   "second_step_parameter_sha": "7d20162461924ba3aa2b2e15c0c4b3d4dc3dde038c8a05176224829a395b9da1",
+   "second_step_loss": 5.351278305053711,
+   "second_step_with_grad": 95,
+   "wrote_output": true
+  },
+  "result_exists": true
+ },
+ "rejections": {
+  "rows": [
+   {
+    "case": "missing_key",
+    "raised": true,
+    "error": "RuntimeError: Error(s) in loading state_dict for LivingCoreReference:\n\tMissing key(s) in state_dict: \"P\". "
+   },
+   {
+    "case": "unexpected_key",
+    "raised": true,
+    "error": "RuntimeError: Error(s) in loading state_dict for LivingCoreReference:\n\tUnexpected key(s) in state_dict: \"bogus.weight\". "
+   },
+   {
+    "case": "random_bytes",
+    "raised": true,
+    "error": "UnpicklingError: invalid load key, '8'."
+   },
+   {
+    "case": "truncated_file",
+    "raised": true,
+    "error": "RuntimeError: PytorchStreamReader failed reading zip archive: failed finding central directory. This is an internal miniz error. If you are seeing this error, there is a high likelihood that your checkpoint file is corrupted. This can happen if the checkpoint was not saved properly, was transferred incorrectly, or the file was modified after saving."
+   }
+  ],
+  "rejected": 4,
+  "of": 4
+ },
+ "rerun_anchors": [
+  {
+   "round": "R36",
+   "runner": "scripts/training/probe_taiji_bridge_prefix_use_20261109.py",
+   "rerun_commit": "79d29d184",
+   "runner_blob_sha1": "6a03f114e680078c4863a6330c8c3283b35208ea",
+   "report_runner_sha256": "9eef77ae3fcba4146105ab83023685c2b8bd13f8f00831d392c2bfb6d7da6362",
+   "runner_blob_sha256": "9eef77ae3fcba4146105ab83023685c2b8bd13f8f00831d392c2bfb6d7da6362",
+   "report_core_sha256": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d",
+   "matches_report": true,
+   "note": "R37 does not change living_core; R36 stays runnable at HEAD"
+  }
+ ],
+ "closed_state": {
+  "baseline": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "140d72180a8dfa85e0863e4af417e3c02b049c2a8d7dab532cc225934fc4f27c",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk_none": true,
+   "sc_bridge_none": true,
+   "battery_sha": "1b95dbb0c6511a8dcb930bf50a9da35d671218aca55054097a1b4f1fbac9fdff",
+   "battery_steps": 20
+  },
+  "after": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "140d72180a8dfa85e0863e4af417e3c02b049c2a8d7dab532cc225934fc4f27c",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk_none": true,
+   "sc_bridge_none": true,
+   "battery_sha": "1b95dbb0c6511a8dcb930bf50a9da35d671218aca55054097a1b4f1fbac9fdff",
+   "battery_steps": 20
+  },
+  "checks": {
+   "parameters_equal": true,
+   "state_equal": true,
+   "identity_equal": true,
+   "store_equal": true,
+   "battery_equal": true,
+   "steps_equal": true,
+   "sc_sfk_none": true,
+   "flag_disabled": true,
+   "rng_untouched": true
+  }
+ },
+ "main_parameter_sha_equal": true,
+ "bridge_default_none": true,
+ "verdict": {
+  "gradients": "no_step_effect",
+  "checkpoint": "checkpoint_written_with_state",
+  "child_load": "child_load_exact",
+  "child_forward": "child_forward_exact",
+  "child_resume": "child_resume_exact",
+  "adam_step": "adam_step_restored",
+  "rejections": "checkpoint_rejections_4_4",
+  "closed_state": "closed_state_equal",
+  "main_untouched": "main_subject_untouched",
+  "bridge_default": "bridge_default_none",
+  "rerun_anchors": "anchors_complete",
+  "overall": "checkpoint_round_trip_unexpected"
+ },
+ "cost": {
+  "cpu_seconds": 5.53125,
+  "wall_seconds": 15.829991102218628,
+  "cpu_cap": 200.0,
+  "estimate_cpu_upper": 40.0,
+  "threads": 1
+ }
+}

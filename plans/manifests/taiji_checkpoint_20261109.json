@@ -1,0 +1,58 @@
+{
+ "schema": "taiji-checkpoint-r37-v1",
+ "created": "2026-11-09T17:50:33",
+ "seed": 20261109,
+ "estimate_cpu_upper": 40.0,
+ "cpu_cap": 200.0,
+ "learning_rate": 0.001,
+ "checkpoint_schema": "taiji-lived-checkpoint-v1",
+ "runner_sha256": "3402bd884dba5ad5a2cb0f397f99dfdd76aacb0157dc5d0b088fbf56abce0eae",
+ "core_sha256": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d"
+ },
+ "definition": {
+  "step": "exactly one Adam step on an independent scratch model over sentence 0",
+  "checkpoint": "model state, optimizer state and global step in one file",
+  "load": "a child process restores all three and reports digests",
+  "forward": "the teacher-forced distribution digest after the load equals the parent's",
+  "resume": "one more Adam step in the child equals the parent's own second step bit for bit",
+  "reject": "missing key, unexpected key, random bytes and a truncated file each raise",
+  "closed_state": "the nine legacy readings on the main subject stay equal before and after"
+ },
+ "criteria": {
+  "gradients": "every parameter Adam updates has a finite gradient; the one step changes parameters",
+  "checkpoint_file": "the checkpoint exists, is non-trivial and carries schema/config/lr/global_step",
+  "child_load": "child return code 0; loaded parameter digest equals the parent's after-step digest",
+  "child_forward": "child forward digest equals the parent's after-step forward digest",
+  "child_resume": "child second-step parameter digest equals the parent's second-step digest",
+  "adam_step": "the restored Adam state reports step 1 before the child's second step",
+  "rejections": "4/4 rejection cases raise (missing, unexpected, random bytes, truncated)",
+  "closed_state": "the nine legacy readings stay equal and the main parameter digest does not move",
+  "rerun": "the R36 anchor carries a commit, a runner blob sha1, a runner sha256 and a core sha256"
+ },
+ "definition_digest": "93b754fc2d0756abffff37430622f4a33b3dd57720783b4467254f98c55096fa",
+ "counts": {
+  "describe_sentences": 20,
+  "rerun_anchors": 1
+ },
+ "inputs": {
+  "goal": "r37",
+  "sentence": "让圆口的器皿到四方木台。",
+  "rerun_anchors": [
+   {
+    "round": "R36",
+    "runner": "scripts/training/probe_taiji_bridge_prefix_use_20261109.py",
+    "rerun_commit": "79d29d184",
+    "runner_blob_sha1": "6a03f114e680078c4863a6330c8c3283b35208ea",
+    "report_runner_sha256": "9eef77ae3fcba4146105ab83023685c2b8bd13f8f00831d392c2bfb6d7da6362",
+    "runner_blob_sha256": "9eef77ae3fcba4146105ab83023685c2b8bd13f8f00831d392c2bfb6d7da6362",
+    "report_core_sha256": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d",
+    "matches_report": true,
+    "note": "R37 does not change living_core; R36 stays runnable at HEAD"
+   }
+  ]
+ }
+}
