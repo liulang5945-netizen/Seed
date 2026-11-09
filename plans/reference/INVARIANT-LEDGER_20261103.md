@@ -2177,6 +2177,32 @@ owner 2026-11-07 裁定：多模态是整个算法内部系统的一部分，不
 | S-95 | “闭环会反复写入/不收敛” | R-D29-300 | **被取代**：读到一致即 `agreed`、不写；两轮内收敛，日志恰好 1 条。 |
 | S-96 | “单键闭环等于句级能力” | R-D29-305 | **限定**：只在单键上测；一句两实体的子集纠正、另一槽不动、过期子集拒绝均未测，留给 R20。 |
 
+## 67. R20 句级双实体纠正（2026-11-09）
+
+**67.0 冻结与范围**：六个双实体算例、默认表双键往返、12 条未写候选、18 条碎片在读数前写入 [manifest](../manifests/taiji_bridge_pair_correction_20261109.json) 的 `definition_digest`。本轮**不修改** `taiji/address_bridge.py`。0 训练／0 优化器步／0 Adam／0 confirm。
+
+**67.1 读数**
+
+| 编号 | 读数 | 出处 |
+|---|---|---|
+| R-D29-306 | **单槽错只动一槽**：读 `(蓝色杯子, 木桌)`、核对器 `(红色印章, 木桌)` ⇒ 只纠正 object 键、读回 `(红色印章, 木桌)`、**place 未动**、日志 1 条。 | `single_slot` |
+| R-D29-307 | **双槽同批纠正**：读 `(蓝色杯子, 木桌)`、核对器 `(红色印章, 书架)` ⇒ 同一批 `corrected=2`、读回 `(红色印章, 书架)`、日志 2 条（先 object 后 place）。 | `both_slots` |
+| R-D29-308 | **过期子集整批拒绝**：先读 `(蓝色杯子, 木桌)`，他人把 place 改成 `书架`，再用旧对提交两槽 ⇒ `rejected_batch_correction_mismatch`，object 仍 `蓝色杯子`、place 仍 `书架`，日志仍 1 条。**有效那一槽也没有落盘**。 | `stale_subset` |
+| R-D29-309 | **两槽已一致不写**：`agreed`、日志 0、内容摘要不变。 | `no_op` |
+| R-D29-310 | **普通冲突写仍拒**：同键 `write` 到另一值 ⇒ `rejected_batch_address_already_bound`、读回原对、日志 0。 | `plain_write` |
+| R-D29-311 | **两轮收敛**：第一轮 `corrected`、第二轮 `agreed`，日志恰好 1 条，读回 `(红色印章, 木桌)`。 | `convergence` |
+| R-D29-312 | **默认表双键往返**：18 键表首条 describe 句的 object／place 两键同批改到另一对、再同批改回 ⇒ `content_digest` **前后相等**、读回原对、日志 4 条；R15 **40/40**、12 未写候选 **0**、18 碎片 **0**、关闭态**九项全等**。 | `default_table`／`closed_state` |
+| R-D29-313 | **判定与成本**：`single_slot_correction`／`both_slots_correction`／`stale_subset_rejected`／`no_op_when_pair_agrees`／`plain_write_still_rejected`／`pair_loop_converges`／`default_table_unchanged`／`closed_state_equal` ⇒ 总判 **`sentence_pair_correction_available`**；成本 **1.844 CPU／2.616 wall**（估 30、上限 200）。 | 报告 `verdict`／`cost` |
+
+**67.2 superseded／范围登记**
+
+| 编号 | 被取代／被限定的对象 | 取代者 | 处置与理由 |
+|---|---|---|---|
+| S-97 | “单槽纠正会连带改另一槽” | R-D29-306 | **被取代**：单槽错只提交一项，另一槽不动。 |
+| S-98 | “过期子集只回滚出错的那一项” | R-D29-308 | **被取代**：整批先校验后应用，过期子集导致整批拒绝，有效项也不落盘（原子性）。 |
+| S-99 | “双槽纠正必须分两批” | R-D29-307 | **被取代**：两个键可以在同一批纠正，日志两条、读回新对。 |
+
+
 
 
 
