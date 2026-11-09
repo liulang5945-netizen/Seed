@@ -2252,6 +2252,31 @@ owner 2026-11-07 裁定：多模态是整个算法内部系统的一部分，不
 | S-104 | “导入端沿用导出端的允许来源策略” | R-D29-325 | **被取代**：策略属于导入端构造，导出端策略只是元数据。 |
 | S-105 | “损坏输入可以部分导入” | R-D29-326 | **被取代**：整包校验，任一损坏整批拒绝。 |
 
+## 70. R23 跨进程继承认读（2026-11-09）
+
+**70.0 冻结与范围**：交接链、子进程策略、损坏文件、12 条未写候选与 18 条碎片在读数前写入 [manifest](../manifests/taiji_bridge_handoff_20261109.json) 的 `definition_digest`。本轮**不修改** `taiji/address_bridge.py`；两个子进程由 runner 以独立 Python 解释器启动。0 训练／0 优化器步／0 Adam／0 confirm。
+
+**70.1 读数**
+
+| 编号 | 读数 | 出处 |
+|---|---|---|
+| R-D29-330 | **父导出→子导入**：1,820 B、摘要 `a4edca3e…`；子进程导入摘要与父进程**相等**，返回码 **0**。 | `child_import` |
+| R-D29-331 | **子进程读**：R15 **40/40**、12 未写候选 **0**、18 碎片 **0**。 | `child_reading` |
+| R-D29-332 | **子进程策略**：`verifier:v2` ⇒ `rejected_batch_unknown_authority`；`verifier:v1` ⇒ `corrected`；别名读回 `红色印章`，日志 1 条（`verifier:v1`／`child:accepted`）。 | `child_policy` |
+| R-D29-333 | **交回父进程**：父进程导入子进程导出，摘要与子进程导出**相等**；别名 `红色印章`、日志来源/理由保留、R15 **40/40**、零线 **0/0**。 | `handback` |
+| R-D29-334 | **损坏文件**：第二个子进程收到截断字节 ⇒ 返回码 0、`error="rejected_import_invalid_state: not_json"`、**无输出表**。 | `corrupt_child` |
+| R-D29-335 | **关闭态九项全等**。 | `closed_state` |
+| R-D29-336 | **判定与成本**：`child_import_matched`／`child_read_40_40`／`child_policy_enforced`／`handback_clean`／`corrupt_child_rejected`／`closed_state_equal` ⇒ 总判 **`cross_process_handoff_clean`**；成本 **1.844 CPU／15.943 wall**（估 60、上限 200；wall 主要花在两个子进程启动）。 | 报告 `verdict`／`cost` |
+
+**70.2 superseded／范围登记**
+
+| 编号 | 被取代／被限定的对象 | 取代者 | 处置与理由 |
+|---|---|---|---|
+| S-106 | “导出/导入只是同进程对象复制” | R-D29-330 | **被取代**：独立 Python 进程导入同一字节并读回，摘要逐字相等。 |
+| S-107 | “子进程会沿用父进程策略” | R-D29-332 | **被取代**：子进程按自己的构造执行策略，未列来源被拒。 |
+| S-108 | “跨进程错误会半途落盘” | R-D29-334 | **被取代**：损坏文件在子进程整批拒绝，无输出表。 |
+
+
 
 
 
