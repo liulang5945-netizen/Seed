@@ -17,7 +17,7 @@
 | D-20261109-06 | 读数后 runner 增补（R4a 输出逐对明细） | R4a 首跑缺逐对距离，无法做家族拆分；给 runner 加 `pairs` 输出后重冻重跑，判据/阈值/夹具未动，八项读数逐项相同 | 90426725e |
 | D-20261109-07 | 预算超限＋读数后 runner 修正（CPU 线程与 wall 计时） | R5 首跑 845.0 CPU、次跑 702.0 CPU（上限 200）；归因为 BLAS 线程自旋＋wall 计时公式写错，限 1 线程后重冻重跑 0.516 CPU，判定与全部读数逐项相同 | 0061918d8 |
 | D-20261109-08 | 判据改写（读数后发现 joint 列结构性无效，冻结新口径重跑） | R6 的 joint 用 20 类 one-hot，而按 goal 分组交叉验证时测试折的联合类在训练中无样本，20 个权重恒零、argmax 永不选中，joint 必然 0.0；改为“同一行 object ∧ place 都对”后 R6b 三臂 joint 1.0、判 `cross_family_readout_transfers` | 98263aba2 |
-| D-20261109-09 | 读数后 runner 修正（名字域串用，分子错位） | R8 首跑三臂短语 object 全是 0.0、且预测里出现“左盒／窗台”等地点名：`detail()` 用 `slot` 同时决定名字表与目标字段，短语级传 `slot="target"` 导致名字表取成 `place_names`；改为显式传 `names` 后重冻重跑，判据／分母／夹具未动，verdict 仍 `control_failed` | 待回填 |
+| D-20261109-09 | 读数后 runner 修正（名字域串用，分子错位） | R8 首跑三臂短语 object 全是 0.0、且预测里出现“左盒／窗台”等地点名：`detail()` 用 `slot` 同时决定名字表与目标字段，短语级传 `slot="target"` 导致名字表取成 `place_names`；改为显式传 `names` 后重冻重跑，判据／分母／夹具未动，verdict 仍 `control_failed` | e7b6b53df |
 
 ---
 
