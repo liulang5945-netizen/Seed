@@ -1,0 +1,224 @@
+{
+ "schema": "taiji-bridge-slot-choice-r27-report-v1",
+ "runner_sha256": "54f07049bf23efbd984edbea3004a245bcf9de4236ec53da8a4c060e012eb0f3",
+ "manifest_sha256": "086ea0d78ed414247a6f6a1338f8b42311f58bf4f6da548083b2c6d176de5e00",
+ "bridge_sha256": "4edf29b22a199c29160523debb8ea23a45e59321f2b0c8dc06da72497672e831",
+ "core_sha256": "76936e0e8b1114ee4e122d5b78e8c4fd5e98c6db3d71d82eab27b05b9d8c622c",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "76936e0e8b1114ee4e122d5b78e8c4fd5e98c6db3d71d82eab27b05b9d8c622c"
+ },
+ "definition": {
+  "slot": "bridge_choose(..., slot=...) counts only answers whose value[0] equals the slot; without slot the whole read is counted",
+  "separate": "one sentence with CUP and TABLE chooses CUP in object and TABLE in place, independently",
+  "no_slot": "the same two-entity sentence without slot is ambiguous_read",
+  "slot_missing": "a slot the sentence does not carry gives no_choice",
+  "outside": "a slot whose value is outside the candidates gives not_in_candidates",
+  "same_slot_ambiguous": "two entities of the same slot give ambiguous_read even with slot",
+  "correction": "correcting CUP to GREEN flips the object choice 0->1 while the place choice stays 0; the table digest moves and the subject hashes do not",
+  "no_bridge": "a state without a table gives no_bridge",
+  "closed_state": "the nine legacy closed-state readings stay equal before and after"
+ },
+ "criteria": {
+  "slot_choice": "object [RED,CUP] -> CUP index 1; place [SHELF,TABLE] -> TABLE index 1; object [CUP,RED] -> index 0; place [TABLE,SHELF] -> index 0",
+  "no_slot": "two-entity sentence without slot -> ambiguous_read, answers=2",
+  "slot_missing": "CUP-only sentence with slot=place -> no_choice, read_answers=1, answers=0",
+  "outside": "two-entity sentence, slot=object, candidates [TABLE,SHELF] -> not_in_candidates",
+  "same_slot_ambiguous": "two objects, slot=object -> ambiguous_read, answers=2",
+  "correction": "before object 0 / place 0; after object 1 / place 0; table digest changes; hashes equal",
+  "inert": "parameter and state hashes equal before and after all choices",
+  "no_bridge": "a state without a table -> no_bridge",
+  "closed_state": "the nine legacy readings stay equal before and after",
+  "rerun": "the R26 anchor carries a commit, a runner blob sha1, a runner sha256 and a core sha256"
+ },
+ "slot": {
+  "object_zero": {
+   "decision": "chosen",
+   "choice": [
+    "object",
+    "蓝色杯子"
+   ],
+   "index": 0,
+   "read_decision": "answered_pair",
+   "answers": 1,
+   "read_answers": 2,
+   "slot": "object"
+  },
+  "object_one": {
+   "decision": "chosen",
+   "choice": [
+    "object",
+    "蓝色杯子"
+   ],
+   "index": 1,
+   "read_decision": "answered_pair",
+   "answers": 1,
+   "read_answers": 2,
+   "slot": "object"
+  },
+  "place_zero": {
+   "decision": "chosen",
+   "choice": [
+    "place",
+    "木桌"
+   ],
+   "index": 0,
+   "read_decision": "answered_pair",
+   "answers": 1,
+   "read_answers": 2,
+   "slot": "place"
+  },
+  "place_one": {
+   "decision": "chosen",
+   "choice": [
+    "place",
+    "木桌"
+   ],
+   "index": 1,
+   "read_decision": "answered_pair",
+   "answers": 1,
+   "read_answers": 2,
+   "slot": "place"
+  },
+  "whole": {
+   "decision": "ambiguous_read",
+   "choice": null,
+   "index": null,
+   "read_decision": "answered_pair",
+   "answers": 2,
+   "read_answers": 2,
+   "slot": null
+  },
+  "missing": {
+   "decision": "no_choice",
+   "choice": null,
+   "index": null,
+   "read_decision": "answered_single",
+   "answers": 0,
+   "read_answers": 1,
+   "slot": "place"
+  },
+  "outside": {
+   "decision": "not_in_candidates",
+   "choice": null,
+   "index": null,
+   "read_decision": "answered_pair",
+   "answers": 1,
+   "read_answers": 2,
+   "slot": "object"
+  },
+  "same_slot": {
+   "decision": "ambiguous_read",
+   "choice": null,
+   "index": null,
+   "read_decision": "answered_pair",
+   "answers": 2,
+   "read_answers": 2,
+   "slot": "object"
+  },
+  "no_bridge": {
+   "decision": "no_bridge",
+   "choice": null,
+   "index": null,
+   "read_decision": "no_bridge",
+   "answers": 0,
+   "read_answers": 0,
+   "slot": "object"
+  },
+  "correction": "corrected",
+  "after_object": {
+   "decision": "chosen",
+   "choice": [
+    "object",
+    "绿色瓶子"
+   ],
+   "index": 1,
+   "read_decision": "answered_pair",
+   "answers": 1,
+   "read_answers": 2,
+   "slot": "object"
+  },
+  "after_place": {
+   "decision": "chosen",
+   "choice": [
+    "place",
+    "木桌"
+   ],
+   "index": 0,
+   "read_decision": "answered_pair",
+   "answers": 1,
+   "read_answers": 2,
+   "slot": "place"
+  },
+  "table_digest_changed": true,
+  "state_sha_equal": true,
+  "parameter_sha_equal": true,
+  "ok": true
+ },
+ "rerun_anchors": [
+  {
+   "round": "R26",
+   "runner": "scripts/training/probe_taiji_bridge_choice_20261109.py",
+   "rerun_commit": "c3633b4c8",
+   "runner_blob_sha1": "950eef248c9fff3bb6cd3c0d4d29d77d978597e1",
+   "report_runner_sha256": "053b852dbfe9dcc845b57f6106799d00419f014aed8b0e656f5050bdf1396426",
+   "runner_blob_sha256": "053b852dbfe9dcc845b57f6106799d00419f014aed8b0e656f5050bdf1396426",
+   "report_core_sha256": "eead9c4af475ccd7c74c7260d60c2d035a37aabf2445442a0db7bc36cacb4c4a",
+   "matches_report": true,
+   "note": "current HEAD cannot run it after R27 (core sha changed); checkout this commit"
+  }
+ ],
+ "closed_state": {
+  "baseline": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "e3809802849fa38648ee5c1bf71d75bd69f0904add43f231ef488ef289296b37",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk_none": true,
+   "sc_bridge_none": true,
+   "battery_sha": "093831299bdaa55ba7d26f032188e12b7a9f55b98e97ce90eb5638f9c0df972a",
+   "battery_steps": 20
+  },
+  "after": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "e3809802849fa38648ee5c1bf71d75bd69f0904add43f231ef488ef289296b37",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk_none": true,
+   "sc_bridge_none": true,
+   "battery_sha": "093831299bdaa55ba7d26f032188e12b7a9f55b98e97ce90eb5638f9c0df972a",
+   "battery_steps": 20
+  },
+  "checks": {
+   "parameters_equal": true,
+   "state_equal": true,
+   "identity_equal": true,
+   "store_equal": true,
+   "battery_equal": true,
+   "steps_equal": true,
+   "sc_sfk_none": true,
+   "flag_disabled": true,
+   "rng_untouched": true
+  }
+ },
+ "bridge_default_none": true,
+ "verdict": {
+  "slot_choice": "slot_choice_from_read",
+  "closed_state": "closed_state_equal",
+  "bridge_default": "bridge_default_none",
+  "rerun_anchors": "anchors_complete",
+  "overall": "bridge_slot_choice_available"
+ },
+ "cost": {
+  "cpu_seconds": 1.78125,
+  "wall_seconds": 2.5266189575195312,
+  "cpu_cap": 200.0,
+  "estimate_cpu_upper": 30.0,
+  "threads": 1
+ }
+}

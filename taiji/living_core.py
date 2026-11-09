@@ -617,23 +617,32 @@ class LivingCoreReference(nn.Module):
         state: LivingState,
         query: str | bytes,
         candidates: list[tuple[str, str]] | tuple[tuple[str, str], ...],
+        *,
+        slot: str | None = None,
     ) -> dict:
         """Choose exactly one candidate, or abstain; never touches a tensor.
 
         The bridge read must yield exactly one entity and that entity must be in
-        ``candidates``.  Otherwise the result says why: ``no_bridge``,
-        ``no_choice`` (the read answered nothing), ``ambiguous_read`` (the read
-        yielded more than one entity) or ``not_in_candidates``.
+        ``candidates``.  With ``slot``, only answers from that slot are counted,
+        so a two-entity sentence can be asked one slot at a time.  Otherwise the
+        result says why: ``no_bridge``, ``no_choice`` (nothing in this slot or no
+        answer at all), ``ambiguous_read`` (more than one entity in this slot or
+        in the whole read) or ``not_in_candidates``.
         """
         choices = [tuple(candidate) for candidate in candidates]
         read = self.bridge_read(state, query)
-        values = [tuple(row["value"]) for row in read["answers"]]
+        raw_values = [tuple(row["value"]) for row in read["answers"]]
+        values = (
+            [value for value in raw_values if value[0] == slot] if slot is not None else raw_values
+        )
         result = {
             "decision": "",
             "choice": None,
             "index": None,
             "read_decision": read["decision"],
             "answers": len(values),
+            "read_answers": len(raw_values),
+            "slot": slot,
         }
         if state.sc_bridge is None:
             result["decision"] = "no_bridge"
