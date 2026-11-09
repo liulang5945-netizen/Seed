@@ -1,0 +1,54 @@
+{
+ "schema": "taiji-phrase-localisation-v1",
+ "date": "2026-11-09",
+ "frozen_at": "2026-11-09T13:23:13",
+ "runner_sha256": "403021cdfd348d15df6557b9c8b8e5bd35fb5968097654d28eea5ebfcda39678",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "8fa3aafde38b1cbad3b021dc271abd316c0a265c68870403dd4ca7b0b53e0c6a"
+ },
+ "fixture_files": [
+  "taiji/native_goal_world_wide.py",
+  "taiji/goal_paraphrase.py",
+  "taiji/living_core.py"
+ ],
+ "question": "R7/R8 的地点名 0.60：是描述短语在整句表示里丢了（表示层），还是短语还在但接不上名字（映射层）？",
+ "counts": {
+  "describe_sentences": 20,
+  "object_phrases": 4,
+  "place_phrases": 5,
+  "texts_per_arm": 29,
+  "samples_per_slot": 20
+ },
+ "cost_estimate_cpu_upper": 45.0,
+ "header_note": "R3 使用外部冻结句向量，只作上界；它的读数不进能力账，也不升级/降级任何既有判定。",
+ "definition": {
+  "fixture": "frozen.build_fixture() describe rows only: 20 goals = 4 objects x 5 places, each written once as describe_goal = '让{object phrase}到{place phrase}。'.  No paraphrase row is used.",
+  "phrases": "the 9 description phrases from OBJECT_DESCRIPTIONS (4) and PLACE_DESCRIPTIONS (5).  They are the only candidates; names (蓝色杯子 / 木桌 / ...) do not appear in this round at all.",
+  "reading": "for each describe sentence, cosine similarity against the 4 object phrases and against the 5 place phrases; a slot is correct iff the sentence's own phrase is the arg-max.  20 samples per slot, so chance is 0.25 (object) and 0.20 (place).",
+  "detail": "besides accuracy the report keeps, per sample, the own-phrase cosine, the best other phrase, the margin own - best-other, and the 1-based rank of the own phrase.",
+  "control": "R1 is an additive byte histogram and the phrase occurs verbatim inside the sentence, so R1 localisation is the metric's positive control: it must be >= 0.95 on both slots.",
+  "arms": {
+   "R1": "LivingCoreReference.content_feature (128-bin byte histogram, L2-normalised).",
+   "R2": "mean of reference.encoder.context(raw) over positions (128 dims), L2-normalised; weights are the random initialisation at seed 20261031, i.e. untrained.",
+   "R3": "instruments.document_embedding.DocumentEmbedder on the frozen sentence-transformer; upper bound only, reported unavailable if the local cache is missing."
+  },
+  "chance": {
+   "object": 0.25,
+   "place": 0.2
+  },
+  "chance_rank": {
+   "object": 2.5,
+   "place": 3.0
+  }
+ },
+ "criteria": {
+  "control": "control_ok iff R1 object localisation >= 0.95 and R1 place localisation >= 0.95.  If it fails the round is control_failed and no other reading is interpreted.",
+  "localised": "a slot is localised iff accuracy >= 0.80, not_localised iff accuracy <= 0.60, otherwise inconclusive.  Thresholds are fixed here, before the first reading.",
+  "attribution": "read on R3 place only: phrase_survives_name_link_absent iff >= 0.80; phrase_diluted_or_absent iff <= 0.60; otherwise inconclusive.",
+  "project_side": "R1/R2 localisation is reported separately: project_phrase_localised iff either arm is localised on both slots, project_phrase_not_localised iff neither arm is.  R3 cannot change this line.",
+  "r3_unavailable": "if the R3 weights are not cached the verdict is r3_unavailable and no attribution is made.",
+  "no_fit": "0 training, 0 optimizer steps, 0 Adam, 0 confirm, 0 new parameters."
+ }
+}

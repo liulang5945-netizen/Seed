@@ -1,0 +1,1500 @@
+{
+ "schema": "taiji-phrase-localisation-v1",
+ "date": "2026-11-09",
+ "header_note": "R3 使用外部冻结句向量，只作上界；它的读数不进能力账，也不升级/降级任何既有判定。",
+ "runner_sha256": "403021cdfd348d15df6557b9c8b8e5bd35fb5968097654d28eea5ebfcda39678",
+ "manifest_sha256": "693b7d20b45e97000bcfa1174c9394df10c64f397007fded0c8d8a7e3a042614",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "8fa3aafde38b1cbad3b021dc271abd316c0a265c68870403dd4ca7b0b53e0c6a"
+ },
+ "counts": {
+  "describe_sentences": 20,
+  "object_phrases": 4,
+  "place_phrases": 5,
+  "texts_per_arm": 29,
+  "samples_per_slot": 20
+ },
+ "definition": {
+  "fixture": "frozen.build_fixture() describe rows only: 20 goals = 4 objects x 5 places, each written once as describe_goal = '让{object phrase}到{place phrase}。'.  No paraphrase row is used.",
+  "phrases": "the 9 description phrases from OBJECT_DESCRIPTIONS (4) and PLACE_DESCRIPTIONS (5).  They are the only candidates; names (蓝色杯子 / 木桌 / ...) do not appear in this round at all.",
+  "reading": "for each describe sentence, cosine similarity against the 4 object phrases and against the 5 place phrases; a slot is correct iff the sentence's own phrase is the arg-max.  20 samples per slot, so chance is 0.25 (object) and 0.20 (place).",
+  "detail": "besides accuracy the report keeps, per sample, the own-phrase cosine, the best other phrase, the margin own - best-other, and the 1-based rank of the own phrase.",
+  "control": "R1 is an additive byte histogram and the phrase occurs verbatim inside the sentence, so R1 localisation is the metric's positive control: it must be >= 0.95 on both slots.",
+  "arms": {
+   "R1": "LivingCoreReference.content_feature (128-bin byte histogram, L2-normalised).",
+   "R2": "mean of reference.encoder.context(raw) over positions (128 dims), L2-normalised; weights are the random initialisation at seed 20261031, i.e. untrained.",
+   "R3": "instruments.document_embedding.DocumentEmbedder on the frozen sentence-transformer; upper bound only, reported unavailable if the local cache is missing."
+  },
+  "chance": {
+   "object": 0.25,
+   "place": 0.2
+  },
+  "chance_rank": {
+   "object": 2.5,
+   "place": 3.0
+  }
+ },
+ "criteria": {
+  "control": "control_ok iff R1 object localisation >= 0.95 and R1 place localisation >= 0.95.  If it fails the round is control_failed and no other reading is interpreted.",
+  "localised": "a slot is localised iff accuracy >= 0.80, not_localised iff accuracy <= 0.60, otherwise inconclusive.  Thresholds are fixed here, before the first reading.",
+  "attribution": "read on R3 place only: phrase_survives_name_link_absent iff >= 0.80; phrase_diluted_or_absent iff <= 0.60; otherwise inconclusive.",
+  "project_side": "R1/R2 localisation is reported separately: project_phrase_localised iff either arm is localised on both slots, project_phrase_not_localised iff neither arm is.  R3 cannot change this line.",
+  "r3_unavailable": "if the R3 weights are not cached the verdict is r3_unavailable and no attribution is made.",
+  "no_fit": "0 training, 0 optimizer steps, 0 Adam, 0 confirm, 0 new parameters."
+ },
+ "model": {
+  "model_id": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+  "status": "available",
+  "payload": {
+   "format": "taiji-document-embedder-v1",
+   "version": 1,
+   "model_id": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+   "revision": "e8f8c211226b894fcb81acc59f3b34ba3efd5f42",
+   "config_digest": "584d721354a4443103960a80b1a3a61226765bc470bd4077d96e37beb85b433f",
+   "dimension": 384,
+   "max_length": 256,
+   "batch_size": 32,
+   "pooling": "mean",
+   "normalized": true
+  }
+ },
+ "arms": {
+  "R1": {
+   "dimensions": 128,
+   "object": {
+    "accuracy": 1.0,
+    "correct": 20,
+    "of": 20,
+    "mean_rank": 1.0,
+    "mean_own_cosine": 0.826792,
+    "mean_margin": 0.160932,
+    "detail": [
+     {
+      "target": "蓝色杯子",
+      "predicted": "圆口的器皿",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.817193,
+      "best_other": 0.658703,
+      "margin": 0.15849,
+      "text": "让圆口的器皿到四方木台。",
+      "own_phrase": "圆口的器皿"
+     },
+     {
+      "target": "蓝色杯子",
+      "predicted": "圆口的器皿",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.836248,
+      "best_other": 0.737878,
+      "margin": 0.098369,
+      "text": "让圆口的器皿到靠窗的台面。",
+      "own_phrase": "圆口的器皿"
+     },
+     {
+      "target": "蓝色杯子",
+      "predicted": "圆口的器皿",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.85769,
+      "best_other": 0.713283,
+      "margin": 0.144408,
+      "text": "让圆口的器皿到手边的匣子。",
+      "own_phrase": "圆口的器皿"
+     },
+     {
+      "target": "蓝色杯子",
+      "predicted": "圆口的器皿",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.85769,
+      "best_other": 0.737878,
+      "margin": 0.119812,
+      "text": "让圆口的器皿到靠墙的层架。",
+      "own_phrase": "圆口的器皿"
+     },
+     {
+      "target": "蓝色杯子",
+      "predicted": "圆口的器皿",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.826798,
+      "best_other": 0.705223,
+      "margin": 0.121576,
+      "text": "让圆口的器皿到脚边的毡子。",
+      "own_phrase": "圆口的器皿"
+     },
+     {
+      "target": "红色印章",
+      "predicted": "带纹路的方块",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.816497,
+      "best_other": 0.555556,
+      "margin": 0.260941,
+      "text": "让带纹路的方块到四方木台。",
+      "own_phrase": "带纹路的方块"
+     },
+     {
+      "target": "红色印章",
+      "predicted": "带纹路的方块",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.836428,
+      "best_other": 0.618463,
+      "margin": 0.217965,
+      "text": "让带纹路的方块到靠窗的台面。",
+      "own_phrase": "带纹路的方块"
+     },
+     {
+      "target": "红色印章",
+      "predicted": "带纹路的方块",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.85844,
+      "best_other": 0.603864,
+      "margin": 0.254576,
+      "text": "让带纹路的方块到手边的匣子。",
+      "own_phrase": "带纹路的方块"
+     },
+     {
+      "target": "红色印章",
+      "predicted": "带纹路的方块",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.834044,
+      "best_other": 0.633368,
+      "margin": 0.200676,
+      "text": "让带纹路的方块到靠墙的层架。",
+      "own_phrase": "带纹路的方块"
+     },
+     {
+      "target": "红色印章",
+      "predicted": "带纹路的方块",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.863206,
+      "best_other": 0.567898,
+      "margin": 0.295307,
+      "text": "让带纹路的方块到脚边的毡子。",
+      "own_phrase": "带纹路的方块"
+     },
+     {
+      "target": "绿色瓶子",
+      "predicted": "细长的容器",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.767772,
+      "best_other": 0.693233,
+      "margin": 0.074539,
+      "text": "让细长的容器到四方木台。",
+      "own_phrase": "细长的容器"
+     },
+     {
+      "target": "绿色瓶子",
+      "predicted": "细长的容器",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.825961,
+      "best_other": 0.697554,
+      "margin": 0.128407,
+      "text": "让细长的容器到靠窗的台面。",
+      "own_phrase": "细长的容器"
+     },
+     {
+      "target": "绿色瓶子",
+      "predicted": "细长的容器",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.82121,
+      "best_other": 0.739008,
+      "margin": 0.082202,
+      "text": "让细长的容器到手边的匣子。",
+      "own_phrase": "细长的容器"
+     },
+     {
+      "target": "绿色瓶子",
+      "predicted": "细长的容器",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.836619,
+      "best_other": 0.729348,
+      "margin": 0.107271,
+      "text": "让细长的容器到靠墙的层架。",
+      "own_phrase": "细长的容器"
+     },
+     {
+      "target": "绿色瓶子",
+      "predicted": "细长的容器",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.80015,
+      "best_other": 0.697554,
+      "margin": 0.102595,
+      "text": "让细长的容器到脚边的毡子。",
+      "own_phrase": "细长的容器"
+     },
+     {
+      "target": "黄色球",
+      "predicted": "圆滚滚的东西",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.801605,
+      "best_other": 0.61468,
+      "margin": 0.186925,
+      "text": "让圆滚滚的东西到四方木台。",
+      "own_phrase": "圆滚滚的东西"
+     },
+     {
+      "target": "黄色球",
+      "predicted": "圆滚滚的东西",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.786316,
+      "best_other": 0.662589,
+      "margin": 0.123727,
+      "text": "让圆滚滚的东西到靠窗的台面。",
+      "own_phrase": "圆滚滚的东西"
+     },
+     {
+      "target": "黄色球",
+      "predicted": "圆滚滚的东西",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.826874,
+      "best_other": 0.668563,
+      "margin": 0.158311,
+      "text": "让圆滚滚的东西到手边的匣子。",
+      "own_phrase": "圆滚滚的东西"
+     },
+     {
+      "target": "黄色球",
+      "predicted": "圆滚滚的东西",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.81674,
+      "best_other": 0.676475,
+      "margin": 0.140264,
+      "text": "让圆滚滚的东西到靠墙的层架。",
+      "own_phrase": "圆滚滚的东西"
+     },
+     {
+      "target": "黄色球",
+      "predicted": "圆滚滚的东西",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.848368,
+      "best_other": 0.606092,
+      "margin": 0.242276,
+      "text": "让圆滚滚的东西到脚边的毡子。",
+      "own_phrase": "圆滚滚的东西"
+     }
+    ]
+   },
+   "place": {
+    "accuracy": 1.0,
+    "correct": 20,
+    "of": 20,
+    "mean_rank": 1.0,
+    "mean_own_cosine": 0.800838,
+    "mean_margin": 0.152664,
+    "detail": [
+     {
+      "target": "木桌",
+      "predicted": "四方木台",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.780869,
+      "best_other": 0.589239,
+      "margin": 0.19163,
+      "text": "让圆口的器皿到四方木台。",
+      "own_phrase": "四方木台"
+     },
+     {
+      "target": "窗台",
+      "predicted": "靠窗的台面",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.795444,
+      "best_other": 0.702069,
+      "margin": 0.093375,
+      "text": "让圆口的器皿到靠窗的台面。",
+      "own_phrase": "靠窗的台面"
+     },
+     {
+      "target": "左盒",
+      "predicted": "手边的匣子",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.832082,
+      "best_other": 0.655072,
+      "margin": 0.17701,
+      "text": "让圆口的器皿到手边的匣子。",
+      "own_phrase": "手边的匣子"
+     },
+     {
+      "target": "书架",
+      "predicted": "靠墙的层架",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.832082,
+      "best_other": 0.598059,
+      "margin": 0.234023,
+      "text": "让圆口的器皿到靠墙的层架。",
+      "own_phrase": "靠墙的层架"
+     },
+     {
+      "target": "地毯",
+      "predicted": "脚边的毡子",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.809587,
+      "best_other": 0.745553,
+      "margin": 0.064034,
+      "text": "让圆口的器皿到脚边的毡子。",
+      "own_phrase": "脚边的毡子"
+     },
+     {
+      "target": "木桌",
+      "predicted": "四方木台",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.785674,
+      "best_other": 0.592865,
+      "margin": 0.192809,
+      "text": "让带纹路的方块到四方木台。",
+      "own_phrase": "四方木台"
+     },
+     {
+      "target": "窗台",
+      "predicted": "靠窗的台面",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.800055,
+      "best_other": 0.653832,
+      "margin": 0.146223,
+      "text": "让带纹路的方块到靠窗的台面。",
+      "own_phrase": "靠窗的台面"
+     },
+     {
+      "target": "左盒",
+      "predicted": "手边的匣子",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.836905,
+      "best_other": 0.729462,
+      "margin": 0.107443,
+      "text": "让带纹路的方块到手边的匣子。",
+      "own_phrase": "手边的匣子"
+     },
+     {
+      "target": "书架",
+      "predicted": "靠墙的层架",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.803507,
+      "best_other": 0.616022,
+      "margin": 0.187485,
+      "text": "让带纹路的方块到靠墙的层架。",
+      "own_phrase": "靠墙的层架"
+     },
+     {
+      "target": "地毯",
+      "predicted": "脚边的毡子",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.855283,
+      "best_other": 0.725454,
+      "margin": 0.12983,
+      "text": "让带纹路的方块到脚边的毡子。",
+      "own_phrase": "脚边的毡子"
+     },
+     {
+      "target": "木桌",
+      "predicted": "四方木台",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.760639,
+      "best_other": 0.550782,
+      "margin": 0.209856,
+      "text": "让细长的容器到四方木台。",
+      "own_phrase": "四方木台"
+     },
+     {
+      "target": "窗台",
+      "predicted": "靠窗的台面",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.810197,
+      "best_other": 0.682185,
+      "margin": 0.128012,
+      "text": "让细长的容器到靠窗的台面。",
+      "own_phrase": "靠窗的台面"
+     },
+     {
+      "target": "左盒",
+      "predicted": "手边的匣子",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.812162,
+      "best_other": 0.655138,
+      "margin": 0.157024,
+      "text": "让细长的容器到手边的匣子。",
+      "own_phrase": "手边的匣子"
+     },
+     {
+      "target": "书架",
+      "predicted": "靠墙的层架",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.829185,
+      "best_other": 0.596838,
+      "margin": 0.232347,
+      "text": "让细长的容器到靠墙的层架。",
+      "own_phrase": "靠墙的层架"
+     },
+     {
+      "target": "地毯",
+      "predicted": "脚边的毡子",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.810197,
+      "best_other": 0.709472,
+      "margin": 0.100725,
+      "text": "让细长的容器到脚边的毡子。",
+      "own_phrase": "脚边的毡子"
+     },
+     {
+      "target": "木桌",
+      "predicted": "四方木台",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.750279,
+      "best_other": 0.532435,
+      "margin": 0.217844,
+      "text": "让圆滚滚的东西到四方木台。",
+      "own_phrase": "四方木台"
+     },
+     {
+      "target": "窗台",
+      "predicted": "靠窗的台面",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.722944,
+      "best_other": 0.642806,
+      "margin": 0.080138,
+      "text": "让圆滚滚的东西到靠窗的台面。",
+      "own_phrase": "靠窗的台面"
+     },
+     {
+      "target": "左盒",
+      "predicted": "手边的匣子",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.784599,
+      "best_other": 0.729462,
+      "margin": 0.055136,
+      "text": "让圆滚滚的东西到手边的匣子。",
+      "own_phrase": "手边的匣子"
+     },
+     {
+      "target": "书架",
+      "predicted": "靠墙的层架",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.767421,
+      "best_other": 0.595238,
+      "margin": 0.172183,
+      "text": "让圆滚滚的东西到靠墙的层架。",
+      "own_phrase": "靠墙的层架"
+     },
+     {
+      "target": "地毯",
+      "predicted": "脚边的毡子",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.837647,
+      "best_other": 0.661495,
+      "margin": 0.176152,
+      "text": "让圆滚滚的东西到脚边的毡子。",
+      "own_phrase": "脚边的毡子"
+     }
+    ]
+   },
+   "localised_both": true
+  },
+  "R2": {
+   "dimensions": 128,
+   "object": {
+    "accuracy": 1.0,
+    "correct": 20,
+    "of": 20,
+    "mean_rank": 1.0,
+    "mean_own_cosine": 0.84326,
+    "mean_margin": 0.142557,
+    "detail": [
+     {
+      "target": "蓝色杯子",
+      "predicted": "圆口的器皿",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.842192,
+      "best_other": 0.791581,
+      "margin": 0.05061,
+      "text": "让圆口的器皿到四方木台。",
+      "own_phrase": "圆口的器皿"
+     },
+     {
+      "target": "蓝色杯子",
+      "predicted": "圆口的器皿",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.837835,
+      "best_other": 0.823897,
+      "margin": 0.013939,
+      "text": "让圆口的器皿到靠窗的台面。",
+      "own_phrase": "圆口的器皿"
+     },
+     {
+      "target": "蓝色杯子",
+      "predicted": "圆口的器皿",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.83534,
+      "best_other": 0.77655,
+      "margin": 0.05879,
+      "text": "让圆口的器皿到手边的匣子。",
+      "own_phrase": "圆口的器皿"
+     },
+     {
+      "target": "蓝色杯子",
+      "predicted": "圆口的器皿",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.846431,
+      "best_other": 0.818158,
+      "margin": 0.028273,
+      "text": "让圆口的器皿到靠墙的层架。",
+      "own_phrase": "圆口的器皿"
+     },
+     {
+      "target": "蓝色杯子",
+      "predicted": "圆口的器皿",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.804488,
+      "best_other": 0.742168,
+      "margin": 0.062319,
+      "text": "让圆口的器皿到脚边的毡子。",
+      "own_phrase": "圆口的器皿"
+     },
+     {
+      "target": "红色印章",
+      "predicted": "带纹路的方块",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.862255,
+      "best_other": 0.542499,
+      "margin": 0.319756,
+      "text": "让带纹路的方块到四方木台。",
+      "own_phrase": "带纹路的方块"
+     },
+     {
+      "target": "红色印章",
+      "predicted": "带纹路的方块",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.860527,
+      "best_other": 0.555277,
+      "margin": 0.30525,
+      "text": "让带纹路的方块到靠窗的台面。",
+      "own_phrase": "带纹路的方块"
+     },
+     {
+      "target": "红色印章",
+      "predicted": "带纹路的方块",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.872939,
+      "best_other": 0.545927,
+      "margin": 0.327013,
+      "text": "让带纹路的方块到手边的匣子。",
+      "own_phrase": "带纹路的方块"
+     },
+     {
+      "target": "红色印章",
+      "predicted": "带纹路的方块",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.878667,
+      "best_other": 0.550515,
+      "margin": 0.328153,
+      "text": "让带纹路的方块到靠墙的层架。",
+      "own_phrase": "带纹路的方块"
+     },
+     {
+      "target": "红色印章",
+      "predicted": "带纹路的方块",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.880324,
+      "best_other": 0.52958,
+      "margin": 0.350744,
+      "text": "让带纹路的方块到脚边的毡子。",
+      "own_phrase": "带纹路的方块"
+     },
+     {
+      "target": "绿色瓶子",
+      "predicted": "细长的容器",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.84141,
+      "best_other": 0.76273,
+      "margin": 0.07868,
+      "text": "让细长的容器到四方木台。",
+      "own_phrase": "细长的容器"
+     },
+     {
+      "target": "绿色瓶子",
+      "predicted": "细长的容器",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.853904,
+      "best_other": 0.73523,
+      "margin": 0.118674,
+      "text": "让细长的容器到靠窗的台面。",
+      "own_phrase": "细长的容器"
+     },
+     {
+      "target": "绿色瓶子",
+      "predicted": "细长的容器",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.831697,
+      "best_other": 0.767632,
+      "margin": 0.064065,
+      "text": "让细长的容器到手边的匣子。",
+      "own_phrase": "细长的容器"
+     },
+     {
+      "target": "绿色瓶子",
+      "predicted": "细长的容器",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.856622,
+      "best_other": 0.753593,
+      "margin": 0.103028,
+      "text": "让细长的容器到靠墙的层架。",
+      "own_phrase": "细长的容器"
+     },
+     {
+      "target": "绿色瓶子",
+      "predicted": "细长的容器",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.798196,
+      "best_other": 0.748005,
+      "margin": 0.050191,
+      "text": "让细长的容器到脚边的毡子。",
+      "own_phrase": "细长的容器"
+     },
+     {
+      "target": "黄色球",
+      "predicted": "圆滚滚的东西",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.833418,
+      "best_other": 0.717114,
+      "margin": 0.116304,
+      "text": "让圆滚滚的东西到四方木台。",
+      "own_phrase": "圆滚滚的东西"
+     },
+     {
+      "target": "黄色球",
+      "predicted": "圆滚滚的东西",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.801617,
+      "best_other": 0.763169,
+      "margin": 0.038447,
+      "text": "让圆滚滚的东西到靠窗的台面。",
+      "own_phrase": "圆滚滚的东西"
+     },
+     {
+      "target": "黄色球",
+      "predicted": "圆滚滚的东西",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.846992,
+      "best_other": 0.693074,
+      "margin": 0.153918,
+      "text": "让圆滚滚的东西到手边的匣子。",
+      "own_phrase": "圆滚滚的东西"
+     },
+     {
+      "target": "黄色球",
+      "predicted": "圆滚滚的东西",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.82947,
+      "best_other": 0.738042,
+      "margin": 0.091428,
+      "text": "让圆滚滚的东西到靠墙的层架。",
+      "own_phrase": "圆滚滚的东西"
+     },
+     {
+      "target": "黄色球",
+      "predicted": "圆滚滚的东西",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.85088,
+      "best_other": 0.659325,
+      "margin": 0.191556,
+      "text": "让圆滚滚的东西到脚边的毡子。",
+      "own_phrase": "圆滚滚的东西"
+     }
+    ]
+   },
+   "place": {
+    "accuracy": 0.7,
+    "correct": 14,
+    "of": 20,
+    "mean_rank": 1.4,
+    "mean_own_cosine": 0.75504,
+    "mean_margin": 0.040936,
+    "detail": [
+     {
+      "target": "木桌",
+      "predicted": "四方木台",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.728068,
+      "best_other": 0.613272,
+      "margin": 0.114796,
+      "text": "让圆口的器皿到四方木台。",
+      "own_phrase": "四方木台"
+     },
+     {
+      "target": "窗台",
+      "predicted": "靠窗的台面",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.703343,
+      "best_other": 0.686881,
+      "margin": 0.016462,
+      "text": "让圆口的器皿到靠窗的台面。",
+      "own_phrase": "靠窗的台面"
+     },
+     {
+      "target": "左盒",
+      "predicted": "手边的匣子",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.798289,
+      "best_other": 0.765532,
+      "margin": 0.032757,
+      "text": "让圆口的器皿到手边的匣子。",
+      "own_phrase": "手边的匣子"
+     },
+     {
+      "target": "书架",
+      "predicted": "靠墙的层架",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.749885,
+      "best_other": 0.65398,
+      "margin": 0.095905,
+      "text": "让圆口的器皿到靠墙的层架。",
+      "own_phrase": "靠墙的层架"
+     },
+     {
+      "target": "地毯",
+      "predicted": "脚边的毡子",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.841257,
+      "best_other": 0.758966,
+      "margin": 0.082291,
+      "text": "让圆口的器皿到脚边的毡子。",
+      "own_phrase": "脚边的毡子"
+     },
+     {
+      "target": "木桌",
+      "predicted": "四方木台",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.729669,
+      "best_other": 0.679163,
+      "margin": 0.050506,
+      "text": "让带纹路的方块到四方木台。",
+      "own_phrase": "四方木台"
+     },
+     {
+      "target": "窗台",
+      "predicted": "靠墙的层架",
+      "correct": false,
+      "rank": 2,
+      "own_cosine": 0.702053,
+      "best_other": 0.710771,
+      "margin": -0.008719,
+      "text": "让带纹路的方块到靠窗的台面。",
+      "own_phrase": "靠窗的台面"
+     },
+     {
+      "target": "左盒",
+      "predicted": "脚边的毡子",
+      "correct": false,
+      "rank": 2,
+      "own_cosine": 0.799761,
+      "best_other": 0.819136,
+      "margin": -0.019375,
+      "text": "让带纹路的方块到手边的匣子。",
+      "own_phrase": "手边的匣子"
+     },
+     {
+      "target": "书架",
+      "predicted": "靠墙的层架",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.762957,
+      "best_other": 0.699919,
+      "margin": 0.063038,
+      "text": "让带纹路的方块到靠墙的层架。",
+      "own_phrase": "靠墙的层架"
+     },
+     {
+      "target": "地毯",
+      "predicted": "脚边的毡子",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.871183,
+      "best_other": 0.744967,
+      "margin": 0.126217,
+      "text": "让带纹路的方块到脚边的毡子。",
+      "own_phrase": "脚边的毡子"
+     },
+     {
+      "target": "木桌",
+      "predicted": "四方木台",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.690227,
+      "best_other": 0.570127,
+      "margin": 0.1201,
+      "text": "让细长的容器到四方木台。",
+      "own_phrase": "四方木台"
+     },
+     {
+      "target": "窗台",
+      "predicted": "靠窗的台面",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.722251,
+      "best_other": 0.683496,
+      "margin": 0.038756,
+      "text": "让细长的容器到靠窗的台面。",
+      "own_phrase": "靠窗的台面"
+     },
+     {
+      "target": "左盒",
+      "predicted": "手边的匣子",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.768994,
+      "best_other": 0.717156,
+      "margin": 0.051839,
+      "text": "让细长的容器到手边的匣子。",
+      "own_phrase": "手边的匣子"
+     },
+     {
+      "target": "书架",
+      "predicted": "靠墙的层架",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.753916,
+      "best_other": 0.594338,
+      "margin": 0.159578,
+      "text": "让细长的容器到靠墙的层架。",
+      "own_phrase": "靠墙的层架"
+     },
+     {
+      "target": "地毯",
+      "predicted": "脚边的毡子",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.80813,
+      "best_other": 0.736811,
+      "margin": 0.071319,
+      "text": "让细长的容器到脚边的毡子。",
+      "own_phrase": "脚边的毡子"
+     },
+     {
+      "target": "木桌",
+      "predicted": "脚边的毡子",
+      "correct": false,
+      "rank": 2,
+      "own_cosine": 0.707116,
+      "best_other": 0.738488,
+      "margin": -0.031373,
+      "text": "让圆滚滚的东西到四方木台。",
+      "own_phrase": "四方木台"
+     },
+     {
+      "target": "窗台",
+      "predicted": "脚边的毡子",
+      "correct": false,
+      "rank": 4,
+      "own_cosine": 0.592749,
+      "best_other": 0.735749,
+      "margin": -0.143,
+      "text": "让圆滚滚的东西到靠窗的台面。",
+      "own_phrase": "靠窗的台面"
+     },
+     {
+      "target": "左盒",
+      "predicted": "脚边的毡子",
+      "correct": false,
+      "rank": 2,
+      "own_cosine": 0.808704,
+      "best_other": 0.848491,
+      "margin": -0.039788,
+      "text": "让圆滚滚的东西到手边的匣子。",
+      "own_phrase": "手边的匣子"
+     },
+     {
+      "target": "书架",
+      "predicted": "脚边的毡子",
+      "correct": false,
+      "rank": 2,
+      "own_cosine": 0.677899,
+      "best_other": 0.774839,
+      "margin": -0.096941,
+      "text": "让圆滚滚的东西到靠墙的层架。",
+      "own_phrase": "靠墙的层架"
+     },
+     {
+      "target": "地毯",
+      "predicted": "脚边的毡子",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.884345,
+      "best_other": 0.75,
+      "margin": 0.134344,
+      "text": "让圆滚滚的东西到脚边的毡子。",
+      "own_phrase": "脚边的毡子"
+     }
+    ]
+   },
+   "localised_both": false
+  },
+  "R3": {
+   "dimensions": 384,
+   "object": {
+    "accuracy": 0.95,
+    "correct": 19,
+    "of": 20,
+    "mean_rank": 1.05,
+    "mean_own_cosine": 0.75625,
+    "mean_margin": 0.170846,
+    "detail": [
+     {
+      "target": "蓝色杯子",
+      "predicted": "圆口的器皿",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.813317,
+      "best_other": 0.55876,
+      "margin": 0.254557,
+      "text": "让圆口的器皿到四方木台。",
+      "own_phrase": "圆口的器皿"
+     },
+     {
+      "target": "蓝色杯子",
+      "predicted": "圆口的器皿",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.706419,
+      "best_other": 0.49894,
+      "margin": 0.207478,
+      "text": "让圆口的器皿到靠窗的台面。",
+      "own_phrase": "圆口的器皿"
+     },
+     {
+      "target": "蓝色杯子",
+      "predicted": "圆口的器皿",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.799896,
+      "best_other": 0.653714,
+      "margin": 0.146182,
+      "text": "让圆口的器皿到手边的匣子。",
+      "own_phrase": "圆口的器皿"
+     },
+     {
+      "target": "蓝色杯子",
+      "predicted": "圆口的器皿",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.760177,
+      "best_other": 0.53542,
+      "margin": 0.224757,
+      "text": "让圆口的器皿到靠墙的层架。",
+      "own_phrase": "圆口的器皿"
+     },
+     {
+      "target": "蓝色杯子",
+      "predicted": "圆口的器皿",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.788836,
+      "best_other": 0.654857,
+      "margin": 0.133979,
+      "text": "让圆口的器皿到脚边的毡子。",
+      "own_phrase": "圆口的器皿"
+     },
+     {
+      "target": "红色印章",
+      "predicted": "带纹路的方块",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.788267,
+      "best_other": 0.587858,
+      "margin": 0.200409,
+      "text": "让带纹路的方块到四方木台。",
+      "own_phrase": "带纹路的方块"
+     },
+     {
+      "target": "红色印章",
+      "predicted": "带纹路的方块",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.680271,
+      "best_other": 0.467695,
+      "margin": 0.212575,
+      "text": "让带纹路的方块到靠窗的台面。",
+      "own_phrase": "带纹路的方块"
+     },
+     {
+      "target": "红色印章",
+      "predicted": "带纹路的方块",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.833259,
+      "best_other": 0.527802,
+      "margin": 0.305458,
+      "text": "让带纹路的方块到手边的匣子。",
+      "own_phrase": "带纹路的方块"
+     },
+     {
+      "target": "红色印章",
+      "predicted": "带纹路的方块",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.767298,
+      "best_other": 0.528002,
+      "margin": 0.239296,
+      "text": "让带纹路的方块到靠墙的层架。",
+      "own_phrase": "带纹路的方块"
+     },
+     {
+      "target": "红色印章",
+      "predicted": "带纹路的方块",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.799442,
+      "best_other": 0.534283,
+      "margin": 0.265159,
+      "text": "让带纹路的方块到脚边的毡子。",
+      "own_phrase": "带纹路的方块"
+     },
+     {
+      "target": "绿色瓶子",
+      "predicted": "细长的容器",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.815574,
+      "best_other": 0.659259,
+      "margin": 0.156315,
+      "text": "让细长的容器到四方木台。",
+      "own_phrase": "细长的容器"
+     },
+     {
+      "target": "绿色瓶子",
+      "predicted": "细长的容器",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.722419,
+      "best_other": 0.56107,
+      "margin": 0.161349,
+      "text": "让细长的容器到靠窗的台面。",
+      "own_phrase": "细长的容器"
+     },
+     {
+      "target": "绿色瓶子",
+      "predicted": "细长的容器",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.849321,
+      "best_other": 0.600736,
+      "margin": 0.248585,
+      "text": "让细长的容器到手边的匣子。",
+      "own_phrase": "细长的容器"
+     },
+     {
+      "target": "绿色瓶子",
+      "predicted": "细长的容器",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.776217,
+      "best_other": 0.616953,
+      "margin": 0.159264,
+      "text": "让细长的容器到靠墙的层架。",
+      "own_phrase": "细长的容器"
+     },
+     {
+      "target": "绿色瓶子",
+      "predicted": "细长的容器",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.826644,
+      "best_other": 0.613061,
+      "margin": 0.213583,
+      "text": "让细长的容器到脚边的毡子。",
+      "own_phrase": "细长的容器"
+     },
+     {
+      "target": "黄色球",
+      "predicted": "圆滚滚的东西",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.71795,
+      "best_other": 0.653691,
+      "margin": 0.064259,
+      "text": "让圆滚滚的东西到四方木台。",
+      "own_phrase": "圆滚滚的东西"
+     },
+     {
+      "target": "黄色球",
+      "predicted": "圆口的器皿",
+      "correct": false,
+      "rank": 2,
+      "own_cosine": 0.537758,
+      "best_other": 0.561628,
+      "margin": -0.02387,
+      "text": "让圆滚滚的东西到靠窗的台面。",
+      "own_phrase": "圆滚滚的东西"
+     },
+     {
+      "target": "黄色球",
+      "predicted": "圆滚滚的东西",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.733071,
+      "best_other": 0.685683,
+      "margin": 0.047388,
+      "text": "让圆滚滚的东西到手边的匣子。",
+      "own_phrase": "圆滚滚的东西"
+     },
+     {
+      "target": "黄色球",
+      "predicted": "圆滚滚的东西",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.672737,
+      "best_other": 0.582023,
+      "margin": 0.090714,
+      "text": "让圆滚滚的东西到靠墙的层架。",
+      "own_phrase": "圆滚滚的东西"
+     },
+     {
+      "target": "黄色球",
+      "predicted": "圆滚滚的东西",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.736131,
+      "best_other": 0.626655,
+      "margin": 0.109476,
+      "text": "让圆滚滚的东西到脚边的毡子。",
+      "own_phrase": "圆滚滚的东西"
+     }
+    ]
+   },
+   "place": {
+    "accuracy": 1.0,
+    "correct": 20,
+    "of": 20,
+    "mean_rank": 1.0,
+    "mean_own_cosine": 0.744338,
+    "mean_margin": 0.203157,
+    "detail": [
+     {
+      "target": "木桌",
+      "predicted": "四方木台",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.745311,
+      "best_other": 0.464846,
+      "margin": 0.280465,
+      "text": "让圆口的器皿到四方木台。",
+      "own_phrase": "四方木台"
+     },
+     {
+      "target": "窗台",
+      "predicted": "靠窗的台面",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.744694,
+      "best_other": 0.532402,
+      "margin": 0.212292,
+      "text": "让圆口的器皿到靠窗的台面。",
+      "own_phrase": "靠窗的台面"
+     },
+     {
+      "target": "左盒",
+      "predicted": "手边的匣子",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.72148,
+      "best_other": 0.536557,
+      "margin": 0.184923,
+      "text": "让圆口的器皿到手边的匣子。",
+      "own_phrase": "手边的匣子"
+     },
+     {
+      "target": "书架",
+      "predicted": "靠墙的层架",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.736391,
+      "best_other": 0.646265,
+      "margin": 0.090126,
+      "text": "让圆口的器皿到靠墙的层架。",
+      "own_phrase": "靠墙的层架"
+     },
+     {
+      "target": "地毯",
+      "predicted": "脚边的毡子",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.756362,
+      "best_other": 0.599697,
+      "margin": 0.156664,
+      "text": "让圆口的器皿到脚边的毡子。",
+      "own_phrase": "脚边的毡子"
+     },
+     {
+      "target": "木桌",
+      "predicted": "四方木台",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.719869,
+      "best_other": 0.526894,
+      "margin": 0.192974,
+      "text": "让带纹路的方块到四方木台。",
+      "own_phrase": "四方木台"
+     },
+     {
+      "target": "窗台",
+      "predicted": "靠窗的台面",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.776561,
+      "best_other": 0.544861,
+      "margin": 0.231699,
+      "text": "让带纹路的方块到靠窗的台面。",
+      "own_phrase": "靠窗的台面"
+     },
+     {
+      "target": "左盒",
+      "predicted": "手边的匣子",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.742717,
+      "best_other": 0.454127,
+      "margin": 0.28859,
+      "text": "让带纹路的方块到手边的匣子。",
+      "own_phrase": "手边的匣子"
+     },
+     {
+      "target": "书架",
+      "predicted": "靠墙的层架",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.757561,
+      "best_other": 0.551784,
+      "margin": 0.205778,
+      "text": "让带纹路的方块到靠墙的层架。",
+      "own_phrase": "靠墙的层架"
+     },
+     {
+      "target": "地毯",
+      "predicted": "脚边的毡子",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.760582,
+      "best_other": 0.598941,
+      "margin": 0.161641,
+      "text": "让带纹路的方块到脚边的毡子。",
+      "own_phrase": "脚边的毡子"
+     },
+     {
+      "target": "木桌",
+      "predicted": "四方木台",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.649846,
+      "best_other": 0.502471,
+      "margin": 0.147375,
+      "text": "让细长的容器到四方木台。",
+      "own_phrase": "四方木台"
+     },
+     {
+      "target": "窗台",
+      "predicted": "靠窗的台面",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.702166,
+      "best_other": 0.4784,
+      "margin": 0.223767,
+      "text": "让细长的容器到靠窗的台面。",
+      "own_phrase": "靠窗的台面"
+     },
+     {
+      "target": "左盒",
+      "predicted": "手边的匣子",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.688179,
+      "best_other": 0.425324,
+      "margin": 0.262855,
+      "text": "让细长的容器到手边的匣子。",
+      "own_phrase": "手边的匣子"
+     },
+     {
+      "target": "书架",
+      "predicted": "靠墙的层架",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.684139,
+      "best_other": 0.545224,
+      "margin": 0.138915,
+      "text": "让细长的容器到靠墙的层架。",
+      "own_phrase": "靠墙的层架"
+     },
+     {
+      "target": "地毯",
+      "predicted": "脚边的毡子",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.71225,
+      "best_other": 0.568817,
+      "margin": 0.143434,
+      "text": "让细长的容器到脚边的毡子。",
+      "own_phrase": "脚边的毡子"
+     },
+     {
+      "target": "木桌",
+      "predicted": "四方木台",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.778288,
+      "best_other": 0.526476,
+      "margin": 0.251812,
+      "text": "让圆滚滚的东西到四方木台。",
+      "own_phrase": "四方木台"
+     },
+     {
+      "target": "窗台",
+      "predicted": "靠窗的台面",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.83053,
+      "best_other": 0.584584,
+      "margin": 0.245947,
+      "text": "让圆滚滚的东西到靠窗的台面。",
+      "own_phrase": "靠窗的台面"
+     },
+     {
+      "target": "左盒",
+      "predicted": "手边的匣子",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.767693,
+      "best_other": 0.582767,
+      "margin": 0.184926,
+      "text": "让圆滚滚的东西到手边的匣子。",
+      "own_phrase": "手边的匣子"
+     },
+     {
+      "target": "书架",
+      "predicted": "靠墙的层架",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.806569,
+      "best_other": 0.587701,
+      "margin": 0.218868,
+      "text": "让圆滚滚的东西到靠墙的层架。",
+      "own_phrase": "靠墙的层架"
+     },
+     {
+      "target": "地毯",
+      "predicted": "脚边的毡子",
+      "correct": true,
+      "rank": 1,
+      "own_cosine": 0.805575,
+      "best_other": 0.565483,
+      "margin": 0.240092,
+      "text": "让圆滚滚的东西到脚边的毡子。",
+      "own_phrase": "脚边的毡子"
+     }
+    ]
+   },
+   "localised_both": true
+  }
+ },
+ "control_ok": true,
+ "verdict": "phrase_survives_name_link_absent",
+ "slot_verdict": {
+  "R1": {
+   "object": "localised",
+   "place": "localised"
+  },
+  "R2": {
+   "object": "localised",
+   "place": "inconclusive"
+  },
+  "R3": {
+   "object": "localised",
+   "place": "localised"
+  }
+ },
+ "project_line": "project_phrase_localised",
+ "contrast": {
+  "r8_reference": {
+   "status": "cited from reports/taiji_slot_bridge_20261109.json",
+   "note": "R8 已发布读数，本闸不重算，只作两段箭头的并排对照。",
+   "R3_phrase_to_name": {
+    "object": 1.0,
+    "place": 0.6
+   },
+   "R3_sentence_to_name": {
+    "object": 0.85,
+    "place": 0.6
+   },
+   "R8_verdict": "control_failed"
+  },
+  "r9_localisation_R3": {
+   "object": 0.95,
+   "place": 1.0
+  }
+ },
+ "cost": {
+  "cpu_seconds": 17.875,
+  "wall_seconds": 24.32,
+  "cpu_cap": 200.0,
+  "estimate_cpu_upper": 45.0,
+  "threads": 1
+ }
+}
