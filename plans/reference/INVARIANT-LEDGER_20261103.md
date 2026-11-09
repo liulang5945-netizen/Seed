@@ -2276,6 +2276,30 @@ owner 2026-11-07 裁定：多模态是整个算法内部系统的一部分，不
 | S-107 | “子进程会沿用父进程策略” | R-D29-332 | **被取代**：子进程按自己的构造执行策略，未列来源被拒。 |
 | S-108 | “跨进程错误会半途落盘” | R-D29-334 | **被取代**：损坏文件在子进程整批拒绝，无输出表。 |
 
+## 71. R24 桥接入主体状态（只读侧）（2026-11-09）
+
+**71.0 冻结与范围**：挂载、纠正、清除、交回接入、12 条未写候选与 18 条碎片在读数前写入 [manifest](../manifests/taiji_bridge_attach_20261109.json) 的 `definition_digest`。本轮**修改** `taiji/living_core.py`：`LivingState` 增加可选 `sc_bridge` 字段，新增 `attach_bridge`／`clear_bridge`／`bridge_read`；不改 `step`／`observe` 的张量路径。0 训练／0 优化器步／0 Adam／0 confirm。
+
+**71.1 读数**
+
+| 编号 | 读数 | 出处 |
+|---|---|---|
+| R-D29-337 | **挂载只读**：`sc_bridge` 就是那张表；20 句 **40/40**、零线 **0/0**；参数摘要、状态摘要与基线**相等**；表摘要不变。 | `attach` |
+| R-D29-338 | **纠正只动表**：表摘要变化、别名读回 `红色印章`、参数/状态摘要**仍相等**、日志 1 条（`verifier:v1`／`r24:attach`）。 | `correction` |
+| R-D29-339 | **清除回基线**：`sc_bridge=None`、`bridge_read` 返回 `no_bridge`、状态摘要回到基线。 | `clear` |
+| R-D29-340 | **交回表可接入**：纠正后的表导出/导入/挂载，摘要相等、别名 `红色印章`、**40/40**、**0/0**。 | `handback` |
+| R-D29-341 | **关闭态九项全等**；`sc_bridge` 前后都为 `None`（额外单列）。 | `closed_state`／`bridge_default` |
+| R-D29-342 | **判定与成本**：`bridge_attached_read_side`／`bridge_correction_read_side`／`bridge_cleared`／`bridge_handback_attached`／`closed_state_equal`／`bridge_default_none` ⇒ 总判 **`bridge_read_side_attached`**；成本 **1.844 CPU／2.477 wall**（估 30、上限 200）。 | 报告 `verdict`／`cost` |
+
+**71.2 superseded／范围登记**
+
+| 编号 | 被取代／被限定的对象 | 取代者 | 处置与理由 |
+|---|---|---|---|
+| S-109 | “桥只能作为独立对象存在” | R-D29-337 | **被取代**：桥可挂到 `LivingState` 的 `sc_bridge` 侧表并通过状态读。 |
+| S-110 | “挂表会改参数/`fast`” | R-D29-337 | **被取代**：挂载、读、纠正、清除后参数与状态摘要逐字相等。 |
+| S-111 | “清除后会留残” | R-D29-339 | **被取代**：`clear_bridge` 后 `no_bridge`，状态摘要回到基线。 |
+
+
 
 
 

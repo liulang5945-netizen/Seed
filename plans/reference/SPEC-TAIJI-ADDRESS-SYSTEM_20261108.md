@@ -1987,7 +1987,29 @@ R6b 的 joint 1.0 有两种解释：学会了“描述↔名字”的桥，或�
 
 **边界（与读数一起引用）**：① 交接的是**表状态字节**，不是主体完整状态；`LivingState` 的参数、`fast`、`sc_sfk` 都不在这份字节里；② 子进程策略由子进程构造决定，不继承父进程；③ 损坏输入在子进程整批拒绝，但**合法但语义错误**的字节仍无法识别；④ 只在 18 键表、单次纠正、两个子进程上测；⑤ 跨会话的“同一主体身份”仍需要把这份表接到主体状态上——本轮**没有**接；⑥ 桥**仍不得**接进默认图。
 
-**下一步**：R24“桥接入主体状态（只读侧）”闸——给 `LivingState` 增加一个可选的 `sc_bridge` 侧表与 `attach_bridge`／`clear_bridge`／`bridge_read`，默认 `None`；测①关闭态九项全等、②接入后读 20 句 40/40 且参数/`fast`/`sc_sfk` 逐字不动、③纠正一条后读回新值且参数仍不动、④`clear_bridge` 后状态回到基线、⑤跨进程交回的表可直接接入。判据读数前冻结。
+**下一步（已于 §21.33 执行）**：R24“桥接入主体状态（只读侧）”闸——给 `LivingState` 增加一个可选的 `sc_bridge` 侧表与 `attach_bridge`／`clear_bridge`／`bridge_read`，默认 `None`；测①关闭态九项全等、②接入后读 20 句 40/40 且参数/`fast`/`sc_sfk` 逐字不动、③纠正一条后读回新值且参数仍不动、④`clear_bridge` 后状态回到基线、⑤跨进程交回的表可直接接入。判据读数前冻结。
+
+## 21.33 R24 桥接入主体状态（只读侧）：侧表可挂载，张量逐字不动（2026-11-09）
+
+**一句话**：`LivingState` 多了一个可选的 `sc_bridge` 侧表（默认 `None`）。`attach_bridge` 把 18 键表挂到主体状态上，`bridge_read` 从状态里读出值；**挂载、读 20 句、纠正一条、清除**这四个动作都不改任何参数、`h`、`fast`、`nu_ema`、`coverage`、`prior` 或 `sc_sfk`。桥是纯 Python 侧表，不进 `state_dict`、不进 `candidate_sha_v2`、不进任何张量。
+
+**A 只读侧四个动作**
+
+| 动作 | 读数 |
+|---|---|
+| 挂载 | `sc_bridge` 就是那张表；读 20 句 **40/40**、零线 **0/0**；参数摘要与状态摘要**与基线相等** |
+| 纠正 | 表摘要变化；别名读回 `红色印章`；参数/状态摘要**仍与基线相等**；日志 1 条（`verifier:v1`／`r24:attach`） |
+| 清除 | `sc_bridge` 回到 `None`；`bridge_read` 返回 `no_bridge`；状态摘要**回到基线** |
+| 交回接入 | 纠正后的表导出、导入、挂到新状态；表摘要相等；别名 `红色印章`；**40/40**、**0/0** |
+
+**B 关闭态**：九项全等；`sc_bridge` 前后都为 `None`（额外单列，不混入九项）。
+
+**判定与成本**：`bridge_attached_read_side`／`bridge_correction_read_side`／`bridge_cleared`／`bridge_handback_attached`／`closed_state_equal`／`bridge_default_none` ⇒ 总判 **`bridge_read_side_attached`**；成本 **1.844 CPU／2.477 wall**（估 30、上限 200、`threads=1`）。0 训练／0 优化器步／0 Adam／0 confirm。
+
+**边界（与读数一起引用）**：① 只接了**读侧**：`bridge_read` 返回 `(slot, name)`，**没有写进 `fast`**，也没有成为下一步决策的输入；② 侧表不在 `state_dict`／`candidate_sha_v2` 里，参数与身份不受影响；③ `attach_bridge` 只做 `replace`，不复制表；④ 本轮的 `initial_state` 与 20 步电池没有在**挂表后继续 `step`／`observe`**，侧表能否随主体步进存活未测（R25）；⑤ 桥**仍不得**接进默认图；⑥ 只在 18 键表、20 句、单条纠正上测。
+
+**下一步**：R25“侧表随主体步进存活”闸——挂表后连续 `observe`／`step` 20 步，测①`sc_bridge` 仍指向同一张表、表摘要不变，②每步后读 20 句仍 40/40、零线 0/0，③参数/`fast` 按正常步进更新但桥不产生梯度，④清除后步进回到无桥基线，⑤关闭态九项全等。判据读数前冻结。
+
 
 
 
