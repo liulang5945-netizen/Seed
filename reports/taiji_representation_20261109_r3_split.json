@@ -1,0 +1,56 @@
+{
+  "schema": "taiji-representation-r3-split-v1",
+  "date": "2026-11-09",
+  "role": "post_hoc_diagnostic_only_does_not_change_the_verdict",
+  "derived_from": {
+    "path": "reports/taiji_representation_20261109_r3.json",
+    "sha256": "04121f4eb8fc1ed0a6aec3c49108d6f739b020628e4cfaeeb227ed5c4a0c0fec",
+    "frozen_report_sha256": "1ca927fe9c283a5ff4e4215c2d1bbaba737a76024e0d64388dd5f777d91f226e",
+    "runner_sha256": "20dcadd9dcc18602307bb92bbb5c99390e0e3304c51ad7fae51a055598e70283"
+  },
+  "method": "Re-read the per-pair distances already stored in the R3 report; split the 120 same pairs by lexical family using the fixture variant order (index%4: 0=describe, 1=needs, 2=hope, 3=state). No re-embedding, no new distance, no threshold change.",
+  "families": {
+    "paraphrase_paraphrase": {
+      "n": 60,
+      "min": 0.034274,
+      "p10": 0.046604,
+      "p25": 0.067658,
+      "median": 0.077527,
+      "p75": 0.091922,
+      "p90": 0.098947,
+      "max": 0.122525
+    },
+    "describe_paraphrase": {
+      "n": 60,
+      "min": 0.275802,
+      "p10": 0.32592,
+      "p25": 0.374959,
+      "median": 0.440055,
+      "p75": 0.511822,
+      "p90": 0.568132,
+      "max": 0.655999
+    }
+  },
+  "unrelated_reference": {
+    "n": 1920,
+    "min": 0.224598,
+    "p10": 0.504159,
+    "p25": 0.582821,
+    "median": 0.650843,
+    "p75": 0.70095,
+    "p90": 0.742897,
+    "max": 0.856942
+  },
+  "tail_above_unrelated_p10": {
+    "threshold": 0.504159,
+    "n": 16,
+    "of": 120,
+    "fraction": 0.133333,
+    "composition": {
+      "describe_paraphrase": 16
+    },
+    "threshold_note": "p10 of the unrelated distribution, linear interpolation (same definition as the frozen runner)"
+  },
+  "verdict_unchanged": "overlaps",
+  "conclusion": "Within-family paraphrases are fully separated (max 0.122525 < unrelated min 0.224598). Cross-family pairs (entity description vs entity name) are not separated at all: their median 0.440055 sits inside the unrelated body. Every one of the 16 same-pairs above the unrelated p10 belongs to the cross-family bucket."
+}

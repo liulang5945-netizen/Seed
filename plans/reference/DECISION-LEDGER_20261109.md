@@ -3,7 +3,7 @@
 > 用途：记录**由执行者自行决定**的越界决策，一笔一条，可逐条复核。授权来源统一为：**用户 2026-11-09 授权（放权，须留档）**。
 > 覆盖范围：①预算超限；②动封存集或改写已冻结判据；③开新训练窗口；④方向二选一（按“上限更高的方案”取舍）。其余纯实现修复、同口径复测、文档同步不在此立账。
 > 纪律：留档在决策当时写，不事后补；每笔独立提交（不推送）；索引行追加在里程碑简报末尾。
-> 关联：判据与读数见 [SPEC-TAIJI-ADDRESS-SYSTEM_20261108.md](SPEC-TAIJI-ADDRESS-SYSTEM_20261108.md) §20、[INVARIANT-LEDGER_20261103.md](INVARIANT-LEDGER_20261103.md) §47、[CAPABILITY-CARD_20261103.md](CAPABILITY-CARD_20261103.md) U35。
+> 关联：判据与读数见 [SPEC-TAIJI-ADDRESS-SYSTEM_20261108.md](SPEC-TAIJI-ADDRESS-SYSTEM_20261108.md) §20–§21、[INVARIANT-LEDGER_20261103.md](INVARIANT-LEDGER_20261103.md) §47–§49、[CAPABILITY-CARD_20261103.md](CAPABILITY-CARD_20261103.md) U35–U37。
 
 ## 索引
 
@@ -13,6 +13,7 @@
 | D-20261109-02 | 方向取舍（四选一） | 队首定为“表示层”，放弃“训练合流／更短地址／外部语料” | 2d88d0ddc |
 | D-20261109-03 | 判据改写（读数前口径修正） | 无关对由文字“120”更正为完整枚举 1,920（120 个无关 goal 对 × 16 句对），首份未入库 manifest 删除重冻 | 59994d141 |
 | D-20261109-04 | 判据改写（读数后夹具字面修正，重跑读数逐项相同） | 夹具 `native_goal_world_wide.states` 的 `zip` 补 `strict=True` 以满足仓库 B905 闸；夹具 sha 变更、重冻重跑，全部读数相同 | 59994d141 |
+| D-20261109-05 | 外部依赖（R3 由“仅缓存”放宽为“允许下载”） | 为回答“夹具是否存在可分上界”，允许下载冻结句向量权重并记录 revision／config digest，R3 只作上界、不进总判定 | 待回填 |
 
 ---
 
@@ -160,3 +161,38 @@
 **7. 授权来源**：用户 2026-11-09 授权（放权，须留档）。
 
 **8. 对已有结论的影响**：**无读数作废**——新旧读数逐项相同，判定仍为 `representation_not_supported`。唯一变化是夹具文件 sha；地址层线（U35／§20／§47）与全部旧读数不受影响。
+
+---
+
+## D-20261109-05 R3 由“仅缓存”放宽为“允许下载”
+
+**1. 编号／时间／类型**：D-20261109-05｜2026-11-09｜外部依赖类——≠预算超限（CPU 16.219 远低于上限 200），≠改判据（R1／R2／B 判定与阈值一字未动），≠开训练窗（0 训练／0 优化器步／0 新参数）。
+
+**2. 动了什么（逐字）**：`scripts/training/probe_taiji_representation_r3_20261109.py` 的下载策略常量与文档串。
+
+- 原口径（逐字，来自 [SPEC §21.3](SPEC-TAIJI-ADDRESS-SYSTEM_20261108.md)）：`只在本机缓存已存在时使用，否则 unavailable，不下载、不改判据`
+- 实际执行（逐字，runner 常量）：`IDLE_LIMIT = 900.0`（模型加载/下载期间允许的空闲上限，秒）；加载路径不再短路为 `unavailable`。
+- 实际后果：Hugging Face 缓存目录 `models--sentence-transformers--paraphrase-multilingual-MiniLM-L12-v2` 于 **2026-11-09T10:35:02** 落盘；权重解析为 `revision e8f8c211226b894fcb81acc59f3b34ba3efd5f42`、`config_digest 584d721354a4443103960a80b1a3a61226765bc470bd4077d96e37beb85b433f`，均写入 [R3 报告](../../reports/taiji_representation_20261109_r3.json) 的 `model.payload`。
+
+**3. 触发原因**：R3 是唯一能回答“这个夹具是否存在可分上界”的臂；而 §21.9 已写死“不能回答……R3 本机无缓存、本轮未下载，留待下一臂”。若继续坚持“仅缓存”，该问题将永久悬空，且后续任何“是否值得给桥／是否值得开训练窗”的判断都失去参照。读数出处：[R3 报告](../../reports/taiji_representation_20261109_r3.json) 的 `reading`／`model.status=available`；[进度日志](../../reports/taiji_representation_20261109_r3_progress.jsonl) 的 `loading_model → model_loaded`。
+
+**4. 代价**：
+
+- 外部依赖：首次引入约 470 MB 权重下载（网络依赖 + 磁盘占用），此前整条线零外部权重。
+- 预算：**16.219 CPU／257.23 wall**（上限 200 CPU）；wall 的绝大部分是模型加载与下载等待，不计入 CPU。
+- 可复现性：已记录 `revision` 与 `config_digest`，同一 revision 可逐位复现；但**离线环境无法重跑** R3（这是本条唯一的长期代价）。
+- 分母／分类：**不变**（80 句／120／1,920／1,120）。
+- 旧结论可比性：**全部可比**，无读数作废；R3 只作上界，未进总判定。
+
+**5. 替代方案（及否掉理由）**：
+
+- 坚持“仅缓存 ⇒ `unavailable`”——**否决**：等于主动放弃本轮唯一的架构判别读数，并让 §21.9 的“不能回答”成为永久缺口。
+- 改用“标注数据上训练出的判别上界”——**否决**：那会引入可训练自由度与训练窗（需另行批准），且不再是“冻结通用语义空间”的对照，读数含义会被污染。
+- 换一个更小的本地模型——**否决**：MiniLM-L12 已是本机可得的标准化多语种句向量；换模型等于改“上界”的定义，且无证据更省。
+
+**6. 撤回路径**：删除 HF 缓存目录 `models--sentence-transformers--paraphrase-multilingual-MiniLM-L12-v2`、删除 `reports/taiji_representation_20261109_r3*.json` 与 `scripts/training/probe_taiji_representation_r3_20261109.py`，`git revert` 本笔提交；把 SPEC §21.3／§21.9／§21.11 与四份 plans 队首改回“R3 `unavailable`、上界未测”。不影响 R1／R2／B 的任何读数。
+
+**7. 授权来源**：用户 2026-11-09 授权（放权，须留档）。
+
+**8. 对已有结论的影响**：**无读数作废**。总判定仍为 `representation_not_supported`（R1／R2／B 三臂全 `overlaps`，阈值与分母未动）。新增的是“上界可测且判 `overlaps`”，并由此把判负范围精确化为“现有表示 × 跨词法家族”（§49 S-49／S-50）。
+
