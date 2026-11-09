@@ -1,0 +1,159 @@
+{
+ "schema": "taiji-bridge-snapshot-handoff-r33-v1",
+ "created": "2026-11-09T17:30:08",
+ "seed": 20261109,
+ "estimate_cpu_upper": 60.0,
+ "cpu_cap": 200.0,
+ "runner_sha256": "bb5fbb282764552871c02d8db69d45ff2f2311aca7ea15be7b5857df7adc7f57",
+ "bridge_sha256": "4edf29b22a199c29160523debb8ea23a45e59321f2b0c8dc06da72497672e831",
+ "core_sha256": "d5ccb13bcf15636c400a45655dc7253f60e003d177044d54248e44814d2ee78b",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "d5ccb13bcf15636c400a45655dc7253f60e003d177044d54248e44814d2ee78b"
+ },
+ "definition": {
+  "child": "a child process restores the parent snapshot under verifier:v1, expresses the 20 describe sentences, corrects the CUP description to GREEN, expresses the last sentence again, and writes a second snapshot",
+  "before": "the child's 20 before texts must equal '{object}在{place}'",
+  "after": "the child's 20 after texts must substitute GREEN for CUP and keep every place",
+  "handback": "the parent restores the child snapshot; digest, text and 20/20 texts match",
+  "corrupt": "a second child receives truncated bytes and must reject them with rejected_snapshot_invalid_json",
+  "closed_state": "the nine legacy closed-state readings stay equal before and after"
+ },
+ "criteria": {
+  "child_import": "child restored digest equals the parent digest",
+  "before": "20/20 before pairs and texts exact",
+  "after": "20/20 after pairs and texts exact; CUP sentences become GREEN; places unchanged",
+  "handback": "parent restored digest equals child snapshot digest; text and 20/20 after texts match",
+  "corrupt": "child error starts with rejected_snapshot_invalid_json and no output exists",
+  "closed_state": "the nine legacy readings stay equal before and after",
+  "rerun": "the R32 anchor carries a commit, a runner blob sha1, a runner sha256 and a core sha256"
+ },
+ "definition_digest": "b5afc426a4d3e4821c9da93afd601277c647e4bbef943f6b84d0cd43da21e155",
+ "counts": {
+  "child_processes": 2,
+  "regression_sentences": 20,
+  "unknown_candidates": 12,
+  "rerun_anchors": 1
+ },
+ "inputs": {
+  "query": "喝水的杯子放在方方正正的木桌子上面。",
+  "description_key": "圆口的器皿",
+  "authority": "verifier:v1",
+  "reason": "r33:snapshot",
+  "values": [
+   [
+    "object",
+    "蓝色杯子"
+   ],
+   [
+    "object",
+    "红色印章"
+   ],
+   [
+    "object",
+    "绿色瓶子"
+   ],
+   [
+    "place",
+    "木桌"
+   ],
+   [
+    "place",
+    "书架"
+   ]
+  ],
+  "aliases": [
+   [
+    "喝水的杯子",
+    [
+     "object",
+     "蓝色杯子"
+    ]
+   ],
+   [
+    "盖章用的印章",
+    [
+     "object",
+     "红色印章"
+    ]
+   ],
+   [
+    "盛水的瓶子",
+    [
+     "object",
+     "绿色瓶子"
+    ]
+   ],
+   [
+    "圆形的皮球",
+    [
+     "object",
+     "黄色球"
+    ]
+   ],
+   [
+    "方方正正的木桌子",
+    [
+     "place",
+     "木桌"
+    ]
+   ],
+   [
+    "窗前的台板",
+    [
+     "place",
+     "窗台"
+    ]
+   ],
+   [
+    "手边的小盒子",
+    [
+     "place",
+     "左盒"
+    ]
+   ],
+   [
+    "墙上的架子",
+    [
+     "place",
+     "书架"
+    ]
+   ],
+   [
+    "脚下的垫子",
+    [
+     "place",
+     "地毯"
+    ]
+   ]
+  ],
+  "unknown_candidates": [
+   "黑色铁铃",
+   "白色帆布",
+   "长柄铜勺",
+   "软木瓶塞",
+   "蓝色毛巾",
+   "银质圆镜",
+   "棕色皮箱",
+   "青色陶罐",
+   "灰色石阶",
+   "紫色绸带",
+   "金色烛台",
+   "深红木箱"
+  ],
+  "rerun_anchors": [
+   {
+    "round": "R32",
+    "runner": "scripts/training/probe_taiji_bridge_snapshot_20261109.py",
+    "rerun_commit": "aea59f09e",
+    "runner_blob_sha1": "90cb1c4b38d78dc5a29fda317b38cc0d4d0dceae",
+    "report_runner_sha256": "9f27b956b2078dcee39b6c3c56ae8ed32bd6141bf1942eed560ed5c08fadf954",
+    "runner_blob_sha256": "9f27b956b2078dcee39b6c3c56ae8ed32bd6141bf1942eed560ed5c08fadf954",
+    "report_core_sha256": "d5ccb13bcf15636c400a45655dc7253f60e003d177044d54248e44814d2ee78b",
+    "matches_report": true,
+    "note": "R33 did not change living_core; R32 remains runnable at this HEAD; anchor kept for later rounds"
+   }
+  ]
+ }
+}
