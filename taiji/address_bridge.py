@@ -25,10 +25,16 @@ Write outcomes, all counted and all reachable:
 
 * ``appended``  -- the key is new.
 * ``merged``    -- same key, same value: count+1, no new record.
-* ``replaced``  -- same key, different value: the old value moves to history.
-* ``rejected_batches`` / ``rollbacks`` -- one batch carries two different values
-  for one key.  The batch is validated before it is applied; the table is
-  restored from a snapshot, so "rolled back" is byte equality, not a promise.
+* ``rejected_batches`` / ``rollbacks`` -- the batch would bind one key to a
+  different value (or carries two values for one key).  The batch is validated
+  before it is applied; the table is restored from a snapshot, so "rolled back"
+  is byte equality, not a promise.
+
+There is exactly **one** conflict rule: the first writer keeps the address and
+the later batch is rejected.  R11's ``replace`` rule is deliberately gone: a
+bridge whose default is "the last writer wins" can silently re-point an entity,
+and R14 measured that the difference is not cosmetic.  A caller cannot select a
+different rule because there is no parameter and no branch for one.
 
 Read outcomes (structural, no thresholds): an address anchors a query only when
 it shares a token that occurs in exactly one address.  Exactly one anchor
@@ -122,32 +128,40 @@ def value_key(value: Any) -> str:
 
 def contains_sequence(query: tuple[str, ...], pattern: tuple[str, ...]) -> bool:
     """True when ``pattern`` occurs contiguously inside ``query`` (both non-empty)."""
+    return first_occurrence(query, pattern) is not None
+
+
+def first_occurrence(query: tuple[str, ...], pattern: tuple[str, ...]) -> int | None:
+    """Start index of the first contiguous occurrence, or None."""
     width = len(pattern)
     if width == 0 or width > len(query):
-        return False
-    return any(query[start : start + width] == pattern for start in range(len(query) - width + 1))
+        return None
+    for start in range(len(query) - width + 1):
+        if query[start : start + width] == pattern:
+            return start
+    return None
+
+
+MASK_CHARACTER = "\x00"
 
 
 class BridgeTable:
-    """Phrase -> (slot, name) records with merge / replace / batch rollback."""
+    """Phrase -> (slot, name) records with merge, first-writer-wins and rollback."""
 
     def __init__(
         self,
         start_capacity: int = START_CAPACITY,
         key_fn: Any = phrase_key,
         read_mode: str = "token",
-        on_conflict: str = "replace",
     ) -> None:
         self.key_fn = key_fn
         self.read_mode = read_mode
-        self.on_conflict = on_conflict
         self.capacity = int(start_capacity)
         self.peak_capacity = int(start_capacity)
         self.records: list[dict[str, Any]] = []
         self.batches = 0
         self.appended = 0
         self.merged = 0
-        self.replaced = 0
         self.rejected_batches = 0
         self.rollbacks = 0
         self.rejected_reasons: dict[str, int] = {}
@@ -157,15 +171,8 @@ class BridgeTable:
     def generation(self) -> int:
         return self.peak_capacity // START_CAPACITY - 1
 
-    def values_at(self, index: int) -> list[Any]:
-        return list(self.records[index]["values"])
-
     def current(self, index: int) -> Any:
-        values = self.records[index]["values"]
-        return values[-1] if values else None
-
-    def history_at(self, index: int) -> list[Any]:
-        return list(self.records[index]["history"])
+        return self.records[index]["value"]
 
     def digest(self) -> str:
         """Byte-level digest of the whole table, counters included."""
@@ -175,7 +182,6 @@ class BridgeTable:
             "batches": self.batches,
             "appended": self.appended,
             "merged": self.merged,
-            "replaced": self.replaced,
             "rejected_batches": self.rejected_batches,
             "rollbacks": self.rollbacks,
             "rejected_reasons": dict(sorted(self.rejected_reasons.items())),
@@ -207,8 +213,7 @@ class BridgeTable:
                     if isinstance(record["key"], frozenset)
                     else list(record["key"])
                 ),
-                "values": [value_key(value) for value in record["values"]],
-                "history": [value_key(value) for value in record["history"]],
+                "value": value_key(record["value"]),
                 "count": record["count"],
             }
             for record in self.records
@@ -219,30 +224,20 @@ class BridgeTable:
             "capacity": self.capacity,
             "peak_capacity": self.peak_capacity,
             "records": [
-                {
-                    "key": record["key"],
-                    "values": list(record["values"]),
-                    "history": list(record["history"]),
-                    "count": record["count"],
-                }
+                {"key": record["key"], "value": record["value"], "count": record["count"]}
                 for record in self.records
             ],
-            "counters": (self.appended, self.merged, self.replaced),
+            "counters": (self.appended, self.merged),
         }
 
     def restore(self, snapshot: dict[str, Any]) -> None:
         self.capacity = snapshot["capacity"]
         self.peak_capacity = snapshot["peak_capacity"]
         self.records = [
-            {
-                "key": record["key"],
-                "values": list(record["values"]),
-                "history": list(record["history"]),
-                "count": record["count"],
-            }
+            {"key": record["key"], "value": record["value"], "count": record["count"]}
             for record in snapshot["records"]
         ]
-        self.appended, self.merged, self.replaced = snapshot["counters"]
+        self.appended, self.merged = snapshot["counters"]
 
     # -- write ---------------------------------------------------------------
     def find(self, key: Any) -> int | None:
@@ -274,31 +269,28 @@ class BridgeTable:
                     "digest_unchanged": self.content_digest() == digest_before,
                 }
             encoded = value_key(value)
-            if self.on_conflict == "reject":
-                bound = self.find(key)
-                if bound is not None and value_key(self.current(bound)) != encoded:
-                    # First writer keeps the address; the whole batch is not applied.
-                    self.rejected_batches += 1
-                    self.rollbacks += 1
-                    reason = "address_already_bound"
-                    self.rejected_reasons[reason] = self.rejected_reasons.get(reason, 0) + 1
-                    return {
-                        "action": "rejected_batch_address_already_bound",
-                        "items": len(items),
-                        "rejected_item": position,
-                        "batch": self.batches,
-                        "bound": value_key(self.current(bound)),
-                        "attempted": encoded,
-                        "digest_unchanged": self.content_digest() == digest_before,
-                    }
+            bound = self.find(key)
+            if bound is not None and value_key(self.current(bound)) != encoded:
+                # First writer keeps the address; the whole batch is not applied.
+                self.rejected_batches += 1
+                self.rollbacks += 1
+                reason = "address_already_bound"
+                self.rejected_reasons[reason] = self.rejected_reasons.get(reason, 0) + 1
+                return {
+                    "action": "rejected_batch_address_already_bound",
+                    "items": len(items),
+                    "rejected_item": position,
+                    "batch": self.batches,
+                    "bound": value_key(self.current(bound)),
+                    "attempted": encoded,
+                    "digest_unchanged": self.content_digest() == digest_before,
+                }
             if key not in first_value:
                 first_value[key] = encoded
             elif first_value[key] != encoded:
                 conflict_positions.append(position)
         if conflict_positions:
-            # Nothing has been applied yet; the snapshot restore is the proof.
-            snapshot = self.snapshot()
-            self.restore(snapshot)
+            # Nothing has been applied yet: validation ends before any mutation.
             self.rejected_batches += 1
             self.rollbacks += 1
             reason = "batch_address_collision"
@@ -320,7 +312,7 @@ class BridgeTable:
                 while len(self.records) >= self.capacity:
                     self.capacity *= 2
                     self.peak_capacity = max(self.peak_capacity, self.capacity)
-                self.records.append({"key": key, "values": [value], "history": [], "count": 1})
+                self.records.append({"key": key, "value": value, "count": 1})
                 self.appended += 1
                 planned.append(
                     {"item": position, "address": len(self.records) - 1, "action": "appended"}
@@ -331,12 +323,7 @@ class BridgeTable:
                 self.merged += 1
                 planned.append({"item": position, "address": index, "action": "merged_duplicate"})
                 continue
-            record = self.records[index]
-            record["history"].append(record["values"][-1])
-            record["values"].append(value)
-            record["count"] = int(record["count"]) + 1
-            self.replaced += 1
-            planned.append({"item": position, "address": index, "action": "replaced"})
+            raise AssertionError("unreachable: an unequal binding was rejected above")
 
         return {
             "action": "accepted",
@@ -345,7 +332,6 @@ class BridgeTable:
             "slots": len(self.records),
             "appended": sum(1 for row in planned if row["action"] == "appended"),
             "merged": sum(1 for row in planned if row["action"] == "merged_duplicate"),
-            "replaced": sum(1 for row in planned if row["action"] == "replaced"),
             "items_detail": planned,
         }
 
@@ -408,6 +394,139 @@ class BridgeTable:
             "reason": "not_contained",
             "unknown_tokens": [],
             "query_tokens": len(key),
+        }
+
+    def _earliest_contained(self, query: tuple[str, ...], reason: str) -> dict[str, Any]:
+        """The stored key that starts earliest inside ``query``.
+
+        Reading order decides, not key length: a length rule cannot separate
+        "the object wording and the place wording are both five characters".
+        Two different records that start at the same earliest position abstain
+        (``ambiguous_same_start``): the read must not pick one silently.
+        """
+        best_start: int | None = None
+        winners: list[tuple[int, int, tuple[str, ...]]] = []
+        for index, record in enumerate(self.records):
+            key = tuple(record["key"])
+            start = first_occurrence(query, key)
+            if start is None:
+                continue
+            if best_start is None or start < best_start:
+                best_start = start
+                winners = [(index, start, key)]
+            elif start == best_start:
+                winners.append((index, start, key))
+        if not winners:
+            return {
+                "decision": "no_match",
+                "address": None,
+                "value": None,
+                "reason": reason,
+                "span_start": None,
+                "span_end": None,
+                "key_chars": 0,
+                "candidates": 0,
+            }
+        if len(winners) > 1:
+            return {
+                "decision": "ambiguous_same_start",
+                "address": None,
+                "value": None,
+                "reason": "two_records_share_the_earliest_start",
+                "span_start": None,
+                "span_end": None,
+                "key_chars": 0,
+                "candidates": len(winners),
+                "addresses": [row[0] for row in winners],
+            }
+        index, start, key = winners[0]
+        return {
+            "decision": "matched",
+            "address": index,
+            "value": self.current(index),
+            "reason": "single_earliest_containment",
+            "span_start": start,
+            "span_end": start + len(key),
+            "key_chars": len(key),
+            "candidates": 1,
+        }
+
+    def read_sentence(self, query: str | bytes) -> dict[str, Any]:
+        """Two passes over one sentence: answer, mask the answered span, answer again.
+
+        Pass rule (fixed, not tuned): the key that starts earliest answers; a
+        same-start collision between two records abstains.  Masking rule (fixed,
+        not tuned): the **first** occurrence of that record's whole character
+        sequence is replaced by ``MASK_CHARACTER`` repeated to the same width.
+        The width is preserved, so positions after the span do not shift and the
+        second pass sees the same sentence minus exactly the answered wording.
+
+        Exit names: ``answered_pair`` (two distinct entities), ``answered_single``
+        (one entity; the second pass exited ``no_match``), ``no_match`` (first
+        pass found nothing), ``ambiguous_same_start`` (two records claim the same
+        earliest position -- abstain, never pick one), ``same_address_repeated``
+        (the same key occurs twice, so it is one entity, not two), ``empty_key``.
+        """
+        characters = _decoded(query)
+        if not characters:
+            return {
+                "decision": "empty_key",
+                "answers": [],
+                "passes": [],
+                "distinct_addresses": 0,
+                "query_chars": 0,
+                "mask": None,
+            }
+        passes: list[dict[str, Any]] = []
+        answers: list[dict[str, Any]] = []
+        remaining = tuple(characters)
+        mask: dict[str, Any] | None = None
+        for pass_index in (1, 2):
+            reason = "not_contained" if pass_index == 1 else "masked_no_match"
+            result = self._earliest_contained(remaining, reason)
+            passes.append({"pass": pass_index, **result})
+            if result["decision"] != "matched":
+                break
+            if any(row["address"] == result["address"] for row in answers):
+                passes[-1]["decision"] = "same_address_repeated"
+                break
+            start = result["span_start"]
+            width = result["key_chars"]
+            answers.append(
+                {
+                    "address": result["address"],
+                    "value": result["value"],
+                    "span_start": start,
+                    "span_end": result["span_end"],
+                    "key_chars": width,
+                }
+            )
+            masked = remaining[:start] + (MASK_CHARACTER,) * width + remaining[start + width :]
+            if pass_index == 1:
+                mask = {
+                    "character": "\\u0000",
+                    "rule": "first occurrence of the answered key, same width, positions preserved",
+                    "pass": 1,
+                    "span_start": start,
+                    "span_end": result["span_end"],
+                    "masked_query": "".join(masked),
+                }
+            remaining = masked
+        if len(answers) == 2:
+            decision = "answered_pair"
+        elif len(answers) == 1 and passes and passes[-1]["decision"] == "same_address_repeated":
+            decision = "answered_single_duplicate_key"
+        elif len(answers) == 1:
+            decision = "answered_single"
+        else:
+            decision = passes[0]["decision"] if passes else "empty_key"
+        return {
+            "decision": decision,
+            "answers": answers,
+            "passes": passes,
+            "distinct_addresses": len({row["address"] for row in answers}),
+            "query_chars": len(characters),
+            "mask": mask,
         }
 
     def read_tokens(self, tokens: frozenset[str]) -> dict[str, Any]:

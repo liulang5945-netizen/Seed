@@ -1,0 +1,139 @@
+{
+ "schema": "taiji-bridge-two-pass-r15-v1",
+ "created": "2026-11-09T15:35:27",
+ "seed": 20261109,
+ "estimate_cpu_upper": 30.0,
+ "cpu_cap": 200.0,
+ "runner_sha256": "b6721d6f654d3a244e574983a57426417aef76bd1e8af7eee03322992cbac8a2",
+ "bridge_sha256": "967017e197b382accdcd5286c79eaa6970416ec19ff4fb5b633f1c2ae0ff8b82",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "8fa3aafde38b1cbad3b021dc271abd316c0a265c68870403dd4ca7b0b53e0c6a"
+ },
+ "definition": {
+  "read": "two passes over one sentence; each pass answers with the stored key that starts earliest and whose whole character sequence occurs contiguously in the current text",
+  "mask": "after a pass answers, the first occurrence of that key's sequence is replaced by '\\u0000' repeated to the same character width, so later positions do not shift",
+  "tie": "two different records that start at the same earliest position abstain (ambiguous_same_start); never pick one",
+  "repeat": "a second occurrence of the same address is same_address_repeated: it is one entity, not two",
+  "conflict": "exactly one write rule: first writer keeps the address, a later batch that would bind the same key to a different value is rejected whole; there is no parameter and no branch for another rule",
+  "capability": "20 describe sentences x 2 slots = 40 entities, plus answered-2/1/wrong/abstained"
+ },
+ "criteria": {
+  "structural": "BridgeTable.__init__ exposes exactly start_capacity/key_fn/read_mode; constructing it with on_conflict raises TypeError; the module's syntax tree contains no on_conflict, replaced, history, history_at or values_at identifiers; a re-binding batch exits rejected_batch_address_already_bound with the content digest unchanged",
+  "two_pass": "20 describe sentences reach 40/40 correct entities, every sentence exits answered_pair, wrong pointers 0, and the four-way sentence distribution sums to 20",
+  "zeros": "on the 18-key table, 12 unknown candidates answer 0 and 18 byte fragments answer 0",
+  "closed_state": "the nine closed-state readings stay equal before and after",
+  "reporting": "readings are reported separately; a clean structural gate does not carry two-pass"
+ },
+ "definition_digest": "25cc18d0ac70a6eed91189af471a92452d938747fc6e4e37a489402fd2184a43",
+ "counts": {
+  "records": 9,
+  "aliases": 9,
+  "keys": 18,
+  "describe_sentences": 20,
+  "capability_entities": 40,
+  "unknown_candidates": 12,
+  "fragments": 18
+ },
+ "inputs": {
+  "unknown_candidates": [
+   "黑色铁铃",
+   "白色帆布",
+   "长柄铜勺",
+   "软木瓶塞",
+   "蓝色毛巾",
+   "银质圆镜",
+   "棕色皮箱",
+   "青色陶罐",
+   "灰色石阶",
+   "紫色绸带",
+   "金色烛台",
+   "深红木箱"
+  ],
+  "authored_aliases": [
+   [
+    "喝水的杯子",
+    [
+     "object",
+     "蓝色杯子"
+    ]
+   ],
+   [
+    "盖章用的印章",
+    [
+     "object",
+     "红色印章"
+    ]
+   ],
+   [
+    "盛水的瓶子",
+    [
+     "object",
+     "绿色瓶子"
+    ]
+   ],
+   [
+    "圆形的皮球",
+    [
+     "object",
+     "黄色球"
+    ]
+   ],
+   [
+    "方方正正的木桌子",
+    [
+     "place",
+     "木桌"
+    ]
+   ],
+   [
+    "窗前的台板",
+    [
+     "place",
+     "窗台"
+    ]
+   ],
+   [
+    "手边的小盒子",
+    [
+     "place",
+     "左盒"
+    ]
+   ],
+   [
+    "墙上的架子",
+    [
+     "place",
+     "书架"
+    ]
+   ],
+   [
+    "脚下的垫子",
+    [
+     "place",
+     "地毯"
+    ]
+   ]
+  ],
+  "single_slot_sentence": "让圆口的器皿留在这里。",
+  "duplicate_key_sentence": "圆口的器皿和圆口的器皿都在。",
+  "tie_keys": [
+   [
+    "甲乙",
+    [
+     "object",
+     "蓝色杯子"
+    ]
+   ],
+   [
+    "甲乙丙",
+    [
+     "object",
+     "红色印章"
+    ]
+   ]
+  ],
+  "tie_sentence": "甲乙丙丁"
+ }
+}

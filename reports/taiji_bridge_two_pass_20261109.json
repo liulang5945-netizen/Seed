@@ -1,0 +1,1316 @@
+{
+ "schema": "taiji-bridge-two-pass-r15-report-v1",
+ "runner_sha256": "b6721d6f654d3a244e574983a57426417aef76bd1e8af7eee03322992cbac8a2",
+ "manifest_sha256": "4e12209deaa8bd6e8e4e52ea71c419e5597edf5fc767768a59ea8136544205dc",
+ "bridge_sha256": "967017e197b382accdcd5286c79eaa6970416ec19ff4fb5b633f1c2ae0ff8b82",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "8fa3aafde38b1cbad3b021dc271abd316c0a265c68870403dd4ca7b0b53e0c6a"
+ },
+ "definition": {
+  "read": "two passes over one sentence; each pass answers with the stored key that starts earliest and whose whole character sequence occurs contiguously in the current text",
+  "mask": "after a pass answers, the first occurrence of that key's sequence is replaced by '\\u0000' repeated to the same character width, so later positions do not shift",
+  "tie": "two different records that start at the same earliest position abstain (ambiguous_same_start); never pick one",
+  "repeat": "a second occurrence of the same address is same_address_repeated: it is one entity, not two",
+  "conflict": "exactly one write rule: first writer keeps the address, a later batch that would bind the same key to a different value is rejected whole; there is no parameter and no branch for another rule",
+  "capability": "20 describe sentences x 2 slots = 40 entities, plus answered-2/1/wrong/abstained"
+ },
+ "criteria": {
+  "structural": "BridgeTable.__init__ exposes exactly start_capacity/key_fn/read_mode; constructing it with on_conflict raises TypeError; the module's syntax tree contains no on_conflict, replaced, history, history_at or values_at identifiers; a re-binding batch exits rejected_batch_address_already_bound with the content digest unchanged",
+  "two_pass": "20 describe sentences reach 40/40 correct entities, every sentence exits answered_pair, wrong pointers 0, and the four-way sentence distribution sums to 20",
+  "zeros": "on the 18-key table, 12 unknown candidates answer 0 and 18 byte fragments answer 0",
+  "closed_state": "the nine closed-state readings stay equal before and after",
+  "reporting": "readings are reported separately; a clean structural gate does not carry two-pass"
+ },
+ "structural": {
+  "init_parameters": [
+   "self",
+   "start_capacity",
+   "key_fn",
+   "read_mode"
+  ],
+  "parameter_set_ok": true,
+  "unexpected_kwarg_raises": true,
+  "forbidden_identifiers_in_module": [],
+  "forbidden_identifiers_absent": true,
+  "rebind": {
+   "action": "rejected_batch_address_already_bound",
+   "digest_unchanged": true,
+   "first_binding_still_reads": [
+    "object",
+    "蓝色杯子"
+   ]
+  },
+  "same_value_merge": {
+   "action": "accepted",
+   "merged": 1
+  },
+  "accepted_outcome_keys": [
+   "action",
+   "appended",
+   "batch",
+   "items",
+   "items_detail",
+   "merged",
+   "slots"
+  ]
+ },
+ "two_pass": {
+  "rows": [
+   {
+    "sentence": "让圆口的器皿到四方木台。",
+    "decision": "answered_pair",
+    "sentence_kind": "answered_2",
+    "expected": {
+     "object": [
+      "object",
+      "蓝色杯子"
+     ],
+     "place": [
+      "place",
+      "木桌"
+     ]
+    },
+    "answers": [
+     [
+      "object",
+      "蓝色杯子"
+     ],
+     [
+      "place",
+      "木桌"
+     ]
+    ],
+    "passes": [
+     {
+      "pass": 1,
+      "decision": "matched",
+      "reason": "single_earliest_containment",
+      "span_start": 1,
+      "span_end": 6
+     },
+     {
+      "pass": 2,
+      "decision": "matched",
+      "reason": "single_earliest_containment",
+      "span_start": 7,
+      "span_end": 11
+     }
+    ],
+    "mask": {
+     "span": [
+      1,
+      6
+     ],
+     "width": 5,
+     "masked_query": "让\u0000\u0000\u0000\u0000\u0000到四方木台。"
+    }
+   },
+   {
+    "sentence": "让圆口的器皿到靠窗的台面。",
+    "decision": "answered_pair",
+    "sentence_kind": "answered_2",
+    "expected": {
+     "object": [
+      "object",
+      "蓝色杯子"
+     ],
+     "place": [
+      "place",
+      "窗台"
+     ]
+    },
+    "answers": [
+     [
+      "object",
+      "蓝色杯子"
+     ],
+     [
+      "place",
+      "窗台"
+     ]
+    ],
+    "passes": [
+     {
+      "pass": 1,
+      "decision": "matched",
+      "reason": "single_earliest_containment",
+      "span_start": 1,
+      "span_end": 6
+     },
+     {
+      "pass": 2,
+      "decision": "matched",
+      "reason": "single_earliest_containment",
+      "span_start": 7,
+      "span_end": 12
+     }
+    ],
+    "mask": {
+     "span": [
+      1,
+      6
+     ],
+     "width": 5,
+     "masked_query": "让\u0000\u0000\u0000\u0000\u0000到靠窗的台面。"
+    }
+   },
+   {
+    "sentence": "让圆口的器皿到手边的匣子。",
+    "decision": "answered_pair",
+    "sentence_kind": "answered_2",
+    "expected": {
+     "object": [
+      "object",
+      "蓝色杯子"
+     ],
+     "place": [
+      "place",
+      "左盒"
+     ]
+    },
+    "answers": [
+     [
+      "object",
+      "蓝色杯子"
+     ],
+     [
+      "place",
+      "左盒"
+     ]
+    ],
+    "passes": [
+     {
+      "pass": 1,
+      "decision": "matched",
+      "reason": "single_earliest_containment",
+      "span_start": 1,
+      "span_end": 6
+     },
+     {
+      "pass": 2,
+      "decision": "matched",
+      "reason": "single_earliest_containment",
+      "span_start": 7,
+      "span_end": 12
+     }
+    ],
+    "mask": {
+     "span": [
+      1,
+      6
+     ],
+     "width": 5,
+     "masked_query": "让\u0000\u0000\u0000\u0000\u0000到手边的匣子。"
+    }
+   },
+   {
+    "sentence": "让圆口的器皿到靠墙的层架。",
+    "decision": "answered_pair",
+    "sentence_kind": "answered_2",
+    "expected": {
+     "object": [
+      "object",
+      "蓝色杯子"
+     ],
+     "place": [
+      "place",
+      "书架"
+     ]
+    },
+    "answers": [
+     [
+      "object",
+      "蓝色杯子"
+     ],
+     [
+      "place",
+      "书架"
+     ]
+    ],
+    "passes": [
+     {
+      "pass": 1,
+      "decision": "matched",
+      "reason": "single_earliest_containment",
+      "span_start": 1,
+      "span_end": 6
+     },
+     {
+      "pass": 2,
+      "decision": "matched",
+      "reason": "single_earliest_containment",
+      "span_start": 7,
+      "span_end": 12
+     }
+    ],
+    "mask": {
+     "span": [
+      1,
+      6
+     ],
+     "width": 5,
+     "masked_query": "让\u0000\u0000\u0000\u0000\u0000到靠墙的层架。"
+    }
+   },
+   {
+    "sentence": "让圆口的器皿到脚边的毡子。",
+    "decision": "answered_pair",
+    "sentence_kind": "answered_2",
+    "expected": {
+     "object": [
+      "object",
+      "蓝色杯子"
+     ],
+     "place": [
+      "place",
+      "地毯"
+     ]
+    },
+    "answers": [
+     [
+      "object",
+      "蓝色杯子"
+     ],
+     [
+      "place",
+      "地毯"
+     ]
+    ],
+    "passes": [
+     {
+      "pass": 1,
+      "decision": "matched",
+      "reason": "single_earliest_containment",
+      "span_start": 1,
+      "span_end": 6
+     },
+     {
+      "pass": 2,
+      "decision": "matched",
+      "reason": "single_earliest_containment",
+      "span_start": 7,
+      "span_end": 12
+     }
+    ],
+    "mask": {
+     "span": [
+      1,
+      6
+     ],
+     "width": 5,
+     "masked_query": "让\u0000\u0000\u0000\u0000\u0000到脚边的毡子。"
+    }
+   },
+   {
+    "sentence": "让带纹路的方块到四方木台。",
+    "decision": "answered_pair",
+    "sentence_kind": "answered_2",
+    "expected": {
+     "object": [
+      "object",
+      "红色印章"
+     ],
+     "place": [
+      "place",
+      "木桌"
+     ]
+    },
+    "answers": [
+     [
+      "object",
+      "红色印章"
+     ],
+     [
+      "place",
+      "木桌"
+     ]
+    ],
+    "passes": [
+     {
+      "pass": 1,
+      "decision": "matched",
+      "reason": "single_earliest_containment",
+      "span_start": 1,
+      "span_end": 7
+     },
+     {
+      "pass": 2,
+      "decision": "matched",
+      "reason": "single_earliest_containment",
+      "span_start": 8,
+      "span_end": 12
+     }
+    ],
+    "mask": {
+     "span": [
+      1,
+      7
+     ],
+     "width": 6,
+     "masked_query": "让\u0000\u0000\u0000\u0000\u0000\u0000到四方木台。"
+    }
+   },
+   {
+    "sentence": "让带纹路的方块到靠窗的台面。",
+    "decision": "answered_pair",
+    "sentence_kind": "answered_2",
+    "expected": {
+     "object": [
+      "object",
+      "红色印章"
+     ],
+     "place": [
+      "place",
+      "窗台"
+     ]
+    },
+    "answers": [
+     [
+      "object",
+      "红色印章"
+     ],
+     [
+      "place",
+      "窗台"
+     ]
+    ],
+    "passes": [
+     {
+      "pass": 1,
+      "decision": "matched",
+      "reason": "single_earliest_containment",
+      "span_start": 1,
+      "span_end": 7
+     },
+     {
+      "pass": 2,
+      "decision": "matched",
+      "reason": "single_earliest_containment",
+      "span_start": 8,
+      "span_end": 13
+     }
+    ],
+    "mask": {
+     "span": [
+      1,
+      7
+     ],
+     "width": 6,
+     "masked_query": "让\u0000\u0000\u0000\u0000\u0000\u0000到靠窗的台面。"
+    }
+   },
+   {
+    "sentence": "让带纹路的方块到手边的匣子。",
+    "decision": "answered_pair",
+    "sentence_kind": "answered_2",
+    "expected": {
+     "object": [
+      "object",
+      "红色印章"
+     ],
+     "place": [
+      "place",
+      "左盒"
+     ]
+    },
+    "answers": [
+     [
+      "object",
+      "红色印章"
+     ],
+     [
+      "place",
+      "左盒"
+     ]
+    ],
+    "passes": [
+     {
+      "pass": 1,
+      "decision": "matched",
+      "reason": "single_earliest_containment",
+      "span_start": 1,
+      "span_end": 7
+     },
+     {
+      "pass": 2,
+      "decision": "matched",
+      "reason": "single_earliest_containment",
+      "span_start": 8,
+      "span_end": 13
+     }
+    ],
+    "mask": {
+     "span": [
+      1,
+      7
+     ],
+     "width": 6,
+     "masked_query": "让\u0000\u0000\u0000\u0000\u0000\u0000到手边的匣子。"
+    }
+   },
+   {
+    "sentence": "让带纹路的方块到靠墙的层架。",
+    "decision": "answered_pair",
+    "sentence_kind": "answered_2",
+    "expected": {
+     "object": [
+      "object",
+      "红色印章"
+     ],
+     "place": [
+      "place",
+      "书架"
+     ]
+    },
+    "answers": [
+     [
+      "object",
+      "红色印章"
+     ],
+     [
+      "place",
+      "书架"
+     ]
+    ],
+    "passes": [
+     {
+      "pass": 1,
+      "decision": "matched",
+      "reason": "single_earliest_containment",
+      "span_start": 1,
+      "span_end": 7
+     },
+     {
+      "pass": 2,
+      "decision": "matched",
+      "reason": "single_earliest_containment",
+      "span_start": 8,
+      "span_end": 13
+     }
+    ],
+    "mask": {
+     "span": [
+      1,
+      7
+     ],
+     "width": 6,
+     "masked_query": "让\u0000\u0000\u0000\u0000\u0000\u0000到靠墙的层架。"
+    }
+   },
+   {
+    "sentence": "让带纹路的方块到脚边的毡子。",
+    "decision": "answered_pair",
+    "sentence_kind": "answered_2",
+    "expected": {
+     "object": [
+      "object",
+      "红色印章"
+     ],
+     "place": [
+      "place",
+      "地毯"
+     ]
+    },
+    "answers": [
+     [
+      "object",
+      "红色印章"
+     ],
+     [
+      "place",
+      "地毯"
+     ]
+    ],
+    "passes": [
+     {
+      "pass": 1,
+      "decision": "matched",
+      "reason": "single_earliest_containment",
+      "span_start": 1,
+      "span_end": 7
+     },
+     {
+      "pass": 2,
+      "decision": "matched",
+      "reason": "single_earliest_containment",
+      "span_start": 8,
+      "span_end": 13
+     }
+    ],
+    "mask": {
+     "span": [
+      1,
+      7
+     ],
+     "width": 6,
+     "masked_query": "让\u0000\u0000\u0000\u0000\u0000\u0000到脚边的毡子。"
+    }
+   },
+   {
+    "sentence": "让细长的容器到四方木台。",
+    "decision": "answered_pair",
+    "sentence_kind": "answered_2",
+    "expected": {
+     "object": [
+      "object",
+      "绿色瓶子"
+     ],
+     "place": [
+      "place",
+      "木桌"
+     ]
+    },
+    "answers": [
+     [
+      "object",
+      "绿色瓶子"
+     ],
+     [
+      "place",
+      "木桌"
+     ]
+    ],
+    "passes": [
+     {
+      "pass": 1,
+      "decision": "matched",
+      "reason": "single_earliest_containment",
+      "span_start": 1,
+      "span_end": 6
+     },
+     {
+      "pass": 2,
+      "decision": "matched",
+      "reason": "single_earliest_containment",
+      "span_start": 7,
+      "span_end": 11
+     }
+    ],
+    "mask": {
+     "span": [
+      1,
+      6
+     ],
+     "width": 5,
+     "masked_query": "让\u0000\u0000\u0000\u0000\u0000到四方木台。"
+    }
+   },
+   {
+    "sentence": "让细长的容器到靠窗的台面。",
+    "decision": "answered_pair",
+    "sentence_kind": "answered_2",
+    "expected": {
+     "object": [
+      "object",
+      "绿色瓶子"
+     ],
+     "place": [
+      "place",
+      "窗台"
+     ]
+    },
+    "answers": [
+     [
+      "object",
+      "绿色瓶子"
+     ],
+     [
+      "place",
+      "窗台"
+     ]
+    ],
+    "passes": [
+     {
+      "pass": 1,
+      "decision": "matched",
+      "reason": "single_earliest_containment",
+      "span_start": 1,
+      "span_end": 6
+     },
+     {
+      "pass": 2,
+      "decision": "matched",
+      "reason": "single_earliest_containment",
+      "span_start": 7,
+      "span_end": 12
+     }
+    ],
+    "mask": {
+     "span": [
+      1,
+      6
+     ],
+     "width": 5,
+     "masked_query": "让\u0000\u0000\u0000\u0000\u0000到靠窗的台面。"
+    }
+   },
+   {
+    "sentence": "让细长的容器到手边的匣子。",
+    "decision": "answered_pair",
+    "sentence_kind": "answered_2",
+    "expected": {
+     "object": [
+      "object",
+      "绿色瓶子"
+     ],
+     "place": [
+      "place",
+      "左盒"
+     ]
+    },
+    "answers": [
+     [
+      "object",
+      "绿色瓶子"
+     ],
+     [
+      "place",
+      "左盒"
+     ]
+    ],
+    "passes": [
+     {
+      "pass": 1,
+      "decision": "matched",
+      "reason": "single_earliest_containment",
+      "span_start": 1,
+      "span_end": 6
+     },
+     {
+      "pass": 2,
+      "decision": "matched",
+      "reason": "single_earliest_containment",
+      "span_start": 7,
+      "span_end": 12
+     }
+    ],
+    "mask": {
+     "span": [
+      1,
+      6
+     ],
+     "width": 5,
+     "masked_query": "让\u0000\u0000\u0000\u0000\u0000到手边的匣子。"
+    }
+   },
+   {
+    "sentence": "让细长的容器到靠墙的层架。",
+    "decision": "answered_pair",
+    "sentence_kind": "answered_2",
+    "expected": {
+     "object": [
+      "object",
+      "绿色瓶子"
+     ],
+     "place": [
+      "place",
+      "书架"
+     ]
+    },
+    "answers": [
+     [
+      "object",
+      "绿色瓶子"
+     ],
+     [
+      "place",
+      "书架"
+     ]
+    ],
+    "passes": [
+     {
+      "pass": 1,
+      "decision": "matched",
+      "reason": "single_earliest_containment",
+      "span_start": 1,
+      "span_end": 6
+     },
+     {
+      "pass": 2,
+      "decision": "matched",
+      "reason": "single_earliest_containment",
+      "span_start": 7,
+      "span_end": 12
+     }
+    ],
+    "mask": {
+     "span": [
+      1,
+      6
+     ],
+     "width": 5,
+     "masked_query": "让\u0000\u0000\u0000\u0000\u0000到靠墙的层架。"
+    }
+   },
+   {
+    "sentence": "让细长的容器到脚边的毡子。",
+    "decision": "answered_pair",
+    "sentence_kind": "answered_2",
+    "expected": {
+     "object": [
+      "object",
+      "绿色瓶子"
+     ],
+     "place": [
+      "place",
+      "地毯"
+     ]
+    },
+    "answers": [
+     [
+      "object",
+      "绿色瓶子"
+     ],
+     [
+      "place",
+      "地毯"
+     ]
+    ],
+    "passes": [
+     {
+      "pass": 1,
+      "decision": "matched",
+      "reason": "single_earliest_containment",
+      "span_start": 1,
+      "span_end": 6
+     },
+     {
+      "pass": 2,
+      "decision": "matched",
+      "reason": "single_earliest_containment",
+      "span_start": 7,
+      "span_end": 12
+     }
+    ],
+    "mask": {
+     "span": [
+      1,
+      6
+     ],
+     "width": 5,
+     "masked_query": "让\u0000\u0000\u0000\u0000\u0000到脚边的毡子。"
+    }
+   },
+   {
+    "sentence": "让圆滚滚的东西到四方木台。",
+    "decision": "answered_pair",
+    "sentence_kind": "answered_2",
+    "expected": {
+     "object": [
+      "object",
+      "黄色球"
+     ],
+     "place": [
+      "place",
+      "木桌"
+     ]
+    },
+    "answers": [
+     [
+      "object",
+      "黄色球"
+     ],
+     [
+      "place",
+      "木桌"
+     ]
+    ],
+    "passes": [
+     {
+      "pass": 1,
+      "decision": "matched",
+      "reason": "single_earliest_containment",
+      "span_start": 1,
+      "span_end": 7
+     },
+     {
+      "pass": 2,
+      "decision": "matched",
+      "reason": "single_earliest_containment",
+      "span_start": 8,
+      "span_end": 12
+     }
+    ],
+    "mask": {
+     "span": [
+      1,
+      7
+     ],
+     "width": 6,
+     "masked_query": "让\u0000\u0000\u0000\u0000\u0000\u0000到四方木台。"
+    }
+   },
+   {
+    "sentence": "让圆滚滚的东西到靠窗的台面。",
+    "decision": "answered_pair",
+    "sentence_kind": "answered_2",
+    "expected": {
+     "object": [
+      "object",
+      "黄色球"
+     ],
+     "place": [
+      "place",
+      "窗台"
+     ]
+    },
+    "answers": [
+     [
+      "object",
+      "黄色球"
+     ],
+     [
+      "place",
+      "窗台"
+     ]
+    ],
+    "passes": [
+     {
+      "pass": 1,
+      "decision": "matched",
+      "reason": "single_earliest_containment",
+      "span_start": 1,
+      "span_end": 7
+     },
+     {
+      "pass": 2,
+      "decision": "matched",
+      "reason": "single_earliest_containment",
+      "span_start": 8,
+      "span_end": 13
+     }
+    ],
+    "mask": {
+     "span": [
+      1,
+      7
+     ],
+     "width": 6,
+     "masked_query": "让\u0000\u0000\u0000\u0000\u0000\u0000到靠窗的台面。"
+    }
+   },
+   {
+    "sentence": "让圆滚滚的东西到手边的匣子。",
+    "decision": "answered_pair",
+    "sentence_kind": "answered_2",
+    "expected": {
+     "object": [
+      "object",
+      "黄色球"
+     ],
+     "place": [
+      "place",
+      "左盒"
+     ]
+    },
+    "answers": [
+     [
+      "object",
+      "黄色球"
+     ],
+     [
+      "place",
+      "左盒"
+     ]
+    ],
+    "passes": [
+     {
+      "pass": 1,
+      "decision": "matched",
+      "reason": "single_earliest_containment",
+      "span_start": 1,
+      "span_end": 7
+     },
+     {
+      "pass": 2,
+      "decision": "matched",
+      "reason": "single_earliest_containment",
+      "span_start": 8,
+      "span_end": 13
+     }
+    ],
+    "mask": {
+     "span": [
+      1,
+      7
+     ],
+     "width": 6,
+     "masked_query": "让\u0000\u0000\u0000\u0000\u0000\u0000到手边的匣子。"
+    }
+   },
+   {
+    "sentence": "让圆滚滚的东西到靠墙的层架。",
+    "decision": "answered_pair",
+    "sentence_kind": "answered_2",
+    "expected": {
+     "object": [
+      "object",
+      "黄色球"
+     ],
+     "place": [
+      "place",
+      "书架"
+     ]
+    },
+    "answers": [
+     [
+      "object",
+      "黄色球"
+     ],
+     [
+      "place",
+      "书架"
+     ]
+    ],
+    "passes": [
+     {
+      "pass": 1,
+      "decision": "matched",
+      "reason": "single_earliest_containment",
+      "span_start": 1,
+      "span_end": 7
+     },
+     {
+      "pass": 2,
+      "decision": "matched",
+      "reason": "single_earliest_containment",
+      "span_start": 8,
+      "span_end": 13
+     }
+    ],
+    "mask": {
+     "span": [
+      1,
+      7
+     ],
+     "width": 6,
+     "masked_query": "让\u0000\u0000\u0000\u0000\u0000\u0000到靠墙的层架。"
+    }
+   },
+   {
+    "sentence": "让圆滚滚的东西到脚边的毡子。",
+    "decision": "answered_pair",
+    "sentence_kind": "answered_2",
+    "expected": {
+     "object": [
+      "object",
+      "黄色球"
+     ],
+     "place": [
+      "place",
+      "地毯"
+     ]
+    },
+    "answers": [
+     [
+      "object",
+      "黄色球"
+     ],
+     [
+      "place",
+      "地毯"
+     ]
+    ],
+    "passes": [
+     {
+      "pass": 1,
+      "decision": "matched",
+      "reason": "single_earliest_containment",
+      "span_start": 1,
+      "span_end": 7
+     },
+     {
+      "pass": 2,
+      "decision": "matched",
+      "reason": "single_earliest_containment",
+      "span_start": 8,
+      "span_end": 13
+     }
+    ],
+    "mask": {
+     "span": [
+      1,
+      7
+     ],
+     "width": 6,
+     "masked_query": "让\u0000\u0000\u0000\u0000\u0000\u0000到脚边的毡子。"
+    }
+   }
+  ],
+  "entities": 40,
+  "hits": 40,
+  "wrong": 0,
+  "abstained": 0,
+  "distribution": {
+   "answered_2": 20,
+   "answered_1": 0,
+   "wrong": 0,
+   "abstained": 0
+  },
+  "mask_widths": {
+   "5": 10,
+   "6": 10
+  },
+  "mask_rule": "after a pass answers, the first occurrence of that key's sequence is replaced by '\\u0000' repeated to the same character width, so later positions do not shift",
+  "mask_character": "'\\x00'",
+  "ok": true
+ },
+ "zeros": {
+  "unknown": {
+   "rows": [
+    {
+     "phrase": "黑色铁铃",
+     "decision": "no_match",
+     "answered": false
+    },
+    {
+     "phrase": "白色帆布",
+     "decision": "no_match",
+     "answered": false
+    },
+    {
+     "phrase": "长柄铜勺",
+     "decision": "no_match",
+     "answered": false
+    },
+    {
+     "phrase": "软木瓶塞",
+     "decision": "no_match",
+     "answered": false
+    },
+    {
+     "phrase": "蓝色毛巾",
+     "decision": "no_match",
+     "answered": false
+    },
+    {
+     "phrase": "银质圆镜",
+     "decision": "no_match",
+     "answered": false
+    },
+    {
+     "phrase": "棕色皮箱",
+     "decision": "no_match",
+     "answered": false
+    },
+    {
+     "phrase": "青色陶罐",
+     "decision": "no_match",
+     "answered": false
+    },
+    {
+     "phrase": "灰色石阶",
+     "decision": "no_match",
+     "answered": false
+    },
+    {
+     "phrase": "紫色绸带",
+     "decision": "no_match",
+     "answered": false
+    },
+    {
+     "phrase": "金色烛台",
+     "decision": "no_match",
+     "answered": false
+    },
+    {
+     "phrase": "深红木箱",
+     "decision": "no_match",
+     "answered": false
+    }
+   ],
+   "candidates": 12,
+   "answering": 0,
+   "zero_ok": true
+  },
+  "fragments": {
+   "rows": [
+    {
+     "phrase": "圆口的器皿",
+     "byte_offset": 1,
+     "decision": "empty_key"
+    },
+    {
+     "phrase": "圆口的器皿",
+     "byte_offset": 2,
+     "decision": "empty_key"
+    },
+    {
+     "phrase": "带纹路的方块",
+     "byte_offset": 1,
+     "decision": "empty_key"
+    },
+    {
+     "phrase": "带纹路的方块",
+     "byte_offset": 2,
+     "decision": "empty_key"
+    },
+    {
+     "phrase": "细长的容器",
+     "byte_offset": 1,
+     "decision": "empty_key"
+    },
+    {
+     "phrase": "细长的容器",
+     "byte_offset": 2,
+     "decision": "empty_key"
+    },
+    {
+     "phrase": "圆滚滚的东西",
+     "byte_offset": 1,
+     "decision": "empty_key"
+    },
+    {
+     "phrase": "圆滚滚的东西",
+     "byte_offset": 2,
+     "decision": "empty_key"
+    },
+    {
+     "phrase": "四方木台",
+     "byte_offset": 1,
+     "decision": "empty_key"
+    },
+    {
+     "phrase": "四方木台",
+     "byte_offset": 2,
+     "decision": "empty_key"
+    },
+    {
+     "phrase": "靠窗的台面",
+     "byte_offset": 1,
+     "decision": "empty_key"
+    },
+    {
+     "phrase": "靠窗的台面",
+     "byte_offset": 2,
+     "decision": "empty_key"
+    },
+    {
+     "phrase": "手边的匣子",
+     "byte_offset": 1,
+     "decision": "empty_key"
+    },
+    {
+     "phrase": "手边的匣子",
+     "byte_offset": 2,
+     "decision": "empty_key"
+    },
+    {
+     "phrase": "靠墙的层架",
+     "byte_offset": 1,
+     "decision": "empty_key"
+    },
+    {
+     "phrase": "靠墙的层架",
+     "byte_offset": 2,
+     "decision": "empty_key"
+    },
+    {
+     "phrase": "脚边的毡子",
+     "byte_offset": 1,
+     "decision": "empty_key"
+    },
+    {
+     "phrase": "脚边的毡子",
+     "byte_offset": 2,
+     "decision": "empty_key"
+    }
+   ],
+   "inputs": 18,
+   "answering": 0,
+   "zero_ok": true
+  },
+  "single_pass_baseline": {
+   "inputs": 20,
+   "answering": 0,
+   "decisions": {
+    "ambiguous_multiple_anchors": 20
+   },
+   "note": "one pass cannot split a two-entity sentence; the two-pass read is the treatment"
+  }
+ },
+ "controls": {
+  "single_slot": {
+   "sentence": "让圆口的器皿留在这里。",
+   "decision": "answered_single",
+   "second_pass_exit": "no_match",
+   "second_pass_reason": "masked_no_match",
+   "answers": [
+    [
+     "object",
+     "蓝色杯子"
+    ]
+   ]
+  },
+  "duplicate_key": {
+   "sentence": "圆口的器皿和圆口的器皿都在。",
+   "decision": "answered_single_duplicate_key",
+   "second_pass_exit": "same_address_repeated",
+   "distinct_addresses": 1,
+   "answers": [
+    [
+     "object",
+     "蓝色杯子"
+    ]
+   ],
+   "note": "one wording maps to one entity by write rule, so a repeat is one entity"
+  },
+  "tie": {
+   "write": "accepted",
+   "sentence": "甲乙丙丁",
+   "decision": "ambiguous_same_start",
+   "reason": "two_records_share_the_earliest_start",
+   "candidates": 2
+  }
+ },
+ "closed_state": {
+  "baseline": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "dde7b598ea98229db539238ddb1379f52c974073fa7d1ef3e81c0d533897cf18",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk_none": true,
+   "battery_sha": "a350b1f4e72594e5b0d57e7febd187ff02a9a8d60931b25457caa604db3ffb75",
+   "battery_steps": 20
+  },
+  "after": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "dde7b598ea98229db539238ddb1379f52c974073fa7d1ef3e81c0d533897cf18",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk_none": true,
+   "battery_sha": "a350b1f4e72594e5b0d57e7febd187ff02a9a8d60931b25457caa604db3ffb75",
+   "battery_steps": 20
+  },
+  "checks": {
+   "parameters_equal": true,
+   "state_equal": true,
+   "identity_equal": true,
+   "store_equal": true,
+   "battery_equal": true,
+   "steps_equal": true,
+   "sc_sfk_none": true,
+   "flag_disabled": true,
+   "rng_untouched": true
+  }
+ },
+ "verdict": {
+  "structural": "replace_path_absent",
+  "two_pass": "two_pass_clean",
+  "zeros": "zeros_clean",
+  "controls": "exits_declared"
+ },
+ "cost": {
+  "cpu_seconds": 2.015625,
+  "wall_seconds": 2.6835503578186035,
+  "cpu_cap": 200.0,
+  "estimate_cpu_upper": 30.0,
+  "threads": 1
+ }
+}
