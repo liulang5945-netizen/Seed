@@ -2450,7 +2450,35 @@ R6b 的 joint 1.0 有两种解释：学会了“描述↔名字”的桥，或�
 
 **边界（与读数一起引用）**：① 只测单步、单句、k∈{0,1000}；② k=1000 超出 `fast_limit`；③ 判据失败未事后修补；④ `xi` 不在通路是静态事实，已由 delta=0 直接证实；⑤ 未定位 `expression` 内部具体子项；⑥ 桥**仍不得**接进默认图。
 
-**下一步**：R42“表达段阻尼定位”闸——冻结正确链路 `x → h → z → 概率`，在 `expression` 的三个子项（`generated`／`copied`／`mixing`）上分别取差，判阻尼发生在生成项、复制项还是混合系数。判据读数前冻结。
+**下一步（已于 §21.51 执行）**：R42“表达段阻尼定位”闸——冻结正确链路 `x → h → z → 概率`，在 `expression` 的三个子项（`generated`／`copied`／`mixing`）上分别取差，判阻尼发生在生成项、复制项还是混合系数。判据读数前冻结。
+
+## 21.51 R42 表达段阻尼定位：readout 缩 11 倍、softmax 缩 200 倍（2026-11-09）
+
+**一句话**：按修正链路 `h → z → logits → 概率` 取差：`delta_h = 0.666815`、`delta_z = 0.059511`、`delta_logits = 0.041272`、`delta_prob = 2.073e-04`。三段衰减比为 **readout 0.0892**、**generate 0.6935**、**softmax 0.00502**：**两处低于 0.1 门** ⇒ `damping_distributed`；主缩在输出 softmax，次缩在 `readout`。`delta_mixing = 6.428e-03`（只报告、不参与判定）。总判 **`expression_damping_measured`**。
+
+**A 读数**
+
+| 测点 | 读数 |
+|---|---|
+| `delta_h`（readout 输入） | **0.666815** |
+| `delta_z`（readout 输出） | **0.059511** |
+| `delta_logits`（generate 输出） | **0.041272** |
+| `delta_prob`（softmax 输出） | **2.073e-04** |
+| `delta_mixing`（只报告） | **6.428e-03** |
+| `readout_drop` = Δz/Δh | **0.08925**（< 0.1） |
+| `generate_drop` = Δlogits/Δz | **0.69351**（不缩） |
+| `softmax_drop` = Δprob/Δlogits | **0.00502**（< 0.1） |
+| 主主体 | 参数摘要不动；九项全等；`sc_bridge` 前后 `None` |
+
+**B 复跑锚**：R41 → `1e7e91aa7`（blob `74b3c26e…`、runner sha `7a794d7f…`、core sha `6c0c53a2…`），报告 sha 与 blob sha 一致；**R42 未改模块，R41 在当前 HEAD 仍可复跑**。
+
+**判定与成本**：`memory_written`／`memory_reaches_all_stages`／`damping_distributed`／`closed_state_equal`／`main_subject_untouched`／`bridge_default_none`／`anchors_complete` ⇒ 总判 **`expression_damping_measured`**；成本 **1.250 CPU／1.701 wall**（估 20、上限 200）。
+
+**尺度警告（与读数一起引用）**：`softmax_drop` 是 **max|Δ概率| ÷ max|Δlogit|**，两者**量纲不同**：概率满量程约 1，而当前输出接近均匀（约 1/257 ≈ 0.0039），所以这个比值天然偏小。把它判成“阻尼点”**部分来自定义**，不能直接当成“softmax 层把信息抹掉了”。真正同量纲的缩水是 `readout_drop = 0.089`（两端都是 128 维特征）。
+
+**边界（与读数一起引用）**：① 只测单步、k∈{0,1000}；② k=1000 超出 `fast_limit`；③ softmax 段比值混入尺度，不能单独作结论；④ 无源记录时 `expression` 走早退分支，`copied`／`mixing` 不参与输出；⑤ 未测同量纲的输出距离；⑥ 桥**仍不得**接进默认图。
+
+**下一步**：R43“尺度无关的阻尼度量”闸——改用 **KL 散度**与**总变差距离**度量两档输出的差异，并对每段用**相对 L2（‖Δ‖/‖ref‖）**重算；在可比单位下重判阻尼点。判据读数前冻结。
 
 
 

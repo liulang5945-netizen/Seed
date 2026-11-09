@@ -2680,6 +2680,28 @@ owner 2026-11-07 裁定：多模态是整个算法内部系统的一部分，不
 | S-154 | “记忆进入 readout 的 `xi`” | R-D35-452 | **被证伪**：`delta_xi = 0`，`xi` 与记忆无关。 |
 | S-155 | “阻尼发生在读出前” | R-D35-453 | **被限定**：z 差 4.75e-02，衰减发生在 z→概率。 |
 
+## 88. R42 表达段阻尼定位（2026-11-09）
+
+**88.0 冻结与范围**：链路 `h→z→logits→prob`、三段 0.1 门、k=1000 与 R41 复跑锚写入 [manifest](../manifests/taiji_expression_damping_20261109.json) 的 `definition_digest`。未改模块；**0 优化器步**。
+
+**88.1 读数**
+
+| 编号 | 读数 | 出处 |
+|---|---|---|
+| R-D36-456 | **四段差**：`delta_h=0.666815`、`delta_z=0.059511`、`delta_logits=0.041272`、`delta_prob=2.073e-04`；`delta_mixing=6.428e-03`。 | `reading` |
+| R-D36-457 | **三段比**：readout **0.08925**（<0.1）、generate **0.69351**、softmax **0.00502**（<0.1）⇒ `damping_distributed`。 | `reading.drops` |
+| R-D36-458 | **判定与成本**：总判 **`expression_damping_measured`**；**1.250 CPU／1.701 wall**；九项全等、主主体不动。 | 报告 `verdict`／`cost` |
+| R-D36-459 | **尺度警告**：`softmax_drop` 的分子（概率）与分母（logit）**量纲不同**，当前输出接近均匀（1/257≈0.0039），比值天然偏小；同量纲缩水只有 `readout_drop=0.089`。 | 报告 `reading.drops` |
+
+**88.2 superseded／范围登记**
+
+| 编号 | 被取代／被限定的对象 | 取代者 | 处置与理由 |
+|---|---|---|---|
+| S-156 | “softmax 段真的抹掉了记忆信息” | R-D36-459 | **被限定**：该比值混入尺度，不能单独作结论。 |
+| S-157 | “generate 层也会压缩记忆” | R-D36-457 | **被证伪**：generate_drop 0.694，基本不缩。 |
+
+
+
 
 
 
