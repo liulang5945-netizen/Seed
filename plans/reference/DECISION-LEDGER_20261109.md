@@ -16,7 +16,7 @@
 | D-20261109-05 | 外部依赖（R3 由“仅缓存”放宽为“允许下载”） | 为回答“夹具是否存在可分上界”，允许下载冻结句向量权重并记录 revision／config digest，R3 只作上界、不进总判定 | c23b1d9ca |
 | D-20261109-06 | 读数后 runner 增补（R4a 输出逐对明细） | R4a 首跑缺逐对距离，无法做家族拆分；给 runner 加 `pairs` 输出后重冻重跑，判据/阈值/夹具未动，八项读数逐项相同 | 90426725e |
 | D-20261109-07 | 预算超限＋读数后 runner 修正（CPU 线程与 wall 计时） | R5 首跑 845.0 CPU、次跑 702.0 CPU（上限 200）；归因为 BLAS 线程自旋＋wall 计时公式写错，限 1 线程后重冻重跑 0.516 CPU，判定与全部读数逐项相同 | 0061918d8 |
-| D-20261109-08 | 判据改写（读数后发现 joint 列结构性无效，冻结新口径重跑） | R6 的 joint 用 20 类 one-hot，而按 goal 分组交叉验证时测试折的联合类在训练中无样本，20 个权重恒零、argmax 永不选中，joint 必然 0.0；改为“同一行 object ∧ place 都对”后 R6b 三臂 joint 1.0、判 `cross_family_readout_transfers` | 待回填 |
+| D-20261109-08 | 判据改写（读数后发现 joint 列结构性无效，冻结新口径重跑） | R6 的 joint 用 20 类 one-hot，而按 goal 分组交叉验证时测试折的联合类在训练中无样本，20 个权重恒零、argmax 永不选中，joint 必然 0.0；改为“同一行 object ∧ place 都对”后 R6b 三臂 joint 1.0、判 `cross_family_readout_transfers` | 98263aba2 |
 
 ---
 
