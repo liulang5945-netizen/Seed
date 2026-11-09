@@ -1,0 +1,158 @@
+{
+ "schema": "taiji-bridge-text-r30-v1",
+ "created": "2026-11-09T17:17:23",
+ "seed": 20261109,
+ "estimate_cpu_upper": 30.0,
+ "cpu_cap": 200.0,
+ "runner_sha256": "b9b2fe368ac2f3d926e921af98968a416b623f0dac06dc6dd446d8409cbe7655",
+ "bridge_sha256": "4edf29b22a199c29160523debb8ea23a45e59321f2b0c8dc06da72497672e831",
+ "core_sha256": "ec5c24ece09343848ae0151e52399fbd437df42100fe362cadf6c93bd17ca368",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "ec5c24ece09343848ae0151e52399fbd437df42100fe362cadf6c93bd17ca368"
+ },
+ "definition": {
+  "default": "last_bridge_text is None on a fresh state",
+  "express": "bridge_express writes the chosen template text into last_bridge_text; the parameter and state hashes do not move",
+  "steps": "20 observe calls keep last_bridge_text and sc_bridge; the text is unchanged",
+  "no_pair": "a no_pair expression clears last_bridge_text instead of carrying a stale answer",
+  "clear": "clear_bridge clears both sc_bridge and last_bridge_text",
+  "closed_state": "the nine legacy closed-state readings stay equal before and after"
+ },
+ "criteria": {
+  "default": "fresh state has last_bridge_text None",
+  "express": "text equals '蓝色杯子在木桌'; parameter and state hashes equal to the baseline",
+  "steps": "20/20 steps keep the same text; table digest unchanged; parameters unchanged",
+  "no_pair": "unknown query after a chosen pair leaves last_bridge_text None",
+  "clear": "both sc_bridge and last_bridge_text are None; bridge_read is no_bridge",
+  "closed_state": "the nine legacy readings stay equal before and after",
+  "rerun": "the R29 anchor carries a commit, a runner blob sha1, a runner sha256 and a core sha256"
+ },
+ "definition_digest": "be6dc2a0631a2d60ad52a51704bc7ebeb203b1b04c75d2fd278bfd1d8ff13999",
+ "counts": {
+  "observe_steps": 20,
+  "regression_sentences": 20,
+  "unknown_candidates": 12,
+  "rerun_anchors": 1
+ },
+ "inputs": {
+  "query": "喝水的杯子放在方方正正的木桌子上面。",
+  "unknown": "黑色铁铃",
+  "authority": "verifier:v1",
+  "values": [
+   [
+    "object",
+    "蓝色杯子"
+   ],
+   [
+    "object",
+    "红色印章"
+   ],
+   [
+    "object",
+    "绿色瓶子"
+   ],
+   [
+    "place",
+    "木桌"
+   ],
+   [
+    "place",
+    "书架"
+   ]
+  ],
+  "aliases": [
+   [
+    "喝水的杯子",
+    [
+     "object",
+     "蓝色杯子"
+    ]
+   ],
+   [
+    "盖章用的印章",
+    [
+     "object",
+     "红色印章"
+    ]
+   ],
+   [
+    "盛水的瓶子",
+    [
+     "object",
+     "绿色瓶子"
+    ]
+   ],
+   [
+    "圆形的皮球",
+    [
+     "object",
+     "黄色球"
+    ]
+   ],
+   [
+    "方方正正的木桌子",
+    [
+     "place",
+     "木桌"
+    ]
+   ],
+   [
+    "窗前的台板",
+    [
+     "place",
+     "窗台"
+    ]
+   ],
+   [
+    "手边的小盒子",
+    [
+     "place",
+     "左盒"
+    ]
+   ],
+   [
+    "墙上的架子",
+    [
+     "place",
+     "书架"
+    ]
+   ],
+   [
+    "脚下的垫子",
+    [
+     "place",
+     "地毯"
+    ]
+   ]
+  ],
+  "unknown_candidates": [
+   "黑色铁铃",
+   "白色帆布",
+   "长柄铜勺",
+   "软木瓶塞",
+   "蓝色毛巾",
+   "银质圆镜",
+   "棕色皮箱",
+   "青色陶罐",
+   "灰色石阶",
+   "紫色绸带",
+   "金色烛台",
+   "深红木箱"
+  ],
+  "rerun_anchors": [
+   {
+    "round": "R29",
+    "runner": "scripts/training/probe_taiji_bridge_pair_handoff_20261109.py",
+    "rerun_commit": "fc800aa81",
+    "runner_blob_sha1": "52511f2834df462267b5b8c1f92185555d36863d",
+    "report_runner_sha256": "b05f8fc2da793b6aecc87e9776009b75665137021600fc1ad36db6f0b0637c3c",
+    "runner_blob_sha256": "b05f8fc2da793b6aecc87e9776009b75665137021600fc1ad36db6f0b0637c3c",
+    "report_core_sha256": "9fe7fbf786e900032498b00d6cbeaa600e29e3e14100a625aadbf548629f6d82",
+    "matches_report": true,
+    "note": "current HEAD cannot run it after R30 (core sha changed); checkout this commit"
+   }
+  ]
+ }
+}

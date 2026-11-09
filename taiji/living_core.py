@@ -140,6 +140,9 @@ class LivingState:
     # Optional written bridge (pure Python, no tensor).  It is attached
     # explicitly by ``attach_bridge`` and is ``None`` in every closed state.
     sc_bridge: object | None = None
+    # Optional last paired expression, written by ``bridge_express`` and
+    # carried by step/observe without touching any tensor.
+    last_bridge_text: str | None = None
 
 
 @dataclass(frozen=True)
@@ -595,9 +598,9 @@ class LivingCoreReference(nn.Module):
         return replace(state, sc_bridge=table)
 
     def clear_bridge(self, state: LivingState) -> LivingState:
-        if state.sc_bridge is None:
+        if state.sc_bridge is None and state.last_bridge_text is None:
             return state
-        return replace(state, sc_bridge=None)
+        return replace(state, sc_bridge=None, last_bridge_text=None)
 
     def bridge_read(self, state: LivingState, sentence: str | bytes) -> dict:
         """Read through the attached bridge; no side effect on any tensor."""
@@ -697,6 +700,22 @@ class LivingCoreReference(nn.Module):
         else:
             result["decision"] = "no_pair"
         return result
+
+    def bridge_express(
+        self,
+        state: LivingState,
+        query: str | bytes,
+        object_candidates: list[tuple[str, str]] | tuple[tuple[str, str], ...],
+        place_candidates: list[tuple[str, str]] | tuple[tuple[str, str], ...],
+    ) -> tuple[LivingState, dict]:
+        """Express one pair into ``last_bridge_text``; no tensor is touched.
+
+        A chosen pair writes its template text; any ``no_pair`` clears the field
+        so a stale answer is not carried forward.
+        """
+        result = self.bridge_choose_pair(state, query, object_candidates, place_candidates)
+        text = result["text"] if result["decision"] == "chosen_pair" else None
+        return replace(state, last_bridge_text=text), result
 
     def store_query_key(self, state: LivingState, raw: bytes) -> torch.Tensor:
         context = self.encoder.context(raw)
