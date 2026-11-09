@@ -1,0 +1,864 @@
+{
+ "schema": "taiji-bridge-pair-correction-r20-report-v1",
+ "runner_sha256": "1af43c0b54e92969c1ab8b4784797c4ed303d7f5da323de938e12d0d6997e7a0",
+ "manifest_sha256": "c3256fd2afbca90c8ad9709556d41fc67b73345b135d2f8c7c8699aff1787c96",
+ "bridge_sha256": "65d86897c25544e683f757d4771f2d7e516476528bafd9520e14bdc59ab1fbd4",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "8fa3aafde38b1cbad3b021dc271abd316c0a265c68870403dd4ca7b0b53e0c6a"
+ },
+ "definition": {
+  "pair_read": "one sentence carries two written keys; the two-pass read returns one value per slot (object and place); the slot is read from the value, and the key text is read from the record",
+  "loop": "one iteration compares each slot with the frozen verifier and submits one correct batch containing only the mismatched slots, using each slot's read value as its credential",
+  "single_slot": "object CUP -> RED with place already TABLE; only the object key may move",
+  "both_slots": "object CUP -> RED and place TABLE -> SHELF in one batch; both must move",
+  "stale_subset": "capture (CUP, TABLE), another actor corrects place to SHELF, then submit both corrections from the stale pair; the batch must be rejected whole, so object stays CUP",
+  "no_op": "both read values equal the verifier: no correction, empty log, digest unchanged",
+  "plain_write": "a plain write of the old value is still rejected; correction is the only path",
+  "convergence": "two iterations: the first corrects, the second agrees; exactly one log entry",
+  "default_table": "on the 18-key table, correct the two keys of a describe sentence to another pair and back; content digest returns to the original, R15 40/40, zeros 0/0",
+  "closed_state": "the nine closed-state readings stay equal before and after"
+ },
+ "criteria": {
+  "single_slot": "action corrected with one item; read (CUP, TABLE) -> (RED, TABLE); log length 1; the log key is the object key",
+  "both_slots": "action corrected with two items; read (CUP, TABLE) -> (RED, SHELF); log length 2 in object then place order",
+  "stale_subset": "action rejected_batch_correction_mismatch; read stays (CUP, SHELF); log length 1; content digest unchanged",
+  "no_op": "action agreed; no correction; log empty; content digest unchanged",
+  "plain_write": "action rejected_batch_address_already_bound; read stays (CUP, TABLE); log empty; content digest unchanged",
+  "convergence": "first corrected, second agreed, log length 1, final (RED, TABLE)",
+  "default_table": "first batch corrects two keys, second batch restores them; content digest equal; regression 40/40 with wrong 0; zeros 0/0; log length 4",
+  "closed_state": "the nine closed-state readings stay equal before and after",
+  "reporting": "segments are reported separately; a single-slot correction does not carry the stale-subset segment, and the stale segment is evidence that the batch is atomic"
+ },
+ "single_slot": {
+  "step": {
+   "read": {
+    "decision": "answered_pair",
+    "answers": 2,
+    "values": [
+     [
+      "object",
+      "蓝色杯子"
+     ],
+     [
+      "place",
+      "木桌"
+     ]
+    ],
+    "slots": {
+     "object": {
+      "value": [
+       "object",
+       "蓝色杯子"
+      ],
+      "key": "甲乙"
+     },
+     "place": {
+      "value": [
+       "place",
+       "木桌"
+      ],
+      "key": "丙丁"
+     }
+    },
+    "stopped_at_pass": 3,
+    "final_exit": "no_match"
+   },
+   "action": "corrected",
+   "items": [
+    [
+     "甲乙",
+     [
+      "object",
+      "蓝色杯子"
+     ],
+     [
+      "object",
+      "红色印章"
+     ]
+    ]
+   ],
+   "corrected": 1
+  },
+  "after": {
+   "decision": "answered_pair",
+   "answers": 2,
+   "values": [
+    [
+     "object",
+     "红色印章"
+    ],
+    [
+     "place",
+     "木桌"
+    ]
+   ],
+   "slots": {
+    "object": {
+     "value": [
+      "object",
+      "红色印章"
+     ],
+     "key": "甲乙"
+    },
+    "place": {
+     "value": [
+      "place",
+      "木桌"
+     ],
+     "key": "丙丁"
+    }
+   },
+   "stopped_at_pass": 3,
+   "final_exit": "no_match"
+  },
+  "log": [
+   [
+    "[\"object\", \"蓝色杯子\"]",
+    "[\"object\", \"红色印章\"]"
+   ]
+  ],
+  "log_length": 1,
+  "ok": true
+ },
+ "both_slots": {
+  "step": {
+   "read": {
+    "decision": "answered_pair",
+    "answers": 2,
+    "values": [
+     [
+      "object",
+      "蓝色杯子"
+     ],
+     [
+      "place",
+      "木桌"
+     ]
+    ],
+    "slots": {
+     "object": {
+      "value": [
+       "object",
+       "蓝色杯子"
+      ],
+      "key": "甲乙"
+     },
+     "place": {
+      "value": [
+       "place",
+       "木桌"
+      ],
+      "key": "丙丁"
+     }
+    },
+    "stopped_at_pass": 3,
+    "final_exit": "no_match"
+   },
+   "action": "corrected",
+   "items": [
+    [
+     "甲乙",
+     [
+      "object",
+      "蓝色杯子"
+     ],
+     [
+      "object",
+      "红色印章"
+     ]
+    ],
+    [
+     "丙丁",
+     [
+      "place",
+      "木桌"
+     ],
+     [
+      "place",
+      "书架"
+     ]
+    ]
+   ],
+   "corrected": 2
+  },
+  "after": {
+   "decision": "answered_pair",
+   "answers": 2,
+   "values": [
+    [
+     "object",
+     "红色印章"
+    ],
+    [
+     "place",
+     "书架"
+    ]
+   ],
+   "slots": {
+    "object": {
+     "value": [
+      "object",
+      "红色印章"
+     ],
+     "key": "甲乙"
+    },
+    "place": {
+     "value": [
+      "place",
+      "书架"
+     ],
+     "key": "丙丁"
+    }
+   },
+   "stopped_at_pass": 3,
+   "final_exit": "no_match"
+  },
+  "log": [
+   [
+    "[\"object\", \"蓝色杯子\"]",
+    "[\"object\", \"红色印章\"]"
+   ],
+   [
+    "[\"place\", \"木桌\"]",
+    "[\"place\", \"书架\"]"
+   ]
+  ],
+  "log_length": 2,
+  "ok": true
+ },
+ "stale_subset": {
+  "stale_read": {
+   "decision": "answered_pair",
+   "answers": 2,
+   "values": [
+    [
+     "object",
+     "蓝色杯子"
+    ],
+    [
+     "place",
+     "木桌"
+    ]
+   ],
+   "slots": {
+    "object": {
+     "value": [
+      "object",
+      "蓝色杯子"
+     ],
+     "key": "甲乙"
+    },
+    "place": {
+     "value": [
+      "place",
+      "木桌"
+     ],
+     "key": "丙丁"
+    }
+   },
+   "stopped_at_pass": 3,
+   "final_exit": "no_match"
+  },
+  "step": {
+   "action": "rejected_batch_correction_mismatch",
+   "items": [
+    [
+     "甲乙",
+     [
+      "object",
+      "蓝色杯子"
+     ],
+     [
+      "object",
+      "红色印章"
+     ]
+    ],
+    [
+     "丙丁",
+     [
+      "place",
+      "木桌"
+     ],
+     [
+      "place",
+      "书架"
+     ]
+    ]
+   ],
+   "corrected": 0
+  },
+  "after": {
+   "decision": "answered_pair",
+   "answers": 2,
+   "values": [
+    [
+     "object",
+     "蓝色杯子"
+    ],
+    [
+     "place",
+     "书架"
+    ]
+   ],
+   "slots": {
+    "object": {
+     "value": [
+      "object",
+      "蓝色杯子"
+     ],
+     "key": "甲乙"
+    },
+    "place": {
+     "value": [
+      "place",
+      "书架"
+     ],
+     "key": "丙丁"
+    }
+   },
+   "stopped_at_pass": 3,
+   "final_exit": "no_match"
+  },
+  "log_length": 1,
+  "content_digest_unchanged": true,
+  "ok": true
+ },
+ "no_op": {
+  "step": {
+   "read": {
+    "decision": "answered_pair",
+    "answers": 2,
+    "values": [
+     [
+      "object",
+      "蓝色杯子"
+     ],
+     [
+      "place",
+      "木桌"
+     ]
+    ],
+    "slots": {
+     "object": {
+      "value": [
+       "object",
+       "蓝色杯子"
+      ],
+      "key": "甲乙"
+     },
+     "place": {
+      "value": [
+       "place",
+       "木桌"
+      ],
+      "key": "丙丁"
+     }
+    },
+    "stopped_at_pass": 3,
+    "final_exit": "no_match"
+   },
+   "action": "agreed",
+   "items": [],
+   "corrected": 0
+  },
+  "after": {
+   "decision": "answered_pair",
+   "answers": 2,
+   "values": [
+    [
+     "object",
+     "蓝色杯子"
+    ],
+    [
+     "place",
+     "木桌"
+    ]
+   ],
+   "slots": {
+    "object": {
+     "value": [
+      "object",
+      "蓝色杯子"
+     ],
+     "key": "甲乙"
+    },
+    "place": {
+     "value": [
+      "place",
+      "木桌"
+     ],
+     "key": "丙丁"
+    }
+   },
+   "stopped_at_pass": 3,
+   "final_exit": "no_match"
+  },
+  "log_length": 0,
+  "content_digest_unchanged": true,
+  "ok": true
+ },
+ "plain_write": {
+  "action": "rejected_batch_address_already_bound",
+  "after": {
+   "decision": "answered_pair",
+   "answers": 2,
+   "values": [
+    [
+     "object",
+     "蓝色杯子"
+    ],
+    [
+     "place",
+     "木桌"
+    ]
+   ],
+   "slots": {
+    "object": {
+     "value": [
+      "object",
+      "蓝色杯子"
+     ],
+     "key": "甲乙"
+    },
+    "place": {
+     "value": [
+      "place",
+      "木桌"
+     ],
+     "key": "丙丁"
+    }
+   },
+   "stopped_at_pass": 3,
+   "final_exit": "no_match"
+  },
+  "log_length": 0,
+  "content_digest_unchanged": true,
+  "ok": true
+ },
+ "convergence": {
+  "first": {
+   "read": {
+    "decision": "answered_pair",
+    "answers": 2,
+    "values": [
+     [
+      "object",
+      "蓝色杯子"
+     ],
+     [
+      "place",
+      "木桌"
+     ]
+    ],
+    "slots": {
+     "object": {
+      "value": [
+       "object",
+       "蓝色杯子"
+      ],
+      "key": "甲乙"
+     },
+     "place": {
+      "value": [
+       "place",
+       "木桌"
+      ],
+      "key": "丙丁"
+     }
+    },
+    "stopped_at_pass": 3,
+    "final_exit": "no_match"
+   },
+   "action": "corrected",
+   "items": [
+    [
+     "甲乙",
+     [
+      "object",
+      "蓝色杯子"
+     ],
+     [
+      "object",
+      "红色印章"
+     ]
+    ]
+   ],
+   "corrected": 1
+  },
+  "second": {
+   "read": {
+    "decision": "answered_pair",
+    "answers": 2,
+    "values": [
+     [
+      "object",
+      "红色印章"
+     ],
+     [
+      "place",
+      "木桌"
+     ]
+    ],
+    "slots": {
+     "object": {
+      "value": [
+       "object",
+       "红色印章"
+      ],
+      "key": "甲乙"
+     },
+     "place": {
+      "value": [
+       "place",
+       "木桌"
+      ],
+      "key": "丙丁"
+     }
+    },
+    "stopped_at_pass": 3,
+    "final_exit": "no_match"
+   },
+   "action": "agreed",
+   "items": [],
+   "corrected": 0
+  },
+  "after": {
+   "decision": "answered_pair",
+   "answers": 2,
+   "values": [
+    [
+     "object",
+     "红色印章"
+    ],
+    [
+     "place",
+     "木桌"
+    ]
+   ],
+   "slots": {
+    "object": {
+     "value": [
+      "object",
+      "红色印章"
+     ],
+     "key": "甲乙"
+    },
+    "place": {
+     "value": [
+      "place",
+      "木桌"
+     ],
+     "key": "丙丁"
+    }
+   },
+   "stopped_at_pass": 3,
+   "final_exit": "no_match"
+  },
+  "log_length": 1,
+  "ok": true
+ },
+ "default_table": {
+  "sentence": "让圆口的器皿到四方木台。",
+  "truth": [
+   [
+    "object",
+    "蓝色杯子"
+   ],
+   [
+    "place",
+    "木桌"
+   ]
+  ],
+  "target": [
+   [
+    "object",
+    "红色印章"
+   ],
+   [
+    "place",
+    "书架"
+   ]
+  ],
+  "keys": [
+   "圆口的器皿",
+   "四方木台"
+  ],
+  "first": {
+   "read": {
+    "decision": "answered_pair",
+    "answers": 2,
+    "values": [
+     [
+      "object",
+      "蓝色杯子"
+     ],
+     [
+      "place",
+      "木桌"
+     ]
+    ],
+    "slots": {
+     "object": {
+      "value": [
+       "object",
+       "蓝色杯子"
+      ],
+      "key": "圆口的器皿"
+     },
+     "place": {
+      "value": [
+       "place",
+       "木桌"
+      ],
+      "key": "四方木台"
+     }
+    },
+    "stopped_at_pass": 3,
+    "final_exit": "no_match"
+   },
+   "action": "corrected",
+   "items": [
+    [
+     "圆口的器皿",
+     [
+      "object",
+      "蓝色杯子"
+     ],
+     [
+      "object",
+      "红色印章"
+     ]
+    ],
+    [
+     "四方木台",
+     [
+      "place",
+      "木桌"
+     ],
+     [
+      "place",
+      "书架"
+     ]
+    ]
+   ],
+   "corrected": 2
+  },
+  "middle": {
+   "decision": "answered_pair",
+   "answers": 2,
+   "values": [
+    [
+     "object",
+     "红色印章"
+    ],
+    [
+     "place",
+     "书架"
+    ]
+   ],
+   "slots": {
+    "object": {
+     "value": [
+      "object",
+      "红色印章"
+     ],
+     "key": "圆口的器皿"
+    },
+    "place": {
+     "value": [
+      "place",
+      "书架"
+     ],
+     "key": "四方木台"
+    }
+   },
+   "stopped_at_pass": 3,
+   "final_exit": "no_match"
+  },
+  "second": {
+   "read": {
+    "decision": "answered_pair",
+    "answers": 2,
+    "values": [
+     [
+      "object",
+      "红色印章"
+     ],
+     [
+      "place",
+      "书架"
+     ]
+    ],
+    "slots": {
+     "object": {
+      "value": [
+       "object",
+       "红色印章"
+      ],
+      "key": "圆口的器皿"
+     },
+     "place": {
+      "value": [
+       "place",
+       "书架"
+      ],
+      "key": "四方木台"
+     }
+    },
+    "stopped_at_pass": 3,
+    "final_exit": "no_match"
+   },
+   "action": "corrected",
+   "items": [
+    [
+     "圆口的器皿",
+     [
+      "object",
+      "红色印章"
+     ],
+     [
+      "object",
+      "蓝色杯子"
+     ]
+    ],
+    [
+     "四方木台",
+     [
+      "place",
+      "书架"
+     ],
+     [
+      "place",
+      "木桌"
+     ]
+    ]
+   ],
+   "corrected": 2
+  },
+  "final": {
+   "decision": "answered_pair",
+   "answers": 2,
+   "values": [
+    [
+     "object",
+     "蓝色杯子"
+    ],
+    [
+     "place",
+     "木桌"
+    ]
+   ],
+   "slots": {
+    "object": {
+     "value": [
+      "object",
+      "蓝色杯子"
+     ],
+     "key": "圆口的器皿"
+    },
+    "place": {
+     "value": [
+      "place",
+      "木桌"
+     ],
+     "key": "四方木台"
+    }
+   },
+   "stopped_at_pass": 3,
+   "final_exit": "no_match"
+  },
+  "content_digest_unchanged": true,
+  "log": [
+   [
+    "[\"object\", \"蓝色杯子\"]",
+    "[\"object\", \"红色印章\"]"
+   ],
+   [
+    "[\"place\", \"木桌\"]",
+    "[\"place\", \"书架\"]"
+   ],
+   [
+    "[\"object\", \"红色印章\"]",
+    "[\"object\", \"蓝色杯子\"]"
+   ],
+   [
+    "[\"place\", \"书架\"]",
+    "[\"place\", \"木桌\"]"
+   ]
+  ],
+  "log_length": 4,
+  "regression": {
+   "entities": 40,
+   "hits": 40,
+   "wrong": 0,
+   "distribution": {
+    "answered_2": 20,
+    "answered_1": 0,
+    "wrong": 0,
+    "abstained": 0
+   },
+   "ok": true
+  },
+  "zeros": {
+   "unknown_answering": 0,
+   "fragment_answering": 0,
+   "ok": true
+  },
+  "ok": true
+ },
+ "closed_state": {
+  "baseline": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "1d920d401ae4045c62f2e74baf62ff6dd07110be8a9a1f517d51fb45b756d128",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk_none": true,
+   "battery_sha": "2843be21b810a6ee09323aa4d8de166fbc76e04bd0a629425ca4eaee0b67ca50",
+   "battery_steps": 20
+  },
+  "after": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "1d920d401ae4045c62f2e74baf62ff6dd07110be8a9a1f517d51fb45b756d128",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk_none": true,
+   "battery_sha": "2843be21b810a6ee09323aa4d8de166fbc76e04bd0a629425ca4eaee0b67ca50",
+   "battery_steps": 20
+  },
+  "checks": {
+   "parameters_equal": true,
+   "state_equal": true,
+   "identity_equal": true,
+   "store_equal": true,
+   "battery_equal": true,
+   "steps_equal": true,
+   "sc_sfk_none": true,
+   "flag_disabled": true,
+   "rng_untouched": true
+  }
+ },
+ "verdict": {
+  "single_slot": "single_slot_correction",
+  "both_slots": "both_slots_correction",
+  "stale_subset": "stale_subset_rejected",
+  "no_op": "no_op_when_pair_agrees",
+  "plain_write": "plain_write_still_rejected",
+  "convergence": "pair_loop_converges",
+  "default_table": "default_table_unchanged",
+  "closed_state": "closed_state_equal",
+  "overall": "sentence_pair_correction_available"
+ },
+ "cost": {
+  "cpu_seconds": 1.84375,
+  "wall_seconds": 2.6163055896759033,
+  "cpu_cap": 200.0,
+  "estimate_cpu_upper": 30.0,
+  "threads": 1
+ }
+}

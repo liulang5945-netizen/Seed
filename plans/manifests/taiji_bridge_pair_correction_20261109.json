@@ -1,0 +1,155 @@
+{
+ "schema": "taiji-bridge-pair-correction-r20-v1",
+ "created": "2026-11-09T16:30:49",
+ "seed": 20261109,
+ "estimate_cpu_upper": 30.0,
+ "cpu_cap": 200.0,
+ "runner_sha256": "1af43c0b54e92969c1ab8b4784797c4ed303d7f5da323de938e12d0d6997e7a0",
+ "bridge_sha256": "65d86897c25544e683f757d4771f2d7e516476528bafd9520e14bdc59ab1fbd4",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "8fa3aafde38b1cbad3b021dc271abd316c0a265c68870403dd4ca7b0b53e0c6a"
+ },
+ "definition": {
+  "pair_read": "one sentence carries two written keys; the two-pass read returns one value per slot (object and place); the slot is read from the value, and the key text is read from the record",
+  "loop": "one iteration compares each slot with the frozen verifier and submits one correct batch containing only the mismatched slots, using each slot's read value as its credential",
+  "single_slot": "object CUP -> RED with place already TABLE; only the object key may move",
+  "both_slots": "object CUP -> RED and place TABLE -> SHELF in one batch; both must move",
+  "stale_subset": "capture (CUP, TABLE), another actor corrects place to SHELF, then submit both corrections from the stale pair; the batch must be rejected whole, so object stays CUP",
+  "no_op": "both read values equal the verifier: no correction, empty log, digest unchanged",
+  "plain_write": "a plain write of the old value is still rejected; correction is the only path",
+  "convergence": "two iterations: the first corrects, the second agrees; exactly one log entry",
+  "default_table": "on the 18-key table, correct the two keys of a describe sentence to another pair and back; content digest returns to the original, R15 40/40, zeros 0/0",
+  "closed_state": "the nine closed-state readings stay equal before and after"
+ },
+ "criteria": {
+  "single_slot": "action corrected with one item; read (CUP, TABLE) -> (RED, TABLE); log length 1; the log key is the object key",
+  "both_slots": "action corrected with two items; read (CUP, TABLE) -> (RED, SHELF); log length 2 in object then place order",
+  "stale_subset": "action rejected_batch_correction_mismatch; read stays (CUP, SHELF); log length 1; content digest unchanged",
+  "no_op": "action agreed; no correction; log empty; content digest unchanged",
+  "plain_write": "action rejected_batch_address_already_bound; read stays (CUP, TABLE); log empty; content digest unchanged",
+  "convergence": "first corrected, second agreed, log length 1, final (RED, TABLE)",
+  "default_table": "first batch corrects two keys, second batch restores them; content digest equal; regression 40/40 with wrong 0; zeros 0/0; log length 4",
+  "closed_state": "the nine closed-state readings stay equal before and after",
+  "reporting": "segments are reported separately; a single-slot correction does not carry the stale-subset segment, and the stale segment is evidence that the batch is atomic"
+ },
+ "definition_digest": "58a57c73b62beddc0f28df5ccbb6bf8926b6f393d29206b8912fa25ec1741eff",
+ "counts": {
+  "pair_cases": 6,
+  "default_table_round_trip": 1,
+  "regression_sentences": 20,
+  "unknown_candidates": 12,
+  "fragments": 18
+ },
+ "inputs": {
+  "object_key": "甲乙",
+  "place_key": "丙丁",
+  "sentence": "甲乙丙丁",
+  "values": [
+   [
+    "object",
+    "蓝色杯子"
+   ],
+   [
+    "object",
+    "红色印章"
+   ],
+   [
+    "object",
+    "绿色瓶子"
+   ],
+   [
+    "place",
+    "木桌"
+   ],
+   [
+    "place",
+    "书架"
+   ],
+   [
+    "place",
+    "地毯"
+   ]
+  ],
+  "aliases": [
+   [
+    "喝水的杯子",
+    [
+     "object",
+     "蓝色杯子"
+    ]
+   ],
+   [
+    "盖章用的印章",
+    [
+     "object",
+     "红色印章"
+    ]
+   ],
+   [
+    "盛水的瓶子",
+    [
+     "object",
+     "绿色瓶子"
+    ]
+   ],
+   [
+    "圆形的皮球",
+    [
+     "object",
+     "黄色球"
+    ]
+   ],
+   [
+    "方方正正的木桌子",
+    [
+     "place",
+     "木桌"
+    ]
+   ],
+   [
+    "窗前的台板",
+    [
+     "place",
+     "窗台"
+    ]
+   ],
+   [
+    "手边的小盒子",
+    [
+     "place",
+     "左盒"
+    ]
+   ],
+   [
+    "墙上的架子",
+    [
+     "place",
+     "书架"
+    ]
+   ],
+   [
+    "脚下的垫子",
+    [
+     "place",
+     "地毯"
+    ]
+   ]
+  ],
+  "unknown_candidates": [
+   "黑色铁铃",
+   "白色帆布",
+   "长柄铜勺",
+   "软木瓶塞",
+   "蓝色毛巾",
+   "银质圆镜",
+   "棕色皮箱",
+   "青色陶罐",
+   "灰色石阶",
+   "紫色绸带",
+   "金色烛台",
+   "深红木箱"
+  ]
+ }
+}
