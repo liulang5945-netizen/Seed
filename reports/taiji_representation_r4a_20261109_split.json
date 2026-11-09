@@ -1,0 +1,86 @@
+{
+  "schema": "taiji-representation-r4a-split-v1",
+  "date": "2026-11-09",
+  "role": "post_hoc_diagnostic_only",
+  "derived_from": {
+    "path": "reports/taiji_representation_r4a_20261109.json",
+    "sha256": "f85712deff86a55873cd33294d873e13e437bcc64126e650d2a27b11edf261c6"
+  },
+  "method": "Re-read per-pair distances stored in the R4a report; split the 120 same pairs by variant family (index%4: 0=describe, 1..3=paraphrases) and tally which variant the 1-NN lands on.",
+  "arms": {
+    "R1": {
+      "describe_paraphrase": {
+        "n": 60,
+        "min": 0.086478,
+        "p10": 0.112021,
+        "p25": 0.137245,
+        "median": 0.169777,
+        "p75": 0.191428,
+        "p90": 0.222371,
+        "max": 0.265697
+      },
+      "paraphrase_paraphrase": {
+        "n": 60,
+        "min": 0.125806,
+        "p10": 0.133998,
+        "p25": 0.143772,
+        "median": 0.170434,
+        "p75": 0.192746,
+        "p90": 0.219037,
+        "max": 0.277704
+      },
+      "unrelated": {
+        "n": 1920,
+        "min": 0.08907,
+        "p10": 0.199264,
+        "p25": 0.284655,
+        "median": 0.36148,
+        "p75": 0.428899,
+        "p90": 0.490864,
+        "max": 0.610159
+      },
+      "nn_same_template": {
+        "n": 76,
+        "of": 80,
+        "fraction": 0.95
+      }
+    },
+    "R2": {
+      "describe_paraphrase": {
+        "n": 60,
+        "min": 0.09326,
+        "p10": 0.100392,
+        "p25": 0.111508,
+        "median": 0.127347,
+        "p75": 0.158104,
+        "p90": 0.176722,
+        "max": 0.199633
+      },
+      "paraphrase_paraphrase": {
+        "n": 60,
+        "min": 0.084064,
+        "p10": 0.096868,
+        "p25": 0.105593,
+        "median": 0.136912,
+        "p75": 0.168244,
+        "p90": 0.225044,
+        "max": 0.258487
+      },
+      "unrelated": {
+        "n": 1920,
+        "min": 0.046697,
+        "p10": 0.152999,
+        "p25": 0.213051,
+        "median": 0.278128,
+        "p75": 0.360186,
+        "p90": 0.438039,
+        "max": 0.650954
+      },
+      "nn_same_template": {
+        "n": 79,
+        "of": 80,
+        "fraction": 0.9875
+      }
+    }
+  }
+}
