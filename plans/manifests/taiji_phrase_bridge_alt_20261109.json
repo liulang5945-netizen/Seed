@@ -1,0 +1,72 @@
+{
+ "schema": "taiji-phrase-bridge-alt-v1",
+ "date": "2026-11-09",
+ "frozen_at": "2026-11-09T14:27:04",
+ "runner_sha256": "d790f328d7540eba8db85a52bcf9e00d23e91c4010d63970bee9fd7f0014acd9",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "8fa3aafde38b1cbad3b021dc271abd316c0a265c68870403dd4ca7b0b53e0c6a"
+ },
+ "fixture_files": [
+  "taiji/native_goal_world_wide.py",
+  "taiji/goal_paraphrase.py",
+  "taiji/living_core.py"
+ ],
+ "alt_phrasing_sha256": "cb12110b5ae1c0845a3a0ebc7ba77e64988ae63f668bc29dd060915626ce112c",
+ "alt_phrasing_source": "ALTERNATE_DESCRIPTIONS constant in this runner",
+ "question": "R10 的 0.00 是构造性零：给每个名字第二种说法后，删掉句子自用的那种说法，桥还能不能读出名字（真泛化），还是只有背过的词条？",
+ "counts": {
+  "describe_sentences": 20,
+  "phrasings_per_name": 2,
+  "bank_before": {
+   "object": 8,
+   "place": 10
+  },
+  "bank_after": {
+   "object": 7,
+   "place": 9
+  },
+  "deleted_per_held_out": 1,
+  "control_bank": {
+   "object": 4,
+   "place": 5
+  },
+  "texts_per_arm": 47
+ },
+ "lambda_grid": [
+  0.001,
+  0.1,
+  1.0,
+  10.0,
+  1000.0
+ ],
+ "primary_lambda": 1.0,
+ "cost_estimate_cpu_upper": 40.0,
+ "header_note": "R3 使用外部冻结句向量，只作上界；它的读数不进能力账，也不升级/降级任何既有判定。第二种说法只在 runner 内定义，taiji/ 夹具字节未动。",
+ "definition": {
+  "bank": "two wordings per name: the primary wording from OBJECT_DESCRIPTIONS / PLACE_DESCRIPTIONS and the alternate wording defined in this runner (ALTERNATE_DESCRIPTIONS).  Object 4->8 rows, place 5->10 rows.  Names are never input: they are the regression target and the candidate set.",
+  "bridge": "closed-form ridge W = (X^T X + lambda I)^-1 X^T N over the slot's name embeddings; read-out x W classified by nearest name by cosine.",
+  "column_before": "fit the full two-wording bank and read the primary rows back (in-sample).  Establishes that both wordings are representable; not a generalisation reading.",
+  "column_after": "for each primary row delete exactly that row (2n -> 2n-1, one entry per item), refit and read it.  The other wording of the same name stays in the bank, so a high reading is cross-wording generalisation, not table lookup.",
+  "sentence_mode": "fit the phrase bank and read the 20 describe sentences (each sentence uses the primary wording).  sentence_after deletes the primary row of the sentence's own target name and keeps the alternate: the decisive 'do we still get the name without the literal wording' reading.",
+  "lambda": "verdict at lambda = 1.0, fixed before the first reading.  The grid {1e-3, 1e-1, 1, 1e1, 1e3} is robustness and is used only to reject the memorised claim.",
+  "arms": {
+   "R1": "LivingCoreReference.content_feature (128-bin byte histogram, L2-normalised).",
+   "R2": "mean of reference.encoder.context(raw) over positions (128 dims), untrained weights.",
+   "R3": "DocumentEmbedder on the frozen sentence-transformer; upper bound only."
+  },
+  "chance": {
+   "object": 0.25,
+   "place": 0.2
+  }
+ },
+ "criteria": {
+  "control": "machinery control: R1 primary-only in-sample accuracy (bank = one wording per name, exactly R10's bank) must be >= 0.95 on both slots at lambda 1.0; kept independent of the two-wording bank so a control failure means the closed-form path broke, not that the new bank is harder.",
+  "generalises": "phrase_bridge_generalises_across_wordings iff R3 place sentence_after >= 0.80 at lambda 1.0.",
+  "memorised": "phrase_bridge_memorised_per_wording iff R3 place sentence_after <= 0.60 at every lambda in the grid; otherwise phrase_bridge_inconclusive.",
+  "project_side": "computed on R2 only (D-20261109-10): project_bridge_generalises iff R2 place sentence_after >= 0.80, project_bridge_memorised iff <= 0.60, else inconclusive.",
+  "r3_unavailable": "if the R3 weights are not cached the verdict is r3_unavailable.",
+  "no_fit": "0 training, 0 optimizer steps, 0 Adam, 0 confirm, 0 new parameters."
+ }
+}

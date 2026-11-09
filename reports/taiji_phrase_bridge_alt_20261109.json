@@ -1,0 +1,3270 @@
+{
+ "schema": "taiji-phrase-bridge-alt-v1",
+ "date": "2026-11-09",
+ "header_note": "R3 使用外部冻结句向量，只作上界；它的读数不进能力账，也不升级/降级任何既有判定。第二种说法只在 runner 内定义，taiji/ 夹具字节未动。",
+ "runner_sha256": "d790f328d7540eba8db85a52bcf9e00d23e91c4010d63970bee9fd7f0014acd9",
+ "manifest_sha256": "51a0d3afc609d18b52668df496d0fcc1c29bd9b5091812e6df5d5b1bbf427cbb",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "8fa3aafde38b1cbad3b021dc271abd316c0a265c68870403dd4ca7b0b53e0c6a"
+ },
+ "alt_phrasing_sha256": "cb12110b5ae1c0845a3a0ebc7ba77e64988ae63f668bc29dd060915626ce112c",
+ "counts": {
+  "describe_sentences": 20,
+  "phrasings_per_name": 2,
+  "bank_before": {
+   "object": 8,
+   "place": 10
+  },
+  "bank_after": {
+   "object": 7,
+   "place": 9
+  },
+  "deleted_per_held_out": 1,
+  "control_bank": {
+   "object": 4,
+   "place": 5
+  },
+  "texts_per_arm": 47
+ },
+ "definition": {
+  "bank": "two wordings per name: the primary wording from OBJECT_DESCRIPTIONS / PLACE_DESCRIPTIONS and the alternate wording defined in this runner (ALTERNATE_DESCRIPTIONS).  Object 4->8 rows, place 5->10 rows.  Names are never input: they are the regression target and the candidate set.",
+  "bridge": "closed-form ridge W = (X^T X + lambda I)^-1 X^T N over the slot's name embeddings; read-out x W classified by nearest name by cosine.",
+  "column_before": "fit the full two-wording bank and read the primary rows back (in-sample).  Establishes that both wordings are representable; not a generalisation reading.",
+  "column_after": "for each primary row delete exactly that row (2n -> 2n-1, one entry per item), refit and read it.  The other wording of the same name stays in the bank, so a high reading is cross-wording generalisation, not table lookup.",
+  "sentence_mode": "fit the phrase bank and read the 20 describe sentences (each sentence uses the primary wording).  sentence_after deletes the primary row of the sentence's own target name and keeps the alternate: the decisive 'do we still get the name without the literal wording' reading.",
+  "lambda": "verdict at lambda = 1.0, fixed before the first reading.  The grid {1e-3, 1e-1, 1, 1e1, 1e3} is robustness and is used only to reject the memorised claim.",
+  "arms": {
+   "R1": "LivingCoreReference.content_feature (128-bin byte histogram, L2-normalised).",
+   "R2": "mean of reference.encoder.context(raw) over positions (128 dims), untrained weights.",
+   "R3": "DocumentEmbedder on the frozen sentence-transformer; upper bound only."
+  },
+  "chance": {
+   "object": 0.25,
+   "place": 0.2
+  }
+ },
+ "criteria": {
+  "control": "machinery control: R1 primary-only in-sample accuracy (bank = one wording per name, exactly R10's bank) must be >= 0.95 on both slots at lambda 1.0; kept independent of the two-wording bank so a control failure means the closed-form path broke, not that the new bank is harder.",
+  "generalises": "phrase_bridge_generalises_across_wordings iff R3 place sentence_after >= 0.80 at lambda 1.0.",
+  "memorised": "phrase_bridge_memorised_per_wording iff R3 place sentence_after <= 0.60 at every lambda in the grid; otherwise phrase_bridge_inconclusive.",
+  "project_side": "computed on R2 only (D-20261109-10): project_bridge_generalises iff R2 place sentence_after >= 0.80, project_bridge_memorised iff <= 0.60, else inconclusive.",
+  "r3_unavailable": "if the R3 weights are not cached the verdict is r3_unavailable.",
+  "no_fit": "0 training, 0 optimizer steps, 0 Adam, 0 confirm, 0 new parameters."
+ },
+ "lambda_grid": [
+  0.001,
+  0.1,
+  1.0,
+  10.0,
+  1000.0
+ ],
+ "primary_lambda": 1.0,
+ "model": {
+  "model_id": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+  "status": "available",
+  "payload": {
+   "format": "taiji-document-embedder-v1",
+   "version": 1,
+   "model_id": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+   "revision": "e8f8c211226b894fcb81acc59f3b34ba3efd5f42",
+   "config_digest": "584d721354a4443103960a80b1a3a61226765bc470bd4077d96e37beb85b433f",
+   "dimension": 384,
+   "max_length": 256,
+   "batch_size": 32,
+   "pooling": "mean",
+   "normalized": true
+  }
+ },
+ "arms": {
+  "R1": {
+   "dimensions": 128,
+   "object": {
+    "control": {
+     "accuracy": 1.0,
+     "correct": 4,
+     "of": 4,
+     "bank_size": 4,
+     "predicted": [
+      "蓝色杯子",
+      "红色印章",
+      "绿色瓶子",
+      "黄色球"
+     ]
+    },
+    "control_ok": true,
+    "bank_size_before": 8,
+    "bank_size_after": 7,
+    "deleted_per_item": 1,
+    "grid": {
+     "0.001": {
+      "before": {
+       "accuracy": 1.0,
+       "correct": 4,
+       "of": 4,
+       "bank_size": 8,
+       "predicted": [
+        "蓝色杯子",
+        "红色印章",
+        "绿色瓶子",
+        "黄色球"
+       ]
+      },
+      "after": {
+       "accuracy": 0.0,
+       "correct": 0,
+       "of": 4,
+       "bank_size": 7,
+       "predicted": [
+        "绿色瓶子",
+        "黄色球",
+        "蓝色杯子",
+        "蓝色杯子"
+       ]
+      },
+      "sentence_before": {
+       "accuracy": 0.95,
+       "correct": 19,
+       "of": 20,
+       "bank_size": 8,
+       "predicted": [
+        "蓝色杯子",
+        "蓝色杯子",
+        "蓝色杯子",
+        "蓝色杯子",
+        "蓝色杯子",
+        "红色印章",
+        "红色印章",
+        "红色印章",
+        "红色印章",
+        "红色印章",
+        "蓝色杯子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "黄色球",
+        "黄色球",
+        "黄色球",
+        "黄色球",
+        "黄色球"
+       ]
+      },
+      "sentence_after": {
+       "accuracy": 0.15,
+       "correct": 3,
+       "of": 20,
+       "bank_size": 7,
+       "predicted": [
+        "蓝色杯子",
+        "绿色瓶子",
+        "黄色球",
+        "绿色瓶子",
+        "黄色球",
+        "黄色球",
+        "绿色瓶子",
+        "黄色球",
+        "黄色球",
+        "黄色球",
+        "蓝色杯子",
+        "绿色瓶子",
+        "蓝色杯子",
+        "蓝色杯子",
+        "绿色瓶子",
+        "蓝色杯子",
+        "绿色瓶子",
+        "蓝色杯子",
+        "绿色瓶子",
+        "绿色瓶子"
+       ]
+      }
+     },
+     "0.1": {
+      "before": {
+       "accuracy": 1.0,
+       "correct": 4,
+       "of": 4,
+       "bank_size": 8,
+       "predicted": [
+        "蓝色杯子",
+        "红色印章",
+        "绿色瓶子",
+        "黄色球"
+       ]
+      },
+      "after": {
+       "accuracy": 0.0,
+       "correct": 0,
+       "of": 4,
+       "bank_size": 7,
+       "predicted": [
+        "绿色瓶子",
+        "黄色球",
+        "蓝色杯子",
+        "绿色瓶子"
+       ]
+      },
+      "sentence_before": {
+       "accuracy": 0.95,
+       "correct": 19,
+       "of": 20,
+       "bank_size": 8,
+       "predicted": [
+        "蓝色杯子",
+        "蓝色杯子",
+        "蓝色杯子",
+        "蓝色杯子",
+        "蓝色杯子",
+        "红色印章",
+        "红色印章",
+        "红色印章",
+        "红色印章",
+        "红色印章",
+        "蓝色杯子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "黄色球",
+        "黄色球",
+        "黄色球",
+        "黄色球",
+        "黄色球"
+       ]
+      },
+      "sentence_after": {
+       "accuracy": 0.15,
+       "correct": 3,
+       "of": 20,
+       "bank_size": 7,
+       "predicted": [
+        "蓝色杯子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "黄色球",
+        "黄色球",
+        "绿色瓶子",
+        "黄色球",
+        "黄色球",
+        "黄色球",
+        "蓝色杯子",
+        "绿色瓶子",
+        "蓝色杯子",
+        "蓝色杯子",
+        "绿色瓶子",
+        "蓝色杯子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子"
+       ]
+      }
+     },
+     "1": {
+      "before": {
+       "accuracy": 1.0,
+       "correct": 4,
+       "of": 4,
+       "bank_size": 8,
+       "predicted": [
+        "蓝色杯子",
+        "红色印章",
+        "绿色瓶子",
+        "黄色球"
+       ]
+      },
+      "after": {
+       "accuracy": 0.0,
+       "correct": 0,
+       "of": 4,
+       "bank_size": 7,
+       "predicted": [
+        "绿色瓶子",
+        "绿色瓶子",
+        "蓝色杯子",
+        "绿色瓶子"
+       ]
+      },
+      "sentence_before": {
+       "accuracy": 0.8,
+       "correct": 16,
+       "of": 20,
+       "bank_size": 8,
+       "predicted": [
+        "蓝色杯子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "红色印章",
+        "红色印章",
+        "红色印章",
+        "红色印章",
+        "红色印章",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "黄色球",
+        "黄色球",
+        "黄色球",
+        "黄色球",
+        "黄色球"
+       ]
+      },
+      "sentence_after": {
+       "accuracy": 0.2,
+       "correct": 4,
+       "of": 20,
+       "bank_size": 7,
+       "predicted": [
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "黄色球",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "黄色球",
+        "蓝色杯子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "蓝色杯子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子"
+       ]
+      }
+     },
+     "10": {
+      "before": {
+       "accuracy": 0.25,
+       "correct": 1,
+       "of": 4,
+       "bank_size": 8,
+       "predicted": [
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子"
+       ]
+      },
+      "after": {
+       "accuracy": 0.25,
+       "correct": 1,
+       "of": 4,
+       "bank_size": 7,
+       "predicted": [
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子"
+       ]
+      },
+      "sentence_before": {
+       "accuracy": 0.25,
+       "correct": 5,
+       "of": 20,
+       "bank_size": 8,
+       "predicted": [
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子"
+       ]
+      },
+      "sentence_after": {
+       "accuracy": 0.25,
+       "correct": 5,
+       "of": 20,
+       "bank_size": 7,
+       "predicted": [
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子"
+       ]
+      }
+     },
+     "1000": {
+      "before": {
+       "accuracy": 0.25,
+       "correct": 1,
+       "of": 4,
+       "bank_size": 8,
+       "predicted": [
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子"
+       ]
+      },
+      "after": {
+       "accuracy": 0.25,
+       "correct": 1,
+       "of": 4,
+       "bank_size": 7,
+       "predicted": [
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子"
+       ]
+      },
+      "sentence_before": {
+       "accuracy": 0.25,
+       "correct": 5,
+       "of": 20,
+       "bank_size": 8,
+       "predicted": [
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子"
+       ]
+      },
+      "sentence_after": {
+       "accuracy": 0.25,
+       "correct": 5,
+       "of": 20,
+       "bank_size": 7,
+       "predicted": [
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子"
+       ]
+      }
+     }
+    },
+    "primary": {
+     "before": {
+      "accuracy": 1.0,
+      "correct": 4,
+      "of": 4,
+      "bank_size": 8,
+      "predicted": [
+       "蓝色杯子",
+       "红色印章",
+       "绿色瓶子",
+       "黄色球"
+      ]
+     },
+     "after": {
+      "accuracy": 0.0,
+      "correct": 0,
+      "of": 4,
+      "bank_size": 7,
+      "predicted": [
+       "绿色瓶子",
+       "绿色瓶子",
+       "蓝色杯子",
+       "绿色瓶子"
+      ]
+     },
+     "sentence_before": {
+      "accuracy": 0.8,
+      "correct": 16,
+      "of": 20,
+      "bank_size": 8,
+      "predicted": [
+       "蓝色杯子",
+       "绿色瓶子",
+       "绿色瓶子",
+       "绿色瓶子",
+       "绿色瓶子",
+       "红色印章",
+       "红色印章",
+       "红色印章",
+       "红色印章",
+       "红色印章",
+       "绿色瓶子",
+       "绿色瓶子",
+       "绿色瓶子",
+       "绿色瓶子",
+       "绿色瓶子",
+       "黄色球",
+       "黄色球",
+       "黄色球",
+       "黄色球",
+       "黄色球"
+      ]
+     },
+     "sentence_after": {
+      "accuracy": 0.2,
+      "correct": 4,
+      "of": 20,
+      "bank_size": 7,
+      "predicted": [
+       "绿色瓶子",
+       "绿色瓶子",
+       "绿色瓶子",
+       "绿色瓶子",
+       "绿色瓶子",
+       "黄色球",
+       "绿色瓶子",
+       "绿色瓶子",
+       "绿色瓶子",
+       "黄色球",
+       "蓝色杯子",
+       "绿色瓶子",
+       "绿色瓶子",
+       "绿色瓶子",
+       "绿色瓶子",
+       "蓝色杯子",
+       "绿色瓶子",
+       "绿色瓶子",
+       "绿色瓶子",
+       "绿色瓶子"
+      ]
+     }
+    }
+   },
+   "place": {
+    "control": {
+     "accuracy": 1.0,
+     "correct": 5,
+     "of": 5,
+     "bank_size": 5,
+     "predicted": [
+      "木桌",
+      "窗台",
+      "左盒",
+      "书架",
+      "地毯"
+     ]
+    },
+    "control_ok": true,
+    "bank_size_before": 10,
+    "bank_size_after": 9,
+    "deleted_per_item": 1,
+    "grid": {
+     "0.001": {
+      "before": {
+       "accuracy": 1.0,
+       "correct": 5,
+       "of": 5,
+       "bank_size": 10,
+       "predicted": [
+        "木桌",
+        "窗台",
+        "左盒",
+        "书架",
+        "地毯"
+       ]
+      },
+      "after": {
+       "accuracy": 0.4,
+       "correct": 2,
+       "of": 5,
+       "bank_size": 9,
+       "predicted": [
+        "木桌",
+        "书架",
+        "地毯",
+        "书架",
+        "左盒"
+       ]
+      },
+      "sentence_before": {
+       "accuracy": 0.95,
+       "correct": 19,
+       "of": 20,
+       "bank_size": 10,
+       "predicted": [
+        "木桌",
+        "窗台",
+        "左盒",
+        "书架",
+        "地毯",
+        "木桌",
+        "窗台",
+        "左盒",
+        "书架",
+        "地毯",
+        "木桌",
+        "窗台",
+        "左盒",
+        "书架",
+        "地毯",
+        "木桌",
+        "地毯",
+        "左盒",
+        "书架",
+        "地毯"
+       ]
+      },
+      "sentence_after": {
+       "accuracy": 0.15,
+       "correct": 3,
+       "of": 20,
+       "bank_size": 9,
+       "predicted": [
+        "书架",
+        "书架",
+        "地毯",
+        "木桌",
+        "左盒",
+        "左盒",
+        "书架",
+        "地毯",
+        "地毯",
+        "左盒",
+        "木桌",
+        "书架",
+        "地毯",
+        "木桌",
+        "地毯",
+        "书架",
+        "地毯",
+        "地毯",
+        "地毯",
+        "地毯"
+       ]
+      }
+     },
+     "0.1": {
+      "before": {
+       "accuracy": 1.0,
+       "correct": 5,
+       "of": 5,
+       "bank_size": 10,
+       "predicted": [
+        "木桌",
+        "窗台",
+        "左盒",
+        "书架",
+        "地毯"
+       ]
+      },
+      "after": {
+       "accuracy": 0.4,
+       "correct": 2,
+       "of": 5,
+       "bank_size": 9,
+       "predicted": [
+        "木桌",
+        "书架",
+        "地毯",
+        "书架",
+        "左盒"
+       ]
+      },
+      "sentence_before": {
+       "accuracy": 0.9,
+       "correct": 18,
+       "of": 20,
+       "bank_size": 10,
+       "predicted": [
+        "木桌",
+        "窗台",
+        "左盒",
+        "书架",
+        "地毯",
+        "木桌",
+        "窗台",
+        "左盒",
+        "书架",
+        "地毯",
+        "木桌",
+        "窗台",
+        "左盒",
+        "书架",
+        "地毯",
+        "木桌",
+        "地毯",
+        "地毯",
+        "书架",
+        "地毯"
+       ]
+      },
+      "sentence_after": {
+       "accuracy": 0.1,
+       "correct": 2,
+       "of": 20,
+       "bank_size": 9,
+       "predicted": [
+        "书架",
+        "书架",
+        "地毯",
+        "木桌",
+        "左盒",
+        "左盒",
+        "地毯",
+        "地毯",
+        "地毯",
+        "左盒",
+        "木桌",
+        "书架",
+        "地毯",
+        "木桌",
+        "左盒",
+        "书架",
+        "地毯",
+        "地毯",
+        "地毯",
+        "地毯"
+       ]
+      }
+     },
+     "1": {
+      "before": {
+       "accuracy": 1.0,
+       "correct": 5,
+       "of": 5,
+       "bank_size": 10,
+       "predicted": [
+        "木桌",
+        "窗台",
+        "左盒",
+        "书架",
+        "地毯"
+       ]
+      },
+      "after": {
+       "accuracy": 0.0,
+       "correct": 0,
+       "of": 5,
+       "bank_size": 9,
+       "predicted": [
+        "书架",
+        "书架",
+        "地毯",
+        "木桌",
+        "左盒"
+       ]
+      },
+      "sentence_before": {
+       "accuracy": 0.9,
+       "correct": 18,
+       "of": 20,
+       "bank_size": 10,
+       "predicted": [
+        "木桌",
+        "窗台",
+        "左盒",
+        "书架",
+        "地毯",
+        "木桌",
+        "窗台",
+        "左盒",
+        "书架",
+        "地毯",
+        "木桌",
+        "窗台",
+        "左盒",
+        "书架",
+        "地毯",
+        "木桌",
+        "地毯",
+        "地毯",
+        "书架",
+        "地毯"
+       ]
+      },
+      "sentence_after": {
+       "accuracy": 0.0,
+       "correct": 0,
+       "of": 20,
+       "bank_size": 9,
+       "predicted": [
+        "书架",
+        "书架",
+        "地毯",
+        "地毯",
+        "左盒",
+        "左盒",
+        "地毯",
+        "地毯",
+        "地毯",
+        "左盒",
+        "书架",
+        "书架",
+        "地毯",
+        "地毯",
+        "左盒",
+        "地毯",
+        "地毯",
+        "地毯",
+        "地毯",
+        "左盒"
+       ]
+      }
+     },
+     "10": {
+      "before": {
+       "accuracy": 1.0,
+       "correct": 5,
+       "of": 5,
+       "bank_size": 10,
+       "predicted": [
+        "木桌",
+        "窗台",
+        "左盒",
+        "书架",
+        "地毯"
+       ]
+      },
+      "after": {
+       "accuracy": 0.0,
+       "correct": 0,
+       "of": 5,
+       "bank_size": 9,
+       "predicted": [
+        "书架",
+        "书架",
+        "地毯",
+        "地毯",
+        "左盒"
+       ]
+      },
+      "sentence_before": {
+       "accuracy": 0.55,
+       "correct": 11,
+       "of": 20,
+       "bank_size": 10,
+       "predicted": [
+        "木桌",
+        "地毯",
+        "地毯",
+        "书架",
+        "地毯",
+        "木桌",
+        "地毯",
+        "地毯",
+        "地毯",
+        "地毯",
+        "木桌",
+        "窗台",
+        "地毯",
+        "书架",
+        "地毯",
+        "木桌",
+        "地毯",
+        "地毯",
+        "地毯",
+        "地毯"
+       ]
+      },
+      "sentence_after": {
+       "accuracy": 0.0,
+       "correct": 0,
+       "of": 20,
+       "bank_size": 9,
+       "predicted": [
+        "左盒",
+        "书架",
+        "地毯",
+        "地毯",
+        "左盒",
+        "地毯",
+        "地毯",
+        "地毯",
+        "地毯",
+        "左盒",
+        "左盒",
+        "书架",
+        "地毯",
+        "地毯",
+        "左盒",
+        "地毯",
+        "地毯",
+        "地毯",
+        "地毯",
+        "左盒"
+       ]
+      }
+     },
+     "1000": {
+      "before": {
+       "accuracy": 1.0,
+       "correct": 5,
+       "of": 5,
+       "bank_size": 10,
+       "predicted": [
+        "木桌",
+        "窗台",
+        "左盒",
+        "书架",
+        "地毯"
+       ]
+      },
+      "after": {
+       "accuracy": 0.0,
+       "correct": 0,
+       "of": 5,
+       "bank_size": 9,
+       "predicted": [
+        "左盒",
+        "书架",
+        "地毯",
+        "地毯",
+        "左盒"
+       ]
+      },
+      "sentence_before": {
+       "accuracy": 0.4,
+       "correct": 8,
+       "of": 20,
+       "bank_size": 10,
+       "predicted": [
+        "木桌",
+        "地毯",
+        "地毯",
+        "书架",
+        "地毯",
+        "地毯",
+        "地毯",
+        "地毯",
+        "地毯",
+        "地毯",
+        "木桌",
+        "地毯",
+        "地毯",
+        "书架",
+        "地毯",
+        "地毯",
+        "地毯",
+        "地毯",
+        "地毯",
+        "地毯"
+       ]
+      },
+      "sentence_after": {
+       "accuracy": 0.0,
+       "correct": 0,
+       "of": 20,
+       "bank_size": 9,
+       "predicted": [
+        "左盒",
+        "书架",
+        "地毯",
+        "地毯",
+        "左盒",
+        "地毯",
+        "地毯",
+        "地毯",
+        "地毯",
+        "左盒",
+        "左盒",
+        "书架",
+        "地毯",
+        "地毯",
+        "左盒",
+        "地毯",
+        "地毯",
+        "地毯",
+        "地毯",
+        "左盒"
+       ]
+      }
+     }
+    },
+    "primary": {
+     "before": {
+      "accuracy": 1.0,
+      "correct": 5,
+      "of": 5,
+      "bank_size": 10,
+      "predicted": [
+       "木桌",
+       "窗台",
+       "左盒",
+       "书架",
+       "地毯"
+      ]
+     },
+     "after": {
+      "accuracy": 0.0,
+      "correct": 0,
+      "of": 5,
+      "bank_size": 9,
+      "predicted": [
+       "书架",
+       "书架",
+       "地毯",
+       "木桌",
+       "左盒"
+      ]
+     },
+     "sentence_before": {
+      "accuracy": 0.9,
+      "correct": 18,
+      "of": 20,
+      "bank_size": 10,
+      "predicted": [
+       "木桌",
+       "窗台",
+       "左盒",
+       "书架",
+       "地毯",
+       "木桌",
+       "窗台",
+       "左盒",
+       "书架",
+       "地毯",
+       "木桌",
+       "窗台",
+       "左盒",
+       "书架",
+       "地毯",
+       "木桌",
+       "地毯",
+       "地毯",
+       "书架",
+       "地毯"
+      ]
+     },
+     "sentence_after": {
+      "accuracy": 0.0,
+      "correct": 0,
+      "of": 20,
+      "bank_size": 9,
+      "predicted": [
+       "书架",
+       "书架",
+       "地毯",
+       "地毯",
+       "左盒",
+       "左盒",
+       "地毯",
+       "地毯",
+       "地毯",
+       "左盒",
+       "书架",
+       "书架",
+       "地毯",
+       "地毯",
+       "左盒",
+       "地毯",
+       "地毯",
+       "地毯",
+       "地毯",
+       "左盒"
+      ]
+     }
+    }
+   }
+  },
+  "R2": {
+   "dimensions": 128,
+   "object": {
+    "control": {
+     "accuracy": 1.0,
+     "correct": 4,
+     "of": 4,
+     "bank_size": 4,
+     "predicted": [
+      "蓝色杯子",
+      "红色印章",
+      "绿色瓶子",
+      "黄色球"
+     ]
+    },
+    "control_ok": true,
+    "bank_size_before": 8,
+    "bank_size_after": 7,
+    "deleted_per_item": 1,
+    "grid": {
+     "0.001": {
+      "before": {
+       "accuracy": 1.0,
+       "correct": 4,
+       "of": 4,
+       "bank_size": 8,
+       "predicted": [
+        "蓝色杯子",
+        "红色印章",
+        "绿色瓶子",
+        "黄色球"
+       ]
+      },
+      "after": {
+       "accuracy": 0.0,
+       "correct": 0,
+       "of": 4,
+       "bank_size": 7,
+       "predicted": [
+        "绿色瓶子",
+        "黄色球",
+        "蓝色杯子",
+        "绿色瓶子"
+       ]
+      },
+      "sentence_before": {
+       "accuracy": 0.75,
+       "correct": 15,
+       "of": 20,
+       "bank_size": 8,
+       "predicted": [
+        "蓝色杯子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "红色印章",
+        "红色印章",
+        "红色印章",
+        "红色印章",
+        "红色印章",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "黄色球",
+        "绿色瓶子",
+        "黄色球",
+        "黄色球",
+        "黄色球"
+       ]
+      },
+      "sentence_after": {
+       "accuracy": 0.1,
+       "correct": 2,
+       "of": 20,
+       "bank_size": 7,
+       "predicted": [
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "黄色球",
+        "绿色瓶子",
+        "黄色球",
+        "黄色球",
+        "黄色球",
+        "蓝色杯子",
+        "蓝色杯子",
+        "绿色瓶子",
+        "蓝色杯子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子"
+       ]
+      }
+     },
+     "0.1": {
+      "before": {
+       "accuracy": 1.0,
+       "correct": 4,
+       "of": 4,
+       "bank_size": 8,
+       "predicted": [
+        "蓝色杯子",
+        "红色印章",
+        "绿色瓶子",
+        "黄色球"
+       ]
+      },
+      "after": {
+       "accuracy": 0.0,
+       "correct": 0,
+       "of": 4,
+       "bank_size": 7,
+       "predicted": [
+        "绿色瓶子",
+        "黄色球",
+        "蓝色杯子",
+        "绿色瓶子"
+       ]
+      },
+      "sentence_before": {
+       "accuracy": 0.75,
+       "correct": 15,
+       "of": 20,
+       "bank_size": 8,
+       "predicted": [
+        "蓝色杯子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "红色印章",
+        "红色印章",
+        "红色印章",
+        "红色印章",
+        "红色印章",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "黄色球",
+        "绿色瓶子",
+        "黄色球",
+        "黄色球",
+        "黄色球"
+       ]
+      },
+      "sentence_after": {
+       "accuracy": 0.1,
+       "correct": 2,
+       "of": 20,
+       "bank_size": 7,
+       "predicted": [
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "黄色球",
+        "绿色瓶子",
+        "黄色球",
+        "黄色球",
+        "黄色球",
+        "蓝色杯子",
+        "蓝色杯子",
+        "绿色瓶子",
+        "蓝色杯子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子"
+       ]
+      }
+     },
+     "1": {
+      "before": {
+       "accuracy": 0.75,
+       "correct": 3,
+       "of": 4,
+       "bank_size": 8,
+       "predicted": [
+        "绿色瓶子",
+        "红色印章",
+        "绿色瓶子",
+        "黄色球"
+       ]
+      },
+      "after": {
+       "accuracy": 0.0,
+       "correct": 0,
+       "of": 4,
+       "bank_size": 7,
+       "predicted": [
+        "绿色瓶子",
+        "绿色瓶子",
+        "蓝色杯子",
+        "绿色瓶子"
+       ]
+      },
+      "sentence_before": {
+       "accuracy": 0.5,
+       "correct": 10,
+       "of": 20,
+       "bank_size": 8,
+       "predicted": [
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "红色印章",
+        "红色印章",
+        "红色印章",
+        "红色印章",
+        "红色印章",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子"
+       ]
+      },
+      "sentence_after": {
+       "accuracy": 0.15,
+       "correct": 3,
+       "of": 20,
+       "bank_size": 7,
+       "predicted": [
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "黄色球",
+        "红色印章",
+        "红色印章",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子"
+       ]
+      }
+     },
+     "10": {
+      "before": {
+       "accuracy": 0.5,
+       "correct": 2,
+       "of": 4,
+       "bank_size": 8,
+       "predicted": [
+        "绿色瓶子",
+        "红色印章",
+        "绿色瓶子",
+        "绿色瓶子"
+       ]
+      },
+      "after": {
+       "accuracy": 0.25,
+       "correct": 1,
+       "of": 4,
+       "bank_size": 7,
+       "predicted": [
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子"
+       ]
+      },
+      "sentence_before": {
+       "accuracy": 0.25,
+       "correct": 5,
+       "of": 20,
+       "bank_size": 8,
+       "predicted": [
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子"
+       ]
+      },
+      "sentence_after": {
+       "accuracy": 0.2,
+       "correct": 4,
+       "of": 20,
+       "bank_size": 7,
+       "predicted": [
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "红色印章",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子"
+       ]
+      }
+     },
+     "1000": {
+      "before": {
+       "accuracy": 0.5,
+       "correct": 2,
+       "of": 4,
+       "bank_size": 8,
+       "predicted": [
+        "绿色瓶子",
+        "红色印章",
+        "绿色瓶子",
+        "绿色瓶子"
+       ]
+      },
+      "after": {
+       "accuracy": 0.25,
+       "correct": 1,
+       "of": 4,
+       "bank_size": 7,
+       "predicted": [
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子"
+       ]
+      },
+      "sentence_before": {
+       "accuracy": 0.25,
+       "correct": 5,
+       "of": 20,
+       "bank_size": 8,
+       "predicted": [
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子"
+       ]
+      },
+      "sentence_after": {
+       "accuracy": 0.25,
+       "correct": 5,
+       "of": 20,
+       "bank_size": 7,
+       "predicted": [
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子"
+       ]
+      }
+     }
+    },
+    "primary": {
+     "before": {
+      "accuracy": 0.75,
+      "correct": 3,
+      "of": 4,
+      "bank_size": 8,
+      "predicted": [
+       "绿色瓶子",
+       "红色印章",
+       "绿色瓶子",
+       "黄色球"
+      ]
+     },
+     "after": {
+      "accuracy": 0.0,
+      "correct": 0,
+      "of": 4,
+      "bank_size": 7,
+      "predicted": [
+       "绿色瓶子",
+       "绿色瓶子",
+       "蓝色杯子",
+       "绿色瓶子"
+      ]
+     },
+     "sentence_before": {
+      "accuracy": 0.5,
+      "correct": 10,
+      "of": 20,
+      "bank_size": 8,
+      "predicted": [
+       "绿色瓶子",
+       "绿色瓶子",
+       "绿色瓶子",
+       "绿色瓶子",
+       "绿色瓶子",
+       "红色印章",
+       "红色印章",
+       "红色印章",
+       "红色印章",
+       "红色印章",
+       "绿色瓶子",
+       "绿色瓶子",
+       "绿色瓶子",
+       "绿色瓶子",
+       "绿色瓶子",
+       "绿色瓶子",
+       "绿色瓶子",
+       "绿色瓶子",
+       "绿色瓶子",
+       "绿色瓶子"
+      ]
+     },
+     "sentence_after": {
+      "accuracy": 0.15,
+      "correct": 3,
+      "of": 20,
+      "bank_size": 7,
+      "predicted": [
+       "绿色瓶子",
+       "绿色瓶子",
+       "绿色瓶子",
+       "绿色瓶子",
+       "绿色瓶子",
+       "绿色瓶子",
+       "绿色瓶子",
+       "绿色瓶子",
+       "绿色瓶子",
+       "黄色球",
+       "红色印章",
+       "红色印章",
+       "绿色瓶子",
+       "绿色瓶子",
+       "绿色瓶子",
+       "绿色瓶子",
+       "绿色瓶子",
+       "绿色瓶子",
+       "绿色瓶子",
+       "绿色瓶子"
+      ]
+     }
+    }
+   },
+   "place": {
+    "control": {
+     "accuracy": 1.0,
+     "correct": 5,
+     "of": 5,
+     "bank_size": 5,
+     "predicted": [
+      "木桌",
+      "窗台",
+      "左盒",
+      "书架",
+      "地毯"
+     ]
+    },
+    "control_ok": true,
+    "bank_size_before": 10,
+    "bank_size_after": 9,
+    "deleted_per_item": 1,
+    "grid": {
+     "0.001": {
+      "before": {
+       "accuracy": 1.0,
+       "correct": 5,
+       "of": 5,
+       "bank_size": 10,
+       "predicted": [
+        "木桌",
+        "窗台",
+        "左盒",
+        "书架",
+        "地毯"
+       ]
+      },
+      "after": {
+       "accuracy": 0.0,
+       "correct": 0,
+       "of": 5,
+       "bank_size": 9,
+       "predicted": [
+        "窗台",
+        "书架",
+        "地毯",
+        "窗台",
+        "左盒"
+       ]
+      },
+      "sentence_before": {
+       "accuracy": 0.7,
+       "correct": 14,
+       "of": 20,
+       "bank_size": 10,
+       "predicted": [
+        "木桌",
+        "窗台",
+        "左盒",
+        "书架",
+        "地毯",
+        "木桌",
+        "地毯",
+        "左盒",
+        "书架",
+        "地毯",
+        "左盒",
+        "窗台",
+        "左盒",
+        "书架",
+        "地毯",
+        "地毯",
+        "地毯",
+        "地毯",
+        "地毯",
+        "地毯"
+       ]
+      },
+      "sentence_after": {
+       "accuracy": 0.2,
+       "correct": 4,
+       "of": 20,
+       "bank_size": 9,
+       "predicted": [
+        "左盒",
+        "书架",
+        "左盒",
+        "窗台",
+        "左盒",
+        "地毯",
+        "书架",
+        "地毯",
+        "地毯",
+        "左盒",
+        "窗台",
+        "书架",
+        "左盒",
+        "窗台",
+        "地毯",
+        "地毯",
+        "地毯",
+        "地毯",
+        "地毯",
+        "地毯"
+       ]
+      }
+     },
+     "0.1": {
+      "before": {
+       "accuracy": 1.0,
+       "correct": 5,
+       "of": 5,
+       "bank_size": 10,
+       "predicted": [
+        "木桌",
+        "窗台",
+        "左盒",
+        "书架",
+        "地毯"
+       ]
+      },
+      "after": {
+       "accuracy": 0.0,
+       "correct": 0,
+       "of": 5,
+       "bank_size": 9,
+       "predicted": [
+        "窗台",
+        "书架",
+        "地毯",
+        "窗台",
+        "左盒"
+       ]
+      },
+      "sentence_before": {
+       "accuracy": 0.75,
+       "correct": 15,
+       "of": 20,
+       "bank_size": 10,
+       "predicted": [
+        "木桌",
+        "窗台",
+        "左盒",
+        "书架",
+        "地毯",
+        "木桌",
+        "地毯",
+        "左盒",
+        "书架",
+        "地毯",
+        "木桌",
+        "窗台",
+        "左盒",
+        "书架",
+        "地毯",
+        "地毯",
+        "地毯",
+        "地毯",
+        "地毯",
+        "地毯"
+       ]
+      },
+      "sentence_after": {
+       "accuracy": 0.05,
+       "correct": 1,
+       "of": 20,
+       "bank_size": 9,
+       "predicted": [
+        "窗台",
+        "书架",
+        "地毯",
+        "窗台",
+        "左盒",
+        "地毯",
+        "书架",
+        "地毯",
+        "地毯",
+        "左盒",
+        "窗台",
+        "书架",
+        "地毯",
+        "窗台",
+        "左盒",
+        "地毯",
+        "地毯",
+        "地毯",
+        "地毯",
+        "地毯"
+       ]
+      }
+     },
+     "1": {
+      "before": {
+       "accuracy": 1.0,
+       "correct": 5,
+       "of": 5,
+       "bank_size": 10,
+       "predicted": [
+        "木桌",
+        "窗台",
+        "左盒",
+        "书架",
+        "地毯"
+       ]
+      },
+      "after": {
+       "accuracy": 0.0,
+       "correct": 0,
+       "of": 5,
+       "bank_size": 9,
+       "predicted": [
+        "窗台",
+        "书架",
+        "地毯",
+        "窗台",
+        "左盒"
+       ]
+      },
+      "sentence_before": {
+       "accuracy": 0.6,
+       "correct": 12,
+       "of": 20,
+       "bank_size": 10,
+       "predicted": [
+        "木桌",
+        "窗台",
+        "左盒",
+        "地毯",
+        "地毯",
+        "木桌",
+        "地毯",
+        "地毯",
+        "地毯",
+        "地毯",
+        "木桌",
+        "窗台",
+        "左盒",
+        "书架",
+        "地毯",
+        "地毯",
+        "地毯",
+        "地毯",
+        "地毯",
+        "地毯"
+       ]
+      },
+      "sentence_after": {
+       "accuracy": 0.0,
+       "correct": 0,
+       "of": 20,
+       "bank_size": 9,
+       "predicted": [
+        "地毯",
+        "书架",
+        "地毯",
+        "窗台",
+        "左盒",
+        "地毯",
+        "书架",
+        "地毯",
+        "地毯",
+        "左盒",
+        "窗台",
+        "书架",
+        "地毯",
+        "窗台",
+        "左盒",
+        "地毯",
+        "地毯",
+        "地毯",
+        "地毯",
+        "左盒"
+       ]
+      }
+     },
+     "10": {
+      "before": {
+       "accuracy": 1.0,
+       "correct": 5,
+       "of": 5,
+       "bank_size": 10,
+       "predicted": [
+        "木桌",
+        "窗台",
+        "左盒",
+        "书架",
+        "地毯"
+       ]
+      },
+      "after": {
+       "accuracy": 0.0,
+       "correct": 0,
+       "of": 5,
+       "bank_size": 9,
+       "predicted": [
+        "地毯",
+        "书架",
+        "地毯",
+        "窗台",
+        "左盒"
+       ]
+      },
+      "sentence_before": {
+       "accuracy": 0.4,
+       "correct": 8,
+       "of": 20,
+       "bank_size": 10,
+       "predicted": [
+        "木桌",
+        "地毯",
+        "地毯",
+        "地毯",
+        "地毯",
+        "木桌",
+        "地毯",
+        "地毯",
+        "地毯",
+        "地毯",
+        "木桌",
+        "窗台",
+        "地毯",
+        "地毯",
+        "地毯",
+        "地毯",
+        "地毯",
+        "地毯",
+        "地毯",
+        "地毯"
+       ]
+      },
+      "sentence_after": {
+       "accuracy": 0.0,
+       "correct": 0,
+       "of": 20,
+       "bank_size": 9,
+       "predicted": [
+        "地毯",
+        "木桌",
+        "地毯",
+        "地毯",
+        "左盒",
+        "地毯",
+        "木桌",
+        "地毯",
+        "地毯",
+        "左盒",
+        "地毯",
+        "木桌",
+        "地毯",
+        "地毯",
+        "左盒",
+        "地毯",
+        "地毯",
+        "地毯",
+        "地毯",
+        "左盒"
+       ]
+      }
+     },
+     "1000": {
+      "before": {
+       "accuracy": 0.8,
+       "correct": 4,
+       "of": 5,
+       "bank_size": 10,
+       "predicted": [
+        "木桌",
+        "窗台",
+        "地毯",
+        "书架",
+        "地毯"
+       ]
+      },
+      "after": {
+       "accuracy": 0.0,
+       "correct": 0,
+       "of": 5,
+       "bank_size": 9,
+       "predicted": [
+        "地毯",
+        "书架",
+        "地毯",
+        "地毯",
+        "左盒"
+       ]
+      },
+      "sentence_before": {
+       "accuracy": 0.35,
+       "correct": 7,
+       "of": 20,
+       "bank_size": 10,
+       "predicted": [
+        "木桌",
+        "地毯",
+        "地毯",
+        "地毯",
+        "地毯",
+        "木桌",
+        "地毯",
+        "地毯",
+        "地毯",
+        "地毯",
+        "木桌",
+        "地毯",
+        "地毯",
+        "地毯",
+        "地毯",
+        "地毯",
+        "地毯",
+        "地毯",
+        "地毯",
+        "地毯"
+       ]
+      },
+      "sentence_after": {
+       "accuracy": 0.0,
+       "correct": 0,
+       "of": 20,
+       "bank_size": 9,
+       "predicted": [
+        "地毯",
+        "木桌",
+        "地毯",
+        "地毯",
+        "左盒",
+        "地毯",
+        "木桌",
+        "地毯",
+        "地毯",
+        "左盒",
+        "地毯",
+        "木桌",
+        "地毯",
+        "地毯",
+        "左盒",
+        "地毯",
+        "地毯",
+        "地毯",
+        "地毯",
+        "左盒"
+       ]
+      }
+     }
+    },
+    "primary": {
+     "before": {
+      "accuracy": 1.0,
+      "correct": 5,
+      "of": 5,
+      "bank_size": 10,
+      "predicted": [
+       "木桌",
+       "窗台",
+       "左盒",
+       "书架",
+       "地毯"
+      ]
+     },
+     "after": {
+      "accuracy": 0.0,
+      "correct": 0,
+      "of": 5,
+      "bank_size": 9,
+      "predicted": [
+       "窗台",
+       "书架",
+       "地毯",
+       "窗台",
+       "左盒"
+      ]
+     },
+     "sentence_before": {
+      "accuracy": 0.6,
+      "correct": 12,
+      "of": 20,
+      "bank_size": 10,
+      "predicted": [
+       "木桌",
+       "窗台",
+       "左盒",
+       "地毯",
+       "地毯",
+       "木桌",
+       "地毯",
+       "地毯",
+       "地毯",
+       "地毯",
+       "木桌",
+       "窗台",
+       "左盒",
+       "书架",
+       "地毯",
+       "地毯",
+       "地毯",
+       "地毯",
+       "地毯",
+       "地毯"
+      ]
+     },
+     "sentence_after": {
+      "accuracy": 0.0,
+      "correct": 0,
+      "of": 20,
+      "bank_size": 9,
+      "predicted": [
+       "地毯",
+       "书架",
+       "地毯",
+       "窗台",
+       "左盒",
+       "地毯",
+       "书架",
+       "地毯",
+       "地毯",
+       "左盒",
+       "窗台",
+       "书架",
+       "地毯",
+       "窗台",
+       "左盒",
+       "地毯",
+       "地毯",
+       "地毯",
+       "地毯",
+       "左盒"
+      ]
+     }
+    }
+   }
+  },
+  "R3": {
+   "dimensions": 384,
+   "object": {
+    "control": {
+     "accuracy": 1.0,
+     "correct": 4,
+     "of": 4,
+     "bank_size": 4,
+     "predicted": [
+      "蓝色杯子",
+      "红色印章",
+      "绿色瓶子",
+      "黄色球"
+     ]
+    },
+    "control_ok": true,
+    "bank_size_before": 8,
+    "bank_size_after": 7,
+    "deleted_per_item": 1,
+    "grid": {
+     "0.001": {
+      "before": {
+       "accuracy": 1.0,
+       "correct": 4,
+       "of": 4,
+       "bank_size": 8,
+       "predicted": [
+        "蓝色杯子",
+        "红色印章",
+        "绿色瓶子",
+        "黄色球"
+       ]
+      },
+      "after": {
+       "accuracy": 0.25,
+       "correct": 1,
+       "of": 4,
+       "bank_size": 7,
+       "predicted": [
+        "绿色瓶子",
+        "红色印章",
+        "蓝色杯子",
+        "红色印章"
+       ]
+      },
+      "sentence_before": {
+       "accuracy": 0.9,
+       "correct": 18,
+       "of": 20,
+       "bank_size": 8,
+       "predicted": [
+        "蓝色杯子",
+        "蓝色杯子",
+        "蓝色杯子",
+        "蓝色杯子",
+        "蓝色杯子",
+        "红色印章",
+        "红色印章",
+        "红色印章",
+        "红色印章",
+        "红色印章",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "黄色球",
+        "红色印章",
+        "黄色球",
+        "红色印章",
+        "黄色球"
+       ]
+      },
+      "sentence_after": {
+       "accuracy": 0.25,
+       "correct": 5,
+       "of": 20,
+       "bank_size": 7,
+       "predicted": [
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "红色印章",
+        "绿色瓶子",
+        "红色印章",
+        "红色印章",
+        "红色印章",
+        "红色印章",
+        "红色印章",
+        "蓝色杯子",
+        "蓝色杯子",
+        "蓝色杯子",
+        "蓝色杯子",
+        "蓝色杯子",
+        "红色印章",
+        "红色印章",
+        "红色印章",
+        "红色印章",
+        "红色印章"
+       ]
+      }
+     },
+     "0.1": {
+      "before": {
+       "accuracy": 1.0,
+       "correct": 4,
+       "of": 4,
+       "bank_size": 8,
+       "predicted": [
+        "蓝色杯子",
+        "红色印章",
+        "绿色瓶子",
+        "黄色球"
+       ]
+      },
+      "after": {
+       "accuracy": 0.25,
+       "correct": 1,
+       "of": 4,
+       "bank_size": 7,
+       "predicted": [
+        "绿色瓶子",
+        "红色印章",
+        "蓝色杯子",
+        "红色印章"
+       ]
+      },
+      "sentence_before": {
+       "accuracy": 0.9,
+       "correct": 18,
+       "of": 20,
+       "bank_size": 8,
+       "predicted": [
+        "蓝色杯子",
+        "蓝色杯子",
+        "蓝色杯子",
+        "蓝色杯子",
+        "蓝色杯子",
+        "红色印章",
+        "红色印章",
+        "红色印章",
+        "红色印章",
+        "红色印章",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "黄色球",
+        "红色印章",
+        "黄色球",
+        "红色印章",
+        "黄色球"
+       ]
+      },
+      "sentence_after": {
+       "accuracy": 0.25,
+       "correct": 5,
+       "of": 20,
+       "bank_size": 7,
+       "predicted": [
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "红色印章",
+        "绿色瓶子",
+        "红色印章",
+        "红色印章",
+        "红色印章",
+        "红色印章",
+        "红色印章",
+        "蓝色杯子",
+        "蓝色杯子",
+        "蓝色杯子",
+        "蓝色杯子",
+        "蓝色杯子",
+        "红色印章",
+        "红色印章",
+        "红色印章",
+        "红色印章",
+        "红色印章"
+       ]
+      }
+     },
+     "1": {
+      "before": {
+       "accuracy": 1.0,
+       "correct": 4,
+       "of": 4,
+       "bank_size": 8,
+       "predicted": [
+        "蓝色杯子",
+        "红色印章",
+        "绿色瓶子",
+        "黄色球"
+       ]
+      },
+      "after": {
+       "accuracy": 0.0,
+       "correct": 0,
+       "of": 4,
+       "bank_size": 7,
+       "predicted": [
+        "绿色瓶子",
+        "绿色瓶子",
+        "蓝色杯子",
+        "红色印章"
+       ]
+      },
+      "sentence_before": {
+       "accuracy": 0.9,
+       "correct": 18,
+       "of": 20,
+       "bank_size": 8,
+       "predicted": [
+        "蓝色杯子",
+        "蓝色杯子",
+        "蓝色杯子",
+        "蓝色杯子",
+        "蓝色杯子",
+        "红色印章",
+        "红色印章",
+        "红色印章",
+        "红色印章",
+        "红色印章",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "黄色球",
+        "红色印章",
+        "黄色球",
+        "红色印章",
+        "黄色球"
+       ]
+      },
+      "sentence_after": {
+       "accuracy": 0.05,
+       "correct": 1,
+       "of": 20,
+       "bank_size": 7,
+       "predicted": [
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "蓝色杯子",
+        "蓝色杯子",
+        "绿色瓶子",
+        "红色印章",
+        "绿色瓶子",
+        "蓝色杯子",
+        "蓝色杯子",
+        "蓝色杯子",
+        "蓝色杯子",
+        "蓝色杯子",
+        "红色印章",
+        "红色印章",
+        "红色印章",
+        "红色印章",
+        "红色印章"
+       ]
+      }
+     },
+     "10": {
+      "before": {
+       "accuracy": 1.0,
+       "correct": 4,
+       "of": 4,
+       "bank_size": 8,
+       "predicted": [
+        "蓝色杯子",
+        "红色印章",
+        "绿色瓶子",
+        "黄色球"
+       ]
+      },
+      "after": {
+       "accuracy": 0.0,
+       "correct": 0,
+       "of": 4,
+       "bank_size": 7,
+       "predicted": [
+        "绿色瓶子",
+        "绿色瓶子",
+        "蓝色杯子",
+        "绿色瓶子"
+       ]
+      },
+      "sentence_before": {
+       "accuracy": 0.75,
+       "correct": 15,
+       "of": 20,
+       "bank_size": 8,
+       "predicted": [
+        "蓝色杯子",
+        "蓝色杯子",
+        "蓝色杯子",
+        "蓝色杯子",
+        "蓝色杯子",
+        "红色印章",
+        "红色印章",
+        "红色印章",
+        "红色印章",
+        "红色印章",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "蓝色杯子",
+        "蓝色杯子",
+        "蓝色杯子",
+        "红色印章",
+        "绿色瓶子"
+       ]
+      },
+      "sentence_after": {
+       "accuracy": 0.0,
+       "correct": 0,
+       "of": 20,
+       "bank_size": 7,
+       "predicted": [
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "蓝色杯子",
+        "蓝色杯子",
+        "绿色瓶子",
+        "蓝色杯子",
+        "绿色瓶子",
+        "蓝色杯子",
+        "蓝色杯子",
+        "蓝色杯子",
+        "蓝色杯子",
+        "蓝色杯子",
+        "蓝色杯子",
+        "蓝色杯子",
+        "蓝色杯子",
+        "红色印章",
+        "绿色瓶子"
+       ]
+      }
+     },
+     "1000": {
+      "before": {
+       "accuracy": 1.0,
+       "correct": 4,
+       "of": 4,
+       "bank_size": 8,
+       "predicted": [
+        "蓝色杯子",
+        "红色印章",
+        "绿色瓶子",
+        "黄色球"
+       ]
+      },
+      "after": {
+       "accuracy": 0.0,
+       "correct": 0,
+       "of": 4,
+       "bank_size": 7,
+       "predicted": [
+        "绿色瓶子",
+        "绿色瓶子",
+        "蓝色杯子",
+        "绿色瓶子"
+       ]
+      },
+      "sentence_before": {
+       "accuracy": 0.7,
+       "correct": 14,
+       "of": 20,
+       "bank_size": 8,
+       "predicted": [
+        "蓝色杯子",
+        "蓝色杯子",
+        "蓝色杯子",
+        "蓝色杯子",
+        "绿色瓶子",
+        "红色印章",
+        "红色印章",
+        "红色印章",
+        "红色印章",
+        "红色印章",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "蓝色杯子",
+        "蓝色杯子",
+        "蓝色杯子",
+        "蓝色杯子",
+        "绿色瓶子"
+       ]
+      },
+      "sentence_after": {
+       "accuracy": 0.0,
+       "correct": 0,
+       "of": 20,
+       "bank_size": 7,
+       "predicted": [
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "绿色瓶子",
+        "蓝色杯子",
+        "蓝色杯子",
+        "绿色瓶子",
+        "蓝色杯子",
+        "绿色瓶子",
+        "蓝色杯子",
+        "蓝色杯子",
+        "蓝色杯子",
+        "蓝色杯子",
+        "蓝色杯子",
+        "蓝色杯子",
+        "蓝色杯子",
+        "绿色瓶子",
+        "蓝色杯子",
+        "绿色瓶子"
+       ]
+      }
+     }
+    },
+    "primary": {
+     "before": {
+      "accuracy": 1.0,
+      "correct": 4,
+      "of": 4,
+      "bank_size": 8,
+      "predicted": [
+       "蓝色杯子",
+       "红色印章",
+       "绿色瓶子",
+       "黄色球"
+      ]
+     },
+     "after": {
+      "accuracy": 0.0,
+      "correct": 0,
+      "of": 4,
+      "bank_size": 7,
+      "predicted": [
+       "绿色瓶子",
+       "绿色瓶子",
+       "蓝色杯子",
+       "红色印章"
+      ]
+     },
+     "sentence_before": {
+      "accuracy": 0.9,
+      "correct": 18,
+      "of": 20,
+      "bank_size": 8,
+      "predicted": [
+       "蓝色杯子",
+       "蓝色杯子",
+       "蓝色杯子",
+       "蓝色杯子",
+       "蓝色杯子",
+       "红色印章",
+       "红色印章",
+       "红色印章",
+       "红色印章",
+       "红色印章",
+       "绿色瓶子",
+       "绿色瓶子",
+       "绿色瓶子",
+       "绿色瓶子",
+       "绿色瓶子",
+       "黄色球",
+       "红色印章",
+       "黄色球",
+       "红色印章",
+       "黄色球"
+      ]
+     },
+     "sentence_after": {
+      "accuracy": 0.05,
+      "correct": 1,
+      "of": 20,
+      "bank_size": 7,
+      "predicted": [
+       "绿色瓶子",
+       "绿色瓶子",
+       "绿色瓶子",
+       "绿色瓶子",
+       "绿色瓶子",
+       "蓝色杯子",
+       "蓝色杯子",
+       "绿色瓶子",
+       "红色印章",
+       "绿色瓶子",
+       "蓝色杯子",
+       "蓝色杯子",
+       "蓝色杯子",
+       "蓝色杯子",
+       "蓝色杯子",
+       "红色印章",
+       "红色印章",
+       "红色印章",
+       "红色印章",
+       "红色印章"
+      ]
+     }
+    }
+   },
+   "place": {
+    "control": {
+     "accuracy": 1.0,
+     "correct": 5,
+     "of": 5,
+     "bank_size": 5,
+     "predicted": [
+      "木桌",
+      "窗台",
+      "左盒",
+      "书架",
+      "地毯"
+     ]
+    },
+    "control_ok": true,
+    "bank_size_before": 10,
+    "bank_size_after": 9,
+    "deleted_per_item": 1,
+    "grid": {
+     "0.001": {
+      "before": {
+       "accuracy": 1.0,
+       "correct": 5,
+       "of": 5,
+       "bank_size": 10,
+       "predicted": [
+        "木桌",
+        "窗台",
+        "左盒",
+        "书架",
+        "地毯"
+       ]
+      },
+      "after": {
+       "accuracy": 0.6,
+       "correct": 3,
+       "of": 5,
+       "bank_size": 9,
+       "predicted": [
+        "书架",
+        "窗台",
+        "左盒",
+        "窗台",
+        "地毯"
+       ]
+      },
+      "sentence_before": {
+       "accuracy": 1.0,
+       "correct": 20,
+       "of": 20,
+       "bank_size": 10,
+       "predicted": [
+        "木桌",
+        "窗台",
+        "左盒",
+        "书架",
+        "地毯",
+        "木桌",
+        "窗台",
+        "左盒",
+        "书架",
+        "地毯",
+        "木桌",
+        "窗台",
+        "左盒",
+        "书架",
+        "地毯",
+        "木桌",
+        "窗台",
+        "左盒",
+        "书架",
+        "地毯"
+       ]
+      },
+      "sentence_after": {
+       "accuracy": 0.7,
+       "correct": 14,
+       "of": 20,
+       "bank_size": 9,
+       "predicted": [
+        "书架",
+        "窗台",
+        "左盒",
+        "窗台",
+        "地毯",
+        "书架",
+        "窗台",
+        "左盒",
+        "左盒",
+        "地毯",
+        "左盒",
+        "窗台",
+        "左盒",
+        "书架",
+        "地毯",
+        "书架",
+        "窗台",
+        "左盒",
+        "书架",
+        "地毯"
+       ]
+      }
+     },
+     "0.1": {
+      "before": {
+       "accuracy": 1.0,
+       "correct": 5,
+       "of": 5,
+       "bank_size": 10,
+       "predicted": [
+        "木桌",
+        "窗台",
+        "左盒",
+        "书架",
+        "地毯"
+       ]
+      },
+      "after": {
+       "accuracy": 0.6,
+       "correct": 3,
+       "of": 5,
+       "bank_size": 9,
+       "predicted": [
+        "书架",
+        "窗台",
+        "左盒",
+        "窗台",
+        "地毯"
+       ]
+      },
+      "sentence_before": {
+       "accuracy": 1.0,
+       "correct": 20,
+       "of": 20,
+       "bank_size": 10,
+       "predicted": [
+        "木桌",
+        "窗台",
+        "左盒",
+        "书架",
+        "地毯",
+        "木桌",
+        "窗台",
+        "左盒",
+        "书架",
+        "地毯",
+        "木桌",
+        "窗台",
+        "左盒",
+        "书架",
+        "地毯",
+        "木桌",
+        "窗台",
+        "左盒",
+        "书架",
+        "地毯"
+       ]
+      },
+      "sentence_after": {
+       "accuracy": 0.75,
+       "correct": 15,
+       "of": 20,
+       "bank_size": 9,
+       "predicted": [
+        "书架",
+        "窗台",
+        "左盒",
+        "窗台",
+        "地毯",
+        "书架",
+        "窗台",
+        "左盒",
+        "书架",
+        "地毯",
+        "书架",
+        "窗台",
+        "左盒",
+        "书架",
+        "地毯",
+        "书架",
+        "窗台",
+        "左盒",
+        "书架",
+        "地毯"
+       ]
+      }
+     },
+     "1": {
+      "before": {
+       "accuracy": 1.0,
+       "correct": 5,
+       "of": 5,
+       "bank_size": 10,
+       "predicted": [
+        "木桌",
+        "窗台",
+        "左盒",
+        "书架",
+        "地毯"
+       ]
+      },
+      "after": {
+       "accuracy": 0.2,
+       "correct": 1,
+       "of": 5,
+       "bank_size": 9,
+       "predicted": [
+        "书架",
+        "书架",
+        "左盒",
+        "窗台",
+        "左盒"
+       ]
+      },
+      "sentence_before": {
+       "accuracy": 0.95,
+       "correct": 19,
+       "of": 20,
+       "bank_size": 10,
+       "predicted": [
+        "木桌",
+        "窗台",
+        "左盒",
+        "书架",
+        "地毯",
+        "书架",
+        "窗台",
+        "左盒",
+        "书架",
+        "地毯",
+        "木桌",
+        "窗台",
+        "左盒",
+        "书架",
+        "地毯",
+        "木桌",
+        "窗台",
+        "左盒",
+        "书架",
+        "地毯"
+       ]
+      },
+      "sentence_after": {
+       "accuracy": 0.4,
+       "correct": 8,
+       "of": 20,
+       "bank_size": 9,
+       "predicted": [
+        "书架",
+        "窗台",
+        "书架",
+        "窗台",
+        "地毯",
+        "书架",
+        "书架",
+        "左盒",
+        "书架",
+        "左盒",
+        "书架",
+        "窗台",
+        "左盒",
+        "书架",
+        "左盒",
+        "书架",
+        "书架",
+        "书架",
+        "书架",
+        "左盒"
+       ]
+      }
+     },
+     "10": {
+      "before": {
+       "accuracy": 0.8,
+       "correct": 4,
+       "of": 5,
+       "bank_size": 10,
+       "predicted": [
+        "书架",
+        "窗台",
+        "左盒",
+        "书架",
+        "地毯"
+       ]
+      },
+      "after": {
+       "accuracy": 0.0,
+       "correct": 0,
+       "of": 5,
+       "bank_size": 9,
+       "predicted": [
+        "书架",
+        "书架",
+        "书架",
+        "窗台",
+        "书架"
+       ]
+      },
+      "sentence_before": {
+       "accuracy": 0.7,
+       "correct": 14,
+       "of": 20,
+       "bank_size": 10,
+       "predicted": [
+        "书架",
+        "窗台",
+        "书架",
+        "书架",
+        "地毯",
+        "书架",
+        "窗台",
+        "左盒",
+        "书架",
+        "地毯",
+        "书架",
+        "窗台",
+        "左盒",
+        "书架",
+        "地毯",
+        "书架",
+        "窗台",
+        "书架",
+        "书架",
+        "地毯"
+       ]
+      },
+      "sentence_after": {
+       "accuracy": 0.15,
+       "correct": 3,
+       "of": 20,
+       "bank_size": 9,
+       "predicted": [
+        "书架",
+        "书架",
+        "书架",
+        "窗台",
+        "书架",
+        "书架",
+        "书架",
+        "书架",
+        "书架",
+        "书架",
+        "书架",
+        "书架",
+        "书架",
+        "书架",
+        "书架",
+        "书架",
+        "书架",
+        "书架",
+        "书架",
+        "书架"
+       ]
+      }
+     },
+     "1000": {
+      "before": {
+       "accuracy": 0.6,
+       "correct": 3,
+       "of": 5,
+       "bank_size": 10,
+       "predicted": [
+        "书架",
+        "窗台",
+        "书架",
+        "书架",
+        "地毯"
+       ]
+      },
+      "after": {
+       "accuracy": 0.0,
+       "correct": 0,
+       "of": 5,
+       "bank_size": 9,
+       "predicted": [
+        "书架",
+        "书架",
+        "书架",
+        "窗台",
+        "书架"
+       ]
+      },
+      "sentence_before": {
+       "accuracy": 0.35,
+       "correct": 7,
+       "of": 20,
+       "bank_size": 10,
+       "predicted": [
+        "书架",
+        "书架",
+        "书架",
+        "书架",
+        "书架",
+        "书架",
+        "书架",
+        "书架",
+        "书架",
+        "地毯",
+        "书架",
+        "书架",
+        "书架",
+        "书架",
+        "地毯",
+        "书架",
+        "书架",
+        "书架",
+        "书架",
+        "地毯"
+       ]
+      },
+      "sentence_after": {
+       "accuracy": 0.2,
+       "correct": 4,
+       "of": 20,
+       "bank_size": 9,
+       "predicted": [
+        "书架",
+        "书架",
+        "书架",
+        "书架",
+        "书架",
+        "书架",
+        "书架",
+        "书架",
+        "书架",
+        "书架",
+        "书架",
+        "书架",
+        "书架",
+        "书架",
+        "书架",
+        "书架",
+        "书架",
+        "书架",
+        "书架",
+        "书架"
+       ]
+      }
+     }
+    },
+    "primary": {
+     "before": {
+      "accuracy": 1.0,
+      "correct": 5,
+      "of": 5,
+      "bank_size": 10,
+      "predicted": [
+       "木桌",
+       "窗台",
+       "左盒",
+       "书架",
+       "地毯"
+      ]
+     },
+     "after": {
+      "accuracy": 0.2,
+      "correct": 1,
+      "of": 5,
+      "bank_size": 9,
+      "predicted": [
+       "书架",
+       "书架",
+       "左盒",
+       "窗台",
+       "左盒"
+      ]
+     },
+     "sentence_before": {
+      "accuracy": 0.95,
+      "correct": 19,
+      "of": 20,
+      "bank_size": 10,
+      "predicted": [
+       "木桌",
+       "窗台",
+       "左盒",
+       "书架",
+       "地毯",
+       "书架",
+       "窗台",
+       "左盒",
+       "书架",
+       "地毯",
+       "木桌",
+       "窗台",
+       "左盒",
+       "书架",
+       "地毯",
+       "木桌",
+       "窗台",
+       "左盒",
+       "书架",
+       "地毯"
+      ]
+     },
+     "sentence_after": {
+      "accuracy": 0.4,
+      "correct": 8,
+      "of": 20,
+      "bank_size": 9,
+      "predicted": [
+       "书架",
+       "窗台",
+       "书架",
+       "窗台",
+       "地毯",
+       "书架",
+       "书架",
+       "左盒",
+       "书架",
+       "左盒",
+       "书架",
+       "窗台",
+       "左盒",
+       "书架",
+       "左盒",
+       "书架",
+       "书架",
+       "书架",
+       "书架",
+       "左盒"
+      ]
+     }
+    }
+   }
+  }
+ },
+ "control_ok": true,
+ "verdict": "phrase_bridge_inconclusive",
+ "project_line": "project_bridge_memorised",
+ "slot_verdict": {
+  "object": {
+   "before": "generalises",
+   "after": "memorised",
+   "sentence_before": "generalises",
+   "sentence_after": "memorised"
+  },
+  "place": {
+   "before": "generalises",
+   "after": "memorised",
+   "sentence_before": "generalises",
+   "sentence_after": "memorised"
+  }
+ },
+ "contrast": {
+  "r10_reference": {
+   "status": "cited from reports/taiji_phrase_bridge_20261109.json",
+   "note": "1:1 词表，删掉该概念唯一训练目标；0.00 是构造性零（D-20261109-11）。",
+   "R10_verdict": "phrase_name_bridge_memorised",
+   "R10_bank": {
+    "object": 4,
+    "place": 5
+   },
+   "R10_R3_place": {
+    "before": 1.0,
+    "after": 0.0,
+    "sentence_after": 0.0
+   }
+  },
+  "r10b_R3": {
+   "object": {
+    "before": 1.0,
+    "after": 0.0,
+    "sentence_before": 0.9,
+    "sentence_after": 0.05,
+    "sentence_after_worst_lambda": 0.0,
+    "chance": 0.25
+   },
+   "place": {
+    "before": 1.0,
+    "after": 0.2,
+    "sentence_before": 0.95,
+    "sentence_after": 0.4,
+    "sentence_after_worst_lambda": 0.15,
+    "chance": 0.2
+   }
+  }
+ },
+ "written_bridge_sketch": {
+  "status": "design only; not implemented in this round",
+  "applies_if": "the after column falls back to chance (memorised verdict)",
+  "key": "the phrase's set of 2-byte tokens, exactly as sc_sfk features / content_feature already build them (order-free set, no positions).",
+  "value": "(slot, name) as a string pair, e.g. ('place', '书架').",
+  "write": "one record per (phrase, slot+name) observation; same key + same value merges (count+1), same key + different value replaces (old value into history), a batch that carries two different values for one key is rejected whole.",
+  "read": "sentence -> locate the phrase (R9 localisation) -> phrase token set -> table read; answer only when exactly one address anchors the set, otherwise no_match / ambiguous and the answer is withheld.",
+  "size": "9 rows (4 object + 5 place), 0 training, 0 gradient.",
+  "why_minimal": "it writes only the mapping the closed-form bridge cannot generalise; it adds no parameter, no threshold, and reuses the existing write/read discipline."
+ },
+ "cost": {
+  "cpu_seconds": 18.562,
+  "wall_seconds": 24.94,
+  "cpu_cap": 200.0,
+  "estimate_cpu_upper": 40.0,
+  "threads": 1
+ }
+}
