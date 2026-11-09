@@ -15,6 +15,7 @@
 | D-20261109-04 | 判据改写（读数后夹具字面修正，重跑读数逐项相同） | 夹具 `native_goal_world_wide.states` 的 `zip` 补 `strict=True` 以满足仓库 B905 闸；夹具 sha 变更、重冻重跑，全部读数相同 | 59994d141 |
 | D-20261109-05 | 外部依赖（R3 由“仅缓存”放宽为“允许下载”） | 为回答“夹具是否存在可分上界”，允许下载冻结句向量权重并记录 revision／config digest，R3 只作上界、不进总判定 | c23b1d9ca |
 | D-20261109-06 | 读数后 runner 增补（R4a 输出逐对明细） | R4a 首跑缺逐对距离，无法做家族拆分；给 runner 加 `pairs` 输出后重冻重跑，判据/阈值/夹具未动，八项读数逐项相同 | 90426725e |
+| D-20261109-07 | 预算超限＋读数后 runner 修正（CPU 线程与 wall 计时） | R5 首跑 845.0 CPU、次跑 702.0 CPU（上限 200）；归因为 BLAS 线程自旋＋wall 计时公式写错，限 1 线程后重冻重跑 0.516 CPU，判定与全部读数逐项相同 | 待回填 |
 
 ---
 
@@ -227,4 +228,45 @@ reading["pairs"] = {
 **7. 授权来源**：用户 2026-11-09 的放权条款（“要改已冻结判据……自行决定并执行，但必须留档”）；本笔严格说未改判据，仍按同规格留档。
 
 **8. 对已有结论的影响**：**无读数作废**。首跑与重跑的八项读数逐项相同（R1 gap −0.023106／AUC 0.930655／1-NN 0.05；R2 gap −0.037904／AUC 0.902808／1-NN 0.0125）。新增的是机制读数：1-NN 同模板 R1 95%／R2 98.75%。
+
+---
+
+## D-20261109-07 R5 首跑超预算：CPU 线程与 wall 计时修正后重冻重跑
+
+**1. 编号／时间／类型**：D-20261109-07｜2026-11-09｜**预算超限类**（首跑 844.984 CPU、次跑 701.953 CPU，上限 200）＋读数后 runner 修正（只改资源与计时，不改判据／夹具／读数口径）。
+
+**2. 动了什么（逐字）**：`scripts/training/probe_taiji_slot_probe_20261109.py` 三处。
+
+- 新增（在 `import numpy` 之前，逐字）：
+  ```python
+  for _variable in ("OPENBLAS_NUM_THREADS", "OMP_NUM_THREADS", "MKL_NUM_THREADS"):
+      os.environ.setdefault(_variable, "1")
+
+  import numpy as np
+  import torch
+  ```
+  以及导入段之后的 `torch.set_num_threads(1)`。
+- `phase_run()` 计时原值（逐字）：`started = time.process_time()`；`wall_seconds = round(time.time() - started, 2)`——**把 epoch 秒减成了 CPU 秒**，故首跑报 `wall_seconds = 1794197664.92`（无意义）。
+- 新值（逐字）：`started_cpu = time.process_time()`、`started_wall = time.time()`、`"wall_seconds": round(time.time() - started_wall, 2)`，并在 `cost` 增 `"threads": torch.get_num_threads()`。
+- **判据、阈值、`LAMBDAS`、`FOLDS`、标签、480 条样本、5 折分组、`READABLE_JOINT=0.80`／`NOT_READABLE_MARGIN=0.10` 全部未改**；manifest 因 runner sha 变化重冻一次，`counts` 逐项相同（480 样本／120 states／4 物件／5 地点／折大小 88,112,80,124,76）。
+
+**3. 触发原因与读数出处**：首跑结束时 `cost.cpu_seconds = 844.984`，**超出 200 上限 4.2 倍**。逐段归因（诊断命令，非正式读数）：`features_for('R1')` **0.08 CPU／0.08 wall**、`features_for('R2')` **0.39 CPU／0.39 wall**，而 `arm_reading` 单臂 **381.3 CPU／32.24 wall**（R1）与 **356.7 CPU／29.45 wall**（R2）——即开销几乎全部在 80 次 128×128 的 `np.linalg.solve`：BLAS 为小矩阵也拉起全部 worker 线程自旋。第二次只加 `torch.set_num_threads(1)`，仍 **701.953 CPU／59.59 wall**（CPU/wall≈11.8，线程未被限住）；把线程限制移到 numpy 导入之前后，**0.516 CPU／0.54 wall**，降幅约 1,600 倍。出处：[R5 报告](../../reports/taiji_slot_probe_20261109.json) `cost`；首跑原样留档 [run1](../../reports/taiji_slot_probe_20261109_run1.json)。
+
+**4. 代价**：
+- 超限本身不可撤回：两次超预算运行共 **1,546.9 CPU 秒**，如实计入本轮预算，**不按“作废重跑”豁免**。
+- 失去的保证：manifest 的 `runner_sha256` 在首跑后改写过两次（每次重冻）；首跑报告的双列 sha 已不描述入库 runner，故按“读数逐项比对 + 旧报告留档”方式保留证据链。
+- 变化的分母／分类：**无**（判定与三组 `per_lambda` 读数逐项相同，见第 8 点）。
+- 旧结论可比性：**全部可比**。
+
+**5. 替代方案（及否掉理由）**：
+- 保留首跑、只把 845 写进报告——**否决**：`wall_seconds` 字段仍是无意义值，且后续每次重跑都会再烧 700+ CPU 秒。
+- 只改 wall 公式、不限线程——**否决**：治不了超预算这个真问题。
+- 换 `scipy.linalg.solve` 或手写 Cholesky 绕开 BLAS——**否决**：同一 BLAS 后端仍在，且引入新依赖／新数值路径，读数可比性下降。
+- 降低 `FOLDS` 或 `LAMBDAS` 把开销压下去——**否决**：那是改判据与分母，代价远大于限线程。
+
+**6. 撤回路径**：删掉三段线程限制与 `threads` 字段、把计时改回单变量，重冻重跑（会重新超预算）；或 `git revert` 本笔。判据与读数不受影响。
+
+**7. 授权来源**：用户 2026-11-09 授权（放权，须留档；“预算要超”属三类之一）。
+
+**8. 对已有结论的影响**：**无读数作废**。三次运行的 `arms`、`verdict`、`counts` 逐项相同：R1／R2 在 λ=0.001／0.1／10 上 **object 1.0、place 1.0、joint 1.0**，λ=1000 时 place 降到 **0.627083**（R1）／**0.552083**（R2），总判定 **`content_present_readout_wrong`**。新增的只是资源读数（最终 **0.516 CPU／0.54 wall／threads=1**）与可用的 wall 计时。
 

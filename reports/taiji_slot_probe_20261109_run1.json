@@ -1,0 +1,107 @@
+{
+  "schema": "taiji-slot-probe-v1",
+  "date": "2026-11-09",
+  "arm": "R5",
+  "verdict": "content_present_readout_wrong",
+  "readable_arms": [
+    "R1",
+    "R2"
+  ],
+  "not_readable_arms": [],
+  "runner_sha256": "37c160a58d8753652d936fc5feaf64ccd8e41c255ea2e6f8a8fb805e51d283de",
+  "counts": {
+    "samples": 480,
+    "states": 120,
+    "objects": 4,
+    "places": 5,
+    "fold_sizes": [
+      88,
+      112,
+      80,
+      124,
+      76
+    ]
+  },
+  "arms": {
+    "R1": {
+      "per_lambda": [
+        {
+          "lambda": 0.001,
+          "object_accuracy": 1.0,
+          "place_accuracy": 1.0,
+          "joint_accuracy": 1.0
+        },
+        {
+          "lambda": 0.1,
+          "object_accuracy": 1.0,
+          "place_accuracy": 1.0,
+          "joint_accuracy": 1.0
+        },
+        {
+          "lambda": 10.0,
+          "object_accuracy": 1.0,
+          "place_accuracy": 1.0,
+          "joint_accuracy": 1.0
+        },
+        {
+          "lambda": 1000.0,
+          "object_accuracy": 1.0,
+          "place_accuracy": 0.627083,
+          "joint_accuracy": 0.627083
+        }
+      ],
+      "best": {
+        "lambda": 0.001,
+        "object_accuracy": 1.0,
+        "place_accuracy": 1.0,
+        "joint_accuracy": 1.0
+      },
+      "verdict": "readable"
+    },
+    "R2": {
+      "per_lambda": [
+        {
+          "lambda": 0.001,
+          "object_accuracy": 1.0,
+          "place_accuracy": 1.0,
+          "joint_accuracy": 1.0
+        },
+        {
+          "lambda": 0.1,
+          "object_accuracy": 1.0,
+          "place_accuracy": 1.0,
+          "joint_accuracy": 1.0
+        },
+        {
+          "lambda": 10.0,
+          "object_accuracy": 1.0,
+          "place_accuracy": 1.0,
+          "joint_accuracy": 1.0
+        },
+        {
+          "lambda": 1000.0,
+          "object_accuracy": 1.0,
+          "place_accuracy": 0.552083,
+          "joint_accuracy": 0.552083
+        }
+      ],
+      "best": {
+        "lambda": 0.001,
+        "object_accuracy": 1.0,
+        "place_accuracy": 1.0,
+        "joint_accuracy": 1.0
+      },
+      "verdict": "readable"
+    }
+  },
+  "disclosures": [
+    "The read-out is fitted on the same 480 samples it is scored on, but strictly out-of-fold; a state in the test fold is never seen in training.",
+    "Ridge regression is linear; a negative result rules out a linear read-out, not every possible read-out.",
+    "The goals here are all describe-form; this probe says nothing about the description/name gap measured in R3 and R4a."
+  ],
+  "cost": {
+    "cpu_seconds": 844.984,
+    "wall_seconds": 1794197664.92,
+    "cpu_cap": 200.0
+  }
+}

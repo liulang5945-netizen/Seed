@@ -1,0 +1,41 @@
+{
+  "schema": "taiji-slot-probe-v1",
+  "date": "2026-11-09",
+  "frozen_at": "2026-11-09T12:18:44",
+  "runner_sha256": "a06640df5f228666ea3e43cdc5984a87a06a7c2df4d2d159082d000682f8b06a",
+  "counts": {
+    "samples": 480,
+    "states": 120,
+    "objects": 4,
+    "places": 5,
+    "fold_sizes": [
+      88,
+      112,
+      80,
+      124,
+      76
+    ]
+  },
+  "definition": {
+    "read_out": "closed-form ridge regression from the feature vector to one-hot labels",
+    "solution": "W = (X^T X + lambda I)^-1 X^T Y; one linear solve, no gradient step",
+    "cross_validation": "5 folds keyed by sha256(state_text)[0] % 5; all four goals of a state stay together",
+    "lambdas": [
+      0.001,
+      0.1,
+      10.0,
+      1000.0
+    ],
+    "targets": "object (4 classes) and place (5 classes), each read separately"
+  },
+  "criteria": {
+    "readable": "best joint accuracy over lambdas >= 0.8",
+    "not_readable": "best joint accuracy <= chance + 0.1",
+    "chance": {
+      "object": 0.25,
+      "place": 0.2,
+      "joint": 0.05
+    },
+    "overall": "content_present_readout_wrong if R1 or R2 is readable; representation_lacks_content if both are not_readable; otherwise inconclusive"
+  }
+}
