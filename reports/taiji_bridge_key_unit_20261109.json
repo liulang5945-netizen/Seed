@@ -1,0 +1,3315 @@
+{
+ "schema": "taiji-bridge-key-unit-r12-report-v1",
+ "runner_sha256": "3d484121c294976d15cb41408694ec4c7d62d6d0f1eae7af59861fae1e859ef1",
+ "manifest_sha256": "9c72010ba1f08a919061e422b9f3dba8073852800f7382707733cb98b9ce7a75",
+ "bridge_sha256": "248a04934fa4ce60e3d0e92a7381e1dab4df71b22fbe71e08853e73f6941f4de",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "8fa3aafde38b1cbad3b021dc271abd316c0a265c68870403dd4ca7b0b53e0c6a"
+ },
+ "definition": {
+  "records": "nine (phrase -> (slot, name)) rows, identical for every arm",
+  "arms": {
+   "byte_pair": "R11 unit: 2-byte sliding windows on the UTF-8 bytes, hex, order-free.",
+   "codepoint": "one whole UTF-8 code point per token, order-free; invalid bytes -> empty key.",
+   "codepoint_offset": "code point tagged with its character index (offset-aware diagnostic)."
+  },
+  "read_rule": "an address anchors only through a token that occurs in exactly one address; one anchor answers, two or more say ambiguous_multiple_anchors, zero says no_match, and every non-answer returns value None.",
+  "unknown_inputs": "12 frozen candidates, identical for every arm; a collision is a non-empty intersection with the table keys under that arm; a failure is a non-empty returned value.",
+  "fragments": "for each written phrase, the bytes cut at offset 1 and offset 2 (18 inputs); they are not valid text, so any returned value is an over-answer.",
+  "rewrites": "9 synonymous paraphrases with their intended (slot, name); correct / wrong / abstain are all reported, only wrong pointers count as false answers."
+ },
+ "criteria": {
+  "capability": "every arm: 40/40 located-phrase reads and zero wrong pointers.",
+  "zero_line": "byte_pair and codepoint: zero answering phrases among the 12 unknown candidates (collision set per arm, same input list).",
+  "companions": "fragments, whole sentences and rewrites are reported for every arm, not gated.",
+  "closed_state": "nine checks identical before and after the arms; sc_sfk stays None."
+ },
+ "arms": {
+  "byte_pair": {
+   "write": {
+    "appended": 9,
+    "slots": 9,
+    "key_size": [
+     6,
+     7,
+     9
+    ]
+   },
+   "capability": {
+    "rows": [
+     {
+      "phrase": "圆口的器皿",
+      "expected": [
+       "object",
+       "蓝色杯子"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "蓝色杯子"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "四方木台",
+      "expected": [
+       "place",
+       "木桌"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "木桌"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "圆口的器皿",
+      "expected": [
+       "object",
+       "蓝色杯子"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "蓝色杯子"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "靠窗的台面",
+      "expected": [
+       "place",
+       "窗台"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "窗台"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "圆口的器皿",
+      "expected": [
+       "object",
+       "蓝色杯子"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "蓝色杯子"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "手边的匣子",
+      "expected": [
+       "place",
+       "左盒"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "左盒"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "圆口的器皿",
+      "expected": [
+       "object",
+       "蓝色杯子"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "蓝色杯子"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "靠墙的层架",
+      "expected": [
+       "place",
+       "书架"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "书架"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "圆口的器皿",
+      "expected": [
+       "object",
+       "蓝色杯子"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "蓝色杯子"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "脚边的毡子",
+      "expected": [
+       "place",
+       "地毯"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "地毯"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "带纹路的方块",
+      "expected": [
+       "object",
+       "红色印章"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "红色印章"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "四方木台",
+      "expected": [
+       "place",
+       "木桌"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "木桌"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "带纹路的方块",
+      "expected": [
+       "object",
+       "红色印章"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "红色印章"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "靠窗的台面",
+      "expected": [
+       "place",
+       "窗台"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "窗台"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "带纹路的方块",
+      "expected": [
+       "object",
+       "红色印章"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "红色印章"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "手边的匣子",
+      "expected": [
+       "place",
+       "左盒"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "左盒"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "带纹路的方块",
+      "expected": [
+       "object",
+       "红色印章"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "红色印章"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "靠墙的层架",
+      "expected": [
+       "place",
+       "书架"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "书架"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "带纹路的方块",
+      "expected": [
+       "object",
+       "红色印章"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "红色印章"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "脚边的毡子",
+      "expected": [
+       "place",
+       "地毯"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "地毯"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "细长的容器",
+      "expected": [
+       "object",
+       "绿色瓶子"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "绿色瓶子"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "四方木台",
+      "expected": [
+       "place",
+       "木桌"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "木桌"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "细长的容器",
+      "expected": [
+       "object",
+       "绿色瓶子"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "绿色瓶子"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "靠窗的台面",
+      "expected": [
+       "place",
+       "窗台"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "窗台"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "细长的容器",
+      "expected": [
+       "object",
+       "绿色瓶子"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "绿色瓶子"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "手边的匣子",
+      "expected": [
+       "place",
+       "左盒"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "左盒"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "细长的容器",
+      "expected": [
+       "object",
+       "绿色瓶子"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "绿色瓶子"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "靠墙的层架",
+      "expected": [
+       "place",
+       "书架"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "书架"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "细长的容器",
+      "expected": [
+       "object",
+       "绿色瓶子"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "绿色瓶子"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "脚边的毡子",
+      "expected": [
+       "place",
+       "地毯"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "地毯"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "圆滚滚的东西",
+      "expected": [
+       "object",
+       "黄色球"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "黄色球"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "四方木台",
+      "expected": [
+       "place",
+       "木桌"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "木桌"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "圆滚滚的东西",
+      "expected": [
+       "object",
+       "黄色球"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "黄色球"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "靠窗的台面",
+      "expected": [
+       "place",
+       "窗台"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "窗台"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "圆滚滚的东西",
+      "expected": [
+       "object",
+       "黄色球"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "黄色球"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "手边的匣子",
+      "expected": [
+       "place",
+       "左盒"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "左盒"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "圆滚滚的东西",
+      "expected": [
+       "object",
+       "黄色球"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "黄色球"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "靠墙的层架",
+      "expected": [
+       "place",
+       "书架"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "书架"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "圆滚滚的东西",
+      "expected": [
+       "object",
+       "黄色球"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "黄色球"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "脚边的毡子",
+      "expected": [
+       "place",
+       "地毯"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "地毯"
+      ],
+      "reason": "single_anchor"
+     }
+    ],
+    "hits": 40,
+    "of": 40,
+    "wrong_pointers": 0,
+    "abstained": 0,
+    "accuracy": 1.0,
+    "ok": true
+   },
+   "unknown": {
+    "rows": [
+     {
+      "phrase": "黑色铁铃",
+      "shared_tokens": [],
+      "decision": "no_match",
+      "value": null,
+      "reason": "unknown_token",
+      "answered": false,
+      "r11_rejected": false
+     },
+     {
+      "phrase": "白色帆布",
+      "shared_tokens": [
+       "86e5",
+       "e5b8"
+      ],
+      "decision": "ambiguous_multiple_anchors",
+      "value": null,
+      "reason": "multiple_anchors",
+      "answered": false,
+      "r11_rejected": true
+     },
+     {
+      "phrase": "长柄铜勺",
+      "shared_tokens": [],
+      "decision": "no_match",
+      "value": null,
+      "reason": "unknown_token",
+      "answered": false,
+      "r11_rejected": false
+     },
+     {
+      "phrase": "软木瓶塞",
+      "shared_tokens": [],
+      "decision": "no_match",
+      "value": null,
+      "reason": "unknown_token",
+      "answered": false,
+      "r11_rejected": false
+     },
+     {
+      "phrase": "蓝色毛巾",
+      "shared_tokens": [],
+      "decision": "no_match",
+      "value": null,
+      "reason": "unknown_token",
+      "answered": false,
+      "r11_rejected": false
+     },
+     {
+      "phrase": "银质圆镜",
+      "shared_tokens": [
+       "86e9",
+       "e59c"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "绿色瓶子"
+      ],
+      "reason": "single_anchor",
+      "answered": true,
+      "r11_rejected": true
+     },
+     {
+      "phrase": "棕色皮箱",
+      "shared_tokens": [
+       "e79a"
+      ],
+      "decision": "no_match",
+      "value": null,
+      "reason": "unknown_token",
+      "answered": false,
+      "r11_rejected": true
+     },
+     {
+      "phrase": "青色陶罐",
+      "shared_tokens": [
+       "e99d"
+      ],
+      "decision": "no_match",
+      "value": null,
+      "reason": "unknown_token",
+      "answered": false,
+      "r11_rejected": true
+     },
+     {
+      "phrase": "灰色石阶",
+      "shared_tokens": [],
+      "decision": "no_match",
+      "value": null,
+      "reason": "unknown_token",
+      "answered": false,
+      "r11_rejected": false
+     },
+     {
+      "phrase": "紫色绸带",
+      "shared_tokens": [
+       "e7bb"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "绿色瓶子"
+      ],
+      "reason": "single_anchor",
+      "answered": true,
+      "r11_rejected": false
+     },
+     {
+      "phrase": "金色烛台",
+      "shared_tokens": [
+       "8fb0"
+      ],
+      "decision": "no_match",
+      "value": null,
+      "reason": "unknown_token",
+      "answered": false,
+      "r11_rejected": false
+     },
+     {
+      "phrase": "深红木箱",
+      "shared_tokens": [
+       "e69c"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "木桌"
+      ],
+      "reason": "single_anchor",
+      "answered": true,
+      "r11_rejected": false
+     }
+    ],
+    "candidates": 12,
+    "collision_phrases": 7,
+    "answering_phrases": 3,
+    "collision_rate": 0.25,
+    "zero_line_ok": false,
+    "r11_rejected_answering": 1,
+    "r11_rejected_total": 4
+   },
+   "fragments": {
+    "rows": [
+     {
+      "phrase": "圆口的器皿",
+      "byte_offset": 1,
+      "decision": "matched",
+      "value": [
+       "object",
+       "绿色瓶子"
+      ],
+      "kind": "other_record"
+     },
+     {
+      "phrase": "圆口的器皿",
+      "byte_offset": 2,
+      "decision": "matched",
+      "value": [
+       "object",
+       "蓝色杯子"
+      ],
+      "kind": "same_record"
+     },
+     {
+      "phrase": "带纹路的方块",
+      "byte_offset": 1,
+      "decision": "ambiguous_multiple_anchors",
+      "value": null,
+      "kind": "abstain"
+     },
+     {
+      "phrase": "带纹路的方块",
+      "byte_offset": 2,
+      "decision": "matched",
+      "value": [
+       "object",
+       "红色印章"
+      ],
+      "kind": "same_record"
+     },
+     {
+      "phrase": "细长的容器",
+      "byte_offset": 1,
+      "decision": "ambiguous_multiple_anchors",
+      "value": null,
+      "kind": "abstain"
+     },
+     {
+      "phrase": "细长的容器",
+      "byte_offset": 2,
+      "decision": "matched",
+      "value": [
+       "object",
+       "绿色瓶子"
+      ],
+      "kind": "same_record"
+     },
+     {
+      "phrase": "圆滚滚的东西",
+      "byte_offset": 1,
+      "decision": "matched",
+      "value": [
+       "object",
+       "黄色球"
+      ],
+      "kind": "same_record"
+     },
+     {
+      "phrase": "圆滚滚的东西",
+      "byte_offset": 2,
+      "decision": "matched",
+      "value": [
+       "object",
+       "黄色球"
+      ],
+      "kind": "same_record"
+     },
+     {
+      "phrase": "四方木台",
+      "byte_offset": 1,
+      "decision": "matched",
+      "value": [
+       "object",
+       "红色印章"
+      ],
+      "kind": "other_record"
+     },
+     {
+      "phrase": "四方木台",
+      "byte_offset": 2,
+      "decision": "matched",
+      "value": [
+       "place",
+       "木桌"
+      ],
+      "kind": "same_record"
+     },
+     {
+      "phrase": "靠窗的台面",
+      "byte_offset": 1,
+      "decision": "no_match",
+      "value": null,
+      "kind": "abstain"
+     },
+     {
+      "phrase": "靠窗的台面",
+      "byte_offset": 2,
+      "decision": "matched",
+      "value": [
+       "place",
+       "窗台"
+      ],
+      "kind": "same_record"
+     },
+     {
+      "phrase": "手边的匣子",
+      "byte_offset": 1,
+      "decision": "no_match",
+      "value": null,
+      "kind": "abstain"
+     },
+     {
+      "phrase": "手边的匣子",
+      "byte_offset": 2,
+      "decision": "matched",
+      "value": [
+       "place",
+       "左盒"
+      ],
+      "kind": "same_record"
+     },
+     {
+      "phrase": "靠墙的层架",
+      "byte_offset": 1,
+      "decision": "no_match",
+      "value": null,
+      "kind": "abstain"
+     },
+     {
+      "phrase": "靠墙的层架",
+      "byte_offset": 2,
+      "decision": "matched",
+      "value": [
+       "place",
+       "书架"
+      ],
+      "kind": "same_record"
+     },
+     {
+      "phrase": "脚边的毡子",
+      "byte_offset": 1,
+      "decision": "no_match",
+      "value": null,
+      "kind": "abstain"
+     },
+     {
+      "phrase": "脚边的毡子",
+      "byte_offset": 2,
+      "decision": "matched",
+      "value": [
+       "place",
+       "地毯"
+      ],
+      "kind": "same_record"
+     }
+    ],
+    "inputs": 18,
+    "same_record": 10,
+    "other_record": 2,
+    "false_answers": 12
+   },
+   "sentences_direct": {
+    "rows": [
+     {
+      "sentence": "让圆口的器皿到四方木台。",
+      "decision": "ambiguous_multiple_anchors",
+      "value": null,
+      "reason": "multiple_anchors"
+     },
+     {
+      "sentence": "让圆口的器皿到靠窗的台面。",
+      "decision": "matched",
+      "value": [
+       "object",
+       "绿色瓶子"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "sentence": "让圆口的器皿到手边的匣子。",
+      "decision": "matched",
+      "value": [
+       "object",
+       "绿色瓶子"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "sentence": "让圆口的器皿到靠墙的层架。",
+      "decision": "matched",
+      "value": [
+       "object",
+       "绿色瓶子"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "sentence": "让圆口的器皿到脚边的毡子。",
+      "decision": "matched",
+      "value": [
+       "object",
+       "绿色瓶子"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "sentence": "让带纹路的方块到四方木台。",
+      "decision": "ambiguous_multiple_anchors",
+      "value": null,
+      "reason": "multiple_anchors"
+     },
+     {
+      "sentence": "让带纹路的方块到靠窗的台面。",
+      "decision": "ambiguous_multiple_anchors",
+      "value": null,
+      "reason": "multiple_anchors"
+     },
+     {
+      "sentence": "让带纹路的方块到手边的匣子。",
+      "decision": "ambiguous_multiple_anchors",
+      "value": null,
+      "reason": "multiple_anchors"
+     },
+     {
+      "sentence": "让带纹路的方块到靠墙的层架。",
+      "decision": "ambiguous_multiple_anchors",
+      "value": null,
+      "reason": "multiple_anchors"
+     },
+     {
+      "sentence": "让带纹路的方块到脚边的毡子。",
+      "decision": "ambiguous_multiple_anchors",
+      "value": null,
+      "reason": "multiple_anchors"
+     },
+     {
+      "sentence": "让细长的容器到四方木台。",
+      "decision": "ambiguous_multiple_anchors",
+      "value": null,
+      "reason": "multiple_anchors"
+     },
+     {
+      "sentence": "让细长的容器到靠窗的台面。",
+      "decision": "ambiguous_multiple_anchors",
+      "value": null,
+      "reason": "multiple_anchors"
+     },
+     {
+      "sentence": "让细长的容器到手边的匣子。",
+      "decision": "ambiguous_multiple_anchors",
+      "value": null,
+      "reason": "multiple_anchors"
+     },
+     {
+      "sentence": "让细长的容器到靠墙的层架。",
+      "decision": "ambiguous_multiple_anchors",
+      "value": null,
+      "reason": "multiple_anchors"
+     },
+     {
+      "sentence": "让细长的容器到脚边的毡子。",
+      "decision": "ambiguous_multiple_anchors",
+      "value": null,
+      "reason": "multiple_anchors"
+     },
+     {
+      "sentence": "让圆滚滚的东西到四方木台。",
+      "decision": "ambiguous_multiple_anchors",
+      "value": null,
+      "reason": "multiple_anchors"
+     },
+     {
+      "sentence": "让圆滚滚的东西到靠窗的台面。",
+      "decision": "ambiguous_multiple_anchors",
+      "value": null,
+      "reason": "multiple_anchors"
+     },
+     {
+      "sentence": "让圆滚滚的东西到手边的匣子。",
+      "decision": "ambiguous_multiple_anchors",
+      "value": null,
+      "reason": "multiple_anchors"
+     },
+     {
+      "sentence": "让圆滚滚的东西到靠墙的层架。",
+      "decision": "ambiguous_multiple_anchors",
+      "value": null,
+      "reason": "multiple_anchors"
+     },
+     {
+      "sentence": "让圆滚滚的东西到脚边的毡子。",
+      "decision": "ambiguous_multiple_anchors",
+      "value": null,
+      "reason": "multiple_anchors"
+     }
+    ],
+    "inputs": 20,
+    "false_answers": 4
+   },
+   "rewrites": {
+    "rows": [
+     {
+      "text": "喝水的杯子",
+      "expected": [
+       "object",
+       "蓝色杯子"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "地毯"
+      ],
+      "outcome": "wrong"
+     },
+     {
+      "text": "盖章用的印章",
+      "expected": [
+       "object",
+       "红色印章"
+      ],
+      "decision": "no_match",
+      "value": null,
+      "outcome": "abstain"
+     },
+     {
+      "text": "盛水的瓶子",
+      "expected": [
+       "object",
+       "绿色瓶子"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "木桌"
+      ],
+      "outcome": "wrong"
+     },
+     {
+      "text": "圆形的皮球",
+      "expected": [
+       "object",
+       "黄色球"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "蓝色杯子"
+      ],
+      "outcome": "wrong"
+     },
+     {
+      "text": "方方正正的木桌子",
+      "expected": [
+       "place",
+       "木桌"
+      ],
+      "decision": "ambiguous_multiple_anchors",
+      "value": null,
+      "outcome": "abstain"
+     },
+     {
+      "text": "窗前的台板",
+      "expected": [
+       "place",
+       "窗台"
+      ],
+      "decision": "no_match",
+      "value": null,
+      "outcome": "abstain"
+     },
+     {
+      "text": "手边的小盒子",
+      "expected": [
+       "place",
+       "左盒"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "左盒"
+      ],
+      "outcome": "correct"
+     },
+     {
+      "text": "墙上的架子",
+      "expected": [
+       "place",
+       "书架"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "地毯"
+      ],
+      "outcome": "wrong"
+     },
+     {
+      "text": "脚下的垫子",
+      "expected": [
+       "place",
+       "地毯"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "地毯"
+      ],
+      "outcome": "correct"
+     }
+    ],
+    "inputs": 9,
+    "correct": 2,
+    "wrong": 4,
+    "abstain": 3,
+    "false_answers": 4
+   }
+  },
+  "codepoint": {
+   "write": {
+    "appended": 9,
+    "slots": 9,
+    "key_size": [
+     4,
+     5,
+     6
+    ]
+   },
+   "capability": {
+    "rows": [
+     {
+      "phrase": "圆口的器皿",
+      "expected": [
+       "object",
+       "蓝色杯子"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "蓝色杯子"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "四方木台",
+      "expected": [
+       "place",
+       "木桌"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "木桌"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "圆口的器皿",
+      "expected": [
+       "object",
+       "蓝色杯子"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "蓝色杯子"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "靠窗的台面",
+      "expected": [
+       "place",
+       "窗台"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "窗台"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "圆口的器皿",
+      "expected": [
+       "object",
+       "蓝色杯子"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "蓝色杯子"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "手边的匣子",
+      "expected": [
+       "place",
+       "左盒"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "左盒"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "圆口的器皿",
+      "expected": [
+       "object",
+       "蓝色杯子"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "蓝色杯子"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "靠墙的层架",
+      "expected": [
+       "place",
+       "书架"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "书架"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "圆口的器皿",
+      "expected": [
+       "object",
+       "蓝色杯子"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "蓝色杯子"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "脚边的毡子",
+      "expected": [
+       "place",
+       "地毯"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "地毯"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "带纹路的方块",
+      "expected": [
+       "object",
+       "红色印章"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "红色印章"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "四方木台",
+      "expected": [
+       "place",
+       "木桌"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "木桌"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "带纹路的方块",
+      "expected": [
+       "object",
+       "红色印章"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "红色印章"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "靠窗的台面",
+      "expected": [
+       "place",
+       "窗台"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "窗台"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "带纹路的方块",
+      "expected": [
+       "object",
+       "红色印章"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "红色印章"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "手边的匣子",
+      "expected": [
+       "place",
+       "左盒"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "左盒"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "带纹路的方块",
+      "expected": [
+       "object",
+       "红色印章"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "红色印章"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "靠墙的层架",
+      "expected": [
+       "place",
+       "书架"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "书架"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "带纹路的方块",
+      "expected": [
+       "object",
+       "红色印章"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "红色印章"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "脚边的毡子",
+      "expected": [
+       "place",
+       "地毯"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "地毯"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "细长的容器",
+      "expected": [
+       "object",
+       "绿色瓶子"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "绿色瓶子"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "四方木台",
+      "expected": [
+       "place",
+       "木桌"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "木桌"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "细长的容器",
+      "expected": [
+       "object",
+       "绿色瓶子"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "绿色瓶子"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "靠窗的台面",
+      "expected": [
+       "place",
+       "窗台"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "窗台"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "细长的容器",
+      "expected": [
+       "object",
+       "绿色瓶子"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "绿色瓶子"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "手边的匣子",
+      "expected": [
+       "place",
+       "左盒"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "左盒"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "细长的容器",
+      "expected": [
+       "object",
+       "绿色瓶子"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "绿色瓶子"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "靠墙的层架",
+      "expected": [
+       "place",
+       "书架"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "书架"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "细长的容器",
+      "expected": [
+       "object",
+       "绿色瓶子"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "绿色瓶子"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "脚边的毡子",
+      "expected": [
+       "place",
+       "地毯"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "地毯"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "圆滚滚的东西",
+      "expected": [
+       "object",
+       "黄色球"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "黄色球"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "四方木台",
+      "expected": [
+       "place",
+       "木桌"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "木桌"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "圆滚滚的东西",
+      "expected": [
+       "object",
+       "黄色球"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "黄色球"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "靠窗的台面",
+      "expected": [
+       "place",
+       "窗台"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "窗台"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "圆滚滚的东西",
+      "expected": [
+       "object",
+       "黄色球"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "黄色球"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "手边的匣子",
+      "expected": [
+       "place",
+       "左盒"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "左盒"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "圆滚滚的东西",
+      "expected": [
+       "object",
+       "黄色球"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "黄色球"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "靠墙的层架",
+      "expected": [
+       "place",
+       "书架"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "书架"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "圆滚滚的东西",
+      "expected": [
+       "object",
+       "黄色球"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "黄色球"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "脚边的毡子",
+      "expected": [
+       "place",
+       "地毯"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "地毯"
+      ],
+      "reason": "single_anchor"
+     }
+    ],
+    "hits": 40,
+    "of": 40,
+    "wrong_pointers": 0,
+    "abstained": 0,
+    "accuracy": 1.0,
+    "ok": true
+   },
+   "unknown": {
+    "rows": [
+     {
+      "phrase": "黑色铁铃",
+      "shared_tokens": [],
+      "decision": "no_match",
+      "value": null,
+      "reason": "unknown_token",
+      "answered": false,
+      "r11_rejected": false
+     },
+     {
+      "phrase": "白色帆布",
+      "shared_tokens": [],
+      "decision": "no_match",
+      "value": null,
+      "reason": "unknown_token",
+      "answered": false,
+      "r11_rejected": true
+     },
+     {
+      "phrase": "长柄铜勺",
+      "shared_tokens": [
+       "长"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "绿色瓶子"
+      ],
+      "reason": "single_anchor",
+      "answered": true,
+      "r11_rejected": false
+     },
+     {
+      "phrase": "软木瓶塞",
+      "shared_tokens": [
+       "木"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "木桌"
+      ],
+      "reason": "single_anchor",
+      "answered": true,
+      "r11_rejected": false
+     },
+     {
+      "phrase": "蓝色毛巾",
+      "shared_tokens": [],
+      "decision": "no_match",
+      "value": null,
+      "reason": "unknown_token",
+      "answered": false,
+      "r11_rejected": false
+     },
+     {
+      "phrase": "银质圆镜",
+      "shared_tokens": [
+       "圆"
+      ],
+      "decision": "no_match",
+      "value": null,
+      "reason": "unknown_token",
+      "answered": false,
+      "r11_rejected": true
+     },
+     {
+      "phrase": "棕色皮箱",
+      "shared_tokens": [],
+      "decision": "no_match",
+      "value": null,
+      "reason": "unknown_token",
+      "answered": false,
+      "r11_rejected": true
+     },
+     {
+      "phrase": "青色陶罐",
+      "shared_tokens": [],
+      "decision": "no_match",
+      "value": null,
+      "reason": "unknown_token",
+      "answered": false,
+      "r11_rejected": true
+     },
+     {
+      "phrase": "灰色石阶",
+      "shared_tokens": [],
+      "decision": "no_match",
+      "value": null,
+      "reason": "unknown_token",
+      "answered": false,
+      "r11_rejected": false
+     },
+     {
+      "phrase": "紫色绸带",
+      "shared_tokens": [
+       "带"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "红色印章"
+      ],
+      "reason": "single_anchor",
+      "answered": true,
+      "r11_rejected": false
+     },
+     {
+      "phrase": "金色烛台",
+      "shared_tokens": [
+       "台"
+      ],
+      "decision": "no_match",
+      "value": null,
+      "reason": "unknown_token",
+      "answered": false,
+      "r11_rejected": false
+     },
+     {
+      "phrase": "深红木箱",
+      "shared_tokens": [
+       "木"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "木桌"
+      ],
+      "reason": "single_anchor",
+      "answered": true,
+      "r11_rejected": false
+     }
+    ],
+    "candidates": 12,
+    "collision_phrases": 6,
+    "answering_phrases": 4,
+    "collision_rate": 0.3333333333333333,
+    "zero_line_ok": false,
+    "r11_rejected_answering": 0,
+    "r11_rejected_total": 4
+   },
+   "fragments": {
+    "rows": [
+     {
+      "phrase": "圆口的器皿",
+      "byte_offset": 1,
+      "decision": "no_match",
+      "value": null,
+      "kind": "abstain"
+     },
+     {
+      "phrase": "圆口的器皿",
+      "byte_offset": 2,
+      "decision": "no_match",
+      "value": null,
+      "kind": "abstain"
+     },
+     {
+      "phrase": "带纹路的方块",
+      "byte_offset": 1,
+      "decision": "no_match",
+      "value": null,
+      "kind": "abstain"
+     },
+     {
+      "phrase": "带纹路的方块",
+      "byte_offset": 2,
+      "decision": "no_match",
+      "value": null,
+      "kind": "abstain"
+     },
+     {
+      "phrase": "细长的容器",
+      "byte_offset": 1,
+      "decision": "no_match",
+      "value": null,
+      "kind": "abstain"
+     },
+     {
+      "phrase": "细长的容器",
+      "byte_offset": 2,
+      "decision": "no_match",
+      "value": null,
+      "kind": "abstain"
+     },
+     {
+      "phrase": "圆滚滚的东西",
+      "byte_offset": 1,
+      "decision": "no_match",
+      "value": null,
+      "kind": "abstain"
+     },
+     {
+      "phrase": "圆滚滚的东西",
+      "byte_offset": 2,
+      "decision": "no_match",
+      "value": null,
+      "kind": "abstain"
+     },
+     {
+      "phrase": "四方木台",
+      "byte_offset": 1,
+      "decision": "no_match",
+      "value": null,
+      "kind": "abstain"
+     },
+     {
+      "phrase": "四方木台",
+      "byte_offset": 2,
+      "decision": "no_match",
+      "value": null,
+      "kind": "abstain"
+     },
+     {
+      "phrase": "靠窗的台面",
+      "byte_offset": 1,
+      "decision": "no_match",
+      "value": null,
+      "kind": "abstain"
+     },
+     {
+      "phrase": "靠窗的台面",
+      "byte_offset": 2,
+      "decision": "no_match",
+      "value": null,
+      "kind": "abstain"
+     },
+     {
+      "phrase": "手边的匣子",
+      "byte_offset": 1,
+      "decision": "no_match",
+      "value": null,
+      "kind": "abstain"
+     },
+     {
+      "phrase": "手边的匣子",
+      "byte_offset": 2,
+      "decision": "no_match",
+      "value": null,
+      "kind": "abstain"
+     },
+     {
+      "phrase": "靠墙的层架",
+      "byte_offset": 1,
+      "decision": "no_match",
+      "value": null,
+      "kind": "abstain"
+     },
+     {
+      "phrase": "靠墙的层架",
+      "byte_offset": 2,
+      "decision": "no_match",
+      "value": null,
+      "kind": "abstain"
+     },
+     {
+      "phrase": "脚边的毡子",
+      "byte_offset": 1,
+      "decision": "no_match",
+      "value": null,
+      "kind": "abstain"
+     },
+     {
+      "phrase": "脚边的毡子",
+      "byte_offset": 2,
+      "decision": "no_match",
+      "value": null,
+      "kind": "abstain"
+     }
+    ],
+    "inputs": 18,
+    "same_record": 0,
+    "other_record": 0,
+    "false_answers": 0
+   },
+   "sentences_direct": {
+    "rows": [
+     {
+      "sentence": "让圆口的器皿到四方木台。",
+      "decision": "ambiguous_multiple_anchors",
+      "value": null,
+      "reason": "multiple_anchors"
+     },
+     {
+      "sentence": "让圆口的器皿到靠窗的台面。",
+      "decision": "ambiguous_multiple_anchors",
+      "value": null,
+      "reason": "multiple_anchors"
+     },
+     {
+      "sentence": "让圆口的器皿到手边的匣子。",
+      "decision": "ambiguous_multiple_anchors",
+      "value": null,
+      "reason": "multiple_anchors"
+     },
+     {
+      "sentence": "让圆口的器皿到靠墙的层架。",
+      "decision": "ambiguous_multiple_anchors",
+      "value": null,
+      "reason": "multiple_anchors"
+     },
+     {
+      "sentence": "让圆口的器皿到脚边的毡子。",
+      "decision": "ambiguous_multiple_anchors",
+      "value": null,
+      "reason": "multiple_anchors"
+     },
+     {
+      "sentence": "让带纹路的方块到四方木台。",
+      "decision": "ambiguous_multiple_anchors",
+      "value": null,
+      "reason": "multiple_anchors"
+     },
+     {
+      "sentence": "让带纹路的方块到靠窗的台面。",
+      "decision": "ambiguous_multiple_anchors",
+      "value": null,
+      "reason": "multiple_anchors"
+     },
+     {
+      "sentence": "让带纹路的方块到手边的匣子。",
+      "decision": "ambiguous_multiple_anchors",
+      "value": null,
+      "reason": "multiple_anchors"
+     },
+     {
+      "sentence": "让带纹路的方块到靠墙的层架。",
+      "decision": "ambiguous_multiple_anchors",
+      "value": null,
+      "reason": "multiple_anchors"
+     },
+     {
+      "sentence": "让带纹路的方块到脚边的毡子。",
+      "decision": "ambiguous_multiple_anchors",
+      "value": null,
+      "reason": "multiple_anchors"
+     },
+     {
+      "sentence": "让细长的容器到四方木台。",
+      "decision": "ambiguous_multiple_anchors",
+      "value": null,
+      "reason": "multiple_anchors"
+     },
+     {
+      "sentence": "让细长的容器到靠窗的台面。",
+      "decision": "ambiguous_multiple_anchors",
+      "value": null,
+      "reason": "multiple_anchors"
+     },
+     {
+      "sentence": "让细长的容器到手边的匣子。",
+      "decision": "ambiguous_multiple_anchors",
+      "value": null,
+      "reason": "multiple_anchors"
+     },
+     {
+      "sentence": "让细长的容器到靠墙的层架。",
+      "decision": "ambiguous_multiple_anchors",
+      "value": null,
+      "reason": "multiple_anchors"
+     },
+     {
+      "sentence": "让细长的容器到脚边的毡子。",
+      "decision": "ambiguous_multiple_anchors",
+      "value": null,
+      "reason": "multiple_anchors"
+     },
+     {
+      "sentence": "让圆滚滚的东西到四方木台。",
+      "decision": "ambiguous_multiple_anchors",
+      "value": null,
+      "reason": "multiple_anchors"
+     },
+     {
+      "sentence": "让圆滚滚的东西到靠窗的台面。",
+      "decision": "ambiguous_multiple_anchors",
+      "value": null,
+      "reason": "multiple_anchors"
+     },
+     {
+      "sentence": "让圆滚滚的东西到手边的匣子。",
+      "decision": "ambiguous_multiple_anchors",
+      "value": null,
+      "reason": "multiple_anchors"
+     },
+     {
+      "sentence": "让圆滚滚的东西到靠墙的层架。",
+      "decision": "ambiguous_multiple_anchors",
+      "value": null,
+      "reason": "multiple_anchors"
+     },
+     {
+      "sentence": "让圆滚滚的东西到脚边的毡子。",
+      "decision": "ambiguous_multiple_anchors",
+      "value": null,
+      "reason": "multiple_anchors"
+     }
+    ],
+    "inputs": 20,
+    "false_answers": 0
+   },
+   "rewrites": {
+    "rows": [
+     {
+      "text": "喝水的杯子",
+      "expected": [
+       "object",
+       "蓝色杯子"
+      ],
+      "decision": "no_match",
+      "value": null,
+      "outcome": "abstain"
+     },
+     {
+      "text": "盖章用的印章",
+      "expected": [
+       "object",
+       "红色印章"
+      ],
+      "decision": "no_match",
+      "value": null,
+      "outcome": "abstain"
+     },
+     {
+      "text": "盛水的瓶子",
+      "expected": [
+       "object",
+       "绿色瓶子"
+      ],
+      "decision": "no_match",
+      "value": null,
+      "outcome": "abstain"
+     },
+     {
+      "text": "圆形的皮球",
+      "expected": [
+       "object",
+       "黄色球"
+      ],
+      "decision": "no_match",
+      "value": null,
+      "outcome": "abstain"
+     },
+     {
+      "text": "方方正正的木桌子",
+      "expected": [
+       "place",
+       "木桌"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "木桌"
+      ],
+      "outcome": "correct"
+     },
+     {
+      "text": "窗前的台板",
+      "expected": [
+       "place",
+       "窗台"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "窗台"
+      ],
+      "outcome": "correct"
+     },
+     {
+      "text": "手边的小盒子",
+      "expected": [
+       "place",
+       "左盒"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "左盒"
+      ],
+      "outcome": "correct"
+     },
+     {
+      "text": "墙上的架子",
+      "expected": [
+       "place",
+       "书架"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "书架"
+      ],
+      "outcome": "correct"
+     },
+     {
+      "text": "脚下的垫子",
+      "expected": [
+       "place",
+       "地毯"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "地毯"
+      ],
+      "outcome": "correct"
+     }
+    ],
+    "inputs": 9,
+    "correct": 5,
+    "wrong": 0,
+    "abstain": 4,
+    "false_answers": 0
+   }
+  },
+  "codepoint_offset": {
+   "write": {
+    "appended": 9,
+    "slots": 9,
+    "key_size": [
+     4,
+     5,
+     6
+    ]
+   },
+   "capability": {
+    "rows": [
+     {
+      "phrase": "圆口的器皿",
+      "expected": [
+       "object",
+       "蓝色杯子"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "蓝色杯子"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "四方木台",
+      "expected": [
+       "place",
+       "木桌"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "木桌"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "圆口的器皿",
+      "expected": [
+       "object",
+       "蓝色杯子"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "蓝色杯子"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "靠窗的台面",
+      "expected": [
+       "place",
+       "窗台"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "窗台"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "圆口的器皿",
+      "expected": [
+       "object",
+       "蓝色杯子"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "蓝色杯子"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "手边的匣子",
+      "expected": [
+       "place",
+       "左盒"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "左盒"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "圆口的器皿",
+      "expected": [
+       "object",
+       "蓝色杯子"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "蓝色杯子"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "靠墙的层架",
+      "expected": [
+       "place",
+       "书架"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "书架"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "圆口的器皿",
+      "expected": [
+       "object",
+       "蓝色杯子"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "蓝色杯子"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "脚边的毡子",
+      "expected": [
+       "place",
+       "地毯"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "地毯"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "带纹路的方块",
+      "expected": [
+       "object",
+       "红色印章"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "红色印章"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "四方木台",
+      "expected": [
+       "place",
+       "木桌"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "木桌"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "带纹路的方块",
+      "expected": [
+       "object",
+       "红色印章"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "红色印章"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "靠窗的台面",
+      "expected": [
+       "place",
+       "窗台"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "窗台"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "带纹路的方块",
+      "expected": [
+       "object",
+       "红色印章"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "红色印章"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "手边的匣子",
+      "expected": [
+       "place",
+       "左盒"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "左盒"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "带纹路的方块",
+      "expected": [
+       "object",
+       "红色印章"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "红色印章"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "靠墙的层架",
+      "expected": [
+       "place",
+       "书架"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "书架"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "带纹路的方块",
+      "expected": [
+       "object",
+       "红色印章"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "红色印章"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "脚边的毡子",
+      "expected": [
+       "place",
+       "地毯"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "地毯"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "细长的容器",
+      "expected": [
+       "object",
+       "绿色瓶子"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "绿色瓶子"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "四方木台",
+      "expected": [
+       "place",
+       "木桌"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "木桌"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "细长的容器",
+      "expected": [
+       "object",
+       "绿色瓶子"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "绿色瓶子"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "靠窗的台面",
+      "expected": [
+       "place",
+       "窗台"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "窗台"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "细长的容器",
+      "expected": [
+       "object",
+       "绿色瓶子"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "绿色瓶子"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "手边的匣子",
+      "expected": [
+       "place",
+       "左盒"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "左盒"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "细长的容器",
+      "expected": [
+       "object",
+       "绿色瓶子"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "绿色瓶子"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "靠墙的层架",
+      "expected": [
+       "place",
+       "书架"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "书架"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "细长的容器",
+      "expected": [
+       "object",
+       "绿色瓶子"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "绿色瓶子"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "脚边的毡子",
+      "expected": [
+       "place",
+       "地毯"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "地毯"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "圆滚滚的东西",
+      "expected": [
+       "object",
+       "黄色球"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "黄色球"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "四方木台",
+      "expected": [
+       "place",
+       "木桌"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "木桌"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "圆滚滚的东西",
+      "expected": [
+       "object",
+       "黄色球"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "黄色球"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "靠窗的台面",
+      "expected": [
+       "place",
+       "窗台"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "窗台"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "圆滚滚的东西",
+      "expected": [
+       "object",
+       "黄色球"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "黄色球"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "手边的匣子",
+      "expected": [
+       "place",
+       "左盒"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "左盒"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "圆滚滚的东西",
+      "expected": [
+       "object",
+       "黄色球"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "黄色球"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "靠墙的层架",
+      "expected": [
+       "place",
+       "书架"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "书架"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "圆滚滚的东西",
+      "expected": [
+       "object",
+       "黄色球"
+      ],
+      "decision": "matched",
+      "value": [
+       "object",
+       "黄色球"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "phrase": "脚边的毡子",
+      "expected": [
+       "place",
+       "地毯"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "地毯"
+      ],
+      "reason": "single_anchor"
+     }
+    ],
+    "hits": 40,
+    "of": 40,
+    "wrong_pointers": 0,
+    "abstained": 0,
+    "accuracy": 1.0,
+    "ok": true
+   },
+   "unknown": {
+    "rows": [
+     {
+      "phrase": "黑色铁铃",
+      "shared_tokens": [],
+      "decision": "no_match",
+      "value": null,
+      "reason": "unknown_token",
+      "answered": false,
+      "r11_rejected": false
+     },
+     {
+      "phrase": "白色帆布",
+      "shared_tokens": [],
+      "decision": "no_match",
+      "value": null,
+      "reason": "unknown_token",
+      "answered": false,
+      "r11_rejected": true
+     },
+     {
+      "phrase": "长柄铜勺",
+      "shared_tokens": [],
+      "decision": "no_match",
+      "value": null,
+      "reason": "unknown_token",
+      "answered": false,
+      "r11_rejected": false
+     },
+     {
+      "phrase": "软木瓶塞",
+      "shared_tokens": [],
+      "decision": "no_match",
+      "value": null,
+      "reason": "unknown_token",
+      "answered": false,
+      "r11_rejected": false
+     },
+     {
+      "phrase": "蓝色毛巾",
+      "shared_tokens": [],
+      "decision": "no_match",
+      "value": null,
+      "reason": "unknown_token",
+      "answered": false,
+      "r11_rejected": false
+     },
+     {
+      "phrase": "银质圆镜",
+      "shared_tokens": [],
+      "decision": "no_match",
+      "value": null,
+      "reason": "unknown_token",
+      "answered": false,
+      "r11_rejected": true
+     },
+     {
+      "phrase": "棕色皮箱",
+      "shared_tokens": [],
+      "decision": "no_match",
+      "value": null,
+      "reason": "unknown_token",
+      "answered": false,
+      "r11_rejected": true
+     },
+     {
+      "phrase": "青色陶罐",
+      "shared_tokens": [],
+      "decision": "no_match",
+      "value": null,
+      "reason": "unknown_token",
+      "answered": false,
+      "r11_rejected": true
+     },
+     {
+      "phrase": "灰色石阶",
+      "shared_tokens": [],
+      "decision": "no_match",
+      "value": null,
+      "reason": "unknown_token",
+      "answered": false,
+      "r11_rejected": false
+     },
+     {
+      "phrase": "紫色绸带",
+      "shared_tokens": [],
+      "decision": "no_match",
+      "value": null,
+      "reason": "unknown_token",
+      "answered": false,
+      "r11_rejected": false
+     },
+     {
+      "phrase": "金色烛台",
+      "shared_tokens": [
+       "3:台"
+      ],
+      "decision": "no_match",
+      "value": null,
+      "reason": "unknown_token",
+      "answered": false,
+      "r11_rejected": false
+     },
+     {
+      "phrase": "深红木箱",
+      "shared_tokens": [
+       "2:木"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "木桌"
+      ],
+      "reason": "single_anchor",
+      "answered": true,
+      "r11_rejected": false
+     }
+    ],
+    "candidates": 12,
+    "collision_phrases": 2,
+    "answering_phrases": 1,
+    "collision_rate": 0.08333333333333333,
+    "zero_line_ok": false,
+    "r11_rejected_answering": 0,
+    "r11_rejected_total": 4
+   },
+   "fragments": {
+    "rows": [
+     {
+      "phrase": "圆口的器皿",
+      "byte_offset": 1,
+      "decision": "no_match",
+      "value": null,
+      "kind": "abstain"
+     },
+     {
+      "phrase": "圆口的器皿",
+      "byte_offset": 2,
+      "decision": "no_match",
+      "value": null,
+      "kind": "abstain"
+     },
+     {
+      "phrase": "带纹路的方块",
+      "byte_offset": 1,
+      "decision": "no_match",
+      "value": null,
+      "kind": "abstain"
+     },
+     {
+      "phrase": "带纹路的方块",
+      "byte_offset": 2,
+      "decision": "no_match",
+      "value": null,
+      "kind": "abstain"
+     },
+     {
+      "phrase": "细长的容器",
+      "byte_offset": 1,
+      "decision": "no_match",
+      "value": null,
+      "kind": "abstain"
+     },
+     {
+      "phrase": "细长的容器",
+      "byte_offset": 2,
+      "decision": "no_match",
+      "value": null,
+      "kind": "abstain"
+     },
+     {
+      "phrase": "圆滚滚的东西",
+      "byte_offset": 1,
+      "decision": "no_match",
+      "value": null,
+      "kind": "abstain"
+     },
+     {
+      "phrase": "圆滚滚的东西",
+      "byte_offset": 2,
+      "decision": "no_match",
+      "value": null,
+      "kind": "abstain"
+     },
+     {
+      "phrase": "四方木台",
+      "byte_offset": 1,
+      "decision": "no_match",
+      "value": null,
+      "kind": "abstain"
+     },
+     {
+      "phrase": "四方木台",
+      "byte_offset": 2,
+      "decision": "no_match",
+      "value": null,
+      "kind": "abstain"
+     },
+     {
+      "phrase": "靠窗的台面",
+      "byte_offset": 1,
+      "decision": "no_match",
+      "value": null,
+      "kind": "abstain"
+     },
+     {
+      "phrase": "靠窗的台面",
+      "byte_offset": 2,
+      "decision": "no_match",
+      "value": null,
+      "kind": "abstain"
+     },
+     {
+      "phrase": "手边的匣子",
+      "byte_offset": 1,
+      "decision": "no_match",
+      "value": null,
+      "kind": "abstain"
+     },
+     {
+      "phrase": "手边的匣子",
+      "byte_offset": 2,
+      "decision": "no_match",
+      "value": null,
+      "kind": "abstain"
+     },
+     {
+      "phrase": "靠墙的层架",
+      "byte_offset": 1,
+      "decision": "no_match",
+      "value": null,
+      "kind": "abstain"
+     },
+     {
+      "phrase": "靠墙的层架",
+      "byte_offset": 2,
+      "decision": "no_match",
+      "value": null,
+      "kind": "abstain"
+     },
+     {
+      "phrase": "脚边的毡子",
+      "byte_offset": 1,
+      "decision": "no_match",
+      "value": null,
+      "kind": "abstain"
+     },
+     {
+      "phrase": "脚边的毡子",
+      "byte_offset": 2,
+      "decision": "no_match",
+      "value": null,
+      "kind": "abstain"
+     }
+    ],
+    "inputs": 18,
+    "same_record": 0,
+    "other_record": 0,
+    "false_answers": 0
+   },
+   "sentences_direct": {
+    "rows": [
+     {
+      "sentence": "让圆口的器皿到四方木台。",
+      "decision": "matched",
+      "value": [
+       "object",
+       "绿色瓶子"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "sentence": "让圆口的器皿到靠窗的台面。",
+      "decision": "matched",
+      "value": [
+       "object",
+       "绿色瓶子"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "sentence": "让圆口的器皿到手边的匣子。",
+      "decision": "matched",
+      "value": [
+       "object",
+       "绿色瓶子"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "sentence": "让圆口的器皿到靠墙的层架。",
+      "decision": "matched",
+      "value": [
+       "object",
+       "绿色瓶子"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "sentence": "让圆口的器皿到脚边的毡子。",
+      "decision": "matched",
+      "value": [
+       "object",
+       "绿色瓶子"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "sentence": "让带纹路的方块到四方木台。",
+      "decision": "no_match",
+      "value": null,
+      "reason": "unknown_token"
+     },
+     {
+      "sentence": "让带纹路的方块到靠窗的台面。",
+      "decision": "no_match",
+      "value": null,
+      "reason": "unknown_token"
+     },
+     {
+      "sentence": "让带纹路的方块到手边的匣子。",
+      "decision": "no_match",
+      "value": null,
+      "reason": "unknown_token"
+     },
+     {
+      "sentence": "让带纹路的方块到靠墙的层架。",
+      "decision": "no_match",
+      "value": null,
+      "reason": "unknown_token"
+     },
+     {
+      "sentence": "让带纹路的方块到脚边的毡子。",
+      "decision": "no_match",
+      "value": null,
+      "reason": "unknown_token"
+     },
+     {
+      "sentence": "让细长的容器到四方木台。",
+      "decision": "no_match",
+      "value": null,
+      "reason": "unknown_token"
+     },
+     {
+      "sentence": "让细长的容器到靠窗的台面。",
+      "decision": "no_match",
+      "value": null,
+      "reason": "unknown_token"
+     },
+     {
+      "sentence": "让细长的容器到手边的匣子。",
+      "decision": "no_match",
+      "value": null,
+      "reason": "unknown_token"
+     },
+     {
+      "sentence": "让细长的容器到靠墙的层架。",
+      "decision": "no_match",
+      "value": null,
+      "reason": "unknown_token"
+     },
+     {
+      "sentence": "让细长的容器到脚边的毡子。",
+      "decision": "no_match",
+      "value": null,
+      "reason": "unknown_token"
+     },
+     {
+      "sentence": "让圆滚滚的东西到四方木台。",
+      "decision": "matched",
+      "value": [
+       "object",
+       "黄色球"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "sentence": "让圆滚滚的东西到靠窗的台面。",
+      "decision": "matched",
+      "value": [
+       "object",
+       "黄色球"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "sentence": "让圆滚滚的东西到手边的匣子。",
+      "decision": "matched",
+      "value": [
+       "object",
+       "黄色球"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "sentence": "让圆滚滚的东西到靠墙的层架。",
+      "decision": "matched",
+      "value": [
+       "object",
+       "黄色球"
+      ],
+      "reason": "single_anchor"
+     },
+     {
+      "sentence": "让圆滚滚的东西到脚边的毡子。",
+      "decision": "matched",
+      "value": [
+       "object",
+       "黄色球"
+      ],
+      "reason": "single_anchor"
+     }
+    ],
+    "inputs": 20,
+    "false_answers": 10
+   },
+   "rewrites": {
+    "rows": [
+     {
+      "text": "喝水的杯子",
+      "expected": [
+       "object",
+       "蓝色杯子"
+      ],
+      "decision": "no_match",
+      "value": null,
+      "outcome": "abstain"
+     },
+     {
+      "text": "盖章用的印章",
+      "expected": [
+       "object",
+       "红色印章"
+      ],
+      "decision": "no_match",
+      "value": null,
+      "outcome": "abstain"
+     },
+     {
+      "text": "盛水的瓶子",
+      "expected": [
+       "object",
+       "绿色瓶子"
+      ],
+      "decision": "no_match",
+      "value": null,
+      "outcome": "abstain"
+     },
+     {
+      "text": "圆形的皮球",
+      "expected": [
+       "object",
+       "黄色球"
+      ],
+      "decision": "no_match",
+      "value": null,
+      "outcome": "abstain"
+     },
+     {
+      "text": "方方正正的木桌子",
+      "expected": [
+       "place",
+       "木桌"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "木桌"
+      ],
+      "outcome": "correct"
+     },
+     {
+      "text": "窗前的台板",
+      "expected": [
+       "place",
+       "窗台"
+      ],
+      "decision": "no_match",
+      "value": null,
+      "outcome": "abstain"
+     },
+     {
+      "text": "手边的小盒子",
+      "expected": [
+       "place",
+       "左盒"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "左盒"
+      ],
+      "outcome": "correct"
+     },
+     {
+      "text": "墙上的架子",
+      "expected": [
+       "place",
+       "书架"
+      ],
+      "decision": "no_match",
+      "value": null,
+      "outcome": "abstain"
+     },
+     {
+      "text": "脚下的垫子",
+      "expected": [
+       "place",
+       "地毯"
+      ],
+      "decision": "matched",
+      "value": [
+       "place",
+       "地毯"
+      ],
+      "outcome": "correct"
+     }
+    ],
+    "inputs": 9,
+    "correct": 3,
+    "wrong": 0,
+    "abstain": 6,
+    "false_answers": 0
+   }
+  }
+ },
+ "closed_state": {
+  "baseline": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "6e340a67c9a4e11e12926879d3b5268f5d58a99368a1df3230c9f6aae7c798f3",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk_none": true,
+   "battery_sha": "b6b417b5cedc889fbbefc58098d20663465f278e1f96acbfd43e8ae625dea45e",
+   "battery_steps": 20
+  },
+  "after": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "6e340a67c9a4e11e12926879d3b5268f5d58a99368a1df3230c9f6aae7c798f3",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk_none": true,
+   "battery_sha": "b6b417b5cedc889fbbefc58098d20663465f278e1f96acbfd43e8ae625dea45e",
+   "battery_steps": 20
+  },
+  "checks": {
+   "parameters_equal": true,
+   "state_equal": true,
+   "identity_equal": true,
+   "store_equal": true,
+   "battery_equal": true,
+   "steps_equal": true,
+   "sc_sfk_none": true,
+   "flag_disabled": true,
+   "rng_untouched": true
+  }
+ },
+ "zero_line": {
+  "per_arm": {
+   "byte_pair": 3,
+   "codepoint": 4
+  },
+  "criterion": "0 answering phrases among the 12 frozen unknown candidates"
+ },
+ "cost": {
+  "cpu_seconds": 1.78125,
+  "wall_seconds": 2.5488829612731934,
+  "cpu_cap": 200.0,
+  "estimate_cpu_upper": 60.0,
+  "threads": 1
+ },
+ "verdict": "bridge_key_unit_still_leaks",
+ "note": "codepoint_offset is diagnostic: it tests positional drift, not shared characters. A character shared at the same index still collides."
+}

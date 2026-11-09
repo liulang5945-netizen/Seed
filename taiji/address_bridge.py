@@ -12,8 +12,10 @@ nothing in the default graph imports it, so the closed-state path cannot move.
 
 Record shape (one per (phrase, slot+name) observation):
 
-* key   -- the phrase's 2-byte token *set* (order-free, no positions, deduped),
-  the same "short substring" granularity the byte-level probes use.
+* key   -- the phrase's token *set* (order-free, no positions, deduped).  The
+  token unit is a parameter: R11 used 2-byte windows (``phrase_key``); R12 adds
+  UTF-8 code points (``codepoint_key``) and code points with their character
+  index (``codepoint_offset_key``).  Nothing else in the table changes.
 * value -- (slot, name), e.g. ("place", "书架"); names never enter the key.
 
 Write outcomes, all counted and all reachable:
@@ -46,11 +48,53 @@ START_CAPACITY = 2
 
 
 def phrase_key(text: str | bytes) -> frozenset[str]:
-    """Order-free set of 2-byte tokens, hex-encoded.  Deterministic, no state."""
+    """Order-free set of 2-byte tokens, hex-encoded.  Deterministic, no state.
+
+    **This is the R11 key unit and must stay byte-identical**: R11's frozen
+    reading is reproduced by this function alone.  Named ``byte_pair_key`` in
+    R12 reports; ``phrase_key`` stays the default for older callers.
+    """
     data = text.encode("utf-8") if isinstance(text, str) else bytes(text)
     return frozenset(
         data[index : index + TOKEN_WIDTH].hex() for index in range(0, len(data) - 1, TOKEN_WIDTH)
     )
+
+
+def byte_pair_key(text: str | bytes) -> frozenset[str]:
+    """R12 name for the R11 unit: the 2-byte window set (byte-identical)."""
+    return phrase_key(text)
+
+
+def codepoint_key(text: str | bytes) -> frozenset[str]:
+    """Order-free set of UTF-8 code points (one whole character per token).
+
+    Bytes are decoded strictly: a byte slice that cuts a character in half is
+    not text, so it has an empty key and can never address a record.
+    """
+    if isinstance(text, str):
+        characters = text
+    else:
+        try:
+            characters = bytes(text).decode("utf-8")
+        except UnicodeDecodeError:
+            return frozenset()
+    return frozenset(characters)
+
+
+def codepoint_offset_key(text: str | bytes) -> frozenset[str]:
+    """Code points tagged with their character index: the offset-aware arm.
+
+    Diagnostic only in R12: it is the pre-registered treatment for positional
+    drift, and the report must state which failure class it does *not* treat.
+    """
+    if isinstance(text, str):
+        characters = text
+    else:
+        try:
+            characters = bytes(text).decode("utf-8")
+        except UnicodeDecodeError:
+            return frozenset()
+    return frozenset(f"{index}:{character}" for index, character in enumerate(characters))
 
 
 def value_key(value: Any) -> str:
@@ -62,7 +106,12 @@ def value_key(value: Any) -> str:
 class BridgeTable:
     """Phrase -> (slot, name) records with merge / replace / batch rollback."""
 
-    def __init__(self, start_capacity: int = START_CAPACITY) -> None:
+    def __init__(
+        self,
+        start_capacity: int = START_CAPACITY,
+        key_fn: Any = phrase_key,
+    ) -> None:
+        self.key_fn = key_fn
         self.capacity = int(start_capacity)
         self.peak_capacity = int(start_capacity)
         self.records: list[dict[str, Any]] = []
@@ -177,7 +226,7 @@ class BridgeTable:
         first_value: dict[frozenset[str], str] = {}
         conflict_positions: list[int] = []
         for position, (text, value) in enumerate(items):
-            key = phrase_key(text)
+            key = self.key_fn(text)
             if not key:
                 self.rejected_batches += 1
                 self.rejected_reasons["key_too_short"] = (
@@ -215,7 +264,7 @@ class BridgeTable:
 
         planned: list[dict[str, Any]] = []
         for position, (text, value) in enumerate(items):
-            key = phrase_key(text)
+            key = self.key_fn(text)
             index = self.find(key)
             if index is None:
                 while len(self.records) >= self.capacity:
@@ -252,7 +301,7 @@ class BridgeTable:
 
     # -- read ----------------------------------------------------------------
     def read(self, query: str | bytes) -> dict[str, Any]:
-        return self.read_tokens(phrase_key(query))
+        return self.read_tokens(self.key_fn(query))
 
     def read_tokens(self, tokens: frozenset[str]) -> dict[str, Any]:
         document_frequency: dict[str, int] = {}
