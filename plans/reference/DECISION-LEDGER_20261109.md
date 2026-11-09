@@ -24,7 +24,7 @@
 | D-20261109-13 | 读数前口径修正（回滚证据＋未知短语筛选） | R11 首跑用含计数器的 `digest()` 当回滚证据（拒绝批次必然改计数器，证据自相矛盾）→ 改 `content_digest()`；未知短语手工挑选共享 token → 改“token 不相交”自动筛选；判据、语料、阈值未动 | 0c8cad59e |
 | D-20261109-14 | 架构判断＋键定义扩展 | R12 并列 2 字节／码位／码位＋字符位三臂：字节碎片 12/18 被当地址 ⇒ 键单位确实选错；但码位版仍有 4 条单字共享碰撞（比 2 字节多 1），零线未达；offset 只治位置漂移，残留“同字同位”。判 `bridge_key_unit_still_leaks` | 31ef1850c |
 | D-20261109-15 | 架构判断＋键身份改写 | R13 两段分开判：A 段键＝整串字符保序保重数、读＝连续包含才作答 ⇒ 未写候选 0／碎片 0／整句 0／能力 40/40；代价是 9 条同义改写全 `no_match`。B 段 9 条改写作附加键写入 ⇒ 9/9 读回、写后零线仍 0、键 18／实体 9。判 A `sequence_identity_clean`／B `alias_write_clean` | ff79e7094 |
-| D-20261109-16 | 架构判断＋写冲突策略 | R14 三段分开判：C 键／实体 9/9＝1.0→18/9＝2.0→78/9＝8.667 被拒（60 句含实体名，“80 键”不可达；比值随说法数增长）；D 18 键表零线 0／0／0、能力 40/40；E 同一说法指向两实体 3 例全部 `rejected_batch_address_already_bound`、先写者保留、整批回滚，`replace` 对照会转主。判 C `cost_curve_measured`／D `large_table_zero_clean`／E `conflict_rejected_first_writer_kept` | 待填 |
+| D-20261109-16 | 架构判断＋写冲突策略 | R14 三段分开判：C 键／实体 9/9＝1.0→18/9＝2.0→78/9＝8.667 被拒（60 句含实体名，“80 键”不可达；比值随说法数增长）；D 18 键表零线 0／0／0、能力 40/40；E 同一说法指向两实体 3 例全部 `rejected_batch_address_already_bound`、先写者保留、整批回滚，`replace` 对照会转主。判 C `cost_curve_measured`／D `large_table_zero_clean`／E `conflict_rejected_first_writer_kept` | edcf623ca（提交说明误写为“R14 test”，内容见下文本笔） |
 
 ---
 
