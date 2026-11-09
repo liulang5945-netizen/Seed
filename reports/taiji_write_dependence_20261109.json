@@ -1,0 +1,109 @@
+{
+ "schema": "taiji-write-dependence-r49-report-v1",
+ "runner_sha256": "602c72b42973ffb7a6f68d931f91fc3c42e0e80ce7e751dfd641f4741452b4fd",
+ "manifest_sha256": "5046acbad7bebad6bd2543fc9879f63fb867948dcf37bea50d12a30432fff93b",
+ "core_sha256": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d"
+ },
+ "definition": {
+  "write": "each of the 20 describe sentences is written once with a write-enabled observe",
+  "determinism": "sentence 0 is written twice; the relative L2 between the two fast vectors must be 0",
+  "geometry": "all 190 cross-sentence pairs get a scale-free relative L2",
+  "decision": "mean pairwise relative distance < 0.01 -> write_content_independent",
+  "closed_state": "the nine legacy readings on the main subject stay equal before and after"
+ },
+ "criteria": {
+  "determinism": "the repeated write of the same sentence gives distance 0",
+  "pairs": "all 190 cross-sentence distances are reported with min/mean/median/max",
+  "decision": "the frozen 0.01 gate decides independent/dependent",
+  "closed_state": "the nine legacy readings stay equal and the main parameter digest does not move",
+  "rerun": "the R48 anchor carries a commit, a runner blob sha1, a runner sha256 and a core sha256"
+ },
+ "reading": {
+  "samples": 20,
+  "dim": 8192,
+  "same_distance": 0.0,
+  "deterministic": true,
+  "pairs": 190,
+  "pair_min": 0.06168935164643021,
+  "pair_mean": 0.18420131284810723,
+  "pair_median": 0.200205614862317,
+  "pair_max": 0.2974171723793167,
+  "norm_mean": 0.22917208333302294,
+  "norm_min": 0.21280218411136995,
+  "norm_max": 0.2528135083770284,
+  "content_independent": false,
+  "ok": true
+ },
+ "rerun_anchors": [
+  {
+   "round": "R48",
+   "runner": "scripts/training/probe_taiji_write_fidelity_20261109.py",
+   "rerun_commit": "4126e6bf3",
+   "runner_blob_sha1": "93b31338380b2b23b881f95eb358a15301002ae4",
+   "report_runner_sha256": "f7d45e076c45b10d68d4e9f62a48af0526f1c50862466e5f07a962be5c11b69a",
+   "runner_blob_sha256": "f7d45e076c45b10d68d4e9f62a48af0526f1c50862466e5f07a962be5c11b69a",
+   "report_core_sha256": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d",
+   "matches_report": true,
+   "note": "R49 does not change living_core; R48 stays runnable at HEAD"
+  }
+ ],
+ "closed_state": {
+  "baseline": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "83fd9c8026855f72b9ec91330b73d83a26fd89baee97106037f08bd6f85c24b0",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk_none": true,
+   "sc_bridge_none": true,
+   "battery_sha": "6e97b9eb4dbc160b6143fdd9d523180b4c73e64a3ef8e8787e7d58a776353e14",
+   "battery_steps": 20
+  },
+  "after": {
+   "parameters_sha": "e0fb5deb35281e28463b1c82558a0e44333b1675a0a8bc965f39a05324991fd0",
+   "state_sha": "83fd9c8026855f72b9ec91330b73d83a26fd89baee97106037f08bd6f85c24b0",
+   "keys_len": 0,
+   "step": 108,
+   "store_sha": "f1ae6957ee03f587663e8ca32978b984e760ea35815f1872df19b786e3c60a08",
+   "identity_sha": "7504ba2ee07d55104a0abc4a74fdf02bcbdc062552fd98900bf31331e748b01e",
+   "sc_sfk_none": true,
+   "sc_bridge_none": true,
+   "battery_sha": "6e97b9eb4dbc160b6143fdd9d523180b4c73e64a3ef8e8787e7d58a776353e14",
+   "battery_steps": 20
+  },
+  "checks": {
+   "parameters_equal": true,
+   "state_equal": true,
+   "identity_equal": true,
+   "store_equal": true,
+   "battery_equal": true,
+   "steps_equal": true,
+   "sc_sfk_none": true,
+   "flag_disabled": true,
+   "rng_untouched": true
+  }
+ },
+ "main_parameter_sha_equal": true,
+ "bridge_default_none": true,
+ "verdict": {
+  "determinism": "write_deterministic",
+  "decision": "write_content_dependent_but_not_linearly_decodable",
+  "closed_state": "closed_state_equal",
+  "main_untouched": "main_subject_untouched",
+  "bridge_default": "bridge_default_none",
+  "rerun_anchors": "anchors_complete",
+  "overall": "write_dependence_measured"
+ },
+ "cost": {
+  "cpu_seconds": 1.4375,
+  "wall_seconds": 1.881260871887207,
+  "cpu_cap": 200.0,
+  "estimate_cpu_upper": 40.0,
+  "threads": 1
+ }
+}

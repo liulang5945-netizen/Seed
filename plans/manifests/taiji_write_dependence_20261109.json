@@ -1,0 +1,72 @@
+{
+ "schema": "taiji-write-dependence-r49-v1",
+ "created": "2026-11-09T18:25:22",
+ "seed": 20261109,
+ "estimate_cpu_upper": 40.0,
+ "cpu_cap": 200.0,
+ "independence_gate": 0.01,
+ "runner_sha256": "602c72b42973ffb7a6f68d931f91fc3c42e0e80ce7e751dfd641f4741452b4fd",
+ "core_sha256": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d",
+ "fixture_sha256": {
+  "taiji/native_goal_world_wide.py": "01ef1914a5765b6514deedc45efd0dbb110215ca9c29c9bb5bf2adbe9df67910",
+  "taiji/goal_paraphrase.py": "5d1f47f0a72c7eb2a9dfe1871154f8a8541176ef7a0f871a62d5c76b0b3655d1",
+  "taiji/living_core.py": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d"
+ },
+ "definition": {
+  "write": "each of the 20 describe sentences is written once with a write-enabled observe",
+  "determinism": "sentence 0 is written twice; the relative L2 between the two fast vectors must be 0",
+  "geometry": "all 190 cross-sentence pairs get a scale-free relative L2",
+  "decision": "mean pairwise relative distance < 0.01 -> write_content_independent",
+  "closed_state": "the nine legacy readings on the main subject stay equal before and after"
+ },
+ "criteria": {
+  "determinism": "the repeated write of the same sentence gives distance 0",
+  "pairs": "all 190 cross-sentence distances are reported with min/mean/median/max",
+  "decision": "the frozen 0.01 gate decides independent/dependent",
+  "closed_state": "the nine legacy readings stay equal and the main parameter digest does not move",
+  "rerun": "the R48 anchor carries a commit, a runner blob sha1, a runner sha256 and a core sha256"
+ },
+ "definition_digest": "43980d741207db1339d2ae63eecb601b11f7a4ccbd9e769fe9ea06955a4751b6",
+ "counts": {
+  "describe_sentences": 20,
+  "writes": 22
+ },
+ "inputs": {
+  "goal": "r49",
+  "sentences": [
+   "让圆口的器皿到四方木台。",
+   "让圆口的器皿到靠窗的台面。",
+   "让圆口的器皿到手边的匣子。",
+   "让圆口的器皿到靠墙的层架。",
+   "让圆口的器皿到脚边的毡子。",
+   "让带纹路的方块到四方木台。",
+   "让带纹路的方块到靠窗的台面。",
+   "让带纹路的方块到手边的匣子。",
+   "让带纹路的方块到靠墙的层架。",
+   "让带纹路的方块到脚边的毡子。",
+   "让细长的容器到四方木台。",
+   "让细长的容器到靠窗的台面。",
+   "让细长的容器到手边的匣子。",
+   "让细长的容器到靠墙的层架。",
+   "让细长的容器到脚边的毡子。",
+   "让圆滚滚的东西到四方木台。",
+   "让圆滚滚的东西到靠窗的台面。",
+   "让圆滚滚的东西到手边的匣子。",
+   "让圆滚滚的东西到靠墙的层架。",
+   "让圆滚滚的东西到脚边的毡子。"
+  ],
+  "rerun_anchors": [
+   {
+    "round": "R48",
+    "runner": "scripts/training/probe_taiji_write_fidelity_20261109.py",
+    "rerun_commit": "4126e6bf3",
+    "runner_blob_sha1": "93b31338380b2b23b881f95eb358a15301002ae4",
+    "report_runner_sha256": "f7d45e076c45b10d68d4e9f62a48af0526f1c50862466e5f07a962be5c11b69a",
+    "runner_blob_sha256": "f7d45e076c45b10d68d4e9f62a48af0526f1c50862466e5f07a962be5c11b69a",
+    "report_core_sha256": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d",
+    "matches_report": true,
+    "note": "R49 does not change living_core; R48 stays runnable at HEAD"
+   }
+  ]
+ }
+}
