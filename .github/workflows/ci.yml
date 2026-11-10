@@ -479,6 +479,19 @@ jobs:
         # outcomes` 按 steps.deselect-guard.outcome 判（一红不再让整腿失明）。
         run: python scripts/training/verify_ci_deselect_list.py
 
+      - name: Check report run conditions
+        id: report-conditions
+        continue-on-error: true
+        # 能力卡 §13 / 台账 D-20261110-05：同一模型同一输入，torch intra-op 线程数
+        # 不同会改变浮点归约顺序，末位差异被摘要放大（1 vs 4 相同、1 vs 12 不同）。
+        # 因此**带相等／摘要字段的新报告必须记录运行条件**（threads，设置过 OMP/MKL
+        # 也一并记）。旧报告不回写：它们逐条列在
+        # plans/manifests/report_run_conditions_baseline_20261110.json，身份是
+        # "report_level_claim_not_machine_verifiable"（只标注，不改文件）。
+        # 本步只判「基线之外的新违例」；基线过期（改名/删除）只出 warning。
+        # R-S6a：continue-on-error 并入 S6-i 集合，红由末置汇总按 steps.report-conditions.outcome 判。
+        run: python scripts/training/check_report_run_conditions.py --check
+
       - name: Run complete regression suite
         id: pytest-full
         continue-on-error: true
@@ -585,6 +598,7 @@ jobs:
         # collection-crlf 探针在 Windows 腿（决策 14），其 outcome 由该腿的同名汇总判。
         env:
           OUT_GUARD: ${{ steps.deselect-guard.outcome }}
+          OUT_COND: ${{ steps.report-conditions.outcome }}
           OUT_PYTEST: ${{ steps.pytest-full.outcome }}
           OUT_FACES: ${{ steps.junit-faces.outcome }}
           OUT_COVER: ${{ steps.coverage-gate.outcome }}
@@ -606,6 +620,7 @@ jobs:
             echo "| step | outcome | verdict |"
             echo "|---|---|---|"
             check "deselect-guard" "$OUT_GUARD"
+            check "report-conditions" "$OUT_COND"
             check "pytest-full"    "$OUT_PYTEST"
             check "junit-faces"    "$OUT_FACES"
             check "coverage-gate"  "$OUT_COVER"

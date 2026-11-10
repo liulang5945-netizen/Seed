@@ -1,0 +1,1969 @@
+{
+  "schema": "report_run_conditions_baseline_v1",
+  "rule": "CAPABILITY-CARD §13 / DECISION-LEDGER D-20261110-05",
+  "generated": "2026-11-10",
+  "status": "report_level_claim_not_machine_verifiable",
+  "note": "旧报告一律不回写、不补字段：列在这里只表示它们的结论依赖未记录的运行条件，按『报告级声明、不可机器复核』引用。新报告若带相等／摘要字段而缺运行条件，由 check_report_run_conditions.py 判失败。",
+  "count": 620,
+  "files": {
+    "plans/manifests/n1_plan163_transition_template_rebalanced_schedule_20261020.json": [
+      "equal"
+    ],
+    "plans/manifests/n1_plan163a_transition_template_rebalanced_schedule_20261020.json": [
+      "equal"
+    ],
+    "plans/manifests/n1_plan165_transition_template_mid_dose_schedule_20261020.json": [
+      "equal"
+    ],
+    "plans/manifests/taiji_binding_copy_15_1_data_20261102.json": [
+      "digest"
+    ],
+    "plans/manifests/taiji_byte_address_20261108.json": [
+      "unchanged"
+    ],
+    "plans/manifests/taiji_core_10_21_3_price_20261101.json": [
+      "digest"
+    ],
+    "plans/manifests/taiji_core_record_relation_14_5_20261102.json": [
+      "digest"
+    ],
+    "plans/manifests/taiji_core_record_relation_14_6_20261102.json": [
+      "max_abs_diff",
+      "digest"
+    ],
+    "plans/manifests/taiji_core_record_relation_14_6_20261102_v1_engineering_failure.json": [
+      "max_abs_diff",
+      "digest"
+    ],
+    "plans/manifests/taiji_core_record_relation_14_6_preflight_20261102.json": [
+      "equal",
+      "max_abs_diff",
+      "digest"
+    ],
+    "plans/manifests/taiji_core_v11_e1_audit_admission_20261031.json": [
+      "unchanged"
+    ],
+    "plans/manifests/taiji_data_premise_18_0_manifest_20261104.json": [
+      "digest"
+    ],
+    "plans/manifests/taiji_data_premise_18_0_prereg_20261104.json": [
+      "digest"
+    ],
+    "plans/manifests/taiji_f_expressive_capacity_prereg_v2_20261108.json": [
+      "unchanged"
+    ],
+    "plans/manifests/taiji_f_expressive_capacity_prereg_v3_20261108.json": [
+      "unchanged"
+    ],
+    "plans/manifests/taiji_gate_centering_20261108.json": [
+      "unchanged"
+    ],
+    "plans/manifests/taiji_gate_generalization_20261108.json": [
+      "unchanged"
+    ],
+    "plans/manifests/taiji_gate_localized_20261108.json": [
+      "unchanged"
+    ],
+    "plans/manifests/taiji_gate_negative_control_20261108.json": [
+      "unchanged"
+    ],
+    "plans/manifests/taiji_gate_read_gate_20261108.json": [
+      "unchanged"
+    ],
+    "plans/manifests/taiji_gate_simplified_20261108.json": [
+      "unchanged"
+    ],
+    "plans/manifests/taiji_gate_task_value_20261108.json": [
+      "unchanged"
+    ],
+    "plans/manifests/taiji_gate_whitening_20261108.json": [
+      "unchanged"
+    ],
+    "plans/manifests/taiji_growth_wire_20261108.json": [
+      "unchanged"
+    ],
+    "plans/manifests/taiji_m4v2_r6_formal_input_v1.json": [
+      "checkpoint_digest"
+    ],
+    "plans/manifests/taiji_m4v2_r6_matched_control_v2_20260910.json": [
+      "checkpoint_digest"
+    ],
+    "plans/manifests/taiji_m5_k_default_runtime_rollout_attachment_v1.json": [
+      "digest"
+    ],
+    "plans/manifests/taiji_m5_k_p3_3_g_candidate_manifest_v1.json": [
+      "candidate_digest"
+    ],
+    "plans/manifests/taiji_m5_k_p3_4_behavior_manifest_v1.json": [
+      "candidate_digest"
+    ],
+    "plans/manifests/taiji_m5_k_p3_6_behavior_holdout_manifest_v1.json": [
+      "candidate_digest"
+    ],
+    "plans/manifests/taiji_m5_k_p4_0_capacity_pressure_manifest_v1.json": [
+      "candidate_digest"
+    ],
+    "plans/manifests/taiji_m5_k_p4_10_feature_factorization_manifest_v1.json": [
+      "candidate_digest"
+    ],
+    "plans/manifests/taiji_m5_k_p4_11_projection_solver_manifest_v1.json": [
+      "candidate_digest"
+    ],
+    "plans/manifests/taiji_m5_k_p4_2_capacity_attribution_manifest_v1.json": [
+      "candidate_digest"
+    ],
+    "plans/manifests/taiji_m5_k_p4_3_retention_incremental_manifest_v1.json": [
+      "candidate_digest"
+    ],
+    "plans/manifests/taiji_m5_k_p4_4_retention_identity_calibration_manifest_v1.json": [
+      "candidate_digest"
+    ],
+    "plans/manifests/taiji_m5_k_p4_5_update_rule_gate_manifest_v1.json": [
+      "candidate_digest"
+    ],
+    "plans/manifests/taiji_m5_k_p4_6_functional_parent_objective_manifest_v1.json": [
+      "candidate_digest"
+    ],
+    "plans/manifests/taiji_m5_k_p4_7_capacity_clean_test_manifest_v1.json": [
+      "candidate_digest"
+    ],
+    "plans/manifests/taiji_m5_k_p4_8_representation_redesign_manifest_v1.json": [
+      "candidate_digest"
+    ],
+    "plans/manifests/taiji_package19_2b_prereg_20261104.json": [
+      "unchanged"
+    ],
+    "plans/manifests/taiji_package19_2t_zero_training_assembly_20261105.json": [
+      "identical"
+    ],
+    "plans/manifests/taiji_package19_2u_stop_boundary_ablation_20261105.json": [
+      "identical"
+    ],
+    "plans/manifests/taiji_package19_compare_20261104.json": [
+      "digest"
+    ],
+    "plans/manifests/taiji_sc_address_20261108.json": [
+      "unchanged"
+    ],
+    "plans/manifests/taiji_selection_routing_18_1_compare_20261104.json": [
+      "digest"
+    ],
+    "plans/manifests/taiji_stop_boundary_20261109.json": [
+      "identical"
+    ],
+    "plans/manifests/taiji_stop_boundary_20261109_rebaseline_20261111.json": [
+      "identical"
+    ],
+    "plans/manifests/taiji_store_wire_20261108.json": [
+      "unchanged"
+    ],
+    "reports/p3b_v2_pilot_20260917.json": [
+      "digest"
+    ],
+    "reports/p3b_v2_pilot_20260917/preflight_report.json": [
+      "digest"
+    ],
+    "reports/production_dialogue_generation_contract_20260819.json": [
+      "max_abs_diff"
+    ],
+    "reports/r2_d4_matched_dev_20260918.json": [
+      "bitwise_identical",
+      "max_abs_diff"
+    ],
+    "reports/r2_d5_matched_dev_20260918.json": [
+      "bitwise_identical",
+      "max_abs_diff"
+    ],
+    "reports/r2_d6_matched_dev_20260918.json": [
+      "bitwise_identical",
+      "max_abs_diff"
+    ],
+    "reports/r2_h3_7b_validation/learnability_analysis.json": [
+      "checkpoint_digest"
+    ],
+    "reports/r2_h3_8_train_learnability_20260917.json": [
+      "checkpoint_digest"
+    ],
+    "reports/r2_h3_8_train_learnability_v2_20260917.json": [
+      "checkpoint_digest"
+    ],
+    "reports/r2_hfbw_matched_dev_20260917.json": [
+      "checkpoint_digest"
+    ],
+    "reports/r2_hgen_matched_dev_20260917.json": [
+      "checkpoint_digest"
+    ],
+    "reports/r2_hgen_readout_diagnosis_20260917.json": [
+      "checkpoint_digest"
+    ],
+    "reports/r2_hobj_matched_dev_20260917.json": [
+      "checkpoint_digest"
+    ],
+    "reports/r2_hobj_scaled_corpus_20260917.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_batch_c2_arm_parity_20261014.json": [
+      "equal"
+    ],
+    "reports/taiji_batch_c_arm_parity_20261013.json": [
+      "equal"
+    ],
+    "reports/taiji_binding_copy_15_1_closeout_20261103.json": [
+      "equal"
+    ],
+    "reports/taiji_binding_copy_15_1_compare_20261102.json": [
+      "equal"
+    ],
+    "reports/taiji_binding_copy_15_1_data_20261102.json": [
+      "digest"
+    ],
+    "reports/taiji_binding_copy_15_1_graph_20261102.json": [
+      "equal",
+      "max_abs_diff"
+    ],
+    "reports/taiji_binding_copy_15_1_preflight_20261102.json": [
+      "equal",
+      "max_abs_diff"
+    ],
+    "reports/taiji_binding_copy_15_1_preflight_final_20261102.json": [
+      "equal",
+      "max_abs_diff"
+    ],
+    "reports/taiji_binding_select_16_1_attribution_20261103.json": [
+      "equal"
+    ],
+    "reports/taiji_binding_select_16_1_compare_20261103.json": [
+      "equal"
+    ],
+    "reports/taiji_byte_address_20261108.json": [
+      "unchanged"
+    ],
+    "reports/taiji_core_09_closeout_20261101.json": [
+      "equal",
+      "max_abs_diff"
+    ],
+    "reports/taiji_core_10_21_3_price_20261101.json": [
+      "digest"
+    ],
+    "reports/taiji_core_10_21_3_price_20261101_v1_engineering_failure_status_bug.json": [
+      "digest"
+    ],
+    "reports/taiji_core_10_21_3_price_20261101_v2_cache_bound_wording.json": [
+      "digest"
+    ],
+    "reports/taiji_core_10_21_3_price_20261101_v3_pre_manifest.json": [
+      "digest"
+    ],
+    "reports/taiji_core_10_21_plan_revision_20261101.json": [
+      "unchanged"
+    ],
+    "reports/taiji_core_algorithm_v11_evaluation_20261031.json": [
+      "identical"
+    ],
+    "reports/taiji_core_algorithm_v1_math_checks_20261031.json": [
+      "max_delta"
+    ],
+    "reports/taiji_core_record_relation_14_4_20261102.json": [
+      "equal",
+      "max_abs_diff",
+      "candidate_digest",
+      "digest"
+    ],
+    "reports/taiji_core_record_relation_14_5_20261102.json": [
+      "equal",
+      "max_abs_diff",
+      "candidate_digest",
+      "digest"
+    ],
+    "reports/taiji_core_record_relation_14_6_20261102.json": [
+      "max_abs_diff",
+      "digest"
+    ],
+    "reports/taiji_core_record_relation_14_6_20261102_v1_engineering_failure.json": [
+      "max_abs_diff",
+      "digest"
+    ],
+    "reports/taiji_core_record_relation_14_6_preflight_20261102.json": [
+      "equal",
+      "max_abs_diff",
+      "digest"
+    ],
+    "reports/taiji_core_training_replay_10_7a_20261101.json": [
+      "max_abs_delta"
+    ],
+    "reports/taiji_core_training_replay_10_7a_v2_20261101.json": [
+      "max_abs_delta"
+    ],
+    "reports/taiji_data_premise_18_0_pricing_20261104.json": [
+      "digest"
+    ],
+    "reports/taiji_gate_centering_20261108.json": [
+      "max_abs_delta",
+      "unchanged"
+    ],
+    "reports/taiji_gate_generalization_20261108.json": [
+      "unchanged"
+    ],
+    "reports/taiji_gate_localized_20261108.json": [
+      "max_abs_delta",
+      "unchanged"
+    ],
+    "reports/taiji_gate_negative_control_20261108.json": [
+      "unchanged"
+    ],
+    "reports/taiji_gate_read_gate_enabled_20261108.json": [
+      "unchanged"
+    ],
+    "reports/taiji_gate_read_gate_zero_20261108.json": [
+      "bytes_identical",
+      "max_abs_delta",
+      "unchanged"
+    ],
+    "reports/taiji_gate_simplified_20261108.json": [
+      "unchanged"
+    ],
+    "reports/taiji_gate_task_value_20261108.json": [
+      "unchanged"
+    ],
+    "reports/taiji_gate_whitening_20261108.json": [
+      "max_abs_delta",
+      "unchanged"
+    ],
+    "reports/taiji_growth_f1_correction_20261108.json": [
+      "unchanged"
+    ],
+    "reports/taiji_growth_f3_multigen_20261108.json": [
+      "digest"
+    ],
+    "reports/taiji_growth_gate_p1_20261108.json": [
+      "unchanged"
+    ],
+    "reports/taiji_growth_gate_p1b_20261108.json": [
+      "unchanged"
+    ],
+    "reports/taiji_growth_gate_p2_20261108.json": [
+      "unchanged"
+    ],
+    "reports/taiji_growth_gate_p3_20261108.json": [
+      "unchanged"
+    ],
+    "reports/taiji_growth_wire_20261108.json": [
+      "max_abs_delta",
+      "unchanged"
+    ],
+    "reports/taiji_growth_wire_20261108_run1_invalid_metric.json": [
+      "max_abs_delta",
+      "unchanged"
+    ],
+    "reports/taiji_growth_zero_perturbation_20261108.json": [
+      "max_abs_diff"
+    ],
+    "reports/taiji_m0_checkpoint_preflight_20260901.json": [
+      "digest"
+    ],
+    "reports/taiji_m1_32_checkpoint_preflight_20260902.json": [
+      "digest"
+    ],
+    "reports/taiji_m1_32_foundation_pilot_seed11_eval_only.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m1_32_foundation_pilot_seed29_eval_only.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m1_32_foundation_pilot_seed47_eval_only.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m1_32_memory_pilot_seed11_eval_only.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m1_32_memory_pilot_seed29_eval_only.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m1_32_memory_pilot_seed47_eval_only.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m1_32_reentry_20260902.json": [
+      "digest"
+    ],
+    "reports/taiji_m1_33_memory_capacity_20260902.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m1_51_credit_audit_20260902.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m1_52_replay_interference_20260902.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m1_53_credit_identifiability_20260902.json": [
+      "digest"
+    ],
+    "reports/taiji_m1_54_readout_credit_isolation_20260902.json": [
+      "digest"
+    ],
+    "reports/taiji_m1_55_replay_schedule_20260902.json": [
+      "digest"
+    ],
+    "reports/taiji_m1_56_replay_admission_20260902.json": [
+      "digest",
+      "trace_digest"
+    ],
+    "reports/taiji_m1_57_protected_replay_trace_20260902.json": [
+      "digest"
+    ],
+    "reports/taiji_m1_58_protected_replay_20260902.json": [
+      "digest"
+    ],
+    "reports/taiji_m1_59_objective_contract_20260902.json": [
+      "digest"
+    ],
+    "reports/taiji_m1_60_contrastive_objective_20260902.json": [
+      "candidate_digest",
+      "digest"
+    ],
+    "reports/taiji_m1_61_key_value_boundary_20260902.json": [
+      "digest"
+    ],
+    "reports/taiji_m1_62_learning_data_contract_20260902.json": [
+      "digest"
+    ],
+    "reports/taiji_m1_63_identity_organ_promotion_20260902.json": [
+      "digest"
+    ],
+    "reports/taiji_m1_64_foundation_memory_20260903.json": [
+      "digest"
+    ],
+    "reports/taiji_m1_b18_checkpoint_preflight_20260902.json": [
+      "digest"
+    ],
+    "reports/taiji_m1_b18_joint_seed11_eval_only_20260902.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m1_b18_joint_seed29_eval_only_20260902.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m1_b18_joint_seed47_eval_only_20260902.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m1_f2_pilot_seed11_eval_20260901.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m1_f2_pilot_seed29_eval_20260901.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m1_f2_pilot_seed47_eval_20260901.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m1_f2_smoke_eval_20260901.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m1_f3_pilot_seed11_eval_20260901.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m1_f3_pilot_seed29_eval_20260901.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m1_f3_pilot_seed47_eval_20260901.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m1_f4_pilot_matrix_20260901.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m1_f4_pilot_seed11_eval_20260901.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m1_f4_pilot_seed29_eval_20260901.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m1_f4_pilot_seed47_eval_20260901.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m1_f5_full_promotion_20260902.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m1_f5_full_seed11_eval_only_20260901.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m1_f5_full_seed29_eval_only_20260902.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m1_f5_full_seed47_eval_only_20260902.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m1_f5_promotion_20260901.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m1_f7_memory_replay_canary_eval_only_20260902.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m1_f8_full_memory_replay_seed11_20260902_eval_only.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m1_f8_full_memory_replay_seed29_20260902_eval_only.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m1_f8_full_memory_replay_seed47_20260902_eval_only.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m1_f8_memory_replay_promotion_20260902.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m1_identity_candidate_20260902.json": [
+      "candidate_digest"
+    ],
+    "reports/taiji_m1_pilot_eval_20260901.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m1_pilot_seed11_eval_20260901.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m1_pilot_seed29_eval_20260901.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m1_pilot_seed47_eval_20260901.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m2_checkpoint_preflight_20260903.json": [
+      "digest"
+    ],
+    "reports/taiji_m2_f1_isolation_20260904.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m2_f1_isolation_seed11_20260904.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m2_f1_isolation_seed29_20260904.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m2_f1_isolation_seed47_20260904.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m2_f1f5_foundation_seed11_resume_20260903.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m2_f5_phase_b_preflight_20260904.json": [
+      "digest"
+    ],
+    "reports/taiji_m2_f5_seed11_no_replay_course_resume_20260904.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m2_f5_seed11_no_replay_parent_preflight_20260904.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m2_f5_seed11_no_replay_parent_resume_20260904.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m2_f5_seed11_no_replay_resume_eval_20260904.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m2_f5_seed11_predictor_only_course_resume_20260905.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m2_f5_seed11_predictor_only_preflight_20260905.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m2_f5_seed11_predictor_only_preflight_resume_20260905.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m2_f5_seed11_private_context_course_resume_20260905.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m2_f5_seed11_private_context_preflight_20260905.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m2_f5_seed11_private_context_preflight_resume_20260905.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m2_f5_seed11_readout_protected_course_preflight_20260904.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m2_f5_seed11_readout_protected_course_preflight_resume_20260904.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m2_f5_seed11_readout_protected_course_resume_20260904.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m2_f5_seed11_readout_protected_preflight_20260904.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m2_f5_seed11_replay_course_resume_20260904.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m2_f5_seed29_predictor_only_preflight_20260905.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m2_f5_seed29_private_context_course_resume_20260905.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m2_f5_seed29_private_context_preflight_resume_20260905.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m2_f5_seed47_private_context_course_resume_20260905.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m2_f5_seed47_private_context_preflight_20260905.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m2_f5_seed47_private_context_preflight_resume_20260905.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m2_pipe_check_seed11_resume_20260903.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m2_r0_checkpoint_inventory_20260905.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m2_r0_checkpoint_inventory_20260906.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m2ad_active_continuation_20260905.json": [
+      "digest"
+    ],
+    "reports/taiji_m2ad_active_continuation_canary_20260905.json": [
+      "digest"
+    ],
+    "reports/taiji_m2n_seed11_organ_isolated_eval_20260905.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m2r1_data_contract_20260906.json": [
+      "digest"
+    ],
+    "reports/taiji_m2r1_phase_c_1mib_20260906.json": [
+      "digest"
+    ],
+    "reports/taiji_m2r1_phase_c_1mib_baselines_20260906.json": [
+      "digest"
+    ],
+    "reports/taiji_m2r1_phase_c_1mib_seed29_20260906.json": [
+      "digest"
+    ],
+    "reports/taiji_m2r1_phase_c_1mib_seed47_20260906.json": [
+      "digest"
+    ],
+    "reports/taiji_m2r1_phase_c_arms_20260906.json": [
+      "digest"
+    ],
+    "reports/taiji_m2r1_phase_c_canary_20260906.json": [
+      "digest"
+    ],
+    "reports/taiji_m2r1_phase_c_pilot_20260906.json": [
+      "digest"
+    ],
+    "reports/taiji_m2r1_v2_canary_active_seed11_20260907.json": [
+      "digest"
+    ],
+    "reports/taiji_m2r1_v2_pilot_seed11_20260907.json": [
+      "digest"
+    ],
+    "reports/taiji_m2r2_equal_budget_replay_seed11_20260906.json": [
+      "digest"
+    ],
+    "reports/taiji_m2r2_equal_budget_replay_seed29_20260906.json": [
+      "digest"
+    ],
+    "reports/taiji_m2r2_equal_budget_replay_seed47_20260906.json": [
+      "digest"
+    ],
+    "reports/taiji_m2r2_r0_1_ablation_seed11_20260907.json": [
+      "digest"
+    ],
+    "reports/taiji_m2r2_r0_1_smoke_seed11_20260907.json": [
+      "digest"
+    ],
+    "reports/taiji_m2r2_r0_2_delay_probe_v2_seed11_20260907.json": [
+      "digest"
+    ],
+    "reports/taiji_m2r2_r0_2_smoke_v2_seed11_20260907.json": [
+      "digest"
+    ],
+    "reports/taiji_m2r2_r0_context_seed29_20260907.json": [
+      "digest"
+    ],
+    "reports/taiji_m2r2_r0_context_seed47_20260907.json": [
+      "digest"
+    ],
+    "reports/taiji_m2r2_r0_learning_curve_seed11_20260907.json": [
+      "digest"
+    ],
+    "reports/taiji_m2r2_r0_smoke_seed11_20260907.json": [
+      "digest"
+    ],
+    "reports/taiji_m2r2_r1_candidate_probe_seed11_20260907.json": [
+      "digest"
+    ],
+    "reports/taiji_m2r2_r1_candidate_smoke_seed11_20260907.json": [
+      "digest"
+    ],
+    "reports/taiji_m2r3_cascade_seed11_20260906.json": [
+      "digest"
+    ],
+    "reports/taiji_m2r3_cascade_seed29_20260906.json": [
+      "digest"
+    ],
+    "reports/taiji_m2r3_cascade_seed47_20260906.json": [
+      "digest"
+    ],
+    "reports/taiji_m2r3_cascade_smoke_seed11_20260906.json": [
+      "digest"
+    ],
+    "reports/taiji_m2r3_r0_structured_semantics_20260907.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m2r3_r1_runtime_owner_20260907.json": [
+      "checkpoint_digest",
+      "digest"
+    ],
+    "reports/taiji_m2r3_r2_multiseed_20260907.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m2w_seed11_b5_owner_diagnosis_20260905.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m2x_seed11_b5_readout_generation_20260905.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m2y_seed11_b5_online_novelty_20260905.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m3r1_native_observation_20260907.json": [
+      "unchanged"
+    ],
+    "reports/taiji_m3r3_read_only_intent_20260907.json": [
+      "unchanged",
+      "digest"
+    ],
+    "reports/taiji_m3r4_preview_approval_20260907.json": [
+      "unchanged"
+    ],
+    "reports/taiji_m3r5_approved_execution_20260907.json": [
+      "digest"
+    ],
+    "reports/taiji_m4r11_cycle3_interaction_attribution_20260909.json": [
+      "max_abs_delta"
+    ],
+    "reports/taiji_m4r2_capacity_diagnosis_canary_seed11_20260908.json": [
+      "digest"
+    ],
+    "reports/taiji_m4r3_update_interference_canary_seed11_20260908.json": [
+      "digest"
+    ],
+    "reports/taiji_m4r3_update_interference_canary_seed29_20260908.json": [
+      "digest"
+    ],
+    "reports/taiji_m4r3_update_interference_canary_seed47_20260908.json": [
+      "digest"
+    ],
+    "reports/taiji_m4r3_update_interference_pilot_seed11_20260908.json": [
+      "digest"
+    ],
+    "reports/taiji_m4r3_update_interference_pilot_seed29_20260908.json": [
+      "digest"
+    ],
+    "reports/taiji_m4r3_update_interference_pilot_seed47_20260908.json": [
+      "digest"
+    ],
+    "reports/taiji_m4r4_course_shift_audit_20260908.json": [
+      "max_abs_delta",
+      "digest"
+    ],
+    "reports/taiji_m4r6_cycle_retention_attribution_20260908.json": [
+      "max_abs_delta"
+    ],
+    "reports/taiji_m4r8_cycle3_failure_attribution_20260908.json": [
+      "max_abs_delta"
+    ],
+    "reports/taiji_m4v2_b3_k_c_fixed_large_build_20260910.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m4v2_b3_k_c_widened_candidate_build_20260910.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m4v2_b3_pilot_probe_20260910.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m4v2_r2_formal_sg_20260909.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m4v2_r2_sg_canary_20260909.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m4v2_r3_bridge_canary_20260909.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m4v2_r4_shadow_canary_20260909.json": [
+      "candidate_digest",
+      "checkpoint_digest",
+      "trace_digest"
+    ],
+    "reports/taiji_m4v2_r4_shadow_formal_20260909.json": [
+      "candidate_digest",
+      "trace_digest"
+    ],
+    "reports/taiji_m4v2_r6_admission_audit_20260909.json": [
+      "content_digest"
+    ],
+    "reports/taiji_m4v2_r6_k_fixed_large_ensemble_build_model_17_20260909.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m4v2_r6_k_fixed_large_ensemble_build_model_23_20260909.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m4v2_r6_k_fixed_large_ensemble_build_model_31_20260909.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m4v2_r6_k_worker_artifact_build_20260909.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m4v2_r6_k_worker_artifact_build_model_17_20260909.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m4v2_r6_k_worker_artifact_build_model_23_20260909.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m4v2_r6_k_worker_artifact_build_model_31_20260909.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m4v2_r6_k_worker_attachment_preflight_20260909.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m4v2_r6_matched_control_admission_20260910.json": [
+      "content_digest"
+    ],
+    "reports/taiji_m4v2_r6_parent_baseline_preflight_20260909.json": [
+      "candidate_digest",
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m5_k_axis_scorecard_20260909.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m5_k_axis_scorecard_v2_20260909.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m5_k_axis_scorecard_v3_20260910.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m5_k_axis_scorecard_v4_20260911.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m5_k_axis_scorecard_v5_20260911.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m5_k_axis_scorecard_v6_20260911.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m5_k_axis_scorecard_v7_20260912.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m5_k_axis_scorecard_v8_20260912.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m5_k_default_runtime_rollout_review_20260911.json": [
+      "digest"
+    ],
+    "reports/taiji_m5_k_p1_data_contract_audit_20260910.json": [
+      "checkpoint_digest",
+      "digest"
+    ],
+    "reports/taiji_m5_k_p1_data_contract_audit_v2_20260910.json": [
+      "checkpoint_digest",
+      "digest"
+    ],
+    "reports/taiji_m5_k_p2_validation_pilot_20260910.json": [
+      "digest"
+    ],
+    "reports/taiji_m5_k_p2_validation_pilot_v2_20260910.json": [
+      "digest"
+    ],
+    "reports/taiji_m5_k_p3_0_checkpoint_contract_20260910.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_m5_k_p3_1_single_cell_20260910.json": [
+      "checkpoint_digest",
+      "digest"
+    ],
+    "reports/taiji_m5_k_p3_2_owner_transfer_20260910.json": [
+      "candidate_digest",
+      "checkpoint_digest",
+      "digest"
+    ],
+    "reports/taiji_m5_k_p3_3_g_learning_20260911.json": [
+      "digest"
+    ],
+    "reports/taiji_m5_k_p3_5_g_learning_20260911.json": [
+      "digest"
+    ],
+    "reports/taiji_m5_k_p3_6_behavior_holdout_20260911.json": [
+      "digest"
+    ],
+    "reports/taiji_m5_k_p4_10_feature_factorization_20260911.json": [
+      "digest"
+    ],
+    "reports/taiji_m5_k_p4_11_projection_solver_20260911.json": [
+      "digest"
+    ],
+    "reports/taiji_m5_k_p4_12_course_level_validation_20260911.json": [
+      "digest"
+    ],
+    "reports/taiji_m5_k_p4_13_promotion_course_20260911.json": [
+      "digest"
+    ],
+    "reports/taiji_m5_k_p4_14_joint_course_20260911.json": [
+      "digest"
+    ],
+    "reports/taiji_m5_k_p4_1_context_contract_20260911.json": [
+      "digest"
+    ],
+    "reports/taiji_m5_k_p4_2_capacity_attribution_20260911.json": [
+      "digest"
+    ],
+    "reports/taiji_m5_k_p4_3_retention_incremental_20260911.json": [
+      "digest"
+    ],
+    "reports/taiji_m5_k_p4_4_retention_identity_calibration_20260911.json": [
+      "digest"
+    ],
+    "reports/taiji_m5_k_p4_5_update_rule_gate_20260911.json": [
+      "digest"
+    ],
+    "reports/taiji_m5_k_p4_6_functional_parent_objective_20260911.json": [
+      "digest"
+    ],
+    "reports/taiji_m5_k_p4_7_capacity_clean_test_20260911.json": [
+      "digest"
+    ],
+    "reports/taiji_m5_k_p4_8_representation_redesign_20260911.json": [
+      "digest"
+    ],
+    "reports/taiji_mainline_fit_20261109.json": [
+      "equal"
+    ],
+    "reports/taiji_n02_gain_ruler_range_20261018.json": [
+      "digest"
+    ],
+    "reports/taiji_n02_repeat_determinism_c4g_20261018.json": [
+      "bytes_identical"
+    ],
+    "reports/taiji_n1_address_consistency_train_20261015.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_bound_consistency_train_20261015.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_bound_question_interchange_20261015.json": [
+      "unchanged"
+    ],
+    "reports/taiji_n1_contextual_question_train_20261015.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_coupled_rwl_length_balanced_r1_20261018.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_cross_read_intervention_20261015.json": [
+      "unchanged"
+    ],
+    "reports/taiji_n1_expanded_normalized_rwl_length_balanced_20261019.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_fresh_full_history_calibration_20261016.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_fresh_full_history_preflight_20261016.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_fresh_paired_train_20261016.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_group_relative_adam_preflight_20261015.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_group_relative_adam_train_20261015.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_group_relative_paired_preflight_20261015.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_group_relative_paired_train_20261015.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_hard_neighbor_training_20261017.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_iterative_read_preflight_20261015.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_iterative_read_train_20261015.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_length_balanced_training_20261018.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_local_question_train_20261015.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_local_relation_train_20261015.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_margin_satisfaction_20261015.json": [
+      "unchanged"
+    ],
+    "reports/taiji_n1_native_evidence_paired_20261015_final.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_native_evidence_train_fit_20261015.json": [
+      "unchanged"
+    ],
+    "reports/taiji_n1_normalized_coupled_rwl_length_balanced_20261018.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_observation_fidelity_preflight_20261015.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_observation_fidelity_train_20261015.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_paired_question_train_20261015.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_plan132_binding_supervision_calibration_checkpoint_preflight_revalidation_20261019.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_plan132_binding_supervision_calibration_result_20261019.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_plan139_context_robust_matched_continuation_calibration_checkpoint_preflight_20261019.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_plan139_context_robust_matched_continuation_calibration_result_20261019.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_plan140_baseline_retention_balanced_matched_continuation_checkpoint_preflight_20261019.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_plan140_baseline_retention_balanced_matched_continuation_result_20261019.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_plan141_interleaved_context_schedule_matched_continuation_checkpoint_preflight_20261019.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_plan141_interleaved_context_schedule_matched_continuation_result_20261019.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_plan150_v27_length_checkpoint_preflight_20261020.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_plan150_v27_length_result_20261020.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_plan151a_train_score_ledger_recovery_preflight_20261020.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_plan153_v28_fresh_context_checkpoint_preflight_20261020.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_plan153a_fresh_context_checkpoint_preflight_20261020.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_plan155_unknown8_rebalance_preflight_20261020.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_plan155a_unknown8_rebalance_preflight_20261020.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_plan155a_unknown8_rebalance_result_20261020.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_plan157_candidate_parent_preflight_20261020.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_plan157a2_candidate_parent_preflight_20261020.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_plan159_candidate_parent_preflight_20261020.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_plan159a_candidate_parent_preflight_20261020.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_plan160_candidate_parent_preflight_20261020.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_plan160a_candidate_parent_preflight_20261020.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_plan161_question_surface_preflight_20261020.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_plan162_question_surface_zero_preflight_20261020.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_plan162b_question_surface_result_20261020.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_plan162b_question_surface_zero_preflight_20261020.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_plan162f_transition_template_crossover_20261020.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_plan163_transition_template_rebalanced_readiness_20261020.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_plan163_transition_template_rebalanced_result_20261020.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_plan163_transition_template_rebalanced_zero_preflight_20261020.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_plan163a_transition_template_rebalanced_readiness_20261020.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_plan165_transition_template_mid_dose_readiness_20261020.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_plan165_transition_template_mid_dose_result_20261020.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_plan165_transition_template_mid_dose_zero_preflight_20261020.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_plan168_isolated_train_fit_20261025.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan169_task_core_calibration_20261025.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan170_byte_evidence_calibration_20261025.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan171_holdout_generalization_20261025.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan172_fit_first_exposure_20261025.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan173_rollout_training_20261025.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan174_scale_20261025_ss_seed169.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan174_scale_20261025_ss_seed170.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan174_scale_20261025_ss_seed171.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan174_scale_20261025_tf_seed169.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan174_scale_20261025_tf_seed170.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan174_scale_20261025_tf_seed171.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan174b_scale_20261025_ss_seed169.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan174b_scale_20261025_ss_seed170.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan174b_scale_20261025_ss_seed171.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan174b_scale_20261025_tf_seed169.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan174b_scale_20261025_tf_seed170.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan174b_scale_20261025_tf_seed171.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan174c_scale_complete_20261025_ss_seed169.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan174c_scale_complete_20261025_ss_seed170.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan174c_scale_complete_20261025_ss_seed171.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan174c_scale_complete_20261025_tf_seed169.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan174c_scale_complete_20261025_tf_seed170.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan174c_scale_complete_20261025_tf_seed171.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan175_architecture_path_audit_20261026.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan175_v3_checkpoint_restore_epoch01_20261026.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan175_v3_checkpoint_restore_epoch02_20261026.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan175_v3_checkpoint_restore_epoch03_20261026.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan175_v3_checkpoint_restore_epoch04_20261026.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan175_v3_checkpoint_restore_epoch05_20261026.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan175_v3_checkpoint_restore_epoch06_20261026.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan175_v3_checkpoint_restore_epoch07_20261026.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan175_v3_checkpoint_restore_epoch08_20261026.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan175_v3_checkpoint_restore_epoch09_20261026.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan175_v3_checkpoint_restore_epoch10_20261026.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan175_v3_checkpoint_restore_epoch11_20261026.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan175_v3_checkpoint_restore_epoch12_20261026.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan175_v3_checkpoint_restore_epoch13_20261026.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan175_v3_checkpoint_restore_epoch14_20261026.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan175_v3_checkpoint_restore_epoch15_20261026.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan175_v3_checkpoint_restore_epoch16_20261026.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan175_v3_checkpoint_restore_epoch17_20261026.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan175_v3_checkpoint_restore_epoch18_20261026.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan175_v3_checkpoint_restore_epoch19_20261026.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan175_v3_checkpoint_restore_epoch20_20261026.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan175_v3_checkpoint_restore_epoch21_20261026.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan175_v3_checkpoint_restore_epoch22_20261026.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan175_v3_checkpoint_restore_epoch23_20261026.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan175_v3_checkpoint_restore_epoch24_20261026.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan175_v3_checkpoint_restore_epoch25_20261026.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan175_v3_checkpoint_restore_epoch26_20261026.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan175_v3_checkpoint_restore_epoch27_20261026.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan175_v3_checkpoint_restore_epoch28_20261026.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan175_v3_checkpoint_restore_epoch29_20261026.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan175_v3_checkpoint_restore_epoch30_20261026.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan175_v3_checkpoint_restore_epoch31_20261026.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan175_v3_checkpoint_restore_epoch32_20261026.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan175_v3_checkpoint_restore_epoch33_20261026.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan175_v3_checkpoint_restore_epoch34_20261026.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan175_v3_checkpoint_restore_epoch35_20261026.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan175_v3_checkpoint_restore_epoch36_20261026.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan175_v3_checkpoint_restore_epoch37_20261026.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan175_v3_checkpoint_restore_epoch38_20261026.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan175_v3_checkpoint_restore_epoch39_20261026.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan175_v3_checkpoint_restore_epoch40_20261026.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan175_v3_scale_20261026_tf_seed169.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan175_v3_scale_20261026_tf_seed170.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan175_v3_scale_20261026_tf_seed171.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan176_v4_parent_migration_20261026.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_n1_plan177_6_t1_endpoint_receipts_20261029.json": [
+      "unchanged",
+      "digest"
+    ],
+    "reports/taiji_n1_plan177_6_t1_state_isolation_20261029.json": [
+      "unchanged"
+    ],
+    "reports/taiji_n1_plan177_e2c_credit_control_20261029.json": [
+      "logits_digest"
+    ],
+    "reports/taiji_n1_plan177_e3_state_credit_20261029.json": [
+      "logits_digest"
+    ],
+    "reports/taiji_n1_position_five_group_itemwise_interactions_s13_20261018.json": [
+      "unchanged"
+    ],
+    "reports/taiji_n1_position_weight_checkpoint_parameter_delta_s13_20261018.json": [
+      "max_abs_delta"
+    ],
+    "reports/taiji_n1_question_alignment_train_20261015.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_question_separation_20261015.json": [
+      "unchanged"
+    ],
+    "reports/taiji_n1_read_equivariance_20261015.json": [
+      "unchanged"
+    ],
+    "reports/taiji_n1_reader_transfer_train_20261015.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_relation_paired_preflight_20261015.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_relation_paired_train_20261015.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_relation_update_replay_20261015.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_relative_continuation_20261015.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_relative_continuation_preflight_20261015.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_relative_margin_train_20261015.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_relative_paired_20261015.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_relative_paired_preflight_20261015.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_relative_paired_preflight_v2_20261015.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_relative_read_preflight_20261015.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_relative_read_train_20261015.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_renaming_train_20261015.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_renaming_train_v2_20261015.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_residual_question_train_20261015.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_train_only_learning_curve_20261015.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_transition_factorial_calibration_20261016.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_transition_factorial_confirmation_v6.json": [
+      "unchanged"
+    ],
+    "reports/taiji_n1_transition_factorial_lr_decay_run88c.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_transition_factorial_lr_decay_run88c_batch_verification.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_transition_factorial_lr_decay_run89a.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_transition_factorial_lr_decay_run89a_batch_verification.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_transition_factorial_lr_decay_run89b.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_transition_factorial_lr_decay_run89b_batch_verification.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_transition_factorial_paired_preflight_20261016.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_transition_factorial_preflight_20261016.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_transition_factorial_run86c.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_unknown_abstention_factorial_diagnostic_20261017.json": [
+      "unchanged"
+    ],
+    "reports/taiji_n1_v21_confirmation_readiness_20261019.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_v22_confirmation_readiness_20261019.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_v23_confirmation_readiness_20261019.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_v24_abstention_readiness_20261019.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_v25_abstention_readiness_20261019.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_v26_abstention_length_readiness_20261019.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_v3_train_calibration_20261015.json": [
+      "equal"
+    ],
+    "reports/taiji_n1_writer_question_interchange_20261015.json": [
+      "unchanged"
+    ],
+    "reports/taiji_n2_postcheck_20261008.json": [
+      "digest"
+    ],
+    "reports/taiji_n5_08_arm_tensor_diff_20261010.json": [
+      "max_abs_delta"
+    ],
+    "reports/taiji_n5_10_arm_tensor_diff_20261011.json": [
+      "max_abs_delta"
+    ],
+    "reports/taiji_n5_arm_tensor_base_vs_batch_c_control_20261013.json": [
+      "max_abs_delta"
+    ],
+    "reports/taiji_n5_arm_tensor_base_vs_batch_c_control_v3_20261013.json": [
+      "max_abs_delta"
+    ],
+    "reports/taiji_n5_arm_tensor_base_vs_batch_c_treated_20261013.json": [
+      "max_abs_delta"
+    ],
+    "reports/taiji_n5_arm_tensor_base_vs_batch_c_treated_v3_20261013.json": [
+      "max_abs_delta"
+    ],
+    "reports/taiji_n5_arm_tensor_batch_c2_treated_vs_batch_c_20261014.json": [
+      "max_abs_delta"
+    ],
+    "reports/taiji_n5_arm_tensor_batch_c_two_arms_20261013.json": [
+      "max_abs_delta"
+    ],
+    "reports/taiji_native_core_r1_course_audit_20261030.json": [
+      "digest"
+    ],
+    "reports/taiji_native_core_r3_probe_20261030.json": [
+      "logits_digest"
+    ],
+    "reports/taiji_native_core_r3b2_ordinary_20261030.json": [
+      "logits_digest"
+    ],
+    "reports/taiji_native_core_r3b_baseline_20261030.json": [
+      "logits_digest"
+    ],
+    "reports/taiji_native_core_r4_preflight_20261030.json": [
+      "digest"
+    ],
+    "reports/taiji_native_core_r5_evaluation_20261030.json": [
+      "digest"
+    ],
+    "reports/taiji_native_core_r5b_evaluation_20261030.json": [
+      "digest"
+    ],
+    "reports/taiji_native_core_r5c_evaluation_20261031.json": [
+      "digest"
+    ],
+    "reports/taiji_native_core_r5c_pricing_20261031.json": [
+      "probe_digest"
+    ],
+    "reports/taiji_native_core_r5c_training_20261031.json": [
+      "probe_digest"
+    ],
+    "reports/taiji_object_edge_r61_20261109.json": [
+      "unchanged"
+    ],
+    "reports/taiji_object_edge_r61_20261109_rebaseline_20261111.json": [
+      "unchanged"
+    ],
+    "reports/taiji_package19_2g_record_margin_20261104.json": [
+      "max_abs_diff"
+    ],
+    "reports/taiji_package19_2h_sequence_surface_20261104.json": [
+      "max_abs_diff"
+    ],
+    "reports/taiji_package19_2t_zero_training_assembly_20261105.json": [
+      "identical"
+    ],
+    "reports/taiji_package19_2u_stop_boundary_ablation_20261105.json": [
+      "identical"
+    ],
+    "reports/taiji_package20_1_rule_learning_fixture_graph_20261105.json": [
+      "byte_identical",
+      "digest"
+    ],
+    "reports/taiji_package20_2_credit_recovery_20261105.json": [
+      "byte_identical"
+    ],
+    "reports/taiji_package20_2r_f_leverage_20261105.json": [
+      "byte_identical"
+    ],
+    "reports/taiji_package20_3a_addressed_store_20261105.json": [
+      "identical",
+      "digest"
+    ],
+    "reports/taiji_package20_4c_formal_comparison_20261105.json": [
+      "unchanged"
+    ],
+    "reports/taiji_package20_4c_r2_formal_comparison_20261105.json": [
+      "byte_identical",
+      "unchanged"
+    ],
+    "reports/taiji_package20_4d_shared_eval_20261106.json": [
+      "identical"
+    ],
+    "reports/taiji_preflight_18_1_20261104.json": [
+      "equal",
+      "digest"
+    ],
+    "reports/taiji_preflight_19_2b_20261104.json": [
+      "equal",
+      "unchanged",
+      "digest"
+    ],
+    "reports/taiji_preflight_19_4_20261104.json": [
+      "equal",
+      "digest"
+    ],
+    "reports/taiji_pricing_19_2b_20261104.json": [
+      "unchanged"
+    ],
+    "reports/taiji_pricing_19_3_20261104.json": [
+      "digest"
+    ],
+    "reports/taiji_r2_daily_dialogue_20261021_continuation_recovery1_generations.json": [
+      "equal",
+      "checkpoint_digest"
+    ],
+    "reports/taiji_r2_daily_dialogue_20261021_continuation_recovery1_result.json": [
+      "equal",
+      "checkpoint_digest"
+    ],
+    "reports/taiji_r2_daily_dialogue_20261021_continuation_result.json": [
+      "equal",
+      "checkpoint_digest"
+    ],
+    "reports/taiji_r2_daily_dialogue_20261021_retry2_result.json": [
+      "equal",
+      "checkpoint_digest"
+    ],
+    "reports/taiji_r2_daily_dialogue_recovery_20261021_fresh_same_capacity_readiness.json": [
+      "checkpoint_digest",
+      "digest"
+    ],
+    "reports/taiji_r2_daily_dialogue_recovery_20261021_full_turn_1m_readiness.json": [
+      "checkpoint_digest",
+      "digest"
+    ],
+    "reports/taiji_r2_daily_dialogue_recovery_20261021_warm_start_readiness.json": [
+      "checkpoint_digest",
+      "digest"
+    ],
+    "reports/taiji_r2_daily_dialogue_recovery_v2_20261021_extension_v1_endpoint_manifest_v1.json": [
+      "equal",
+      "checkpoint_digest"
+    ],
+    "reports/taiji_r2_daily_dialogue_recovery_v2_20261021_extension_v1_fresh_same_capacity_attempt.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_r2_daily_dialogue_recovery_v2_20261021_extension_v1_fresh_same_capacity_result.json": [
+      "equal",
+      "checkpoint_digest",
+      "digest"
+    ],
+    "reports/taiji_r2_daily_dialogue_recovery_v2_20261021_extension_v1_fresh_same_capacity_result_readiness.json": [
+      "equal",
+      "checkpoint_digest",
+      "digest"
+    ],
+    "reports/taiji_r2_daily_dialogue_recovery_v2_20261021_extension_v1_full_turn_1m_attempt.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_r2_daily_dialogue_recovery_v2_20261021_extension_v1_full_turn_1m_result.json": [
+      "equal",
+      "checkpoint_digest",
+      "digest"
+    ],
+    "reports/taiji_r2_daily_dialogue_recovery_v2_20261021_extension_v1_full_turn_1m_result_readiness.json": [
+      "equal",
+      "checkpoint_digest",
+      "digest"
+    ],
+    "reports/taiji_r2_daily_dialogue_recovery_v2_20261021_extension_v1_paired_eval_attempt.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_r2_daily_dialogue_recovery_v2_20261021_extension_v1_paired_eval_endpoints.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_r2_daily_dialogue_recovery_v2_20261021_extension_v1_paired_eval_readiness.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_r2_daily_dialogue_recovery_v2_20261021_extension_v1_paired_eval_recovery_v1_attempt.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_r2_daily_dialogue_recovery_v2_20261021_extension_v1_paired_eval_recovery_v1_endpoints.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_r2_daily_dialogue_recovery_v2_20261021_extension_v1_paired_eval_recovery_v1_readiness.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_r2_daily_dialogue_recovery_v2_20261021_extension_v1_paired_eval_recovery_v2_admission_001_attempt.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_r2_daily_dialogue_recovery_v2_20261021_extension_v1_paired_eval_recovery_v2_admission_001_endpoints.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_r2_daily_dialogue_recovery_v2_20261021_extension_v1_paired_eval_recovery_v2_admission_001_readiness.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_r2_daily_dialogue_recovery_v2_20261021_extension_v1_paired_eval_recovery_v2_admission_002_attempt.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_r2_daily_dialogue_recovery_v2_20261021_extension_v1_paired_eval_recovery_v2_admission_002_endpoints.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_r2_daily_dialogue_recovery_v2_20261021_extension_v1_paired_eval_recovery_v2_admission_002_readiness.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_r2_daily_dialogue_recovery_v2_20261021_extension_v1_paired_eval_recovery_v2_admission_002_result.json": [
+      "equal",
+      "checkpoint_digest"
+    ],
+    "reports/taiji_r2_daily_dialogue_recovery_v2_20261021_extension_v1_paired_eval_recovery_v2_formal_001_attempt.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_r2_daily_dialogue_recovery_v2_20261021_extension_v1_paired_eval_recovery_v2_formal_001_endpoints.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_r2_daily_dialogue_recovery_v2_20261021_extension_v1_paired_eval_recovery_v2_formal_001_readiness.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_r2_daily_dialogue_recovery_v2_20261021_extension_v1_paired_eval_recovery_v2_formal_001_result.json": [
+      "equal",
+      "checkpoint_digest"
+    ],
+    "reports/taiji_r2_daily_dialogue_recovery_v2_20261021_extension_v1_warm_start_attempt.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_r2_daily_dialogue_recovery_v2_20261021_extension_v1_warm_start_result.json": [
+      "equal",
+      "checkpoint_digest",
+      "digest"
+    ],
+    "reports/taiji_r2_daily_dialogue_recovery_v2_20261021_extension_v1_warm_start_result_readiness.json": [
+      "equal",
+      "checkpoint_digest",
+      "digest"
+    ],
+    "reports/taiji_r2_daily_dialogue_recovery_v2_20261021_fresh_same_capacity_readiness.json": [
+      "checkpoint_digest",
+      "digest"
+    ],
+    "reports/taiji_r2_daily_dialogue_recovery_v2_20261021_full_turn_1m_readiness.json": [
+      "checkpoint_digest",
+      "digest"
+    ],
+    "reports/taiji_r2_daily_dialogue_recovery_v2_20261021_warm_start_readiness.json": [
+      "checkpoint_digest",
+      "digest"
+    ],
+    "reports/taiji_r2_daily_dialogue_retry1_restore_reaudit_20261021.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_r2_daily_dialogue_warmstart_matched_20261021_fresh_same_capacity_readiness.json": [
+      "equal",
+      "checkpoint_digest"
+    ],
+    "reports/taiji_r2_daily_dialogue_warmstart_matched_20261021_warm_start_readiness.json": [
+      "equal",
+      "checkpoint_digest"
+    ],
+    "reports/taiji_r2_evaluation_recovery_v2_execution_audit_20261025.json": [
+      "equal",
+      "checkpoint_digest"
+    ],
+    "reports/taiji_r2_fast_ledger_resume_full_turn_1m_4c61d76d582f4ad99097264b45dcce00.json": [
+      "checkpoint_digest",
+      "digest"
+    ],
+    "reports/taiji_r2_fast_ledger_resume_v2_warm_start_7c75bfbae72d43d1b0996540f200ae63.json": [
+      "checkpoint_digest",
+      "digest"
+    ],
+    "reports/taiji_r2_fast_ledger_resume_v3_warm_start_212efdf54f7c4b5290cead8af556edd0.json": [
+      "checkpoint_digest",
+      "digest"
+    ],
+    "reports/taiji_r2_fast_ledger_resume_v4_fresh_same_capacity_cd22c9a63ee94176acab240e4c804f06.json": [
+      "checkpoint_digest",
+      "digest"
+    ],
+    "reports/taiji_r2_fast_ledger_resume_v4_fresh_same_capacity_fe48c1f8e09a4358a6382a6cae7a052f.json": [
+      "checkpoint_digest",
+      "digest"
+    ],
+    "reports/taiji_r2_fast_ledger_resume_v4_full_turn_1m_26729041f3dd4f13a68a729b81194add.json": [
+      "checkpoint_digest",
+      "digest"
+    ],
+    "reports/taiji_r2_fast_ledger_resume_v4_full_turn_1m_55591db6797a4317b63b4121244915b1.json": [
+      "checkpoint_digest",
+      "digest"
+    ],
+    "reports/taiji_r2_fast_ledger_resume_v4_full_turn_1m_e5f2b59f80e34460b6c81d184b3ff955.json": [
+      "checkpoint_digest",
+      "digest"
+    ],
+    "reports/taiji_r2_fast_ledger_resume_v4_warm_start_024767a457e74153911437b3435bd2c9.json": [
+      "checkpoint_digest",
+      "digest"
+    ],
+    "reports/taiji_r2_fast_ledger_resume_v4_warm_start_4bea936ea4a545e5b4201022342c15e1.json": [
+      "checkpoint_digest",
+      "digest"
+    ],
+    "reports/taiji_r2_fast_ledger_resume_warm_start_480b7c878fde4c47b5f772a94be6d873.json": [
+      "checkpoint_digest",
+      "digest"
+    ],
+    "reports/taiji_r2_h3_3_generalization_20260916.json": [
+      "checkpoint_digest",
+      "digest"
+    ],
+    "reports/taiji_r2_h3_3b_shared_support_profile_20260916.json": [
+      "checkpoint_digest",
+      "digest"
+    ],
+    "reports/taiji_r2_h3_3c_course_300k_10e_20260916.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_r2_h3_3c_shared_support_profile_20260916.json": [
+      "checkpoint_digest",
+      "digest"
+    ],
+    "reports/taiji_r2_h3_4_conditional_credit_20260916.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_r2_h3_6_plan_target_geometry_audit_20260916.json": [
+      "digest"
+    ],
+    "reports/taiji_r2_h3_6_target_encoder_smoke_20260916.json": [
+      "digest"
+    ],
+    "reports/taiji_r2_h3_6b_bridge_ablation_20260916_seed20260916.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_r2_h3_6b_bridge_ablation_20260916_seed20260917.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_r2_h3_6b_bridge_ablation_20260916_seed20260918.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_r2_h3_6b_control_dev_20260916_seed20260916.json": [
+      "digest"
+    ],
+    "reports/taiji_r2_h3_6b_control_dev_20260916_seed20260917.json": [
+      "digest"
+    ],
+    "reports/taiji_r2_h3_6b_control_dev_20260916_seed20260918.json": [
+      "digest"
+    ],
+    "reports/taiji_r2_h3_6b_control_preflight_20260916.json": [
+      "digest"
+    ],
+    "reports/taiji_r2_h3_6b_matched_dev_result_20260916.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_r2_h3_6b_treatment_dev_20260916_seed20260916.json": [
+      "digest"
+    ],
+    "reports/taiji_r2_h3_6b_treatment_dev_20260916_seed20260917.json": [
+      "digest"
+    ],
+    "reports/taiji_r2_h3_6b_treatment_dev_20260916_seed20260918.json": [
+      "digest"
+    ],
+    "reports/taiji_r2_h3_6b_treatment_preflight_20260916.json": [
+      "digest"
+    ],
+    "reports/taiji_r2_h3_7_ablation_20260917_seed20260917.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_r2_h3_7_ablation_20260917_seed20260918.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_r2_h3_7_ablation_20260917_seed20260919.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_r2_h3_7_attribution_audit_20260917.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_r2_h3_7_control_dev_20260917_seed20260917.json": [
+      "digest"
+    ],
+    "reports/taiji_r2_h3_7_control_dev_20260917_seed20260918.json": [
+      "digest"
+    ],
+    "reports/taiji_r2_h3_7_control_dev_20260917_seed20260919.json": [
+      "digest"
+    ],
+    "reports/taiji_r2_h3_7_control_preflight_20260917.json": [
+      "digest"
+    ],
+    "reports/taiji_r2_h3_7_matched_dev_result_20260917.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_r2_h3_7_treatment_dev_20260917_seed20260917.json": [
+      "digest"
+    ],
+    "reports/taiji_r2_h3_7_treatment_dev_20260917_seed20260918.json": [
+      "digest"
+    ],
+    "reports/taiji_r2_h3_7_treatment_dev_20260917_seed20260919.json": [
+      "digest"
+    ],
+    "reports/taiji_r2_h3_7_treatment_preflight_20260917.json": [
+      "digest"
+    ],
+    "reports/taiji_r2_resume_warm_start_82fb70d3eb444f5695014ee3d0a599d7.json": [
+      "checkpoint_digest",
+      "digest"
+    ],
+    "reports/taiji_r2_target_update_resume_fresh_same_capacity_853240cc68ea46599c13c1033413361f.json": [
+      "checkpoint_digest",
+      "digest"
+    ],
+    "reports/taiji_r2_target_update_resume_fresh_same_capacity_f2749e98e8a747349c204da8a95a52a2.json": [
+      "checkpoint_digest",
+      "digest"
+    ],
+    "reports/taiji_r2_target_update_resume_full_turn_1m_0b0e458c3c1b49b0aaadb43d283070ab.json": [
+      "checkpoint_digest",
+      "digest"
+    ],
+    "reports/taiji_r2_target_update_resume_full_turn_1m_ab5bc56d93684c39a766b80077b4333e.json": [
+      "checkpoint_digest",
+      "digest"
+    ],
+    "reports/taiji_r2_target_update_resume_warm_start_09bc1e3847344dda9ca9097614a70435.json": [
+      "checkpoint_digest",
+      "digest"
+    ],
+    "reports/taiji_r2_target_update_resume_warm_start_5eb9688ac43b46ef889687b3d18693de.json": [
+      "checkpoint_digest",
+      "digest"
+    ],
+    "reports/taiji_selection_routing_17_2r_format_equivalence_20261104.json": [
+      "max_abs_diff"
+    ],
+    "reports/taiji_stop_boundary_20261109.json": [
+      "identical"
+    ],
+    "reports/taiji_stop_boundary_20261109_rebaseline_20261111.json": [
+      "identical"
+    ],
+    "reports/taiji_store_wire_20261108_open.json": [
+      "unchanged"
+    ],
+    "reports/taiji_unified_entry_evidence_20260919.json": [
+      "digest"
+    ],
+    "reports/taiji_w7_e1_evolution_ledger_20260901.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_w7_e3_4_capacity_preflight_20260901.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_w7_p2_12_natural_language_write_20260831.json": [
+      "unchanged"
+    ],
+    "reports/taiji_w7_p6_1c_qwen_browser_field_20260831.json": [
+      "digest"
+    ],
+    "reports/taiji_w7_r3_visual_desktop_s1_20260829.json": [
+      "byte_identical"
+    ],
+    "reports/taiji_w7_r5b_l1_capability_candidate_20260830.json": [
+      "candidate_digest"
+    ],
+    "reports/taiji_w7_r5b_l3_capability_resource_20260830.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_w7_r5b_s1_capability_registry_20260830.json": [
+      "checkpoint_digest"
+    ],
+    "reports/taiji_w7_r5c_s10_workbench_multi_region_batch_20260830.json": [
+      "digest"
+    ],
+    "reports/taiji_w7_r5c_s11_workbench_multi_region_lifecycle_20260830.json": [
+      "digest"
+    ],
+    "reports/taiji_w7_r5c_s16_workbench_measured_multi_round_20260830.json": [
+      "digest"
+    ],
+    "reports/taiji_w7_r5c_s18_structural_evidence_compaction_20260830.json": [
+      "digest"
+    ],
+    "reports/taiji_w7_r5c_s21_structural_long_sequence_stress_20260831.json": [
+      "digest"
+    ],
+    "reports/taiji_w7_r5c_s6_workbench_structural_scheduler_20260830.json": [
+      "digest"
+    ]
+  }
+}

@@ -1896,3 +1896,23 @@ R57 是 confirm 分区第 2 次读（D-20261109-60），本次重跑构成**第 
 
 **7. 撤回路径**：本条是判据登记，无代码与记录变更；撤回只需删除本条与能力卡 §13。
 
+**8. 机器门（2026-11-10 上线，把 §3 从文档纪律变成拦截）**：`scripts/training/check_report_run_conditions.py` 按**字段**判——需条件字段＝相等类（`max_abs_delta`／`max_abs_diff`／`max_delta`／`*_identical`／`identical`／`equal`／`equal_fields`／`same_bytes`／`unchanged`）与内容摘要类（`content_digest`／`probe_digest`／`checkpoint_digest`／`param_digest`／`state_digest`／`trace_digest`／`logits_digest`／`weight_digest`／`candidate_digest`／`digest`）；已记条件＝`threads`／`*_threads` 键，或 `OMP_NUM_THREADS`／`MKL_NUM_THREADS`／`OPENBLAS_NUM_THREADS`／`set_num_threads` 字样。新脚本写盘必须走 `write_report()`：缺条件即抛 `MissingRunConditions`，**不落盘**。旧文件不回写，逐条列进 `plans/manifests/report_run_conditions_baseline_20261110.json`（状态 `report_level_claim_not_machine_verifiable`，只标注）。以该口径重扫：tracked JSON 3931 份，命中 **620** 份（reports 571／manifests 49），其中带相等类字段 **228** 份。与 §4 的 212／267 不同是**口径差**（§4 是上一轮的窄口径普查：只数四类摘要名与"逐字节"字样；本节是字段级全量，含 `*_identical` 与十类摘要名），不是读数变化。`*_sha256` 与 `frozen_files` 属字节哈希，与归约顺序无关，不要求条件。自检入口：`--check`（CI 步骤 `report-conditions`，红由末置汇总判）；`--write-baseline` 重建；`--list-legacy` 打印旧清单。
+
+## D-20261110-06 封存集读取改为默认拒绝（常设规则 R-SEAL-1）
+
+**1. 编号／时间／类型**：D-20261110-06｜2026-11-10｜**常设规则**（不涉及任何读数，由 owner 2026-11-10 拍板）。规则名 `R-SEAL-1`，正文以本条为唯一权威；[MASTER-PLAN](../MASTER-PLAN.md)只立规则名与要点。
+
+**2. 规则（五条，全部为硬约束）**：
+
+1. **默认拒绝**：没有 owner 当次授权，一律不得读取 confirm／封存分区；不存在"上次批过所以这次也算"的默认续期。
+2. **逐次重新授权**：每次读取都要一条新的、明确指向该次运行的授权；授权必须写明"这是第几次"。
+3. **与台账对账**：授权声明的次数必须与台账里被引用的显式行"已消耗 confirm 预算：第 N 次"一致；对不上即不得开跑。该行是格式要求，不是叙述——只写在段落里不算。
+4. **现有读数够用即禁读**：预注册必须写出"为什么现有读数回答不了这个问题"；写不出即不得读。
+5. **判据不得在原预算内修改**：读后若发现判据需要改，该次预算作废；改完判据必须重新申请，不得用同一笔预算重读。
+
+**3. 与既有记录的关系**：D-20261110-04 §6 的显式行记录的是第 3 次（R57，2026-11-11 重基线重跑）。本条不追溯既有三次，只约束今后：**这三次之后预算视为 0**，任何再读都要按 §2 走新授权。
+
+**4. 为什么**：三次预算已用尽，封存集的边际信息量下降；而 confirm"读过就是读过"，没有回滚手段。默认放行会把封存集退化成第二个开发集，"未污染"的表述随之失效。
+
+**5. 撤回路径**：本条是规则登记，无代码与数据变更；撤回需 owner 明确裁定，并同时删除 MASTER-PLAN 的 §R-SEAL-1。
+
