@@ -1976,3 +1976,35 @@ R57 是 confirm 分区第 2 次读（D-20261109-60），本次重跑构成**第 
 
 **6. 记账副作用（自查已修，留作纪律）**：本条初稿把该产物写成带 `reports/` 前缀的完整路径，引用普查随即把它当成一条新的"被引用但不在库"的读数，`test_n5_38` 又红 2 条——**记账动作自己造红**。改为裸文件名并注明"CI 运行时产物、不入库、本机无此件"后 `verdict=holds`、9 passed。纪律：**台账里提到不入库的产物，只能写裸文件名并注明状态**，不写可被普查当成读数的完整路径。
 
+## D-20261110-10 用重建关掉最后一条缺件红：CI 按需生成 09.8 bundle，并合并 sha 常量
+
+**1. 编号／时间／类型**：D-20261110-10｜2026-11-10｜**CI 接线 + 常量合并**（0 读数改动、0 断言改动）。
+
+**2. 起因**：D-20261110-08 判 `regenerable_exact`（逐字节可重建）之后，"缺件"不再是无解的 (b) 类，而是一个接线问题：干净检出里没有 `output/taiji_core_09/subject_bundle.pt`（被 `*.pt` 忽略），于是 `test_composition_read_probe_anchor` 在 CI 上必红。
+
+**3. 处置（三条）**：
+- **正式入口**：新增 `scripts/training/materialize_taiji_core_09_bundle.py`。它只重走 `verify_taiji_closeout_09.py` 中**落盘 bundle 之前**的确定性前缀（seed 20261101、单线程、8 次声明更新、1 步 career），不跑其后的活动训练——那段训练发生在 bundle 落盘之后，不参与产件。构造常量（`SEED`／`PARTS`／`UNITS_PER_GROUP`／`STEPS`／`LR`）与 `pricing`／`bd`／`gc`／`development`／`rule` 全部直接从 closeout 生产者模块读取，因此不存在第二份参数副本。
+- **自证门**：产出必须 sha256 等于封存值且字节数等于 77609636（常量见 `taiji/core_09_bundle.py`），否则非零退出；盘上已有且匹配时不做任何写入（幂等）。"生成个差不多"在这一步被拦下。
+- **CI 接线**：两条 pytest 腿（Ubuntu `test (3.12)`、Windows `test-windows`）各加一步 `materialize-bundle`，位置在跑套件之前；带 `continue-on-error` 并入 S6-i 集合，红由末置汇总表点名。**生成失败不会拖垮整腿的测试信号，而是以一条具名红出现**。
+
+**4. 成本与缓存决策（先估再选）**：本机 Windows 干净目录实测 **wall 63.9 s、峰值工作集 ≈1.37 GB**（产件 77,609,636 B）。对照 Ubuntu 腿全量套件 45 min+ 约占 2%。据此**不挂 artifact 缓存**：77 MB 的上传／下载加输入 sha 计算省不下这 64 s，还多出一个缓存失效面。
+
+**5. 断言未动**：`test_composition_read_probe_anchor` 一行未改——它照旧要求 bundle 的 sha／字节数与封存值一致，只是这个前提现在由 CI 自己造出来（既不 skip，也不缺件报红）。
+
+**6. 单一来源（用户第 4 条要求）**：sha／字节数／相对路径收敛到 `taiji/core_09_bundle.py`；原先各写一份的 6 个消费者（`verify_taiji_record_relation_14.py`／`_14_5`／`_14_6`／`_14_6_preflight`／`verify_taiji_composition_10_21.py`／`verify_taiji_10_21_1.py`）改为别名导入，行为不变。新增守卫测试 `tests/taiji_native/test_core_09_bundle_single_source.py`：`taiji/` 与 `scripts/` 里除 owner 外任何 `.py` 再出现该 sha 字面量即红。
+
+**7. 未验证的残余风险**：跨平台逐字节一致性**只在维护机（Windows）上验过**。若 runner 的指令集或浮点收缩令重建漂移，`materialize-bundle` 会以"sha／字节数不等"的明确消息判红——那属跨平台问题，需要另立条目处置；但它不会伪装成"文件缺失"。
+
+## D-20261110-11 `CI fast lint` 的 13 条 mypy 错：非本线引入、归属另一条线
+
+**1. 编号／时间／类型**：D-20261110-11｜2026-11-10｜**记账／归属声明**（0 改动）。
+
+**2. 事实**：`CI fast lint` 的 mypy 面有 13 条错，全部落在 `taiji/u2_operators.py` 与 `taiji/u2_subject.py`，由提交 `13466c975` 引入（U2 主体方向）。本轮记账时这两个文件正被另一条线修改（工作树未提交）。
+
+**3. 记账口径**：
+- 这 13 条**不进本线欠账**，也**不进"仍待修"的分母**；本线的 CI 结论必须与它们分开写。
+- 本线**不代改**他人文件（避免与在飞改动冲突）。
+- 若该线长期不动、这条红长期存在，报 owner 协调。
+
+**4. 与 D-20261110-07 的关系**：那 15 条（(a)14／(b)1／(c)0）是 n5_38 族的引用口径与缺件问题；本条 13 条是另一条线的类型错。两者不是同一个分母，混在一起会让"本线已清"这句话失去意义。
+

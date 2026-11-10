@@ -492,6 +492,20 @@ jobs:
         # R-S6a：continue-on-error 并入 S6-i 集合，红由末置汇总按 steps.report-conditions.outcome 判。
         run: python scripts/training/check_report_run_conditions.py --check
 
+      # 2026-11-10（台账 D-20261110-08：09.8 bundle 判定为 regenerable_exact）：
+      # `output/taiji_core_09/subject_bundle.pt` 被 `*.pt` 忽略，干净检出里永不存在；
+      # 它已按声明构造路径验证**逐字节**可重建。本步在跑测试前按需生成，
+      # 使 test_composition_read_probe_anchor 真的执行——既不 skip，也不因缺件报红。
+      # 生成器自身就是自证门：产出 sha256／字节数与封存值不等即非零退出（"生成个差不多"不允许）。
+      # 成本（本机 Windows 实测）：wall 63.9 s、峰值工作集 ≈1.37 GB；对照本腿全量套件
+      # 45 min+ 只占 ~2%，故**不挂 artifact 缓存**——77 MB 的上传/下载加输入 sha 计算
+      # 省不下这 64 s，反而多一个缓存失效面。
+      # R-S6a：continue-on-error 并入 S6-i 集合，红由末置汇总按 steps.materialize-bundle.outcome 判。
+      - name: Materialize the 09.8 subject bundle (regenerable_exact)
+        id: materialize-bundle
+        continue-on-error: true
+        run: python scripts/training/materialize_taiji_core_09_bundle.py
+
       - name: Run complete regression suite
         id: pytest-full
         continue-on-error: true
@@ -598,6 +612,7 @@ jobs:
         env:
           OUT_GUARD: ${{ steps.deselect-guard.outcome }}
           OUT_COND: ${{ steps.report-conditions.outcome }}
+          OUT_BUNDLE: ${{ steps.materialize-bundle.outcome }}
           OUT_PYTEST: ${{ steps.pytest-full.outcome }}
           OUT_FACES: ${{ steps.junit-faces.outcome }}
           OUT_COVER: ${{ steps.coverage-gate.outcome }}
@@ -620,6 +635,7 @@ jobs:
             echo "|---|---|---|"
             check "deselect-guard" "$OUT_GUARD"
             check "report-conditions" "$OUT_COND"
+            check "materialize-bundle" "$OUT_BUNDLE"
             check "pytest-full"    "$OUT_PYTEST"
             check "junit-faces"    "$OUT_FACES"
             check "coverage-gate"  "$OUT_COVER"
@@ -880,6 +896,13 @@ jobs:
       # F06-R3: Windows 核心测试 + 顶层回归 + 覆盖率 + JUnit 报告，便于跨平台对比
       # 覆盖率度量面必须与测试范围对齐：本 job 跑全量 tests/（排除 slow），
       # 与 Ubuntu test job 保持一致范围，便于跨平台对比。
+      # 2026-11-10：与 Ubuntu 腿同一件（详见该腿 Materialize 步上的判定与成本注释）。
+      # 本腿若要跑 test_composition_read_probe_anchor，同样需要这枚 .pt。
+      - name: Materialize the 09.8 subject bundle (regenerable_exact)
+        id: materialize-bundle
+        continue-on-error: true
+        run: python scripts/training/materialize_taiji_core_09_bundle.py
+
       - name: Run full regression tests on Windows
         id: pytest-windows
         continue-on-error: true
@@ -965,11 +988,12 @@ jobs:
         id: gate-summary-windows
         if: always()
         # R-S6a：Windows 腿汇总，契约与 Ubuntu 腿 gate-summary 同一（ADR §3.6
-        # 「两腿结构同构，后续读到的失败传播语义是同一种」）。判 steps.pytest-windows
-        # 与 steps.collection-crlf 两个 outcome；四条机制约定同 Ubuntu 腿注释①–④。
+        # 「两腿结构同构，后续读到的失败传播语义是同一种」）。判 steps.pytest-windows、
+        # steps.collection-crlf、steps.materialize-bundle 三个 outcome；四条机制约定同 Ubuntu 腿注释①–④。
         env:
           OUT_PYTEST: ${{ steps.pytest-windows.outcome }}
           OUT_COLLECT: ${{ steps.collection-crlf.outcome }}
+          OUT_BUNDLE: ${{ steps.materialize-bundle.outcome }}
         shell: bash
         run: |
           set -u
@@ -990,6 +1014,7 @@ jobs:
             echo "|---|---|---|"
             check "pytest-windows" "$OUT_PYTEST"
             check "collection-crlf" "$OUT_COLLECT"
+            check "materialize-bundle" "$OUT_BUNDLE"
           } > "$table"
           cat "$table"
           cat "$table" >> "$GITHUB_STEP_SUMMARY"

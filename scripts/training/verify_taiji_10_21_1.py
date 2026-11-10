@@ -35,6 +35,9 @@ from taiji.composition_read_probe import (  # noqa: E402
     TIE,
     descriptor_read,
 )
+from taiji.core_09_bundle import BUNDLE_RELATIVE_PATH as CORE_09_BUNDLE_PATH  # noqa: E402
+from taiji.core_09_bundle import EXPECTED_BYTES as CORE_09_BUNDLE_BYTES  # noqa: E402
+from taiji.core_09_bundle import EXPECTED_SHA256 as CORE_09_BUNDLE_SHA  # noqa: E402
 from taiji.living_core import EOS, RawSource  # noqa: E402
 from taiji.native_goal_attributes import (  # noqa: E402
     OBJECT_DESCRIPTIONS,
@@ -45,11 +48,11 @@ from taiji.native_goal_attributes import (  # noqa: E402
 from taiji.native_goal_glossary import glossary_records  # noqa: E402
 from taiji.state_migration import resume_subject  # noqa: E402
 
-BUNDLE = "output/taiji_core_09/subject_bundle.pt"
+BUNDLE = CORE_09_BUNDLE_PATH
 CLOSEOUT = "reports/taiji_core_09_closeout_20261101.json"
 EXPECTED_CANDIDATE = "feb0cbcb00e2e16bb66b77db530ae566ce40eecaf2e14852b7cc1661292139dd"
-EXPECTED_BUNDLE_SHA = "ce4c62685d55bb518d234e7407e19b05257d1d761a0430432f7d0f09641321cf"
-EXPECTED_BUNDLE_BYTES = 77609636
+EXPECTED_BUNDLE_SHA = CORE_09_BUNDLE_SHA
+EXPECTED_BUNDLE_BYTES = CORE_09_BUNDLE_BYTES
 
 BUDGET_CPU_SECONDS = 600
 BUDGET_WALL_SECONDS = 1200
