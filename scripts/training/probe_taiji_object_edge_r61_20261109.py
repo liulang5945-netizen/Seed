@@ -15,6 +15,15 @@ fail, and the length rule "object <= 6 B implies failure"), and an exact McNemar
 test compares the predictor with the length rule.  R60's own eight cells are
 re-read as a replication anchor and must match field for field.
 
+Revision v3 (2026-11-10): the first run reported one ``zero_extra`` gate that
+conflated "the answer reached the declared end" with "the answer did not run
+past it", so the early-EOS cell g1@15B was described as an exception inside a
+55/56 pass.  The gate is re-signed so that ``extra_bytes`` (answer longer than
+declared) and ``missing_bytes`` (answer shorter, i.e. a premature EOS) are
+counted separately and gated separately; ``zero_extra_pass`` is removed rather
+than aliased, because its old value is False while ``zero_extra_bytes_pass`` is
+True on that cell.
+
 Discipline: dev/synthetic only, 0 training, 0 parameter change, 0 graph change,
 the sealed confirm split and its holdout report are never read, and the Task1
 192/192 reading is untouched.
@@ -47,7 +56,7 @@ import probe_taiji_stop_shape_r59_20261109 as r59  # noqa: E402
 
 from taiji import data_premise_18_0 as premise  # noqa: E402
 
-MANIFEST = ROOT / "plans/manifests/taiji_object_edge_r61_20261109_v2.json"
+MANIFEST = ROOT / "plans/manifests/taiji_object_edge_r61_20261109_v3.json"
 REPORT = ROOT / "reports/taiji_object_edge_r61_20261109.json"
 PROGRESS = ROOT / "reports/taiji_object_edge_r61_20261109_progress.jsonl"
 BUNDLE = r59.BUNDLE
@@ -68,6 +77,31 @@ LENGTH_RULE_MAX_BYTES = 6
 MCNEMAR_ALPHA = 0.05
 GLYPHS_PER_STEM = 5
 NEW_STEMS_PER_FAMILY = 6
+RECALIBRATION_DECLARED = {
+    "trigger": (
+        "the v1/v2 run reported a single zero_extra gate; its 55/56 reading counted the early EOS "
+        "of g1@15B as an exception inside a pass, not as a missing byte"
+    ),
+    "old_manifest": "plans/manifests/taiji_object_edge_r61_20261109_v2.json",
+    "old_manifest_sha256": "8ac9f1140dc6fd1b5d4e915db5f9246bc32e018cad2660143f9136a0f05de50a",
+    "old_report": "reports/taiji_object_edge_r61_20261109.json",
+    "old_report_sha256": "429456f2f9f1ebe141133a07f13417cebbb70199930066fe6af118fbe8f31391",
+    "old_cells": 56,
+    "old_new_cells": 48,
+    "old_byte_exact_new_cells": 29,
+    "old_type1_errors": 0,
+    "old_type2_errors": 0,
+    "old_predictor_accuracy": 1.0,
+    "old_zero_extra_cells": 55,
+    "old_gate_zero_extra_pass": False,
+    "old_verdict": "argmax_predicts_content",
+    "old_early_eos_cell": {
+        "stem": "g1",
+        "object_bytes": 15,
+        "answer_bytes": 21,
+        "expected_bytes": 30,
+    },
+}
 
 GLYPH_POOL = "甲乙丙丁戊己庚辛壬癸子丑寅卯辰巳午未申酉戌亥"
 MATERIALS = ("木", "竹", "藤", "棕", "檀", "樟", "楠", "松", "柏", "杉", "榆", "槐")
@@ -191,6 +225,34 @@ DEFINITION = {
             "type2": "predicted pass but the answer is not byte exact",
         },
     },
+    "measurements": {
+        "content": "decoded_text, answer_bytes, expected_bytes, byte_exact, field_lengths_ok",
+        "extra_bytes": "max(0, answer_bytes - expected_bytes): bytes the answer emitted past the declared end",
+        "missing_bytes": "max(0, expected_bytes - answer_bytes): declared bytes the answer never emitted",
+        "zero_extra_bytes": "extra_bytes == 0",
+        "zero_missing_bytes": "missing_bytes == 0",
+        "legacy_zero_extra": (
+            "kept per cell only because the R60 anchor compares it; it is not a gate in this revision"
+        ),
+        "early_eos_rule": (
+            "a premature EOS only ever produces missing_bytes; it is never counted as an exception "
+            "inside a zero-extra pass"
+        ),
+    },
+    "recalibration": {
+        "old_reading": RECALIBRATION_DECLARED,
+        "rule": (
+            "every declared old reading must be reproduced by the v3 run; a mismatch is reported in "
+            "recalibration.unchanged instead of being silently overwritten"
+        ),
+        "new_gates": ["zero_extra_bytes_pass", "zero_missing_bytes_pass"],
+        "removed_gate": "zero_extra_pass",
+        "removal_reason": (
+            "the old gate required len(raw) == stop and terminated, which is False on g1@15B while "
+            "zero_extra_bytes_pass is True there; aliasing it would silently change the old reading, "
+            "so it is removed and the migration is reported"
+        ),
+    },
     "baselines": {
         "constant_pass": "predict byte exact for every cell",
         "constant_fail": "predict failure for every cell",
@@ -222,7 +284,8 @@ DEFINITION = {
     },
     "gates": {
         "structural_pass": "12 structural cells exact AND every cell field_lengths_ok",
-        "zero_extra_pass": "every cell stops at the declared end with zero extra bytes",
+        "zero_extra_bytes_pass": "every cell has extra_bytes == 0",
+        "zero_missing_bytes_pass": "every cell has missing_bytes == 0",
         "object_edge_measured": "every cell carries a trace at object_stop",
         "anchor_match": "all replication cells equal R60's published rows on every declared field",
         "failing_axes": "names of failed boolean gates",
@@ -345,6 +408,10 @@ def measure_cell(candidate, probe, base_fixture: dict, stem: dict, nbytes: int) 
         PLACE_DESCRIPTION,
     )
     decoded = r59.decode_cell(candidate, probe, fixture, shape)
+    expected_bytes = len(shape["target"])
+    answer_bytes = decoded["answer_bytes"]
+    extra_bytes = max(0, answer_bytes - expected_bytes)
+    missing_bytes = max(0, expected_bytes - answer_bytes)
     return {
         "stem": stem["stem"],
         "family": stem["family"],
@@ -354,8 +421,12 @@ def measure_cell(candidate, probe, base_fixture: dict, stem: dict, nbytes: int) 
         "place_name": PLACE_NAME,
         "target_text": shape["target"].decode("utf-8"),
         "decoded_text": decoded["decoded_text"],
-        "expected_bytes": len(shape["target"]),
-        "answer_bytes": decoded["answer_bytes"],
+        "expected_bytes": expected_bytes,
+        "answer_bytes": answer_bytes,
+        "extra_bytes": extra_bytes,
+        "missing_bytes": missing_bytes,
+        "zero_extra_bytes": extra_bytes == 0,
+        "zero_missing_bytes": missing_bytes == 0,
         "zero_extra": decoded["zero_extra"],
         "byte_exact": decoded["byte_exact"],
         "field_lengths_ok": shape["field_lengths_ok"],
@@ -541,6 +612,77 @@ def compare_anchor(cells: list[dict], published: dict) -> dict:
     }
 
 
+def recalibration_block(cells: list[dict], stats: dict, verdict: str, anchor: dict) -> dict:
+    """Compare the v3 readings with the readings declared before this re-sign."""
+    observed = {
+        "cells": len(cells),
+        "new_cells": stats["cells"],
+        "byte_exact_new_cells": stats["byte_exact_cells"],
+        "type1_errors": stats["type1_errors"],
+        "type2_errors": stats["type2_errors"],
+        "predictor_accuracy": stats["predictor_accuracy"],
+        "zero_extra_cells": sum(1 for cell in cells if cell["zero_extra"]),
+        "verdict": verdict,
+        "anchor_match": anchor["matched"],
+    }
+    expected = {
+        "cells": RECALIBRATION_DECLARED["old_cells"],
+        "new_cells": RECALIBRATION_DECLARED["old_new_cells"],
+        "byte_exact_new_cells": RECALIBRATION_DECLARED["old_byte_exact_new_cells"],
+        "type1_errors": RECALIBRATION_DECLARED["old_type1_errors"],
+        "type2_errors": RECALIBRATION_DECLARED["old_type2_errors"],
+        "predictor_accuracy": RECALIBRATION_DECLARED["old_predictor_accuracy"],
+        "zero_extra_cells": RECALIBRATION_DECLARED["old_zero_extra_cells"],
+        "verdict": RECALIBRATION_DECLARED["old_verdict"],
+        "anchor_match": True,
+    }
+    mismatches = [
+        {"field": field, "v3": observed[field], "declared_old": expected[field]}
+        for field in expected
+        if observed[field] != expected[field]
+    ]
+    early = [
+        {
+            "stem": cell["stem"],
+            "family": cell["family"],
+            "object_bytes": cell["object_bytes"],
+            "object_name": cell["object_name"],
+            "answer_bytes": cell["answer_bytes"],
+            "expected_bytes": cell["expected_bytes"],
+            "extra_bytes": cell["extra_bytes"],
+            "missing_bytes": cell["missing_bytes"],
+            "zero_extra": cell["zero_extra"],
+            "decoded_text": cell["decoded_text"],
+        }
+        for cell in cells
+        if cell["missing_bytes"] or cell["extra_bytes"]
+    ]
+    return {
+        "declared_old_reading": RECALIBRATION_DECLARED,
+        "observed": observed,
+        "unchanged": not mismatches,
+        "mismatches": mismatches,
+        "counts": {
+            "zero_extra_bytes_cells": (
+                f"{sum(1 for cell in cells if cell['zero_extra_bytes'])}/{len(cells)}"
+            ),
+            "zero_missing_bytes_cells": (
+                f"{sum(1 for cell in cells if cell['zero_missing_bytes'])}/{len(cells)}"
+            ),
+            "legacy_zero_extra_cells": (
+                f"{sum(1 for cell in cells if cell['zero_extra'])}/{len(cells)}"
+            ),
+        },
+        "early_eos_cells": early,
+        "gate_migration": {
+            "removed": "zero_extra_pass",
+            "replacement": ["zero_extra_bytes_pass", "zero_missing_bytes_pass"],
+            "alias_declared": False,
+            "reason": DEFINITION["recalibration"]["removal_reason"],
+        },
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--freeze", action="store_true")
@@ -559,9 +701,16 @@ def main() -> int:
         r59.write_json(
             MANIFEST,
             {
-                "schema": "taiji-object-edge-r61-manifest-v1",
+                "schema": "taiji-object-edge-r61-manifest-v3",
                 "step": "R61",
-                "date": "2026-11-09",
+                "date": "2026-11-10",
+                "revision": "v3: extra_bytes and missing_bytes gated separately; zero_extra_pass removed",
+                "replaces": {
+                    "manifest": RECALIBRATION_DECLARED["old_manifest"],
+                    "manifest_sha256": RECALIBRATION_DECLARED["old_manifest_sha256"],
+                    "report": RECALIBRATION_DECLARED["old_report"],
+                    "report_sha256": RECALIBRATION_DECLARED["old_report_sha256"],
+                },
                 "definition": DEFINITION,
                 "definition_digest": definition_digest(),
                 "frozen_files": file_hashes(),
@@ -653,6 +802,8 @@ def main() -> int:
                     "object_bytes": nbytes,
                     "byte_exact": cell["byte_exact"],
                     "zero_extra": cell["zero_extra"],
+                    "extra_bytes": cell["extra_bytes"],
+                    "missing_bytes": cell["missing_bytes"],
                     "argmax_byte": edge.get("argmax_byte"),
                     "eos_rank": edge.get("eos_rank"),
                     "cpu_seconds": round(time.process_time() - started_cpu, 4),
@@ -678,10 +829,12 @@ def main() -> int:
     structural_pass = all(cell["exact"] for cell in structural) and all(
         cell["field_lengths_ok"] for cell in cells
     )
-    zero_extra_pass = all(cell["zero_extra"] for cell in cells)
+    zero_extra_bytes_pass = all(cell["zero_extra_bytes"] for cell in cells)
+    zero_missing_bytes_pass = all(cell["zero_missing_bytes"] for cell in cells)
     gates = {
         "structural_pass": structural_pass,
-        "zero_extra_pass": zero_extra_pass,
+        "zero_extra_bytes_pass": zero_extra_bytes_pass,
+        "zero_missing_bytes_pass": zero_missing_bytes_pass,
         "object_edge_measured": object_edge_measured,
         "anchor_match": anchor["matched"],
     }
@@ -697,10 +850,22 @@ def main() -> int:
     else:
         verdict = classify(stats, families, gates, over_budget)
 
+    if stats["measurable"]:
+        recalibration = recalibration_block(cells, stats, verdict, anchor)
+    else:
+        recalibration = {
+            "declared_old_reading": RECALIBRATION_DECLARED,
+            "observed": None,
+            "unchanged": None,
+            "mismatches": [],
+            "note": "the predictor is unmeasurable, so no recalibration comparison is issued",
+        }
+
     report = {
-        "schema": "taiji-object-edge-r61-report-v1",
+        "schema": "taiji-object-edge-r61-report-v2",
         "step": "R61",
-        "date": "2026-11-09",
+        "date": "2026-11-10",
+        "revision": "v3: extra_bytes and missing_bytes reported and gated separately",
         "relation_to_main_task": (
             "不改 Task1 的 192/192，只检验 R60 读数后那条未预注册的分离能否当预测子："
             "物件止边 argmax=0xE7 是否预示答案内容败，且是否在 R60 没见过的词干上胜过长度基线。"
@@ -731,10 +896,22 @@ def main() -> int:
             "replication": replication_stats,
         },
         "anchor": anchor,
+        "recalibration": recalibration,
         "gates": {
             **gates,
             "failing_axes": failing_axes,
             "structural_cells_exact": f"{sum(1 for cell in structural if cell['exact'])}/{len(structural)}",
+            "zero_extra_bytes_cells": (
+                f"{sum(1 for cell in cells if cell['zero_extra_bytes'])}/{len(cells)}"
+            ),
+            "zero_missing_bytes_cells": (
+                f"{sum(1 for cell in cells if cell['zero_missing_bytes'])}/{len(cells)}"
+            ),
+            "legacy_zero_extra_cells": (
+                f"{sum(1 for cell in cells if cell['zero_extra'])}/{len(cells)}"
+            ),
+            "removed_gate": "zero_extra_pass",
+            "removed_gate_migration": DEFINITION["recalibration"]["removal_reason"],
         },
         "outcome": {
             "verdict": verdict,
@@ -742,6 +919,7 @@ def main() -> int:
             "note": (
                 "判据、基线、发牌规则与出口都在读数前冻结；结论只在这 12 条新词干、地点 6 B、"
                 "这一对描述上成立。即使预测子成立也不放宽 192/192 的形状限制。"
+                "多出字节与缺少字节分列两门：提前 EOS 只算缺字节，不算零多余通过里的例外。"
             ),
         },
         "cost": {
@@ -768,6 +946,8 @@ def main() -> int:
             "The predictor is scored on new stems only; R60's eight cells are a replication anchor and are reported separately, never pooled into the verdict.",
             "McNemar is exact and integer-counted, so no floating-point tie handling is involved.",
             "A missing object edge fails closed instead of dropping the cell.",
+            "v3 splits the stop accounting into extra_bytes and missing_bytes and removes zero_extra_pass instead of aliasing it, because that gate is False on g1@15B while zero_extra_bytes_pass is True there.",
+            "recalibration.unchanged re-checks every declared old reading (56 cells, 48 new cells, 29 byte-exact new cells, 0/0 errors, accuracy 1.0, 55/56 legacy zero_extra, anchor, verdict) before the reading is interpreted.",
         ],
         "closed_state": {"frozen_files_unchanged": file_hashes() == manifest["frozen_files"]},
     }
@@ -782,6 +962,10 @@ def main() -> int:
             "predictor_accuracy": stats.get("predictor_accuracy"),
             "baselines": stats.get("baselines"),
             "anchor_matched": anchor["matched"],
+            "zero_extra_bytes_pass": zero_extra_bytes_pass,
+            "zero_missing_bytes_pass": zero_missing_bytes_pass,
+            "zero_extra_bytes_cells": report["gates"]["zero_extra_bytes_cells"],
+            "zero_missing_bytes_cells": report["gates"]["zero_missing_bytes_cells"],
             "cpu_seconds": round(cpu_seconds, 4),
             "wall_seconds": round(wall_seconds, 4),
         }
@@ -811,7 +995,11 @@ def main() -> int:
                 "anchor_matched": anchor["matched"],
                 "anchor_fields": anchor["fields_compared"],
                 "structural_exact": report["gates"]["structural_cells_exact"],
-                "zero_extra_pass": zero_extra_pass,
+                "zero_extra_bytes_pass": zero_extra_bytes_pass,
+                "zero_missing_bytes_pass": zero_missing_bytes_pass,
+                "zero_extra_bytes_cells": report["gates"]["zero_extra_bytes_cells"],
+                "zero_missing_bytes_cells": report["gates"]["zero_missing_bytes_cells"],
+                "recalibration_unchanged": recalibration["unchanged"],
                 "failing_axes": failing_axes,
                 "cost": report["cost"],
             },

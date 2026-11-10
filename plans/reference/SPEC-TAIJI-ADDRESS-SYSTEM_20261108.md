@@ -3083,3 +3083,27 @@ KL(p0‖pk) **9.905408e-05**；KL(pk‖p0) **9.920218e-05**；TV **5.588227e-03*
 **Q 估值偏差（如实登记）**：声明单轮 **25 CPU**、实测 **10.88** ⇒ **高估 2.30 倍**。本轮自测：setup＋structural＋首格 **1.1406 CPU**，其后 55 个间隔 ⇒ **0.1770 CPU/格**；R60 同链是 **0.2433**（差 **1.37 倍**，两轮跑前都无并发 python 进程，**差异未归因**）。约束力在上限（10.88/200），不在估值。
 
 **R 唯一后继（候选，待准入，本轮不自动启动）＝R62「物件止边干预闸」**：把 N③ 的相关升级为因果——在 dev 上对物件止边做**内容受限干预**（强制该位发射 `0xE6` 对比强制 `0xE7`，其余照旧），与**不干预臂**在同一词干上配对，测 `byte_exact` 是否随之翻转；判据读数前冻结、0 训练、不读 confirm。**前置要求**：干预 runner 若需自建解码循环，必须先对 R61 的 56 格做**逐位锚点复现**才许加干预（不得在未锚定的重抄链上做干预）。若翻转不成立，则预测子只是伴随读数，**不得**写成机制。
+
+**S 口径订正（2026-11-10，v3 重签重跑；分类不变）**：原 H 段只有一个 `zero_extra_pass`，把 `g1`@15 B 的提前 EOS 记成“55/56 通过里的例外”。按用户要求拆成两门：**`zero_extra_bytes_pass=true`（56/56）**、**`zero_missing_bytes_pass=false`（55/56）**；`failing_axes=["zero_missing_bytes_pass"]`。原门**删除而非别名**（旧值 False、新 `zero_extra_bytes_pass` True，别名会篡改旧读数），迁移说明见报告 `gates.removed_gate_migration`；`legacy_zero_extra_cells=55/56` 只作 R60 锚点比较，不再当门。唯一失败格仍 **`g1`@15 B**：实得 21 B 对声明 30 B，`extra_bytes=0`、**`missing_bytes=9`**，文本 `把子庚巳辰亥箔`——**提前 EOS 属漏字节，不得记作“通过里的例外”**。重跑逐项复现旧读数（`recalibration.unchanged=true`、`mismatches=[]`）：56 格／48 新格／29 精确／type1=0／type2=0／准确率 1.0／`argmax_predicts_content`／锚 128 字段全同。冻结件：[manifest v3](../manifests/taiji_object_edge_r61_20261109_v3.json)（sha `1c7a3f99…`）、[runner](../../scripts/training/probe_taiji_object_edge_r61_20261109.py)、[报告](../../reports/taiji_object_edge_r61_20261109.json)（sha `83f035ab…`）；v2 manifest 已按本段删除、旧 sha `8ac9f114…` 记在 `recalibration`。成本 **21.44 CPU／22.70 wall**（声明单轮 25、含重放 75、上限 200／1800）。
+
+### §21.71 R60b 补测：物件名 6/7/8/9/10/12/15 B × 3 词干（21 格）——判 `no_stable_boundary`
+
+**A 与主任务的关系**：R60b **不改 192/192**，只补齐 R60 没做完的三条（密集档、名字级与整句级分开、整数边界反推），把 R60 的 `stem_dependent` 从“两条词干”扩到“三条词干 × 七档”，从而给出一条**可以直接写进能力卡、不许写“大约”的限制句**。两向都不读 confirm。
+
+**B 冻结面（全程不动）**：base fixture `dev[0]`；物件描述 `古旧木制器具`、地点描述 `旧年石砌场所`、地点名 `井前`（6 B）；goal 45 B；模板与记录写作同 R60。三个词干：`stem_wumu`（`乌木`／`乌木罗`／`乌木罗盘`／`乌木罗盘座`）、`stem_glyph`（`甲乙`／`甲乙丙`／`甲乙丙丁`／`甲乙丙丁戊`）、`stem_real`（`铜灯`／`铜灯架`／`铜灯架台`／`铜灯架台柱`）。7／8／10 B 用“汉字前缀＋ASCII 小写填充”达到（`乌木a`／`乌木ab`／`乌木罗a` 等）。**边界说明**：所有 21 格都落在 UTF-8 码点边界上（ASCII 每字符 1 字节），**无需排除任何档**；但 7／8／10 B 是**汉字＋ASCII 的混杂脚本**，除长度外多一个变量，故在 report 里逐格标 `script_mixed=true`，结论必须带上这一限定。另：8→9 B 不是前缀延长（`乌木ab`→`乌木罗`），该阶梯不是单一前缀族。
+
+**C 21 格读数**（`name_exact` 与 `sentence_exact` 分列；EOS 为物件止边 argmax 的 `eos_probability`／名次；`extra`／`missing` 全 0）：
+
+| 词干 | 6 | 7 | 8 | 9 | 10 | 12 | 15 |
+|---|---|---|---|---|---|---|---|
+| `stem_wumu` | ✗ `0xe7`／9.27e-9／67 | ✓ `0xe6` | ✓ `0xe6` | ✗ `0xe7`／8.89e-8／64 | ✗ `0xe7`／7.92e-9／64 | ✓ `0xe6` | ✓ `0xe6`／4.06e-4／11 |
+| `stem_glyph` | ✗ `0xe7`／2.81e-8／73 | ✓ `0xe6` | ✓ `0xe6` | ✓ `0xe6` | ✓ `0xe6` | ✓ `0xe6` | ✗ `0xe7`／1.22e-3／13 |
+| `stem_real` | ✓ `0xe6`／1.73e-9／238 | ✓ `0xe6` | ✓ `0xe6` | ✓ `0xe6` | ✓ `0xe6` | ✓ `0xe6` | ✗ `0xe7`／2.15e-4／27 |
+
+21 格 **`name_exact` 全 true**、`extra_bytes`／`missing_bytes` **全 0**、`structural 12/12`、`object_edge_measured 21/21`、`anchor_match=true`（12 B 两格与 R60 对应行 74 个字段逐项相同）。
+
+**D 结论（唯一，两选一中的第二支）**：三个词干都**不存在**单调阶跃边界 X（`sentence_exact` 序列：wumu `F,T,T,F,F,T,T`；glyph `F,T,T,T,T,T,F`；real `T,T,T,T,T,T,F`）⇒ `decision = no_stable_boundary`，能力卡限制栏逐字写：**“192/192 只能按精确形状＋精确词干引用，任何长度或词干变体须重测”**。**不许写“大约”、不许给区间。**
+
+**E 三条必须同段引用的观察**：① 败因**不是名字抄错、也不是长度不够**——21 格 `name_exact` 全 true、零多余零缺字节，失败形态是“`到` 被等长替换成 `玉`”（如 wumu 9 B `把乌木罗玉放井前`）⇒ **“零多余＋零缺字节”不等于内容正确**，只有整句逐字节能暴露。② 长度轴本身不单调：纯汉字 wumu 9 B 失败，而混杂脚本 7／8 B 反而通过；`stem_real` 连 6 B 都通过 ⇒ 同一长度在不同词干上成败相反。③ 物件止边 argmax 在本批仍与结果同向：6 个败格全 `0xe7`、15 个过格全 `0xe6`，与 R61 的“`0xE7` ⇒ 败”同向；但这仍是**相关读数**，本轮无干预，不得写成因果。
+
+**F 冻结件与代价**：[报告](../../reports/taiji_object_length_dense_r60b_20261110.json)（sha `e5df9df4…`）、[manifest](../manifests/taiji_object_length_dense_r60b_20261110.json)（sha `4331f5b0…`）、[runner](../../scripts/training/probe_taiji_object_length_dense_r60b_20261110.py)；`definition_digest` 与冻结文件清单见 manifest；成本 **8.16 CPU／8.61 wall**（声明单轮 10、含重放 30、上限 200／1800）；`training_runs 0／optimizer_steps 0／parameters_added 0／graph_changes 0／confirm_reads 0`。**重签说明（2026-11-10）**：首跑因仓库 pre-commit 的 ruff SIM201 闸未过（`not x == y` 写法），把该行改成等价的 `!=` 后按纪律删掉 manifest／报告／progress 重签重跑；**21 格读数、两选一出口、锚点 74 字段逐项不变**，只有 sha 与耗时变。

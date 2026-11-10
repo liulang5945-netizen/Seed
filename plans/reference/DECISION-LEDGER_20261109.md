@@ -1689,3 +1689,39 @@ reading["pairs"] = {
 **9. 唯一后继（候选，待准入，本轮不自动启动）**：**R62 物件止边干预闸**——强制物件止边发射 `0xE6` 对比强制 `0xE7`，与**不干预臂**在同一词干上配对，测 `byte_exact` 是否随之翻转；判据读数前冻结、0 训练、不读 confirm。**前置硬要求**：若干预需要自建解码循环，必须先对 R61 的 **56 格逐位复现**才许加干预（不得在未锚定的重抄链上做干预）。翻转不成立 ⇒ 预测子只是伴随读数，第 4(c) 的因果禁令继续有效。
 
 **10. 未做的事**：不训练、不读 confirm 及其 holdout 报告、不改 `sequence_stop`、不给名字加特例、不改 192/192、不放宽形状限制、不因主判成立而淡化红门、不把相关写成因果、不自动启动 R62。
+
+## D-20261109-72 R60b 补测：把 R60 没做完的三条补齐（密集档／名字级分列／整数边界反推）
+
+**1. 编号／时间／类型**：D-20261109-72｜2026-11-10｜**补测＋判据冻结（0 训练、0 参数、0 图改动、不改模块、0 次封存集读取）**。R60 已提交（`425bcc57a`）但只扫 6／9／12／15 四档 × 2 词干、且没有“名字级是否抄对”这一列；用户要求补 R60b，三条硬要求：密集档、三项分列、整数边界反推。R60b 是**补充测**，不改 R60 的判据与读数，也不重跑 R60。
+
+**2. 设计（读数前冻结，digest 覆盖）**：base fixture `dev[0]`、描述与地点名与 R60 同字节（`井前` 6 B）；物件名 7 档 **6／7／8／9／10／12／15 B** × 3 词干（`stem_wumu`、`stem_glyph`、`stem_real`）＝21 格。7／8／10 B 用“汉字前缀＋ASCII 小写填充”达成；21 格**全部落在 UTF-8 码点边界**（ASCII 1 字节），故不排除任何档，但 7／8／10 逐格标 `script_mixed=true`。每格分列：① 物件止边 `argmax_byte`／`eos_probability`／`eos_rank`（另记地点止边同字段）；② **`name_exact`**（`raw[3:3+L]` 是否逐字节等于物件名）与 `name_field_text`；③ **`sentence_exact`**（整句逐字节）与 `decoded_text`；④ `extra_bytes`／`missing_bytes` 两列，提前 EOS 只算缺字节。
+
+**3. 出口（两选一，逐字写死）**：逐词干 `stable_boundary` 定义为“存在 X 使 `sentence_exact(L) == (L >= X)` 对全部 7 档成立”；三词干都有 ⇒ `boundary_per_stem`（写每词干 X）；否则 ⇒ `no_stable_boundary`，statement 逐字 `192/192 只能按精确形状＋精确词干引用，任何长度或词干变体须重测`。**不许写“大约”、不许给区间。**
+
+**4. 读数**：21 格 `name_exact` **全 true**、`extra_bytes`／`missing_bytes` **全 0**、`structural 12/12`、`object_edge_measured 21/21`、`anchor_match=true`（12 B 两格与 R60 对应行 74 字段逐项相同）。`sentence_exact` 序列：`stem_wumu` `F,T,T,F,F,T,T`；`stem_glyph` `F,T,T,T,T,T,F`；`stem_real` `T,T,T,T,T,T,F` ⇒ 三个词干**都没有**单调阶跃边界 ⇒ **`no_stable_boundary`**，限制句按第 3 条逐字落卡。6 个败格物件止边 argmax 全 `0xe7`、15 个过格全 `0xe6`（与 R61 同向，但本轮无干预，**不得**写成因果）。
+
+**5. 三条必须同段引用的观察**：(a) 败因不是名字抄错、也不是长度不够——失败形态是“`到` 被等长替换为 `玉`”（如 wumu 9 B `把乌木罗玉放井前`）⇒ **零多余＋零缺字节不等于内容正确**，只有整句逐字节能暴露。(b) 长度轴不单调：纯汉字 wumu 9 B 失败、混杂脚本 7／8 B 通过、`stem_real` 连 6 B 都通过 ⇒ 同一长度在不同词干上成败相反。(c) 7／8／10 B 的混杂脚本是附加变量，结论必须带此限定。
+
+**6. 能力卡改了什么**：U91 限制栏新增 ⑪，承载第 3 条的逐字限制句与“不许大约／区间”；证据列补 R60b 报告／manifest／runner、SPEC §21.71、D-72。**未**新增能力项、**未**放宽形状限制。
+
+**7. 代价**：实测 **8.16 CPU／8.61 wall**（声明单轮 10、含重放 30、上限 200／1800、`over_budget=false`）。首跑为 10.02／11.34，因下述重签而作废，不作为正式读数。
+
+**8. 复跑锚**：runner `scripts/training/probe_taiji_object_length_dense_r60b_20261110.py`；manifest sha `4331f5b0…`；报告 sha `e5df9df4…`；`threads=1`；冻结清单含 R60／R59／R58 runner 与 R59 的 taiji 模块／bundle（只读纳入）。**重签（2026-11-10）**：首跑后仓库 pre-commit 的 ruff SIM201 闸指出 runner 里 `not x == y`，改成等价 `!=` 后按纪律删 manifest／报告／progress 重签重跑；**21 格读数与出口、锚点 74 字段逐项不变**，仅 sha 与耗时变。旧 sha（manifest `69c20ff9…`／报告 `23f7d12d…`）作废，不再引用。
+
+**9. 未做的事**：不重跑 R60、不改 R60 读数、不训练、不读 confirm、不改 `sequence_stop`、不给名字加特例、不改 192/192、不把相关写成因果、不自动启动 R62。
+
+## D-20261109-73 R61 口径订正：把“零多余字节”与“零缺字节”拆成两门（v3 重签重跑，分类不变）
+
+**1. 编号／时间／类型**：D-20261109-73｜2026-11-10｜**读数后报告口径修正（用户明确要求）＋同口径复测**。原报告只有 `zero_extra_pass`，把 `g1`@15 B 的提前 EOS 记成“55/56 通过里的例外”；现拆成 `zero_extra_bytes_pass` 与 `zero_missing_bytes_pass` 两门。**判据 F 段的分类出口未改、基线未改、发牌未改、读数未改**。
+
+**2. 为何不能做别名**：旧门在 `g1`@15 B 为 False，而新 `zero_extra_bytes_pass` 在该格为 True；若把旧门保留为别名，会**静默改变旧读数**。故**删除**旧门，迁移说明写进报告 `gates.removed_gate_migration`；`legacy_zero_extra_cells=55/56` 仅作 R60 锚点比较字段保留。
+
+**3. 重签与重跑**：删 v2 manifest、旧 report、旧 progress（只这三个文件），生成 **v3** manifest（sha `1c7a3f99…`），重跑。逐项复现：56 格／48 新格／29 精确／type1=0／type2=0／准确率 1.0000／`argmax_predicts_content`／锚 128 字段全同；`recalibration.unchanged=true`、`mismatches=[]`。
+
+**4. 新读数**：`zero_extra_bytes_pass=true`（**56/56**）、`zero_missing_bytes_pass=false`（**55/56**）、`failing_axes=["zero_missing_bytes_pass"]`。`g1`@15 B：实得 21 B 对声明 30 B、`extra_bytes=0`、`missing_bytes=9`、文本 `把子庚巳辰亥箔` ⇒ **提前 EOS 只记漏字节，不得记作“通过里的例外”**。
+
+**5. 能力卡改了什么**：U91 限制⑩(d) 从单一“零多余字节在未见词干上不再是全称”改为两条**分开引用**的限制：**“零多余字节”56/56 成立；“零缺字节”55/56 不成立**；证据列 manifest 改指 v3、并注明 v2 已删、旧 sha 在报告 `recalibration`。
+
+**6. 代价**：实测 **21.44 CPU／22.70 wall**（声明单轮 25、含重放 75、上限 200／1800）。
+
+**7. 未做的事**：不改 R61 的分类出口、不改 R60／R59／R58 runner、不改 192/192、不训练、不读 confirm。

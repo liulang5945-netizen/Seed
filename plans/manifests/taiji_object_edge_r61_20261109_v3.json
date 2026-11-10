@@ -1,7 +1,14 @@
 {
-  "schema": "taiji-object-edge-r61-manifest-v1",
+  "schema": "taiji-object-edge-r61-manifest-v3",
   "step": "R61",
-  "date": "2026-11-09",
+  "date": "2026-11-10",
+  "revision": "v3: extra_bytes and missing_bytes gated separately; zero_extra_pass removed",
+  "replaces": {
+    "manifest": "plans/manifests/taiji_object_edge_r61_20261109_v2.json",
+    "manifest_sha256": "8ac9f1140dc6fd1b5d4e915db5f9246bc32e018cad2660143f9136a0f05de50a",
+    "report": "reports/taiji_object_edge_r61_20261109.json",
+    "report_sha256": "429456f2f9f1ebe141133a07f13417cebbb70199930066fe6af118fbe8f31391"
+  },
   "definition": {
     "gate": "R61 frozen-criterion dev probe: does the object-edge argmax predict content failure on unseen stems",
     "held_constant": {
@@ -115,6 +122,46 @@
         "type2": "predicted pass but the answer is not byte exact"
       }
     },
+    "measurements": {
+      "content": "decoded_text, answer_bytes, expected_bytes, byte_exact, field_lengths_ok",
+      "extra_bytes": "max(0, answer_bytes - expected_bytes): bytes the answer emitted past the declared end",
+      "missing_bytes": "max(0, expected_bytes - answer_bytes): declared bytes the answer never emitted",
+      "zero_extra_bytes": "extra_bytes == 0",
+      "zero_missing_bytes": "missing_bytes == 0",
+      "legacy_zero_extra": "kept per cell only because the R60 anchor compares it; it is not a gate in this revision",
+      "early_eos_rule": "a premature EOS only ever produces missing_bytes; it is never counted as an exception inside a zero-extra pass"
+    },
+    "recalibration": {
+      "old_reading": {
+        "trigger": "the v1/v2 run reported a single zero_extra gate; its 55/56 reading counted the early EOS of g1@15B as an exception inside a pass, not as a missing byte",
+        "old_manifest": "plans/manifests/taiji_object_edge_r61_20261109_v2.json",
+        "old_manifest_sha256": "8ac9f1140dc6fd1b5d4e915db5f9246bc32e018cad2660143f9136a0f05de50a",
+        "old_report": "reports/taiji_object_edge_r61_20261109.json",
+        "old_report_sha256": "429456f2f9f1ebe141133a07f13417cebbb70199930066fe6af118fbe8f31391",
+        "old_cells": 56,
+        "old_new_cells": 48,
+        "old_byte_exact_new_cells": 29,
+        "old_type1_errors": 0,
+        "old_type2_errors": 0,
+        "old_predictor_accuracy": 1.0,
+        "old_zero_extra_cells": 55,
+        "old_gate_zero_extra_pass": false,
+        "old_verdict": "argmax_predicts_content",
+        "old_early_eos_cell": {
+          "stem": "g1",
+          "object_bytes": 15,
+          "answer_bytes": 21,
+          "expected_bytes": 30
+        }
+      },
+      "rule": "every declared old reading must be reproduced by the v3 run; a mismatch is reported in recalibration.unchanged instead of being silently overwritten",
+      "new_gates": [
+        "zero_extra_bytes_pass",
+        "zero_missing_bytes_pass"
+      ],
+      "removed_gate": "zero_extra_pass",
+      "removal_reason": "the old gate required len(raw) == stop and terminated, which is False on g1@15B while zero_extra_bytes_pass is True there; aliasing it would silently change the old reading, so it is removed and the migration is reported"
+    },
     "baselines": {
       "constant_pass": "predict byte exact for every cell",
       "constant_fail": "predict failure for every cell",
@@ -146,7 +193,8 @@
     },
     "gates": {
       "structural_pass": "12 structural cells exact AND every cell field_lengths_ok",
-      "zero_extra_pass": "every cell stops at the declared end with zero extra bytes",
+      "zero_extra_bytes_pass": "every cell has extra_bytes == 0",
+      "zero_missing_bytes_pass": "every cell has missing_bytes == 0",
       "object_edge_measured": "every cell carries a trace at object_stop",
       "anchor_match": "all replication cells equal R60's published rows on every declared field",
       "failing_axes": "names of failed boolean gates"
@@ -161,9 +209,9 @@
       "caveat": "D-69 logged a 2.0x mismatch between R59 and R60 unit prices; the cap, not the estimate, is the binding budget"
     }
   },
-  "definition_digest": "3c5c18e70b624f2ea90b83acff3547dc49522b992c2c5bd6b8f3c7d96a2d92fc",
+  "definition_digest": "91487df6762b9994134375a4334c4ae856836c4257b1e2770fc752bdc97b5e04",
   "frozen_files": {
-    "scripts/training/probe_taiji_object_edge_r61_20261109.py": "14c9a62dbf20fddb819c0dc32af4c46637a4891176c7e413f9259eb33409947b",
+    "scripts/training/probe_taiji_object_edge_r61_20261109.py": "5b73dbb71f523486472a93a0bf9f464a43bee6b118ecfa14a0881197b4f691f3",
     "scripts/training/probe_taiji_object_length_r60_20261109.py": "8f6c518158796d59314a354695e512e37f70964fd692767d864197fd99fa282c",
     "scripts/training/probe_taiji_stop_shape_r59_20261109.py": "e0bff4c025e221087e51053fe7e2f45b80689751ccb8d1b81fc48e41c79fa08f",
     "scripts/training/probe_taiji_stop_shape_r58_20261109.py": "b4866f9d77ec28ac59c35788e045241fb5b8cf64c7775b34ea73e2cccfbe4e2a",
