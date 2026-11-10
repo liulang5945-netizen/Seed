@@ -3121,3 +3121,23 @@ KL(p0‖pk) **9.905408e-05**；KL(pk‖p0) **9.920218e-05**；TV **5.588227e-03*
 **E 结论（唯一出口）**：`causal_one_direction` ⇒ `causal_handle_break_only`。**物件止边发射的首字节对“内容败”是因果把手（break 方向 29/29 全称）；对“内容正确”不是充分把手（rescue 18/19，因为一个首字节不钉住字符）**。**不得**写成“`0xE6` 导致正确”“换字节就能修好”，也不得把 18/19 写成 19/19。
 
 **F 冻结件与代价**：[报告](../../reports/taiji_object_edge_intervention_r62_20261109.json)（sha `9289e0d5…`）、[manifest](../manifests/taiji_object_edge_intervention_r62_20261109.json)（sha `79af9de4…`）、[runner](../../scripts/training/probe_taiji_object_edge_intervention_r62_20261109.py)；`definition_digest=387cd934…`；成本 **52.66 CPU／53.47 wall**（声明单轮 60、含重放 180、上限 200／1800，未超）；实测 ≈0.26 CPU/格 对预注册 0.177，**低估 1.44 倍、未归因**（与 D-69／D-71 的单价漂移同类）。`training_runs 0／optimizer_steps 0／parameters_added 0／graph_changes 0／confirm_reads 0`；封存集与 holdout 报告均未读。
+
+### §21.73 R63 物件止边字符级闸：整字强制把 rescue 推到 19/19——判 `char_handle_complete`
+
+**A 与主任务的关系**：不改 192/192、不放宽形状限制。R62 只强制**首字节**：break 29/29，rescue 18/19，唯一失败格把 `放` 写成了同首字节的 `漆`。R63 把干预升到**完整 3 字节字符**（`放` = E6 94 BE 对 `玉` = E7 8E 89），按“整字是否改变”分类，检验字符粒度能否补上那一格。
+
+**B 冻结面**：与 R62 同一 base fixture、同一 14 条词干（不重发牌）、同一描述对、地点 6 B、物件 6／9／12／15 B。六臂：`none`、`sham`（强制 none 已发射的那几个字节）、`put_char`（3 B `放`）、`yu_char`（3 B `玉`）、`put_lead`（1 B `E6`，保留 R62 臂用于读“同源”）、`yu_lead`（1 B `E7`）。解码 **48×6＋8＝296**。
+
+**C 前置门（不变）**：沿用 R62 已逐位复现 R61 的解码循环（本轮只把强制载荷从 1 字节放宽到 3 字节，未编辑循环）。实测 **`anchor_match=true`：56 格／1890 字段／0 不符**（门内显式要求 `fields_compared == 1890`）；`sham_identity`／`force_applied`／`no_op_consistency` 在 48 格上全 true；`structural 12/12`。
+
+**D 读数（48 新格，按“整字是否改变”分类）**
+- `put_char`：**48/48 整字到达 `放`，48/48 整句逐字节对**；分类 `failed_office_repaired_by_put_char` **19**，另 29 格原本就是 `放`（强制等于 sham，未受扰动）。
+- `yu_char`：**48/48 整字到达 `玉`，0/48 整句对**；29 个原本通过的格全部被整字强制破坏（`exact_office_breaks_under_yu_char` 29），19 个原本失败的格仍错。
+- rescue **19/19 = 1.0**、break **29/29 = 1.0**；`char_granularity_undetermined` **0 格**（没有“整字已到达但整句仍错”的格）。
+- 不干预臂的 19 个败格，边缘字符并不只有 `玉`：**玉 13、甾 5、箔 1**（都以 `E7` 开头）——这解释了 R62 为什么看到“首字节一致”。
+- **同源读数（字节 ≠ 字的逐格证据）**：`put_lead` **47/48** 同源（唯一不同源是 `g5`@6 B → `漆`）；`yu_lead` 只 **26/48** 同源，分叉 **23 格**：甾 19、箔 1、竹 1、漆 1、爰 1。即：**同一首字节下模型会自行选择不同的后两字节，强制首字节并没有定下这个字。**
+- 两个代表格：`g5`@6 B（none `把未戊玉玉井前` → `put_char` `把未戊放到井前` 逐字节对；`put_lead` 落到 `漆`）；`g1`@15 B（none 21 B 提前 EOS → `put_char` 30 B 逐字节对）。
+
+**E 结论（唯一出口）**：`char_handle_complete` ⇒ `character_handle_both_directions`。**物件止边那个完整字符对内容是对称因果把手：换入 `放`，19/19 败格全部逐字节修复；换入 `玉`，29/29 通过格全部内容败。** 但这是**机制读数**，不是能力声明，也不放宽 192/192；且**不得**用“强制首字节成功 18/19”去声称“定下了这个字”——**字节 ≠ 字**：`yu_lead` 仅 26/48 同源、23 格分叉就是反证。
+
+**F 冻结件与代价**：[报告](../../reports/taiji_object_edge_char_r63_20261110.json)（sha `593532bf…`）、[manifest](../manifests/taiji_object_edge_char_r63_20261110.json)（sha `89cf13d1…`）、[runner](../../scripts/training/probe_taiji_object_edge_char_r63_20261110.py)；`definition_digest=7514b91b…`（格式化前后未变）；成本 **81.53 CPU／82.97 wall**（声明单轮 110、含重放 330、上限 400／1800，未超）；0 训练／0 参数／0 图改动／0 confirm 读取。**重签重跑说明**：首跑读数全部成立，但提交钩子要求 black 格式化 runner（纯换行，判据与逻辑零改动）；按纪律删 manifest／报告／progress 重签重跑，判定、锚（56 格／1890 字段／0 不符）、三守卫、rescue 19/19、break 29/29、`put_char` 48/48、`yu_char` 0/48、`put_lead` 47/48、`yu_lead` 26/48、`char_granularity_undetermined=0` 逐项不变；只有成本按第二次实测重记（72.52／73.73 → 81.53／82.97）。
