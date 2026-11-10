@@ -1779,3 +1779,19 @@ reading["pairs"] = {
 授权来源为owner“下一步”，按上一轮唯一队首22.1执行。数学/源码审查发现有限精度补质量、χ边界导数、旧SVD方向和多代继承缺口，按本卡规格无效/重新冻结规则修订。首轮预检未发布正式报告，v1合同保留；修正核验器中的混合秩阈值及装饰性红臂后，以v2冻结并生成正式回执。
 
 [回执](VALIDATION-TAIJI-U2_22_1_20261110.md)裁决passed_local_math_only，允许进入22.2完整参考图，恢复及训练仍按各自后继卡。未知Outcome另由独立回归测试覆盖，真实held-out门对齐及多代成熟未签。
+
+## D-20261110-03 五个 taiji 模块漏入库（产物缺失／可复现性）
+
+**1. 编号／时间／类型**：D-20261110-03｜2026-11-10｜**证据缺口（产物缺失／可复现性）**，不是读数修正，不动任何已入库数字。
+
+**2. 事实**：`taiji/native_goal_world.py`、`taiji/goal_binding.py`、`taiji/goal_planner.py`、`taiji/goal_conditioned_training.py`、`taiji/native_composition_fixture.py` 五个模块自 2026-11-01 起只存在于维护机工作区，从未入库。已入库代码早已 import 它们：`tests/taiji_native/` 下 `test_goal_attributes_10_9`、`test_glossary_records_10_11`、`test_goal_world`、`test_goal_planner`、`test_goal_binding`、`test_goal_conditioned_training`、`test_goal_paraphrase_10_8`、`test_subject_action_scorer`，以及 `scripts/training/` 下 20 个 `verify_*`／`probe_*`／`audit_*` 入口。远程 `ab1aeab1a` 上这些入口一律 `ModuleNotFoundError`。
+
+**3. 受影响范围（在远程 HEAD 上复现不出来的已入库读数）**：10.1／10.1b／10.2／10.3／10.3b／10.5／10.6／10.7／10.7b／10.7c／10.7d／10.7e／10.7e1／10.7e2／10.7g／10.7h／10.8／10.9／10.10／10.11／10.11b／11.7 的复现入口，加上 14.3（`verify_taiji_read_source_14_3.py`）与 10.21／14.5／14.6 的 composition 部分。R58–R63 探针链不 import 这五个模块，**anchor 门（56 格／1890 字段）不受影响**。
+
+**4. 第二层缺口（入库版本 ≠ 读数时钉的版本）**：`goal_binding.py` 当前 `7081245c…` 与证据一致；`goal_planner.py` 当前 `5819bbf3…` 与 10.3b／10.1b 一致、与 10.3 的 `a0d5726a…` 不一致；`native_goal_world.py` 当前 `f91cab70…`，与证据钉的 `5adf9fd5…`／`66657b0c…` 都不一致；`native_composition_fixture.py` 当前 `1b9141de…`，与 10.21／14.5／14.6 钉的 `18ca7f7c…` 不一致——后者的差异来自本次为过 B/SIM 棘轮加的两处 `zip(..., strict=True)`，运行语义只在长度不等时由静默截断变为抛错。这几个被钉版本从未入库，seal_ast 的 git 历史取证通道无法为它们取证，相应的源哈希记录退化为“文档级声明、机器不可验证”；这些 manifest 的 `source_hashes` 目前没有已入库测试消费，所以没有测试因此变红。
+
+**5. 处置**：五个文件按工作区原样入库（唯一代码改动是 `native_goal_world.py` 的 B007 循环变量和 `native_composition_fixture.py` 两处 `strict=True`）；未改读数／判据／manifest 数字，未重签任何旧 manifest。入库提交 `de49c0de1`，B/SIM 修复提交 `5769342f3`。
+
+**6. 教训（写成规则）**：往已入库代码里新增 import 前，先确认被导入模块已入库；否则 ruff 的 I001 是“缺文件”的症状，改 import 排序治不了它。
+
+**7. 后续**：第 4 条的可验证性只能靠新协议重新登记（读当前版本、成本重记），不得回写旧 manifest。
