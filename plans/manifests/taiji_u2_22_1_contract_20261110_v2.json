@@ -1,0 +1,290 @@
+{
+  "schema": "taiji-u2-22.1-contract-v2",
+  "parent_revision": "7335c85d0b027d3747f3d798a8737238ec125fc9",
+  "source_hash_semantics": "utf8 text, universal newline to LF, no BOM",
+  "source_pins": {
+    "scripts/training/verify_taiji_u2_math_22_1.py": "f88d60723d66cc82043372f83e265e35712db2e0549224f09e2ecc940d728686",
+    "scripts/training/verify_taiji_mgw1_math.py": "dba1f43e40a17a4fd347c45dbe2be3d9774129e64329317de4fd416ddbd4b8b5",
+    "taiji/utf8_state.py": "6ec7e96b2994dfa8eea430b3a08ddb5ff0fd877cf70c8cc288f57bab2efcac09",
+    "taiji/growth_credit.py": "3c311b49b4ebefdb552dc52c6716941cf3ad5882a6bf55b295a1adc9769f3317",
+    "plans/reference/SPEC-TAIJI-CLOSED_LOOP_U2_20261110.md": "5d3d10cf969d715c5514cd8e713463b0e43be66e4b9e28d328146c8c1414487e"
+  },
+  "budget": {
+    "cpu_seconds": 1200,
+    "wall_seconds": 2400,
+    "training_steps": 0,
+    "optimizer_steps": 0,
+    "project_dataset_reads": 0,
+    "checkpoints_loaded": 0
+  },
+  "tolerances": {
+    "float64": {
+      "atol": 1e-10,
+      "rtol": 1e-08,
+      "FD_steps": [
+        0.0001,
+        1e-05,
+        1e-06
+      ]
+    },
+    "float32": {
+      "atol": 1e-05,
+      "rtol": 0.0001,
+      "FD_steps": [
+        0.02,
+        0.01,
+        0.005
+      ]
+    },
+    "FD_rule": "two of three coordinate estimates within absolute+relative threshold; unresolved is failure, no tolerance adaptation",
+    "boundaries": "allowed chi0/1 use analytic and one-sided fixture; C0 value only, nonsmooth activation excluded from central FD"
+  },
+  "expected_groups": [
+    [
+      "read_R",
+      "torch.float64"
+    ],
+    [
+      "FP1",
+      "torch.float64"
+    ],
+    [
+      "residuals",
+      "torch.float64"
+    ],
+    [
+      "sequence",
+      "torch.float64"
+    ],
+    [
+      "utf8",
+      "torch.float64"
+    ],
+    [
+      "growth",
+      "torch.float64"
+    ],
+    [
+      "read_R",
+      "torch.float32"
+    ],
+    [
+      "FP1",
+      "torch.float32"
+    ],
+    [
+      "residuals",
+      "torch.float32"
+    ],
+    [
+      "sequence",
+      "torch.float32"
+    ],
+    [
+      "utf8",
+      "torch.float32"
+    ],
+    [
+      "growth",
+      "torch.float32"
+    ],
+    [
+      "events",
+      "none"
+    ]
+  ],
+  "coverage": [
+    {
+      "id": "U2-EVENT",
+      "equation": "§4/§8/§12",
+      "parameters": "none",
+      "state": "packet_id/source/scope/time/permission/receipt/goal/processing_epoch",
+      "loss": "real Outcome only",
+      "local_source": "packet_admission,event_transition,settle",
+      "check_group": "events",
+      "status": "local_protocol_fixture",
+      "planned_source": "taiji/u2_subject.py::admit_event,settle_receipt",
+      "remaining": "complete controller, pending ledger and epoch restore in22.2/22.3"
+    },
+    {
+      "id": "U2-H",
+      "equation": "§5/§5.1",
+      "parameters": "theta.W,theta.R,theta.P,theta.Read_R.last",
+      "state": "H[G,d],8d input blocks",
+      "loss": "task/next_sensor",
+      "local_source": "check_read_derivative",
+      "check_group": "read_R",
+      "status": "local_tensor_derivative",
+      "planned_source": "taiji/u2_operators.py::update_h,read_records",
+      "remaining": "full shared consumers and upstream parameter graph in22.2"
+    },
+    {
+      "id": "U2-FP1",
+      "equation": "§6",
+      "parameters": "theta.fast.key,value,alpha,gain,chi",
+      "state": "F[K,dk,dv],legal F0/chi/beta",
+      "loss": "task/next_sensor after query read",
+      "local_source": "fp1,check_fp1",
+      "check_group": "FP1",
+      "status": "local_tensor_derivative",
+      "planned_source": "taiji/u2_operators.py::fp1_edit",
+      "remaining": "full key/value/chi neural projections and task leverage in22.2/22.5"
+    },
+    {
+      "id": "U2-RESIDUAL",
+      "equation": "§6.1",
+      "parameters": "none",
+      "state": "legal diagnostic K,V,C and rank cutoff",
+      "loss": "diagnostic only",
+      "local_source": "check_residuals",
+      "check_group": "residuals",
+      "status": "local_algebra_counterexamples",
+      "planned_source": "taiji/u2_operators.py::memory_residual_certificate",
+      "remaining": "unweighted/fixed key domain, task growth efficacy in22.7; numerical raw-K certificate subtracts C times spectral truncation error"
+    },
+    {
+      "id": "U2-CURSOR",
+      "equation": "§7",
+      "parameters": "theta.route,theta.position,theta.continue,theta.generate",
+      "state": "per record log_m/log_zeta,log_eta,coverage,record/version",
+      "loss": "task byte NLL",
+      "local_source": "record_inputs,emission,accept,revoke_records",
+      "check_group": "sequence",
+      "status": "local_log_recursion",
+      "planned_source": "taiji/u2_operators.py::emission,accept_byte,revoke_record",
+      "remaining": "neural parameterization/shared graph and actual bundle in22.2/22.3"
+    },
+    {
+      "id": "U2-UTF8",
+      "equation": "§7",
+      "parameters": "none",
+      "state": "DFA remaining/lead,budget,EOS,global latent normalization",
+      "loss": "task byte NLL",
+      "local_source": "utf8_mask,check_utf8",
+      "check_group": "utf8",
+      "status": "local_257_byte_profile",
+      "planned_source": "taiji/u2_operators.py::utterance_mask",
+      "remaining": "full64-byte controller and reference output coupling in22.2"
+    },
+    {
+      "id": "U2-BIRTH",
+      "equation": "§10",
+      "parameters": "new_R,new_P,conditional gates",
+      "state": "credit Cc,gates,noise threshold,unit lineage",
+      "loss": "delta_s=dL_task/da_s with task denominator once; local per-sample residual divided by N once",
+      "local_source": "check_growth",
+      "check_group": "growth",
+      "status": "local_derivative_counterexamples",
+      "planned_source": "taiji/u2_operators.py::credit_matrix,choose_left_directions,birth_units",
+      "remaining": "allocator, full R/P birth and actual multi-generation inheritance in22.2/22.3"
+    },
+    {
+      "id": "U2-ENCODERS",
+      "equation": "§5,MGW1 codecs",
+      "parameters": "theta.rgb,audio,text,proprio",
+      "state": "local modality tokens and source/time metadata",
+      "loss": "sensor,masked modality,task",
+      "local_source": "inherited MGWReference",
+      "check_group": "none",
+      "status": "deferred22.2",
+      "planned_source": "taiji/u2_subject.py::encode_event",
+      "remaining": "must enumerate every trainable tensor and formal shapes"
+    },
+    {
+      "id": "U2-BELIEF",
+      "equation": "§5,MGW1 prior/correct/lifecycle",
+      "parameters": "theta.bind,world,QKV",
+      "state": "objects,branch omega,H;real time and prior packet",
+      "loss": "sensor,outcome,task",
+      "local_source": "inherited MGWReference",
+      "check_group": "none",
+      "status": "deferred22.2",
+      "planned_source": "taiji/u2_subject.py::prior,correct",
+      "remaining": "object/branch lifecycle and all declarations in full graph"
+    },
+    {
+      "id": "U2-READOUT",
+      "equation": "§5/§7",
+      "parameters": "theta.Read_R,theta.Read_F,theta.expression",
+      "state": "query/head/record features and utterance scratch",
+      "loss": "task,world prediction",
+      "local_source": "U1/MGW1 source assets",
+      "check_group": "none",
+      "status": "deferred22.2",
+      "planned_source": "taiji/u2_subject.py::query_read,express",
+      "remaining": "formal query, complete output and consumers"
+    },
+    {
+      "id": "U2-POLICY",
+      "equation": "§8/§9",
+      "parameters": "psi.policy,psi.value",
+      "state": "decision-time features,eligibility,pending receipt,old goal",
+      "loss": "conditional SMDP actor/critic",
+      "local_source": "MGW1 §9,activity assets",
+      "check_group": "none",
+      "status": "deferred22.2",
+      "planned_source": "taiji/u2_subject.py::choose_operation,settle_outcome",
+      "remaining": "legality mask, exact policy score and full parameter map"
+    },
+    {
+      "id": "U2-RECURSION",
+      "equation": "§9",
+      "parameters": "theta.development,learned rates/gates",
+      "state": "predicted gain/risk/cost,measured development-fit Outcome",
+      "loss": "L_dev and measured policy utility",
+      "local_source": "MGW1 §9,main draft§24.8",
+      "check_group": "none",
+      "status": "deferred22.2",
+      "planned_source": "taiji/u2_subject.py::predict_development,apply_internal_operation",
+      "remaining": "two dependent choices and real result efficacy later22.6"
+    },
+    {
+      "id": "U2-RESTORE",
+      "equation": "§3/§10/§12",
+      "parameters": "all params/config/buffers/optimizers",
+      "state": "entire registry incl log cursors/SC/bridge/goals/RNG/receipts/environment",
+      "loss": "next decision and next update",
+      "local_source": "state_migration legacy assets",
+      "check_group": "none",
+      "status": "deferred22.3",
+      "planned_source": "taiji/u2_subject.py::state_registry,export_bundle,restore_bundle",
+      "remaining": "unknown fields, epoch relocation, multi-generation moments/lineage"
+    },
+    {
+      "id": "U2-EFFECT",
+      "equation": "§11/§14",
+      "parameters": "accepted same candidate",
+      "state": "train/fit/check/final rights,retention/resource ledgers",
+      "loss": "behavior/retention and cost",
+      "local_source": "package22 workcards",
+      "check_group": "none",
+      "status": "deferred22.5_to22.8",
+      "planned_source": "not an operator acceptance",
+      "remaining": "no synthetic local pass grants capability"
+    }
+  ],
+  "scope": "local algebra/protocol fixtures only; deferred fields remain unsigned",
+  "production_source_untouched": true,
+  "revision": 2,
+  "supersedes": {
+    "path": "plans/manifests/taiji_u2_22_1_contract_20261110.json",
+    "canonical_sha256": "8c5e108041da7cc5beb7d575b6218d6ee0063f030526b764682c1dabc0dfed5b",
+    "disposition": "superseded engineering preflight; no formal report",
+    "preflight_checks_cpu_seconds": 0.453125,
+    "preflight_check_wall_seconds": 0.5779999999795109,
+    "preflight_command_wall_seconds": 5.4570192,
+    "review_fixes": [
+      "consistent truncated K residual certificate",
+      "execute early-return and detached-mu derivative mutants",
+      "terminal receipt mask and receipt-id binding",
+      "birth zero-outgoing and permuted-gate checks",
+      "full-process resource measurement"
+    ],
+    "preflight_source_snapshot_available": false
+  },
+  "resource_prior_attempt": {
+    "logical_processors": 24,
+    "cpu_upper_bound_charge": 130.9684608,
+    "meaning": "conservative CPU upper bound of preflight command, startup CPU not measured"
+  }
+}
