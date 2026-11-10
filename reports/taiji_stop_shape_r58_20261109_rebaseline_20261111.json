@@ -1,0 +1,1124 @@
+{
+  "schema": "taiji-stop-shape-r58-report-v1",
+  "step": "R58",
+  "date": "2026-11-09",
+  "relation_to_main_task": "决定 Task1 的 192/192 能否外推到其它答案形状；本步不改变任何已有读数，只界定 192/192 的适用范围。",
+  "preregistration": "plans\\manifests\\taiji_stop_shape_r58_20261109_rebaseline_20261111.json",
+  "preregistration_sha256": "a356b2fd3566b64c4c8196a0bb0b83ab5a13645aa948358aba3e93886a975722",
+  "scope": {
+    "sealed_split": "not read",
+    "split": "dev",
+    "examples_used": 5
+  },
+  "structural": {
+    "cells": [
+      {
+        "hops": 1,
+        "name_bytes": 3,
+        "styles": [
+          "又叫"
+        ],
+        "field_bounds": [
+          {
+            "style": "又叫",
+            "record": "甲又叫说明0。",
+            "start": 0,
+            "end": 3,
+            "field_bytes": 3
+          }
+        ],
+        "hop_spans": [
+          {
+            "start": 3,
+            "end": 6
+          }
+        ],
+        "contract_bytes": 6,
+        "declared_end": 6,
+        "exact": true
+      },
+      {
+        "hops": 1,
+        "name_bytes": 6,
+        "styles": [
+          "对应"
+        ],
+        "field_bounds": [
+          {
+            "style": "对应",
+            "record": "说明0对应甲乙。",
+            "start": 13,
+            "end": 19,
+            "field_bytes": 6
+          }
+        ],
+        "hop_spans": [
+          {
+            "start": 3,
+            "end": 9
+          }
+        ],
+        "contract_bytes": 9,
+        "declared_end": 9,
+        "exact": true
+      },
+      {
+        "hops": 1,
+        "name_bytes": 9,
+        "styles": [
+          "是"
+        ],
+        "field_bounds": [
+          {
+            "style": "是",
+            "record": "说明0是甲乙丙。",
+            "start": 10,
+            "end": 19,
+            "field_bytes": 9
+          }
+        ],
+        "hop_spans": [
+          {
+            "start": 3,
+            "end": 12
+          }
+        ],
+        "contract_bytes": 12,
+        "declared_end": 12,
+        "exact": true
+      },
+      {
+        "hops": 1,
+        "name_bytes": 12,
+        "styles": [
+          "又叫"
+        ],
+        "field_bounds": [
+          {
+            "style": "又叫",
+            "record": "甲乙丙丁又叫说明0。",
+            "start": 0,
+            "end": 12,
+            "field_bytes": 12
+          }
+        ],
+        "hop_spans": [
+          {
+            "start": 3,
+            "end": 15
+          }
+        ],
+        "contract_bytes": 15,
+        "declared_end": 15,
+        "exact": true
+      },
+      {
+        "hops": 2,
+        "name_bytes": 3,
+        "styles": [
+          "又叫",
+          "对应"
+        ],
+        "field_bounds": [
+          {
+            "style": "又叫",
+            "record": "甲又叫说明0。",
+            "start": 0,
+            "end": 3,
+            "field_bytes": 3
+          },
+          {
+            "style": "对应",
+            "record": "说明1对应乙。",
+            "start": 13,
+            "end": 16,
+            "field_bytes": 3
+          }
+        ],
+        "hop_spans": [
+          {
+            "start": 3,
+            "end": 6
+          },
+          {
+            "start": 12,
+            "end": 15
+          }
+        ],
+        "contract_bytes": 15,
+        "declared_end": 15,
+        "exact": true
+      },
+      {
+        "hops": 2,
+        "name_bytes": 6,
+        "styles": [
+          "对应",
+          "是"
+        ],
+        "field_bounds": [
+          {
+            "style": "对应",
+            "record": "说明0对应甲乙。",
+            "start": 13,
+            "end": 19,
+            "field_bytes": 6
+          },
+          {
+            "style": "是",
+            "record": "说明1是丙丁。",
+            "start": 10,
+            "end": 16,
+            "field_bytes": 6
+          }
+        ],
+        "hop_spans": [
+          {
+            "start": 3,
+            "end": 9
+          },
+          {
+            "start": 15,
+            "end": 21
+          }
+        ],
+        "contract_bytes": 21,
+        "declared_end": 21,
+        "exact": true
+      },
+      {
+        "hops": 2,
+        "name_bytes": 9,
+        "styles": [
+          "是",
+          "又叫"
+        ],
+        "field_bounds": [
+          {
+            "style": "是",
+            "record": "说明0是甲乙丙。",
+            "start": 10,
+            "end": 19,
+            "field_bytes": 9
+          },
+          {
+            "style": "又叫",
+            "record": "丁戊己又叫说明1。",
+            "start": 0,
+            "end": 9,
+            "field_bytes": 9
+          }
+        ],
+        "hop_spans": [
+          {
+            "start": 3,
+            "end": 12
+          },
+          {
+            "start": 18,
+            "end": 27
+          }
+        ],
+        "contract_bytes": 27,
+        "declared_end": 27,
+        "exact": true
+      },
+      {
+        "hops": 2,
+        "name_bytes": 12,
+        "styles": [
+          "又叫",
+          "对应"
+        ],
+        "field_bounds": [
+          {
+            "style": "又叫",
+            "record": "甲乙丙丁又叫说明0。",
+            "start": 0,
+            "end": 12,
+            "field_bytes": 12
+          },
+          {
+            "style": "对应",
+            "record": "说明1对应戊己庚辛。",
+            "start": 13,
+            "end": 25,
+            "field_bytes": 12
+          }
+        ],
+        "hop_spans": [
+          {
+            "start": 3,
+            "end": 15
+          },
+          {
+            "start": 21,
+            "end": 33
+          }
+        ],
+        "contract_bytes": 33,
+        "declared_end": 33,
+        "exact": true
+      },
+      {
+        "hops": 3,
+        "name_bytes": 3,
+        "styles": [
+          "又叫",
+          "对应",
+          "是"
+        ],
+        "field_bounds": [
+          {
+            "style": "又叫",
+            "record": "甲又叫说明0。",
+            "start": 0,
+            "end": 3,
+            "field_bytes": 3
+          },
+          {
+            "style": "对应",
+            "record": "说明1对应乙。",
+            "start": 13,
+            "end": 16,
+            "field_bytes": 3
+          },
+          {
+            "style": "是",
+            "record": "说明2是丙。",
+            "start": 10,
+            "end": 13,
+            "field_bytes": 3
+          }
+        ],
+        "hop_spans": [
+          {
+            "start": 3,
+            "end": 6
+          },
+          {
+            "start": 9,
+            "end": 12
+          },
+          {
+            "start": 18,
+            "end": 21
+          }
+        ],
+        "contract_bytes": 21,
+        "declared_end": 21,
+        "exact": true
+      },
+      {
+        "hops": 3,
+        "name_bytes": 6,
+        "styles": [
+          "对应",
+          "是",
+          "又叫"
+        ],
+        "field_bounds": [
+          {
+            "style": "对应",
+            "record": "说明0对应甲乙。",
+            "start": 13,
+            "end": 19,
+            "field_bytes": 6
+          },
+          {
+            "style": "是",
+            "record": "说明1是丙丁。",
+            "start": 10,
+            "end": 16,
+            "field_bytes": 6
+          },
+          {
+            "style": "又叫",
+            "record": "戊己又叫说明2。",
+            "start": 0,
+            "end": 6,
+            "field_bytes": 6
+          }
+        ],
+        "hop_spans": [
+          {
+            "start": 3,
+            "end": 9
+          },
+          {
+            "start": 12,
+            "end": 18
+          },
+          {
+            "start": 24,
+            "end": 30
+          }
+        ],
+        "contract_bytes": 30,
+        "declared_end": 30,
+        "exact": true
+      },
+      {
+        "hops": 3,
+        "name_bytes": 9,
+        "styles": [
+          "是",
+          "又叫",
+          "对应"
+        ],
+        "field_bounds": [
+          {
+            "style": "是",
+            "record": "说明0是甲乙丙。",
+            "start": 10,
+            "end": 19,
+            "field_bytes": 9
+          },
+          {
+            "style": "又叫",
+            "record": "丁戊己又叫说明1。",
+            "start": 0,
+            "end": 9,
+            "field_bytes": 9
+          },
+          {
+            "style": "对应",
+            "record": "说明2对应庚辛甲。",
+            "start": 13,
+            "end": 22,
+            "field_bytes": 9
+          }
+        ],
+        "hop_spans": [
+          {
+            "start": 3,
+            "end": 12
+          },
+          {
+            "start": 15,
+            "end": 24
+          },
+          {
+            "start": 30,
+            "end": 39
+          }
+        ],
+        "contract_bytes": 39,
+        "declared_end": 39,
+        "exact": true
+      },
+      {
+        "hops": 3,
+        "name_bytes": 12,
+        "styles": [
+          "又叫",
+          "对应",
+          "是"
+        ],
+        "field_bounds": [
+          {
+            "style": "又叫",
+            "record": "甲乙丙丁又叫说明0。",
+            "start": 0,
+            "end": 12,
+            "field_bytes": 12
+          },
+          {
+            "style": "对应",
+            "record": "说明1对应戊己庚辛。",
+            "start": 13,
+            "end": 25,
+            "field_bytes": 12
+          },
+          {
+            "style": "是",
+            "record": "说明2是甲乙丙丁。",
+            "start": 10,
+            "end": 22,
+            "field_bytes": 12
+          }
+        ],
+        "hop_spans": [
+          {
+            "start": 3,
+            "end": 15
+          },
+          {
+            "start": 18,
+            "end": 30
+          },
+          {
+            "start": 36,
+            "end": 48
+          }
+        ],
+        "contract_bytes": 48,
+        "declared_end": 48,
+        "exact": true
+      }
+    ],
+    "exact": 12,
+    "total": 12,
+    "boundary_probe": [
+      {
+        "note": "delimiter inside a stated name",
+        "record": "说明是又叫人。",
+        "recovered_field": "又叫人",
+        "expected_field": "又叫人",
+        "ok": true
+      },
+      {
+        "note": "terminator inside a name",
+        "record": "说明是甲。乙。",
+        "recovered_field": "甲。乙",
+        "expected_field": "甲。乙",
+        "ok": true
+      },
+      {
+        "note": "aka style, name before the split",
+        "record": "名又叫说明。",
+        "recovered_field": "名",
+        "expected_field": "名",
+        "ok": true
+      }
+    ]
+  },
+  "model_shapes": [
+    {
+      "object_bytes": 3,
+      "place_bytes": 3,
+      "role": "extension",
+      "object_name": "甲",
+      "place_name": "戊",
+      "target_text": "把甲放到戊",
+      "decoded_text": "把甲铁玉戊",
+      "object_stop": 6,
+      "declared_end": 15,
+      "field_lengths_ok": true,
+      "answer_bytes": 15,
+      "zero_extra": true,
+      "byte_exact": false,
+      "traces": {
+        "6": {
+          "eos_probability": 5.932391118374842e-09,
+          "eos_rank": 257,
+          "argmax_byte": 148,
+          "argmax_label": "0x94",
+          "top": [
+            {
+              "byte": 148,
+              "label": "0x94",
+              "probability": 0.01244592092850138
+            },
+            {
+              "byte": 156,
+              "label": "0x9c",
+              "probability": 0.010116038807700001
+            },
+            {
+              "byte": 142,
+              "label": "0x8e",
+              "probability": 0.008742022442333403
+            }
+          ],
+          "pre_mask_label": "0x94",
+          "masked": true,
+          "emitted_label": "0xe9",
+          "copy_mass_total": 0.0,
+          "copy_limit_active": 21,
+          "continuation_desire": 2097960.2794481455,
+          "position": 6,
+          "at_declared_end": false,
+          "gamma_eff": 0.0,
+          "q_null": 0.09395525572920216
+        },
+        "15": {
+          "eos_probability": 1.6205336265345533e-05,
+          "eos_rank": 44,
+          "argmax_byte": 231,
+          "argmax_label": "0xe7",
+          "top": [
+            {
+              "byte": 231,
+              "label": "0xe7",
+              "probability": 0.1039574026442803
+            },
+            {
+              "byte": 233,
+              "label": "0xe9",
+              "probability": 0.02506809546799014
+            },
+            {
+              "byte": 232,
+              "label": "0xe8",
+              "probability": 0.016812802411301127
+            }
+          ],
+          "pre_mask_label": "0xe7",
+          "masked": false,
+          "emitted_label": "0xe7",
+          "copy_mass_total": 0.0,
+          "copy_limit_active": 21,
+          "continuation_desire": 6415.010521354566,
+          "position": 15,
+          "at_declared_end": true,
+          "gamma_eff": 0.0,
+          "q_null": 0.17916445947064263
+        }
+      }
+    },
+    {
+      "object_bytes": 6,
+      "place_bytes": 6,
+      "role": "extension",
+      "object_name": "甲乙",
+      "place_name": "戊己",
+      "target_text": "把甲乙放到戊己",
+      "decoded_text": "把甲乙玉放戊己",
+      "object_stop": 9,
+      "declared_end": 21,
+      "field_lengths_ok": true,
+      "answer_bytes": 21,
+      "zero_extra": true,
+      "byte_exact": false,
+      "traces": {
+        "9": {
+          "eos_probability": 3.727743856983141e-07,
+          "eos_rank": 66,
+          "argmax_byte": 231,
+          "argmax_label": "0xe7",
+          "top": [
+            {
+              "byte": 231,
+              "label": "0xe7",
+              "probability": 0.49492371231143883
+            },
+            {
+              "byte": 230,
+              "label": "0xe6",
+              "probability": 0.08701258018894147
+            },
+            {
+              "byte": 189,
+              "label": "0xbd",
+              "probability": 0.01609673007943486
+            }
+          ],
+          "pre_mask_label": "0xe7",
+          "masked": false,
+          "emitted_label": "0xe7",
+          "copy_mass_total": 0.0,
+          "copy_limit_active": 24,
+          "continuation_desire": 1327676.28705042,
+          "position": 9,
+          "at_declared_end": false,
+          "gamma_eff": 0.0,
+          "q_null": 0.6504312175925882
+        },
+        "21": {
+          "eos_probability": 0.044299483883577725,
+          "eos_rank": 5,
+          "argmax_byte": 229,
+          "argmax_label": "0xe5",
+          "top": [
+            {
+              "byte": 229,
+              "label": "0xe5",
+              "probability": 0.27427406336494614
+            },
+            {
+              "byte": 232,
+              "label": "0xe8",
+              "probability": 0.14401632231303346
+            },
+            {
+              "byte": 228,
+              "label": "0xe4",
+              "probability": 0.07562202269356189
+            }
+          ],
+          "pre_mask_label": "0xe5",
+          "masked": false,
+          "emitted_label": "0xe5",
+          "copy_mass_total": 0.0,
+          "copy_limit_active": 24,
+          "continuation_desire": 6.191360244416354,
+          "position": 21,
+          "at_declared_end": true,
+          "gamma_eff": 0.0,
+          "q_null": 0.7544020851448868
+        }
+      }
+    },
+    {
+      "object_bytes": 9,
+      "place_bytes": 9,
+      "role": "extension",
+      "object_name": "甲乙丙",
+      "place_name": "戊己庚",
+      "target_text": "把甲乙丙放到戊己庚",
+      "decoded_text": "把甲乙丙放到戊己庚",
+      "object_stop": 12,
+      "declared_end": 27,
+      "field_lengths_ok": true,
+      "answer_bytes": 27,
+      "zero_extra": true,
+      "byte_exact": true,
+      "traces": {
+        "12": {
+          "eos_probability": 2.593803245429722e-06,
+          "eos_rank": 58,
+          "argmax_byte": 230,
+          "argmax_label": "0xe6",
+          "top": [
+            {
+              "byte": 230,
+              "label": "0xe6",
+              "probability": 0.3279326900935227
+            },
+            {
+              "byte": 231,
+              "label": "0xe7",
+              "probability": 0.1712126678721758
+            },
+            {
+              "byte": 229,
+              "label": "0xe5",
+              "probability": 0.01639174673800679
+            }
+          ],
+          "pre_mask_label": "0xe6",
+          "masked": false,
+          "emitted_label": "0xe6",
+          "copy_mass_total": 0.0,
+          "copy_limit_active": 27,
+          "continuation_desire": 126429.28513230126,
+          "position": 12,
+          "at_declared_end": false,
+          "gamma_eff": 0.0,
+          "q_null": 0.5586359062953078
+        },
+        "27": {
+          "eos_probability": 0.1115379928304481,
+          "eos_rank": 3,
+          "argmax_byte": 230,
+          "argmax_label": "0xe6",
+          "top": [
+            {
+              "byte": 230,
+              "label": "0xe6",
+              "probability": 0.15350374465088226
+            },
+            {
+              "byte": 229,
+              "label": "0xe5",
+              "probability": 0.12314548101326644
+            },
+            {
+              "byte": 256,
+              "label": "<EOS>",
+              "probability": 0.1115379928304481
+            }
+          ],
+          "pre_mask_label": "0xe6",
+          "masked": false,
+          "emitted_label": "0xe6",
+          "copy_mass_total": 0.0,
+          "copy_limit_active": 27,
+          "continuation_desire": 1.3762462525592283,
+          "position": 27,
+          "at_declared_end": true,
+          "gamma_eff": 0.0,
+          "q_null": 0.7584275841750729
+        }
+      }
+    },
+    {
+      "object_bytes": 12,
+      "place_bytes": 12,
+      "role": "extension",
+      "object_name": "甲乙丙丁",
+      "place_name": "戊己庚辛",
+      "target_text": "把甲乙丙丁放到戊己庚辛",
+      "decoded_text": "把甲乙丙丁放到戊己庚辛",
+      "object_stop": 15,
+      "declared_end": 33,
+      "field_lengths_ok": true,
+      "answer_bytes": 33,
+      "zero_extra": true,
+      "byte_exact": true,
+      "traces": {
+        "15": {
+          "eos_probability": 4.0411063537009364e-07,
+          "eos_rank": 31,
+          "argmax_byte": 230,
+          "argmax_label": "0xe6",
+          "top": [
+            {
+              "byte": 230,
+              "label": "0xe6",
+              "probability": 0.2365128838170398
+            },
+            {
+              "byte": 229,
+              "label": "0xe5",
+              "probability": 0.10374103647490647
+            },
+            {
+              "byte": 190,
+              "label": "0xbe",
+              "probability": 0.015249785695885542
+            }
+          ],
+          "pre_mask_label": "0xe6",
+          "masked": false,
+          "emitted_label": "0xe6",
+          "copy_mass_total": 0.0,
+          "copy_limit_active": 30,
+          "continuation_desire": 585267.6547362729,
+          "position": 15,
+          "at_declared_end": false,
+          "gamma_eff": 0.0,
+          "q_null": 0.3604316431641019
+        },
+        "33": {
+          "eos_probability": 0.7345267653895112,
+          "eos_rank": 1,
+          "argmax_byte": 256,
+          "argmax_label": "<EOS>",
+          "top": [
+            {
+              "byte": 256,
+              "label": "<EOS>",
+              "probability": 0.7345267653895112
+            },
+            {
+              "byte": 190,
+              "label": "0xbe",
+              "probability": 0.021234198713195897
+            },
+            {
+              "byte": 167,
+              "label": "0xa7",
+              "probability": 0.010301155666032276
+            }
+          ],
+          "pre_mask_label": "<EOS>",
+          "masked": false,
+          "emitted_label": "<EOS>",
+          "copy_mass_total": 0.0,
+          "copy_limit_active": 30,
+          "continuation_desire": 1.0,
+          "position": 33,
+          "at_declared_end": true,
+          "gamma_eff": 0.0,
+          "q_null": 0.7871556883714326
+        }
+      }
+    },
+    {
+      "object_bytes": 12,
+      "place_bytes": 6,
+      "role": "control_task1_shape",
+      "object_name": "甲乙丙丁",
+      "place_name": "戊己",
+      "target_text": "把甲乙丙丁放到戊己",
+      "decoded_text": "把甲乙丙丁放到戊己",
+      "object_stop": 15,
+      "declared_end": 27,
+      "field_lengths_ok": true,
+      "answer_bytes": 27,
+      "zero_extra": true,
+      "byte_exact": true,
+      "traces": {
+        "15": {
+          "eos_probability": 1.9022103101735242e-07,
+          "eos_rank": 31,
+          "argmax_byte": 230,
+          "argmax_label": "0xe6",
+          "top": [
+            {
+              "byte": 230,
+              "label": "0xe6",
+              "probability": 0.1461150679514804
+            },
+            {
+              "byte": 229,
+              "label": "0xe5",
+              "probability": 0.08730908656880844
+            },
+            {
+              "byte": 190,
+              "label": "0xbe",
+              "probability": 0.014009232648672723
+            }
+          ],
+          "pre_mask_label": "0xe6",
+          "masked": false,
+          "emitted_label": "0xe6",
+          "copy_mass_total": 0.0,
+          "copy_limit_active": 30,
+          "continuation_desire": 768133.0879662378,
+          "position": 15,
+          "at_declared_end": false,
+          "gamma_eff": 0.0,
+          "q_null": 0.24998815594822876
+        },
+        "27": {
+          "eos_probability": 0.7476175492335252,
+          "eos_rank": 1,
+          "argmax_byte": 256,
+          "argmax_label": "<EOS>",
+          "top": [
+            {
+              "byte": 256,
+              "label": "<EOS>",
+              "probability": 0.7476175492335252
+            },
+            {
+              "byte": 229,
+              "label": "0xe5",
+              "probability": 0.024310432258792737
+            },
+            {
+              "byte": 228,
+              "label": "0xe4",
+              "probability": 0.023914677417563365
+            }
+          ],
+          "pre_mask_label": "<EOS>",
+          "masked": false,
+          "emitted_label": "<EOS>",
+          "copy_mass_total": 0.0,
+          "copy_limit_active": 30,
+          "continuation_desire": 1.0,
+          "position": 27,
+          "at_declared_end": true,
+          "gamma_eff": 0.0,
+          "q_null": 0.844509855505994
+        }
+      }
+    }
+  ],
+  "stop_edges": [
+    {
+      "object_bytes": 3,
+      "place_bytes": 3,
+      "role": "extension",
+      "edge": "object_stop",
+      "position": 6,
+      "argmax_label": "0x94",
+      "argmax_byte": 148,
+      "masked": true,
+      "emitted_label": "0xe9",
+      "eos_probability": 5.932391118374842e-09,
+      "eos_rank": 257,
+      "continuation_desire": 2097960.2794481455,
+      "copy_mass_total": 0.0
+    },
+    {
+      "object_bytes": 3,
+      "place_bytes": 3,
+      "role": "extension",
+      "edge": "place_stop",
+      "position": 15,
+      "argmax_label": "0xe7",
+      "argmax_byte": 231,
+      "masked": false,
+      "emitted_label": "0xe7",
+      "eos_probability": 1.6205336265345533e-05,
+      "eos_rank": 44,
+      "continuation_desire": 6415.010521354566,
+      "copy_mass_total": 0.0
+    },
+    {
+      "object_bytes": 6,
+      "place_bytes": 6,
+      "role": "extension",
+      "edge": "object_stop",
+      "position": 9,
+      "argmax_label": "0xe7",
+      "argmax_byte": 231,
+      "masked": false,
+      "emitted_label": "0xe7",
+      "eos_probability": 3.727743856983141e-07,
+      "eos_rank": 66,
+      "continuation_desire": 1327676.28705042,
+      "copy_mass_total": 0.0
+    },
+    {
+      "object_bytes": 6,
+      "place_bytes": 6,
+      "role": "extension",
+      "edge": "place_stop",
+      "position": 21,
+      "argmax_label": "0xe5",
+      "argmax_byte": 229,
+      "masked": false,
+      "emitted_label": "0xe5",
+      "eos_probability": 0.044299483883577725,
+      "eos_rank": 5,
+      "continuation_desire": 6.191360244416354,
+      "copy_mass_total": 0.0
+    },
+    {
+      "object_bytes": 9,
+      "place_bytes": 9,
+      "role": "extension",
+      "edge": "object_stop",
+      "position": 12,
+      "argmax_label": "0xe6",
+      "argmax_byte": 230,
+      "masked": false,
+      "emitted_label": "0xe6",
+      "eos_probability": 2.593803245429722e-06,
+      "eos_rank": 58,
+      "continuation_desire": 126429.28513230126,
+      "copy_mass_total": 0.0
+    },
+    {
+      "object_bytes": 9,
+      "place_bytes": 9,
+      "role": "extension",
+      "edge": "place_stop",
+      "position": 27,
+      "argmax_label": "0xe6",
+      "argmax_byte": 230,
+      "masked": false,
+      "emitted_label": "0xe6",
+      "eos_probability": 0.1115379928304481,
+      "eos_rank": 3,
+      "continuation_desire": 1.3762462525592283,
+      "copy_mass_total": 0.0
+    },
+    {
+      "object_bytes": 12,
+      "place_bytes": 12,
+      "role": "extension",
+      "edge": "object_stop",
+      "position": 15,
+      "argmax_label": "0xe6",
+      "argmax_byte": 230,
+      "masked": false,
+      "emitted_label": "0xe6",
+      "eos_probability": 4.0411063537009364e-07,
+      "eos_rank": 31,
+      "continuation_desire": 585267.6547362729,
+      "copy_mass_total": 0.0
+    },
+    {
+      "object_bytes": 12,
+      "place_bytes": 12,
+      "role": "extension",
+      "edge": "place_stop",
+      "position": 33,
+      "argmax_label": "<EOS>",
+      "argmax_byte": 256,
+      "masked": false,
+      "emitted_label": "<EOS>",
+      "eos_probability": 0.7345267653895112,
+      "eos_rank": 1,
+      "continuation_desire": 1.0,
+      "copy_mass_total": 0.0
+    },
+    {
+      "object_bytes": 12,
+      "place_bytes": 6,
+      "role": "control_task1_shape",
+      "edge": "object_stop",
+      "position": 15,
+      "argmax_label": "0xe6",
+      "argmax_byte": 230,
+      "masked": false,
+      "emitted_label": "0xe6",
+      "eos_probability": 1.9022103101735242e-07,
+      "eos_rank": 31,
+      "continuation_desire": 768133.0879662378,
+      "copy_mass_total": 0.0
+    },
+    {
+      "object_bytes": 12,
+      "place_bytes": 6,
+      "role": "control_task1_shape",
+      "edge": "place_stop",
+      "position": 27,
+      "argmax_label": "<EOS>",
+      "argmax_byte": 256,
+      "masked": false,
+      "emitted_label": "<EOS>",
+      "eos_probability": 0.7476175492335252,
+      "eos_rank": 1,
+      "continuation_desire": 1.0,
+      "copy_mass_total": 0.0
+    }
+  ],
+  "gates": {
+    "structural_pass": true,
+    "stop_pass": true,
+    "content_pass": false,
+    "control_pass": true,
+    "adversarial_pass": true,
+    "failing_axes": [
+      "content_byte_exact"
+    ],
+    "load_bearing_edges": [
+      {
+        "object_bytes": 3,
+        "place_bytes": 3,
+        "argmax_label": "0xe7",
+        "eos_probability": 1.6205336265345533e-05,
+        "eos_rank": 44,
+        "continuation_desire": 6415.010521354566
+      },
+      {
+        "object_bytes": 6,
+        "place_bytes": 6,
+        "argmax_label": "0xe5",
+        "eos_probability": 0.044299483883577725,
+        "eos_rank": 5,
+        "continuation_desire": 6.191360244416354
+      },
+      {
+        "object_bytes": 9,
+        "place_bytes": 9,
+        "argmax_label": "0xe6",
+        "eos_probability": 0.1115379928304481,
+        "eos_rank": 3,
+        "continuation_desire": 1.3762462525592283
+      }
+    ],
+    "adversarial_shapes": [
+      [
+        3,
+        3
+      ],
+      [
+        6,
+        6
+      ]
+    ]
+  },
+  "outcome": {
+    "verdict": "stop_rule_partial_general",
+    "note": "1-hop and 3-hop are structural only: the model was never trained on those templates, so no model-side claim is made for them"
+  },
+  "cost": {
+    "cpu_seconds": 6.38,
+    "wall_seconds": 7.12,
+    "single_run_estimate": 10.0,
+    "estimate_with_replays": 30.0,
+    "cpu_cap": 200.0,
+    "wall_cap": 1800.0,
+    "over_budget": false
+  },
+  "discipline": {
+    "training_runs": 0,
+    "optimizer_steps": 0,
+    "parameters_added": 0,
+    "graph_changes": 0,
+    "confirm_reads": 0
+  },
+  "closed_state": {
+    "frozen_files_unchanged": true
+  }
+}

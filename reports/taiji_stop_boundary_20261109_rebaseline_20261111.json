@@ -1,0 +1,3199 @@
+{
+  "schema": "taiji-stop-boundary-r57-report-v1",
+  "step": "R57",
+  "date": "2026-11-09",
+  "relation_to_main_task": "本步直接面向主任务 Task1：19.2v confirm 188/192 的最后 4 例是唯一未收口的读数，本闸决定它能否变成 192/192。",
+  "preregistration": "plans\\manifests\\taiji_stop_boundary_20261109_rebaseline_20261111.json",
+  "preregistration_sha256": "f1edcf87891488180d308c031e463150aa6caa39fda3dc4fa2ee3bfe48974ce8",
+  "read_register": {
+    "confirm_read_index": 2,
+    "recovery_rerun": false,
+    "recovery_check": {
+      "recovery_rerun": false
+    },
+    "previous_confirm_read": "N19.2v",
+    "authorization": "D-20261109-60",
+    "retune_forbidden": true,
+    "single_forward_per_configuration": true
+  },
+  "assembly": {
+    "candidate_sha_v2": "0d6a5df304f0bf952e97046822edf24fcba5371984c820063ef0b8331100cc42",
+    "candidate_parameters": 3563859,
+    "assembled_state_sha256": "f5bd80e780bf0cb48d18f7e27915549432c07932a28ae833290e8873d6959e88",
+    "copy_stop_module": "taiji/copy_stop_boundary.py",
+    "stop_position": 27,
+    "identity_reconciliation": {
+      "assembled_declared": "1d69e945ac149d436cc39426de5717b8a3e2b82de5e8f35565354028c0a33728",
+      "current_declared": "0d6a5df304f0bf952e97046822edf24fcba5371984c820063ef0b8331100cc42",
+      "rebuilt_without_sequence_stop": "1d69e945ac149d436cc39426de5717b8a3e2b82de5e8f35565354028c0a33728",
+      "removed_key": "decode_rules.sequence_stop",
+      "identical": false,
+      "explained": true
+    }
+  },
+  "evaluation": {
+    "examples": 192,
+    "rule": "sequence_stop on the final hop's declared field end",
+    "readings": {
+      "examples": 192,
+      "selection_accuracy_object": 1.0,
+      "selection_accuracy_place": 1.0,
+      "selection_accuracy_both": 1.0,
+      "completion": 1.0,
+      "byte_exact_rate": 1.0,
+      "start_hit_object": 1.0,
+      "start_hit_place": 1.0,
+      "composite_start_hit_object": 1.0,
+      "composite_start_hit_place": 1.0,
+      "conditional_byte": 1.0,
+      "provenance_rate": 1.0,
+      "fabricated_bytes": 0,
+      "misbound_bytes": 0,
+      "truncation_rate": 0.0,
+      "wrong_route_right_content": 0,
+      "cells": {
+        "aligned": 384
+      },
+      "first_difference": {
+        "none": 192
+      },
+      "first_difference_positions": {
+        "none": 192
+      },
+      "object_span_exact": 1.0,
+      "place_span_exact": 1.0
+    },
+    "first_difference": {
+      "none": 192
+    }
+  },
+  "statistics_192": {
+    "examples": 192,
+    "place_char_length": {
+      "2": 192
+    },
+    "object_char_length": {
+      "4": 192
+    },
+    "place_name_byte_length": {
+      "6": 192
+    },
+    "place_last_char": {
+      "前": 48,
+      "外": 32,
+      "尾": 28,
+      "上": 24,
+      "角": 12,
+      "沿": 12,
+      "畔": 12,
+      "北": 12,
+      "侧": 8,
+      "下": 4
+    },
+    "place_last_char_failures": {
+      "尾": 4
+    },
+    "place_last_char_successes": {
+      "前": 48,
+      "外": 32,
+      "上": 24,
+      "尾": 24,
+      "角": 12,
+      "沿": 12,
+      "畔": 12,
+      "北": 12,
+      "侧": 8,
+      "下": 4
+    },
+    "failure_place_char_length": {
+      "2": 4
+    },
+    "success_place_char_length": {
+      "2": 188
+    },
+    "universal_place_char_length": true,
+    "universal_object_char_length": true,
+    "two_char_place_is_necessary": false,
+    "trigger_char": "尾",
+    "trigger_failures": 4,
+    "trigger_examples": 28,
+    "trigger_failure_rate": 0.14285714285714285,
+    "non_trigger_failure_rate": 0.0,
+    "note": "place names are uniform in length across all 192, so 'two-character place name' cannot be a necessary condition for the four failures; the suffix table separates enrichment from necessity"
+  },
+  "per_slot_stop": [
+    {
+      "world": 3,
+      "index": 13,
+      "place_name": "雾尾",
+      "object_name": "朱砂铜镜",
+      "place_name_last_char": "尾",
+      "old_rule_text": "把朱砂铜镜放到雾尾到",
+      "target_text": "把朱砂铜镜放到雾尾",
+      "traces": {
+        "15": {
+          "eos_probability": 9.553857040816292e-09,
+          "eos_rank": 50,
+          "top": [
+            {
+              "byte": 230,
+              "label": "0xe6",
+              "probability": 0.17565286474120717
+            },
+            {
+              "byte": 231,
+              "label": "0xe7",
+              "probability": 0.0024385496648222575
+            },
+            {
+              "byte": 229,
+              "label": "0xe5",
+              "probability": 0.002172445852829932
+            }
+          ],
+          "runner_up": {
+            "byte": 231,
+            "label": "0xe7",
+            "probability": 0.0024385496648222575
+          },
+          "argmax_byte": 230,
+          "argmax_label": "0xe6",
+          "pre_mask_byte": 230,
+          "masked": false,
+          "copy_mass_total": 0.0,
+          "copy_mass_max": 0.0,
+          "copy_mass_at_argmax": 0.0,
+          "copy_limits": [
+            12,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1
+          ],
+          "copy_limit_active": 12,
+          "position": 15,
+          "gamma_eff": 0.0,
+          "q_null": 0.18100571086436223
+        },
+        "27": {
+          "eos_probability": 0.32781786849299954,
+          "eos_rank": 2,
+          "top": [
+            {
+              "byte": 229,
+              "label": "0xe5",
+              "probability": 0.36822911469009717
+            },
+            {
+              "byte": 256,
+              "label": "<EOS>",
+              "probability": 0.32781786849299954
+            },
+            {
+              "byte": 167,
+              "label": "0xa7",
+              "probability": 0.06609927578852567
+            }
+          ],
+          "runner_up": {
+            "byte": 256,
+            "label": "<EOS>",
+            "probability": 0.32781786849299954
+          },
+          "argmax_byte": 229,
+          "argmax_label": "0xe5",
+          "pre_mask_byte": 229,
+          "masked": false,
+          "copy_mass_total": 0.0,
+          "copy_mass_max": 0.0,
+          "copy_mass_at_argmax": 0.0,
+          "copy_limits": [
+            12,
+            -1,
+            -1,
+            -1,
+            -1,
+            21,
+            -1,
+            -1
+          ],
+          "copy_limit_active": 21,
+          "position": 27,
+          "gamma_eff": 0.0,
+          "q_null": 0.7882683182118722
+        }
+      }
+    },
+    {
+      "world": 4,
+      "index": 4,
+      "place_name": "瓮尾",
+      "object_name": "玄铁锡壶",
+      "place_name_last_char": "尾",
+      "old_rule_text": "把玄铁锡壶放到瓮尾到",
+      "target_text": "把玄铁锡壶放到瓮尾",
+      "traces": {
+        "15": {
+          "eos_probability": 1.1990646854984534e-07,
+          "eos_rank": 39,
+          "top": [
+            {
+              "byte": 230,
+              "label": "0xe6",
+              "probability": 0.5311947080272872
+            },
+            {
+              "byte": 229,
+              "label": "0xe5",
+              "probability": 0.0025499353871977245
+            },
+            {
+              "byte": 231,
+              "label": "0xe7",
+              "probability": 0.001501741802330506
+            }
+          ],
+          "runner_up": {
+            "byte": 229,
+            "label": "0xe5",
+            "probability": 0.0025499353871977245
+          },
+          "argmax_byte": 230,
+          "argmax_label": "0xe6",
+          "pre_mask_byte": 230,
+          "masked": false,
+          "copy_mass_total": 0.0,
+          "copy_mass_max": 0.0,
+          "copy_mass_at_argmax": 0.0,
+          "copy_limits": [
+            -1,
+            12,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1
+          ],
+          "copy_limit_active": 12,
+          "position": 15,
+          "gamma_eff": 0.0,
+          "q_null": 0.5356368256764017
+        },
+        "27": {
+          "eos_probability": 0.14295003941229978,
+          "eos_rank": 2,
+          "top": [
+            {
+              "byte": 229,
+              "label": "0xe5",
+              "probability": 0.6014198449851085
+            },
+            {
+              "byte": 256,
+              "label": "<EOS>",
+              "probability": 0.14295003941229978
+            },
+            {
+              "byte": 167,
+              "label": "0xa7",
+              "probability": 0.04413320120353308
+            }
+          ],
+          "runner_up": {
+            "byte": 256,
+            "label": "<EOS>",
+            "probability": 0.14295003941229978
+          },
+          "argmax_byte": 229,
+          "argmax_label": "0xe5",
+          "pre_mask_byte": 229,
+          "masked": false,
+          "copy_mass_total": 0.0,
+          "copy_mass_max": 0.0,
+          "copy_mass_at_argmax": 0.0,
+          "copy_limits": [
+            -1,
+            12,
+            -1,
+            6,
+            -1,
+            -1,
+            -1,
+            -1
+          ],
+          "copy_limit_active": 12,
+          "position": 27,
+          "gamma_eff": 0.0,
+          "q_null": 0.8176501451746845
+        }
+      }
+    },
+    {
+      "world": 4,
+      "index": 8,
+      "place_name": "瓮尾",
+      "object_name": "霜白玉玦",
+      "place_name_last_char": "尾",
+      "old_rule_text": "把霜白玉玦放到瓮尾到",
+      "target_text": "把霜白玉玦放到瓮尾",
+      "traces": {
+        "15": {
+          "eos_probability": 6.277697697262431e-09,
+          "eos_rank": 61,
+          "top": [
+            {
+              "byte": 230,
+              "label": "0xe6",
+              "probability": 0.19254019018718666
+            },
+            {
+              "byte": 229,
+              "label": "0xe5",
+              "probability": 0.002333946941692371
+            },
+            {
+              "byte": 231,
+              "label": "0xe7",
+              "probability": 0.0011647404523008585
+            }
+          ],
+          "runner_up": {
+            "byte": 229,
+            "label": "0xe5",
+            "probability": 0.002333946941692371
+          },
+          "argmax_byte": 230,
+          "argmax_label": "0xe6",
+          "pre_mask_byte": 230,
+          "masked": false,
+          "copy_mass_total": 0.0,
+          "copy_mass_max": 0.0,
+          "copy_mass_at_argmax": 0.0,
+          "copy_limits": [
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            33,
+            -1,
+            -1
+          ],
+          "copy_limit_active": 33,
+          "position": 15,
+          "gamma_eff": 0.0,
+          "q_null": 0.19750653158245313
+        },
+        "27": {
+          "eos_probability": 0.22638443728637436,
+          "eos_rank": 2,
+          "top": [
+            {
+              "byte": 229,
+              "label": "0xe5",
+              "probability": 0.45900216041271724
+            },
+            {
+              "byte": 256,
+              "label": "<EOS>",
+              "probability": 0.22638443728637436
+            },
+            {
+              "byte": 167,
+              "label": "0xa7",
+              "probability": 0.04456565851392402
+            }
+          ],
+          "runner_up": {
+            "byte": 256,
+            "label": "<EOS>",
+            "probability": 0.22638443728637436
+          },
+          "argmax_byte": 229,
+          "argmax_label": "0xe5",
+          "pre_mask_byte": 229,
+          "masked": false,
+          "copy_mass_total": 0.0,
+          "copy_mass_max": 0.0,
+          "copy_mass_at_argmax": 0.0,
+          "copy_limits": [
+            -1,
+            -1,
+            -1,
+            6,
+            -1,
+            33,
+            -1,
+            -1
+          ],
+          "copy_limit_active": 33,
+          "position": 27,
+          "gamma_eff": 0.0,
+          "q_null": 0.757441235582607
+        }
+      }
+    },
+    {
+      "world": 4,
+      "index": 12,
+      "place_name": "瓮尾",
+      "object_name": "赤铜香炉",
+      "place_name_last_char": "尾",
+      "old_rule_text": "把赤铜香炉放到瓮尾到",
+      "target_text": "把赤铜香炉放到瓮尾",
+      "traces": {
+        "15": {
+          "eos_probability": 1.2706809209315225e-08,
+          "eos_rank": 33,
+          "top": [
+            {
+              "byte": 230,
+              "label": "0xe6",
+              "probability": 0.15602663316216042
+            },
+            {
+              "byte": 231,
+              "label": "0xe7",
+              "probability": 0.0011499267085997077
+            },
+            {
+              "byte": 138,
+              "label": "0x8a",
+              "probability": 6.827138677037117e-05
+            }
+          ],
+          "runner_up": {
+            "byte": 231,
+            "label": "0xe7",
+            "probability": 0.0011499267085997077
+          },
+          "argmax_byte": 230,
+          "argmax_label": "0xe6",
+          "pre_mask_byte": 230,
+          "masked": false,
+          "copy_mass_total": 0.0,
+          "copy_mass_max": 0.0,
+          "copy_mass_at_argmax": 0.0,
+          "copy_limits": [
+            -1,
+            -1,
+            -1,
+            -1,
+            30,
+            -1,
+            -1,
+            -1
+          ],
+          "copy_limit_active": 30,
+          "position": 15,
+          "gamma_eff": 0.0,
+          "q_null": 0.1573520121324291
+        },
+        "27": {
+          "eos_probability": 0.15592881474524936,
+          "eos_rank": 2,
+          "top": [
+            {
+              "byte": 229,
+              "label": "0xe5",
+              "probability": 0.5019010439516389
+            },
+            {
+              "byte": 256,
+              "label": "<EOS>",
+              "probability": 0.15592881474524936
+            },
+            {
+              "byte": 167,
+              "label": "0xa7",
+              "probability": 0.03587713393021271
+            }
+          ],
+          "runner_up": {
+            "byte": 256,
+            "label": "<EOS>",
+            "probability": 0.15592881474524936
+          },
+          "argmax_byte": 229,
+          "argmax_label": "0xe5",
+          "pre_mask_byte": 229,
+          "masked": false,
+          "copy_mass_total": 0.0,
+          "copy_mass_max": 0.0,
+          "copy_mass_at_argmax": 0.0,
+          "copy_limits": [
+            -1,
+            -1,
+            -1,
+            6,
+            30,
+            -1,
+            -1,
+            -1
+          ],
+          "copy_limit_active": 30,
+          "position": 27,
+          "gamma_eff": 0.0,
+          "q_null": 0.720597618994668
+        }
+      }
+    }
+  ],
+  "outcome": {
+    "verdict": "stop_edge_probability_side",
+    "branch": "4 条已被结构停止修正为 27 B，但位置 27 的 argmax 仍是字节而非 EOS：停止边界只存在于解码器，模型自身没有长出停止概率",
+    "gates": {
+      "a": {
+        "examples": 4,
+        "expected": 4,
+        "all_exactly_27": true,
+        "all_byte_exact": true,
+        "all_terminated": true,
+        "rows": [
+          {
+            "world": 3,
+            "index": 13,
+            "answer_bytes": 27,
+            "byte_exact": true,
+            "decoded_text": "把朱砂铜镜放到雾尾",
+            "target_text": "把朱砂铜镜放到雾尾"
+          },
+          {
+            "world": 4,
+            "index": 4,
+            "answer_bytes": 27,
+            "byte_exact": true,
+            "decoded_text": "把玄铁锡壶放到瓮尾",
+            "target_text": "把玄铁锡壶放到瓮尾"
+          },
+          {
+            "world": 4,
+            "index": 8,
+            "answer_bytes": 27,
+            "byte_exact": true,
+            "decoded_text": "把霜白玉玦放到瓮尾",
+            "target_text": "把霜白玉玦放到瓮尾"
+          },
+          {
+            "world": 4,
+            "index": 12,
+            "answer_bytes": 27,
+            "byte_exact": true,
+            "decoded_text": "把赤铜香炉放到瓮尾",
+            "target_text": "把赤铜香炉放到瓮尾"
+          }
+        ],
+        "pass": true
+      },
+      "b": {
+        "examples": 188,
+        "expected": 188,
+        "all_byte_exact": true,
+        "all_terminated": true,
+        "all_exactly_27": true,
+        "answer_byte_lengths": {
+          "27": 188
+        },
+        "pass": true
+      },
+      "c": {
+        "diagnostics_present": true,
+        "eos_is_argmax_at_27": false,
+        "per_example": [
+          {
+            "world": 3,
+            "index": 13,
+            "position_27": {
+              "eos_probability": 0.32781786849299954,
+              "eos_rank": 2,
+              "top": [
+                {
+                  "byte": 229,
+                  "label": "0xe5",
+                  "probability": 0.36822911469009717
+                },
+                {
+                  "byte": 256,
+                  "label": "<EOS>",
+                  "probability": 0.32781786849299954
+                },
+                {
+                  "byte": 167,
+                  "label": "0xa7",
+                  "probability": 0.06609927578852567
+                }
+              ],
+              "runner_up": {
+                "byte": 256,
+                "label": "<EOS>",
+                "probability": 0.32781786849299954
+              },
+              "argmax_byte": 229,
+              "argmax_label": "0xe5",
+              "pre_mask_byte": 229,
+              "masked": false,
+              "copy_mass_total": 0.0,
+              "copy_mass_max": 0.0,
+              "copy_mass_at_argmax": 0.0,
+              "copy_limits": [
+                12,
+                -1,
+                -1,
+                -1,
+                -1,
+                21,
+                -1,
+                -1
+              ],
+              "copy_limit_active": 21,
+              "position": 27,
+              "gamma_eff": 0.0,
+              "q_null": 0.7882683182118722
+            },
+            "position_15": {
+              "eos_probability": 9.553857040816292e-09,
+              "eos_rank": 50,
+              "top": [
+                {
+                  "byte": 230,
+                  "label": "0xe6",
+                  "probability": 0.17565286474120717
+                },
+                {
+                  "byte": 231,
+                  "label": "0xe7",
+                  "probability": 0.0024385496648222575
+                },
+                {
+                  "byte": 229,
+                  "label": "0xe5",
+                  "probability": 0.002172445852829932
+                }
+              ],
+              "runner_up": {
+                "byte": 231,
+                "label": "0xe7",
+                "probability": 0.0024385496648222575
+              },
+              "argmax_byte": 230,
+              "argmax_label": "0xe6",
+              "pre_mask_byte": 230,
+              "masked": false,
+              "copy_mass_total": 0.0,
+              "copy_mass_max": 0.0,
+              "copy_mass_at_argmax": 0.0,
+              "copy_limits": [
+                12,
+                -1,
+                -1,
+                -1,
+                -1,
+                -1,
+                -1,
+                -1
+              ],
+              "copy_limit_active": 12,
+              "position": 15,
+              "gamma_eff": 0.0,
+              "q_null": 0.18100571086436223
+            }
+          },
+          {
+            "world": 4,
+            "index": 4,
+            "position_27": {
+              "eos_probability": 0.14295003941229978,
+              "eos_rank": 2,
+              "top": [
+                {
+                  "byte": 229,
+                  "label": "0xe5",
+                  "probability": 0.6014198449851085
+                },
+                {
+                  "byte": 256,
+                  "label": "<EOS>",
+                  "probability": 0.14295003941229978
+                },
+                {
+                  "byte": 167,
+                  "label": "0xa7",
+                  "probability": 0.04413320120353308
+                }
+              ],
+              "runner_up": {
+                "byte": 256,
+                "label": "<EOS>",
+                "probability": 0.14295003941229978
+              },
+              "argmax_byte": 229,
+              "argmax_label": "0xe5",
+              "pre_mask_byte": 229,
+              "masked": false,
+              "copy_mass_total": 0.0,
+              "copy_mass_max": 0.0,
+              "copy_mass_at_argmax": 0.0,
+              "copy_limits": [
+                -1,
+                12,
+                -1,
+                6,
+                -1,
+                -1,
+                -1,
+                -1
+              ],
+              "copy_limit_active": 12,
+              "position": 27,
+              "gamma_eff": 0.0,
+              "q_null": 0.8176501451746845
+            },
+            "position_15": {
+              "eos_probability": 1.1990646854984534e-07,
+              "eos_rank": 39,
+              "top": [
+                {
+                  "byte": 230,
+                  "label": "0xe6",
+                  "probability": 0.5311947080272872
+                },
+                {
+                  "byte": 229,
+                  "label": "0xe5",
+                  "probability": 0.0025499353871977245
+                },
+                {
+                  "byte": 231,
+                  "label": "0xe7",
+                  "probability": 0.001501741802330506
+                }
+              ],
+              "runner_up": {
+                "byte": 229,
+                "label": "0xe5",
+                "probability": 0.0025499353871977245
+              },
+              "argmax_byte": 230,
+              "argmax_label": "0xe6",
+              "pre_mask_byte": 230,
+              "masked": false,
+              "copy_mass_total": 0.0,
+              "copy_mass_max": 0.0,
+              "copy_mass_at_argmax": 0.0,
+              "copy_limits": [
+                -1,
+                12,
+                -1,
+                -1,
+                -1,
+                -1,
+                -1,
+                -1
+              ],
+              "copy_limit_active": 12,
+              "position": 15,
+              "gamma_eff": 0.0,
+              "q_null": 0.5356368256764017
+            }
+          },
+          {
+            "world": 4,
+            "index": 8,
+            "position_27": {
+              "eos_probability": 0.22638443728637436,
+              "eos_rank": 2,
+              "top": [
+                {
+                  "byte": 229,
+                  "label": "0xe5",
+                  "probability": 0.45900216041271724
+                },
+                {
+                  "byte": 256,
+                  "label": "<EOS>",
+                  "probability": 0.22638443728637436
+                },
+                {
+                  "byte": 167,
+                  "label": "0xa7",
+                  "probability": 0.04456565851392402
+                }
+              ],
+              "runner_up": {
+                "byte": 256,
+                "label": "<EOS>",
+                "probability": 0.22638443728637436
+              },
+              "argmax_byte": 229,
+              "argmax_label": "0xe5",
+              "pre_mask_byte": 229,
+              "masked": false,
+              "copy_mass_total": 0.0,
+              "copy_mass_max": 0.0,
+              "copy_mass_at_argmax": 0.0,
+              "copy_limits": [
+                -1,
+                -1,
+                -1,
+                6,
+                -1,
+                33,
+                -1,
+                -1
+              ],
+              "copy_limit_active": 33,
+              "position": 27,
+              "gamma_eff": 0.0,
+              "q_null": 0.757441235582607
+            },
+            "position_15": {
+              "eos_probability": 6.277697697262431e-09,
+              "eos_rank": 61,
+              "top": [
+                {
+                  "byte": 230,
+                  "label": "0xe6",
+                  "probability": 0.19254019018718666
+                },
+                {
+                  "byte": 229,
+                  "label": "0xe5",
+                  "probability": 0.002333946941692371
+                },
+                {
+                  "byte": 231,
+                  "label": "0xe7",
+                  "probability": 0.0011647404523008585
+                }
+              ],
+              "runner_up": {
+                "byte": 229,
+                "label": "0xe5",
+                "probability": 0.002333946941692371
+              },
+              "argmax_byte": 230,
+              "argmax_label": "0xe6",
+              "pre_mask_byte": 230,
+              "masked": false,
+              "copy_mass_total": 0.0,
+              "copy_mass_max": 0.0,
+              "copy_mass_at_argmax": 0.0,
+              "copy_limits": [
+                -1,
+                -1,
+                -1,
+                -1,
+                -1,
+                33,
+                -1,
+                -1
+              ],
+              "copy_limit_active": 33,
+              "position": 15,
+              "gamma_eff": 0.0,
+              "q_null": 0.19750653158245313
+            }
+          },
+          {
+            "world": 4,
+            "index": 12,
+            "position_27": {
+              "eos_probability": 0.15592881474524936,
+              "eos_rank": 2,
+              "top": [
+                {
+                  "byte": 229,
+                  "label": "0xe5",
+                  "probability": 0.5019010439516389
+                },
+                {
+                  "byte": 256,
+                  "label": "<EOS>",
+                  "probability": 0.15592881474524936
+                },
+                {
+                  "byte": 167,
+                  "label": "0xa7",
+                  "probability": 0.03587713393021271
+                }
+              ],
+              "runner_up": {
+                "byte": 256,
+                "label": "<EOS>",
+                "probability": 0.15592881474524936
+              },
+              "argmax_byte": 229,
+              "argmax_label": "0xe5",
+              "pre_mask_byte": 229,
+              "masked": false,
+              "copy_mass_total": 0.0,
+              "copy_mass_max": 0.0,
+              "copy_mass_at_argmax": 0.0,
+              "copy_limits": [
+                -1,
+                -1,
+                -1,
+                6,
+                30,
+                -1,
+                -1,
+                -1
+              ],
+              "copy_limit_active": 30,
+              "position": 27,
+              "gamma_eff": 0.0,
+              "q_null": 0.720597618994668
+            },
+            "position_15": {
+              "eos_probability": 1.2706809209315225e-08,
+              "eos_rank": 33,
+              "top": [
+                {
+                  "byte": 230,
+                  "label": "0xe6",
+                  "probability": 0.15602663316216042
+                },
+                {
+                  "byte": 231,
+                  "label": "0xe7",
+                  "probability": 0.0011499267085997077
+                },
+                {
+                  "byte": 138,
+                  "label": "0x8a",
+                  "probability": 6.827138677037117e-05
+                }
+              ],
+              "runner_up": {
+                "byte": 231,
+                "label": "0xe7",
+                "probability": 0.0011499267085997077
+              },
+              "argmax_byte": 230,
+              "argmax_label": "0xe6",
+              "pre_mask_byte": 230,
+              "masked": false,
+              "copy_mass_total": 0.0,
+              "copy_mass_max": 0.0,
+              "copy_mass_at_argmax": 0.0,
+              "copy_limits": [
+                -1,
+                -1,
+                -1,
+                -1,
+                30,
+                -1,
+                -1,
+                -1
+              ],
+              "copy_limit_active": 30,
+              "position": 15,
+              "gamma_eff": 0.0,
+              "q_null": 0.1573520121324291
+            }
+          }
+        ]
+      }
+    },
+    "read_integrity": {
+      "previous_read_reproduced": true,
+      "rows": [
+        {
+          "world": 3,
+          "index": 13,
+          "old_rule_text": "把朱砂铜镜放到雾尾到",
+          "previous_read_text": "把朱砂铜镜放到雾尾到",
+          "reproduced": true,
+          "new_rule_text": "把朱砂铜镜放到雾尾",
+          "new_rule_bytes": 27,
+          "target_text": "把朱砂铜镜放到雾尾"
+        },
+        {
+          "world": 4,
+          "index": 4,
+          "old_rule_text": "把玄铁锡壶放到瓮尾到",
+          "previous_read_text": "把玄铁锡壶放到瓮尾到",
+          "reproduced": true,
+          "new_rule_text": "把玄铁锡壶放到瓮尾",
+          "new_rule_bytes": 27,
+          "target_text": "把玄铁锡壶放到瓮尾"
+        },
+        {
+          "world": 4,
+          "index": 8,
+          "old_rule_text": "把霜白玉玦放到瓮尾到",
+          "previous_read_text": "把霜白玉玦放到瓮尾到",
+          "reproduced": true,
+          "new_rule_text": "把霜白玉玦放到瓮尾",
+          "new_rule_bytes": 27,
+          "target_text": "把霜白玉玦放到瓮尾"
+        },
+        {
+          "world": 4,
+          "index": 12,
+          "old_rule_text": "把赤铜香炉放到瓮尾到",
+          "previous_read_text": "把赤铜香炉放到瓮尾到",
+          "reproduced": true,
+          "new_rule_text": "把赤铜香炉放到瓮尾",
+          "new_rule_bytes": 27,
+          "target_text": "把赤铜香炉放到瓮尾"
+        }
+      ]
+    },
+    "completion": 1.0,
+    "byte_exact_rate": 1.0
+  },
+  "trace": {
+    "examples_per_row": 192,
+    "rows": [
+      {
+        "world": 0,
+        "index": 0,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把乌木罗盘放到池外",
+        "target_text": "把乌木罗盘放到池外"
+      },
+      {
+        "world": 0,
+        "index": 1,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把乌木罗盘放到亭角",
+        "target_text": "把乌木罗盘放到亭角"
+      },
+      {
+        "world": 0,
+        "index": 2,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把乌木罗盘放到松前",
+        "target_text": "把乌木罗盘放到松前"
+      },
+      {
+        "world": 0,
+        "index": 3,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把乌木罗盘放到圃外",
+        "target_text": "把乌木罗盘放到圃外"
+      },
+      {
+        "world": 0,
+        "index": 4,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把铁英石砚放到池外",
+        "target_text": "把铁英石砚放到池外"
+      },
+      {
+        "world": 0,
+        "index": 5,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把铁英石砚放到亭角",
+        "target_text": "把铁英石砚放到亭角"
+      },
+      {
+        "world": 0,
+        "index": 6,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把铁英石砚放到松前",
+        "target_text": "把铁英石砚放到松前"
+      },
+      {
+        "world": 0,
+        "index": 7,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把铁英石砚放到圃外",
+        "target_text": "把铁英石砚放到圃外"
+      },
+      {
+        "world": 0,
+        "index": 8,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把赤铜石砚放到池外",
+        "target_text": "把赤铜石砚放到池外"
+      },
+      {
+        "world": 0,
+        "index": 9,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把赤铜石砚放到亭角",
+        "target_text": "把赤铜石砚放到亭角"
+      },
+      {
+        "world": 0,
+        "index": 10,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把赤铜石砚放到松前",
+        "target_text": "把赤铜石砚放到松前"
+      },
+      {
+        "world": 0,
+        "index": 11,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把赤铜石砚放到圃外",
+        "target_text": "把赤铜石砚放到圃外"
+      },
+      {
+        "world": 0,
+        "index": 12,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把赭石玉玦放到池外",
+        "target_text": "把赭石玉玦放到池外"
+      },
+      {
+        "world": 0,
+        "index": 13,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把赭石玉玦放到亭角",
+        "target_text": "把赭石玉玦放到亭角"
+      },
+      {
+        "world": 0,
+        "index": 14,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把赭石玉玦放到松前",
+        "target_text": "把赭石玉玦放到松前"
+      },
+      {
+        "world": 0,
+        "index": 15,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把赭石玉玦放到圃外",
+        "target_text": "把赭石玉玦放到圃外"
+      },
+      {
+        "world": 1,
+        "index": 0,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把松绿铜镜放到瓮沿",
+        "target_text": "把松绿铜镜放到瓮沿"
+      },
+      {
+        "world": 1,
+        "index": 1,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把松绿铜镜放到竹上",
+        "target_text": "把松绿铜镜放到竹上"
+      },
+      {
+        "world": 1,
+        "index": 2,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把松绿铜镜放到沙外",
+        "target_text": "把松绿铜镜放到沙外"
+      },
+      {
+        "world": 1,
+        "index": 3,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把松绿铜镜放到廊前",
+        "target_text": "把松绿铜镜放到廊前"
+      },
+      {
+        "world": 1,
+        "index": 4,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把金漆竹简放到瓮沿",
+        "target_text": "把金漆竹简放到瓮沿"
+      },
+      {
+        "world": 1,
+        "index": 5,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把金漆竹简放到竹上",
+        "target_text": "把金漆竹简放到竹上"
+      },
+      {
+        "world": 1,
+        "index": 6,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把金漆竹简放到沙外",
+        "target_text": "把金漆竹简放到沙外"
+      },
+      {
+        "world": 1,
+        "index": 7,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把金漆竹简放到廊前",
+        "target_text": "把金漆竹简放到廊前"
+      },
+      {
+        "world": 1,
+        "index": 8,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把松绿漆盒放到瓮沿",
+        "target_text": "把松绿漆盒放到瓮沿"
+      },
+      {
+        "world": 1,
+        "index": 9,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把松绿漆盒放到竹上",
+        "target_text": "把松绿漆盒放到竹上"
+      },
+      {
+        "world": 1,
+        "index": 10,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把松绿漆盒放到沙外",
+        "target_text": "把松绿漆盒放到沙外"
+      },
+      {
+        "world": 1,
+        "index": 11,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把松绿漆盒放到廊前",
+        "target_text": "把松绿漆盒放到廊前"
+      },
+      {
+        "world": 1,
+        "index": 12,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把乌木铜镜放到瓮沿",
+        "target_text": "把乌木铜镜放到瓮沿"
+      },
+      {
+        "world": 1,
+        "index": 13,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把乌木铜镜放到竹上",
+        "target_text": "把乌木铜镜放到竹上"
+      },
+      {
+        "world": 1,
+        "index": 14,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把乌木铜镜放到沙外",
+        "target_text": "把乌木铜镜放到沙外"
+      },
+      {
+        "world": 1,
+        "index": 15,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把乌木铜镜放到廊前",
+        "target_text": "把乌木铜镜放到廊前"
+      },
+      {
+        "world": 2,
+        "index": 0,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把赤铜漆盒放到井前",
+        "target_text": "把赤铜漆盒放到井前"
+      },
+      {
+        "world": 2,
+        "index": 1,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把赤铜漆盒放到亭畔",
+        "target_text": "把赤铜漆盒放到亭畔"
+      },
+      {
+        "world": 2,
+        "index": 2,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把赤铜漆盒放到溪前",
+        "target_text": "把赤铜漆盒放到溪前"
+      },
+      {
+        "world": 2,
+        "index": 3,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把赤铜漆盒放到兰上",
+        "target_text": "把赤铜漆盒放到兰上"
+      },
+      {
+        "world": 2,
+        "index": 4,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把铜绿玉玦放到井前",
+        "target_text": "把铜绿玉玦放到井前"
+      },
+      {
+        "world": 2,
+        "index": 5,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把铜绿玉玦放到亭畔",
+        "target_text": "把铜绿玉玦放到亭畔"
+      },
+      {
+        "world": 2,
+        "index": 6,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把铜绿玉玦放到溪前",
+        "target_text": "把铜绿玉玦放到溪前"
+      },
+      {
+        "world": 2,
+        "index": 7,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把铜绿玉玦放到兰上",
+        "target_text": "把铜绿玉玦放到兰上"
+      },
+      {
+        "world": 2,
+        "index": 8,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把银霜竹简放到井前",
+        "target_text": "把银霜竹简放到井前"
+      },
+      {
+        "world": 2,
+        "index": 9,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把银霜竹简放到亭畔",
+        "target_text": "把银霜竹简放到亭畔"
+      },
+      {
+        "world": 2,
+        "index": 10,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把银霜竹简放到溪前",
+        "target_text": "把银霜竹简放到溪前"
+      },
+      {
+        "world": 2,
+        "index": 11,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把银霜竹简放到兰上",
+        "target_text": "把银霜竹简放到兰上"
+      },
+      {
+        "world": 2,
+        "index": 12,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把翠羽罗盘放到井前",
+        "target_text": "把翠羽罗盘放到井前"
+      },
+      {
+        "world": 2,
+        "index": 13,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把翠羽罗盘放到亭畔",
+        "target_text": "把翠羽罗盘放到亭畔"
+      },
+      {
+        "world": 2,
+        "index": 14,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把翠羽罗盘放到溪前",
+        "target_text": "把翠羽罗盘放到溪前"
+      },
+      {
+        "world": 2,
+        "index": 15,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把翠羽罗盘放到兰上",
+        "target_text": "把翠羽罗盘放到兰上"
+      },
+      {
+        "world": 3,
+        "index": 0,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把漆烟算筹放到崖前",
+        "target_text": "把漆烟算筹放到崖前"
+      },
+      {
+        "world": 3,
+        "index": 1,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把漆烟算筹放到雾尾",
+        "target_text": "把漆烟算筹放到雾尾"
+      },
+      {
+        "world": 3,
+        "index": 2,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把漆烟算筹放到舟侧",
+        "target_text": "把漆烟算筹放到舟侧"
+      },
+      {
+        "world": 3,
+        "index": 3,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把漆烟算筹放到池前",
+        "target_text": "把漆烟算筹放到池前"
+      },
+      {
+        "world": 3,
+        "index": 4,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把金漆香炉放到崖前",
+        "target_text": "把金漆香炉放到崖前"
+      },
+      {
+        "world": 3,
+        "index": 5,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把金漆香炉放到雾尾",
+        "target_text": "把金漆香炉放到雾尾"
+      },
+      {
+        "world": 3,
+        "index": 6,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把金漆香炉放到舟侧",
+        "target_text": "把金漆香炉放到舟侧"
+      },
+      {
+        "world": 3,
+        "index": 7,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把金漆香炉放到池前",
+        "target_text": "把金漆香炉放到池前"
+      },
+      {
+        "world": 3,
+        "index": 8,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把铜绿石砚放到崖前",
+        "target_text": "把铜绿石砚放到崖前"
+      },
+      {
+        "world": 3,
+        "index": 9,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把铜绿石砚放到雾尾",
+        "target_text": "把铜绿石砚放到雾尾"
+      },
+      {
+        "world": 3,
+        "index": 10,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把铜绿石砚放到舟侧",
+        "target_text": "把铜绿石砚放到舟侧"
+      },
+      {
+        "world": 3,
+        "index": 11,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把铜绿石砚放到池前",
+        "target_text": "把铜绿石砚放到池前"
+      },
+      {
+        "world": 3,
+        "index": 12,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把朱砂铜镜放到崖前",
+        "target_text": "把朱砂铜镜放到崖前"
+      },
+      {
+        "world": 3,
+        "index": 13,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把朱砂铜镜放到雾尾",
+        "target_text": "把朱砂铜镜放到雾尾"
+      },
+      {
+        "world": 3,
+        "index": 14,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把朱砂铜镜放到舟侧",
+        "target_text": "把朱砂铜镜放到舟侧"
+      },
+      {
+        "world": 3,
+        "index": 15,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把朱砂铜镜放到池前",
+        "target_text": "把朱砂铜镜放到池前"
+      },
+      {
+        "world": 4,
+        "index": 0,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把翠羽玉玦放到瓮尾",
+        "target_text": "把翠羽玉玦放到瓮尾"
+      },
+      {
+        "world": 4,
+        "index": 1,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把翠羽玉玦放到松上",
+        "target_text": "把翠羽玉玦放到松上"
+      },
+      {
+        "world": 4,
+        "index": 2,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把翠羽玉玦放到井畔",
+        "target_text": "把翠羽玉玦放到井畔"
+      },
+      {
+        "world": 4,
+        "index": 3,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把翠羽玉玦放到梅角",
+        "target_text": "把翠羽玉玦放到梅角"
+      },
+      {
+        "world": 4,
+        "index": 4,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把玄铁锡壶放到瓮尾",
+        "target_text": "把玄铁锡壶放到瓮尾"
+      },
+      {
+        "world": 4,
+        "index": 5,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把玄铁锡壶放到松上",
+        "target_text": "把玄铁锡壶放到松上"
+      },
+      {
+        "world": 4,
+        "index": 6,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把玄铁锡壶放到井畔",
+        "target_text": "把玄铁锡壶放到井畔"
+      },
+      {
+        "world": 4,
+        "index": 7,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把玄铁锡壶放到梅角",
+        "target_text": "把玄铁锡壶放到梅角"
+      },
+      {
+        "world": 4,
+        "index": 8,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把霜白玉玦放到瓮尾",
+        "target_text": "把霜白玉玦放到瓮尾"
+      },
+      {
+        "world": 4,
+        "index": 9,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把霜白玉玦放到松上",
+        "target_text": "把霜白玉玦放到松上"
+      },
+      {
+        "world": 4,
+        "index": 10,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把霜白玉玦放到井畔",
+        "target_text": "把霜白玉玦放到井畔"
+      },
+      {
+        "world": 4,
+        "index": 11,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把霜白玉玦放到梅角",
+        "target_text": "把霜白玉玦放到梅角"
+      },
+      {
+        "world": 4,
+        "index": 12,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把赤铜香炉放到瓮尾",
+        "target_text": "把赤铜香炉放到瓮尾"
+      },
+      {
+        "world": 4,
+        "index": 13,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把赤铜香炉放到松上",
+        "target_text": "把赤铜香炉放到松上"
+      },
+      {
+        "world": 4,
+        "index": 14,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把赤铜香炉放到井畔",
+        "target_text": "把赤铜香炉放到井畔"
+      },
+      {
+        "world": 4,
+        "index": 15,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把赤铜香炉放到梅角",
+        "target_text": "把赤铜香炉放到梅角"
+      },
+      {
+        "world": 5,
+        "index": 0,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把金漆算筹放到桥尾",
+        "target_text": "把金漆算筹放到桥尾"
+      },
+      {
+        "world": 5,
+        "index": 1,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把金漆算筹放到竹沿",
+        "target_text": "把金漆算筹放到竹沿"
+      },
+      {
+        "world": 5,
+        "index": 2,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把金漆算筹放到圃下",
+        "target_text": "把金漆算筹放到圃下"
+      },
+      {
+        "world": 5,
+        "index": 3,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把金漆算筹放到瓮北",
+        "target_text": "把金漆算筹放到瓮北"
+      },
+      {
+        "world": 5,
+        "index": 4,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把苔痕竹简放到桥尾",
+        "target_text": "把苔痕竹简放到桥尾"
+      },
+      {
+        "world": 5,
+        "index": 5,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把苔痕竹简放到竹沿",
+        "target_text": "把苔痕竹简放到竹沿"
+      },
+      {
+        "world": 5,
+        "index": 6,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把苔痕竹简放到圃下",
+        "target_text": "把苔痕竹简放到圃下"
+      },
+      {
+        "world": 5,
+        "index": 7,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把苔痕竹简放到瓮北",
+        "target_text": "把苔痕竹简放到瓮北"
+      },
+      {
+        "world": 5,
+        "index": 8,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把乌木玉玦放到桥尾",
+        "target_text": "把乌木玉玦放到桥尾"
+      },
+      {
+        "world": 5,
+        "index": 9,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把乌木玉玦放到竹沿",
+        "target_text": "把乌木玉玦放到竹沿"
+      },
+      {
+        "world": 5,
+        "index": 10,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把乌木玉玦放到圃下",
+        "target_text": "把乌木玉玦放到圃下"
+      },
+      {
+        "world": 5,
+        "index": 11,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把乌木玉玦放到瓮北",
+        "target_text": "把乌木玉玦放到瓮北"
+      },
+      {
+        "world": 5,
+        "index": 12,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把夜蓝罗盘放到桥尾",
+        "target_text": "把夜蓝罗盘放到桥尾"
+      },
+      {
+        "world": 5,
+        "index": 13,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把夜蓝罗盘放到竹沿",
+        "target_text": "把夜蓝罗盘放到竹沿"
+      },
+      {
+        "world": 5,
+        "index": 14,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把夜蓝罗盘放到圃下",
+        "target_text": "把夜蓝罗盘放到圃下"
+      },
+      {
+        "world": 5,
+        "index": 15,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把夜蓝罗盘放到瓮北",
+        "target_text": "把夜蓝罗盘放到瓮北"
+      },
+      {
+        "world": 6,
+        "index": 0,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把夜蓝算筹放到圃尾",
+        "target_text": "把夜蓝算筹放到圃尾"
+      },
+      {
+        "world": 6,
+        "index": 1,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把夜蓝算筹放到兰外",
+        "target_text": "把夜蓝算筹放到兰外"
+      },
+      {
+        "world": 6,
+        "index": 2,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把夜蓝算筹放到雾外",
+        "target_text": "把夜蓝算筹放到雾外"
+      },
+      {
+        "world": 6,
+        "index": 3,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把夜蓝算筹放到井尾",
+        "target_text": "把夜蓝算筹放到井尾"
+      },
+      {
+        "world": 6,
+        "index": 4,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把金漆铜镜放到圃尾",
+        "target_text": "把金漆铜镜放到圃尾"
+      },
+      {
+        "world": 6,
+        "index": 5,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把金漆铜镜放到兰外",
+        "target_text": "把金漆铜镜放到兰外"
+      },
+      {
+        "world": 6,
+        "index": 6,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把金漆铜镜放到雾外",
+        "target_text": "把金漆铜镜放到雾外"
+      },
+      {
+        "world": 6,
+        "index": 7,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把金漆铜镜放到井尾",
+        "target_text": "把金漆铜镜放到井尾"
+      },
+      {
+        "world": 6,
+        "index": 8,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把玄铁镇纸放到圃尾",
+        "target_text": "把玄铁镇纸放到圃尾"
+      },
+      {
+        "world": 6,
+        "index": 9,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把玄铁镇纸放到兰外",
+        "target_text": "把玄铁镇纸放到兰外"
+      },
+      {
+        "world": 6,
+        "index": 10,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把玄铁镇纸放到雾外",
+        "target_text": "把玄铁镇纸放到雾外"
+      },
+      {
+        "world": 6,
+        "index": 11,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把玄铁镇纸放到井尾",
+        "target_text": "把玄铁镇纸放到井尾"
+      },
+      {
+        "world": 6,
+        "index": 12,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把翠羽香炉放到圃尾",
+        "target_text": "把翠羽香炉放到圃尾"
+      },
+      {
+        "world": 6,
+        "index": 13,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把翠羽香炉放到兰外",
+        "target_text": "把翠羽香炉放到兰外"
+      },
+      {
+        "world": 6,
+        "index": 14,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把翠羽香炉放到雾外",
+        "target_text": "把翠羽香炉放到雾外"
+      },
+      {
+        "world": 6,
+        "index": 15,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把翠羽香炉放到井尾",
+        "target_text": "把翠羽香炉放到井尾"
+      },
+      {
+        "world": 7,
+        "index": 0,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把青玉香炉放到井北",
+        "target_text": "把青玉香炉放到井北"
+      },
+      {
+        "world": 7,
+        "index": 1,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把青玉香炉放到廊北",
+        "target_text": "把青玉香炉放到廊北"
+      },
+      {
+        "world": 7,
+        "index": 2,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把青玉香炉放到池外",
+        "target_text": "把青玉香炉放到池外"
+      },
+      {
+        "world": 7,
+        "index": 3,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把青玉香炉放到亭角",
+        "target_text": "把青玉香炉放到亭角"
+      },
+      {
+        "world": 7,
+        "index": 4,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把金漆罗盘放到井北",
+        "target_text": "把金漆罗盘放到井北"
+      },
+      {
+        "world": 7,
+        "index": 5,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把金漆罗盘放到廊北",
+        "target_text": "把金漆罗盘放到廊北"
+      },
+      {
+        "world": 7,
+        "index": 6,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把金漆罗盘放到池外",
+        "target_text": "把金漆罗盘放到池外"
+      },
+      {
+        "world": 7,
+        "index": 7,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把金漆罗盘放到亭角",
+        "target_text": "把金漆罗盘放到亭角"
+      },
+      {
+        "world": 7,
+        "index": 8,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把乌木罗盘放到井北",
+        "target_text": "把乌木罗盘放到井北"
+      },
+      {
+        "world": 7,
+        "index": 9,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把乌木罗盘放到廊北",
+        "target_text": "把乌木罗盘放到廊北"
+      },
+      {
+        "world": 7,
+        "index": 10,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把乌木罗盘放到池外",
+        "target_text": "把乌木罗盘放到池外"
+      },
+      {
+        "world": 7,
+        "index": 11,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把乌木罗盘放到亭角",
+        "target_text": "把乌木罗盘放到亭角"
+      },
+      {
+        "world": 7,
+        "index": 12,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把铁英石砚放到井北",
+        "target_text": "把铁英石砚放到井北"
+      },
+      {
+        "world": 7,
+        "index": 13,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把铁英石砚放到廊北",
+        "target_text": "把铁英石砚放到廊北"
+      },
+      {
+        "world": 7,
+        "index": 14,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把铁英石砚放到池外",
+        "target_text": "把铁英石砚放到池外"
+      },
+      {
+        "world": 7,
+        "index": 15,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把铁英石砚放到亭角",
+        "target_text": "把铁英石砚放到亭角"
+      },
+      {
+        "world": 8,
+        "index": 0,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把赤铜石砚放到松前",
+        "target_text": "把赤铜石砚放到松前"
+      },
+      {
+        "world": 8,
+        "index": 1,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把赤铜石砚放到圃外",
+        "target_text": "把赤铜石砚放到圃外"
+      },
+      {
+        "world": 8,
+        "index": 2,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把赤铜石砚放到瓮沿",
+        "target_text": "把赤铜石砚放到瓮沿"
+      },
+      {
+        "world": 8,
+        "index": 3,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把赤铜石砚放到竹上",
+        "target_text": "把赤铜石砚放到竹上"
+      },
+      {
+        "world": 8,
+        "index": 4,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把赭石玉玦放到松前",
+        "target_text": "把赭石玉玦放到松前"
+      },
+      {
+        "world": 8,
+        "index": 5,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把赭石玉玦放到圃外",
+        "target_text": "把赭石玉玦放到圃外"
+      },
+      {
+        "world": 8,
+        "index": 6,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把赭石玉玦放到瓮沿",
+        "target_text": "把赭石玉玦放到瓮沿"
+      },
+      {
+        "world": 8,
+        "index": 7,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把赭石玉玦放到竹上",
+        "target_text": "把赭石玉玦放到竹上"
+      },
+      {
+        "world": 8,
+        "index": 8,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把松绿铜镜放到松前",
+        "target_text": "把松绿铜镜放到松前"
+      },
+      {
+        "world": 8,
+        "index": 9,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把松绿铜镜放到圃外",
+        "target_text": "把松绿铜镜放到圃外"
+      },
+      {
+        "world": 8,
+        "index": 10,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把松绿铜镜放到瓮沿",
+        "target_text": "把松绿铜镜放到瓮沿"
+      },
+      {
+        "world": 8,
+        "index": 11,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把松绿铜镜放到竹上",
+        "target_text": "把松绿铜镜放到竹上"
+      },
+      {
+        "world": 8,
+        "index": 12,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把金漆竹简放到松前",
+        "target_text": "把金漆竹简放到松前"
+      },
+      {
+        "world": 8,
+        "index": 13,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把金漆竹简放到圃外",
+        "target_text": "把金漆竹简放到圃外"
+      },
+      {
+        "world": 8,
+        "index": 14,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把金漆竹简放到瓮沿",
+        "target_text": "把金漆竹简放到瓮沿"
+      },
+      {
+        "world": 8,
+        "index": 15,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把金漆竹简放到竹上",
+        "target_text": "把金漆竹简放到竹上"
+      },
+      {
+        "world": 9,
+        "index": 0,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把松绿漆盒放到沙外",
+        "target_text": "把松绿漆盒放到沙外"
+      },
+      {
+        "world": 9,
+        "index": 1,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把松绿漆盒放到廊前",
+        "target_text": "把松绿漆盒放到廊前"
+      },
+      {
+        "world": 9,
+        "index": 2,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把松绿漆盒放到井前",
+        "target_text": "把松绿漆盒放到井前"
+      },
+      {
+        "world": 9,
+        "index": 3,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把松绿漆盒放到亭畔",
+        "target_text": "把松绿漆盒放到亭畔"
+      },
+      {
+        "world": 9,
+        "index": 4,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把乌木铜镜放到沙外",
+        "target_text": "把乌木铜镜放到沙外"
+      },
+      {
+        "world": 9,
+        "index": 5,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把乌木铜镜放到廊前",
+        "target_text": "把乌木铜镜放到廊前"
+      },
+      {
+        "world": 9,
+        "index": 6,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把乌木铜镜放到井前",
+        "target_text": "把乌木铜镜放到井前"
+      },
+      {
+        "world": 9,
+        "index": 7,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把乌木铜镜放到亭畔",
+        "target_text": "把乌木铜镜放到亭畔"
+      },
+      {
+        "world": 9,
+        "index": 8,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把赤铜漆盒放到沙外",
+        "target_text": "把赤铜漆盒放到沙外"
+      },
+      {
+        "world": 9,
+        "index": 9,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把赤铜漆盒放到廊前",
+        "target_text": "把赤铜漆盒放到廊前"
+      },
+      {
+        "world": 9,
+        "index": 10,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把赤铜漆盒放到井前",
+        "target_text": "把赤铜漆盒放到井前"
+      },
+      {
+        "world": 9,
+        "index": 11,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把赤铜漆盒放到亭畔",
+        "target_text": "把赤铜漆盒放到亭畔"
+      },
+      {
+        "world": 9,
+        "index": 12,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把铜绿玉玦放到沙外",
+        "target_text": "把铜绿玉玦放到沙外"
+      },
+      {
+        "world": 9,
+        "index": 13,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把铜绿玉玦放到廊前",
+        "target_text": "把铜绿玉玦放到廊前"
+      },
+      {
+        "world": 9,
+        "index": 14,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把铜绿玉玦放到井前",
+        "target_text": "把铜绿玉玦放到井前"
+      },
+      {
+        "world": 9,
+        "index": 15,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把铜绿玉玦放到亭畔",
+        "target_text": "把铜绿玉玦放到亭畔"
+      },
+      {
+        "world": 10,
+        "index": 0,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把银霜竹简放到溪前",
+        "target_text": "把银霜竹简放到溪前"
+      },
+      {
+        "world": 10,
+        "index": 1,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把银霜竹简放到兰上",
+        "target_text": "把银霜竹简放到兰上"
+      },
+      {
+        "world": 10,
+        "index": 2,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把银霜竹简放到崖前",
+        "target_text": "把银霜竹简放到崖前"
+      },
+      {
+        "world": 10,
+        "index": 3,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把银霜竹简放到雾尾",
+        "target_text": "把银霜竹简放到雾尾"
+      },
+      {
+        "world": 10,
+        "index": 4,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把翠羽罗盘放到溪前",
+        "target_text": "把翠羽罗盘放到溪前"
+      },
+      {
+        "world": 10,
+        "index": 5,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把翠羽罗盘放到兰上",
+        "target_text": "把翠羽罗盘放到兰上"
+      },
+      {
+        "world": 10,
+        "index": 6,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把翠羽罗盘放到崖前",
+        "target_text": "把翠羽罗盘放到崖前"
+      },
+      {
+        "world": 10,
+        "index": 7,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把翠羽罗盘放到雾尾",
+        "target_text": "把翠羽罗盘放到雾尾"
+      },
+      {
+        "world": 10,
+        "index": 8,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把漆烟算筹放到溪前",
+        "target_text": "把漆烟算筹放到溪前"
+      },
+      {
+        "world": 10,
+        "index": 9,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把漆烟算筹放到兰上",
+        "target_text": "把漆烟算筹放到兰上"
+      },
+      {
+        "world": 10,
+        "index": 10,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把漆烟算筹放到崖前",
+        "target_text": "把漆烟算筹放到崖前"
+      },
+      {
+        "world": 10,
+        "index": 11,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把漆烟算筹放到雾尾",
+        "target_text": "把漆烟算筹放到雾尾"
+      },
+      {
+        "world": 10,
+        "index": 12,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把金漆香炉放到溪前",
+        "target_text": "把金漆香炉放到溪前"
+      },
+      {
+        "world": 10,
+        "index": 13,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把金漆香炉放到兰上",
+        "target_text": "把金漆香炉放到兰上"
+      },
+      {
+        "world": 10,
+        "index": 14,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把金漆香炉放到崖前",
+        "target_text": "把金漆香炉放到崖前"
+      },
+      {
+        "world": 10,
+        "index": 15,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把金漆香炉放到雾尾",
+        "target_text": "把金漆香炉放到雾尾"
+      },
+      {
+        "world": 11,
+        "index": 0,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把铜绿石砚放到舟侧",
+        "target_text": "把铜绿石砚放到舟侧"
+      },
+      {
+        "world": 11,
+        "index": 1,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把铜绿石砚放到池前",
+        "target_text": "把铜绿石砚放到池前"
+      },
+      {
+        "world": 11,
+        "index": 2,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把铜绿石砚放到瓮尾",
+        "target_text": "把铜绿石砚放到瓮尾"
+      },
+      {
+        "world": 11,
+        "index": 3,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把铜绿石砚放到松上",
+        "target_text": "把铜绿石砚放到松上"
+      },
+      {
+        "world": 11,
+        "index": 4,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把朱砂铜镜放到舟侧",
+        "target_text": "把朱砂铜镜放到舟侧"
+      },
+      {
+        "world": 11,
+        "index": 5,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把朱砂铜镜放到池前",
+        "target_text": "把朱砂铜镜放到池前"
+      },
+      {
+        "world": 11,
+        "index": 6,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把朱砂铜镜放到瓮尾",
+        "target_text": "把朱砂铜镜放到瓮尾"
+      },
+      {
+        "world": 11,
+        "index": 7,
+        "age": "old",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把朱砂铜镜放到松上",
+        "target_text": "把朱砂铜镜放到松上"
+      },
+      {
+        "world": 11,
+        "index": 8,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把翠羽玉玦放到舟侧",
+        "target_text": "把翠羽玉玦放到舟侧"
+      },
+      {
+        "world": 11,
+        "index": 9,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把翠羽玉玦放到池前",
+        "target_text": "把翠羽玉玦放到池前"
+      },
+      {
+        "world": 11,
+        "index": 10,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把翠羽玉玦放到瓮尾",
+        "target_text": "把翠羽玉玦放到瓮尾"
+      },
+      {
+        "world": 11,
+        "index": 11,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把翠羽玉玦放到松上",
+        "target_text": "把翠羽玉玦放到松上"
+      },
+      {
+        "world": 11,
+        "index": 12,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把玄铁锡壶放到舟侧",
+        "target_text": "把玄铁锡壶放到舟侧"
+      },
+      {
+        "world": 11,
+        "index": 13,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把玄铁锡壶放到池前",
+        "target_text": "把玄铁锡壶放到池前"
+      },
+      {
+        "world": 11,
+        "index": 14,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把玄铁锡壶放到瓮尾",
+        "target_text": "把玄铁锡壶放到瓮尾"
+      },
+      {
+        "world": 11,
+        "index": 15,
+        "age": "new",
+        "answer_bytes": 27,
+        "target_bytes": 27,
+        "byte_exact": true,
+        "terminated": true,
+        "decoded_text": "把玄铁锡壶放到松上",
+        "target_text": "把玄铁锡壶放到松上"
+      }
+    ]
+  },
+  "cost": {
+    "cpu_seconds": 78.61,
+    "wall_seconds": 80.48,
+    "cpu_cap": 400.0,
+    "wall_cap": 3600.0,
+    "over_budget": false,
+    "estimated_before_read": 75.0
+  },
+  "discipline": {
+    "training_runs": 0,
+    "optimizer_steps": 0,
+    "confirm_reads": 1,
+    "parameters_added": 0,
+    "graph_changes": 0,
+    "progress_fsync_per_row": true,
+    "report_write_then_rename": true
+  },
+  "closed_state": {
+    "frozen_files_unchanged": true,
+    "module_hashes": {
+      "scripts/training/probe_taiji_stop_boundary_20261109.py": "f706770d400137fccf177ff546deabbedb8090e996428cb97d240e84112bba59",
+      "scripts/training/probe_taiji_package19_2v_confirm_holdout.py": "c81d80dcc67d67a4eae12e7758996a53a96ed11fd1e19d2737667d59860b9307",
+      "scripts/training/probe_taiji_content_transport_18_1.py": "202167c20485af10550a73047f0ce78ad3f7c92da3c5972d2d76c38dcc3b37d4",
+      "taiji/copy_stop_boundary.py": "27e5b9a63be29e98197331d59c5ad471e5ae46fa68921c87ce13b42bf193d702",
+      "taiji/binding_copy.py": "ce74e47f5e9b28e20b330b1c3438603bfe91d9822b107c981e2193b43068f19f",
+      "taiji/byte_match_route.py": "367f2441c9fbe3d91fb178d1b4dc6d2eb73e41c8eaf87bc4dc6c05b7ccbfe4df",
+      "taiji/record_relation_core.py": "3281f2599eaa6208bf54a61e14f4ced33151f440f903b4a75450158fbcc43256",
+      "taiji/living_core.py": "c9df8b7a99c7950e0b69f0881c96d3ac3354dba548ccdede8b1902b6b9ddba38",
+      "taiji/data_premise_18_0.py": "0d849106fbadd0d46f4c2e06853eea98a6606e3067433ac8db6ba452d84587e4",
+      "taiji/candidate_identity.py": "7aa1babf4737334461ae1a599504c946297f723ffc5a74ba36225397d50bd31c"
+    }
+  }
+}

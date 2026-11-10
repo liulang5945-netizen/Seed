@@ -19,7 +19,7 @@ from __future__ import annotations
 import json
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import torch
 from torch import nn
@@ -101,6 +101,9 @@ def expected_span_parameter_count(config: RoutingConfig = DEFAULT_ROUTING_CONFIG
 class OrderedSelectionHead(nn.Module):
     """Independent per-step route head over ordered pooled encodings."""
 
+    W_align: nn.Linear | None
+    offset_embed: nn.Parameter | None
+
     def __init__(self, config: RoutingConfig = DEFAULT_ROUTING_CONFIG, *, seed: int) -> None:
         super().__init__()
         generator = torch.Generator().manual_seed(seed)
@@ -134,7 +137,7 @@ class OrderedSelectionHead(nn.Module):
             self.offset_embed = None
 
     def pooled(self, relation: Any, subject: Any, raw: bytes) -> torch.Tensor:
-        return relation.pool(relation.encode_units(subject, raw))
+        return cast(torch.Tensor, relation.pool(relation.encode_units(subject, raw)))
 
     def alignment_features(self, goal_vec: torch.Tensor, key: torch.Tensor) -> torch.Tensor:
         """Local cross-correlation of two pooled encodings over four subspaces.
@@ -147,8 +150,9 @@ class OrderedSelectionHead(nn.Module):
         into ``ALIGN_FEATURES`` row inputs, so the pooled features stay intact.
         """
         block = self.config.width // ALIGN_BLOCKS
-        goal_blocks = self.W_align(goal_vec.reshape(ALIGN_BLOCKS, block))
-        key_blocks = self.W_align(key.reshape(ALIGN_BLOCKS, block))
+        project = cast(nn.Linear, self.W_align)
+        goal_blocks = project(goal_vec.reshape(ALIGN_BLOCKS, block))
+        key_blocks = project(key.reshape(ALIGN_BLOCKS, block))
         values = []
         for offset in ALIGN_OFFSETS:
             rows = []
@@ -157,7 +161,7 @@ class OrderedSelectionHead(nn.Module):
                 rows.append(F.cosine_similarity(goal_blocks[partner], key_blocks[index], dim=0))
             values.append(torch.stack(rows).mean())
         correlations = torch.stack(values)
-        blend = (correlations.unsqueeze(-1) * self.offset_embed).sum(0)
+        blend = (correlations.unsqueeze(-1) * cast(nn.Parameter, self.offset_embed)).sum(0)
         half = ALIGN_EMBED // 2
         return blend[:half] + blend[half:]
 
@@ -174,7 +178,7 @@ class OrderedSelectionHead(nn.Module):
         rows.append(self._row(goal_vec, self.k_null, s_t, previous_embedding))
         stacked = torch.stack(rows)
         hidden = torch.tanh(self.W_hidden(stacked))
-        return self.w_out(hidden).squeeze(-1)
+        return cast(torch.Tensor, self.w_out(hidden).squeeze(-1))
 
     def _row(
         self,
@@ -191,6 +195,8 @@ class OrderedSelectionHead(nn.Module):
 
 class SpanPointerHead(nn.Module):
     """Teacher-span start/end pointer over the selected record's ordered units."""
+
+    proj: nn.Linear | None
 
     def __init__(self, config: RoutingConfig = DEFAULT_ROUTING_CONFIG, *, seed: int) -> None:
         super().__init__()
@@ -287,7 +293,7 @@ def _s_t(candidate: Any, prepared: Any, state: Any, previous: int) -> torch.Tens
     xi = subject.xi(
         torch.cat([base.r_goal, previous_embedding, _mode_vector(subject.W, 0), base.nu])
     )
-    return subject.readout(state.living.h, xi)[0]
+    return cast(torch.Tensor, subject.readout(state.living.h, xi)[0])
 
 
 def _hard_route(scores: torch.Tensor) -> torch.Tensor:
@@ -717,7 +723,7 @@ def route_labels(fixture: dict[str, Any]) -> tuple[tuple[int, ...], tuple[int, .
 
 def load_thresholds(path: str | Path) -> dict[str, Any]:
     with open(path, encoding="utf-8") as handle:
-        data = json.load(handle)
+        data: dict[str, Any] = json.load(handle)
     for key in ("theta_repr", "theta_score", "noise_floor_repr", "noise_floor_score"):
         if key not in data:
             raise ValueError(f"threshold file missing {key}")

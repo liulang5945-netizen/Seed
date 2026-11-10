@@ -18,7 +18,7 @@ import time
 import traceback
 from dataclasses import asdict, dataclass, replace
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import torch
 from torch import nn
@@ -204,6 +204,11 @@ def build_subject(parent: dict) -> nn.Module:
 class RecordRelationCandidate(nn.Module):
     """The same subject with the registered ``record_relation_v1`` subgraph."""
 
+    # The inherited subject is a plain ``nn.Module`` whose tensor attributes
+    # (``W``, ``encoder``, ``readout``, ...) are resolved dynamically, so every
+    # read through it is an unverifiable ``Tensor | Module`` union.
+    subject: Any
+
     def __init__(
         self,
         subject: nn.Module,
@@ -219,7 +224,7 @@ class RecordRelationCandidate(nn.Module):
         self.arm = arm
         self.config = config
         self.growth_gates = growth_gates
-        self.relation.encoder.local = arm == ARM_LOCAL
+        cast(Any, self.relation.encoder).local = arm == ARM_LOCAL
         self.flat = arm == ARM_FLAT
         self.content_schema = RECORD_RELATION_SCHEMA
         self.configure_trainable()
@@ -350,10 +355,10 @@ def prepare(
     zero = subject.W.new_zeros(8)
     unknown = torch.zeros(8, dtype=torch.bool, device=subject.W.device)
     ema, nu, _ = subject.update_nu(state, zero, unknown)
-    coverage = align_coverage(state.coverage, state.keys, view)
+    coverage = align_coverage(state.coverage, cast(Any, state.keys), view)
     prepared_state = replace(
         state,
-        keys=view.coverage_keys,
+        keys=cast(Any, view.coverage_keys),
         coverage=coverage,
         nu_ema=ema,
         prior=subject.W.new_empty(0),
@@ -770,7 +775,7 @@ def combined_loss(
             subject_id=subject_id,
         )
         losses.append(result.nll)
-    return sum(losses) / len(losses)
+    return cast(torch.Tensor, sum(losses) / len(losses))
 
 
 def make_optimizer(candidate: RecordRelationCandidate) -> torch.optim.Adam:
@@ -848,7 +853,7 @@ def state_payload(state: LivingState) -> dict:
         "h": state.h.detach().cpu().clone(),
         "fast": state.fast.detach().cpu().clone(),
         "nu_ema": state.nu_ema.detach().cpu().clone(),
-        "keys": [[source, version, offset] for source, version, offset in state.keys],
+        "keys": [[source, version, offset] for source, version, offset in cast(Any, state.keys)],
         "coverage": state.coverage.detach().cpu().clone(),
         "prior": state.prior.detach().cpu().clone(),
     }
@@ -862,7 +867,9 @@ def state_from_payload(payload: dict, reference: torch.Tensor) -> LivingState:
         h=payload["h"].to(reference.dtype),
         fast=payload["fast"].to(reference.dtype),
         nu_ema=payload["nu_ema"].to(reference.dtype),
-        keys=tuple((source, version, offset) for source, version, offset in payload["keys"]),
+        keys=tuple(
+            cast(Any, (source, version, offset)) for source, version, offset in payload["keys"]
+        ),
         coverage=payload["coverage"].to(reference.dtype),
         prior=payload["prior"].to(reference.dtype),
     )

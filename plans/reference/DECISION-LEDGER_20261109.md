@@ -1790,8 +1790,62 @@ reading["pairs"] = {
 
 **4. 第二层缺口（入库版本 ≠ 读数时钉的版本）**：`goal_binding.py` 当前 `7081245c…` 与证据一致；`goal_planner.py` 当前 `5819bbf3…` 与 10.3b／10.1b 一致、与 10.3 的 `a0d5726a…` 不一致；`native_goal_world.py` 当前 `f91cab70…`，与证据钉的 `5adf9fd5…`／`66657b0c…` 都不一致；`native_composition_fixture.py` 当前 `1b9141de…`，与 10.21／14.5／14.6 钉的 `18ca7f7c…` 不一致——后者的差异来自本次为过 B/SIM 棘轮加的两处 `zip(..., strict=True)`，运行语义只在长度不等时由静默截断变为抛错。这几个被钉版本从未入库，seal_ast 的 git 历史取证通道无法为它们取证，相应的源哈希记录退化为“文档级声明、机器不可验证”；这些 manifest 的 `source_hashes` 目前没有已入库测试消费，所以没有测试因此变红。
 
+**4b. 11 条失效哈希逐条取证（2026-11-10 补）**：本轮把 42 条入册钉逐条复核，31 条仍可验，11 条在**任何 ref 的历史里都不存在**（`git log --all` 逐条 `git show` 取证；每条的 `commits_scanned` 为 1 或 7，结论一律 `UNRECOVERABLE`）。它们全部是**改前就已失效**，不是本轮编辑造成的：
+
+| # | 文件 | 失效 sha256（前 8 位） | 对应读数 | 取证结论 |
+| --- | --- | --- | --- | --- |
+| 1 | `taiji/rule_learning_20_1_net.py` | `282e8ce1` | 20.1 fixture graph（`reports/taiji_package20_1_rule_learning_fixture_graph_20261105.json`） | 不可恢复 |
+| 2 | `taiji/native_goal_world.py` | `5adf9fd5` | 10.1b／10.3b／10.4／10.5／10.6／10.7、fixture fairness audit 正本与 `_void`、algorithm review 的 `expected_sha256` | 不可恢复 |
+| 3 | `taiji/native_goal_world.py` | `66657b0c` | 10.1／10.2／10.3 | 不可恢复 |
+| 4 | `taiji/native_activity.py` | `4ebcfbbe` | R0.29 engineering gaps（`reports/taiji_core_r029_engineering_gaps_20261101.json`）、algorithm review 的 `expected_sha256` | 不可恢复 |
+| 5 | `taiji/native_activity_fixture.py` | `06fb6f0e` | 10.21 fixture arrivals 正本与 v2 | 不可恢复 |
+| 6 | `taiji/goal_planner.py` | `a0d5726a` | 10.3 goal planner | 不可恢复 |
+| 7 | `taiji/query_binding.py` | `87997b94` | 10.21 `_v1_pre_fix` manifest、v2／v3 工程失败报告 | 不可恢复 |
+| 8 | `taiji/goal_fixture_fairness.py` | `b4d4e019` | fixture fairness audit（`_void`） | 不可恢复 |
+| 9 | `taiji/candidate_session.py` | `2ed2c455` | 11.3 task suite、algorithm review 的 `expected_sha256` | 不可恢复 |
+| 10 | `taiji/candidate_session.py` | `e04760be` | 11.2 task entry | 不可恢复 |
+| 11 | `taiji/candidate_session.py` | `fd906a34` | 11.2b task entry roundtrip | 不可恢复 |
+
+**原因（11 条共同）**：读数是**用工作区状态**产生的，产生读数时的那些字节**从未提交**，因此 `seal_ast.verify_hash_dict(..., allow_git_history=True)` 的三条通道（原地字节／canonical AST／git 历史 blob）全部无法命中——这不是"改坏了"，而是"当年就没进历史"。
+
+**结论性判断**：这批读数当前的状态是**"报告级声明、不可机器复核"**。它们的**存在性**仍被台账普查仪（`test_n5_38_ledger_cited_reports_contract.py`）覆盖（文件在不在册），但**哈希与字节一致性没有任何机器复核入口**：`tests/` 全部用例不引用这些报告，`source_hashes` 的校验入口只服务于 R 系列新 manifest，不覆盖这些旧报告。因此这 11 条**全部是纯存档**，不影响 CI、不影响 R58–R63 链、不影响 192/192。
+
 **5. 处置**：五个文件按工作区原样入库（唯一代码改动是 `native_goal_world.py` 的 B007 循环变量和 `native_composition_fixture.py` 两处 `strict=True`）；未改读数／判据／manifest 数字，未重签任何旧 manifest。入库提交 `de49c0de1`，B/SIM 修复提交 `5769342f3`。
 
 **6. 教训（写成规则）**：往已入库代码里新增 import 前，先确认被导入模块已入库；否则 ruff 的 I001 是“缺文件”的症状，改 import 排序治不了它。
 
 **7. 后续**：第 4 条的可验证性只能靠新协议重新登记（读当前版本、成本重记），不得回写旧 manifest。
+
+## D-20261110-04 6 个字节冻结模块的类型修复与证据协议重基线
+
+**1. 编号／时间／类型**：D-20261110-04｜2026-11-10｜**证据协议变更**（不是读数修正）。旧 manifest／旧报告／旧 progress 一个字节未改，只旁侧新增一套新记录。完整说明见 [协议记录](PROTOCOL-TAIJI-BYTE_FREEZE_REBASELINE_20261110.md)。
+
+**2. 事实**：CI 的类型闸（mypy 292 条）里有 146 条落在 6 个被 `frozen_files` 严格字节钉住的模块上。修类型必须改字节，改字节必然让 9 份旧 manifest 无法再通过自身的 `frozen input drift` 校验。协议不允许覆盖旧记录，因此改为"旧记录保留、新记录旁侧登记"。
+
+**3. 旧哈希 → 新哈希（6 个文件）**：
+
+| 文件 | 旧 | 新 |
+| --- | --- | --- |
+| `taiji/binding_copy.py` | `37f4885e…` | `ce74e47f…` |
+| `taiji/record_relation_core.py` | `8318dde5…` | `3281f259…` |
+| `taiji/living_core.py` | `6c0c53a2…` | `c9df8b7a…` |
+| `taiji/data_premise_18_0.py` | `b98b6853…` | `0d849106…` |
+| `taiji/selection_routing.py` | `3b80ed03…` | `b90c410b…` |
+| `taiji/selection_routing_checkpoint.py` | `606cc68c…` | `80aa1dc3…` |
+
+146 条全部用注解／`cast`／`assert` 收窄解决，**没有一条需要改公开签名**。运行时可观测差异只有 2 处：`living_core.py` 的 4 个 `assert`（`-O` 下移除；只把 store 四字段不一致时的异常类型由 `TypeError` 变 `AssertionError`）与 `record_relation_core.py` 的 `subject: Any`（弱化静态检查，运行时零差异）。
+
+**4. 受影响读数**：9 份 manifest（R58／R59／R60／R60b／R61／R61_v3／R62／R63／R57），对应 8 份报告。用回放驱动（重绑模块级 `MANIFEST`／`REPORT`／`PROGRESS` 后调用 `main()`，不改任何 runner 源码）重跑，新记录写到 `*_rebaseline_20261111.*`。
+
+**5. 重跑结论**：7 份 dev 报告（R58–R63）逐行 diff 只有 `preregistration` 路径与哈希、以及 `cost` 的 cpu／wall 两类差异；**判定名、核心计数、分布、逐格行、锚点字段数逐项相同**（R61 29/48＋p=3.81e-06；R62 rescue 18/19＋break 29/29；R63 rescue 19/19＋break 29/29＋`put_char_exact` 48；anchor 1890 字段 0 不符）。R57 有一处结构性差异：`read_register.recovery_rerun` 由 `true` 变 `false`（该字段只表示"跑前已有一遍逐例日志、需逐行复算"的崩溃恢复标记，不是读数），旧报告的 `recovery_check{192, 0 mismatch, identical}` 因此没有复现；补偿取证为三方向逐例比对旧两遍与新一遍的 192 行，`byte_exact`／`answer_bytes`／`terminated` 0 处不同。
+
+**6. 协议代价（必须记账）**：R57 是 confirm 分区第 2 次读（D-20261109-60），本次重跑构成**第 3 次读**。结果与第 1／2 次逐例相同，不产生新声明；但这是不可撤回的读取成本，此后任何步骤不得再读 confirm 分区。
+
+**7. 重跑成本**：CPU 337.29 s、墙钟 345.87 s（旧 8 步合计 CPU 263.02 s、墙钟 270.84 s；差额来自机器负载，单步均未越 cap）。
+
+**8. 撤回路径**：新记录全是新增文件，删除 `*_rebaseline_20261111.*` 三联与回放驱动即回到纯旧状态；若同时撤回字节改动，`git revert` 本提交后 6 个文件恢复旧哈希、9 份旧 manifest 重新自洽。旧记录从未被写入，无需恢复任何被覆盖内容——唯一不可撤回的是第 6 条的第 3 次 confirm 读。
+
+**9. 与未入库草稿的关系（说明，不提交）**：工作区那批未入库的 `scripts/training/verify_*` 与 `tests/taiji_native/test_*`（10.x／11.x／14.x 的复算入口）**不参与本次提交**，CI 也看不见它们。它们与已入库读数的关系只有一条：它们是 D-20261110-03 里那 5 个"从未提交"模块的复算入口，因此那 21 条只按 `source_hashes` 固定的 manifest，在本机仍可被这些脚本复算、在 CI 里则完全不可复核——这与 §4b 里 11 条失效哈希是同一个根因（读数取自工作区、字节没进历史），不是本次类型修复引入的。
+
+**10. 附带结项：三条"单独重跑就过"的用例**：已单独立项判定，见 [跨进程证据立项](FINDING-CROSS_PROCESS_EVIDENCE_20261110.md)。结论是**三条都属于"测试写错了"**，不是实现硬伤，也与本次类型改动无关：两条跨进程摘要比对是父进程被同会话早先用例钉成 1 线程、子进程从机器默认起步（摘要随线程预算变，同预算下逐位确定）；一条是 Windows `process_time()` 的 1/64 s 量化在 ~40 ms 区间上与连续墙钟比大小。处置：两条摘要把子进程钉到父进程的预算；CPU 用例放宽一个 tick 并让 worker 与参考实现同为单线程。
+

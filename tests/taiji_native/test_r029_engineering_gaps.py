@@ -37,6 +37,8 @@ from taiji.state_migration import (
 )
 
 CONFIG = LivingCoreConfig(groups=2, width=8, units=12, adapter_rank=2, key_width=4, value_width=4)
+# time.process_time() advances in OS clock ticks; Windows uses 1/64 s.
+_CPU_CLOCK_TICK_SECONDS = 1.0 / 64.0
 RECORDS = (
     RawSource("s1", "蓝色杯子在木桌上。".encode(), version=1, observed_at=1),
     RawSource("s2", "更正：蓝色杯子在窗台。".encode(), version=2, observed_at=5),
@@ -89,9 +91,21 @@ def child_pipeline():
     return _CHILD_CACHE
 
 
+def _worker_entry(spec: dict) -> None:
+    """Run the worker with the same one-thread budget the parent reference uses.
+
+    ``new_model`` pins the parent to one thread; a freshly spawned child starts
+    at the machine default, and a multi-threaded few-millisecond microstep can
+    spend more CPU time than wall time.  ``worker_cpu <= worker_wall`` is a
+    single-thread invariant, so the child has to be pinned too.
+    """
+    torch.set_num_threads(1)
+    run_worker_job(spec)
+
+
 def spawn_worker(spec: dict) -> dict:
     context = multiprocessing.get_context("spawn")
-    process = context.Process(target=run_worker_job, args=(spec,))
+    process = context.Process(target=_worker_entry, args=(spec,))
     process.start()
     process.join(timeout=600)
     if process.exitcode != 0:
@@ -495,8 +509,20 @@ def test_r029_worker_accounts_its_own_cpu():
         parent_wall = time.perf_counter() - parent_wall
     assert worker["worker_cpu_seconds"] > 0.0
     assert worker["worker_wall_seconds"] > 0.0
-    assert worker["worker_cpu_seconds"] <= worker["worker_wall_seconds"]
-    assert parent_cpu < worker["worker_wall_seconds"]
+    # time.process_time() is accounted in OS clock ticks (1/64 s on Windows), so
+    # a ~40 ms microstep reports CPU in 15.625 ms steps: 0.046875 s of CPU for a
+    # 0.0459 s wall is the same measurement rounded up, not a worker that spent
+    # more CPU than time.  Allow one tick; the assertion is here to catch a
+    # worker that reports somebody else's CPU, not to test clock resolution.
+    assert worker["worker_cpu_seconds"] <= worker["worker_wall_seconds"] + _CPU_CLOCK_TICK_SECONDS
+    # parent_cpu covers process.start() *and* the torch.load of the worker's
+    # output, while worker_wall covers only the child's microstep (~30 ms on a
+    # quiet box).  Asserting parent_cpu < worker_wall orders two intervals that
+    # are not the same interval, so a GC pause or an antivirus scan inside the
+    # parent flips it.  The invariant that does hold is that the worker's own
+    # CPU is a strict part of the parent's whole spawn-and-join window.
+    assert parent_cpu <= parent_wall
+    assert worker["worker_cpu_seconds"] < parent_wall
     assert parent_wall >= worker["worker_wall_seconds"]
     assert torch.equal(worker["h"], local_state.h)
     assert torch.equal(worker["probabilities"], local_steps[0][0].probabilities)

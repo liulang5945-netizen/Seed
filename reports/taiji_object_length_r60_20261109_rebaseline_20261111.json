@@ -1,0 +1,1386 @@
+{
+  "schema": "taiji-object-length-r60-report-v1",
+  "step": "R60",
+  "date": "2026-11-09",
+  "relation_to_main_task": "不改 Task1 的 192/192，只判它的物件槽长度适用范围：地点固定 6 B、描述固定，物件名 6/9/12/15 B 两条词干各扫一遍，判 >=9 B 即可还是必须精确 12 B。",
+  "preregistration": "plans\\manifests\\taiji_object_length_r60_20261109_rebaseline_20261111.json",
+  "preregistration_sha256": "ea932bebb016cc84c0f58d05ba738139b1205e0a39fdd287785256f579d92d5b",
+  "definition": {
+    "gate": "R60 frozen-criterion dev probe: object-slot byte-length sweep at fixed place 6 B",
+    "held_constant": {
+      "base_fixture": "dev[0], as in R59 group B",
+      "object_description": "古旧木制器具",
+      "place_description": "旧年石砌场所",
+      "place_name": "井前",
+      "place_bytes": 6,
+      "place_name_rule": "first word in R59's published GROUP_B_WORDS order; not selected on its reading",
+      "goal": "让古旧木制器具到旧年石砌场所。",
+      "template": "2-hop 把{object}放到{place}; records written as {desc}是{name}。 and {desc}对应{name}。"
+    },
+    "sweep": {
+      "object_bytes": [
+        6,
+        9,
+        12,
+        15
+      ],
+      "arms": {
+        "stem_wumu": {
+          "6": "乌木",
+          "9": "乌木罗",
+          "12": "乌木罗盘",
+          "15": "乌木罗盘座"
+        },
+        "stem_glyph": "r58.names_for(1, nbytes)[0] over the same four lengths"
+      },
+      "family_shape": "each arm is a nested prefix family: only the name byte count changes",
+      "answer_bytes": {
+        "6": 21,
+        "9": 24,
+        "12": 27,
+        "15": 30
+      },
+      "cells": 8
+    },
+    "measurements": {
+      "object_edge": "position object_stop = 3 + object_bytes; argmax, EOS probability, EOS rank, copy mass",
+      "place_edge": "position place_stop = object_stop + 6 + place_bytes; same fields",
+      "content": "decoded_text, answer_bytes, zero_extra, byte_exact, field_lengths_ok"
+    },
+    "classifier": {
+      "pattern": "per arm, the four byte_exact booleans in 6/9/12/15 order",
+      "branches_in_order": [
+        "both arms (false,true,true,true) -> object_min_nine_sufficient",
+        "both arms (false,false,true,false) -> exact_twelve_only",
+        "both arms (false,false,true,true) -> object_min_twelve_sufficient",
+        "both arms (true,true,true,true) -> all_lengths_exact_contradicts_r59",
+        "both arms (false,false,false,false) -> no_object_length_exact",
+        "arms disagree -> stem_dependent",
+        "same pattern with a true above a false -> non_monotone_length_effect",
+        "anything else -> unexplained"
+      ],
+      "note": "branches are mutually exclusive and evaluated in this order; every pattern is reported"
+    },
+    "main_task_rule": {
+      "object_min_nine_sufficient": "192/192 may be cited for object >=9 B, limited to these two stems, place 6 B and this description pair",
+      "object_min_twelve_sufficient": "192/192 may be cited for object >=12 B under the same limits",
+      "exact_twelve_only": "192/192 must be cited under the exact trained shape; length variants need retraining",
+      "any_other_class": "the capability limit is not relaxed"
+    },
+    "gates": {
+      "structural_pass": "12 structural cells exact AND every cell field_lengths_ok",
+      "zero_extra_pass": "all 8 cells stop at the declared end with zero extra bytes",
+      "object_edge_measured": "all 8 cells carry a trace at object_stop; missing trace fails closed",
+      "anchor_match": "the stem_wumu 12 B cell equals R59's published 井前 row on every declared field",
+      "failing_axes": "names of failed boolean gates"
+    },
+    "anchor": {
+      "source": "reports\\taiji_stop_shape_r59_20261109.json",
+      "row": "group_b.cells[place_word=井前]",
+      "fields": [
+        "target_text",
+        "decoded_text",
+        "answer_bytes",
+        "zero_extra",
+        "byte_exact",
+        "field_lengths_ok"
+      ],
+      "place_edge_fields": [
+        "argmax_byte",
+        "argmax_label",
+        "masked",
+        "pre_mask_label",
+        "emitted_label",
+        "eos_probability",
+        "eos_rank",
+        "continuation_desire",
+        "copy_mass_total"
+      ],
+      "on_mismatch": "engineering_failure; the sweep is not interpreted"
+    },
+    "scope": "dev/synthetic only; the sealed confirm split and its holdout report are not read; no change to 192/192",
+    "estimate_rule": "D-64: single run x 3 (one run plus two replay margins) + report assembly",
+    "unit_price_source": {
+      "path": "reports/taiji_stop_shape_r59_20261109_progress.jsonl",
+      "setup_structural_and_four_cells_cpu": 7.2969,
+      "group_b_last_cpu": 21.8281,
+      "group_b_first_cpu": 7.75,
+      "group_b_cells_between": 29,
+      "derived_cpu_per_cell": 0.4854,
+      "r60_single_run_derivation": "5.36 setup+structural + 8 x 0.4854 cells = 9.24; declared 15 with margin"
+    }
+  },
+  "scope": {
+    "sealed_split": "not read",
+    "split": "dev/synthetic",
+    "fixtures_used": "12 dev worlds materialised; dev[0] carries all 8 cells",
+    "examples_used": 8,
+    "confirm_holdout_report_read": false
+  },
+  "structural": {
+    "cells": [
+      {
+        "hops": 1,
+        "name_bytes": 3,
+        "styles": [
+          "又叫"
+        ],
+        "field_bounds": [
+          {
+            "style": "又叫",
+            "record": "甲又叫说明0。",
+            "start": 0,
+            "end": 3,
+            "field_bytes": 3
+          }
+        ],
+        "hop_spans": [
+          {
+            "start": 3,
+            "end": 6
+          }
+        ],
+        "contract_bytes": 6,
+        "declared_end": 6,
+        "exact": true
+      },
+      {
+        "hops": 1,
+        "name_bytes": 6,
+        "styles": [
+          "对应"
+        ],
+        "field_bounds": [
+          {
+            "style": "对应",
+            "record": "说明0对应甲乙。",
+            "start": 13,
+            "end": 19,
+            "field_bytes": 6
+          }
+        ],
+        "hop_spans": [
+          {
+            "start": 3,
+            "end": 9
+          }
+        ],
+        "contract_bytes": 9,
+        "declared_end": 9,
+        "exact": true
+      },
+      {
+        "hops": 1,
+        "name_bytes": 9,
+        "styles": [
+          "是"
+        ],
+        "field_bounds": [
+          {
+            "style": "是",
+            "record": "说明0是甲乙丙。",
+            "start": 10,
+            "end": 19,
+            "field_bytes": 9
+          }
+        ],
+        "hop_spans": [
+          {
+            "start": 3,
+            "end": 12
+          }
+        ],
+        "contract_bytes": 12,
+        "declared_end": 12,
+        "exact": true
+      },
+      {
+        "hops": 1,
+        "name_bytes": 12,
+        "styles": [
+          "又叫"
+        ],
+        "field_bounds": [
+          {
+            "style": "又叫",
+            "record": "甲乙丙丁又叫说明0。",
+            "start": 0,
+            "end": 12,
+            "field_bytes": 12
+          }
+        ],
+        "hop_spans": [
+          {
+            "start": 3,
+            "end": 15
+          }
+        ],
+        "contract_bytes": 15,
+        "declared_end": 15,
+        "exact": true
+      },
+      {
+        "hops": 2,
+        "name_bytes": 3,
+        "styles": [
+          "又叫",
+          "对应"
+        ],
+        "field_bounds": [
+          {
+            "style": "又叫",
+            "record": "甲又叫说明0。",
+            "start": 0,
+            "end": 3,
+            "field_bytes": 3
+          },
+          {
+            "style": "对应",
+            "record": "说明1对应乙。",
+            "start": 13,
+            "end": 16,
+            "field_bytes": 3
+          }
+        ],
+        "hop_spans": [
+          {
+            "start": 3,
+            "end": 6
+          },
+          {
+            "start": 12,
+            "end": 15
+          }
+        ],
+        "contract_bytes": 15,
+        "declared_end": 15,
+        "exact": true
+      },
+      {
+        "hops": 2,
+        "name_bytes": 6,
+        "styles": [
+          "对应",
+          "是"
+        ],
+        "field_bounds": [
+          {
+            "style": "对应",
+            "record": "说明0对应甲乙。",
+            "start": 13,
+            "end": 19,
+            "field_bytes": 6
+          },
+          {
+            "style": "是",
+            "record": "说明1是丙丁。",
+            "start": 10,
+            "end": 16,
+            "field_bytes": 6
+          }
+        ],
+        "hop_spans": [
+          {
+            "start": 3,
+            "end": 9
+          },
+          {
+            "start": 15,
+            "end": 21
+          }
+        ],
+        "contract_bytes": 21,
+        "declared_end": 21,
+        "exact": true
+      },
+      {
+        "hops": 2,
+        "name_bytes": 9,
+        "styles": [
+          "是",
+          "又叫"
+        ],
+        "field_bounds": [
+          {
+            "style": "是",
+            "record": "说明0是甲乙丙。",
+            "start": 10,
+            "end": 19,
+            "field_bytes": 9
+          },
+          {
+            "style": "又叫",
+            "record": "丁戊己又叫说明1。",
+            "start": 0,
+            "end": 9,
+            "field_bytes": 9
+          }
+        ],
+        "hop_spans": [
+          {
+            "start": 3,
+            "end": 12
+          },
+          {
+            "start": 18,
+            "end": 27
+          }
+        ],
+        "contract_bytes": 27,
+        "declared_end": 27,
+        "exact": true
+      },
+      {
+        "hops": 2,
+        "name_bytes": 12,
+        "styles": [
+          "又叫",
+          "对应"
+        ],
+        "field_bounds": [
+          {
+            "style": "又叫",
+            "record": "甲乙丙丁又叫说明0。",
+            "start": 0,
+            "end": 12,
+            "field_bytes": 12
+          },
+          {
+            "style": "对应",
+            "record": "说明1对应戊己庚辛。",
+            "start": 13,
+            "end": 25,
+            "field_bytes": 12
+          }
+        ],
+        "hop_spans": [
+          {
+            "start": 3,
+            "end": 15
+          },
+          {
+            "start": 21,
+            "end": 33
+          }
+        ],
+        "contract_bytes": 33,
+        "declared_end": 33,
+        "exact": true
+      },
+      {
+        "hops": 3,
+        "name_bytes": 3,
+        "styles": [
+          "又叫",
+          "对应",
+          "是"
+        ],
+        "field_bounds": [
+          {
+            "style": "又叫",
+            "record": "甲又叫说明0。",
+            "start": 0,
+            "end": 3,
+            "field_bytes": 3
+          },
+          {
+            "style": "对应",
+            "record": "说明1对应乙。",
+            "start": 13,
+            "end": 16,
+            "field_bytes": 3
+          },
+          {
+            "style": "是",
+            "record": "说明2是丙。",
+            "start": 10,
+            "end": 13,
+            "field_bytes": 3
+          }
+        ],
+        "hop_spans": [
+          {
+            "start": 3,
+            "end": 6
+          },
+          {
+            "start": 9,
+            "end": 12
+          },
+          {
+            "start": 18,
+            "end": 21
+          }
+        ],
+        "contract_bytes": 21,
+        "declared_end": 21,
+        "exact": true
+      },
+      {
+        "hops": 3,
+        "name_bytes": 6,
+        "styles": [
+          "对应",
+          "是",
+          "又叫"
+        ],
+        "field_bounds": [
+          {
+            "style": "对应",
+            "record": "说明0对应甲乙。",
+            "start": 13,
+            "end": 19,
+            "field_bytes": 6
+          },
+          {
+            "style": "是",
+            "record": "说明1是丙丁。",
+            "start": 10,
+            "end": 16,
+            "field_bytes": 6
+          },
+          {
+            "style": "又叫",
+            "record": "戊己又叫说明2。",
+            "start": 0,
+            "end": 6,
+            "field_bytes": 6
+          }
+        ],
+        "hop_spans": [
+          {
+            "start": 3,
+            "end": 9
+          },
+          {
+            "start": 12,
+            "end": 18
+          },
+          {
+            "start": 24,
+            "end": 30
+          }
+        ],
+        "contract_bytes": 30,
+        "declared_end": 30,
+        "exact": true
+      },
+      {
+        "hops": 3,
+        "name_bytes": 9,
+        "styles": [
+          "是",
+          "又叫",
+          "对应"
+        ],
+        "field_bounds": [
+          {
+            "style": "是",
+            "record": "说明0是甲乙丙。",
+            "start": 10,
+            "end": 19,
+            "field_bytes": 9
+          },
+          {
+            "style": "又叫",
+            "record": "丁戊己又叫说明1。",
+            "start": 0,
+            "end": 9,
+            "field_bytes": 9
+          },
+          {
+            "style": "对应",
+            "record": "说明2对应庚辛甲。",
+            "start": 13,
+            "end": 22,
+            "field_bytes": 9
+          }
+        ],
+        "hop_spans": [
+          {
+            "start": 3,
+            "end": 12
+          },
+          {
+            "start": 15,
+            "end": 24
+          },
+          {
+            "start": 30,
+            "end": 39
+          }
+        ],
+        "contract_bytes": 39,
+        "declared_end": 39,
+        "exact": true
+      },
+      {
+        "hops": 3,
+        "name_bytes": 12,
+        "styles": [
+          "又叫",
+          "对应",
+          "是"
+        ],
+        "field_bounds": [
+          {
+            "style": "又叫",
+            "record": "甲乙丙丁又叫说明0。",
+            "start": 0,
+            "end": 12,
+            "field_bytes": 12
+          },
+          {
+            "style": "对应",
+            "record": "说明1对应戊己庚辛。",
+            "start": 13,
+            "end": 25,
+            "field_bytes": 12
+          },
+          {
+            "style": "是",
+            "record": "说明2是甲乙丙丁。",
+            "start": 10,
+            "end": 22,
+            "field_bytes": 12
+          }
+        ],
+        "hop_spans": [
+          {
+            "start": 3,
+            "end": 15
+          },
+          {
+            "start": 18,
+            "end": 30
+          },
+          {
+            "start": 36,
+            "end": 48
+          }
+        ],
+        "contract_bytes": 48,
+        "declared_end": 48,
+        "exact": true
+      }
+    ],
+    "exact": 12,
+    "total": 12
+  },
+  "families": {
+    "problems": [],
+    "ok": true
+  },
+  "sweep": {
+    "held_constant": {
+      "base_fixture": "dev[0], as in R59 group B",
+      "object_description": "古旧木制器具",
+      "place_description": "旧年石砌场所",
+      "place_name": "井前",
+      "place_bytes": 6,
+      "place_name_rule": "first word in R59's published GROUP_B_WORDS order; not selected on its reading",
+      "goal": "让古旧木制器具到旧年石砌场所。",
+      "template": "2-hop 把{object}放到{place}; records written as {desc}是{name}。 and {desc}对应{name}。"
+    },
+    "cells": [
+      {
+        "arm": "stem_wumu",
+        "object_bytes": 6,
+        "place_bytes": 6,
+        "object_name": "乌木",
+        "place_name": "井前",
+        "object_description": "古旧木制器具",
+        "place_description": "旧年石砌场所",
+        "target_text": "把乌木放到井前",
+        "decoded_text": "把乌木玉放井前",
+        "expected_bytes": 21,
+        "answer_bytes": 21,
+        "zero_extra": true,
+        "byte_exact": false,
+        "field_lengths_ok": true,
+        "object_stop": 9,
+        "place_stop": 21,
+        "object_edge": {
+          "eos_probability": 9.266104781208417e-09,
+          "eos_rank": 67,
+          "argmax_byte": 231,
+          "argmax_label": "0xe7",
+          "top": [
+            {
+              "byte": 231,
+              "label": "0xe7",
+              "probability": 0.0897846063267045
+            },
+            {
+              "byte": 230,
+              "label": "0xe6",
+              "probability": 0.05495959377282811
+            },
+            {
+              "byte": 233,
+              "label": "0xe9",
+              "probability": 0.004495571045297275
+            }
+          ],
+          "pre_mask_label": "0xe7",
+          "masked": false,
+          "emitted_label": "0xe7",
+          "copy_mass_total": 0.0,
+          "copy_limit_active": 27,
+          "continuation_desire": 9689573.822733684,
+          "position": 9,
+          "at_declared_end": false,
+          "gamma_eff": 0.0,
+          "q_null": 0.15451449245287252
+        },
+        "place_edge": {
+          "eos_probability": 0.0644766645408499,
+          "eos_rank": 3,
+          "argmax_byte": 190,
+          "argmax_label": "0xbe",
+          "top": [
+            {
+              "byte": 190,
+              "label": "0xbe",
+              "probability": 0.10581149841372481
+            },
+            {
+              "byte": 229,
+              "label": "0xe5",
+              "probability": 0.08504302095863292
+            },
+            {
+              "byte": 256,
+              "label": "<EOS>",
+              "probability": 0.0644766645408499
+            }
+          ],
+          "pre_mask_label": "0xbe",
+          "masked": true,
+          "emitted_label": "0xe5",
+          "copy_mass_total": 0.0,
+          "copy_limit_active": 30,
+          "continuation_desire": 1.641082074689003,
+          "position": 21,
+          "at_declared_end": true,
+          "gamma_eff": 0.0,
+          "q_null": 0.37483983599844306
+        }
+      },
+      {
+        "arm": "stem_wumu",
+        "object_bytes": 9,
+        "place_bytes": 6,
+        "object_name": "乌木罗",
+        "place_name": "井前",
+        "object_description": "古旧木制器具",
+        "place_description": "旧年石砌场所",
+        "target_text": "把乌木罗放到井前",
+        "decoded_text": "把乌木罗玉放井前",
+        "expected_bytes": 24,
+        "answer_bytes": 24,
+        "zero_extra": true,
+        "byte_exact": false,
+        "field_lengths_ok": true,
+        "object_stop": 12,
+        "place_stop": 24,
+        "object_edge": {
+          "eos_probability": 8.89291076204358e-08,
+          "eos_rank": 64,
+          "argmax_byte": 231,
+          "argmax_label": "0xe7",
+          "top": [
+            {
+              "byte": 231,
+              "label": "0xe7",
+              "probability": 0.1637248428345309
+            },
+            {
+              "byte": 233,
+              "label": "0xe9",
+              "probability": 0.003760211422250598
+            },
+            {
+              "byte": 230,
+              "label": "0xe6",
+              "probability": 0.0029835676862672317
+            }
+          ],
+          "pre_mask_label": "0xe7",
+          "masked": false,
+          "emitted_label": "0xe7",
+          "copy_mass_total": 0.0,
+          "copy_limit_active": 30,
+          "continuation_desire": 1841071.4693476486,
+          "position": 12,
+          "at_declared_end": false,
+          "gamma_eff": 0.0,
+          "q_null": 0.17790641830447973
+        },
+        "place_edge": {
+          "eos_probability": 0.3173515233391651,
+          "eos_rank": 1,
+          "argmax_byte": 256,
+          "argmax_label": "<EOS>",
+          "top": [
+            {
+              "byte": 256,
+              "label": "<EOS>",
+              "probability": 0.3173515233391651
+            },
+            {
+              "byte": 190,
+              "label": "0xbe",
+              "probability": 0.0697003327984227
+            },
+            {
+              "byte": 229,
+              "label": "0xe5",
+              "probability": 0.030319853841443086
+            }
+          ],
+          "pre_mask_label": "<EOS>",
+          "masked": false,
+          "emitted_label": "<EOS>",
+          "copy_mass_total": 0.0,
+          "copy_limit_active": 30,
+          "continuation_desire": 1.0,
+          "position": 24,
+          "at_declared_end": true,
+          "gamma_eff": 0.0,
+          "q_null": 0.47363690502763045
+        }
+      },
+      {
+        "arm": "stem_wumu",
+        "object_bytes": 12,
+        "place_bytes": 6,
+        "object_name": "乌木罗盘",
+        "place_name": "井前",
+        "object_description": "古旧木制器具",
+        "place_description": "旧年石砌场所",
+        "target_text": "把乌木罗盘放到井前",
+        "decoded_text": "把乌木罗盘放到井前",
+        "expected_bytes": 27,
+        "answer_bytes": 27,
+        "zero_extra": true,
+        "byte_exact": true,
+        "field_lengths_ok": true,
+        "object_stop": 15,
+        "place_stop": 27,
+        "object_edge": {
+          "eos_probability": 4.1850137896946006e-08,
+          "eos_rank": 43,
+          "argmax_byte": 230,
+          "argmax_label": "0xe6",
+          "top": [
+            {
+              "byte": 230,
+              "label": "0xe6",
+              "probability": 0.31051264982946813
+            },
+            {
+              "byte": 231,
+              "label": "0xe7",
+              "probability": 0.0020896724795042695
+            },
+            {
+              "byte": 229,
+              "label": "0xe5",
+              "probability": 0.0010144681661285002
+            }
+          ],
+          "pre_mask_label": "0xe6",
+          "masked": false,
+          "emitted_label": "0xe6",
+          "copy_mass_total": 0.0,
+          "copy_limit_active": 33,
+          "continuation_desire": 7419632.656745144,
+          "position": 15,
+          "at_declared_end": false,
+          "gamma_eff": 0.0,
+          "q_null": 0.3149936773832378
+        },
+        "place_edge": {
+          "eos_probability": 0.8646805789207526,
+          "eos_rank": 1,
+          "argmax_byte": 256,
+          "argmax_label": "<EOS>",
+          "top": [
+            {
+              "byte": 256,
+              "label": "<EOS>",
+              "probability": 0.8646805789207526
+            },
+            {
+              "byte": 190,
+              "label": "0xbe",
+              "probability": 0.004993184804314098
+            },
+            {
+              "byte": 167,
+              "label": "0xa7",
+              "probability": 0.0038083164290353155
+            }
+          ],
+          "pre_mask_label": "<EOS>",
+          "masked": false,
+          "emitted_label": "<EOS>",
+          "copy_mass_total": 0.0,
+          "copy_limit_active": 33,
+          "continuation_desire": 1.0,
+          "position": 27,
+          "at_declared_end": true,
+          "gamma_eff": 0.0,
+          "q_null": 0.8826952719750476
+        }
+      },
+      {
+        "arm": "stem_wumu",
+        "object_bytes": 15,
+        "place_bytes": 6,
+        "object_name": "乌木罗盘座",
+        "place_name": "井前",
+        "object_description": "古旧木制器具",
+        "place_description": "旧年石砌场所",
+        "target_text": "把乌木罗盘座放到井前",
+        "decoded_text": "把乌木罗盘座放到井前",
+        "expected_bytes": 30,
+        "answer_bytes": 30,
+        "zero_extra": true,
+        "byte_exact": true,
+        "field_lengths_ok": true,
+        "object_stop": 18,
+        "place_stop": 30,
+        "object_edge": {
+          "eos_probability": 0.0004057517097667811,
+          "eos_rank": 11,
+          "argmax_byte": 230,
+          "argmax_label": "0xe6",
+          "top": [
+            {
+              "byte": 230,
+              "label": "0xe6",
+              "probability": 0.17320116787400933
+            },
+            {
+              "byte": 146,
+              "label": "0x92",
+              "probability": 0.04783840554834135
+            },
+            {
+              "byte": 190,
+              "label": "0xbe",
+              "probability": 0.010545615231216538
+            }
+          ],
+          "pre_mask_label": "0xe6",
+          "masked": false,
+          "emitted_label": "0xe6",
+          "copy_mass_total": 0.0,
+          "copy_limit_active": 36,
+          "continuation_desire": 426.8649119767414,
+          "position": 18,
+          "at_declared_end": false,
+          "gamma_eff": 0.0,
+          "q_null": 0.2524966236123476
+        },
+        "place_edge": {
+          "eos_probability": 0.9538512101597977,
+          "eos_rank": 1,
+          "argmax_byte": 256,
+          "argmax_label": "<EOS>",
+          "top": [
+            {
+              "byte": 256,
+              "label": "<EOS>",
+              "probability": 0.9538512101597977
+            },
+            {
+              "byte": 167,
+              "label": "0xa7",
+              "probability": 0.0013607858545079622
+            },
+            {
+              "byte": 176,
+              "label": "0xb0",
+              "probability": 0.0003670968233254871
+            }
+          ],
+          "pre_mask_label": "<EOS>",
+          "masked": false,
+          "emitted_label": "<EOS>",
+          "copy_mass_total": 0.0,
+          "copy_limit_active": 36,
+          "continuation_desire": 1.0,
+          "position": 30,
+          "at_declared_end": true,
+          "gamma_eff": 0.0,
+          "q_null": 0.9563569658297487
+        }
+      },
+      {
+        "arm": "stem_glyph",
+        "object_bytes": 6,
+        "place_bytes": 6,
+        "object_name": "甲乙",
+        "place_name": "井前",
+        "object_description": "古旧木制器具",
+        "place_description": "旧年石砌场所",
+        "target_text": "把甲乙放到井前",
+        "decoded_text": "把甲乙玉放井前",
+        "expected_bytes": 21,
+        "answer_bytes": 21,
+        "zero_extra": true,
+        "byte_exact": false,
+        "field_lengths_ok": true,
+        "object_stop": 9,
+        "place_stop": 21,
+        "object_edge": {
+          "eos_probability": 2.8100373071146327e-08,
+          "eos_rank": 73,
+          "argmax_byte": 231,
+          "argmax_label": "0xe7",
+          "top": [
+            {
+              "byte": 231,
+              "label": "0xe7",
+              "probability": 0.12379336215089747
+            },
+            {
+              "byte": 230,
+              "label": "0xe6",
+              "probability": 0.02057833454556506
+            },
+            {
+              "byte": 189,
+              "label": "0xbd",
+              "probability": 0.0024779312670578663
+            }
+          ],
+          "pre_mask_label": "0xe7",
+          "masked": false,
+          "emitted_label": "0xe7",
+          "copy_mass_total": 0.0,
+          "copy_limit_active": 27,
+          "continuation_desire": 4405399.239272357,
+          "position": 9,
+          "at_declared_end": false,
+          "gamma_eff": 0.0,
+          "q_null": 0.15543774049613557
+        },
+        "place_edge": {
+          "eos_probability": 0.09007237700469528,
+          "eos_rank": 2,
+          "argmax_byte": 190,
+          "argmax_label": "0xbe",
+          "top": [
+            {
+              "byte": 190,
+              "label": "0xbe",
+              "probability": 0.11362288293141276
+            },
+            {
+              "byte": 256,
+              "label": "<EOS>",
+              "probability": 0.09007237700469528
+            },
+            {
+              "byte": 229,
+              "label": "0xe5",
+              "probability": 0.08062334593673984
+            }
+          ],
+          "pre_mask_label": "0xbe",
+          "masked": true,
+          "emitted_label": "<EOS>",
+          "copy_mass_total": 0.0,
+          "copy_limit_active": 30,
+          "continuation_desire": 1.2614620232070688,
+          "position": 21,
+          "at_declared_end": true,
+          "gamma_eff": 0.0,
+          "q_null": 0.38684521607612465
+        }
+      },
+      {
+        "arm": "stem_glyph",
+        "object_bytes": 9,
+        "place_bytes": 6,
+        "object_name": "甲乙丙",
+        "place_name": "井前",
+        "object_description": "古旧木制器具",
+        "place_description": "旧年石砌场所",
+        "target_text": "把甲乙丙放到井前",
+        "decoded_text": "把甲乙丙放到井前",
+        "expected_bytes": 24,
+        "answer_bytes": 24,
+        "zero_extra": true,
+        "byte_exact": true,
+        "field_lengths_ok": true,
+        "object_stop": 12,
+        "place_stop": 24,
+        "object_edge": {
+          "eos_probability": 6.126186944171968e-07,
+          "eos_rank": 58,
+          "argmax_byte": 230,
+          "argmax_label": "0xe6",
+          "top": [
+            {
+              "byte": 230,
+              "label": "0xe6",
+              "probability": 0.18825020698311182
+            },
+            {
+              "byte": 231,
+              "label": "0xe7",
+              "probability": 0.08559946010912298
+            },
+            {
+              "byte": 229,
+              "label": "0xe5",
+              "probability": 0.008681595187043523
+            }
+          ],
+          "pre_mask_label": "0xe6",
+          "masked": false,
+          "emitted_label": "0xe6",
+          "copy_mass_total": 0.0,
+          "copy_limit_active": 30,
+          "continuation_desire": 307287.7284004532,
+          "position": 12,
+          "at_declared_end": false,
+          "gamma_eff": 0.0,
+          "q_null": 0.30102251816748515
+        },
+        "place_edge": {
+          "eos_probability": 0.8336349870770665,
+          "eos_rank": 1,
+          "argmax_byte": 256,
+          "argmax_label": "<EOS>",
+          "top": [
+            {
+              "byte": 256,
+              "label": "<EOS>",
+              "probability": 0.8336349870770665
+            },
+            {
+              "byte": 190,
+              "label": "0xbe",
+              "probability": 0.007482200085351129
+            },
+            {
+              "byte": 176,
+              "label": "0xb0",
+              "probability": 0.006205526564871628
+            }
+          ],
+          "pre_mask_label": "<EOS>",
+          "masked": false,
+          "emitted_label": "<EOS>",
+          "copy_mass_total": 0.0,
+          "copy_limit_active": 30,
+          "continuation_desire": 1.0,
+          "position": 24,
+          "at_declared_end": true,
+          "gamma_eff": 0.0,
+          "q_null": 0.8640637836162228
+        }
+      },
+      {
+        "arm": "stem_glyph",
+        "object_bytes": 12,
+        "place_bytes": 6,
+        "object_name": "甲乙丙丁",
+        "place_name": "井前",
+        "object_description": "古旧木制器具",
+        "place_description": "旧年石砌场所",
+        "target_text": "把甲乙丙丁放到井前",
+        "decoded_text": "把甲乙丙丁放到井前",
+        "expected_bytes": 27,
+        "answer_bytes": 27,
+        "zero_extra": true,
+        "byte_exact": true,
+        "field_lengths_ok": true,
+        "object_stop": 15,
+        "place_stop": 27,
+        "object_edge": {
+          "eos_probability": 7.024890673741279e-08,
+          "eos_rank": 34,
+          "argmax_byte": 230,
+          "argmax_label": "0xe6",
+          "top": [
+            {
+              "byte": 230,
+              "label": "0xe6",
+              "probability": 0.13791953205113391
+            },
+            {
+              "byte": 229,
+              "label": "0xe5",
+              "probability": 0.06429581109400712
+            },
+            {
+              "byte": 190,
+              "label": "0xbe",
+              "probability": 0.008227020483516964
+            }
+          ],
+          "pre_mask_label": "0xe6",
+          "masked": false,
+          "emitted_label": "0xe6",
+          "copy_mass_total": 0.0,
+          "copy_limit_active": 33,
+          "continuation_desire": 1963297.913897377,
+          "position": 15,
+          "at_declared_end": false,
+          "gamma_eff": 0.0,
+          "q_null": 0.21267807310507503
+        },
+        "place_edge": {
+          "eos_probability": 0.939237566801436,
+          "eos_rank": 1,
+          "argmax_byte": 256,
+          "argmax_label": "<EOS>",
+          "top": [
+            {
+              "byte": 256,
+              "label": "<EOS>",
+              "probability": 0.939237566801436
+            },
+            {
+              "byte": 167,
+              "label": "0xa7",
+              "probability": 0.0024056936095155374
+            },
+            {
+              "byte": 176,
+              "label": "0xb0",
+              "probability": 0.000925987971135016
+            }
+          ],
+          "pre_mask_label": "<EOS>",
+          "masked": false,
+          "emitted_label": "<EOS>",
+          "copy_mass_total": 0.0,
+          "copy_limit_active": 33,
+          "continuation_desire": 1.0,
+          "position": 27,
+          "at_declared_end": true,
+          "gamma_eff": 0.0,
+          "q_null": 0.9445195996567575
+        }
+      },
+      {
+        "arm": "stem_glyph",
+        "object_bytes": 15,
+        "place_bytes": 6,
+        "object_name": "甲乙丙丁戊",
+        "place_name": "井前",
+        "object_description": "古旧木制器具",
+        "place_description": "旧年石砌场所",
+        "target_text": "把甲乙丙丁戊放到井前",
+        "decoded_text": "把甲乙丙丁戊玉放井前",
+        "expected_bytes": 30,
+        "answer_bytes": 30,
+        "zero_extra": true,
+        "byte_exact": false,
+        "field_lengths_ok": true,
+        "object_stop": 18,
+        "place_stop": 30,
+        "object_edge": {
+          "eos_probability": 0.0012198542173552486,
+          "eos_rank": 13,
+          "argmax_byte": 231,
+          "argmax_label": "0xe7",
+          "top": [
+            {
+              "byte": 231,
+              "label": "0xe7",
+              "probability": 0.21397782125924703
+            },
+            {
+              "byte": 229,
+              "label": "0xe5",
+              "probability": 0.21126428630505367
+            },
+            {
+              "byte": 232,
+              "label": "0xe8",
+              "probability": 0.0723784566045669
+            }
+          ],
+          "pre_mask_label": "0xe7",
+          "masked": false,
+          "emitted_label": "0xe7",
+          "copy_mass_total": 0.0,
+          "copy_limit_active": 36,
+          "continuation_desire": 175.41261752012448,
+          "position": 18,
+          "at_declared_end": false,
+          "gamma_eff": 0.0,
+          "q_null": 0.7036632760010928
+        },
+        "place_edge": {
+          "eos_probability": 0.9327926042168027,
+          "eos_rank": 1,
+          "argmax_byte": 256,
+          "argmax_label": "<EOS>",
+          "top": [
+            {
+              "byte": 256,
+              "label": "<EOS>",
+              "probability": 0.9327926042168027
+            },
+            {
+              "byte": 167,
+              "label": "0xa7",
+              "probability": 0.002198165749618223
+            },
+            {
+              "byte": 176,
+              "label": "0xb0",
+              "probability": 0.0007384948218843022
+            }
+          ],
+          "pre_mask_label": "<EOS>",
+          "masked": false,
+          "emitted_label": "<EOS>",
+          "copy_mass_total": 0.0,
+          "copy_limit_active": 36,
+          "continuation_desire": 1.0,
+          "position": 30,
+          "at_declared_end": true,
+          "gamma_eff": 0.0,
+          "q_null": 0.9371549988667189
+        }
+      }
+    ],
+    "patterns": {
+      "stem_wumu": [
+        false,
+        false,
+        true,
+        true
+      ],
+      "stem_glyph": [
+        false,
+        true,
+        true,
+        false
+      ]
+    },
+    "object_edges": {
+      "stem_wumu:6": {
+        "measured": true,
+        "position": 9,
+        "argmax_label": "0xe7",
+        "eos_probability": 9.266104781208417e-09,
+        "eos_rank": 67,
+        "copy_mass_total": 0.0
+      },
+      "stem_wumu:9": {
+        "measured": true,
+        "position": 12,
+        "argmax_label": "0xe7",
+        "eos_probability": 8.89291076204358e-08,
+        "eos_rank": 64,
+        "copy_mass_total": 0.0
+      },
+      "stem_wumu:12": {
+        "measured": true,
+        "position": 15,
+        "argmax_label": "0xe6",
+        "eos_probability": 4.1850137896946006e-08,
+        "eos_rank": 43,
+        "copy_mass_total": 0.0
+      },
+      "stem_wumu:15": {
+        "measured": true,
+        "position": 18,
+        "argmax_label": "0xe6",
+        "eos_probability": 0.0004057517097667811,
+        "eos_rank": 11,
+        "copy_mass_total": 0.0
+      },
+      "stem_glyph:6": {
+        "measured": true,
+        "position": 9,
+        "argmax_label": "0xe7",
+        "eos_probability": 2.8100373071146327e-08,
+        "eos_rank": 73,
+        "copy_mass_total": 0.0
+      },
+      "stem_glyph:9": {
+        "measured": true,
+        "position": 12,
+        "argmax_label": "0xe6",
+        "eos_probability": 6.126186944171968e-07,
+        "eos_rank": 58,
+        "copy_mass_total": 0.0
+      },
+      "stem_glyph:12": {
+        "measured": true,
+        "position": 15,
+        "argmax_label": "0xe6",
+        "eos_probability": 7.024890673741279e-08,
+        "eos_rank": 34,
+        "copy_mass_total": 0.0
+      },
+      "stem_glyph:15": {
+        "measured": true,
+        "position": 18,
+        "argmax_label": "0xe7",
+        "eos_probability": 0.0012198542173552486,
+        "eos_rank": 13,
+        "copy_mass_total": 0.0
+      }
+    }
+  },
+  "anchor": {
+    "matched": true,
+    "mismatches": [],
+    "fields_compared": 15
+  },
+  "gates": {
+    "structural_pass": true,
+    "zero_extra_pass": true,
+    "object_edge_measured": true,
+    "anchor_match": true,
+    "failing_axes": [],
+    "structural_cells_exact": "12/12"
+  },
+  "outcome": {
+    "verdict": "stem_dependent",
+    "length_class": "stem_dependent",
+    "main_task_implication": "limit_not_relaxed",
+    "note": "分类只在这两条词干、地点 6 B、这一对描述上成立；两向都不读 confirm，都不改 192/192。锚点不命中即 engineering_failure，不解释扫描结果。"
+  },
+  "cost": {
+    "cpu_seconds": 6.89,
+    "wall_seconds": 7.64,
+    "single_run_estimate": 15.0,
+    "estimate_with_replays": 45.0,
+    "cpu_cap": 200.0,
+    "wall_cap": 1800.0,
+    "over_budget": false
+  },
+  "discipline": {
+    "training_runs": 0,
+    "optimizer_steps": 0,
+    "parameters_added": 0,
+    "graph_changes": 0,
+    "confirm_reads": 0,
+    "confirm_holdout_report_reads": 0
+  },
+  "implementation_choices": [
+    "R60 imports the R59 runner and reuses shaped_fixture/shape_for/decode_cell/edge_or_none/sha256_of/write_json; R58 supplies names_for/structural_cell/load_candidate.",
+    "The place word is R59 GROUP_B_WORDS[0], fixed by list order rather than by its published reading.",
+    "Both arms are nested prefix families, so name identity is held as far as a length sweep allows; the two stems are the replication.",
+    "The stem_wumu 12 B cell is a direct re-read of R59's published 井前 row and is compared field for field before any classification is interpreted.",
+    "classify branches are mutually exclusive and ordered; a missing object edge fails closed instead of dropping the cell."
+  ],
+  "closed_state": {
+    "frozen_files_unchanged": true
+  }
+}

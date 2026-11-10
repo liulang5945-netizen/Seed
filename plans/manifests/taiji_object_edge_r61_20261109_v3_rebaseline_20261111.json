@@ -1,0 +1,404 @@
+{
+  "schema": "taiji-object-edge-r61-manifest-v3",
+  "step": "R61",
+  "date": "2026-11-10",
+  "revision": "v3: extra_bytes and missing_bytes gated separately; zero_extra_pass removed",
+  "replaces": {
+    "manifest": "plans/manifests/taiji_object_edge_r61_20261109_v2.json",
+    "manifest_sha256": "8ac9f1140dc6fd1b5d4e915db5f9246bc32e018cad2660143f9136a0f05de50a",
+    "report": "reports/taiji_object_edge_r61_20261109.json",
+    "report_sha256": "429456f2f9f1ebe141133a07f13417cebbb70199930066fe6af118fbe8f31391"
+  },
+  "definition": {
+    "gate": "R61 frozen-criterion dev probe: does the object-edge argmax predict content failure on unseen stems",
+    "held_constant": {
+      "base_fixture": "dev[0], as in R59 group B and R60",
+      "object_description": "古旧木制器具",
+      "place_description": "旧年石砌场所",
+      "place_name": "井前",
+      "place_bytes": 6,
+      "goal": "让古旧木制器具到旧年石砌场所。",
+      "template": "2-hop 把{object}放到{place}; records written as {desc}是{name}。 and {desc}对应{name}。"
+    },
+    "new_stems": {
+      "count": 12,
+      "cells": 48,
+      "object_bytes": [
+        6,
+        9,
+        12,
+        15
+      ],
+      "family_shape": "nested prefix family: the 6/9/12/15 B names are the first 2/3/4/5 characters of one 5-character stem",
+      "glyph_family": {
+        "pool": "甲乙丙丁戊己庚辛壬癸子丑寅卯辰巳午未申酉戌亥",
+        "seed": "r61-glyph|",
+        "deal": "order the pool by sha256(seed + character); stem i takes ordered[(i*5+k) % len(pool)] for k in 0..4",
+        "stems": 6
+      },
+      "real_family": {
+        "materials": [
+          "木",
+          "竹",
+          "藤",
+          "棕",
+          "檀",
+          "樟",
+          "楠",
+          "松",
+          "柏",
+          "杉",
+          "榆",
+          "槐"
+        ],
+        "objects": [
+          "罗盘",
+          "算盘",
+          "灯笼",
+          "茶壶",
+          "匣子",
+          "香炉",
+          "酒盏",
+          "茶杯",
+          "书盒",
+          "花瓶",
+          "鼎器",
+          "座钟"
+        ],
+        "suffixes": [
+          "底座",
+          "支架",
+          "外壳",
+          "把手",
+          "盖板",
+          "内胆"
+        ],
+        "seeds": [
+          "r61-material|",
+          "r61-object|",
+          "r61-suffix|"
+        ],
+        "deal": "order each list by sha256(seed + item); stem i = materials[i] + objects[i] + suffixes[i] (1+2+2 characters)",
+        "stems": 6
+      },
+      "selection_rule": "deterministic hash deal declared before the run; no stem is chosen on its reading",
+      "collision_rule": "a generated 15 B name equal to either R60 stem name is a freeze-time error"
+    },
+    "replication": {
+      "arms": [
+        "stem_wumu",
+        "stem_glyph"
+      ],
+      "cells": 8,
+      "source": "reports\\taiji_object_length_r60_20261109.json",
+      "content_fields": [
+        "target_text",
+        "decoded_text",
+        "answer_bytes",
+        "zero_extra",
+        "byte_exact",
+        "field_lengths_ok"
+      ],
+      "edge_fields": [
+        "argmax_byte",
+        "argmax_label",
+        "eos_probability",
+        "eos_rank",
+        "copy_mass_total"
+      ],
+      "edges_compared": [
+        "object_edge",
+        "place_edge"
+      ],
+      "on_mismatch": "engineering_failure; the prediction is not interpreted"
+    },
+    "predictor": {
+      "rule": "predict content failure iff object_edge.argmax_byte == 231 (0xE7)",
+      "measured_at": "object stop edge = position 3 + object_bytes",
+      "outcome": "byte_exact of the whole answer",
+      "missing_edge": "fail closed: object_edge_unmeasurable",
+      "error_names": {
+        "type1": "predicted failure but the answer is byte exact",
+        "type2": "predicted pass but the answer is not byte exact"
+      }
+    },
+    "measurements": {
+      "content": "decoded_text, answer_bytes, expected_bytes, byte_exact, field_lengths_ok",
+      "extra_bytes": "max(0, answer_bytes - expected_bytes): bytes the answer emitted past the declared end",
+      "missing_bytes": "max(0, expected_bytes - answer_bytes): declared bytes the answer never emitted",
+      "zero_extra_bytes": "extra_bytes == 0",
+      "zero_missing_bytes": "missing_bytes == 0",
+      "legacy_zero_extra": "kept per cell only because the R60 anchor compares it; it is not a gate in this revision",
+      "early_eos_rule": "a premature EOS only ever produces missing_bytes; it is never counted as an exception inside a zero-extra pass"
+    },
+    "recalibration": {
+      "old_reading": {
+        "trigger": "the v1/v2 run reported a single zero_extra gate; its 55/56 reading counted the early EOS of g1@15B as an exception inside a pass, not as a missing byte",
+        "old_manifest": "plans/manifests/taiji_object_edge_r61_20261109_v2.json",
+        "old_manifest_sha256": "8ac9f1140dc6fd1b5d4e915db5f9246bc32e018cad2660143f9136a0f05de50a",
+        "old_report": "reports/taiji_object_edge_r61_20261109.json",
+        "old_report_sha256": "429456f2f9f1ebe141133a07f13417cebbb70199930066fe6af118fbe8f31391",
+        "old_cells": 56,
+        "old_new_cells": 48,
+        "old_byte_exact_new_cells": 29,
+        "old_type1_errors": 0,
+        "old_type2_errors": 0,
+        "old_predictor_accuracy": 1.0,
+        "old_zero_extra_cells": 55,
+        "old_gate_zero_extra_pass": false,
+        "old_verdict": "argmax_predicts_content",
+        "old_early_eos_cell": {
+          "stem": "g1",
+          "object_bytes": 15,
+          "answer_bytes": 21,
+          "expected_bytes": 30
+        }
+      },
+      "rule": "every declared old reading must be reproduced by the v3 run; a mismatch is reported in recalibration.unchanged instead of being silently overwritten",
+      "new_gates": [
+        "zero_extra_bytes_pass",
+        "zero_missing_bytes_pass"
+      ],
+      "removed_gate": "zero_extra_pass",
+      "removal_reason": "the old gate required len(raw) == stop and terminated, which is False on g1@15B while zero_extra_bytes_pass is True there; aliasing it would silently change the old reading, so it is removed and the migration is reported"
+    },
+    "baselines": {
+      "constant_pass": "predict byte exact for every cell",
+      "constant_fail": "predict failure for every cell",
+      "length_rule": "predict failure iff object_bytes <= 6",
+      "primary_comparator": "length_rule",
+      "scored_on": "the same new-stem cells as the predictor"
+    },
+    "statistics": {
+      "accuracy": "(correct predictions) / (new cells)",
+      "mcnemar": "exact two-sided: b = predictor correct and baseline wrong, c = predictor wrong and baseline correct, n = b + c, p = min(1, 2 * sum(C(n,k) for k in 0..min(b,c)) / 2**n); p = 1 when n = 0",
+      "alpha": 0.05
+    },
+    "classifier": {
+      "branches_in_order": [
+        "any new or replication cell lacks an object edge -> object_edge_unmeasurable",
+        "replication anchor mismatch -> engineering_failure",
+        "cpu or wall over cap -> budget_stop",
+        "type1 == 0 and type2 == 0 and both outcome classes present overall and in each family and accuracy > max(baselines) -> argmax_predicts_content",
+        "type1 == 0 and type2 == 0 otherwise -> separation_without_discrimination",
+        "errors > 0 and accuracy > max(baselines) and mcnemar_p_vs_length_rule < alpha -> argmax_partial_predictor",
+        "anything else -> argmax_no_better_than_baseline"
+      ],
+      "note": "branches are mutually exclusive and evaluated in this order; the contingency table and every error cell are reported"
+    },
+    "main_task_rule": {
+      "argmax_predicts_content": "the object-edge argmax is a usable predictor of content failure on these stems; it still does not relax the 192/192 shape limit",
+      "argmax_partial_predictor": "the predictor beats the length rule but makes errors; record the error cells and do not write a mechanism conclusion",
+      "any_other_class": "the R60 post-hoc separation is not supported as a predictor; the hypothesis is withdrawn"
+    },
+    "gates": {
+      "structural_pass": "12 structural cells exact AND every cell field_lengths_ok",
+      "zero_extra_bytes_pass": "every cell has extra_bytes == 0",
+      "zero_missing_bytes_pass": "every cell has missing_bytes == 0",
+      "object_edge_measured": "every cell carries a trace at object_stop",
+      "anchor_match": "all replication cells equal R60's published rows on every declared field",
+      "failing_axes": "names of failed boolean gates"
+    },
+    "scope": "dev/synthetic only; the sealed confirm split and its holdout report are not read; no change to 192/192; conclusions limited to these stems, place 6 B and this description pair",
+    "estimate_rule": "D-64: single run x 3 (one run plus two replay margins) + report assembly",
+    "unit_price_source": {
+      "path": "reports/taiji_object_length_r60_20261109_progress.jsonl",
+      "setup_structural_and_first_cell_cpu": 1.5938,
+      "measured_cpu_per_cell": 0.2433,
+      "r61_single_run_derivation": "1.59 setup + 56 x 0.2433 = 15.21; declared 25 with margin for longer names",
+      "caveat": "D-69 logged a 2.0x mismatch between R59 and R60 unit prices; the cap, not the estimate, is the binding budget"
+    }
+  },
+  "definition_digest": "91487df6762b9994134375a4334c4ae856836c4257b1e2770fc752bdc97b5e04",
+  "frozen_files": {
+    "scripts/training/probe_taiji_object_edge_r61_20261109.py": "5b73dbb71f523486472a93a0bf9f464a43bee6b118ecfa14a0881197b4f691f3",
+    "scripts/training/probe_taiji_object_length_r60_20261109.py": "8f6c518158796d59314a354695e512e37f70964fd692767d864197fd99fa282c",
+    "scripts/training/probe_taiji_stop_shape_r59_20261109.py": "e0bff4c025e221087e51053fe7e2f45b80689751ccb8d1b81fc48e41c79fa08f",
+    "scripts/training/probe_taiji_stop_shape_r58_20261109.py": "b4866f9d77ec28ac59c35788e045241fb5b8cf64c7775b34ea73e2cccfbe4e2a",
+    "scripts/training/probe_taiji_content_transport_18_1.py": "202167c20485af10550a73047f0ce78ad3f7c92da3c5972d2d76c38dcc3b37d4",
+    "taiji/copy_stop_boundary.py": "27e5b9a63be29e98197331d59c5ad471e5ae46fa68921c87ce13b42bf193d702",
+    "taiji/binding_copy.py": "ce74e47f5e9b28e20b330b1c3438603bfe91d9822b107c981e2193b43068f19f",
+    "taiji/record_relation_core.py": "3281f2599eaa6208bf54a61e14f4ced33151f440f903b4a75450158fbcc43256",
+    "taiji/living_core.py": "c9df8b7a99c7950e0b69f0881c96d3ac3354dba548ccdede8b1902b6b9ddba38",
+    "taiji/data_premise_18_0.py": "0d849106fbadd0d46f4c2e06853eea98a6606e3067433ac8db6ba452d84587e4",
+    "taiji/selection_routing.py": "b90c410b844362960954b1fd1085ca86eb923e20254d2d0f0501ae2e8cac7963",
+    "taiji/selection_routing_checkpoint.py": "80aa1dc300bec6b3384b149e11ffb4fa2377edffd2cc427f61a90cb5ea4a0a20",
+    "reports/taiji_object_length_r60_20261109.json": "a08446d1c08757e8aae56e441bc5ed0ccca2d99cbfff8eef296b8d679943c217"
+  },
+  "stems": [
+    {
+      "stem": "g0",
+      "family": "glyph",
+      "full_name": "甲寅卯未戊",
+      "names": {
+        "6": "甲寅",
+        "9": "甲寅卯",
+        "12": "甲寅卯未",
+        "15": "甲寅卯未戊"
+      }
+    },
+    {
+      "stem": "g1",
+      "family": "glyph",
+      "full_name": "子庚巳辰亥",
+      "names": {
+        "6": "子庚",
+        "9": "子庚巳",
+        "12": "子庚巳辰",
+        "15": "子庚巳辰亥"
+      }
+    },
+    {
+      "stem": "g2",
+      "family": "glyph",
+      "full_name": "午丑丙己丁",
+      "names": {
+        "6": "午丑",
+        "9": "午丑丙",
+        "12": "午丑丙己",
+        "15": "午丑丙己丁"
+      }
+    },
+    {
+      "stem": "g3",
+      "family": "glyph",
+      "full_name": "戌乙酉壬申",
+      "names": {
+        "6": "戌乙",
+        "9": "戌乙酉",
+        "12": "戌乙酉壬",
+        "15": "戌乙酉壬申"
+      }
+    },
+    {
+      "stem": "g4",
+      "family": "glyph",
+      "full_name": "癸辛甲寅卯",
+      "names": {
+        "6": "癸辛",
+        "9": "癸辛甲",
+        "12": "癸辛甲寅",
+        "15": "癸辛甲寅卯"
+      }
+    },
+    {
+      "stem": "g5",
+      "family": "glyph",
+      "full_name": "未戊子庚巳",
+      "names": {
+        "6": "未戊",
+        "9": "未戊子",
+        "12": "未戊子庚",
+        "15": "未戊子庚巳"
+      }
+    },
+    {
+      "stem": "r0",
+      "family": "real",
+      "full_name": "樟座钟外壳",
+      "names": {
+        "6": "樟座",
+        "9": "樟座钟",
+        "12": "樟座钟外",
+        "15": "樟座钟外壳"
+      }
+    },
+    {
+      "stem": "r1",
+      "family": "real",
+      "full_name": "藤花瓶底座",
+      "names": {
+        "6": "藤花",
+        "9": "藤花瓶",
+        "12": "藤花瓶底",
+        "15": "藤花瓶底座"
+      }
+    },
+    {
+      "stem": "r2",
+      "family": "real",
+      "full_name": "槐匣子支架",
+      "names": {
+        "6": "槐匣",
+        "9": "槐匣子",
+        "12": "槐匣子支",
+        "15": "槐匣子支架"
+      }
+    },
+    {
+      "stem": "r3",
+      "family": "real",
+      "full_name": "榆茶杯盖板",
+      "names": {
+        "6": "榆茶",
+        "9": "榆茶杯",
+        "12": "榆茶杯盖",
+        "15": "榆茶杯盖板"
+      }
+    },
+    {
+      "stem": "r4",
+      "family": "real",
+      "full_name": "松茶壶把手",
+      "names": {
+        "6": "松茶",
+        "9": "松茶壶",
+        "12": "松茶壶把",
+        "15": "松茶壶把手"
+      }
+    },
+    {
+      "stem": "r5",
+      "family": "real",
+      "full_name": "棕鼎器内胆",
+      "names": {
+        "6": "棕鼎",
+        "9": "棕鼎器",
+        "12": "棕鼎器内",
+        "15": "棕鼎器内胆"
+      }
+    },
+    {
+      "stem": "stem_wumu",
+      "family": "replication",
+      "full_name": "乌木罗盘座",
+      "names": {
+        "6": "乌木",
+        "9": "乌木罗",
+        "12": "乌木罗盘",
+        "15": "乌木罗盘座"
+      }
+    },
+    {
+      "stem": "stem_glyph",
+      "family": "replication",
+      "full_name": "甲乙丙丁戊",
+      "names": {
+        "6": "甲乙",
+        "9": "甲乙丙",
+        "12": "甲乙丙丁",
+        "15": "甲乙丙丁戊"
+      }
+    }
+  ],
+  "stem_check": {
+    "problems": [],
+    "ok": true,
+    "stems": 14,
+    "new_stems": 12
+  },
+  "bundle": "output\\taiji_package19_compare\\28031-B_stop_lock-step300.pt",
+  "bundle_sha256": "fe04fbfb14aa0390877385a4429f2a851396a6fe6acb3107bae0a5e4e331dfca",
+  "anchor": {
+    "path": "reports\\taiji_object_length_r60_20261109.json",
+    "sha256": "a08446d1c08757e8aae56e441bc5ed0ccca2d99cbfff8eef296b8d679943c217"
+  },
+  "cost": {
+    "single_run_estimate": 25.0,
+    "estimate_with_replays": 75.0,
+    "cpu_cap": 200.0,
+    "wall_cap": 1800.0
+  },
+  "immutability": "written once before the run; never rewritten",
+  "sealed_split": "not read"
+}

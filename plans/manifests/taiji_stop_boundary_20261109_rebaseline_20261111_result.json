@@ -1,0 +1,16 @@
+{
+  "schema": "taiji-stop-boundary-r57-result-v1",
+  "report": "reports\\taiji_stop_boundary_20261109_rebaseline_20261111.json",
+  "report_sha256": "ab4c63bff8eaa0ba827807e987cabe7d57114dc53dd8a0fe0226dfafb0c0e543",
+  "definition_digest": "027f9b173f6406377e79edf0e2e82aa123606cafe581e76fdb093143760e4101",
+  "verdict": "stop_edge_probability_side",
+  "completion": 1.0,
+  "cost": {
+    "cpu_seconds": 78.61,
+    "wall_seconds": 80.48,
+    "cpu_cap": 400.0,
+    "wall_cap": 3600.0,
+    "over_budget": false,
+    "estimated_before_read": 75.0
+  }
+}

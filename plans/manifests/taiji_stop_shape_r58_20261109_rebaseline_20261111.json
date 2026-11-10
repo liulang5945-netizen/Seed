@@ -1,0 +1,77 @@
+{
+  "schema": "taiji-stop-shape-r58-manifest-v1",
+  "step": "R58",
+  "date": "2026-11-09",
+  "definition": {
+    "gate": "R58 answer-shape extrapolation for sequence_stop",
+    "axes": {
+      "hops": [
+        1,
+        2,
+        3
+      ],
+      "name_bytes": [
+        3,
+        6,
+        9,
+        12
+      ],
+      "model_shapes": [
+        [
+          3,
+          3
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          9,
+          9
+        ],
+        [
+          12,
+          12
+        ],
+        [
+          12,
+          6
+        ]
+      ]
+    },
+    "criteria": {
+      "structural": "record bytes -> field_bounds -> field length -> answer layout -> sequence_stop lands on the contract end for every hop/length cell",
+      "stop": "every model shape terminates exactly at the declared end with zero bytes past it",
+      "content": "byte-exactness of the decoded answer is reported but does not gate the stop rule",
+      "adversarial": "at least one place-stop edge has a non-EOS argmax with probability >= 2x EOS",
+      "per_edge": "every stop edge reports argmax byte, EOS probability and EOS rank, plus copy mass"
+    },
+    "exits": [
+      "stop_rule_shape_general",
+      "stop_rule_partial_general",
+      "stop_rule_is_task1_constant"
+    ],
+    "scope": "dev/synthetic only; the sealed confirm split is not read",
+    "estimate_rule": "D-64: single run x 3 (one run plus two replay margins) + report assembly"
+  },
+  "definition_digest": "c4f251a137733069afeb28f7ad1537c79101cece6a3d388070feba859e7183d3",
+  "frozen_files": {
+    "scripts/training/probe_taiji_stop_shape_r58_20261109.py": "b4866f9d77ec28ac59c35788e045241fb5b8cf64c7775b34ea73e2cccfbe4e2a",
+    "scripts/training/probe_taiji_content_transport_18_1.py": "202167c20485af10550a73047f0ce78ad3f7c92da3c5972d2d76c38dcc3b37d4",
+    "taiji/copy_stop_boundary.py": "27e5b9a63be29e98197331d59c5ad471e5ae46fa68921c87ce13b42bf193d702",
+    "taiji/binding_copy.py": "ce74e47f5e9b28e20b330b1c3438603bfe91d9822b107c981e2193b43068f19f",
+    "taiji/record_relation_core.py": "3281f2599eaa6208bf54a61e14f4ced33151f440f903b4a75450158fbcc43256",
+    "taiji/living_core.py": "c9df8b7a99c7950e0b69f0881c96d3ac3354dba548ccdede8b1902b6b9ddba38",
+    "taiji/data_premise_18_0.py": "0d849106fbadd0d46f4c2e06853eea98a6606e3067433ac8db6ba452d84587e4"
+  },
+  "bundle": "output\\taiji_package19_compare\\28031-B_stop_lock-step300.pt",
+  "bundle_sha256": "fe04fbfb14aa0390877385a4429f2a851396a6fe6acb3107bae0a5e4e331dfca",
+  "cost": {
+    "single_run_estimate": 10.0,
+    "estimate_with_replays": 30.0,
+    "cpu_cap": 200.0,
+    "wall_cap": 1800.0
+  },
+  "immutability": "written once before the run; never rewritten",
+  "sealed_split": "not read"
+}

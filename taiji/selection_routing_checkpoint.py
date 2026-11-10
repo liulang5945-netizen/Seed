@@ -16,7 +16,7 @@ import hashlib
 from collections.abc import Iterable
 from dataclasses import asdict
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import torch
 from torch import nn
@@ -27,7 +27,7 @@ from taiji.binding_select import (
     load_bundle,
     render_view_bundle,
 )
-from taiji.record_relation_core import state_from_payload
+from taiji.record_relation_core import RecordRelationCandidate, state_from_payload
 from taiji.selection_routing import (
     ARMS,
     OrderedSelectionHead,
@@ -167,7 +167,7 @@ def binding_state_from_payload(
     payload: dict[str, Any], binding: BindingCopyCandidate
 ) -> BindingState:
     """Rebuild a ``BindingState`` (including the mid-sequence m/coverage)."""
-    living = state_from_payload(payload["living"], binding.subject.W)
+    living = state_from_payload(payload["living"], cast(torch.Tensor, binding.subject.W))
     reference = binding.subject.W
     return BindingState(
         living=living,
@@ -192,23 +192,24 @@ def save_routing_bundle(
 ) -> dict[str, Any]:
     """Persist binding + head + Adam + RNG + state + parent summary."""
     target = Path(path)
+    base = cast(RecordRelationCandidate, candidate.binding.base)
     payload = {
         "schema": ROUTING_BUNDLE_SCHEMA,
         "step": ROUTING_STEP,
         "profile": candidate.binding.profile,
         "dtype": str(next(candidate.binding.parameters()).dtype).replace("torch.", ""),
-        "relation_config": asdict(candidate.binding.base.config),
+        "relation_config": asdict(base.config),
         "binding_config": asdict(candidate.binding.config),
         "routing_config": asdict(candidate.head.config),
         "subject_config": dict(vars(candidate.binding.subject.config)),
         "growth_parent_units": getattr(candidate.binding.subject, "growth_parent_units", None),
         "growth_unit_branches": getattr(candidate.binding.subject, "growth_unit_branches", []),
         "growth_gates": list(candidate.binding.growth_gates),
-        "base_arm": candidate.binding.base.arm,
+        "base_arm": base.arm,
         "arm": candidate.arm,
         "seed": candidate.seed,
         "parent": dict(parent_identity),
-        "parameters": candidate_parameter_map(candidate.binding),
+        "parameters": candidate_parameter_map(cast(RecordRelationCandidate, candidate.binding)),
         "head_parameters": dict(candidate.head.state_dict()),
         "head_parameter_count": sum(parameter.numel() for parameter in candidate.head.parameters()),
         "span_head_parameters": (

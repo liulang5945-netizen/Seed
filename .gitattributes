@@ -46,6 +46,16 @@ scripts/training/check_taiji_growth_credit_v12_math.py text eol=lf
 
 # R021 source/contract hashes and archived original audit bytes.
 taiji/living_core.py text eol=lf
+# R58–R63 pin the remaining five by strict sha256 in `frozen_files`; without this
+# a Windows checkout under `core.autocrlf=true` would hand them CRLF bytes and
+# every frozen-input check would report drift on a clean clone.
+# `data_premise_18_0.py` is deliberately absent: its recorded digests are of the
+# maintainer's CRLF working bytes, and re-taking them would mean re-freezing all
+# eight steps, including a fourth confirm read that the protocol forbids.
+taiji/binding_copy.py text eol=lf
+taiji/record_relation_core.py text eol=lf
+taiji/selection_routing.py text eol=lf
+taiji/selection_routing_checkpoint.py text eol=lf
 tests/taiji_native/test_living_core_reference.py text eol=lf
 scripts/training/verify_taiji_living_core_reference.py text eol=lf
 scripts/training/evaluate_taiji_core_algorithm_v11.py text eol=lf

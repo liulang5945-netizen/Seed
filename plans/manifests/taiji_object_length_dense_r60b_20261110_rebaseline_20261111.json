@@ -1,0 +1,212 @@
+{
+  "schema": "taiji-object-length-dense-r60b-manifest-v1",
+  "step": "R60b",
+  "date": "2026-11-10",
+  "definition": {
+    "gate": "R60b frozen-criterion dev probe: seven-point object-length ladder on three stems, with extra bytes and missing bytes reported separately",
+    "held_constant": {
+      "base_fixture": "dev[0], as in R59 group B and R60",
+      "object_description": "古旧木制器具",
+      "place_description": "旧年石砌场所",
+      "place_name": "井前",
+      "place_bytes": 6,
+      "place_name_rule": "first word in R59's published GROUP_B_WORDS order; not selected on its reading",
+      "goal": "让古旧木制器具到旧年石砌场所。",
+      "template": "2-hop 把{object}放到{place}; records written as {desc}是{name}。 and {desc}对应{name}。"
+    },
+    "ladder": {
+      "object_bytes": [
+        6,
+        7,
+        8,
+        9,
+        10,
+        12,
+        15
+      ],
+      "pure_han_object_bytes": [
+        6,
+        9,
+        12,
+        15
+      ],
+      "place_bytes": 6,
+      "stems": {
+        "stem_wumu": {
+          "6": "乌木",
+          "9": "乌木罗",
+          "12": "乌木罗盘",
+          "15": "乌木罗盘座"
+        },
+        "stem_glyph": {
+          "6": "甲乙",
+          "9": "甲乙丙",
+          "12": "甲乙丙丁",
+          "15": "甲乙丙丁戊"
+        },
+        "stem_real": {
+          "6": "铜灯",
+          "9": "铜灯架",
+          "12": "铜灯架台",
+          "15": "铜灯架台柱"
+        }
+      },
+      "filler_rule": "for a length L not divisible by 3 the name is the Han prefix of 3*floor(L/3) bytes plus (L mod 3) lower-case ASCII letters a..; 6/9/12/15 are therefore pure Han",
+      "family_shape": "6/9/12/15 form a nested Han prefix chain and 6/7/8 form a nested prefix chain; the 8->9 step is not a prefix extension, because the ASCII filler is replaced by the next Han character",
+      "answer_bytes": {
+        "6": 21,
+        "7": 22,
+        "8": 23,
+        "9": 24,
+        "10": 25,
+        "12": 27,
+        "15": 30
+      },
+      "cells": 21
+    },
+    "measurements": {
+      "object_edge": "trace at object_stop = 3 + object_bytes; argmax_byte, argmax_label, eos_probability, eos_rank, masked, emitted_label, plus the full edge report",
+      "place_edge": "trace at place_stop = object_stop + 6 + place_bytes; same fields",
+      "name_exact": "decoded raw[3:3+object_bytes] equals the object-name encoding byte for byte",
+      "name_field_text": "utf-8 decoding of that same slice",
+      "sentence_exact": "raw equals 把{object}放到{place} byte for byte; this is the R60 byte_exact reading",
+      "extra_bytes": "max(0, answer_bytes - expected_bytes)",
+      "missing_bytes": "max(0, expected_bytes - answer_bytes)",
+      "zero_extra_bytes": "extra_bytes == 0",
+      "zero_missing_bytes": "missing_bytes == 0",
+      "early_eos_rule": "a premature EOS can only produce missing_bytes; it is never counted as an exception inside a zero-extra pass",
+      "utf8_char_boundary": "the object-name encoding sliced at object_bytes decodes as strict utf-8 and returns the declared name; ASCII is one byte, so 7/8/10 also end on a codepoint boundary",
+      "reported_fields": [
+        "stem",
+        "object_bytes",
+        "place_bytes",
+        "object_name",
+        "place_name",
+        "script_mixed",
+        "utf8_char_boundary",
+        "name_exact",
+        "name_field_text",
+        "sentence_exact",
+        "decoded_text",
+        "answer_bytes",
+        "expected_bytes",
+        "extra_bytes",
+        "missing_bytes",
+        "zero_extra_bytes",
+        "zero_missing_bytes",
+        "object_edge",
+        "place_edge"
+      ]
+    },
+    "classifier": {
+      "stable_boundary": "per stem: there exists X in object_bytes such that sentence_exact(L) == (L >= X) for every L in the ladder; X is unique when it exists",
+      "branches_in_order": [
+        "anchor mismatch, a missing object edge, or a budget overrun -> decision null with blocked_by listed; no conclusion is issued",
+        "all three stems have a stable boundary -> boundary_per_stem",
+        "otherwise -> no_stable_boundary"
+      ],
+      "statements": {
+        "boundary_per_stem": "边界随词干不同，引用 192/192 必须按词干标定",
+        "no_stable_boundary": "192/192 只能按精确形状＋精确词干引用，任何长度或词干变体须重测"
+      },
+      "forbidden": [
+        "approximately",
+        "interval"
+      ],
+      "note": "the two decisions are mutually exclusive and exhaustive; every stem's boolean ladder is reported"
+    },
+    "main_task_rule": {
+      "boundary_per_stem": "192/192 may be cited only when the stem is named and the object length is at or above that stem's X, under this place 6 B and this description pair",
+      "no_stable_boundary": "192/192 must be cited under the exact trained shape and the exact trained stem; any length or stem variant has to be re-measured"
+    },
+    "gates": {
+      "structural_pass": "12 structural cells exact AND every cell field_lengths_ok",
+      "object_edge_measured": "all 21 cells carry a trace at object_stop = 3 + object_bytes",
+      "zero_extra_bytes_pass": "all 21 cells have extra_bytes == 0",
+      "zero_missing_bytes_pass": "all 21 cells have missing_bytes == 0",
+      "anchor_match": "the stem_wumu and stem_glyph 12 B cells equal R60's published rows on every declared field; stem_real has no R60 anchor and is recorded as null",
+      "failing_axes": "names of failed boolean gates"
+    },
+    "anchor": {
+      "source": "reports\\taiji_object_length_r60_20261109.json",
+      "rows": "sweep.cells[arm, object_bytes=12] for stem_wumu and stem_glyph",
+      "content_fields": [
+        "target_text",
+        "decoded_text",
+        "expected_bytes",
+        "answer_bytes",
+        "zero_extra",
+        "byte_exact",
+        "field_lengths_ok",
+        "object_stop",
+        "place_stop"
+      ],
+      "edge_fields": [
+        "position",
+        "at_declared_end",
+        "argmax_byte",
+        "argmax_label",
+        "masked",
+        "pre_mask_label",
+        "emitted_label",
+        "eos_probability",
+        "eos_rank",
+        "continuation_desire",
+        "copy_mass_total",
+        "copy_limit_active",
+        "gamma_eff",
+        "q_null"
+      ],
+      "edges_compared": [
+        "object_edge",
+        "place_edge"
+      ],
+      "stem_real": "R60 published no stem_real row, so there is no anchor for the third stem; it is recorded as null and anchor_match is computed from the two shared stems only",
+      "on_mismatch": "engineering_failure; the ladder is not interpreted"
+    },
+    "scope": "dev/synthetic only; the sealed confirm split and its holdout report are not read; no change to 192/192",
+    "estimate_rule": "D-64: single run x 3 (one run plus two replay margins) + report assembly",
+    "unit_price_source": {
+      "path": "reports/taiji_object_length_r60_20261109_progress.jsonl",
+      "r60_setup_structural_and_eight_cells_cpu": 3.31,
+      "r60_cells": 8,
+      "r60b_single_run_derivation": "3.31 setup+structural+8 cells plus 13 more cells at <=0.5 s",
+      "declared": 10.0
+    }
+  },
+  "definition_digest": "dd984ab689734fa67ce7af1430605acaa7b5c86b9dc882c2872c55b71366d2f1",
+  "frozen_files": {
+    "scripts/training/probe_taiji_object_length_dense_r60b_20261110.py": "bc442144dceaa7a96b4e5dfdc501b54e23d2b3bf5036226649540dc161ff0b03",
+    "scripts/training/probe_taiji_object_length_r60_20261109.py": "8f6c518158796d59314a354695e512e37f70964fd692767d864197fd99fa282c",
+    "scripts/training/probe_taiji_stop_shape_r59_20261109.py": "e0bff4c025e221087e51053fe7e2f45b80689751ccb8d1b81fc48e41c79fa08f",
+    "scripts/training/probe_taiji_stop_shape_r58_20261109.py": "b4866f9d77ec28ac59c35788e045241fb5b8cf64c7775b34ea73e2cccfbe4e2a",
+    "scripts/training/probe_taiji_content_transport_18_1.py": "202167c20485af10550a73047f0ce78ad3f7c92da3c5972d2d76c38dcc3b37d4",
+    "taiji/copy_stop_boundary.py": "27e5b9a63be29e98197331d59c5ad471e5ae46fa68921c87ce13b42bf193d702",
+    "taiji/binding_copy.py": "ce74e47f5e9b28e20b330b1c3438603bfe91d9822b107c981e2193b43068f19f",
+    "taiji/record_relation_core.py": "3281f2599eaa6208bf54a61e14f4ced33151f440f903b4a75450158fbcc43256",
+    "taiji/living_core.py": "c9df8b7a99c7950e0b69f0881c96d3ac3354dba548ccdede8b1902b6b9ddba38",
+    "taiji/data_premise_18_0.py": "0d849106fbadd0d46f4c2e06853eea98a6606e3067433ac8db6ba452d84587e4",
+    "taiji/selection_routing.py": "b90c410b844362960954b1fd1085ca86eb923e20254d2d0f0501ae2e8cac7963",
+    "taiji/selection_routing_checkpoint.py": "80aa1dc300bec6b3384b149e11ffb4fa2377edffd2cc427f61a90cb5ea4a0a20",
+    "reports/taiji_object_length_r60_20261109.json": "a08446d1c08757e8aae56e441bc5ed0ccca2d99cbfff8eef296b8d679943c217"
+  },
+  "ladder": {
+    "problems": [],
+    "ok": true,
+    "cells": 21
+  },
+  "bundle": "output\\taiji_package19_compare\\28031-B_stop_lock-step300.pt",
+  "bundle_sha256": "fe04fbfb14aa0390877385a4429f2a851396a6fe6acb3107bae0a5e4e331dfca",
+  "anchor": {
+    "path": "reports\\taiji_object_length_r60_20261109.json",
+    "sha256": "a08446d1c08757e8aae56e441bc5ed0ccca2d99cbfff8eef296b8d679943c217"
+  },
+  "cost": {
+    "single_run_estimate": 10.0,
+    "estimate_with_replays": 30.0,
+    "cpu_cap": 200.0,
+    "wall_cap": 1800.0
+  },
+  "immutability": "written once before the run; never rewritten",
+  "sealed_split": "not read"
+}

@@ -10,6 +10,7 @@ import base64
 import json
 import math
 from dataclasses import dataclass, replace
+from typing import cast
 
 import torch
 from torch import nn
@@ -194,16 +195,19 @@ class BytePatchEncoder(nn.Module):
         ids = torch.tensor(list(raw), dtype=torch.long, device=self.embedding.weight.device)
         if not raw:
             return self.input.weight.new_empty((0, self.input.out_features))
-        value = self.input(self.embedding(ids)).T.unsqueeze(0)
+        value: torch.Tensor = self.input(self.embedding(ids)).T.unsqueeze(0)
         for convolution in self.convolutions:
-            value = value + torch.tanh(convolution(F.pad(value, (2 * convolution.dilation[0], 0))))
+            layer = cast(nn.Conv1d, convolution)
+            value = value + torch.tanh(layer(F.pad(value, (2 * layer.dilation[0], 0))))
         return value.squeeze(0).T
 
     def patches(self, raw: bytes) -> torch.Tensor:
         context = self.context(raw)
         if not raw:
             return context
-        return self.event(torch.stack([block.mean(0) for block in context.split(8)]))
+        return cast(
+            torch.Tensor, self.event(torch.stack([block.mean(0) for block in context.split(8)]))
+        )
 
     def goal_vector(self, raw: bytes) -> torch.Tensor:
         context = self.context(raw)
@@ -348,7 +352,9 @@ class LivingCoreReference(nn.Module):
         )
         with torch.no_grad():
             for network in self.write_heads:
-                biases = network[-1].bias.view(c.fast_heads, -1)
+                biases = cast(torch.Tensor, cast(nn.Sequential, network)[-1].bias).view(
+                    c.fast_heads, -1
+                )
                 biases[:, c.key_width + c.value_width : 2 * c.key_width + c.value_width] = 4
                 biases[:, -1] = -2
         self.world = nn.ModuleList(
@@ -384,7 +390,9 @@ class LivingCoreReference(nn.Module):
         ]
         if sum(len(r.raw) for r in legal) > c.max_source_bytes:
             raise ValueError("R021 source-byte budget exceeded")
-        keys, ids, positions, positional, metadata = [], [], [], [], []
+        keys: list[tuple[str, int]] = []
+        ids: list[int] = []
+        positions, positional, metadata = [], [], []
         for record in legal:
             if record.observed_at < 0 or record.version < 0 or not record.source_id:
                 raise ValueError("Malformed source metadata")
@@ -618,7 +626,7 @@ class LivingCoreReference(nn.Module):
                 "stopped_at_pass": 0,
                 "final_exit": "no_bridge",
             }
-        return table.read_sentence(sentence)
+        return cast(BridgeTable, table).read_sentence(sentence)
 
     def bridge_choose(
         self,
@@ -754,7 +762,7 @@ class LivingCoreReference(nn.Module):
             prefix = None
         elif prefix_policy == "on_match":
             table = state.sc_bridge
-            hit = table is not None and bool(table.read_sentence(raw)["answers"])
+            hit = table is not None and bool(cast(BridgeTable, table).read_sentence(raw)["answers"])
             prefix = prefix if hit else None
         input_bytes = prefix.encode("utf-8") + b"\n" + raw_bytes if prefix else raw_bytes
         state = self.observe(state, input_bytes, goal=goal)
@@ -773,7 +781,9 @@ class LivingCoreReference(nn.Module):
         payload = {
             "schema": BRIDGE_SNAPSHOT_SCHEMA,
             "bridge": (
-                None if table is None else base64.b64encode(table.export_state()).decode("ascii")
+                None
+                if table is None
+                else base64.b64encode(cast(BridgeTable, table).export_state()).decode("ascii")
             ),
             "text": state.last_bridge_text,
         }
@@ -841,6 +851,7 @@ class LivingCoreReference(nn.Module):
                 "matched": True,
                 **gate_info,
             }
+        assert state.store_age is not None
         valid = torch.nonzero(state.store_age >= 0, as_tuple=False).flatten()
         if valid.numel() == 0:
             info = {
@@ -887,6 +898,7 @@ class LivingCoreReference(nn.Module):
                 {"blended": False, "matched": False, "abstained": True, "reason": "below_gate"}
             )
             return state, info
+        assert state.store_values is not None
         retrieved = torch.einsum("i,i...->...", weights, state.store_values[valid])
         fast = (1 - ADDRESSED_ALPHA) * state.fast + ADDRESSED_ALPHA * retrieved
         info["retrieved_norm"] = float(retrieved.detach().norm())
@@ -900,6 +912,10 @@ class LivingCoreReference(nn.Module):
             state = self.attach_store(state)
         if key is None:
             key = self.store_query_key(state, raw)
+        assert state.store_keys is not None
+        assert state.store_values is not None
+        assert state.store_age is not None
+        assert state.store_count is not None
         slots = int(state.store_keys.shape[0])
         occupied = int((state.store_age >= 0).sum())
         evicted = occupied >= slots
@@ -943,7 +959,7 @@ class LivingCoreReference(nn.Module):
                 "top1": 0.0,
                 "margin": 0.0,
             }
-        result = table.read(raw)
+        result = cast(AddressTable, table).read(raw)
         info = {
             "enabled": True,
             "blended": False,
@@ -981,7 +997,7 @@ class LivingCoreReference(nn.Module):
         """
         if state.sc_sfk is None:
             state = self.attach_store(state)
-        table = state.sc_sfk
+        table = cast(AddressTable, state.sc_sfk)
         value = _pack_fast(state.fast)
         result = table.write_batch_checked([(raw, value)])
         address = table.target_of(raw)[0]
@@ -1184,7 +1200,7 @@ class LivingCoreReference(nn.Module):
         if getattr(self.config, "content_centered", False):
             centroid = getattr(self, "content_centroid", None)
             if centroid is not None:
-                delta = feature - centroid
+                delta = feature - cast(torch.Tensor, centroid)
                 norm = float(torch.linalg.vector_norm(delta))
                 if norm > 0:
                     return delta / norm

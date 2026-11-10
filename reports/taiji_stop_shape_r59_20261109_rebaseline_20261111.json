@@ -1,0 +1,1644 @@
+{
+  "schema": "taiji-stop-shape-r59-report-v1",
+  "step": "R59",
+  "date": "2026-11-09",
+  "relation_to_main_task": "界定 Task1 的 27 字节答案里，3/6 B 短字段把槽位挤歪发生在哪一槽；并检验形状固定 12/6、只换地名时停止边是否系统性变化。不改 Task1 的 192/192 读数。",
+  "preregistration": "plans\\manifests\\taiji_stop_shape_r59_20261109_rebaseline_20261111.json",
+  "preregistration_sha256": "8a23f7c7febb6c57daab28ed1d4e78a95528427cf727160b8a468f2e176bac56",
+  "definition": {
+    "gate": "R59 frozen-criterion dev probe: slot localisation + same-shape word effect",
+    "group_a": {
+      "template": "2-hop 把{object}放到{place}; records written as {desc}是{name}。 and {desc}对应{name}。",
+      "names": "R58 GLYPHS slices (each Han char is 3 bytes)",
+      "cells": [
+        [
+          3,
+          12
+        ],
+        [
+          12,
+          3
+        ],
+        [
+          6,
+          12
+        ],
+        [
+          12,
+          6
+        ]
+      ],
+      "fixture_assignment": {
+        "3x12": 0,
+        "12x3": 1,
+        "6x12": 2,
+        "12x6": 4,
+        "note": "12x6 re-reads R58's control fixture index 4"
+      },
+      "classifier": {
+        "total_length_threshold": "(3,12) fails AND (12,3) fails AND (6,12) passes AND (12,6) passes",
+        "object_slot_short": "(3,12) fails AND (12,3) passes AND (12,6) passes",
+        "place_slot_short": "(12,3) fails AND (3,12) passes AND (12,6) passes",
+        "unexplained": "anything else; all four booleans are reported",
+        "note": "(6,12) is reported separately as the 6-byte-short-field reading"
+      }
+    },
+    "group_b": {
+      "shape": {
+        "object_bytes": 12,
+        "place_bytes": 6,
+        "answer_bytes": 27
+      },
+      "object_name": "乌木罗盘",
+      "object_description": "古旧木制器具",
+      "place_description": "旧年石砌场所",
+      "words": [
+        "井前",
+        "亭畔",
+        "亭角",
+        "兰上",
+        "圃外",
+        "崖前",
+        "廊前",
+        "松上",
+        "松前",
+        "池前",
+        "池外",
+        "沙外",
+        "溪前",
+        "瓮尾",
+        "瓮沿",
+        "竹上",
+        "舟侧",
+        "雾尾",
+        "井北",
+        "井尾",
+        "井畔",
+        "兰外",
+        "圃下",
+        "圃尾",
+        "廊北",
+        "桥尾",
+        "梅角",
+        "瓮北",
+        "竹沿",
+        "雾外"
+      ],
+      "tail_words": [
+        "瓮尾",
+        "雾尾",
+        "井尾",
+        "圃尾",
+        "桥尾"
+      ],
+      "word_source": "reports/taiji_stop_boundary_20261109.json trace (R57 published list)",
+      "statistic": "EOS rank (1-based, descending) at the place stop edge (byte position 27); larger rank = more desire to continue",
+      "decision_rules": [
+        "complete separation: min(tail rank) > max(non-tail rank) -> word_effect_systematic",
+        "otherwise exact one-sided permutation test on the mean-rank difference, C(30,5)=142506 splits: p < 0.05 and median(tail) > median(non-tail) -> word_effect_systematic",
+        "p >= 0.05 and not separated -> word_effect_absent",
+        "otherwise (direction right but p undecidable) -> word_effect_weak"
+      ]
+    },
+    "gates": {
+      "structural_pass": "12 structural cells exact AND every A/B cell field_lengths_ok",
+      "zero_extra_pass": "all four A cells stop at the declared end with zero extra bytes",
+      "locate_class": "A classifier output",
+      "word_effect": "B decision output",
+      "failing_axes": "names of failed boolean gates"
+    },
+    "scope": "dev/synthetic only; the sealed confirm holdout report is not read; no change to 192/192",
+    "estimate_rule": "D-64: single run x 3 (one run plus two replay margins) + report assembly"
+  },
+  "scope": {
+    "sealed_split": "not read",
+    "split": "dev/synthetic",
+    "fixtures_used": "12 dev worlds materialised; 4 group-A cells + 30 group-B cells",
+    "examples_used": 34,
+    "confirm_holdout_report_read": false
+  },
+  "structural": {
+    "cells": [
+      {
+        "hops": 1,
+        "name_bytes": 3,
+        "styles": [
+          "又叫"
+        ],
+        "field_bounds": [
+          {
+            "style": "又叫",
+            "record": "甲又叫说明0。",
+            "start": 0,
+            "end": 3,
+            "field_bytes": 3
+          }
+        ],
+        "hop_spans": [
+          {
+            "start": 3,
+            "end": 6
+          }
+        ],
+        "contract_bytes": 6,
+        "declared_end": 6,
+        "exact": true
+      },
+      {
+        "hops": 1,
+        "name_bytes": 6,
+        "styles": [
+          "对应"
+        ],
+        "field_bounds": [
+          {
+            "style": "对应",
+            "record": "说明0对应甲乙。",
+            "start": 13,
+            "end": 19,
+            "field_bytes": 6
+          }
+        ],
+        "hop_spans": [
+          {
+            "start": 3,
+            "end": 9
+          }
+        ],
+        "contract_bytes": 9,
+        "declared_end": 9,
+        "exact": true
+      },
+      {
+        "hops": 1,
+        "name_bytes": 9,
+        "styles": [
+          "是"
+        ],
+        "field_bounds": [
+          {
+            "style": "是",
+            "record": "说明0是甲乙丙。",
+            "start": 10,
+            "end": 19,
+            "field_bytes": 9
+          }
+        ],
+        "hop_spans": [
+          {
+            "start": 3,
+            "end": 12
+          }
+        ],
+        "contract_bytes": 12,
+        "declared_end": 12,
+        "exact": true
+      },
+      {
+        "hops": 1,
+        "name_bytes": 12,
+        "styles": [
+          "又叫"
+        ],
+        "field_bounds": [
+          {
+            "style": "又叫",
+            "record": "甲乙丙丁又叫说明0。",
+            "start": 0,
+            "end": 12,
+            "field_bytes": 12
+          }
+        ],
+        "hop_spans": [
+          {
+            "start": 3,
+            "end": 15
+          }
+        ],
+        "contract_bytes": 15,
+        "declared_end": 15,
+        "exact": true
+      },
+      {
+        "hops": 2,
+        "name_bytes": 3,
+        "styles": [
+          "又叫",
+          "对应"
+        ],
+        "field_bounds": [
+          {
+            "style": "又叫",
+            "record": "甲又叫说明0。",
+            "start": 0,
+            "end": 3,
+            "field_bytes": 3
+          },
+          {
+            "style": "对应",
+            "record": "说明1对应乙。",
+            "start": 13,
+            "end": 16,
+            "field_bytes": 3
+          }
+        ],
+        "hop_spans": [
+          {
+            "start": 3,
+            "end": 6
+          },
+          {
+            "start": 12,
+            "end": 15
+          }
+        ],
+        "contract_bytes": 15,
+        "declared_end": 15,
+        "exact": true
+      },
+      {
+        "hops": 2,
+        "name_bytes": 6,
+        "styles": [
+          "对应",
+          "是"
+        ],
+        "field_bounds": [
+          {
+            "style": "对应",
+            "record": "说明0对应甲乙。",
+            "start": 13,
+            "end": 19,
+            "field_bytes": 6
+          },
+          {
+            "style": "是",
+            "record": "说明1是丙丁。",
+            "start": 10,
+            "end": 16,
+            "field_bytes": 6
+          }
+        ],
+        "hop_spans": [
+          {
+            "start": 3,
+            "end": 9
+          },
+          {
+            "start": 15,
+            "end": 21
+          }
+        ],
+        "contract_bytes": 21,
+        "declared_end": 21,
+        "exact": true
+      },
+      {
+        "hops": 2,
+        "name_bytes": 9,
+        "styles": [
+          "是",
+          "又叫"
+        ],
+        "field_bounds": [
+          {
+            "style": "是",
+            "record": "说明0是甲乙丙。",
+            "start": 10,
+            "end": 19,
+            "field_bytes": 9
+          },
+          {
+            "style": "又叫",
+            "record": "丁戊己又叫说明1。",
+            "start": 0,
+            "end": 9,
+            "field_bytes": 9
+          }
+        ],
+        "hop_spans": [
+          {
+            "start": 3,
+            "end": 12
+          },
+          {
+            "start": 18,
+            "end": 27
+          }
+        ],
+        "contract_bytes": 27,
+        "declared_end": 27,
+        "exact": true
+      },
+      {
+        "hops": 2,
+        "name_bytes": 12,
+        "styles": [
+          "又叫",
+          "对应"
+        ],
+        "field_bounds": [
+          {
+            "style": "又叫",
+            "record": "甲乙丙丁又叫说明0。",
+            "start": 0,
+            "end": 12,
+            "field_bytes": 12
+          },
+          {
+            "style": "对应",
+            "record": "说明1对应戊己庚辛。",
+            "start": 13,
+            "end": 25,
+            "field_bytes": 12
+          }
+        ],
+        "hop_spans": [
+          {
+            "start": 3,
+            "end": 15
+          },
+          {
+            "start": 21,
+            "end": 33
+          }
+        ],
+        "contract_bytes": 33,
+        "declared_end": 33,
+        "exact": true
+      },
+      {
+        "hops": 3,
+        "name_bytes": 3,
+        "styles": [
+          "又叫",
+          "对应",
+          "是"
+        ],
+        "field_bounds": [
+          {
+            "style": "又叫",
+            "record": "甲又叫说明0。",
+            "start": 0,
+            "end": 3,
+            "field_bytes": 3
+          },
+          {
+            "style": "对应",
+            "record": "说明1对应乙。",
+            "start": 13,
+            "end": 16,
+            "field_bytes": 3
+          },
+          {
+            "style": "是",
+            "record": "说明2是丙。",
+            "start": 10,
+            "end": 13,
+            "field_bytes": 3
+          }
+        ],
+        "hop_spans": [
+          {
+            "start": 3,
+            "end": 6
+          },
+          {
+            "start": 9,
+            "end": 12
+          },
+          {
+            "start": 18,
+            "end": 21
+          }
+        ],
+        "contract_bytes": 21,
+        "declared_end": 21,
+        "exact": true
+      },
+      {
+        "hops": 3,
+        "name_bytes": 6,
+        "styles": [
+          "对应",
+          "是",
+          "又叫"
+        ],
+        "field_bounds": [
+          {
+            "style": "对应",
+            "record": "说明0对应甲乙。",
+            "start": 13,
+            "end": 19,
+            "field_bytes": 6
+          },
+          {
+            "style": "是",
+            "record": "说明1是丙丁。",
+            "start": 10,
+            "end": 16,
+            "field_bytes": 6
+          },
+          {
+            "style": "又叫",
+            "record": "戊己又叫说明2。",
+            "start": 0,
+            "end": 6,
+            "field_bytes": 6
+          }
+        ],
+        "hop_spans": [
+          {
+            "start": 3,
+            "end": 9
+          },
+          {
+            "start": 12,
+            "end": 18
+          },
+          {
+            "start": 24,
+            "end": 30
+          }
+        ],
+        "contract_bytes": 30,
+        "declared_end": 30,
+        "exact": true
+      },
+      {
+        "hops": 3,
+        "name_bytes": 9,
+        "styles": [
+          "是",
+          "又叫",
+          "对应"
+        ],
+        "field_bounds": [
+          {
+            "style": "是",
+            "record": "说明0是甲乙丙。",
+            "start": 10,
+            "end": 19,
+            "field_bytes": 9
+          },
+          {
+            "style": "又叫",
+            "record": "丁戊己又叫说明1。",
+            "start": 0,
+            "end": 9,
+            "field_bytes": 9
+          },
+          {
+            "style": "对应",
+            "record": "说明2对应庚辛甲。",
+            "start": 13,
+            "end": 22,
+            "field_bytes": 9
+          }
+        ],
+        "hop_spans": [
+          {
+            "start": 3,
+            "end": 12
+          },
+          {
+            "start": 15,
+            "end": 24
+          },
+          {
+            "start": 30,
+            "end": 39
+          }
+        ],
+        "contract_bytes": 39,
+        "declared_end": 39,
+        "exact": true
+      },
+      {
+        "hops": 3,
+        "name_bytes": 12,
+        "styles": [
+          "又叫",
+          "对应",
+          "是"
+        ],
+        "field_bounds": [
+          {
+            "style": "又叫",
+            "record": "甲乙丙丁又叫说明0。",
+            "start": 0,
+            "end": 12,
+            "field_bytes": 12
+          },
+          {
+            "style": "对应",
+            "record": "说明1对应戊己庚辛。",
+            "start": 13,
+            "end": 25,
+            "field_bytes": 12
+          },
+          {
+            "style": "是",
+            "record": "说明2是甲乙丙丁。",
+            "start": 10,
+            "end": 22,
+            "field_bytes": 12
+          }
+        ],
+        "hop_spans": [
+          {
+            "start": 3,
+            "end": 15
+          },
+          {
+            "start": 18,
+            "end": 30
+          },
+          {
+            "start": 36,
+            "end": 48
+          }
+        ],
+        "contract_bytes": 48,
+        "declared_end": 48,
+        "exact": true
+      }
+    ],
+    "exact": 12,
+    "total": 12
+  },
+  "group_a": {
+    "cells": [
+      {
+        "object_bytes": 3,
+        "place_bytes": 12,
+        "role": "cell",
+        "fixture_index": 0,
+        "object_name": "甲",
+        "place_name": "戊己庚辛",
+        "object_description": "细颈的瓶子",
+        "place_description": "生火近旁",
+        "target_text": "把甲放到戊己庚辛",
+        "decoded_text": "把甲铁玉戊己庚辛",
+        "expected_bytes": 24,
+        "answer_bytes": 24,
+        "zero_extra": true,
+        "byte_exact": false,
+        "field_lengths_ok": true,
+        "object_edge": {
+          "eos_probability": 5.938392494295115e-09,
+          "eos_rank": 257,
+          "argmax_byte": 148,
+          "argmax_label": "0x94",
+          "top": [
+            {
+              "byte": 148,
+              "label": "0x94",
+              "probability": 0.012447945600716019
+            },
+            {
+              "byte": 156,
+              "label": "0x9c",
+              "probability": 0.010117171829578421
+            },
+            {
+              "byte": 142,
+              "label": "0x8e",
+              "probability": 0.008742745958100366
+            }
+          ],
+          "pre_mask_label": "0x94",
+          "masked": true,
+          "emitted_label": "0xe9",
+          "copy_mass_total": 0.0,
+          "copy_limit_active": 21,
+          "continuation_desire": 2096181.014083271,
+          "position": 6,
+          "at_declared_end": false,
+          "gamma_eff": 0.0,
+          "q_null": 0.09396617185085165
+        },
+        "place_edge": {
+          "eos_probability": 0.0032216989894358616,
+          "eos_rank": 5,
+          "argmax_byte": 230,
+          "argmax_label": "0xe6",
+          "top": [
+            {
+              "byte": 230,
+              "label": "0xe6",
+              "probability": 0.15260590673543406
+            },
+            {
+              "byte": 190,
+              "label": "0xbe",
+              "probability": 0.06792039338127508
+            },
+            {
+              "byte": 229,
+              "label": "0xe5",
+              "probability": 0.0664605342390882
+            }
+          ],
+          "pre_mask_label": "0xe6",
+          "masked": false,
+          "emitted_label": "0xe6",
+          "copy_mass_total": 0.0,
+          "copy_limit_active": 30,
+          "continuation_desire": 47.36814557655377,
+          "position": 24,
+          "at_declared_end": true,
+          "gamma_eff": 0.0,
+          "q_null": 0.3061360208462687
+        }
+      },
+      {
+        "object_bytes": 12,
+        "place_bytes": 3,
+        "role": "cell",
+        "fixture_index": 1,
+        "object_name": "甲乙丙丁",
+        "place_name": "戊",
+        "object_description": "细颈的瓶子",
+        "place_description": "屋檐底下",
+        "target_text": "把甲乙丙丁放到戊",
+        "decoded_text": "把甲乙丙丁放到戊",
+        "expected_bytes": 24,
+        "answer_bytes": 24,
+        "zero_extra": true,
+        "byte_exact": true,
+        "field_lengths_ok": true,
+        "object_edge": {
+          "eos_probability": 3.9040621213901307e-07,
+          "eos_rank": 31,
+          "argmax_byte": 230,
+          "argmax_label": "0xe6",
+          "top": [
+            {
+              "byte": 230,
+              "label": "0xe6",
+              "probability": 0.2321597766257318
+            },
+            {
+              "byte": 229,
+              "label": "0xe5",
+              "probability": 0.12730443284159287
+            },
+            {
+              "byte": 190,
+              "label": "0xbe",
+              "probability": 0.01912137978960709
+            }
+          ],
+          "pre_mask_label": "0xe6",
+          "masked": false,
+          "emitted_label": "0xe6",
+          "copy_mass_total": 0.0,
+          "copy_limit_active": 30,
+          "continuation_desire": 594662.0965730586,
+          "position": 15,
+          "at_declared_end": false,
+          "gamma_eff": 0.0,
+          "q_null": 0.3836093436607355
+        },
+        "place_edge": {
+          "eos_probability": 0.18748674262127638,
+          "eos_rank": 1,
+          "argmax_byte": 256,
+          "argmax_label": "<EOS>",
+          "top": [
+            {
+              "byte": 256,
+              "label": "<EOS>",
+              "probability": 0.18748674262127638
+            },
+            {
+              "byte": 228,
+              "label": "0xe4",
+              "probability": 0.16665528320198972
+            },
+            {
+              "byte": 229,
+              "label": "0xe5",
+              "probability": 0.16302556757384692
+            }
+          ],
+          "pre_mask_label": "<EOS>",
+          "masked": false,
+          "emitted_label": "<EOS>",
+          "copy_mass_total": 0.0,
+          "copy_limit_active": 30,
+          "continuation_desire": 1.0,
+          "position": 24,
+          "at_declared_end": true,
+          "gamma_eff": 0.0,
+          "q_null": 0.6188829091021406
+        }
+      },
+      {
+        "object_bytes": 6,
+        "place_bytes": 12,
+        "role": "cell",
+        "fixture_index": 2,
+        "object_name": "甲乙",
+        "place_name": "戊己庚辛",
+        "object_description": "细颈的瓶子",
+        "place_description": "书案上方",
+        "target_text": "把甲乙放到戊己庚辛",
+        "decoded_text": "把甲乙玉放戊己庚辛",
+        "expected_bytes": 27,
+        "answer_bytes": 27,
+        "zero_extra": true,
+        "byte_exact": false,
+        "field_lengths_ok": true,
+        "object_edge": {
+          "eos_probability": 2.850555548491496e-07,
+          "eos_rank": 66,
+          "argmax_byte": 231,
+          "argmax_label": "0xe7",
+          "top": [
+            {
+              "byte": 231,
+              "label": "0xe7",
+              "probability": 0.4582377048245465
+            },
+            {
+              "byte": 230,
+              "label": "0xe6",
+              "probability": 0.09894482212269241
+            },
+            {
+              "byte": 232,
+              "label": "0xe8",
+              "probability": 0.011605263029985895
+            }
+          ],
+          "pre_mask_label": "0xe7",
+          "masked": false,
+          "emitted_label": "0xe7",
+          "copy_mass_total": 0.0,
+          "copy_limit_active": 24,
+          "continuation_desire": 1607538.2395794543,
+          "position": 9,
+          "at_declared_end": false,
+          "gamma_eff": 0.0,
+          "q_null": 0.607919030876187
+        },
+        "place_edge": {
+          "eos_probability": 0.06387468460341221,
+          "eos_rank": 4,
+          "argmax_byte": 190,
+          "argmax_label": "0xbe",
+          "top": [
+            {
+              "byte": 190,
+              "label": "0xbe",
+              "probability": 0.15785773429935432
+            },
+            {
+              "byte": 229,
+              "label": "0xe5",
+              "probability": 0.10801444893435432
+            },
+            {
+              "byte": 230,
+              "label": "0xe6",
+              "probability": 0.08255197179475622
+            }
+          ],
+          "pre_mask_label": "0xbe",
+          "masked": true,
+          "emitted_label": "0xe5",
+          "copy_mass_total": 0.0,
+          "copy_limit_active": 30,
+          "continuation_desire": 2.4713661645371396,
+          "position": 27,
+          "at_declared_end": true,
+          "gamma_eff": 0.0,
+          "q_null": 0.46488102867620773
+        }
+      },
+      {
+        "object_bytes": 12,
+        "place_bytes": 6,
+        "role": "control_task1_shape",
+        "fixture_index": 4,
+        "object_name": "甲乙丙丁",
+        "place_name": "戊己",
+        "object_description": "带锁的匣子",
+        "place_description": "生火近旁",
+        "target_text": "把甲乙丙丁放到戊己",
+        "decoded_text": "把甲乙丙丁放到戊己",
+        "expected_bytes": 27,
+        "answer_bytes": 27,
+        "zero_extra": true,
+        "byte_exact": true,
+        "field_lengths_ok": true,
+        "object_edge": {
+          "eos_probability": 1.9022103101735242e-07,
+          "eos_rank": 31,
+          "argmax_byte": 230,
+          "argmax_label": "0xe6",
+          "top": [
+            {
+              "byte": 230,
+              "label": "0xe6",
+              "probability": 0.1461150679514804
+            },
+            {
+              "byte": 229,
+              "label": "0xe5",
+              "probability": 0.08730908656880844
+            },
+            {
+              "byte": 190,
+              "label": "0xbe",
+              "probability": 0.014009232648672723
+            }
+          ],
+          "pre_mask_label": "0xe6",
+          "masked": false,
+          "emitted_label": "0xe6",
+          "copy_mass_total": 0.0,
+          "copy_limit_active": 30,
+          "continuation_desire": 768133.0879662378,
+          "position": 15,
+          "at_declared_end": false,
+          "gamma_eff": 0.0,
+          "q_null": 0.24998815594822876
+        },
+        "place_edge": {
+          "eos_probability": 0.7476175492335252,
+          "eos_rank": 1,
+          "argmax_byte": 256,
+          "argmax_label": "<EOS>",
+          "top": [
+            {
+              "byte": 256,
+              "label": "<EOS>",
+              "probability": 0.7476175492335252
+            },
+            {
+              "byte": 229,
+              "label": "0xe5",
+              "probability": 0.024310432258792737
+            },
+            {
+              "byte": 228,
+              "label": "0xe4",
+              "probability": 0.023914677417563365
+            }
+          ],
+          "pre_mask_label": "<EOS>",
+          "masked": false,
+          "emitted_label": "<EOS>",
+          "copy_mass_total": 0.0,
+          "copy_limit_active": 30,
+          "continuation_desire": 1.0,
+          "position": 27,
+          "at_declared_end": true,
+          "gamma_eff": 0.0,
+          "q_null": 0.844509855505994
+        }
+      }
+    ],
+    "classification": {
+      "locate_class": "object_slot_short",
+      "byte_exact_by_cell": {
+        "3x12": false,
+        "12x3": true,
+        "6x12": false,
+        "12x6": true
+      },
+      "short_six_b_field": "6 B object field stops at the declared end but content is not byte exact"
+    },
+    "word_source_note": "group A uses the dev fixture descriptions, as in R58"
+  },
+  "group_b": {
+    "setup": {
+      "object_name": "乌木罗盘",
+      "object_description": "古旧木制器具",
+      "place_description": "旧年石砌场所",
+      "goal": "让古旧木制器具到旧年石砌场所。",
+      "words": [
+        "井前",
+        "亭畔",
+        "亭角",
+        "兰上",
+        "圃外",
+        "崖前",
+        "廊前",
+        "松上",
+        "松前",
+        "池前",
+        "池外",
+        "沙外",
+        "溪前",
+        "瓮尾",
+        "瓮沿",
+        "竹上",
+        "舟侧",
+        "雾尾",
+        "井北",
+        "井尾",
+        "井畔",
+        "兰外",
+        "圃下",
+        "圃尾",
+        "廊北",
+        "桥尾",
+        "梅角",
+        "瓮北",
+        "竹沿",
+        "雾外"
+      ],
+      "tail_words": [
+        "瓮尾",
+        "雾尾",
+        "井尾",
+        "圃尾",
+        "桥尾"
+      ],
+      "word_source": "reports\\taiji_stop_boundary_20261109.json",
+      "word_source_sha256": "368cdfcc4eca8a92ee29fb5e84833ea626e8984dbcac1fb47410f699c20cb1cb",
+      "word_source_note": "the 30 words are the R57 published trace list; they are also the confirm place-name pool, but no confirm fixture or label is generated or read",
+      "description_held_constant": true
+    },
+    "cells": [
+      {
+        "place_word": "井前",
+        "last_char": "前",
+        "group": "non_tail",
+        "target_text": "把乌木罗盘放到井前",
+        "decoded_text": "把乌木罗盘放到井前",
+        "answer_bytes": 27,
+        "zero_extra": true,
+        "byte_exact": true,
+        "field_lengths_ok": true,
+        "argmax_byte": 256,
+        "argmax_label": "<EOS>",
+        "masked": false,
+        "pre_mask_label": "<EOS>",
+        "emitted_label": "<EOS>",
+        "eos_probability": 0.8646805789207526,
+        "eos_rank": 1,
+        "continuation_desire": 1.0,
+        "copy_mass_total": 0.0
+      },
+      {
+        "place_word": "亭畔",
+        "last_char": "畔",
+        "group": "non_tail",
+        "target_text": "把乌木罗盘放到亭畔",
+        "decoded_text": "把乌木罗盘放到亭畔",
+        "answer_bytes": 27,
+        "zero_extra": true,
+        "byte_exact": true,
+        "field_lengths_ok": true,
+        "argmax_byte": 256,
+        "argmax_label": "<EOS>",
+        "masked": false,
+        "pre_mask_label": "<EOS>",
+        "emitted_label": "<EOS>",
+        "eos_probability": 0.9447026309895054,
+        "eos_rank": 1,
+        "continuation_desire": 1.0,
+        "copy_mass_total": 0.0
+      },
+      {
+        "place_word": "亭角",
+        "last_char": "角",
+        "group": "non_tail",
+        "target_text": "把乌木罗盘放到亭角",
+        "decoded_text": "把乌木罗盘放到亭角",
+        "answer_bytes": 27,
+        "zero_extra": true,
+        "byte_exact": true,
+        "field_lengths_ok": true,
+        "argmax_byte": 256,
+        "argmax_label": "<EOS>",
+        "masked": false,
+        "pre_mask_label": "<EOS>",
+        "emitted_label": "<EOS>",
+        "eos_probability": 0.9535008333900025,
+        "eos_rank": 1,
+        "continuation_desire": 1.0,
+        "copy_mass_total": 0.0
+      },
+      {
+        "place_word": "兰上",
+        "last_char": "上",
+        "group": "non_tail",
+        "target_text": "把乌木罗盘放到兰上",
+        "decoded_text": "把乌木罗盘放到兰上",
+        "answer_bytes": 27,
+        "zero_extra": true,
+        "byte_exact": true,
+        "field_lengths_ok": true,
+        "argmax_byte": 256,
+        "argmax_label": "<EOS>",
+        "masked": false,
+        "pre_mask_label": "<EOS>",
+        "emitted_label": "<EOS>",
+        "eos_probability": 0.9559715694421546,
+        "eos_rank": 1,
+        "continuation_desire": 1.0,
+        "copy_mass_total": 0.0
+      },
+      {
+        "place_word": "圃外",
+        "last_char": "外",
+        "group": "non_tail",
+        "target_text": "把乌木罗盘放到圃外",
+        "decoded_text": "把乌木罗盘放到圃外",
+        "answer_bytes": 27,
+        "zero_extra": true,
+        "byte_exact": true,
+        "field_lengths_ok": true,
+        "argmax_byte": 256,
+        "argmax_label": "<EOS>",
+        "masked": false,
+        "pre_mask_label": "<EOS>",
+        "emitted_label": "<EOS>",
+        "eos_probability": 0.9421520061609451,
+        "eos_rank": 1,
+        "continuation_desire": 1.0,
+        "copy_mass_total": 0.0
+      },
+      {
+        "place_word": "崖前",
+        "last_char": "前",
+        "group": "non_tail",
+        "target_text": "把乌木罗盘放到崖前",
+        "decoded_text": "把乌木罗盘放到崖前",
+        "answer_bytes": 27,
+        "zero_extra": true,
+        "byte_exact": true,
+        "field_lengths_ok": true,
+        "argmax_byte": 256,
+        "argmax_label": "<EOS>",
+        "masked": false,
+        "pre_mask_label": "<EOS>",
+        "emitted_label": "<EOS>",
+        "eos_probability": 0.9138372285694941,
+        "eos_rank": 1,
+        "continuation_desire": 1.0,
+        "copy_mass_total": 0.0
+      },
+      {
+        "place_word": "廊前",
+        "last_char": "前",
+        "group": "non_tail",
+        "target_text": "把乌木罗盘放到廊前",
+        "decoded_text": "把乌木罗盘放到廊前",
+        "answer_bytes": 27,
+        "zero_extra": true,
+        "byte_exact": true,
+        "field_lengths_ok": true,
+        "argmax_byte": 256,
+        "argmax_label": "<EOS>",
+        "masked": false,
+        "pre_mask_label": "<EOS>",
+        "emitted_label": "<EOS>",
+        "eos_probability": 0.854282883052674,
+        "eos_rank": 1,
+        "continuation_desire": 1.0,
+        "copy_mass_total": 0.0
+      },
+      {
+        "place_word": "松上",
+        "last_char": "上",
+        "group": "non_tail",
+        "target_text": "把乌木罗盘放到松上",
+        "decoded_text": "把乌木罗盘放到松上",
+        "answer_bytes": 27,
+        "zero_extra": true,
+        "byte_exact": true,
+        "field_lengths_ok": true,
+        "argmax_byte": 256,
+        "argmax_label": "<EOS>",
+        "masked": false,
+        "pre_mask_label": "<EOS>",
+        "emitted_label": "<EOS>",
+        "eos_probability": 0.9530111162769811,
+        "eos_rank": 1,
+        "continuation_desire": 1.0,
+        "copy_mass_total": 0.0
+      },
+      {
+        "place_word": "松前",
+        "last_char": "前",
+        "group": "non_tail",
+        "target_text": "把乌木罗盘放到松前",
+        "decoded_text": "把乌木罗盘放到松前",
+        "answer_bytes": 27,
+        "zero_extra": true,
+        "byte_exact": true,
+        "field_lengths_ok": true,
+        "argmax_byte": 256,
+        "argmax_label": "<EOS>",
+        "masked": false,
+        "pre_mask_label": "<EOS>",
+        "emitted_label": "<EOS>",
+        "eos_probability": 0.8782106441991415,
+        "eos_rank": 1,
+        "continuation_desire": 1.0,
+        "copy_mass_total": 0.0
+      },
+      {
+        "place_word": "池前",
+        "last_char": "前",
+        "group": "non_tail",
+        "target_text": "把乌木罗盘放到池前",
+        "decoded_text": "把乌木罗盘放到池前",
+        "answer_bytes": 27,
+        "zero_extra": true,
+        "byte_exact": true,
+        "field_lengths_ok": true,
+        "argmax_byte": 256,
+        "argmax_label": "<EOS>",
+        "masked": false,
+        "pre_mask_label": "<EOS>",
+        "emitted_label": "<EOS>",
+        "eos_probability": 0.8998453992644937,
+        "eos_rank": 1,
+        "continuation_desire": 1.0,
+        "copy_mass_total": 0.0
+      },
+      {
+        "place_word": "池外",
+        "last_char": "外",
+        "group": "non_tail",
+        "target_text": "把乌木罗盘放到池外",
+        "decoded_text": "把乌木罗盘放到池外",
+        "answer_bytes": 27,
+        "zero_extra": true,
+        "byte_exact": true,
+        "field_lengths_ok": true,
+        "argmax_byte": 256,
+        "argmax_label": "<EOS>",
+        "masked": false,
+        "pre_mask_label": "<EOS>",
+        "emitted_label": "<EOS>",
+        "eos_probability": 0.9514222379350342,
+        "eos_rank": 1,
+        "continuation_desire": 1.0,
+        "copy_mass_total": 0.0
+      },
+      {
+        "place_word": "沙外",
+        "last_char": "外",
+        "group": "non_tail",
+        "target_text": "把乌木罗盘放到沙外",
+        "decoded_text": "把乌木罗盘放到沙外",
+        "answer_bytes": 27,
+        "zero_extra": true,
+        "byte_exact": true,
+        "field_lengths_ok": true,
+        "argmax_byte": 256,
+        "argmax_label": "<EOS>",
+        "masked": false,
+        "pre_mask_label": "<EOS>",
+        "emitted_label": "<EOS>",
+        "eos_probability": 0.9046678597999693,
+        "eos_rank": 1,
+        "continuation_desire": 1.0,
+        "copy_mass_total": 0.0
+      },
+      {
+        "place_word": "溪前",
+        "last_char": "前",
+        "group": "non_tail",
+        "target_text": "把乌木罗盘放到溪前",
+        "decoded_text": "把乌木罗盘放到溪前",
+        "answer_bytes": 27,
+        "zero_extra": true,
+        "byte_exact": true,
+        "field_lengths_ok": true,
+        "argmax_byte": 256,
+        "argmax_label": "<EOS>",
+        "masked": false,
+        "pre_mask_label": "<EOS>",
+        "emitted_label": "<EOS>",
+        "eos_probability": 0.8828622539960008,
+        "eos_rank": 1,
+        "continuation_desire": 1.0,
+        "copy_mass_total": 0.0
+      },
+      {
+        "place_word": "瓮尾",
+        "last_char": "尾",
+        "group": "tail",
+        "target_text": "把乌木罗盘放到瓮尾",
+        "decoded_text": "把乌木罗盘放到瓮尾",
+        "answer_bytes": 27,
+        "zero_extra": true,
+        "byte_exact": true,
+        "field_lengths_ok": true,
+        "argmax_byte": 229,
+        "argmax_label": "0xe5",
+        "masked": false,
+        "pre_mask_label": "0xe5",
+        "emitted_label": "0xe5",
+        "eos_probability": 0.14942676594952128,
+        "eos_rank": 2,
+        "continuation_desire": 4.563893991619334,
+        "copy_mass_total": 0.0
+      },
+      {
+        "place_word": "瓮沿",
+        "last_char": "沿",
+        "group": "non_tail",
+        "target_text": "把乌木罗盘放到瓮沿",
+        "decoded_text": "把乌木罗盘放到瓮沿",
+        "answer_bytes": 27,
+        "zero_extra": true,
+        "byte_exact": true,
+        "field_lengths_ok": true,
+        "argmax_byte": 256,
+        "argmax_label": "<EOS>",
+        "masked": false,
+        "pre_mask_label": "<EOS>",
+        "emitted_label": "<EOS>",
+        "eos_probability": 0.9201824354424238,
+        "eos_rank": 1,
+        "continuation_desire": 1.0,
+        "copy_mass_total": 0.0
+      },
+      {
+        "place_word": "竹上",
+        "last_char": "上",
+        "group": "non_tail",
+        "target_text": "把乌木罗盘放到竹上",
+        "decoded_text": "把乌木罗盘放到竹上",
+        "answer_bytes": 27,
+        "zero_extra": true,
+        "byte_exact": true,
+        "field_lengths_ok": true,
+        "argmax_byte": 256,
+        "argmax_label": "<EOS>",
+        "masked": false,
+        "pre_mask_label": "<EOS>",
+        "emitted_label": "<EOS>",
+        "eos_probability": 0.9395717708439323,
+        "eos_rank": 1,
+        "continuation_desire": 1.0,
+        "copy_mass_total": 0.0
+      },
+      {
+        "place_word": "舟侧",
+        "last_char": "侧",
+        "group": "non_tail",
+        "target_text": "把乌木罗盘放到舟侧",
+        "decoded_text": "把乌木罗盘放到舟侧",
+        "answer_bytes": 27,
+        "zero_extra": true,
+        "byte_exact": true,
+        "field_lengths_ok": true,
+        "argmax_byte": 256,
+        "argmax_label": "<EOS>",
+        "masked": false,
+        "pre_mask_label": "<EOS>",
+        "emitted_label": "<EOS>",
+        "eos_probability": 0.9363515571945594,
+        "eos_rank": 1,
+        "continuation_desire": 1.0,
+        "copy_mass_total": 0.0
+      },
+      {
+        "place_word": "雾尾",
+        "last_char": "尾",
+        "group": "tail",
+        "target_text": "把乌木罗盘放到雾尾",
+        "decoded_text": "把乌木罗盘放到雾尾",
+        "answer_bytes": 27,
+        "zero_extra": true,
+        "byte_exact": true,
+        "field_lengths_ok": true,
+        "argmax_byte": 229,
+        "argmax_label": "0xe5",
+        "masked": false,
+        "pre_mask_label": "0xe5",
+        "emitted_label": "0xe5",
+        "eos_probability": 0.33943205651530023,
+        "eos_rank": 2,
+        "continuation_desire": 1.4166001824043235,
+        "copy_mass_total": 0.0
+      },
+      {
+        "place_word": "井北",
+        "last_char": "北",
+        "group": "non_tail",
+        "target_text": "把乌木罗盘放到井北",
+        "decoded_text": "把乌木罗盘放到井北",
+        "answer_bytes": 27,
+        "zero_extra": true,
+        "byte_exact": true,
+        "field_lengths_ok": true,
+        "argmax_byte": 256,
+        "argmax_label": "<EOS>",
+        "masked": false,
+        "pre_mask_label": "<EOS>",
+        "emitted_label": "<EOS>",
+        "eos_probability": 0.8878744913661436,
+        "eos_rank": 1,
+        "continuation_desire": 1.0,
+        "copy_mass_total": 0.0
+      },
+      {
+        "place_word": "井尾",
+        "last_char": "尾",
+        "group": "tail",
+        "target_text": "把乌木罗盘放到井尾",
+        "decoded_text": "把乌木罗盘放到井尾",
+        "answer_bytes": 27,
+        "zero_extra": true,
+        "byte_exact": true,
+        "field_lengths_ok": true,
+        "argmax_byte": 256,
+        "argmax_label": "<EOS>",
+        "masked": false,
+        "pre_mask_label": "<EOS>",
+        "emitted_label": "<EOS>",
+        "eos_probability": 0.5488763286076177,
+        "eos_rank": 1,
+        "continuation_desire": 1.0,
+        "copy_mass_total": 0.0
+      },
+      {
+        "place_word": "井畔",
+        "last_char": "畔",
+        "group": "non_tail",
+        "target_text": "把乌木罗盘放到井畔",
+        "decoded_text": "把乌木罗盘放到井畔",
+        "answer_bytes": 27,
+        "zero_extra": true,
+        "byte_exact": true,
+        "field_lengths_ok": true,
+        "argmax_byte": 256,
+        "argmax_label": "<EOS>",
+        "masked": false,
+        "pre_mask_label": "<EOS>",
+        "emitted_label": "<EOS>",
+        "eos_probability": 0.9359237981733756,
+        "eos_rank": 1,
+        "continuation_desire": 1.0,
+        "copy_mass_total": 0.0
+      },
+      {
+        "place_word": "兰外",
+        "last_char": "外",
+        "group": "non_tail",
+        "target_text": "把乌木罗盘放到兰外",
+        "decoded_text": "把乌木罗盘放到兰外",
+        "answer_bytes": 27,
+        "zero_extra": true,
+        "byte_exact": true,
+        "field_lengths_ok": true,
+        "argmax_byte": 256,
+        "argmax_label": "<EOS>",
+        "masked": false,
+        "pre_mask_label": "<EOS>",
+        "emitted_label": "<EOS>",
+        "eos_probability": 0.9587063485123319,
+        "eos_rank": 1,
+        "continuation_desire": 1.0,
+        "copy_mass_total": 0.0
+      },
+      {
+        "place_word": "圃下",
+        "last_char": "下",
+        "group": "non_tail",
+        "target_text": "把乌木罗盘放到圃下",
+        "decoded_text": "把乌木罗盘放到圃下",
+        "answer_bytes": 27,
+        "zero_extra": true,
+        "byte_exact": true,
+        "field_lengths_ok": true,
+        "argmax_byte": 256,
+        "argmax_label": "<EOS>",
+        "masked": false,
+        "pre_mask_label": "<EOS>",
+        "emitted_label": "<EOS>",
+        "eos_probability": 0.969416448525145,
+        "eos_rank": 1,
+        "continuation_desire": 1.0,
+        "copy_mass_total": 0.0
+      },
+      {
+        "place_word": "圃尾",
+        "last_char": "尾",
+        "group": "tail",
+        "target_text": "把乌木罗盘放到圃尾",
+        "decoded_text": "把乌木罗盘放到圃尾",
+        "answer_bytes": 27,
+        "zero_extra": true,
+        "byte_exact": true,
+        "field_lengths_ok": true,
+        "argmax_byte": 256,
+        "argmax_label": "<EOS>",
+        "masked": false,
+        "pre_mask_label": "<EOS>",
+        "emitted_label": "<EOS>",
+        "eos_probability": 0.6341247970603969,
+        "eos_rank": 1,
+        "continuation_desire": 1.0,
+        "copy_mass_total": 0.0
+      },
+      {
+        "place_word": "廊北",
+        "last_char": "北",
+        "group": "non_tail",
+        "target_text": "把乌木罗盘放到廊北",
+        "decoded_text": "把乌木罗盘放到廊北",
+        "answer_bytes": 27,
+        "zero_extra": true,
+        "byte_exact": true,
+        "field_lengths_ok": true,
+        "argmax_byte": 256,
+        "argmax_label": "<EOS>",
+        "masked": false,
+        "pre_mask_label": "<EOS>",
+        "emitted_label": "<EOS>",
+        "eos_probability": 0.8754326382084059,
+        "eos_rank": 1,
+        "continuation_desire": 1.0,
+        "copy_mass_total": 0.0
+      },
+      {
+        "place_word": "桥尾",
+        "last_char": "尾",
+        "group": "tail",
+        "target_text": "把乌木罗盘放到桥尾",
+        "decoded_text": "把乌木罗盘放到桥尾",
+        "answer_bytes": 27,
+        "zero_extra": true,
+        "byte_exact": true,
+        "field_lengths_ok": true,
+        "argmax_byte": 256,
+        "argmax_label": "<EOS>",
+        "masked": false,
+        "pre_mask_label": "<EOS>",
+        "emitted_label": "<EOS>",
+        "eos_probability": 0.7606703870465307,
+        "eos_rank": 1,
+        "continuation_desire": 1.0,
+        "copy_mass_total": 0.0
+      },
+      {
+        "place_word": "梅角",
+        "last_char": "角",
+        "group": "non_tail",
+        "target_text": "把乌木罗盘放到梅角",
+        "decoded_text": "把乌木罗盘放到梅角",
+        "answer_bytes": 27,
+        "zero_extra": true,
+        "byte_exact": true,
+        "field_lengths_ok": true,
+        "argmax_byte": 256,
+        "argmax_label": "<EOS>",
+        "masked": false,
+        "pre_mask_label": "<EOS>",
+        "emitted_label": "<EOS>",
+        "eos_probability": 0.9298260269774176,
+        "eos_rank": 1,
+        "continuation_desire": 1.0,
+        "copy_mass_total": 0.0
+      },
+      {
+        "place_word": "瓮北",
+        "last_char": "北",
+        "group": "non_tail",
+        "target_text": "把乌木罗盘放到瓮北",
+        "decoded_text": "把乌木罗盘放到瓮北",
+        "answer_bytes": 27,
+        "zero_extra": true,
+        "byte_exact": true,
+        "field_lengths_ok": true,
+        "argmax_byte": 256,
+        "argmax_label": "<EOS>",
+        "masked": false,
+        "pre_mask_label": "<EOS>",
+        "emitted_label": "<EOS>",
+        "eos_probability": 0.7281957051722059,
+        "eos_rank": 1,
+        "continuation_desire": 1.0,
+        "copy_mass_total": 0.0
+      },
+      {
+        "place_word": "竹沿",
+        "last_char": "沿",
+        "group": "non_tail",
+        "target_text": "把乌木罗盘放到竹沿",
+        "decoded_text": "把乌木罗盘放到竹沿",
+        "answer_bytes": 27,
+        "zero_extra": true,
+        "byte_exact": true,
+        "field_lengths_ok": true,
+        "argmax_byte": 256,
+        "argmax_label": "<EOS>",
+        "masked": false,
+        "pre_mask_label": "<EOS>",
+        "emitted_label": "<EOS>",
+        "eos_probability": 0.9583549081908805,
+        "eos_rank": 1,
+        "continuation_desire": 1.0,
+        "copy_mass_total": 0.0
+      },
+      {
+        "place_word": "雾外",
+        "last_char": "外",
+        "group": "non_tail",
+        "target_text": "把乌木罗盘放到雾外",
+        "decoded_text": "把乌木罗盘放到雾外",
+        "answer_bytes": 27,
+        "zero_extra": true,
+        "byte_exact": true,
+        "field_lengths_ok": true,
+        "argmax_byte": 256,
+        "argmax_label": "<EOS>",
+        "masked": false,
+        "pre_mask_label": "<EOS>",
+        "emitted_label": "<EOS>",
+        "eos_probability": 0.9157023435983487,
+        "eos_rank": 1,
+        "continuation_desire": 1.0,
+        "copy_mass_total": 0.0
+      }
+    ],
+    "statistics": {
+      "tail": {
+        "words": 5,
+        "measured": 5,
+        "argmax_is_eos": 3,
+        "rank_min": 1,
+        "rank_median": 1,
+        "rank_max": 2,
+        "rank_mean": 1.4
+      },
+      "non_tail": {
+        "words": 25,
+        "measured": 25,
+        "argmax_is_eos": 25,
+        "rank_min": 1,
+        "rank_median": 1,
+        "rank_max": 1,
+        "rank_mean": 1.0
+      },
+      "exact_permutation": {
+        "splits": 142506,
+        "p_value": 0.022988505747126436,
+        "mean_difference": 0.3999999999999999
+      },
+      "separated": false,
+      "median_tail": 1,
+      "median_non_tail": 1,
+      "verdict": "word_effect_weak"
+    }
+  },
+  "gates": {
+    "structural_pass": true,
+    "zero_extra_pass": true,
+    "locate_class": "object_slot_short",
+    "word_effect": "word_effect_weak",
+    "failing_axes": [],
+    "field_lengths_ok": {
+      "group_a": true,
+      "group_b": true
+    },
+    "structural_cells_exact": "12/12"
+  },
+  "outcome": {
+    "locate_class": "object_slot_short",
+    "word_effect": "word_effect_weak",
+    "note": "A 组只判短字段把槽位挤歪发生在哪一槽；B 组只判在形状完全相同、只换地点词时停止边是否系统性变化；两者都不读 confirm、都不改 192/192。"
+  },
+  "cost": {
+    "cpu_seconds": 17.64,
+    "wall_seconds": 18.53,
+    "single_run_estimate": 45.0,
+    "estimate_with_replays": 135.0,
+    "cpu_cap": 200.0,
+    "wall_cap": 1800.0,
+    "over_budget": false
+  },
+  "discipline": {
+    "training_runs": 0,
+    "optimizer_steps": 0,
+    "parameters_added": 0,
+    "graph_changes": 0,
+    "confirm_reads": 0,
+    "confirm_holdout_report_reads": 0
+  },
+  "implementation_choices": [
+    "R59 imports the R58 runner module and reuses decode_shape/edge_report/structural_cell/load_candidate instead of copying them.",
+    "Group A fixture assignment is (3,12)->dev[0], (12,3)->dev[1], (6,12)->dev[2], (12,6)->dev[4]; dev[4] is R58's control fixture.",
+    "Group B uses dev[0] and overwrites records[0]/records[1]; the goal is rebuilt from the constant descriptions.",
+    "The exact permutation test compares integer-scaled mean differences, so no floating-point tie handling is involved.",
+    "If any group-B stop edge lacks the position-27 probe, the verdict is word_effect_unmeasurable instead of silently dropping the word.",
+    "locate_class and word_effect are classification readings, not pass/fail gates; failing_axes lists only failed boolean gates."
+  ],
+  "closed_state": {
+    "frozen_files_unchanged": true
+  }
+}

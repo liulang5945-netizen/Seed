@@ -18,12 +18,12 @@ import hashlib
 import math
 from dataclasses import asdict, dataclass, replace
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import torch
 from torch import nn
 
-from taiji.living_core import EOS, LivingState
+from taiji.living_core import EOS, LivingCoreReference, LivingState
 from taiji.record_relation import (
     RecordRelationConfig,
     RecordRelationReader,
@@ -231,6 +231,10 @@ class BindingAnswerStep:
 
 class BindingCopyReader(nn.Module):
     """R1 span alignment, transport, and carried copy posterior."""
+
+    inherited: RecordRelationReader
+    reuse_null_key: bool
+    null_key: nn.Parameter
 
     def __init__(
         self,
@@ -522,6 +526,9 @@ class BindingCopyReader(nn.Module):
 class BindingCopyCandidate(nn.Module):
     """Same subject plus the R1 reader; the base keeps the R0 path and V/null."""
 
+    base: RecordRelationCandidate
+    subject: LivingCoreReference
+
     def __init__(
         self,
         base: RecordRelationCandidate,
@@ -533,7 +540,7 @@ class BindingCopyCandidate(nn.Module):
         # relation as this candidate's own submodules.  The parameter names stay
         # subject.* / relation.* for the inherited groups and reader.* for R1.
         object.__setattr__(self, "base", base)
-        self.subject = base.subject
+        self.subject = cast(LivingCoreReference, base.subject)
         self.relation = base.relation
         self.reader = BindingCopyReader(config, base.relation.reader)
         self.config = config
@@ -599,6 +606,7 @@ class BindingCopyCandidate(nn.Module):
         }
 
     def reused_rows(self) -> dict[str, Any]:
+        names: tuple[str, ...]
         if self.reader.reuse_null_key:
             names = (
                 "relation.reader.null_key",
@@ -734,7 +742,7 @@ def observe_goal(
                     base.goal_vector,
                     base.nu,
                     read.content,
-                    _gate(candidate, gate_index),
+                    _gate(cast(RecordRelationCandidate, candidate), gate_index),
                 ),
                 prior=subject.W.new_empty(0),
             ),
@@ -844,7 +852,7 @@ def answer_step(
         base.goal_vector,
         base.nu,
         read.content,
-        _gate(candidate, gate_index),
+        _gate(cast(RecordRelationCandidate, candidate), gate_index),
     )
     z = subject.readout(h, xi)[0]
     generated = torch.softmax(subject.expression.generate(torch.cat([z, previous])), dim=-1)
@@ -1067,7 +1075,7 @@ def combined_loss(
             subject_id=subject_id,
         )
         losses.append(result.nll)
-    return sum(losses) / len(losses)
+    return cast(torch.Tensor, sum(losses) / len(losses))
 
 
 def make_optimizer(candidate: BindingCopyCandidate) -> torch.optim.Adam:
@@ -1083,7 +1091,7 @@ def make_optimizer(candidate: BindingCopyCandidate) -> torch.optim.Adam:
 def candidate_digest(candidate: BindingCopyCandidate) -> str:
     from taiji.candidate_manifest import parameter_digest
 
-    return str(parameter_digest(candidate_parameter_map(candidate)))
+    return str(parameter_digest(candidate_parameter_map(cast(RecordRelationCandidate, candidate))))
 
 
 def _all_groups() -> dict[str, tuple[str, ...]]:
@@ -1176,7 +1184,7 @@ def save_bundle(
         "growth_parent_units": getattr(candidate.subject, "growth_parent_units", None),
         "growth_unit_branches": getattr(candidate.subject, "growth_unit_branches", []),
         "growth_gates": candidate.growth_gates,
-        "parameters": candidate_parameter_map(candidate),
+        "parameters": candidate_parameter_map(cast(RecordRelationCandidate, candidate)),
         "state": state.payload(),
         "optimizer": optimizer.state_dict(),
         "update_index": update_index,

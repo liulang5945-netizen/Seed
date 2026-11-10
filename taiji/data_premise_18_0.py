@@ -529,7 +529,7 @@ def split_proofs(payload: dict[str, Any]) -> dict[str, Any]:
             texts[split].append(example["goal"])
             texts[split].append(example["action"])
             combos[split].add((example["object_name"], example["place_name"]))
-    occurrences: dict[str, dict[str, int]] = {}
+    occurrences: dict[str, int] = {}
     for target in splits:
         for source in ("train", "dev"):
             if target == source:

@@ -302,6 +302,12 @@ def test_zero_step_bundle_restores_in_process_and_fresh_process(tmp_path):
         scope="probe",
         session="probe",
     )
+    # probe_digest folds logits rounded to 7 decimals into one hash, and the
+    # float forward pass reduces in a thread-count-dependent order.  A test that
+    # ran earlier in this session may have pinned this process to one thread
+    # while a fresh child starts at the machine default, so an unpinned child
+    # would hash a different execution configuration, not a different state.
+    threads = torch.get_num_threads()
     expected = bundle.probe_digest(query=QUERY)
     path = tmp_path / "corrected-old.pt"
     bundle.save(path)
@@ -310,7 +316,8 @@ def test_zero_step_bundle_restores_in_process_and_fresh_process(tmp_path):
     env = dict(os.environ)
     env["PYTHONPATH"] = str(ROOT) + os.pathsep + env.get("PYTHONPATH", "")
     code = (
-        "import sys; "
+        "import sys, torch; "
+        f"torch.set_num_threads({threads}); "
         "from taiji.corrected_old_baseline import CorrectedOldBundleV1; "
         "b=CorrectedOldBundleV1.load(sys.argv[1]); "
         "print(b.probe_digest(query=sys.argv[2].encode()))"

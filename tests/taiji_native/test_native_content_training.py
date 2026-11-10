@@ -199,13 +199,20 @@ def test_version1_checkpoint_without_frozen_groups_still_loads(tmp_path):
 
 def test_fresh_process_restores_pricing_checkpoint(tmp_path):
     trainer = NativeRunTrainerV1.create(adapter_for("new_core_v1"))
+    # probe_digest folds logits rounded to 7 decimals into one hash, and the
+    # float forward pass reduces in a thread-count-dependent order.  A test that
+    # ran earlier in this session may have pinned this process to one thread
+    # while a fresh child starts at the machine default, so an unpinned child
+    # would hash a different execution configuration, not a different state.
+    threads = torch.get_num_threads()
     digest = trainer.probe_digest()
     path = tmp_path / "fresh.pt"
     trainer.save(path)
     env = dict(os.environ)
     env["PYTHONPATH"] = str(ROOT) + os.pathsep + env.get("PYTHONPATH", "")
     code = (
-        "import sys; "
+        "import sys, torch; "
+        f"torch.set_num_threads({threads}); "
         "from taiji.native_content_training import NativeRunTrainerV1; "
         "print(NativeRunTrainerV1.load(sys.argv[1]).probe_digest())"
     )
