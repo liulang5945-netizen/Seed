@@ -197,7 +197,7 @@ def main() -> int:
     if "--stage" in sys.argv and sys.argv[sys.argv.index("--stage") + 1] == "bundles":
         out = stage_bundles()
         Path("reports/taiji_binding_copy_15_1_attribution_bundles_20261103.json").write_text(
-            json.dumps(out, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+            json.dumps(out, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n"
         )
         print(json.dumps(out, ensure_ascii=False, indent=2))
         return 0

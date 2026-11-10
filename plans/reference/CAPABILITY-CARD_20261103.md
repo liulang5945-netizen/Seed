@@ -567,3 +567,23 @@ R57的192/192属于旧confirm第2次恢复复测，固定形状；19.2v的188/19
 ### 12.1 22.1核验范围
 
 [22.1](VALIDATION-TAIJI-U2_22_1_20261110.md)为局部数学/协议结案，13组与52坐标通过。它支持进入正式参考图，尚未提供U2完整主体、跨进程学习保持、主动选择、神经成熟或物理任务的新能力结果。
+
+## 13. 限制栏：字节级结论必须带运行条件（2026-11-10）
+
+**一句话**：本项目所有"逐字节相同""摘要相同""`max|Δ|=0`""参数逐位一致"的结论，**只有标注了运行条件时才算证据**——至少要有 torch 线程数，以及任何改变归约顺序的设置（`OMP_NUM_THREADS`／`MKL_NUM_THREADS`／`torch.set_num_threads`）。**没有标注运行条件的字节级相等，一律视为"报告级声明、不可机器复核"**，不得据此对外声称能力。
+
+**事实依据**：同一模型、同一输入、同一权重，父进程 12 线程与子进程 1 线程算出的 `content_digest` **不同**；实测 1 线程与 4 线程相同、12 线程不同。原因是 CPU 归约／浮点累加顺序随 intra-op 线程数变化，末位差异被摘要放大。该事实登记于[决策台账 D-20261110-05](DECISION-LEDGER_20261109.md)。
+
+**普查范围（2026-11-10，只读，未改任何读数）**：
+
+| 面 | 总数 | 含相等类断言 | 记录了线程数 | 未记录 |
+| --- | --- | --- | --- | --- |
+| `reports/*.json` | 3523 | 225 | 13 | **212** |
+| 其中只带摘要字段（无相等断言） | — | 267 | 0 | **267** |
+| `plans/manifests/*.json` | 408 | 21 | 0 | **21**（另 5 份带运行时摘要） |
+
+manifest 的 `frozen_files` 是**文件完整性**哈希，与线程无关，不计入上表的"运行时相等"。
+
+**关键受影响（被本卡引用或直接支撑封存／确认口径）**：`reports/taiji_stop_boundary_20261109.json`（R57 封存读）及其 `_rebaseline_20261111`、`reports/taiji_n1_plan176_candidate_equivalence_20261028.json`、`reports/taiji_n1_v21/v22/v23_confirmation_readiness_20261019.json`、`reports/taiji_n02_repeat_determinism_c4g_20261018.json`、`reports/taiji_package19_2u_stop_boundary_ablation_20261105.json`、`reports/taiji_selection_routing_17_2r_format_equivalence_20261104.json`、`reports/taiji_n6_head_face_parity_2026101{0,2}.json`、`reports/taiji_batch_c{,2}_arm_parity_2026101{3,4}.json`、`reports/taiji_byte_address_20261108.json`。
+
+**判断**：现有已入库证据里，**没有发现**"两侧线程数不同却报相同"的条目；已确认的预算不一致只出现在测试层（本轮 4 条跨进程摘要比对），它们报的是"不同"，属**假红**而不是假绿。风险面另记：57 个脚本只在父进程写 `set_num_threads`、未给子进程传 `OMP`／`MKL` 环境；是否构成风险取决于子进程是否重算浮点摘要。

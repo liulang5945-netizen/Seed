@@ -1,7 +1,7 @@
-# 立项结论：三条"单独重跑就过"的用例
+# 立项结论：跨进程"单独重跑就过"的用例（四例）
 
-**日期**：2026-11-10｜**类型**：测试缺陷判定（不是噪声、不是类型改动引入）
-**背景**：修类型前跑 `tests/taiji_native` 子集（167 passed / 3 failed），三条失败单独重跑全部通过。本项目把可信度压在"同字节同摘要"上，因此不接受"重跑就过"的结案，逐条判定。
+**日期**：2026-11-10（2026-11-10 补第 4 例）｜**类型**：测试缺陷判定（不是噪声、不是类型改动引入）
+**背景**：修类型前跑 `tests/taiji_native` 子集（167 passed / 3 failed），三条失败单独重跑全部通过。本项目把可信度压在"同字节同摘要"上，因此不接受"重跑就过"的结案，逐条判定。CI 全量回归的 junit 又暴露同一形态的第 4 条（`test_content_binding_runner_contract`），一并立项。
 
 ## 结论速览
 
@@ -10,8 +10,9 @@
 | `test_native_content_training.py::test_fresh_process_restores_pricing_checkpoint` | `NativeRunTrainerV1.probe_digest()` 摘要 | 相同（同一 checkpoint 字节＋同一查询） | **测试写错了** | 子进程钉父进程的线程预算 |
 | `test_corrected_old_baseline.py::test_zero_step_bundle_restores_in_process_and_fresh_process` | `CorrectedOldBundleV1.probe_digest()` 摘要 | 相同 | **测试写错了** | 子进程钉父进程的线程预算 |
 | `test_r029_engineering_gaps.py::test_r029_worker_accounts_its_own_cpu` | `worker_cpu_seconds`／`worker_wall_seconds` | 相同（同一 bundle、同一 microstep） | **测试写错了** | 允许一个时钟 tick；子进程钉 1 线程 |
+| `test_content_binding_runner_contract.py::test_fresh_process_continuation_matches_uninterrupted` | `SequenceContentTrainer` 的 `content_digest` 摘要 | 相同（同一 3 步 checkpoint、同一续跑 1 步） | **测试写错了** | 子进程钉父进程的线程预算 |
 
-三条都**不是实现硬伤**，也都**与本次类型改动无关**（§4 给出证明）。
+四条都**不是实现硬伤**，也都**与本次类型改动无关**（§4 给出证明）。共同根因已升格为项目判据，见[台账 D-20261110-05](DECISION-LEDGER_20261109.md)与[能力卡 §13](CAPABILITY-CARD_20261103.md)。
 
 ## 1 & 2：跨进程摘要比对
 
@@ -46,7 +47,7 @@ repeat@1   digest=9d227be8…（重复同值）
 - 子进程代码前插 `torch.set_num_threads(<该值>)`；
 - 注释写明"摘要含 7 位小数 logits，浮点归约顺序随线程预算变，故必须钉同一预算"。
 
-**留下的限制（必须记住）**：任何跨进程／跨机器的摘要比对都必须显式钉线程预算。所有产出报告读数的脚本（R5b 训练报告、R58–R63 探针）在模块顶部就 `torch.set_num_threads(1)`，所以**已入库读数可复现**；漏钉的只有上述两条测试。
+**留下的限制（必须记住）**：任何跨进程／跨机器的摘要比对都必须显式钉线程预算。所有产出报告读数的脚本（R5b 训练报告、R58–R63 探针）在模块顶部就 `torch.set_num_threads(1)`，所以**已入库读数可复现**；漏钉的只有本立项里的四条测试。
 
 ## 3：worker CPU 记账
 
@@ -70,8 +71,28 @@ assert 0.046875 <= 0.04587229999015108
 - `parent_cpu < worker_wall` 改为 `parent_cpu <= parent_wall` ＋ `worker_cpu < parent_wall`（worker 的 CPU 必须落在父进程整个 spawn-and-join 窗口内）；
 - `spawn_worker` 改用模块内的 `_worker_entry`，在子进程里先 `torch.set_num_threads(1)` 再 `run_worker_job`——与父进程 `new_model` 的参考实现同一预算，顺带消除"多线程子进程 cpu>wall"的第二条翻转路径。
 
-## 4：为什么三条都与类型改动无关
+## 3b：第 4 条——`content_binding` 的跨进程续跑
 
-1. **路径不重叠**：两条摘要用例走 `native_content_core*`／`corrected_old_baseline` 的前向与序列化，`probe_digest` 里没有任何一个表达式被本轮改过；r029 的断言对象是计时器字段，不是被改的类型面。
-2. **可独立重现**：两条摘要差异在同一进程内仅靠 `torch.set_num_threads` 就能复现（1／4 线程同值、12 线程不同值），完全不需要碰那 6 个文件；r029 的失败差值恰为一个 1/64 s tick，与源码无关。
-3. **时间顺序**：三条失败在**改类型之前**的那次子集运行里就已经出现；改完类型后同样的用例在同样顺序下仍然只在"父进程被钉 1 线程"时失败，改测试后 30/30 通过。
+**失败原文（CI junit，`test-results-3.12`）**：
+
+```
+AssertionError: assert '624f786958aa...145de645a5395' == 'da8bbaac3c4b...a038aea26ead7'
+  - da8bbaac3c4bea69ab3b166606671ad6e74ac820ea23bf18e49a038aea26ead7
+  + 624f786958aa7b8be7221b6a08bacc9b6f754aa63037cc0cf93145de645a5395
+```
+
+**涉及摘要**：`SequenceContentTrainer` 的 checkpoint `content_digest`（权重＋续跑两步后的状态）。父进程在 pytest 会话里连跑 2 步，子进程从同一 checkpoint 起再跑 1 步，两边各算一次摘要。
+
+**两次输入是否真的相同**：**是**。同一 checkpoint 文件、同一批数据、同一 seed。不同之处仍只有线程预算：同一 pytest 进程里先跑的用例把 `torch.set_num_threads(1)` 留在全局，父进程以 1 线程续跑；`subprocess` 子进程是新解释器，从 runner 默认核数起步。单独跑该用例时两侧都是 12 线程，所以本地恒过——这正是"单独重跑就过"的形态。
+
+**判定**：第一类——**测试写错了**。断言本身没写运行条件，等于拿两个不同执行配置的摘要做相等比较。
+
+**改了什么**：父进程先取 `threads = torch.get_num_threads()`，在子进程脚本首行插入 `torch.set_num_threads(threads)`。断言、判据、期望值均未改。
+
+**为什么与类型改动无关**：该用例的摘要路径是 `SequenceContentTrainer` 前向＋`content_digest`，本轮没有改动其中任何表达式；把 `torch.set_num_threads` 改成同一值即可在不碰那 6 个文件的情况下让摘要重合。
+
+## 4：为什么这些失败都与类型改动无关
+
+1. **路径不重叠**：三条摘要用例走 `native_content_core*`／`corrected_old_baseline`／`sequence_content_workspace` 的前向与序列化，摘要函数里没有任何一个表达式被本轮改过；r029 的断言对象是计时器字段，不是被改的类型面。
+2. **可独立重现**：摘要差异在同一进程内仅靠 `torch.set_num_threads` 就能复现（1／4 线程同值、12 线程不同值），完全不需要碰那 6 个文件；r029 的失败差值恰为一个 1/64 s tick，与源码无关。
+3. **时间顺序**：前三条失败在**改类型之前**的那次子集运行里就已经出现；第 4 条在改类型后的 CI 全量回归里出现，且单独运行恒过。改完测试后同类用例在"先跑钉 1 线程用例"的敌意顺序下 30/30 通过。

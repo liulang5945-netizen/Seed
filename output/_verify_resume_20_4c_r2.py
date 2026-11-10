@@ -156,7 +156,7 @@ def main() -> None:
     }
     print(json.dumps(evidence, ensure_ascii=False, indent=2))
     (ROOT / "reports/taiji_package20_4c_r2_stop_20261106.json").write_text(
-        json.dumps(evidence, ensure_ascii=False, indent=2), encoding="utf-8"
+        json.dumps(evidence, ensure_ascii=False, indent=2), encoding="utf-8", newline="\n"
     )
 
 

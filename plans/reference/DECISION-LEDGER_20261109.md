@@ -1810,6 +1810,21 @@ reading["pairs"] = {
 
 **结论性判断**：这批读数当前的状态是**"报告级声明、不可机器复核"**。它们的**存在性**仍被台账普查仪（`test_n5_38_ledger_cited_reports_contract.py`）覆盖（文件在不在册），但**哈希与字节一致性没有任何机器复核入口**：`tests/` 全部用例不引用这些报告，`source_hashes` 的校验入口只服务于 R 系列新 manifest，不覆盖这些旧报告。因此这 11 条**全部是纯存档**，不影响 CI、不影响 R58–R63 链、不影响 192/192。
 
+**4c. 未入库的生产者脚本（2026-11-10 补）**：工作区有 53 个未入库的 `scripts/training/verify_*`／`diagnose_*`／`tests/taiji_native/test_*`。逐条判定后分成两类：
+
+**(i) 真生产者——数据在库、产生它的脚本不在库（4 份报告）**。这 4 个脚本把报告路径写成模块级常量并直接 `write_text`，仓库里没有同名脚本：
+
+| 已入库报告 | 未入库的生产者 |
+| --- | --- |
+| `reports/taiji_core_record_relation_14_4_20261102.json` | `scripts/training/verify_taiji_record_relation_14.py`（`REPORT` 常量） |
+| `reports/taiji_core_record_relation_14_5_20261102.json` | `scripts/training/verify_taiji_record_relation_14_5.py`（`REPORT` 常量） |
+| `reports/taiji_core_record_relation_14_6_20261102.json` | `scripts/training/verify_taiji_record_relation_14_6.py`（`REPORT` 常量） |
+| `reports/taiji_core_record_relation_14_6_preflight_20261102.json` | `scripts/training/verify_taiji_record_relation_14_6_preflight.py`（`REPORT` 常量） |
+
+**结论**：这 4 份读数的状态与 §4b 同属**"报告级声明、不可机器复核"**——区别只在"字节没进历史"与"产生字节的脚本没进历史"。按本轮指令这些脚本**不提交**；恢复可复核性只能在新协议里重新产出并登记，不得回写旧报告。
+
+**(ii) 只是消费者／诊断，不构成缺口（9 个脚本、3 份报告）**：`verify_taiji_composition_10_21.py`、`verify_taiji_action_verdict_10_6.py`、`verify_taiji_goal_training_10_7.py`、`verify_taiji_goal_conditioned_10_5.py`、`verify_taiji_instrument_11_7.py`、`verify_taiji_subject_selection_10_4.py`、`verify_taiji_training_replay_10_7a.py`、`diagnose_training_direction_10_7b.py`、`verify_taiji_selection_14_2.py`。它们只把这些报告当**输入**（`CLOSEOUT_CARD`／`TRAINING_CARD`／`GRAPH_REPORT` 常量），产物写到命令行 `--output` 指定的位置；对应报告另有已入库的核验脚本（如 `verify_taiji_closeout_10.py`、`test_closeout_10_recompute.py`）或本身就是被取代的旧件，故不新增缺口。
+
 **5. 处置**：五个文件按工作区原样入库（唯一代码改动是 `native_goal_world.py` 的 B007 循环变量和 `native_composition_fixture.py` 两处 `strict=True`）；未改读数／判据／manifest 数字，未重签任何旧 manifest。入库提交 `de49c0de1`，B/SIM 修复提交 `5769342f3`。
 
 **6. 教训（写成规则）**：往已入库代码里新增 import 前，先确认被导入模块已入库；否则 ruff 的 I001 是“缺文件”的症状，改 import 排序治不了它。
@@ -1839,7 +1854,13 @@ reading["pairs"] = {
 
 **5. 重跑结论**：7 份 dev 报告（R58–R63）逐行 diff 只有 `preregistration` 路径与哈希、以及 `cost` 的 cpu／wall 两类差异；**判定名、核心计数、分布、逐格行、锚点字段数逐项相同**（R61 29/48＋p=3.81e-06；R62 rescue 18/19＋break 29/29；R63 rescue 19/19＋break 29/29＋`put_char_exact` 48；anchor 1890 字段 0 不符）。R57 有一处结构性差异：`read_register.recovery_rerun` 由 `true` 变 `false`（该字段只表示"跑前已有一遍逐例日志、需逐行复算"的崩溃恢复标记，不是读数），旧报告的 `recovery_check{192, 0 mismatch, identical}` 因此没有复现；补偿取证为三方向逐例比对旧两遍与新一遍的 192 行，`byte_exact`／`answer_bytes`／`terminated` 0 处不同。
 
-**6. 协议代价（必须记账）**：R57 是 confirm 分区第 2 次读（D-20261109-60），本次重跑构成**第 3 次读**。结果与第 1／2 次逐例相同，不产生新声明；但这是不可撤回的读取成本，此后任何步骤不得再读 confirm 分区。
+**6. 协议代价（必须记账）**：
+
+> **已消耗 confirm 预算：第 3 次**（R57，2026-11-11 重基线重跑；前两次为第 1 次施工读与 D-20261109-60 授权的第 2 次恢复复测）。**不可撤回**：confirm 分区没有"撤销读取"这种操作，读过就是读过。
+
+R57 是 confirm 分区第 2 次读（D-20261109-60），本次重跑构成**第 3 次读**。结果与第 1／2 次逐例相同，不产生新声明；但这是不可撤回的读取成本，此后任何步骤不得再读 confirm 分区。
+
+**是否需要重新授权（建议，待 owner 裁）**：**需要，且默认应当拒绝**。理由：现有 192/192 已经被读了三遍且三次相同，再读不会增加信息量，只会继续消耗同一份封存集的唯一性。若将来确有必须读 confirm 的情形，建议按四条件放行：① 读数前先立新台账条（写明为什么 dev 分区回答不了）；② 判据在读数前冻结；③ 一人一次、单次读完，不得"重跑取好的"；④ owner 在台账上签署。未满足任一条，一律按"不可读"处理。
 
 **7. 重跑成本**：CPU 337.29 s、墙钟 345.87 s（旧 8 步合计 CPU 263.02 s、墙钟 270.84 s；差额来自机器负载，单步均未越 cap）。
 
@@ -1848,4 +1869,30 @@ reading["pairs"] = {
 **9. 与未入库草稿的关系（说明，不提交）**：工作区那批未入库的 `scripts/training/verify_*` 与 `tests/taiji_native/test_*`（10.x／11.x／14.x 的复算入口）**不参与本次提交**，CI 也看不见它们。它们与已入库读数的关系只有一条：它们是 D-20261110-03 里那 5 个"从未提交"模块的复算入口，因此那 21 条只按 `source_hashes` 固定的 manifest，在本机仍可被这些脚本复算、在 CI 里则完全不可复核——这与 §4b 里 11 条失效哈希是同一个根因（读数取自工作区、字节没进历史），不是本次类型修复引入的。
 
 **10. 附带结项：三条"单独重跑就过"的用例**：已单独立项判定，见 [跨进程证据立项](FINDING-CROSS_PROCESS_EVIDENCE_20261110.md)。结论是**三条都属于"测试写错了"**，不是实现硬伤，也与本次类型改动无关：两条跨进程摘要比对是父进程被同会话早先用例钉成 1 线程、子进程从机器默认起步（摘要随线程预算变，同预算下逐位确定）；一条是 Windows `process_time()` 的 1/64 s 量化在 ~40 ms 区间上与连续墙钟比大小。处置：两条摘要把子进程钉到父进程的预算；CPU 用例放宽一个 tick 并让 worker 与参考实现同为单线程。
+
+## D-20261110-05 线程预算决定末位字节：字节级结论的必要运行条件
+
+**1. 编号／时间／类型**：D-20261110-05｜2026-11-10｜**证据判据新增**（不是读数修正，不改任何已入库数字）。
+
+**2. 事实**：同一模型、同一输入、同一权重，父进程 12 线程与子进程 1 线程算出的 `content_digest` **不同**；同一对输入下 1 线程与 4 线程相同。机制：CPU intra-op 归约／浮点累加顺序随线程数变化，末位差异被摘要放大。该现象在本轮 4 条跨进程用例上实测复现（`test_native_content_training`、`test_corrected_old_baseline`、`test_content_binding_runner_contract`、`test_r029_engineering_gaps` 的 CPU 计时同源）。
+
+**3. 由此新增的判据（长期有效）**：一切"逐字节相同""摘要相同""`max|Δ|=0`""参数逐位一致"类结论，必须随结论一起写明运行条件——至少 torch 线程数，以及任何改变归约顺序的设置（`OMP_NUM_THREADS`／`MKL_NUM_THREADS`／`torch.set_num_threads`）。**未标注运行条件的字节级相等，一律视为"报告级声明、不可机器复核"**，不得作为能力证据引用。该判据已写入[能力卡 §13](CAPABILITY-CARD_20261103.md)。
+
+**4. 普查（只读，未改任何读数；`git ls-files` 计数）**：
+
+| 面 | 总数 | 含相等类断言 | 记录线程数 | 未记录 |
+| --- | --- | --- | --- | --- |
+| `reports/*.json` | 3523 | 225 | 13 | **212** |
+| 其中只带摘要字段（无相等断言） | — | 267 | 0 | **267** |
+| `plans/manifests/*.json` | 408 | 21 | 0 | **21**（另 5 份带运行时摘要） |
+
+口径：相等类断言＝`max_abs_delta`／`max_abs_diff`／`bytes_identical`／`bitwise`／`identical`／`equal`／`equal_fields` 等键，或正文"逐字节／byte-identical"；摘要字段＝`content_digest`／`probe_digest`／`checkpoint_digest`／`param_digest` 等；线程记录＝上述任一 `*_threads` 键或 `OMP`／`MKL`／`set_num_threads` 字样。manifest 的 `frozen_files` 是文件完整性哈希，与线程无关，不计入。
+
+关键受影响（被能力卡引用或直接支撑封存／确认口径）：`taiji_stop_boundary_20261109`（R57 封存读）及其 `_rebaseline_20261111`、`taiji_n1_plan176_candidate_equivalence_20261028`、`taiji_n1_v21/v22/v23_confirmation_readiness_20261019`、`taiji_n02_repeat_determinism_c4g_20261018`、`taiji_package19_2u_stop_boundary_ablation_20261105`、`taiji_selection_routing_17_2r_format_equivalence_20261104`、`taiji_n6_head_face_parity_2026101{0,2}`、`taiji_batch_c{,2}_arm_parity_2026101{3,4}`、`taiji_byte_address_20261108`。
+
+**5. 判断（是否有"两侧线程不同却报相同"）**：**已入库证据里没有发现这样的条目**。已确认的预算不一致全部出现在测试层：本轮 4 条跨进程用例，父进程被同会话早先用例钉成 1 线程、子进程从机器默认起步，它们报的是"不同"——方向是**假红**，不是假绿。风险面另记：57 个已入库脚本只在父进程写 `set_num_threads`、未给子进程传 `OMP`／`MKL`；是否构成风险取决于子进程是否重算浮点摘要，本轮未发现它们产生"相等"结论。
+
+**6. 影响**：该判据不改变任何读数，只改变**引用资格**——212 份报告里的相等结论从此按"缺运行条件"处理；补齐方式不是回写旧报告（旧报告不动），而是在今后新协议里随读数一起记录线程预算。
+
+**7. 撤回路径**：本条是判据登记，无代码与记录变更；撤回只需删除本条与能力卡 §13。
 

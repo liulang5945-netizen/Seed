@@ -90,7 +90,10 @@ def test_machine_bound_predicate_only_excuses_unrecoverable_pins(tmp_path: Path)
     relative = v16.seal_ast.repo_relative(tracked)
     assert relative is not None and _machine_bound(tracked) is False
 
-    ghost = f"/home/runner/work/Seed/Seed/{relative}"
+    #: 仓外但带仓库相对身份的路径。必须落在**本机真实检出之外**：早先写死
+    #: `/home/runner/work/Seed/Seed/...`，恰在 runner 上等于真实检出，于是这条
+    #: 「盘上无件也不豁免」的角在 CI 里反而因文件在位而红。
+    ghost = str(tmp_path / "other-checkout" / relative)
     assert not Path(ghost).is_file()
     assert _machine_bound(ghost) is False
 

@@ -254,9 +254,13 @@ def test_fresh_process_continuation_matches_uninterrupted(tmp_path: Path) -> Non
     uninterrupted.train_step(batch)
     expected_digest = str(uninterrupted.checkpoint()["checkpoint_digest"])
 
+    #: 末位字节随归约顺序变化：子进程若用默认线程数，而父进程已被同套件里
+    #: 别的用例设成 1 线程，摘要就会在“输入相同”之外分叉。两侧钉同一个预算。
+    threads = torch.get_num_threads()
     script = (
         f"import sys, json; sys.path.insert(0, r'{PROJECT_ROOT}');\n"
         "import torch\n"
+        f"torch.set_num_threads({threads})\n"
         "from taiji.sequence_content_workspace import SequenceContentTrainer\n"
         f"payload = torch.load(r'{path}', map_location='cpu', weights_only=False)\n"
         "trainer = SequenceContentTrainer.from_checkpoint(payload)\n"

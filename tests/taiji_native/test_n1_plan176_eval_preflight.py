@@ -12,6 +12,7 @@ from types import SimpleNamespace
 import pytest
 
 from scripts.training import evaluate_taiji_n1_plan176_foundation_pilot as evaluation
+from scripts.training import seal_ast
 from scripts.training.build_taiji_n1_plan176_foundation_corpus import (
     as_language_episode,
     build_rows,
@@ -47,6 +48,25 @@ def synthetic_preflight(tmp_path, monkeypatch):
     def source(path):
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(str(path.relative_to(root)), encoding="utf-8")
+
+    repo_attestation = seal_ast.recorded_value_attested
+
+    def attest(path, recorded):
+        """Attest the fixture's own bytes instead of the repo's file at the same suffix.
+
+        `seal_ast.recorded_value_attested` resolves an absolute path to its
+        repository-relative identity first, so a tmp tree that mirrors repo paths
+        would be attested (and then fail) against the real repo file.  Bytes in
+        place are the same evidence the production gate accepts, so the fixture
+        supplies them directly and delegates everything else.
+        """
+
+        candidate = Path(path)
+        if candidate.is_file() and evaluation.digest(candidate) == recorded:
+            return True
+        return repo_attestation(path, recorded)
+
+    monkeypatch.setattr(seal_ast, "recorded_value_attested", attest)
 
     source_names = (
         "scripts/training/run_taiji_n1_plan176_foundation_pilot.py",

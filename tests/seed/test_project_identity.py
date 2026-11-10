@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import re
 import tomllib
 from pathlib import Path
@@ -73,9 +74,23 @@ def test_active_plans_have_one_execution_owner_and_resolvable_links() -> None:
     }
     present = {path.name for path in roadmap.glob("*.md")}
     assert backbone <= present, f"roadmap backbone missing: {backbone - present}"
-    assert all(
-        path.is_file() and path.suffix == ".md" for path in roadmap.glob("0*")
-    ), "roadmap shards must all be markdown files"
+    #: 0x 编号下允许一种非 .md 件：原位旁挂的 `.md.superseded.json` 状态侧车
+    #: （原文件字节不动，侧车只记被谁取代）。它不是杂物，但必须自证：状态为
+    #: superseded，且指向的后继件真实在位——否则这条豁免就成了藏垃圾的后门。
+    entries = list(roadmap.glob("0*"))
+    sidecars = [path for path in entries if path.name.endswith(".md.superseded.json")]
+    valid = [
+        path for path in entries if (path.is_file() and path.suffix == ".md") or path in sidecars
+    ]
+    assert len(valid) == len(entries), (
+        "roadmap shards must be markdown files or md-supersede sidecars: "
+        f"{[path.name for path in entries if path not in valid]}"
+    )
+    for sidecar in sidecars:
+        status = json.loads(sidecar.read_text(encoding="utf-8"))
+        assert status.get("status") == "superseded", f"{sidecar.name} is not a supersede record"
+        successor = REPO / str(status.get("superseded_by", ""))
+        assert successor.is_file(), f"{sidecar.name} points at missing {successor}"
 
     execution_headings: list[tuple[Path, str]] = []
     for path in active.rglob("*.md"):

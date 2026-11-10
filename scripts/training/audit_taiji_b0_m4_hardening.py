@@ -130,6 +130,43 @@ SCAN_EXCLUSIONS: dict[str, str] = {
         "all_members_exhausted once as the literal under test. It never observes an episode "
         "and never compares a stop reason; every other B0 rule reason token occurs 0 times"
     ),
+    #: 2026-11-10 补：2026-10-29～11-08 的 N1-177／gate／selection-routing 收口脚本。
+    #: 八条都是**扫出来的**否证：B0 规则 reason 令牌（all_members_blocked /
+    #: all_members_exhausted / goal_reached / contract_intercepted / rule_revision）各 0 次；
+    #: 它们写的 stop_reason 是自己产出的预算/拒跑终止词（budget cap、refused_at_*、
+    #: candidate_sha mismatch 等），没有任何一处读或比较 B0 episode 的 stop reason。
+    "scripts/training/run_taiji_n1_plan177_6_t1_pilot.py": (
+        "writes its own hard-cap markers ('hard cap reached before canary completion', "
+        "'one or more fixed N177.6 hard caps reached'); zero B0 rule reason tokens"
+    ),
+    "scripts/training/evaluate_taiji_n1_plan177_6_t1_pilot.py": (
+        "writes budget_stop_reason ('CPU/wall/artifact cap safety reserve reached') into its "
+        "own evaluation context; it produces a budget word, never reads an episode reason"
+    ),
+    "scripts/training/run_taiji_n1_plan177_f_f1.py": (
+        "produces its own 'completed_planned_runs' / 'total_cpu_cap' / per-seed status word; "
+        "no B0 rule reason token occurs anywhere in the file"
+    ),
+    "scripts/training/probe_taiji_package21_3_representation_separability.py": (
+        "carries an engineering_stop free-text error string (exception repr) into its payload; "
+        "it is a crash label, not a B0 episode judgement"
+    ),
+    "scripts/training/probe_taiji_gate_g2b_20261108.py": (
+        "writes 'completed' / f'refused_at_{index}:{exit_code}' for its own child runs and "
+        "reads that same low_stop token back; none of it is a B0 episode reason"
+    ),
+    "scripts/training/probe_taiji_growth_gate_p3_20261108.py": (
+        "same instrument shape as G2b: its own 'completed' / refusal token, compared only "
+        "against itself to decide publication; zero B0 rule reason tokens"
+    ),
+    "scripts/training/verify_taiji_selection_routing_17_2r.py": (
+        "uses 'candidate_sha mismatch ...' / 'non-empty restore pre-check failed' as its own "
+        "verification verdict text, printed into its own report; no episode is observed"
+    ),
+    "scripts/training/verify_taiji_selection_routing_17_4_preflight.py": (
+        "joins its own preflight failure strings into stop_reason and tests only "
+        "'stop_reason is None'; it never compares a B0 episode reason"
+    ),
 }
 
 CANDIDATES_FOR_REVIEW: dict[str, float] = {
