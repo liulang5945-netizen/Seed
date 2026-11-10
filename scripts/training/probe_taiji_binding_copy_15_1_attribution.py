@@ -270,7 +270,7 @@ def main() -> int:
             "steps": STEPS,
             "tf_losses": tf_losses,
             "self_losses": self_losses,
-            "max_abs_gap": max(abs(a - b) for a, b in zip(tf_losses, self_losses)),
+            "max_abs_gap": max(abs(a - b) for a, b in zip(tf_losses, self_losses, strict=True)),
             "adam_calls": non_adam,
         }
 
