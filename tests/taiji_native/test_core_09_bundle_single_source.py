@@ -9,6 +9,7 @@ fails as soon as a second copy reappears in shipped code.
 
 from __future__ import annotations
 
+import subprocess
 from pathlib import Path
 
 from taiji.core_09_bundle import EXPECTED_SHA256
@@ -18,12 +19,23 @@ OWNER = "taiji/core_09_bundle.py"
 SCAN_ROOTS = ("taiji", "scripts")
 
 
+def _shipped_python_files() -> list[Path]:
+    """Git-tracked files only: an untracked local draft is not shipped code."""
+    listed = subprocess.run(
+        ["git", "ls-files", "-z", "--", *SCAN_ROOTS],
+        cwd=ROOT,
+        capture_output=True,
+        check=True,
+    ).stdout.decode("utf-8")
+    return [ROOT / name for name in listed.split("\0") if name.endswith(".py")]
+
+
 def test_the_sealed_sha256_is_spelled_out_in_exactly_one_shipped_file():
-    offenders = [
-        path.relative_to(ROOT).as_posix()
-        for root in SCAN_ROOTS
-        for path in (ROOT / root).rglob("*.py")
-        if path.relative_to(ROOT).as_posix() != OWNER
-        and EXPECTED_SHA256 in path.read_text(encoding="utf-8", errors="replace")
-    ]
+    offenders = []
+    for path in _shipped_python_files():
+        relative = path.relative_to(ROOT).as_posix()
+        if relative == OWNER:
+            continue
+        if EXPECTED_SHA256 in path.read_text(encoding="utf-8", errors="replace"):
+            offenders.append(relative)
     assert offenders == []
