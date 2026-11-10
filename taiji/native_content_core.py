@@ -23,7 +23,7 @@ import string
 from collections.abc import Mapping, Sequence
 from dataclasses import asdict, dataclass, replace
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import torch
 from torch import nn
@@ -825,14 +825,14 @@ class NativeContentCoreV1(ConditionalLanguageCandidateV3):
         tokens = torch.tensor(list(raw_span), dtype=torch.long)
         encoded, hidden = self.content_encoder(self.core.embedding(tokens.unsqueeze(0)))
         del encoded
-        return hidden[0, 0]
+        return cast(torch.Tensor, hidden[0, 0])
 
     def encode_query(self, query: bytes) -> torch.Tensor:
         _require_bytes(query, label="native content query")
         tokens = torch.tensor(list(query), dtype=torch.long)
         encoded, hidden = self.query_encoder(self.core.embedding(tokens.unsqueeze(0)))
         del encoded
-        return hidden[0, 0]
+        return cast(torch.Tensor, hidden[0, 0])
 
     # --- condition and read cache ----------------------------------------
 

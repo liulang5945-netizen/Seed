@@ -82,7 +82,7 @@ class NativeContentCoreV2(NativeContentCoreV1):
         state: Any,
         condition: NativeContentConditionV1,
         *,
-        store: NativeContentStoreV1,
+        store: NativeContentStoreV1 | None = None,
     ) -> NativeContentReadCacheV2:
         """Build the v1 read cache and bind it to the declared store.
 
@@ -92,6 +92,7 @@ class NativeContentCoreV2(NativeContentCoreV1):
         expected answer) into the copy channel.
         """
 
+        assert store is not None, "native content v2 requires the declared store binding"
         self.validate(state)
         known = {item.content_id: item for item in store.records}
         for record in condition.records:
@@ -157,11 +158,12 @@ class NativeContentCoreV2(NativeContentCoreV1):
         *,
         scope_id: str,
         session_id: str,
-        store: NativeContentStoreV1,
+        store: NativeContentStoreV1 | None = None,
         native_state_ref: str = "native-content:probe",
     ) -> torch.Tensor:
         """One logit row per target byte; the first target byte is supervised."""
 
+        assert store is not None, "native content v2 requires the declared store binding"
         if not target or len(target) > self.config.max_generation_bytes:
             raise ValueError("native content target is empty or exceeds the generation bound")
         state = self.conditioned_state(
@@ -225,11 +227,12 @@ class NativeContentCoreV2(NativeContentCoreV1):
         *,
         scope_id: str,
         session_id: str,
-        store: NativeContentStoreV1,
+        store: NativeContentStoreV1 | None = None,
         native_state_ref: str = "native-content:probe",
         max_new_bytes: int | None = None,
         stop_on_marker: bool = True,
     ) -> Any:
+        assert store is not None, "native content v2 requires the declared store binding"
         allowance = self.config.max_generation_bytes if max_new_bytes is None else max_new_bytes
         if allowance <= 0 or allowance > self.config.max_generation_bytes:
             raise ValueError("native content generation allowance is outside the declared bound")
@@ -276,6 +279,8 @@ class NativeContentBundleV2(NativeContentBundleV1):
     """A complete recoverable v2 entry: copy-track core plus versioned store."""
 
     FORMAT = NATIVE_CORE_BUNDLE_FORMAT_V2
+
+    model: NativeContentCoreV2
 
     @classmethod
     def create(

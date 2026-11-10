@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
+from typing import cast
 
 import torch
 from torch import nn
@@ -208,13 +209,13 @@ class RecordRelationEncoder(nn.Module):
         reference = self.W_c.weight
         if not raw:
             return reference.new_empty((0, self.config.width))
-        context = subject.encoder.context(raw)
+        context: torch.Tensor = subject.encoder.context(raw)
         local = position_features(len(raw), self.config.width, reference)
         activated = context + local
         if getattr(self, "local", False):
             return activated
         forward, _ = self.gru(activated.unsqueeze(1))
-        return activated + self.W_c(forward[:, 0, :])
+        return cast(torch.Tensor, activated + self.W_c(forward[:, 0, :]))
 
     def pool(self, units: torch.Tensor) -> torch.Tensor:
         if units.shape[0] == 0:
@@ -290,12 +291,14 @@ class RecordRelationEncoder(nn.Module):
 def goal_attention(
     encoder: RecordRelationEncoder, s: torch.Tensor, goal_units: torch.Tensor
 ) -> torch.Tensor:
-    q_goal = encoder.Q_goal(s)
+    q_goal: torch.Tensor = encoder.Q_goal(s)
     if goal_units.shape[0] == 0:
-        return encoder.V_goal(s.new_zeros(encoder.config.width))
-    keys = encoder.K_goal(goal_units)
-    values = encoder.V_goal(goal_units)
-    attention = torch.softmax(q_goal @ keys.T / math.sqrt(encoder.config.key_width), dim=-1)
+        return cast(torch.Tensor, encoder.V_goal(s.new_zeros(encoder.config.width)))
+    keys: torch.Tensor = encoder.K_goal(goal_units)
+    values: torch.Tensor = encoder.V_goal(goal_units)
+    attention: torch.Tensor = torch.softmax(
+        q_goal @ keys.T / math.sqrt(encoder.config.key_width), dim=-1
+    )
     return attention @ values
 
 

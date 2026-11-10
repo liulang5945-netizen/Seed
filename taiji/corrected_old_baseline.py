@@ -591,8 +591,20 @@ class CorrectedOldBaselineV1(ConditionalLanguageCandidateV3):
         bias: torch.Tensor = self.value_bias(torch.tensor(index, dtype=torch.long))
         return bias
 
-    def _conditioned_state(self, query: bytes, *, owner: str, scope: str, session: str):
-        state = self.new_state(scope_id=scope, session_id=session, native_state_ref="corrected-old")
+    def _conditioned_state(
+        self,
+        query: bytes,
+        *,
+        owner: str,
+        scope: str,
+        session: str,
+        native_state_ref: str | None = None,
+    ):
+        state = self.new_state(
+            scope_id=scope,
+            session_id=session,
+            native_state_ref="corrected-old" if native_state_ref is None else native_state_ref,
+        )
         return self.step_task(
             query,
             state,
@@ -607,19 +619,33 @@ class CorrectedOldBaselineV1(ConditionalLanguageCandidateV3):
 
     def teacher_forced(
         self,
+        prompt: bytes | None = None,
+        target: bytes = b"",
         *,
-        query: bytes,
-        target: bytes,
-        value: str | None,
+        query: bytes | None = None,
+        value: str | None = None,
         owner: str = "u",
         scope: str = "w",
         session: str = "s",
+        scope_id: str | None = None,
+        session_id: str | None = None,
+        native_state_ref: str | None = None,
     ) -> torch.Tensor:
         """One logit row per target byte; row 0 predicts target[0]."""
 
+        if query is None:
+            query = prompt
+        if query is None:
+            raise TypeError("teacher_forced requires query or prompt bytes")
+        if scope_id is not None:
+            scope = scope_id
+        if session_id is not None:
+            session = session_id
         if not target or len(target) > self.config.max_generation_bytes:
             raise ValueError("corrected-old target is empty or exceeds the generation bound")
-        state = self._conditioned_state(query, owner=owner, scope=scope, session=session)
+        state = self._conditioned_state(
+            query, owner=owner, scope=scope, session=session, native_state_ref=native_state_ref
+        )
         cache = self.evidence_cache(state)
         bias = self.value_bias_for(value)
         rows: list[torch.Tensor] = []

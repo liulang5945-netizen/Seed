@@ -10,6 +10,7 @@ any learning reading is meaningful.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from typing import cast
 
 from taiji.activity_learning import COMPUTE_COST, INTERACT_REWARD
 from taiji.native_activity import ActivityEnvironment
@@ -86,4 +87,4 @@ def oracle_cumulative_reward(rounds: int, interval: int = INTERVAL_TICKS) -> dic
 
 
 def reachable(rounds: int, floor: float, interval: int = INTERVAL_TICKS) -> bool:
-    return oracle_cumulative_reward(rounds, interval)["oracle_reward"] >= floor
+    return cast(float, oracle_cumulative_reward(rounds, interval)["oracle_reward"]) >= floor

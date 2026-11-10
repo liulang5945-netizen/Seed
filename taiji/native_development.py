@@ -98,7 +98,8 @@ def coverage_birth_arm(parent, book, fit_credits, verdicts):
                 caps[name] = entry["rank_num"]
         for name, units in _max_min_allocate(alive, caps)["allocation"].items():
             allocation[name] = units
-    directions, unit_branches = {}, []
+    directions: dict[int, list] = {}
+    unit_branches = []
     counts = {group: 0 for group in range(parent.config.groups)}
     for name, units in sorted(allocation.items()):
         for group in range(parent.config.groups):
@@ -150,7 +151,8 @@ def gradmax_arm(parent, full_credits):
 
 def conditional_svd_arm(parent, book, fit_credits, verdicts):
     """Per-branch top-r_c without max-min or the shared budget."""
-    directions, unit_branches = {}, []
+    directions: dict[int, list] = {}
+    unit_branches = []
     counts = {group: 0 for group in range(parent.config.groups)}
     for name in book.branch_ids:
         for group in range(parent.config.groups):

@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
+from typing import cast
 
 import torch
 import torch.nn.functional as F
@@ -115,7 +116,7 @@ def context_batch(encoder, raws, reference: torch.Tensor) -> torch.Tensor:
         width = encoder.input.out_features
         return reference.new_empty((len(raws), 0, width))
     ids = torch.tensor([list(raw) for raw in raws], dtype=torch.long, device=reference.device)
-    value = encoder.input(encoder.embedding(ids)).transpose(1, 2)
+    value: torch.Tensor = encoder.input(encoder.embedding(ids)).transpose(1, 2)
     for convolution in encoder.convolutions:
         value = value + torch.tanh(convolution(F.pad(value, (2 * convolution.dilation[0], 0))))
     return value.transpose(1, 2)
@@ -135,7 +136,7 @@ def patch_events_batch(encoder, context: torch.Tensor) -> torch.Tensor:
     if pad:
         counts[-1] = float(BLOCK - pad)
     means = summed / counts[None, :, None]
-    return encoder.event(means)
+    return cast(torch.Tensor, encoder.event(means))
 
 
 def goal_vector_batch(encoder, raws, reference: torch.Tensor) -> torch.Tensor:
@@ -145,7 +146,7 @@ def goal_vector_batch(encoder, raws, reference: torch.Tensor) -> torch.Tensor:
     if any(not raw for raw in raws):
         return reference.new_zeros((len(raws), width))
     context = context_batch(encoder, raws, reference)
-    return encoder.goal(context.mean(1))
+    return cast(torch.Tensor, encoder.goal(context.mean(1)))
 
 
 def patch_table(core, reference: torch.Tensor) -> torch.Tensor:
@@ -516,7 +517,7 @@ def step_batch(
     )
     if parent_units < core.R.shape[1]:
         activated = torch.tanh(torch.einsum("nmp,bnp->bnm", core.R[:, parent_units:, :], x))
-        activated = activated * gate_rows.unsqueeze(0)
+        activated = activated * cast(torch.Tensor, gate_rows).unsqueeze(0)
         pre = pre + torch.einsum("ndm,bnm->bnd", core.P[:, :, parent_units:], activated)
     leak = const["leak"].unsqueeze(0).unsqueeze(-1)
     h = (1 - leak) * h0 + leak * torch.tanh(pre)

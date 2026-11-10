@@ -18,7 +18,7 @@ import traceback
 from collections.abc import Iterable
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import torch
 from torch import nn
@@ -598,10 +598,13 @@ def run_binding_worker(spec: dict) -> dict:
                     "post_h": h_post.detach(),
                     "grad_norm": float(
                         torch.sqrt(
-                            sum(
-                                parameter.grad.detach().square().sum()
-                                for parameter in trainable
-                                if parameter.grad is not None
+                            cast(
+                                torch.Tensor,
+                                sum(
+                                    parameter.grad.detach().square().sum()
+                                    for parameter in trainable
+                                    if parameter.grad is not None
+                                ),
                             )
                         )
                     ),
@@ -748,10 +751,13 @@ def run_module_worker(spec: dict) -> dict:
                     "post_probabilities": post_probabilities.detach(),
                     "grad_norm": float(
                         torch.sqrt(
-                            sum(
-                                parameter.grad.detach().square().sum()
-                                for parameter in trainable
-                                if parameter.grad is not None
+                            cast(
+                                torch.Tensor,
+                                sum(
+                                    parameter.grad.detach().square().sum()
+                                    for parameter in trainable
+                                    if parameter.grad is not None
+                                ),
                             )
                         )
                     ),

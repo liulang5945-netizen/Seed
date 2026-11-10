@@ -9,6 +9,8 @@ source level.
 
 from __future__ import annotations
 
+from typing import cast
+
 import torch
 
 from taiji.living_core import LivingCoreReference
@@ -69,7 +71,10 @@ def window_directions(
         loss = window_nll(parent, journal, start, end, provider)
         loss.backward()
         collected.append(
-            [parent.P.grad[group].detach().clone() for group in range(parent.config.groups)]
+            [
+                cast(torch.Tensor, parent.P.grad)[group].detach().clone()
+                for group in range(parent.config.groups)
+            ]
         )
     parent.zero_grad(set_to_none=True)
     return collected

@@ -20,7 +20,7 @@ from typing import Any
 import torch
 from torch import nn
 
-from taiji.living_core import EOS, LivingState, RawSource
+from taiji.living_core import EOS, LivingCoreReference, LivingState, RawSource
 
 ARMS = ("CF1", "B_EH")
 FAST_ARM = "CF1"
@@ -90,6 +90,9 @@ def state_digest(state: RuleState) -> str:
         ("prior", living.prior.detach().cpu().numpy().tobytes()),
     ]
     if living.store_keys is not None:
+        assert living.store_values is not None
+        assert living.store_age is not None
+        assert living.store_count is not None
         rows.extend(
             [
                 ("store_keys", living.store_keys.detach().cpu().numpy().tobytes()),
@@ -109,7 +112,7 @@ class RuleLearningGraph(nn.Module):
 
     def __init__(
         self,
-        subject: nn.Module,
+        subject: LivingCoreReference,
         *,
         arm: str,
         growth_gates: dict[str, float] | None = None,
@@ -298,6 +301,9 @@ class RuleLearningGraph(nn.Module):
             "graph_revision": state.revision,
         }
         if living.store_keys is not None:
+            assert living.store_values is not None
+            assert living.store_age is not None
+            assert living.store_count is not None
             payload["store_keys"] = living.store_keys.detach().cpu().clone()
             payload["store_values"] = living.store_values.detach().cpu().clone()
             payload["store_age"] = living.store_age.detach().cpu().clone()
@@ -351,7 +357,7 @@ class RuleLearningGraph(nn.Module):
         return torch.full((c.groups, c.fast_heads), bool(enabled), dtype=torch.bool)
 
     @staticmethod
-    def _patch(subject: nn.Module, byte: int) -> torch.Tensor:
+    def _patch(subject: LivingCoreReference, byte: int) -> torch.Tensor:
         if byte == EOS:
             return subject.W.new_zeros(subject.config.width)
         return subject.encoder.patches(bytes([byte]))[0]
@@ -556,7 +562,7 @@ class RuleLearningGraph(nn.Module):
         }
 
 
-def copy_subject(subject: nn.Module) -> nn.Module:
+def copy_subject(subject: LivingCoreReference) -> LivingCoreReference:
     clone = copy.deepcopy(subject)
     clone.eval()
     return clone

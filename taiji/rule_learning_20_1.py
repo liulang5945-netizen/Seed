@@ -23,7 +23,7 @@ import hashlib
 import itertools
 import random
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, cast
 
 SEED = 20261105
 ATTRIBUTES = (
@@ -180,7 +180,7 @@ def build_world(seed: int, index: int) -> dict[str, Any]:
     # session 1: blind anchors -> v1 feedback -> five non-anchor answers.
     anchor_turns = []
     for position in anchor_v1:
-        bits = ANCHORS[position]
+        bits: tuple[int, ...] = ANCHORS[position]
         anchor_turns.append(add(1, "anchor_blind", names[0], bits, 1, order_v1, 1, True))
     batch_v1 = [
         {
@@ -290,7 +290,7 @@ def build_world(seed: int, index: int) -> dict[str, Any]:
 
 def response_only(world: dict[str, Any]) -> dict[str, Any]:
     """The exact view a graph may read; scoring truth is dropped."""
-    return world["response"]
+    return cast(dict[str, Any], world["response"])
 
 
 def shuffled_truth(world: dict[str, Any], rng: random.Random) -> dict[str, Any]:
@@ -347,7 +347,7 @@ def example_stats(worlds: list[dict[str, Any]]) -> dict[str, Any]:
 
 
 def turn_byte_stats(worlds: list[dict[str, Any]]) -> dict[str, Any]:
-    rows = {}
+    rows: dict[str, dict[str, int]] = {}
     for world in worlds:
         for turn in world["response"]["turns"]:
             key = turn["kind"]

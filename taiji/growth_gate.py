@@ -46,7 +46,7 @@ import json
 import os
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 
@@ -223,7 +223,7 @@ def _active(state: GateState) -> tuple[np.ndarray, np.ndarray]:
 
 def _normalize(matrix: np.ndarray) -> np.ndarray:
     norms = np.clip(np.linalg.norm(matrix, axis=-1, keepdims=True), 1e-12, None)
-    return matrix / norms
+    return cast(np.ndarray, matrix / norms)
 
 
 def _read(state: GateState, key: np.ndarray) -> tuple[int, np.ndarray, np.ndarray]:

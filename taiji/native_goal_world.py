@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import random
 from dataclasses import dataclass
+from typing import cast
 
 OBJECTS = ("蓝色杯子", "红色印章")
 PLACES = ("木桌", "窗台", "左盒")
@@ -68,7 +69,9 @@ def legal_moves(state: WorldState, *, occupy: bool = False) -> tuple[tuple[str, 
     return tuple(moves)
 
 
-def encode_actions(moves: tuple[tuple[str, str], ...], *, seed: int, step_index: int) -> dict:
+def encode_actions(
+    moves: tuple[tuple[str, str], ...], *, seed: int, step_index: int
+) -> dict[str, dict[str, str]]:
     """Shuffle the move list into opaque ids; the id order carries no meaning."""
     order = list(moves)
     random.Random(seed * 1000 + step_index).shuffle(order)
@@ -92,7 +95,7 @@ def score(state: WorldState, goal: Goal) -> float:
 
 def optimal(state: WorldState, goal: Goal, limit: int = MAX_STEPS, *, occupy: bool = False) -> dict:
     """Exhaustive bread-first search; the state space is tiny, so this is exact."""
-    frontier = [(state, ())]
+    frontier: list[tuple[WorldState, tuple[tuple[str, str], ...]]] = [(state, ())]
     best = {"score": score(state, goal), "moves": (), "steps": 0}
     seen = {state.where}
     for _depth in range(limit):
@@ -102,7 +105,7 @@ def optimal(state: WorldState, goal: Goal, limit: int = MAX_STEPS, *, occupy: bo
                 nxt = step(current, move, occupy=occupy)
                 path_next = path + (move,)
                 candidate = score(nxt, goal)
-                if candidate > best["score"]:
+                if candidate > cast(float, best["score"]):
                     best = {"score": candidate, "moves": path_next, "steps": nxt.steps}
                 if nxt.where not in seen:
                     seen.add(nxt.where)
@@ -121,7 +124,7 @@ def run_policy(
     occupy: bool = False,
 ) -> dict:
     """Execute a declared shortcut policy; it may stop early once the goal holds."""
-    history = []
+    history: list[str] = []
     for step_index in range(limit):
         if goal.satisfied(state):
             break
@@ -137,23 +140,23 @@ def run_policy(
     return {"score": score(state, goal), "actions": history, "state": state}
 
 
-def first_legal(actions: dict, state: WorldState, history: list) -> str:
+def first_legal(actions: dict[str, dict[str, str]], state: WorldState, history: list[str]) -> str:
     """Canonical order, ignoring the shuffled ids; distinct from lowest_id."""
     return min(actions, key=lambda key: (actions[key]["object"], actions[key]["place"]))
 
 
-def lowest_id(actions: dict, state: WorldState, history: list) -> str:
+def lowest_id(actions: dict[str, dict[str, str]], state: WorldState, history: list[str]) -> str:
     return min(actions, key=lambda key: int(key[len(ACTION_PREFIX) :]))
 
 
-def fixed_object(actions: dict, state: WorldState, history: list) -> str:
+def fixed_object(actions: dict[str, dict[str, str]], state: WorldState, history: list[str]) -> str:
     for action_id, payload in actions.items():
         if payload["object"] == OBJECTS[0]:
             return action_id
     return sorted(actions)[0]
 
 
-def cycle(actions: dict, state: WorldState, history: list) -> str:
+def cycle(actions: dict[str, dict[str, str]], state: WorldState, history: list[str]) -> str:
     wanted = (OBJECTS[0], PLACES[1]) if len(history) % 2 == 0 else (OBJECTS[0], PLACES[0])
     for action_id, payload in actions.items():
         if (payload["object"], payload["place"]) == wanted:

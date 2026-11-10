@@ -12,6 +12,7 @@ nu features are rebuilt from the subject EMA with unknown flags (declared).
 from __future__ import annotations
 
 from dataclasses import replace
+from typing import Any, cast
 
 import torch
 from torch import nn
@@ -38,7 +39,7 @@ class ActivityPolicy(nn.Module):
             self.output = nn.Linear(HIDDEN, len(ACTIVITIES))
 
     def forward(self, features: torch.Tensor) -> torch.Tensor:
-        return self.output(torch.tanh(self.input(features)))
+        return cast(torch.Tensor, self.output(torch.tanh(self.input(features))))
 
 
 class ActivityEnvironment:
@@ -279,7 +280,12 @@ def run_round(
     elif activity == "imagine":
         imagined = True
         event = imagined_event(last_event, len(journal))
-        step_kwargs = {"goal": env.goal, "records": env.store, "mode": 2, "now": env.now}
+        step_kwargs: dict[str, Any] = {
+            "goal": env.goal,
+            "records": env.store,
+            "mode": 2,
+            "now": env.now,
+        }
         if gates is not None:
             step_kwargs["growth_gates"] = gates
         output = model.step(state, event=event, **step_kwargs)

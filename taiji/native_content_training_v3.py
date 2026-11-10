@@ -15,13 +15,12 @@ Forward paths, parameters and checkpoint tensors are identical to
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
-from typing import Any
+from typing import Any, cast
 
 import torch
 from torch.nn import functional as F
 
-from .native_content_core import NativeContentStoreV1
-from .native_content_core_v2 import NativeContentCoreV2
+from .native_content_core import NativeContentCoreV1, NativeContentStoreV1
 from .native_content_core_v3 import (
     NativeContentBundleV3,
     NativeContentCoreV3,
@@ -44,17 +43,17 @@ class NativeContentV3Adapter(NativeContentV2Adapter):
     def __init__(self) -> None:
         super().__init__()
         self.branch_counters["aux_turns"] = 0
-        self.branch_counters["aux_loss_sum"] = 0.0
+        cast(dict[str, Any], self.branch_counters)["aux_loss_sum"] = 0.0
 
     def reset_branch_counters(self) -> None:
         super().reset_branch_counters()
         self.branch_counters["aux_turns"] = 0
-        self.branch_counters["aux_loss_sum"] = 0.0
+        cast(dict[str, Any], self.branch_counters)["aux_loss_sum"] = 0.0
 
     def create_model(self) -> NativeContentCoreV3:
         return NativeContentCoreV3(native_core_config())
 
-    def fresh_bundle(self, model: NativeContentCoreV3) -> NativeContentBundleV3:
+    def fresh_bundle(self, model: NativeContentCoreV1) -> NativeContentBundleV3:
         return NativeContentBundleV3(model=model, store=NativeContentStoreV1(()), cursor={})
 
     def from_bundle_payload(self, payload: Mapping[str, Any]) -> NativeContentBundleV3:
@@ -120,7 +119,7 @@ class NativeContentV3Adapter(NativeContentV2Adapter):
 
     def loss_terms(
         self,
-        model: NativeContentCoreV2,
+        model: NativeContentCoreV1,
         episode: Mapping[str, Any],
         *,
         owner: str,
@@ -150,7 +149,7 @@ class NativeContentV3Adapter(NativeContentV2Adapter):
             if auxiliary is not None:
                 terms.append(auxiliary)
                 self.branch_counters["aux_turns"] += 1
-                self.branch_counters["aux_loss_sum"] += aux_value
+                cast(dict[str, Any], self.branch_counters)["aux_loss_sum"] += aux_value
         if total <= 0:
             raise ValueError("native v3 episode produced no supervised bytes")
         self.branch_counters["episodes_seen"] += 1

@@ -14,6 +14,7 @@ import math
 import time
 from dataclasses import dataclass
 from pathlib import Path
+from typing import cast
 
 import torch
 
@@ -294,6 +295,9 @@ def save_subject(
         "extra": extra or {},
     }
     if state.store_keys is not None:
+        assert state.store_values is not None
+        assert state.store_age is not None
+        assert state.store_count is not None
         bundle["store"] = {
             "keys": state.store_keys.detach().cpu().clone(),
             "values": state.store_values.detach().cpu().clone(),
@@ -305,7 +309,7 @@ def save_subject(
 
 
 def load_subject(path) -> dict:
-    return torch.load(path, weights_only=True)
+    return cast(dict, torch.load(path, weights_only=True))
 
 
 def resume_subject(bundle: dict):

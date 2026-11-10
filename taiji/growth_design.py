@@ -19,7 +19,7 @@ loads weights or touches a checkpoint.
 from __future__ import annotations
 
 import itertools
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 
@@ -45,7 +45,7 @@ THRESHOLDS = {
 
 def unit_rows(values: np.ndarray) -> np.ndarray:
     norms = np.linalg.norm(values, axis=-1, keepdims=True)
-    return values / np.clip(norms, 1e-12, None)
+    return cast(np.ndarray, values / np.clip(norms, 1e-12, None))
 
 
 def _spectrum(values: np.ndarray) -> dict[str, float]:

@@ -76,7 +76,9 @@ def check_goal_names_no_answer_entity(samples: list[Mapping], entities: Iterable
 
 
 def check_goal_shares_no_bigram_with_action(samples: list[Mapping]) -> dict:
-    worst, worst_index, total = set(), None, 0
+    worst: set[str] = set()
+    worst_index: int | None = None
+    total = 0
     for index, sample in enumerate(samples):
         shared = bigrams(sample["goal"]) & bigrams(sample["action"])
         total += len(shared)
@@ -116,7 +118,8 @@ def check_goal_carries_no_action_template(samples: list[Mapping]) -> dict:
 
 
 def check_mapping_only_reachable_through_records(samples: list[Mapping]) -> dict:
-    missing, in_goal = [], []
+    missing: list[dict] = []
+    in_goal: list[dict] = []
     for index, sample in enumerate(samples):
         records = "".join(sample.get("records") or ())
         absent = [name for name in sample["answer_entities"] if name not in records]

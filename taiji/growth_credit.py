@@ -430,6 +430,8 @@ def allocate(
         key = (min(rhos.values()), sum(rhos.values()), -sum(combination), combination)
         if best_key is None or key > best_key:
             best_key, best = key, dict(zip(ids, combination, strict=True))
+    assert best is not None
+    assert best_key is not None
     allocation = {branch: units for branch, units in best.items() if units > 0}
     uncovered = [branch for branch, units in best.items() if units == 0]
     return {

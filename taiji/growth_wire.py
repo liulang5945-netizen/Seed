@@ -22,7 +22,7 @@ is state, not weights.  The frozen files listed in
 from __future__ import annotations
 
 from dataclasses import dataclass, replace
-from typing import Any
+from typing import Any, cast
 
 import torch
 
@@ -33,6 +33,7 @@ from taiji.growth_gate import (
 )
 from taiji.growth_runtime import DEFAULT_RESERVE_RATIO, plan_growth, write_headroom
 from taiji.living_core import LivingState
+from taiji.sc_sfk import AddressTable
 
 SESSION_SCHEMA = "taiji-growth-wire-v1"
 
@@ -49,13 +50,13 @@ class GrowthWireConfig:
 
 def store_capacity(state: LivingState) -> int:
     if state.sc_sfk is not None:
-        return int(state.sc_sfk.capacity)
+        return int(cast(AddressTable, state.sc_sfk).capacity)
     return 0 if state.store_keys is None else int(state.store_keys.shape[0])
 
 
 def store_occupied(state: LivingState) -> int:
     if state.sc_sfk is not None:
-        return len(state.sc_sfk.addresses)
+        return len(cast(AddressTable, state.sc_sfk).addresses)
     if state.store_age is None:
         return 0
     return int((state.store_age >= 0).sum())
@@ -63,7 +64,7 @@ def store_occupied(state: LivingState) -> int:
 
 def store_bytes(state: LivingState) -> int:
     if state.sc_sfk is not None:
-        return int(state.sc_sfk.nbytes())
+        return int(cast(AddressTable, state.sc_sfk).nbytes())
     total = 0
     for tensor in (state.store_keys, state.store_values, state.store_age):
         if tensor is not None:
@@ -108,6 +109,8 @@ def grow_store(state: LivingState, slots: int) -> tuple[LivingState, dict[str, A
     current = store_capacity(state)
     if state.store_keys is None or int(slots) <= current:
         return state, {"action": "unchanged", "slots": current, "added": 0, "bytes_added": 0}
+    assert state.store_values is not None
+    assert state.store_age is not None
     extra = int(slots) - current
     keys = torch.cat(
         [state.store_keys, state.store_keys.new_zeros((extra, state.store_keys.shape[1]))]
@@ -153,7 +156,7 @@ def session_boundary(
             {
                 "action": "table_owns_capacity",
                 "reason": "sc_sfk_capacity",
-                "generation": int(state.sc_sfk.generation),
+                "generation": int(cast(AddressTable, state.sc_sfk).generation),
                 "state_same_object": True,
                 "bytes_added": 0,
             }
@@ -226,9 +229,11 @@ def session_write(
         )
         return out, info
     if not config.enabled:
-        return subject.addressed_write(state, raw)
+        return cast(tuple[LivingState, dict[str, Any]], subject.addressed_write(state, raw))
     if state.store_keys is None:
         state = subject.attach_store(state)
+    assert state.store_keys is not None
+    assert state.store_age is not None
     capacity = store_capacity(state)
     occupied = store_occupied(state)
     key = subject.store_query_key(state, raw) if key is None else key

@@ -9,6 +9,7 @@ the scoring path accepts text.
 from __future__ import annotations
 
 import random
+from collections.abc import Iterable
 from dataclasses import dataclass, field
 
 from taiji.goal_binding import Binding
@@ -61,7 +62,7 @@ def _best_within(
     """
     best_score = state_score(state, binding)
     best_trail: tuple[WorldState, ...] = ()
-    stack = [(state, ())]
+    stack: list[tuple[WorldState, tuple[WorldState, ...]]] = [(state, ())]
     while stack:
         current, trail = stack.pop()
         if len(trail) >= depth or binding.satisfied(current):
@@ -101,7 +102,9 @@ def _intent(binding, state, chosen, predicted, trail, value) -> ActionIntent:
     )
 
 
-def _greedy_move(binding: Binding, state: WorldState, moves) -> tuple[str, str]:
+def _greedy_move(
+    binding: Binding, state: WorldState, moves: Iterable[tuple[str, str]]
+) -> tuple[str, str]:
     """Simple heuristic: move the bound object one place closer to its target."""
     del state
     targets = {obj: place for obj, place, polarity in binding.conditions if polarity > 0}

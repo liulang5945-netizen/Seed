@@ -11,7 +11,7 @@ from __future__ import annotations
 import hashlib
 from dataclasses import asdict, dataclass, replace
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import torch
 from torch import nn
@@ -83,7 +83,7 @@ class SelectionHead(nn.Module):
 
     def encode(self, text: bytes) -> torch.Tensor:
         ids = torch.tensor(list(text), dtype=torch.long)
-        return self.byte_embed(ids).mean(0)
+        return cast(torch.Tensor, self.byte_embed(ids).mean(0))
 
     def scores(self, goal: bytes, keys: list[str]) -> torch.Tensor:
         goal_vec = self.goal_proj(self.encode(goal))
@@ -93,7 +93,7 @@ class SelectionHead(nn.Module):
             pos = self.pos_embed(torch.tensor(index, dtype=torch.long))
             rows.append(torch.cat([goal_vec, key_vec, pos]))
         stacked = torch.stack(rows)
-        return self.scorer2(torch.tanh(self.scorer1(stacked))).squeeze(-1)
+        return cast(torch.Tensor, self.scorer2(torch.tanh(self.scorer1(stacked)))).squeeze(-1)
 
     def forward(self, goal: bytes, keys: list[str]) -> torch.Tensor:
         return self.scores(goal, keys)
@@ -341,7 +341,7 @@ def locked_loss(
         )
         gate_index = step.gate_index
         previous = int(label)
-    return sum(losses) / len(losses)
+    return cast(torch.Tensor, sum(losses) / len(losses))
 
 
 def selection_ce(
@@ -352,7 +352,8 @@ def selection_ce(
 
 
 def candidate_digest(candidate: SelectionCandidate) -> str:
-    params = dict(candidate_parameter_map(candidate.binding))
+    base = cast(RecordRelationCandidate, candidate.binding)
+    params = dict(candidate_parameter_map(base))
     params.update({f"head.{name}": value for name, value in candidate.head.state_dict().items()})
     return str(parameter_digest(params))
 
@@ -362,7 +363,7 @@ def state_payload(state: BindingState) -> dict:
 
 
 def _state_from_payload(payload: dict, binding: BindingCopyCandidate) -> BindingState:
-    living = state_from_payload(payload["living"], binding.subject.W)
+    living = state_from_payload(payload["living"], cast(torch.Tensor, binding.subject.W))
     reference = binding.subject.W
     return BindingState(
         living=living,
@@ -385,21 +386,22 @@ def save_bundle(
     cursor: dict,
     parent_identity: dict,
 ) -> dict:
+    base = cast(RecordRelationCandidate, candidate.binding.base)
     payload = {
         "schema": SELECTION_SCHEMA,
         "step": "N16.1.0b",
         "profile": profile,
         "dtype": str(next(candidate.binding.parameters()).dtype).replace("torch.", ""),
-        "relation_config": asdict(candidate.binding.base.config),
+        "relation_config": asdict(base.config),
         "binding_config": asdict(candidate.binding.config),
         "selection_config": asdict(candidate.head.config),
         "subject_config": dict(vars(candidate.binding.subject.config)),
         "growth_parent_units": getattr(candidate.binding.subject, "growth_parent_units", None),
         "growth_unit_branches": getattr(candidate.binding.subject, "growth_unit_branches", []),
         "growth_gates": list(candidate.binding.growth_gates),
-        "base_arm": candidate.binding.base.arm,
+        "base_arm": base.arm,
         "parent": parent_identity,
-        "parameters": candidate_parameter_map(candidate.binding),
+        "parameters": candidate_parameter_map(cast(RecordRelationCandidate, candidate.binding)),
         "head_parameters": dict(candidate.head.state_dict()),
         "state": state_payload(state),
         "optimizer": optimizer.state_dict(),

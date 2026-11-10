@@ -164,18 +164,18 @@ def window_address_audit() -> dict[str, Any]:
     }
     scope = ("read", "contains_contiguous", "window_overlap", "identity", "windows")
     literals: dict[str, list[float]] = {}
-    for node in ast.walk(tree):
-        if isinstance(node, ast.FunctionDef) and node.name in scope:
+    for walked in ast.walk(tree):
+        if isinstance(walked, ast.FunctionDef) and walked.name in scope:
             values = sorted(
                 {
                     float(item.value)
-                    for item in ast.walk(node)
+                    for item in ast.walk(walked)
                     if isinstance(item, ast.Constant)
                     and isinstance(item.value, (int, float))
                     and not isinstance(item.value, bool)
                 }
             )
-            literals[node.name] = values
+            literals[walked.name] = values
     return {
         "constants": constants,
         "read_path_literals": literals,
@@ -262,6 +262,7 @@ class WindowAddressTable:
             reason = self._admission(ident, value)
             if reason == "merge":
                 index = self.find(ident)
+                assert index is not None
                 self.addresses[index]["count"] = int(self.addresses[index]["count"]) + 1
                 self.merged += 1
                 accepted.append({"item": position, "address": index, "action": "merged_duplicate"})
@@ -334,6 +335,7 @@ class WindowAddressTable:
             decision = "ambiguous_multiple_anchors"
         else:
             decision = "no_match"
+        top: dict[str, Any] | None
         if anchors:
             pool = anchors
             top = pool[0]

@@ -15,6 +15,7 @@ import copy
 import hashlib
 import math
 from pathlib import Path
+from typing import Any
 
 import torch
 
@@ -50,7 +51,7 @@ class CandidateSession:
         self.gates = payload["growth_gates"][0]
         self.initial_digest = state_digest(self.state)
         self.goal = b""
-        self.records = ()
+        self.records: tuple[Any, ...] = ()
         self.transcript: list[dict] = []
 
     def _record(self, entry: dict) -> dict:

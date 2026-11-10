@@ -97,6 +97,7 @@ def bind(goal_text: str, state: WorldState) -> Binding:
         if reason is not None:
             unknowns = ("object",) if reason == "missing_referent" else ()
             return Binding((), abstain=True, reason=reason, unknowns=unknowns)
+        assert condition is not None
         conditions.append(condition)
     if not conditions:
         return Binding((), abstain=True, reason="unsupported")

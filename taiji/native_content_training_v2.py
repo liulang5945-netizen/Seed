@@ -23,12 +23,12 @@ from __future__ import annotations
 
 import random
 from collections.abc import Mapping, Sequence
-from typing import Any
+from typing import Any, cast
 
 import torch
 from torch.nn import functional as F
 
-from .native_content_core import NativeContentStoreV1
+from .native_content_core import NativeContentCoreV1, NativeContentStoreV1
 from .native_content_core_v2 import NativeContentBundleV2, NativeContentCoreV2
 from .native_content_training import (
     FACT_ROLES,
@@ -73,8 +73,10 @@ class NativeContentV2Adapter(NativeContentAdapterV1):
     def create_model(self) -> NativeContentCoreV2:
         return NativeContentCoreV2(native_core_config_v2())
 
-    def fresh_bundle(self, model: NativeContentCoreV2) -> NativeContentBundleV2:
-        return NativeContentBundleV2(model=model, store=NativeContentStoreV1(()), cursor={})
+    def fresh_bundle(self, model: NativeContentCoreV1) -> NativeContentBundleV2:
+        return NativeContentBundleV2(
+            model=cast(NativeContentCoreV2, model), store=NativeContentStoreV1(()), cursor={}
+        )
 
     def from_bundle_payload(self, payload: Mapping[str, Any]) -> NativeContentBundleV2:
         return NativeContentBundleV2.from_checkpoint(payload)
@@ -134,7 +136,7 @@ class NativeContentV2Adapter(NativeContentAdapterV1):
 
     def loss_terms(
         self,
-        model: NativeContentCoreV2,
+        model: NativeContentCoreV1,
         episode: Mapping[str, Any],
         *,
         owner: str,
