@@ -1,5 +1,7 @@
 # FEC-1 裁决窗口后续推进计划（2026-11-07）
 
+> 2026-11-10导航更新。FEC及后继F学习窗已按各自证据收案，现行共同主体设计与工作卡见[U2](SPEC-TAIJI-CLOSED_LOOP_U2_20261110.md)及[执行包22](PLAN-TAIJI-CLOSED_LOOP_DEVELOPMENT_20261110.md)，本件只保留历史合同与分支来源。
+
 > 状态 [细化计划·受 MASTER-PLAN / ROADMAP-NEXT 统辖，**不发布队首**]。取证时点 2026-11-07 14:00，基线 `e5a2ff4ed`。本件只做「FEC-1 执行后的全部分支路径细化：可能出现的问题／替换方案／结项条件」，队首与状态仍由 [MASTER-PLAN](../MASTER-PLAN.md) / [ROADMAP-NEXT](ROADMAP-NEXT_20261104.md) 发布，判据唯一源为[账本](INVARIANT-LEDGER_20261103.md)，FEC-1 判据唯一源为[冻结规格](SPEC-F_EXPRESSIVE_CAPACITY_PREREG_20261108.md)＋[机读 manifest](../manifests/taiji_f_expressive_capacity_prereg_20261108.json)（`criteria_sha256=1e0dde22…`）。本件**不复述任何冻结门值**（D16-38：改动须另出预注册版本并保留原块审计）。
 >
 > 目录合规：本件为 `PLAN-*.md`，判据段设 `## 3. 判据、出口与验收` 二级标题，满足 [CI 合同规则](../../docs/CI_CONTRACT_RULES.md) §2.2 措辞门。0 训练 / 0 优化器步 / 0 confirm / 0 前向 / 0 数据重读。

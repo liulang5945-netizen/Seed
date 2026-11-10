@@ -4,7 +4,7 @@
 
 ## 1. 总计划步骤对应的原合同
 
-R 编号保留原合同与实验身份；实施统一使用总计划步骤 01–13。本页不复制阶段状态、审批或队首，实际进度与准入见[总计划](../MASTER-PLAN.md)，原始批准与读数见[03 台账](../active/roadmap/03_CURRENT_EXECUTION.md)。
+当前设计与实施卡为[U2完整主体闭环候选](SPEC-TAIJI-CLOSED_LOOP_U2_20261110.md)和[执行包22](PLAN-TAIJI-CLOSED_LOOP_DEVELOPMENT_20261110.md)，状态与准入见[总计划](../MASTER-PLAN.md)。下表01–13与R编号只保留原合同/实验身份，原始批准与读数见[03台账](../active/roadmap/03_CURRENT_EXECUTION.md)。
 
 | 总计划步骤 | 原合同 | 约定范围 |
 |---|---|---|
@@ -97,13 +97,13 @@ R 编号保留原合同与实验身份；实施统一使用总计划步骤 01–
 | 当前责任 | 文档 | 范围 |
 |---|---|---|
 | N16已结案 | [原执行规格](SPEC-N16-01_SELECTION_LOCKED_BINDING_DRAFT_20261103.md) | 1200正式更新、任务负、16.1.3已收束，确认未释放 |
-| 17待实施 | [逐步选择路由与详细开发计划](DESIGN-POST-N16_SELECTION_ROUTING_20261103.md) | 当前17.1，顺序至17.7，含六接口/正确目标/R1与R2/三臂/资源/专属确认 |
+| 17历史设计 | [逐步选择路由与详细开发计划](DESIGN-POST-N16_SELECTION_ROUTING_20261103.md) | 原工作卡与归因来源，现行顺序见执行包22 |
 
 [架构与算法归因](ATTRIBUTION-ARCH-VS-ALG_20261103.md)按最新源码收窄P3/P4的解释，[命题账本](INVARIANT-LEDGER_20261103.md)将连续性、信用、来源、保持和经验责任映射到17的可检验范围。
 
 | 系统设计细则 | 文档 | 范围 |
 |---|---|---|
-| N17–22算法与架构 | [系统开发计划](PLAN-NATIVE-COGNITIVE_SYSTEM_DEVELOPMENT_20261103.md) | 当前17.2R整合，后继原文/经验/学习/世界活动/规模成长；含VISION映射与备选触发 |
+| 共同主体设计来源 | [原系统开发计划](PLAN-NATIVE-COGNITIVE_SYSTEM_DEVELOPMENT_20261103.md) | VISION映射与历史责任轴，当前定义与工作卡见U2/执行包22 |
 
 [核心动力学、快记忆与复制的数学复核](MATH-REVIEW_CORE_DYNAMICS_MEMORY_COPY_20261103.md)逐项核验本轮外部意见，包含反例、近端回归子族、容量条件、当前读核耦合及对应数学工作。
 
