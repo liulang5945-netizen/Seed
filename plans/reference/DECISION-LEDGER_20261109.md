@@ -1968,9 +1968,11 @@ R57 是 confirm 分区第 2 次读（D-20261109-60），本次重跑构成**第 
 
 **2. 事实**：`ci.yml` 的 `Core reasoning path coverage gate (B-4)` 步首行一直挂着一条 `false  # M5-inject: forced failure (E-fail), revert after readout`。它来自 2026-10-25 的注入实验（注入提交 `7cc58dc31`，台账归档件 `plans/archive/history/delivery-runs/20261025-235503/artifacts/09-injection-experiment-brief.md`，DEBT-G179 也提到"此刻 main 上挂着 M5-inject 的受控红 run"）。实验早已收尾归档，但这条 `false` 从未 revert。
 
-**3. 后果（不是小事）**：`set -e` 下第一行就退出，覆盖率脚本**从未执行**，`reports/core_reasoning_coverage_ci.json` 因此从未产出（所以 upload 步报 "no files found"），末置汇总据此判红。也就是说：**coverage-gate 在过去这段日子的红是注入出来的假红，不是覆盖率不足**。10:29 那次 run 独立复现了同一现象（仅 coverage-gate 与 pytest 红），可证与今天的改动无关。
+**3. 后果（不是小事）**：`set -e` 下第一行就退出，覆盖率脚本**从未执行**，它的产物 `core_reasoning_coverage_ci.json`（`reports/` 下的 **CI 运行时产物，不入库、本机无此件**）因此从未产出（所以 upload 步报 "no files found"），末置汇总据此判红。也就是说：**coverage-gate 在过去这段日子的红是注入出来的假红，不是覆盖率不足**。10:29 那次 run 独立复现了同一现象（仅 coverage-gate 与 pytest 红），可证与今天的改动无关。
 
 **4. 处置**：删掉那一行 `false`，恢复成只跑覆盖率脚本。判据、阈值（60.0）与 `continue-on-error` 语义一概不动。删后该门第一次真正开跑：若核心面覆盖率确实低于 60%，它会**因真实原因**红，那是要另立条目处置的另一次读数，不是本条能预判的。
 
 **5. 为什么现在动**：注入实验的读出面已归档 16 天，`revert after readout` 的条件早已满足；留着它等于让整条 CI 永远不可能绿，并把"CI 红"变成无信息量的常量。
+
+**6. 记账副作用（自查已修，留作纪律）**：本条初稿把该产物写成带 `reports/` 前缀的完整路径，引用普查随即把它当成一条新的"被引用但不在库"的读数，`test_n5_38` 又红 2 条——**记账动作自己造红**。改为裸文件名并注明"CI 运行时产物、不入库、本机无此件"后 `verdict=holds`、9 passed。纪律：**台账里提到不入库的产物，只能写裸文件名并注明状态**，不写可被普查当成读数的完整路径。
 
