@@ -1,0 +1,3987 @@
+{
+  "schema": "taiji-u2-22.2-contract-v1",
+  "parent_revision": "66af8896f7bf398b46cc7d47205da1a1c494d6bf",
+  "parent_receipt": {
+    "path": "reports/taiji_u2_math_22_1_20261110.json",
+    "canonical_sha256": "926c32e5955bd1ade80893dbc778374e18241bc49e21d478813f2ee4b8e192a6"
+  },
+  "source_hash_semantics": "UTF8 text without BOM, universal newline to LF",
+  "source_pins": {
+    "taiji/u2_subject.py": "237241598250a540f1cbb4f15315a63d88b55d521ac8ae4164f1db03b64b003e",
+    "taiji/u2_operators.py": "38d12213410d1b7b4adc67952214f6f9d432a508b816872005b5513b4f94841d",
+    "taiji/utf8_state.py": "6ec7e96b2994dfa8eea430b3a08ddb5ff0fd877cf70c8cc288f57bab2efcac09",
+    "scripts/training/verify_taiji_u2_subject_22_2.py": "40a8f886da0bf07e63d472f3adc81da60644234ac0de68f0f473093d98a8b4c5",
+    "tests/taiji_native/test_u2_subject_22_2.py": "262c20d7746f7bea62c61e16a6e5bacda9461b094944a0b5dc0e5c235488aa91",
+    "scripts/training/verify_taiji_u2_math_22_1.py": "f88d60723d66cc82043372f83e265e35712db2e0549224f09e2ecc940d728686",
+    "scripts/training/verify_taiji_mgw1_math.py": "dba1f43e40a17a4fd347c45dbe2be3d9774129e64329317de4fd416ddbd4b8b5",
+    "plans/reference/SPEC-TAIJI-CLOSED_LOOP_U2_20261110.md": "5d3d10cf969d715c5514cd8e713463b0e43be66e4b9e28d328146c8c1414487e"
+  },
+  "profiles": {
+    "small_base": {
+      "d": 8,
+      "groups": 2,
+      "units": 12,
+      "objects": 3,
+      "branches": 2,
+      "key": 3,
+      "side": 16,
+      "patch": 4,
+      "audio_samples": 256,
+      "fft": 64,
+      "hop": 32,
+      "embedding": 4,
+      "max_record_bytes": 512,
+      "max_output_bytes": 64,
+      "seed": 20261110
+    },
+    "engineering_first_generation": {
+      "d": 8,
+      "groups": 2,
+      "units": 13,
+      "objects": 3,
+      "branches": 2,
+      "key": 3,
+      "side": 16,
+      "patch": 4,
+      "audio_samples": 256,
+      "fft": 64,
+      "hop": 32,
+      "embedding": 4,
+      "max_record_bytes": 512,
+      "max_output_bytes": 64,
+      "seed": 20261110
+    },
+    "nominal": {
+      "d": 128,
+      "groups": 4,
+      "units": 256,
+      "objects": 4,
+      "branches": 3,
+      "key": 32,
+      "side": 64,
+      "patch": 8,
+      "audio_samples": 2560,
+      "fft": 256,
+      "hop": 128,
+      "embedding": 64,
+      "max_record_bytes": 512,
+      "max_output_bytes": 64,
+      "seed": 20261110
+    }
+  },
+  "budget": {
+    "cpu_seconds": 2400,
+    "wall_seconds": 4800,
+    "engineering_optimizer_steps_total": 2,
+    "formal_training_steps": 0,
+    "project_dataset_reads": 0,
+    "existing_checkpoints_loaded": 0
+  },
+  "optimizer": {
+    "name": "Adam",
+    "lr": 0.001,
+    "eps": 1e-08,
+    "weight_decay": 0,
+    "single_small_float64_subject": true,
+    "first_birth_before_updates": true,
+    "second_birth_on_copy_no_updates": true
+  },
+  "acceptance": {
+    "all_declared_parameters_finite": true,
+    "all_parameters_changed_in_two_updates": true,
+    "Read_R_isolated_cascade": true,
+    "native_new_read_columns_cascade": true,
+    "newborn_incoming_then_outgoing_cascade": true,
+    "same_process_bundle_before_step": true,
+    "two_generation_neutrality_atol_float64": 1e-10,
+    "nominal_full_backward": true,
+    "independent_process_restore": "deferred22.3",
+    "task_efficacy": "deferred22.5_to22.8"
+  },
+  "parameter_names": [
+    "modality",
+    "initial_h",
+    "initial_p",
+    "native_w",
+    "native_r",
+    "native_p",
+    "native_q",
+    "native_k",
+    "native_v",
+    "tau_logit",
+    "background",
+    "start_embedding",
+    "record_null_value",
+    "coverage_logit",
+    "actor_log_std",
+    "encoder.rgb.weight",
+    "encoder.rgb.bias",
+    "encoder.audio.weight",
+    "encoder.audio.bias",
+    "encoder.proprio.weight",
+    "encoder.proprio.bias",
+    "metadata.weight",
+    "metadata.bias",
+    "embedding.weight",
+    "text_input.weight",
+    "text_input.bias",
+    "convolutions.0.weight",
+    "convolutions.0.bias",
+    "convolutions.1.weight",
+    "convolutions.1.bias",
+    "convolutions.2.weight",
+    "convolutions.2.bias",
+    "goal_score.weight",
+    "goal_value.weight",
+    "goal_value.bias",
+    "object_projection.weight",
+    "object_projection.bias",
+    "h_query.weight",
+    "h_query.bias",
+    "h_key.weight",
+    "h_value.weight",
+    "h_value.bias",
+    "o_query.weight",
+    "o_query.bias",
+    "o_key.weight",
+    "o_value.weight",
+    "o_value.bias",
+    "action.weight",
+    "action.bias",
+    "f_query.weight",
+    "f_query.bias",
+    "f_output.weight",
+    "f_output.bias",
+    "relation_query.weight",
+    "relation_query.bias",
+    "relation_key.weight",
+    "relation_value.weight",
+    "relation_value.bias",
+    "relation_geometry.first.weight",
+    "relation_geometry.first.bias",
+    "relation_geometry.last.weight",
+    "motion.first.weight",
+    "motion.first.bias",
+    "motion.last.weight",
+    "motion.last.bias",
+    "native_goal.weight",
+    "native_goal.bias",
+    "nu_projection.weight",
+    "nu_projection.bias",
+    "bind_query.weight",
+    "bind_query.bias",
+    "bind_key.rgb.weight",
+    "bind_key.rgb.bias",
+    "bind_key.audio.weight",
+    "bind_key.audio.bias",
+    "bind_key.proprio.weight",
+    "bind_key.proprio.bias",
+    "bind_key.outcome.weight",
+    "bind_key.outcome.bias",
+    "bind_value.rgb.weight",
+    "bind_value.rgb.bias",
+    "bind_value.audio.weight",
+    "bind_value.audio.bias",
+    "bind_value.proprio.weight",
+    "bind_value.proprio.bias",
+    "bind_value.outcome.weight",
+    "bind_value.outcome.bias",
+    "null_score.rgb.weight",
+    "null_score.rgb.bias",
+    "null_score.audio.weight",
+    "null_score.audio.bias",
+    "null_score.proprio.weight",
+    "null_score.proprio.bias",
+    "null_score.outcome.weight",
+    "null_score.outcome.bias",
+    "reliability.rgb.weight",
+    "reliability.rgb.bias",
+    "reliability.audio.weight",
+    "reliability.audio.bias",
+    "reliability.proprio.weight",
+    "reliability.proprio.bias",
+    "reliability.outcome.weight",
+    "reliability.outcome.bias",
+    "corrector.first.weight",
+    "corrector.first.bias",
+    "corrector.last.weight",
+    "corrector.last.bias",
+    "f_key.weight",
+    "f_key.bias",
+    "outcome.weight",
+    "outcome.bias",
+    "f_value.first.weight",
+    "f_value.first.bias",
+    "f_value.last.weight",
+    "f_value.last.bias",
+    "f_beta.first.weight",
+    "f_beta.first.bias",
+    "f_beta.last.weight",
+    "f_beta.last.bias",
+    "f_alpha.first.weight",
+    "f_alpha.first.bias",
+    "f_alpha.last.weight",
+    "f_alpha.last.bias",
+    "f_chi.first.weight",
+    "f_chi.first.bias",
+    "f_chi.last.weight",
+    "f_chi.last.bias",
+    "post_memory.first.weight",
+    "post_memory.first.bias",
+    "post_memory.last.weight",
+    "post_memory.last.bias",
+    "decoder_query.rgb.weight",
+    "decoder_query.rgb.bias",
+    "decoder_query.audio.weight",
+    "decoder_query.audio.bias",
+    "decoder_query.proprio.value",
+    "decoder_key.weight",
+    "decoder_value.weight",
+    "decoder_value.bias",
+    "decoder.rgb.first.weight",
+    "decoder.rgb.first.bias",
+    "decoder.rgb.last.weight",
+    "decoder.rgb.last.bias",
+    "decoder.audio.first.weight",
+    "decoder.audio.first.bias",
+    "decoder.audio.last.weight",
+    "decoder.audio.last.bias",
+    "decoder.proprio.first.weight",
+    "decoder.proprio.first.bias",
+    "decoder.proprio.last.weight",
+    "decoder.proprio.last.bias",
+    "joint_readout.first.weight",
+    "joint_readout.first.bias",
+    "joint_readout.last.weight",
+    "joint_readout.last.bias",
+    "byte_head.weight",
+    "byte_head.bias",
+    "reward.first.weight",
+    "reward.first.bias",
+    "reward.last.weight",
+    "reward.last.bias",
+    "actor.first.weight",
+    "actor.first.bias",
+    "actor.last.weight",
+    "critic.first.weight",
+    "critic.first.bias",
+    "critic.last.weight",
+    "critic.last.bias",
+    "record_goal_query.weight",
+    "record_query.weight",
+    "record_query.bias",
+    "record_key.weight",
+    "record_position_key.weight",
+    "record_position_query.weight",
+    "record_position_query.bias",
+    "record_null.weight",
+    "record_null.bias",
+    "record_value.weight",
+    "record_value.bias",
+    "record_output.weight",
+    "record_output.bias",
+    "copy_gate.weight",
+    "copy_gate.bias",
+    "actor_parameters.first.weight",
+    "actor_parameters.first.bias",
+    "actor_parameters.last.weight",
+    "actor_parameters.last.bias",
+    "development.first.weight",
+    "development.first.bias",
+    "development.last.weight",
+    "development.last.bias"
+  ],
+  "parameters": {
+    "modality": {
+      "small_shape": [
+        5,
+        8
+      ],
+      "nominal_shape": [
+        5,
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "initial_h": {
+      "small_shape": [
+        2,
+        3,
+        8
+      ],
+      "nominal_shape": [
+        3,
+        4,
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "initial_p": {
+      "small_shape": [
+        2,
+        3,
+        2
+      ],
+      "nominal_shape": [
+        3,
+        4,
+        2
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "native_w": {
+      "small_shape": [
+        2,
+        8,
+        64
+      ],
+      "nominal_shape": [
+        4,
+        128,
+        1024
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "native_r": {
+      "small_shape": [
+        2,
+        12,
+        64
+      ],
+      "nominal_shape": [
+        4,
+        256,
+        1024
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "native_p": {
+      "small_shape": [
+        2,
+        8,
+        12
+      ],
+      "nominal_shape": [
+        4,
+        128,
+        256
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "native_q": {
+      "small_shape": [
+        2,
+        8,
+        8
+      ],
+      "nominal_shape": [
+        4,
+        128,
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "native_k": {
+      "small_shape": [
+        2,
+        8,
+        8
+      ],
+      "nominal_shape": [
+        4,
+        128,
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "native_v": {
+      "small_shape": [
+        2,
+        8,
+        8
+      ],
+      "nominal_shape": [
+        4,
+        128,
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "tau_logit": {
+      "small_shape": [
+        2
+      ],
+      "nominal_shape": [
+        4
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "background": {
+      "small_shape": [
+        8
+      ],
+      "nominal_shape": [
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked"
+      ]
+    },
+    "start_embedding": {
+      "small_shape": [
+        4
+      ],
+      "nominal_shape": [
+        64
+      ],
+      "loss_owners": [
+        "task",
+        "next_sensor"
+      ]
+    },
+    "record_null_value": {
+      "small_shape": [
+        8
+      ],
+      "nominal_shape": [
+        128
+      ],
+      "loss_owners": [
+        "task",
+        "next_sensor"
+      ]
+    },
+    "coverage_logit": {
+      "small_shape": [],
+      "nominal_shape": [],
+      "loss_owners": [
+        "task",
+        "next_sensor"
+      ]
+    },
+    "actor_log_std": {
+      "small_shape": [
+        6
+      ],
+      "nominal_shape": [
+        6
+      ],
+      "loss_owners": [
+        "actor"
+      ]
+    },
+    "encoder.rgb.weight": {
+      "small_shape": [
+        8,
+        48
+      ],
+      "nominal_shape": [
+        128,
+        192
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "encoder.rgb.bias": {
+      "small_shape": [
+        8
+      ],
+      "nominal_shape": [
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "encoder.audio.weight": {
+      "small_shape": [
+        8,
+        33
+      ],
+      "nominal_shape": [
+        128,
+        129
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "encoder.audio.bias": {
+      "small_shape": [
+        8
+      ],
+      "nominal_shape": [
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "encoder.proprio.weight": {
+      "small_shape": [
+        8,
+        16
+      ],
+      "nominal_shape": [
+        128,
+        16
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "encoder.proprio.bias": {
+      "small_shape": [
+        8
+      ],
+      "nominal_shape": [
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "metadata.weight": {
+      "small_shape": [
+        8,
+        8
+      ],
+      "nominal_shape": [
+        128,
+        8
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "metadata.bias": {
+      "small_shape": [
+        8
+      ],
+      "nominal_shape": [
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "embedding.weight": {
+      "small_shape": [
+        256,
+        4
+      ],
+      "nominal_shape": [
+        256,
+        64
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "text_input.weight": {
+      "small_shape": [
+        8,
+        4
+      ],
+      "nominal_shape": [
+        128,
+        64
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "text_input.bias": {
+      "small_shape": [
+        8
+      ],
+      "nominal_shape": [
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "convolutions.0.weight": {
+      "small_shape": [
+        8,
+        8,
+        3
+      ],
+      "nominal_shape": [
+        128,
+        128,
+        3
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "convolutions.0.bias": {
+      "small_shape": [
+        8
+      ],
+      "nominal_shape": [
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "convolutions.1.weight": {
+      "small_shape": [
+        8,
+        8,
+        3
+      ],
+      "nominal_shape": [
+        128,
+        128,
+        3
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "convolutions.1.bias": {
+      "small_shape": [
+        8
+      ],
+      "nominal_shape": [
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "convolutions.2.weight": {
+      "small_shape": [
+        8,
+        8,
+        3
+      ],
+      "nominal_shape": [
+        128,
+        128,
+        3
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "convolutions.2.bias": {
+      "small_shape": [
+        8
+      ],
+      "nominal_shape": [
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "goal_score.weight": {
+      "small_shape": [
+        1,
+        8
+      ],
+      "nominal_shape": [
+        1,
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "goal_value.weight": {
+      "small_shape": [
+        8,
+        8
+      ],
+      "nominal_shape": [
+        128,
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "goal_value.bias": {
+      "small_shape": [
+        8
+      ],
+      "nominal_shape": [
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "object_projection.weight": {
+      "small_shape": [
+        8,
+        17
+      ],
+      "nominal_shape": [
+        128,
+        137
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "object_projection.bias": {
+      "small_shape": [
+        8
+      ],
+      "nominal_shape": [
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "h_query.weight": {
+      "small_shape": [
+        8,
+        8
+      ],
+      "nominal_shape": [
+        128,
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "h_query.bias": {
+      "small_shape": [
+        8
+      ],
+      "nominal_shape": [
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "h_key.weight": {
+      "small_shape": [
+        8,
+        8
+      ],
+      "nominal_shape": [
+        128,
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "h_value.weight": {
+      "small_shape": [
+        8,
+        8
+      ],
+      "nominal_shape": [
+        128,
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "h_value.bias": {
+      "small_shape": [
+        8
+      ],
+      "nominal_shape": [
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "o_query.weight": {
+      "small_shape": [
+        8,
+        8
+      ],
+      "nominal_shape": [
+        128,
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "o_query.bias": {
+      "small_shape": [
+        8
+      ],
+      "nominal_shape": [
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "o_key.weight": {
+      "small_shape": [
+        8,
+        8
+      ],
+      "nominal_shape": [
+        128,
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "o_value.weight": {
+      "small_shape": [
+        8,
+        8
+      ],
+      "nominal_shape": [
+        128,
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "o_value.bias": {
+      "small_shape": [
+        8
+      ],
+      "nominal_shape": [
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "action.weight": {
+      "small_shape": [
+        8,
+        15
+      ],
+      "nominal_shape": [
+        128,
+        15
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "action.bias": {
+      "small_shape": [
+        8
+      ],
+      "nominal_shape": [
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "f_query.weight": {
+      "small_shape": [
+        3,
+        32
+      ],
+      "nominal_shape": [
+        32,
+        512
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "f_query.bias": {
+      "small_shape": [
+        3
+      ],
+      "nominal_shape": [
+        32
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "f_output.weight": {
+      "small_shape": [
+        8,
+        3
+      ],
+      "nominal_shape": [
+        128,
+        32
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "f_output.bias": {
+      "small_shape": [
+        8
+      ],
+      "nominal_shape": [
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "relation_query.weight": {
+      "small_shape": [
+        8,
+        8
+      ],
+      "nominal_shape": [
+        128,
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "relation_query.bias": {
+      "small_shape": [
+        8
+      ],
+      "nominal_shape": [
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "relation_key.weight": {
+      "small_shape": [
+        8,
+        8
+      ],
+      "nominal_shape": [
+        128,
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "relation_value.weight": {
+      "small_shape": [
+        8,
+        12
+      ],
+      "nominal_shape": [
+        128,
+        132
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "relation_value.bias": {
+      "small_shape": [
+        8
+      ],
+      "nominal_shape": [
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "relation_geometry.first.weight": {
+      "small_shape": [
+        16,
+        4
+      ],
+      "nominal_shape": [
+        256,
+        4
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "relation_geometry.first.bias": {
+      "small_shape": [
+        16
+      ],
+      "nominal_shape": [
+        256
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "relation_geometry.last.weight": {
+      "small_shape": [
+        1,
+        16
+      ],
+      "nominal_shape": [
+        1,
+        256
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "motion.first.weight": {
+      "small_shape": [
+        16,
+        45
+      ],
+      "nominal_shape": [
+        256,
+        645
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "motion.first.bias": {
+      "small_shape": [
+        16
+      ],
+      "nominal_shape": [
+        256
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "motion.last.weight": {
+      "small_shape": [
+        14,
+        16
+      ],
+      "nominal_shape": [
+        134,
+        256
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "motion.last.bias": {
+      "small_shape": [
+        14
+      ],
+      "nominal_shape": [
+        134
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "native_goal.weight": {
+      "small_shape": [
+        8,
+        8
+      ],
+      "nominal_shape": [
+        128,
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "native_goal.bias": {
+      "small_shape": [
+        8
+      ],
+      "nominal_shape": [
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "nu_projection.weight": {
+      "small_shape": [
+        8,
+        16
+      ],
+      "nominal_shape": [
+        128,
+        16
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "nu_projection.bias": {
+      "small_shape": [
+        8
+      ],
+      "nominal_shape": [
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "bind_query.weight": {
+      "small_shape": [
+        8,
+        8
+      ],
+      "nominal_shape": [
+        128,
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "bind_query.bias": {
+      "small_shape": [
+        8
+      ],
+      "nominal_shape": [
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "bind_key.rgb.weight": {
+      "small_shape": [
+        8,
+        8
+      ],
+      "nominal_shape": [
+        128,
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "bind_key.rgb.bias": {
+      "small_shape": [
+        8
+      ],
+      "nominal_shape": [
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "bind_key.audio.weight": {
+      "small_shape": [
+        8,
+        8
+      ],
+      "nominal_shape": [
+        128,
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "bind_key.audio.bias": {
+      "small_shape": [
+        8
+      ],
+      "nominal_shape": [
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "bind_key.proprio.weight": {
+      "small_shape": [
+        8,
+        8
+      ],
+      "nominal_shape": [
+        128,
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "bind_key.proprio.bias": {
+      "small_shape": [
+        8
+      ],
+      "nominal_shape": [
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "bind_key.outcome.weight": {
+      "small_shape": [
+        8,
+        8
+      ],
+      "nominal_shape": [
+        128,
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "bind_key.outcome.bias": {
+      "small_shape": [
+        8
+      ],
+      "nominal_shape": [
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "bind_value.rgb.weight": {
+      "small_shape": [
+        8,
+        8
+      ],
+      "nominal_shape": [
+        128,
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "bind_value.rgb.bias": {
+      "small_shape": [
+        8
+      ],
+      "nominal_shape": [
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "bind_value.audio.weight": {
+      "small_shape": [
+        8,
+        8
+      ],
+      "nominal_shape": [
+        128,
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "bind_value.audio.bias": {
+      "small_shape": [
+        8
+      ],
+      "nominal_shape": [
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "bind_value.proprio.weight": {
+      "small_shape": [
+        8,
+        8
+      ],
+      "nominal_shape": [
+        128,
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "bind_value.proprio.bias": {
+      "small_shape": [
+        8
+      ],
+      "nominal_shape": [
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "bind_value.outcome.weight": {
+      "small_shape": [
+        8,
+        8
+      ],
+      "nominal_shape": [
+        128,
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "bind_value.outcome.bias": {
+      "small_shape": [
+        8
+      ],
+      "nominal_shape": [
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "null_score.rgb.weight": {
+      "small_shape": [
+        1,
+        8
+      ],
+      "nominal_shape": [
+        1,
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "null_score.rgb.bias": {
+      "small_shape": [
+        1
+      ],
+      "nominal_shape": [
+        1
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "null_score.audio.weight": {
+      "small_shape": [
+        1,
+        8
+      ],
+      "nominal_shape": [
+        1,
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "null_score.audio.bias": {
+      "small_shape": [
+        1
+      ],
+      "nominal_shape": [
+        1
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "null_score.proprio.weight": {
+      "small_shape": [
+        1,
+        8
+      ],
+      "nominal_shape": [
+        1,
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "null_score.proprio.bias": {
+      "small_shape": [
+        1
+      ],
+      "nominal_shape": [
+        1
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "null_score.outcome.weight": {
+      "small_shape": [
+        1,
+        8
+      ],
+      "nominal_shape": [
+        1,
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "null_score.outcome.bias": {
+      "small_shape": [
+        1
+      ],
+      "nominal_shape": [
+        1
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "reliability.rgb.weight": {
+      "small_shape": [
+        1,
+        8
+      ],
+      "nominal_shape": [
+        1,
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "reliability.rgb.bias": {
+      "small_shape": [
+        1
+      ],
+      "nominal_shape": [
+        1
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "reliability.audio.weight": {
+      "small_shape": [
+        1,
+        8
+      ],
+      "nominal_shape": [
+        1,
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "reliability.audio.bias": {
+      "small_shape": [
+        1
+      ],
+      "nominal_shape": [
+        1
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "reliability.proprio.weight": {
+      "small_shape": [
+        1,
+        8
+      ],
+      "nominal_shape": [
+        1,
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "reliability.proprio.bias": {
+      "small_shape": [
+        1
+      ],
+      "nominal_shape": [
+        1
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "reliability.outcome.weight": {
+      "small_shape": [
+        1,
+        8
+      ],
+      "nominal_shape": [
+        1,
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "reliability.outcome.bias": {
+      "small_shape": [
+        1
+      ],
+      "nominal_shape": [
+        1
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "corrector.first.weight": {
+      "small_shape": [
+        16,
+        33
+      ],
+      "nominal_shape": [
+        256,
+        393
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "corrector.first.bias": {
+      "small_shape": [
+        16
+      ],
+      "nominal_shape": [
+        256
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "corrector.last.weight": {
+      "small_shape": [
+        17,
+        16
+      ],
+      "nominal_shape": [
+        137,
+        256
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "corrector.last.bias": {
+      "small_shape": [
+        17
+      ],
+      "nominal_shape": [
+        137
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "f_key.weight": {
+      "small_shape": [
+        3,
+        32
+      ],
+      "nominal_shape": [
+        32,
+        512
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "f_key.bias": {
+      "small_shape": [
+        3
+      ],
+      "nominal_shape": [
+        32
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "outcome.weight": {
+      "small_shape": [
+        8,
+        6
+      ],
+      "nominal_shape": [
+        128,
+        6
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "outcome.bias": {
+      "small_shape": [
+        8
+      ],
+      "nominal_shape": [
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "f_value.first.weight": {
+      "small_shape": [
+        16,
+        16
+      ],
+      "nominal_shape": [
+        256,
+        256
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "f_value.first.bias": {
+      "small_shape": [
+        16
+      ],
+      "nominal_shape": [
+        256
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "f_value.last.weight": {
+      "small_shape": [
+        3,
+        16
+      ],
+      "nominal_shape": [
+        32,
+        256
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "f_value.last.bias": {
+      "small_shape": [
+        3
+      ],
+      "nominal_shape": [
+        32
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "f_beta.first.weight": {
+      "small_shape": [
+        16,
+        16
+      ],
+      "nominal_shape": [
+        256,
+        256
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "f_beta.first.bias": {
+      "small_shape": [
+        16
+      ],
+      "nominal_shape": [
+        256
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "f_beta.last.weight": {
+      "small_shape": [
+        1,
+        16
+      ],
+      "nominal_shape": [
+        1,
+        256
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "f_beta.last.bias": {
+      "small_shape": [
+        1
+      ],
+      "nominal_shape": [
+        1
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "f_alpha.first.weight": {
+      "small_shape": [
+        16,
+        16
+      ],
+      "nominal_shape": [
+        256,
+        256
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "f_alpha.first.bias": {
+      "small_shape": [
+        16
+      ],
+      "nominal_shape": [
+        256
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "f_alpha.last.weight": {
+      "small_shape": [
+        3,
+        16
+      ],
+      "nominal_shape": [
+        32,
+        256
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "f_alpha.last.bias": {
+      "small_shape": [
+        3
+      ],
+      "nominal_shape": [
+        32
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "f_chi.first.weight": {
+      "small_shape": [
+        16,
+        16
+      ],
+      "nominal_shape": [
+        256,
+        256
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "f_chi.first.bias": {
+      "small_shape": [
+        16
+      ],
+      "nominal_shape": [
+        256
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "f_chi.last.weight": {
+      "small_shape": [
+        1,
+        16
+      ],
+      "nominal_shape": [
+        1,
+        256
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "f_chi.last.bias": {
+      "small_shape": [
+        1
+      ],
+      "nominal_shape": [
+        1
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "post_memory.first.weight": {
+      "small_shape": [
+        16,
+        24
+      ],
+      "nominal_shape": [
+        256,
+        384
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "post_memory.first.bias": {
+      "small_shape": [
+        16
+      ],
+      "nominal_shape": [
+        256
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "post_memory.last.weight": {
+      "small_shape": [
+        8,
+        16
+      ],
+      "nominal_shape": [
+        128,
+        256
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "post_memory.last.bias": {
+      "small_shape": [
+        8
+      ],
+      "nominal_shape": [
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "decoder_query.rgb.weight": {
+      "small_shape": [
+        8,
+        8
+      ],
+      "nominal_shape": [
+        128,
+        8
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked"
+      ]
+    },
+    "decoder_query.rgb.bias": {
+      "small_shape": [
+        8
+      ],
+      "nominal_shape": [
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked"
+      ]
+    },
+    "decoder_query.audio.weight": {
+      "small_shape": [
+        8,
+        8
+      ],
+      "nominal_shape": [
+        128,
+        8
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked"
+      ]
+    },
+    "decoder_query.audio.bias": {
+      "small_shape": [
+        8
+      ],
+      "nominal_shape": [
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked"
+      ]
+    },
+    "decoder_query.proprio.value": {
+      "small_shape": [
+        8
+      ],
+      "nominal_shape": [
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked"
+      ]
+    },
+    "decoder_key.weight": {
+      "small_shape": [
+        8,
+        8
+      ],
+      "nominal_shape": [
+        128,
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked"
+      ]
+    },
+    "decoder_value.weight": {
+      "small_shape": [
+        8,
+        8
+      ],
+      "nominal_shape": [
+        128,
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked"
+      ]
+    },
+    "decoder_value.bias": {
+      "small_shape": [
+        8
+      ],
+      "nominal_shape": [
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked"
+      ]
+    },
+    "decoder.rgb.first.weight": {
+      "small_shape": [
+        16,
+        16
+      ],
+      "nominal_shape": [
+        256,
+        136
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked"
+      ]
+    },
+    "decoder.rgb.first.bias": {
+      "small_shape": [
+        16
+      ],
+      "nominal_shape": [
+        256
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked"
+      ]
+    },
+    "decoder.rgb.last.weight": {
+      "small_shape": [
+        96,
+        16
+      ],
+      "nominal_shape": [
+        384,
+        256
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked"
+      ]
+    },
+    "decoder.rgb.last.bias": {
+      "small_shape": [
+        96
+      ],
+      "nominal_shape": [
+        384
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked"
+      ]
+    },
+    "decoder.audio.first.weight": {
+      "small_shape": [
+        16,
+        16
+      ],
+      "nominal_shape": [
+        256,
+        136
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked"
+      ]
+    },
+    "decoder.audio.first.bias": {
+      "small_shape": [
+        16
+      ],
+      "nominal_shape": [
+        256
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked"
+      ]
+    },
+    "decoder.audio.last.weight": {
+      "small_shape": [
+        66,
+        16
+      ],
+      "nominal_shape": [
+        258,
+        256
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked"
+      ]
+    },
+    "decoder.audio.last.bias": {
+      "small_shape": [
+        66
+      ],
+      "nominal_shape": [
+        258
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked"
+      ]
+    },
+    "decoder.proprio.first.weight": {
+      "small_shape": [
+        16,
+        16
+      ],
+      "nominal_shape": [
+        256,
+        136
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked"
+      ]
+    },
+    "decoder.proprio.first.bias": {
+      "small_shape": [
+        16
+      ],
+      "nominal_shape": [
+        256
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked"
+      ]
+    },
+    "decoder.proprio.last.weight": {
+      "small_shape": [
+        16,
+        16
+      ],
+      "nominal_shape": [
+        16,
+        256
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked"
+      ]
+    },
+    "decoder.proprio.last.bias": {
+      "small_shape": [
+        16
+      ],
+      "nominal_shape": [
+        16
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked"
+      ]
+    },
+    "joint_readout.first.weight": {
+      "small_shape": [
+        16,
+        24
+      ],
+      "nominal_shape": [
+        256,
+        384
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "joint_readout.first.bias": {
+      "small_shape": [
+        16
+      ],
+      "nominal_shape": [
+        256
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "joint_readout.last.weight": {
+      "small_shape": [
+        8,
+        16
+      ],
+      "nominal_shape": [
+        128,
+        256
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "joint_readout.last.bias": {
+      "small_shape": [
+        8
+      ],
+      "nominal_shape": [
+        128
+      ],
+      "loss_owners": [
+        "next_sensor",
+        "reconstruction",
+        "masked",
+        "task",
+        "reward",
+        "done",
+        "development"
+      ]
+    },
+    "byte_head.weight": {
+      "small_shape": [
+        257,
+        12
+      ],
+      "nominal_shape": [
+        257,
+        192
+      ],
+      "loss_owners": [
+        "task",
+        "next_sensor"
+      ]
+    },
+    "byte_head.bias": {
+      "small_shape": [
+        257
+      ],
+      "nominal_shape": [
+        257
+      ],
+      "loss_owners": [
+        "task",
+        "next_sensor"
+      ]
+    },
+    "reward.first.weight": {
+      "small_shape": [
+        16,
+        23
+      ],
+      "nominal_shape": [
+        256,
+        143
+      ],
+      "loss_owners": [
+        "reward",
+        "done",
+        "next_sensor"
+      ]
+    },
+    "reward.first.bias": {
+      "small_shape": [
+        16
+      ],
+      "nominal_shape": [
+        256
+      ],
+      "loss_owners": [
+        "reward",
+        "done",
+        "next_sensor"
+      ]
+    },
+    "reward.last.weight": {
+      "small_shape": [
+        4,
+        16
+      ],
+      "nominal_shape": [
+        4,
+        256
+      ],
+      "loss_owners": [
+        "reward",
+        "done",
+        "next_sensor"
+      ]
+    },
+    "reward.last.bias": {
+      "small_shape": [
+        4
+      ],
+      "nominal_shape": [
+        4
+      ],
+      "loss_owners": [
+        "reward",
+        "done",
+        "next_sensor"
+      ]
+    },
+    "actor.first.weight": {
+      "small_shape": [
+        16,
+        34
+      ],
+      "nominal_shape": [
+        256,
+        274
+      ],
+      "loss_owners": [
+        "actor"
+      ]
+    },
+    "actor.first.bias": {
+      "small_shape": [
+        16
+      ],
+      "nominal_shape": [
+        256
+      ],
+      "loss_owners": [
+        "actor"
+      ]
+    },
+    "actor.last.weight": {
+      "small_shape": [
+        1,
+        16
+      ],
+      "nominal_shape": [
+        1,
+        256
+      ],
+      "loss_owners": [
+        "actor"
+      ]
+    },
+    "critic.first.weight": {
+      "small_shape": [
+        16,
+        16
+      ],
+      "nominal_shape": [
+        256,
+        256
+      ],
+      "loss_owners": [
+        "critic"
+      ]
+    },
+    "critic.first.bias": {
+      "small_shape": [
+        16
+      ],
+      "nominal_shape": [
+        256
+      ],
+      "loss_owners": [
+        "critic"
+      ]
+    },
+    "critic.last.weight": {
+      "small_shape": [
+        1,
+        16
+      ],
+      "nominal_shape": [
+        1,
+        256
+      ],
+      "loss_owners": [
+        "critic"
+      ]
+    },
+    "critic.last.bias": {
+      "small_shape": [
+        1
+      ],
+      "nominal_shape": [
+        1
+      ],
+      "loss_owners": [
+        "critic"
+      ]
+    },
+    "record_goal_query.weight": {
+      "small_shape": [
+        8,
+        8
+      ],
+      "nominal_shape": [
+        128,
+        128
+      ],
+      "loss_owners": [
+        "task",
+        "next_sensor"
+      ]
+    },
+    "record_query.weight": {
+      "small_shape": [
+        8,
+        20
+      ],
+      "nominal_shape": [
+        128,
+        320
+      ],
+      "loss_owners": [
+        "task",
+        "next_sensor"
+      ]
+    },
+    "record_query.bias": {
+      "small_shape": [
+        8
+      ],
+      "nominal_shape": [
+        128
+      ],
+      "loss_owners": [
+        "task",
+        "next_sensor"
+      ]
+    },
+    "record_key.weight": {
+      "small_shape": [
+        8,
+        8
+      ],
+      "nominal_shape": [
+        128,
+        128
+      ],
+      "loss_owners": [
+        "task",
+        "next_sensor"
+      ]
+    },
+    "record_position_key.weight": {
+      "small_shape": [
+        8,
+        8
+      ],
+      "nominal_shape": [
+        128,
+        128
+      ],
+      "loss_owners": [
+        "task",
+        "next_sensor"
+      ]
+    },
+    "record_position_query.weight": {
+      "small_shape": [
+        8,
+        16
+      ],
+      "nominal_shape": [
+        128,
+        256
+      ],
+      "loss_owners": [
+        "task",
+        "next_sensor"
+      ]
+    },
+    "record_position_query.bias": {
+      "small_shape": [
+        8
+      ],
+      "nominal_shape": [
+        128
+      ],
+      "loss_owners": [
+        "task",
+        "next_sensor"
+      ]
+    },
+    "record_null.weight": {
+      "small_shape": [
+        1,
+        8
+      ],
+      "nominal_shape": [
+        1,
+        128
+      ],
+      "loss_owners": [
+        "task",
+        "next_sensor"
+      ]
+    },
+    "record_null.bias": {
+      "small_shape": [
+        1
+      ],
+      "nominal_shape": [
+        1
+      ],
+      "loss_owners": [
+        "task",
+        "next_sensor"
+      ]
+    },
+    "record_value.weight": {
+      "small_shape": [
+        8,
+        8
+      ],
+      "nominal_shape": [
+        128,
+        128
+      ],
+      "loss_owners": [
+        "task",
+        "next_sensor"
+      ]
+    },
+    "record_value.bias": {
+      "small_shape": [
+        8
+      ],
+      "nominal_shape": [
+        128
+      ],
+      "loss_owners": [
+        "task",
+        "next_sensor"
+      ]
+    },
+    "record_output.weight": {
+      "small_shape": [
+        8,
+        8
+      ],
+      "nominal_shape": [
+        128,
+        128
+      ],
+      "loss_owners": [
+        "task",
+        "next_sensor"
+      ]
+    },
+    "record_output.bias": {
+      "small_shape": [
+        8
+      ],
+      "nominal_shape": [
+        128
+      ],
+      "loss_owners": [
+        "task",
+        "next_sensor"
+      ]
+    },
+    "copy_gate.weight": {
+      "small_shape": [
+        2,
+        20
+      ],
+      "nominal_shape": [
+        2,
+        320
+      ],
+      "loss_owners": [
+        "task",
+        "next_sensor"
+      ]
+    },
+    "copy_gate.bias": {
+      "small_shape": [
+        2
+      ],
+      "nominal_shape": [
+        2
+      ],
+      "loss_owners": [
+        "task",
+        "next_sensor"
+      ]
+    },
+    "actor_parameters.first.weight": {
+      "small_shape": [
+        16,
+        16
+      ],
+      "nominal_shape": [
+        256,
+        256
+      ],
+      "loss_owners": [
+        "actor"
+      ]
+    },
+    "actor_parameters.first.bias": {
+      "small_shape": [
+        16
+      ],
+      "nominal_shape": [
+        256
+      ],
+      "loss_owners": [
+        "actor"
+      ]
+    },
+    "actor_parameters.last.weight": {
+      "small_shape": [
+        6,
+        16
+      ],
+      "nominal_shape": [
+        6,
+        256
+      ],
+      "loss_owners": [
+        "actor"
+      ]
+    },
+    "actor_parameters.last.bias": {
+      "small_shape": [
+        6
+      ],
+      "nominal_shape": [
+        6
+      ],
+      "loss_owners": [
+        "actor"
+      ]
+    },
+    "development.first.weight": {
+      "small_shape": [
+        16,
+        31
+      ],
+      "nominal_shape": [
+        256,
+        271
+      ],
+      "loss_owners": [
+        "development"
+      ]
+    },
+    "development.first.bias": {
+      "small_shape": [
+        16
+      ],
+      "nominal_shape": [
+        256
+      ],
+      "loss_owners": [
+        "development"
+      ]
+    },
+    "development.last.weight": {
+      "small_shape": [
+        3,
+        16
+      ],
+      "nominal_shape": [
+        3,
+        256
+      ],
+      "loss_owners": [
+        "development"
+      ]
+    },
+    "development.last.bias": {
+      "small_shape": [
+        3
+      ],
+      "nominal_shape": [
+        3
+      ],
+      "loss_owners": [
+        "development"
+      ]
+    }
+  },
+  "state_fields": [
+    "F",
+    "H",
+    "cursor",
+    "data_bytes",
+    "eligibility",
+    "evidence",
+    "goal_raw",
+    "goal_status",
+    "goal_version",
+    "h",
+    "history",
+    "journal",
+    "l",
+    "logw",
+    "nu",
+    "nu_measurement_schema",
+    "p",
+    "pending",
+    "prediction_action",
+    "prediction_goal",
+    "prediction_key_view",
+    "previous_byte",
+    "process_time",
+    "processing_epoch",
+    "records",
+    "released_feedback_records",
+    "resources",
+    "revision",
+    "rng",
+    "s",
+    "seen_packets",
+    "settled",
+    "structure",
+    "subject_id",
+    "utf8_lead",
+    "utf8_remaining",
+    "utterance_active",
+    "v",
+    "wake_condition",
+    "world_time"
+  ],
+  "state_registry": {
+    "F": {
+      "owner": "shared cognition/belief",
+      "persistence": "required",
+      "schema": "taiji-u2-subject-v1"
+    },
+    "H": {
+      "owner": "shared cognition/belief",
+      "persistence": "required",
+      "schema": "taiji-u2-subject-v1"
+    },
+    "cursor": {
+      "owner": "utterance scratch",
+      "persistence": "required",
+      "schema": "taiji-u2-subject-v1"
+    },
+    "data_bytes": {
+      "owner": "utterance scratch",
+      "persistence": "required",
+      "schema": "taiji-u2-subject-v1"
+    },
+    "eligibility": {
+      "owner": "decision and transaction lifecycle",
+      "persistence": "required",
+      "schema": "taiji-u2-subject-v1"
+    },
+    "evidence": {
+      "owner": "source and versioned experience",
+      "persistence": "required",
+      "schema": "taiji-u2-subject-v1"
+    },
+    "goal_raw": {
+      "owner": "persistent goal",
+      "persistence": "required",
+      "schema": "taiji-u2-subject-v1"
+    },
+    "goal_status": {
+      "owner": "persistent goal",
+      "persistence": "required",
+      "schema": "taiji-u2-subject-v1"
+    },
+    "goal_version": {
+      "owner": "persistent goal",
+      "persistence": "required",
+      "schema": "taiji-u2-subject-v1"
+    },
+    "h": {
+      "owner": "shared cognition/belief",
+      "persistence": "required",
+      "schema": "taiji-u2-subject-v1"
+    },
+    "history": {
+      "owner": "source and versioned experience",
+      "persistence": "required",
+      "schema": "taiji-u2-subject-v1"
+    },
+    "journal": {
+      "owner": "decision and transaction lifecycle",
+      "persistence": "required",
+      "schema": "taiji-u2-subject-v1"
+    },
+    "l": {
+      "owner": "shared cognition/belief",
+      "persistence": "required",
+      "schema": "taiji-u2-subject-v1"
+    },
+    "logw": {
+      "owner": "shared cognition/belief",
+      "persistence": "required",
+      "schema": "taiji-u2-subject-v1"
+    },
+    "nu": {
+      "owner": "measured regulation and resources",
+      "persistence": "required",
+      "schema": "taiji-u2-subject-v1"
+    },
+    "nu_measurement_schema": {
+      "owner": "measured regulation and resources",
+      "persistence": "required",
+      "schema": "taiji-u2-subject-v1"
+    },
+    "p": {
+      "owner": "shared cognition/belief",
+      "persistence": "required",
+      "schema": "taiji-u2-subject-v1"
+    },
+    "pending": {
+      "owner": "decision and transaction lifecycle",
+      "persistence": "required",
+      "schema": "taiji-u2-subject-v1"
+    },
+    "prediction_action": {
+      "owner": "shared cognition/belief",
+      "persistence": "required",
+      "schema": "taiji-u2-subject-v1"
+    },
+    "prediction_goal": {
+      "owner": "shared cognition/belief",
+      "persistence": "required",
+      "schema": "taiji-u2-subject-v1"
+    },
+    "prediction_key_view": {
+      "owner": "shared cognition/belief",
+      "persistence": "required",
+      "schema": "taiji-u2-subject-v1"
+    },
+    "previous_byte": {
+      "owner": "utterance scratch",
+      "persistence": "required",
+      "schema": "taiji-u2-subject-v1"
+    },
+    "process_time": {
+      "owner": "identity/config/clock/structure",
+      "persistence": "required",
+      "schema": "taiji-u2-subject-v1"
+    },
+    "processing_epoch": {
+      "owner": "identity/config/clock/structure",
+      "persistence": "required",
+      "schema": "taiji-u2-subject-v1"
+    },
+    "records": {
+      "owner": "source and versioned experience",
+      "persistence": "required",
+      "schema": "taiji-u2-subject-v1"
+    },
+    "released_feedback_records": {
+      "owner": "source and versioned experience",
+      "persistence": "required",
+      "schema": "taiji-u2-subject-v1"
+    },
+    "resources": {
+      "owner": "measured regulation and resources",
+      "persistence": "required",
+      "schema": "taiji-u2-subject-v1"
+    },
+    "revision": {
+      "owner": "identity/config/clock/structure",
+      "persistence": "required",
+      "schema": "taiji-u2-subject-v1"
+    },
+    "rng": {
+      "owner": "decision and transaction lifecycle",
+      "persistence": "required",
+      "schema": "taiji-u2-subject-v1"
+    },
+    "s": {
+      "owner": "shared cognition/belief",
+      "persistence": "required",
+      "schema": "taiji-u2-subject-v1"
+    },
+    "seen_packets": {
+      "owner": "decision and transaction lifecycle",
+      "persistence": "required",
+      "schema": "taiji-u2-subject-v1"
+    },
+    "settled": {
+      "owner": "decision and transaction lifecycle",
+      "persistence": "required",
+      "schema": "taiji-u2-subject-v1"
+    },
+    "structure": {
+      "owner": "identity/config/clock/structure",
+      "persistence": "required",
+      "schema": "taiji-u2-subject-v1"
+    },
+    "subject_id": {
+      "owner": "identity/config/clock/structure",
+      "persistence": "required",
+      "schema": "taiji-u2-subject-v1"
+    },
+    "utf8_lead": {
+      "owner": "utterance scratch",
+      "persistence": "required",
+      "schema": "taiji-u2-subject-v1"
+    },
+    "utf8_remaining": {
+      "owner": "utterance scratch",
+      "persistence": "required",
+      "schema": "taiji-u2-subject-v1"
+    },
+    "utterance_active": {
+      "owner": "utterance scratch",
+      "persistence": "required",
+      "schema": "taiji-u2-subject-v1"
+    },
+    "v": {
+      "owner": "shared cognition/belief",
+      "persistence": "required",
+      "schema": "taiji-u2-subject-v1"
+    },
+    "wake_condition": {
+      "owner": "persistent goal",
+      "persistence": "required",
+      "schema": "taiji-u2-subject-v1"
+    },
+    "world_time": {
+      "owner": "identity/config/clock/structure",
+      "persistence": "required",
+      "schema": "taiji-u2-subject-v1"
+    }
+  },
+  "coverage": [
+    {
+      "id": "text",
+      "implementations": [
+        {
+          "path": "taiji/u2_subject.py",
+          "symbol": "U2Subject.text_units",
+          "line": 543,
+          "last_line": 554
+        },
+        {
+          "path": "taiji/u2_subject.py",
+          "symbol": "U2Subject.goal",
+          "line": 556,
+          "last_line": 564
+        }
+      ],
+      "status": "reference_graph_engineering_to_verify",
+      "behavior_status": "not_evaluated"
+    },
+    {
+      "id": "records",
+      "implementations": [
+        {
+          "path": "taiji/u2_subject.py",
+          "symbol": "U2Subject.set_records",
+          "line": 631,
+          "last_line": 658
+        },
+        {
+          "path": "taiji/u2_subject.py",
+          "symbol": "U2Subject.record_units",
+          "line": 660,
+          "last_line": 671
+        },
+        {
+          "path": "taiji/u2_subject.py",
+          "symbol": "U2Subject.record_read",
+          "line": 678,
+          "last_line": 729
+        }
+      ],
+      "status": "reference_graph_engineering_to_verify",
+      "behavior_status": "not_evaluated"
+    },
+    {
+      "id": "native",
+      "implementations": [
+        {
+          "path": "taiji/u2_subject.py",
+          "symbol": "U2Subject.native",
+          "line": 731,
+          "last_line": 800
+        }
+      ],
+      "status": "reference_graph_engineering_to_verify",
+      "behavior_status": "not_evaluated"
+    },
+    {
+      "id": "world",
+      "implementations": [
+        {
+          "path": "taiji/u2_subject.py",
+          "symbol": "U2Subject.predict",
+          "line": 802,
+          "last_line": 807
+        },
+        {
+          "path": "taiji/u2_subject.py",
+          "symbol": "_WorldKernel.encode",
+          "line": 379,
+          "last_line": 402
+        },
+        {
+          "path": "taiji/u2_subject.py",
+          "symbol": "_WorldKernel.binding",
+          "line": 404,
+          "last_line": 436
+        },
+        {
+          "path": "taiji/u2_subject.py",
+          "symbol": "_WorldKernel.decode",
+          "line": 438,
+          "last_line": 463
+        },
+        {
+          "path": "taiji/u2_subject.py",
+          "symbol": "_WorldKernel.likelihood",
+          "line": 465,
+          "last_line": 495
+        },
+        {
+          "path": "taiji/u2_subject.py",
+          "symbol": "U2Subject.correct",
+          "line": 809,
+          "last_line": 956
+        }
+      ],
+      "status": "reference_graph_engineering_to_verify",
+      "behavior_status": "not_evaluated"
+    },
+    {
+      "id": "query_expression",
+      "implementations": [
+        {
+          "path": "taiji/u2_subject.py",
+          "symbol": "U2Subject.branch_context",
+          "line": 964,
+          "last_line": 983
+        },
+        {
+          "path": "taiji/u2_subject.py",
+          "symbol": "U2Subject.begin_utterance",
+          "line": 985,
+          "last_line": 1000
+        },
+        {
+          "path": "taiji/u2_subject.py",
+          "symbol": "U2Subject.output",
+          "line": 1002,
+          "last_line": 1024
+        },
+        {
+          "path": "taiji/u2_subject.py",
+          "symbol": "U2Subject.accept_byte",
+          "line": 1026,
+          "last_line": 1050
+        }
+      ],
+      "status": "reference_graph_engineering_to_verify",
+      "behavior_status": "not_evaluated"
+    },
+    {
+      "id": "policy",
+      "implementations": [
+        {
+          "path": "taiji/u2_subject.py",
+          "symbol": "U2Subject.policy",
+          "line": 1059,
+          "last_line": 1101
+        },
+        {
+          "path": "taiji/u2_subject.py",
+          "symbol": "U2Subject.choose_operation",
+          "line": 1103,
+          "last_line": 1180
+        }
+      ],
+      "status": "reference_graph_engineering_to_verify",
+      "behavior_status": "not_evaluated"
+    },
+    {
+      "id": "external_result",
+      "implementations": [
+        {
+          "path": "taiji/u2_subject.py",
+          "symbol": "U2Subject.issue",
+          "line": 1182,
+          "last_line": 1220
+        },
+        {
+          "path": "taiji/u2_subject.py",
+          "symbol": "U2Subject.receive",
+          "line": 1222,
+          "last_line": 1367
+        }
+      ],
+      "status": "reference_graph_engineering_to_verify",
+      "behavior_status": "not_evaluated"
+    },
+    {
+      "id": "development",
+      "implementations": [
+        {
+          "path": "taiji/u2_subject.py",
+          "symbol": "U2Subject.replay",
+          "line": 1369,
+          "last_line": 1404
+        },
+        {
+          "path": "taiji/u2_subject.py",
+          "symbol": "U2Subject.internal",
+          "line": 1406,
+          "last_line": 1420
+        },
+        {
+          "path": "taiji/u2_subject.py",
+          "symbol": "U2Subject.consolidate",
+          "line": 1422,
+          "last_line": 1473
+        }
+      ],
+      "status": "reference_graph_engineering_to_verify",
+      "behavior_status": "not_evaluated"
+    },
+    {
+      "id": "growth",
+      "implementations": [
+        {
+          "path": "taiji/u2_subject.py",
+          "symbol": "U2Subject.collect_birth_credit",
+          "line": 1594,
+          "last_line": 1614
+        },
+        {
+          "path": "taiji/u2_subject.py",
+          "symbol": "U2Subject.birth_units",
+          "line": 1475,
+          "last_line": 1562
+        }
+      ],
+      "status": "reference_graph_engineering_to_verify",
+      "behavior_status": "not_evaluated"
+    },
+    {
+      "id": "state_restore",
+      "implementations": [
+        {
+          "path": "taiji/u2_subject.py",
+          "symbol": "U2Subject.state_registry",
+          "line": 1616,
+          "last_line": 1617
+        },
+        {
+          "path": "taiji/u2_subject.py",
+          "symbol": "U2Subject.export_bundle",
+          "line": 1624,
+          "last_line": 1641
+        },
+        {
+          "path": "taiji/u2_subject.py",
+          "symbol": "U2Subject.from_bundle",
+          "line": 1643,
+          "last_line": 1659
+        }
+      ],
+      "status": "reference_graph_engineering_to_verify",
+      "behavior_status": "not_evaluated"
+    }
+  ],
+  "implementation_choices": {
+    "four_modalities": "RGB64x64 patch8, audio2560 FFT256 hop128, proprio8+8mask, sharedcausalUTF8text",
+    "initialization": "Read_R output weight/bias zero; incoming common W/R record columns nonzero",
+    "gauges_removed": [
+      "goal_score.bias",
+      "actor.last.bias",
+      "relation_geometry.last.bias",
+      "h_key.bias",
+      "o_key.bias",
+      "relation_key.bias",
+      "decoder_key.bias"
+    ],
+    "proprio_query": "bias-only equivalent of fixed-zero-coordinate profile",
+    "feedback": "only receipt-released record IDs, prior-query key and feedback content value, joint FP1 batch",
+    "development_probe": "measured first-byte NLL changes and declared graph-operation cost; no capability/real-cost claim",
+    "teacher_forcing": "separate scratch, no target committed to real H/evidence",
+    "late_or_unknown": "first single-result-bundle profile queues incomplete result, rejects historical Corr",
+    "legacy_SC_bridge": "not enabled in this U2 profile; no claim of migrating legacy states",
+    "autonomy": "nine scores defined; continuousbodyclosedloop reference exercises act/inspect and replay/wait; otheroperations explicit API boundaries"
+  },
+  "historical_legacy_source": {
+    "ref": "4f5be3f24:taiji/growth_credit.py",
+    "canonical_sha256": "3c311b49b4ebefdb552dc52c6716941cf3ad5882a6bf55b295a1adc9769f3317",
+    "current_source_matches": false,
+    "disposition": "history-bound diagnostic only; newsubject does not import thislegacy module"
+  },
+  "preflight_accounting": {
+    "optimizer_steps": 0,
+    "measured_kernel_cpu_seconds": [
+      6.1875,
+      7.0625
+    ],
+    "startup_and_static_tool_cpu": "not included in kernel measurements; formal process CPU reported separately"
+  }
+}

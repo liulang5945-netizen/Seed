@@ -2,11 +2,11 @@
 
 > 文档状态：[索引] — 本页只导航，不定义方向、不发布队首。
 
-正式持续Goal概要：**发展内部状态连续、持续可塑、可恢复并能继承式生长的态极原生认知模型，使其自身认知机制实际承担决策与表达，通过可核验的经验与反馈改进负责机制，以自然中文完成连续任务并保持有效旧能力；在授权和资源边界内，按需新增、整合或回收单元/连接/群体，无新提示时也能按目标与状态开展内部活动、求证、求助、休息或等待。** 统一目标与验收表述见[总计划§1](MASTER-PLAN.md#0b-长期目标与阶段边界)。这是长期目标，不宣称现有实现已满足；Seed负责运行承载。
+正式持续Goal概要见[根需求§2.1](active/TAIJI_CORE_REQUIREMENTS.md#21-统一目标与验收)。目标覆盖连续可塑与恢复、继承式规模生长、自然中文连续任务、多模态物理理解、证据纠正与自主活动，按同一候选的实际贡献、保持和全过程成本逐阶段验收。Seed负责运行承载。
 
 ## 按顺序推进只读一份
 
-[MAINLINE](MAINLINE.md)是唯一入口，状态与队首归[MASTER-PLAN](MASTER-PLAN.md)，[ROADMAP-NEXT](reference/ROADMAP-NEXT_20261104.md)只同步依赖。2026-11-10已按R63后的全局收束修订[U2完整主体闭环候选](reference/SPEC-TAIJI-CLOSED_LOOP_U2_20261110.md)与[执行包22](reference/PLAN-TAIJI-CLOSED_LOOP_DEVELOPMENT_20261110.md)。[22.1正式规格与反例核验](reference/VALIDATION-TAIJI-U2_22_1_20261110.md)已局部通过，现转22.2正式参考图，六项目标按同一主体逐层取证。S18–S22为长期责任轴，与执行包号独立。
+[MAINLINE](MAINLINE.md)是唯一入口，状态与队首归[MASTER-PLAN](MASTER-PLAN.md)，[ROADMAP-NEXT](reference/ROADMAP-NEXT_20261104.md)只同步依赖。2026-11-10已按R63后的全局收束修订[U2完整主体闭环候选](reference/SPEC-TAIJI-CLOSED_LOOP_U2_20261110.md)与[执行包22](reference/PLAN-TAIJI-CLOSED_LOOP_DEVELOPMENT_20261110.md)。[22.1正式规格与反例核验](reference/VALIDATION-TAIJI-U2_22_1_20261110.md)已局部通过，[22.2参考图工程](reference/VALIDATION-TAIJI-U2_22_2_20261110.md)已结案，当前22.3完整恢复，六项目标按同一主体逐层取证。S18–S22为长期责任轴，与执行包号独立。
 
 本轮范围、顺序、预算、风险与具名出口见[闭环开发卡](reference/PLAN-TAIJI-CLOSED_LOOP_DEVELOPMENT_20261110.md)。包20、包21、v2 F学习线与桥/边界线按各自结案保存，阶段编号不表示长期能力完成比例。
 
