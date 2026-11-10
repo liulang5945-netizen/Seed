@@ -1926,11 +1926,11 @@ R57 是 confirm 分区第 2 次读（D-20261109-60），本次重跑构成**第 
 | --- | --- | --- | --- | --- |
 | 1 | `plans/reference/CONSOLIDATION_20261103.md:162` | `reports/…_superseded_20261019.json` | `plans/archive/20261103_consolidation/…_superseded_20261019.json` | 当年移档未改引用；按 `7.2` 归档路径并在行内标 superseded |
 | 2 | `plans/reference/CONSOLIDATION_20261103.md:163` | 同上另一枚 | `plans/archive/20261103_consolidation/…` | 同上 |
-| 3 | `plans/reference/delivery-runs/20261101-n-goal-coverage/artifacts/03-requirements-coverage.md:33` | `reports/taiji_core_r026_plasticity_arms_20261101.json` | `reports/taiji_core_r026_plasticity_arms_20261031.json` | 日期写反 |
+| 3 | `plans/reference/delivery-runs/20261101-n-goal-coverage/artifacts/03-requirements-coverage.md:33` | `taiji_core_r026_plasticity_arms_20261101.json`（当年按 11-01 写） | `reports/taiji_core_r026_plasticity_arms_20261031.json` | 日期写反 |
 | 4 | `plans/reference/PLAN-N1-169_execution_closeout_20261025.md:65` | `reports/…_progress.json` | 去链接，改为文字说明"过程中间件，已随 `d9a51bb61` 移除" | 中间件被清理，读数以三份正式件为准 |
 | 5 | `plans/reference/PLAN-N1-175_evaluation_handoff_20261026.md:11` | `reports/…_v3_review_20261026.attempt.json` | `reports/…/blind_review_key.json` | `.attempt.json` 已随 `d9a51bb61` 移除 |
-| 6 | `plans/reference/SPEC-TAIJI-CORE_GATES_R027_20261031.md:33` | `reports/taiji_core_r027_subject_gates_20261031.json` | `reports/taiji_core_r027_subject_gates_20261101.json` | 日期写反（落盘是 11-01） |
-| 7 | `plans/reference/PROJECT_CONSOLIDATION_20261029.md:185` | `reports/taiji_n1_plan177_f_f1_closeout_20261029.json` | `reports/taiji_n1_plan177_f1_closeout_20261029.json` | 多打一个 `_f` |
+| 6 | `plans/reference/SPEC-TAIJI-CORE_GATES_R027_20261031.md:33` | `taiji_core_r027_subject_gates_20261031.json`（当年按 10-31 写） | `reports/taiji_core_r027_subject_gates_20261101.json` | 日期写反（落盘是 11-01） |
+| 7 | `plans/reference/PROJECT_CONSOLIDATION_20261029.md:185` | `taiji_n1_plan177_f_f1_closeout_20261029.json` | `reports/taiji_n1_plan177_f1_closeout_20261029.json` | 多打一个 `_f` |
 
 **3. 更正后的读数**：引用普查 `python scripts/training/audit_taiji_ledger_cited_reports_are_tracked.py` ⇒ `verdict=holds`，`not_tracked=[]`、`missing_on_disk=[]`、`failing_verdicts=[]`；`test_n5_38` **9 passed**。此前 15 条 CI 失败的最终分类改为 **(a) 14 / (b) 1 / (c) 0**，(b) 仅 `test_composition_read_probe_anchor`（缺 `.pt`，处置见 D-20261110-08）。
 
@@ -1961,4 +1961,16 @@ R57 是 confirm 分区第 2 次读（D-20261109-60），本次重跑构成**第 
 **9. 对 CI 的影响（不回避）**：`test_composition_read_probe_anchor` 在干净克隆上仍会红——它直接读 `output/taiji_core_09/subject_bundle.pt`，而该件按本条不入库。它是当前**唯一因缺件而红的用例**；因其已被判定为 `regenerable_exact`，处置方向是"按需生成"（约 435 CPU 秒），既不是 skip，也不是入库。
 
 **10. 撤回路径**：若后续 owner 要求 CI 全绿，唯一合规做法是让该用例在缺件时按 `verify_taiji_closeout_09.py` 的逻辑现场生成到临时目录后再跑，或把该用例从 `pytest-full` 中显式移出并登记原因；两者都要新决策，不得默默 skip。
+
+## D-20261110-09 撤回 2026-10-25 遗留的 M5-inject 受控红（coverage-gate 一直是假红）
+
+**1. 编号／时间／类型**：D-20261110-09｜2026-11-10｜**CI 配置清理**（0 读数改动、0 判定改口径）。
+
+**2. 事实**：`ci.yml` 的 `Core reasoning path coverage gate (B-4)` 步首行一直挂着一条 `false  # M5-inject: forced failure (E-fail), revert after readout`。它来自 2026-10-25 的注入实验（注入提交 `7cc58dc31`，台账归档件 `plans/archive/history/delivery-runs/20261025-235503/artifacts/09-injection-experiment-brief.md`，DEBT-G179 也提到"此刻 main 上挂着 M5-inject 的受控红 run"）。实验早已收尾归档，但这条 `false` 从未 revert。
+
+**3. 后果（不是小事）**：`set -e` 下第一行就退出，覆盖率脚本**从未执行**，`reports/core_reasoning_coverage_ci.json` 因此从未产出（所以 upload 步报 "no files found"），末置汇总据此判红。也就是说：**coverage-gate 在过去这段日子的红是注入出来的假红，不是覆盖率不足**。10:29 那次 run 独立复现了同一现象（仅 coverage-gate 与 pytest 红），可证与今天的改动无关。
+
+**4. 处置**：删掉那一行 `false`，恢复成只跑覆盖率脚本。判据、阈值（60.0）与 `continue-on-error` 语义一概不动。删后该门第一次真正开跑：若核心面覆盖率确实低于 60%，它会**因真实原因**红，那是要另立条目处置的另一次读数，不是本条能预判的。
+
+**5. 为什么现在动**：注入实验的读出面已归档 16 天，`revert after readout` 的条件早已满足；留着它等于让整条 CI 永远不可能绿，并把"CI 红"变成无信息量的常量。
 
