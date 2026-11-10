@@ -3107,3 +3107,17 @@ KL(p0‖pk) **9.905408e-05**；KL(pk‖p0) **9.920218e-05**；TV **5.588227e-03*
 **E 三条必须同段引用的观察**：① 败因**不是名字抄错、也不是长度不够**——21 格 `name_exact` 全 true、零多余零缺字节，失败形态是“`到` 被等长替换成 `玉`”（如 wumu 9 B `把乌木罗玉放井前`）⇒ **“零多余＋零缺字节”不等于内容正确**，只有整句逐字节能暴露。② 长度轴本身不单调：纯汉字 wumu 9 B 失败，而混杂脚本 7／8 B 反而通过；`stem_real` 连 6 B 都通过 ⇒ 同一长度在不同词干上成败相反。③ 物件止边 argmax 在本批仍与结果同向：6 个败格全 `0xe7`、15 个过格全 `0xe6`，与 R61 的“`0xE7` ⇒ 败”同向；但这仍是**相关读数**，本轮无干预，不得写成因果。
 
 **F 冻结件与代价**：[报告](../../reports/taiji_object_length_dense_r60b_20261110.json)（sha `e5df9df4…`）、[manifest](../manifests/taiji_object_length_dense_r60b_20261110.json)（sha `4331f5b0…`）、[runner](../../scripts/training/probe_taiji_object_length_dense_r60b_20261110.py)；`definition_digest` 与冻结文件清单见 manifest；成本 **8.16 CPU／8.61 wall**（声明单轮 10、含重放 30、上限 200／1800）；`training_runs 0／optimizer_steps 0／parameters_added 0／graph_changes 0／confirm_reads 0`。**重签说明（2026-11-10）**：首跑因仓库 pre-commit 的 ruff SIM201 闸未过（`not x == y` 写法），把该行改成等价的 `!=` 后按纪律删掉 manifest／报告／progress 重签重跑；**21 格读数、两选一出口、锚点 74 字段逐项不变**，只有 sha 与耗时变。
+
+### §21.72 R62 物件止边干预闸：强制首字节能否翻转答案——判 `causal_one_direction`
+
+**A 与主任务的关系**：不改 192/192、不放宽形状限制。R61 只给出“物件止边 argmax `0xE7` ⇒ 内容败”的**预测**（相关）；R62 在**同一位置强制换掉实际发射的那一个字节**，看整句 `byte_exact` 是否随之翻转，回答它是不是**因果把手**。
+
+**B 冻结面（读数前冻结，digest 覆盖）**：base fixture `dev[0]`；描述、地点 `井前`（6 B）与 R61 同字节；**词干与发牌完全沿用 R61**（12 新＋2 复现，不重发牌）；物件 6／9／12／15 B。干预范围＝**物件止边（位置 3＋物件字节）恰好一个发射字节**，其余位置自由解码；四臂：`none`（不干预，兼锚点）、`sham`（强制 none 臂在那里已经发射的同一个字节）、`force_e6`、`force_e7`。解码总数 **48×4＋8＝200**；不适用格（该位没有自然发射字节）逐格披露，不静默丢弃。
+
+**C 前置复现门（先过门才解释干预）**：冻结 runner 没有干预钩子，故本轮**用 r58 原语重建解码循环**；预注册前置＝先逐位复现 R61 的 56 格。实测 **`anchor_match=true`：56 格／1890 字段／0 不符**（1890 而非 1904，是 `g1`@15 B 从未到达地点止边、该边两侧同为 None，按规则不计数）。三个机器守卫在 48 格上**全部为 true**：`sham_identity`（sham 与 none 逐字节同）、`force_applied`（每个 force 臂在目标位确实发射了被强制值）、`no_op_consistency`（强制值等于自然值时与 sham 逐字节同）。另 `structural 12/12`、`frozen_files_unchanged=true`、`failing_axes=[]`。
+
+**D 读数（48 个新格）**：不干预臂的实际发射字节——**29 个精确格全 `0xE6`、19 个败格全 `0xE7`**（不只是 argmax）。break 方向：29 个本来精确的格，强制 `0xE7` 后 **29/29 全部内容败**（rate **1.0**）。rescue 方向：19 个本来不精确的格，强制 `0xE6` 后 **18/19 救回逐字节**（rate **0.9474**）。合并：`force_e6` 臂 **47/48** 精确、`force_e7` 臂 **0/48** 精确（后者含 19 个本来已败的 no-op 格）。**唯一未救回格 `g5`@6 B**：目标 `把未戊放到井前`，不干预得到 `把未戊玉玉井前`；强制 `0xE6` 后得到 `把未戊漆放井前`——**首字节被强制、字符没被钉住**（`放` 与 `漆` 同以 `0xE6` 开头），后续两字节落到 `漆`，整句仍 21 B 但内容错。
+
+**E 结论（唯一出口）**：`causal_one_direction` ⇒ `causal_handle_break_only`。**物件止边发射的首字节对“内容败”是因果把手（break 方向 29/29 全称）；对“内容正确”不是充分把手（rescue 18/19，因为一个首字节不钉住字符）**。**不得**写成“`0xE6` 导致正确”“换字节就能修好”，也不得把 18/19 写成 19/19。
+
+**F 冻结件与代价**：[报告](../../reports/taiji_object_edge_intervention_r62_20261109.json)（sha `9289e0d5…`）、[manifest](../manifests/taiji_object_edge_intervention_r62_20261109.json)（sha `79af9de4…`）、[runner](../../scripts/training/probe_taiji_object_edge_intervention_r62_20261109.py)；`definition_digest=387cd934…`；成本 **52.66 CPU／53.47 wall**（声明单轮 60、含重放 180、上限 200／1800，未超）；实测 ≈0.26 CPU/格 对预注册 0.177，**低估 1.44 倍、未归因**（与 D-69／D-71 的单价漂移同类）。`training_runs 0／optimizer_steps 0／parameters_added 0／graph_changes 0／confirm_reads 0`；封存集与 holdout 报告均未读。

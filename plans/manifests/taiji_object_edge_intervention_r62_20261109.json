@@ -1,0 +1,313 @@
+{
+  "schema": "taiji-object-edge-intervention-r62-manifest-v1",
+  "step": "R62",
+  "date": "2026-11-10",
+  "definition": {
+    "gate": "R62 frozen-criterion dev intervention: is the object-edge emitted byte a causal handle on content failure",
+    "held_constant": {
+      "base_fixture": "dev[0], as in R59/R60/R61",
+      "object_description": "古旧木制器具",
+      "place_description": "旧年石砌场所",
+      "place_name": "井前",
+      "place_bytes": 6,
+      "stems": "the same 14 stems R61 dealt (12 new + 2 replication), same sha256 deal, no re-deal",
+      "object_bytes": [
+        6,
+        9,
+        12,
+        15
+      ],
+      "template": "2-hop 把{object}放到{place}; records written as {desc}是{name}。 and {desc}对应{name}。"
+    },
+    "intervention": {
+      "position": "object stop edge = 3 + object_bytes",
+      "scope": "exactly one emitted byte at that position; every other position decodes freely",
+      "mechanism": "override the post-mask emitted byte before advance_custom, so the state carries the forced byte",
+      "arms": {
+        "none": "no override; also the anchor arm",
+        "sham": "override with the byte the none arm already emitted at that position",
+        "force_e6": "override with 230 (0xE6, first byte of 放)",
+        "force_e7": "override with 231 (0xE7, first byte of 玉/箔/甾 class inserts)"
+      },
+      "decodes": "48 new cells x 4 arms + 8 replication cells x none = 200",
+      "not_applicable": "a cell whose none arm never emitted a byte at that position has no sham/force denominator and is disclosed, not dropped silently"
+    },
+    "anchor": {
+      "source": "reports\\taiji_object_edge_r61_20261109.json",
+      "cells": 56,
+      "content_fields": [
+        "target_text",
+        "decoded_text",
+        "answer_bytes",
+        "zero_extra",
+        "byte_exact",
+        "field_lengths_ok"
+      ],
+      "edge_fields": [
+        "position",
+        "at_declared_end",
+        "argmax_byte",
+        "argmax_label",
+        "masked",
+        "pre_mask_label",
+        "emitted_label",
+        "eos_probability",
+        "eos_rank",
+        "continuation_desire",
+        "copy_mass_total",
+        "copy_limit_active",
+        "gamma_eff",
+        "q_null"
+      ],
+      "edges_compared": [
+        "object_edge",
+        "place_edge"
+      ],
+      "on_mismatch": "engineering_failure; no intervention result is interpreted"
+    },
+    "machinery_guards": {
+      "sham_identity": "sham raw bytes and both kept edge traces must equal the none arm bitwise on every applicable new cell",
+      "force_applied": "every force arm must record the override at the position and the answer byte there must equal the forced value",
+      "no_op_consistency": "where the forced byte equals the natural byte, that force arm must equal the sham arm bitwise",
+      "on_violation": "engineering_failure"
+    },
+    "denominators": {
+      "rescue_candidates": "new cells whose none arm is not byte exact, whose natural emitted byte exists and is not 0xE6",
+      "break_candidates": "new cells whose none arm is byte exact, whose natural emitted byte exists and is not 0xE7",
+      "rescued": "rescue candidates whose force_e6 arm is byte exact",
+      "broken": "break candidates whose force_e7 arm is not byte exact",
+      "rates": "rescued / rescue candidates, broken / break candidates"
+    },
+    "classifier": {
+      "branches_in_order": [
+        "anchor mismatch -> engineering_failure",
+        "sham identity or force-applied or no-op consistency violated -> engineering_failure",
+        "cpu or wall over cap -> budget_stop",
+        "either candidate count is zero -> intervention_unmeasurable",
+        "rescue_rate == 1 and break_rate == 1 -> causal_both_directions",
+        "exactly one rate == 1 -> causal_one_direction",
+        "either rate > 0 -> partial_causal_effect",
+        "both rates == 0 -> no_causal_effect"
+      ],
+      "note": "branches are mutually exclusive and evaluated in this order; every intervened cell is reported"
+    },
+    "main_task_rule": {
+      "causal_both_directions": "the emitted byte at the object edge is a causal handle on content failure in both directions; still not a capability claim and still no relaxation of the 192/192 shape limit",
+      "causal_one_direction": "causal in the named direction only; the other direction stays a companion readout",
+      "partial_causal_effect": "counts are reported per cell; no mechanism sentence beyond the counts",
+      "no_causal_effect": "R61's predictor is a companion readout, not a causal handle; R61 limit (c) stands",
+      "engineering_or_unmeasurable": "no reading"
+    },
+    "gates": {
+      "structural_pass": "12 structural cells exact AND every none-arm cell field_lengths_ok",
+      "anchor_match": "all 56 none-arm cells equal R61 on every declared field",
+      "sham_identity": "all applicable sham cells bitwise equal none",
+      "force_applied": "all applicable force arms reached the answer",
+      "no_op_consistency": "force arms whose byte equals the natural byte equal sham bitwise",
+      "failing_axes": "names of failed boolean gates"
+    },
+    "scope": "dev/synthetic only; the sealed confirm split and its holdout report are not read; no change to 192/192; conclusions limited to these stems, place 6 B and this description pair",
+    "estimate_rule": "D-64: single run x 3 (one run plus two replay margins) + report assembly",
+    "unit_price_source": {
+      "path": "reports/taiji_object_edge_r61_20261109_progress.jsonl",
+      "measured_cpu_per_cell": 0.177,
+      "setup_structural_and_first_cell_cpu": 1.1406,
+      "r62_single_run_derivation": "1.14 setup + 200 x 0.177 = 36.54; declared 60 with margin",
+      "caveat": "D-69/D-71 logged unattributed unit-price drift across rounds; the cap, not the estimate, binds"
+    },
+    "reimplementation_disclosure": "the decode loop is rebuilt from r58 primitives because the frozen runners expose no hook; the 56-cell bitwise anchor is the precondition for interpreting any intervention"
+  },
+  "definition_digest": "387cd93401fe738542d65a10d4b0f1bc2427ac8fb7677bd760ac93b867e4cec1",
+  "frozen_files": {
+    "scripts/training/probe_taiji_object_edge_intervention_r62_20261109.py": "0f1aa054b187b9687eaa025319ff7fa2415fbe8c91b58678f30ea0e080ced384",
+    "scripts/training/probe_taiji_object_edge_r61_20261109.py": "5b73dbb71f523486472a93a0bf9f464a43bee6b118ecfa14a0881197b4f691f3",
+    "scripts/training/probe_taiji_object_length_r60_20261109.py": "8f6c518158796d59314a354695e512e37f70964fd692767d864197fd99fa282c",
+    "scripts/training/probe_taiji_stop_shape_r59_20261109.py": "e0bff4c025e221087e51053fe7e2f45b80689751ccb8d1b81fc48e41c79fa08f",
+    "scripts/training/probe_taiji_stop_shape_r58_20261109.py": "b4866f9d77ec28ac59c35788e045241fb5b8cf64c7775b34ea73e2cccfbe4e2a",
+    "scripts/training/probe_taiji_content_transport_18_1.py": "202167c20485af10550a73047f0ce78ad3f7c92da3c5972d2d76c38dcc3b37d4",
+    "taiji/copy_stop_boundary.py": "27e5b9a63be29e98197331d59c5ad471e5ae46fa68921c87ce13b42bf193d702",
+    "taiji/binding_copy.py": "37f4885e8dc33a41f6f701e3d0e87daf15c126be735acceea02098e5e39c045c",
+    "taiji/record_relation_core.py": "8318dde5c3d3b3ff42a2c94e528aec7552363d4f9aef2c11ee95b8e868ef64a2",
+    "taiji/living_core.py": "6c0c53a2a6465627918721da83b1e0fb80a04c262f95c97d9b825ee858d0785d",
+    "taiji/data_premise_18_0.py": "b98b68534d26773091b234d5b7c92220def1059be56ab2c2bb0f3f8cc5791204",
+    "taiji/selection_routing.py": "3b80ed033055ed9eb15afc386befae7d6b73ad829844c68a59a89f20b2aa5bde",
+    "taiji/selection_routing_checkpoint.py": "606cc68cf1c5a628d3b91c494258c9f4b20084fa638eb88615e8e60dfcd5ce61",
+    "reports/taiji_object_edge_r61_20261109.json": "83f035ab59729edf2b6586fa9a8deb1c98723e6129d0da0c212b3a3cd3d3974b"
+  },
+  "stems": [
+    {
+      "stem": "g0",
+      "family": "glyph",
+      "full_name": "甲寅卯未戊",
+      "names": {
+        "6": "甲寅",
+        "9": "甲寅卯",
+        "12": "甲寅卯未",
+        "15": "甲寅卯未戊"
+      }
+    },
+    {
+      "stem": "g1",
+      "family": "glyph",
+      "full_name": "子庚巳辰亥",
+      "names": {
+        "6": "子庚",
+        "9": "子庚巳",
+        "12": "子庚巳辰",
+        "15": "子庚巳辰亥"
+      }
+    },
+    {
+      "stem": "g2",
+      "family": "glyph",
+      "full_name": "午丑丙己丁",
+      "names": {
+        "6": "午丑",
+        "9": "午丑丙",
+        "12": "午丑丙己",
+        "15": "午丑丙己丁"
+      }
+    },
+    {
+      "stem": "g3",
+      "family": "glyph",
+      "full_name": "戌乙酉壬申",
+      "names": {
+        "6": "戌乙",
+        "9": "戌乙酉",
+        "12": "戌乙酉壬",
+        "15": "戌乙酉壬申"
+      }
+    },
+    {
+      "stem": "g4",
+      "family": "glyph",
+      "full_name": "癸辛甲寅卯",
+      "names": {
+        "6": "癸辛",
+        "9": "癸辛甲",
+        "12": "癸辛甲寅",
+        "15": "癸辛甲寅卯"
+      }
+    },
+    {
+      "stem": "g5",
+      "family": "glyph",
+      "full_name": "未戊子庚巳",
+      "names": {
+        "6": "未戊",
+        "9": "未戊子",
+        "12": "未戊子庚",
+        "15": "未戊子庚巳"
+      }
+    },
+    {
+      "stem": "r0",
+      "family": "real",
+      "full_name": "樟座钟外壳",
+      "names": {
+        "6": "樟座",
+        "9": "樟座钟",
+        "12": "樟座钟外",
+        "15": "樟座钟外壳"
+      }
+    },
+    {
+      "stem": "r1",
+      "family": "real",
+      "full_name": "藤花瓶底座",
+      "names": {
+        "6": "藤花",
+        "9": "藤花瓶",
+        "12": "藤花瓶底",
+        "15": "藤花瓶底座"
+      }
+    },
+    {
+      "stem": "r2",
+      "family": "real",
+      "full_name": "槐匣子支架",
+      "names": {
+        "6": "槐匣",
+        "9": "槐匣子",
+        "12": "槐匣子支",
+        "15": "槐匣子支架"
+      }
+    },
+    {
+      "stem": "r3",
+      "family": "real",
+      "full_name": "榆茶杯盖板",
+      "names": {
+        "6": "榆茶",
+        "9": "榆茶杯",
+        "12": "榆茶杯盖",
+        "15": "榆茶杯盖板"
+      }
+    },
+    {
+      "stem": "r4",
+      "family": "real",
+      "full_name": "松茶壶把手",
+      "names": {
+        "6": "松茶",
+        "9": "松茶壶",
+        "12": "松茶壶把",
+        "15": "松茶壶把手"
+      }
+    },
+    {
+      "stem": "r5",
+      "family": "real",
+      "full_name": "棕鼎器内胆",
+      "names": {
+        "6": "棕鼎",
+        "9": "棕鼎器",
+        "12": "棕鼎器内",
+        "15": "棕鼎器内胆"
+      }
+    },
+    {
+      "stem": "stem_wumu",
+      "family": "replication",
+      "full_name": "乌木罗盘座",
+      "names": {
+        "6": "乌木",
+        "9": "乌木罗",
+        "12": "乌木罗盘",
+        "15": "乌木罗盘座"
+      }
+    },
+    {
+      "stem": "stem_glyph",
+      "family": "replication",
+      "full_name": "甲乙丙丁戊",
+      "names": {
+        "6": "甲乙",
+        "9": "甲乙丙",
+        "12": "甲乙丙丁",
+        "15": "甲乙丙丁戊"
+      }
+    }
+  ],
+  "stem_check": {
+    "problems": [],
+    "ok": true,
+    "stems": 14,
+    "new_stems": 12
+  },
+  "bundle": "output\\taiji_package19_compare\\28031-B_stop_lock-step300.pt",
+  "bundle_sha256": "fe04fbfb14aa0390877385a4429f2a851396a6fe6acb3107bae0a5e4e331dfca",
+  "anchor": {
+    "path": "reports\\taiji_object_edge_r61_20261109.json",
+    "sha256": "83f035ab59729edf2b6586fa9a8deb1c98723e6129d0da0c212b3a3cd3d3974b"
+  },
+  "cost": {
+    "single_run_estimate": 60.0,
+    "estimate_with_replays": 180.0,
+    "cpu_cap": 200.0,
+    "wall_cap": 1800.0
+  },
+  "immutability": "written once before the run; never rewritten",
+  "sealed_split": "not read"
+}
