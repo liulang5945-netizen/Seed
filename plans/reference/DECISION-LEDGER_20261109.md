@@ -1991,7 +1991,7 @@ R57 是 confirm 分区第 2 次读（D-20261109-60），本次重跑构成**第 
 
 **5. 断言未动**：`test_composition_read_probe_anchor` 一行未改——它照旧要求 bundle 的 sha／字节数与封存值一致，只是这个前提现在由 CI 自己造出来（既不 skip，也不缺件报红）。
 
-**6. 单一来源（用户第 4 条要求）**：sha／字节数／相对路径收敛到 `taiji/core_09_bundle.py`；原先各写一份的 6 个消费者（`verify_taiji_record_relation_14.py`／`_14_5`／`_14_6`／`_14_6_preflight`／`verify_taiji_composition_10_21.py`／`verify_taiji_10_21_1.py`）改为别名导入，行为不变。新增守卫测试 `tests/taiji_native/test_core_09_bundle_single_source.py`：`taiji/` 与 `scripts/` 里除 owner 外任何 `.py` 再出现该 sha 字面量即红。
+**6. 单一来源（用户第 4 条要求）**：sha／字节数／相对路径收敛到 `taiji/core_09_bundle.py`；原先各写一份的** 5 个已入库消费者**（`verify_taiji_record_relation_14.py`／`_14_5`／`_14_6`／`_14_6_preflight`／`verify_taiji_10_21_1.py`）改为别名导入，行为不变。另有一份**未入库的本地草稿** `verify_taiji_composition_10_21.py` 也带着同一份常量副本：它不在库、按纪律不提交，本轮顺手改过后**已还原为原样**（仍留 15 条既存 B/SIM 违规，不属于本线处理面）。新增守卫测试 `tests/taiji_native/test_core_09_bundle_single_source.py`：`taiji/` 与 `scripts/` 里除 owner 外任何 `.py` 再出现该 sha 字面量即红。
 
 **7. 未验证的残余风险**：跨平台逐字节一致性**只在维护机（Windows）上验过**。若 runner 的指令集或浮点收缩令重建漂移，`materialize-bundle` 会以"sha／字节数不等"的明确消息判红——那属跨平台问题，需要另立条目处置；但它不会伪装成"文件缺失"。
 
@@ -2007,4 +2007,24 @@ R57 是 confirm 分区第 2 次读（D-20261109-60），本次重跑构成**第 
 - 若该线长期不动、这条红长期存在，报 owner 协调。
 
 **4. 与 D-20261110-07 的关系**：那 15 条（(a)14／(b)1／(c)0）是 n5_38 族的引用口径与缺件问题；本条 13 条是另一条线的类型错。两者不是同一个分母，混在一起会让"本线已清"这句话失去意义。
+
+## 观察项（非决策：只记事实与趋势，不含结论、不含优化方案）
+
+### O-20261110-01 全量回归步骤耗时趋势
+
+| 观测点 | run id | 日期（UTC） | `Run complete regression suite` 耗时 | 该步结论 |
+|---|---|---|---|---|
+| 基线 1 | `42799589453` | 2026-11-10 | 64.4 分钟 | success |
+| 基线 2 | `42819658217` | 2026-11-10 | 87.9 分钟 | success |
+| 本次 | `42829898072` | 2026-11-10 | **115.9 分钟**（14:48:16Z → 16:44:13Z） | success |
+
+**趋势**：同一 job（`test (3.12)`）的同一步骤，三次依次为 64.4 → 87.9 → 115.9 分钟，单调上升，且本次比前一次多 28 分钟、比最早一次多 51.5 分钟。全部三次该步骤本身都判 success，不是失败重试拖长。
+
+**判定线（预先写死）**：**下一次**若再超过 120 分钟，就从"观察项"升级为"需要归因的问题"，届时再查三个候选方向——测试数是否增长、宿主／runner 是否变慢、某一步是否退化。在此之前不查、不提优化、不改 CI。
+
+### O-20261110-02 `CI` 进行中 job 取不到日志（方法限制）
+
+GitHub 在 job 结束前不发布日志：`gh run view --job` 直接拒绝（`logs will be available when it is complete`），REST `.../actions/jobs/<id>/logs` 返回 `BlobNotFound`／HTTP 404，job 页的 `data-log-url` 为空且日志容器无内容（相隔 120 秒两次查看均为空）。
+
+因此**"卡死与否"只能靠步骤时间戳与总时长判断，不能靠日志内容**。此类判断必须标明所用证据类型（步骤级 `started_at`／`completed_at`、run 总时长、事后 `conclusion`），不得声称读到了日志或某个用例名。本次对 `42829898072` 的判定即属此列：证据为步骤时间戳（115.9 分钟、success），结论 `slow_but_progressing`，未取消任何 run。
 
