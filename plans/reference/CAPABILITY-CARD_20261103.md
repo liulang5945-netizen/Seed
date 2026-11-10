@@ -18,9 +18,9 @@
 
 | # | 能力/事实 | 证据指针（报告 + 字段） | 一句话白话 |
 |---|---|---|---|
-| C1 | 原生字节读写在同一张图内闭环：解码逐字节复制或生成，256字节值＋EOS，共257类 | `reports/taiji_core_record_relation_14_4_20261102.json` → `content`（`correct`/`wrong`/`null` 三个分支）；`reports/taiji_binding_copy_15_1_compare_20261102.json` → `gates.task` | 模型确实自己写字，不是让外部模型代写 |
+| C1 | 原生字节读写在同一张图内闭环：解码逐字节复制或生成，256字节值＋EOS，共257类 | `reports/taiji_core_record_relation_14_4_20261102.json` → `content`（`correct`/`wrong`/`null` 三个分支）；`reports/taiji_binding_copy_15_1_compare_20261102.json` → `gates.task`。**可复核性（2026-11-10 判定）：生产者已入库、输入件未入库、旧报告无运行条件 ⇒ 可交叉检查、不可复核** | 模型确实自己写字，不是让外部模型代写 |
 | C2 | 内容通路是必要的：去掉来源/换错记录/换错位置，分数会明显下降 | `reports/taiji_core_record_relation_14_6_20261102.json` → `gates.content.conditions`（8 例固定对照下降 0.75 / 0.75 / 0.375） | 记录信息对该范围任务有因果影响 |
-| C3 | 保存—新进程加载—继续训练，参数/优化器矩/后继分布逐位一致 | `reports/taiji_core_record_relation_14_6_preflight_20261102.json` → `checks`（6/6）；`reports/taiji_core_r027_subject_gates_20261101.json` → `boundaries`、`checks`（8/8） | 训练可以中断再续，结果不会漂 |
+| C3 | 保存—新进程加载—继续训练，参数/优化器矩/后继分布逐位一致 | `reports/taiji_core_record_relation_14_6_preflight_20261102.json` → `checks`（6/6）；`reports/taiji_core_r027_subject_gates_20261101.json` → `boundaries`、`checks`（8/8）。**可复核性（2026-11-10 判定）：生产者已入库、输入件未入库、旧报告无运行条件 ⇒ 可交叉检查、不可复核** | 训练可以中断再续，结果不会漂 |
 | C4 | N16同父/剂量等条件有记录，目标处理存在D16-4差异 | reports/taiji_binding_select_16_1_attribution_20261103.json → contract_fault | B触发自模仿、A未触发，增量需保留目标差异解释 |
 | C5 | 历史17容器枚举3,563,859参数及语义身份773dcec2… | `reports/taiji_selection_routing_17_2r_20261103.json` → `candidate` | 这是旧容器身份，不含后来单独装配的65,807参数匹配模块；新装配需去重枚举 |
 | C6 | 有序编码能把“字序不同”送到选择打分：20 对换序句最小差 0.428526 / 0.052838，旧头 0.0 | `reports/taiji_selection_routing_17_3_verify_20261103.json` → `r1_calibration`、`r1_calibration.old_head_witness` | 同一批字换个顺序，模型现在能看出不同 |

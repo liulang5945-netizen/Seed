@@ -62,7 +62,7 @@ SPEC 要求「4 题均 TF≥0.80 且自由前缀匹配≥0.80」才可称 128 by
 
 ## 6. 证据
 
-- 标定原始报告：[task_core_calibration](../../../reports/taiji_n1_plan169_task_core_calibration_20261025.json)、[progress](../../../reports/taiji_n1_plan169_task_core_calibration_20261025_progress.json)、[job exit](../../../reports/taiji_n1_plan169_calibration_job_exit_20261025.json)、[cost basis](../../../reports/taiji_n1_plan169_formal_comparison_cost_basis_20261025.json)。
+- 标定原始报告：[task_core_calibration](../../../reports/taiji_n1_plan169_task_core_calibration_20261025.json)、[job exit](../../../reports/taiji_n1_plan169_calibration_job_exit_20261025.json)、[cost basis](../../../reports/taiji_n1_plan169_formal_comparison_cost_basis_20261025.json)。原先并列的 `..._progress.json` 是过程中间件，已随 `d9a51bb61`（清理 30 份 transient shard）移除、未入库；读数以本行三份正式件为准。
 - 源码快照 SHA 见标定报告 `source_sha256`；运行后源码未变（`source_unchanged_after_run=true`）。
 - 已知限制：target 仅首 128 byte，未训练完整长回答；prompt 未截断但不含多轮历史扩展；4 题、单 seed，不能外推未见任务。
 

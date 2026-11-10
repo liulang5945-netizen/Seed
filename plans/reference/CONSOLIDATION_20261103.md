@@ -159,8 +159,8 @@
 
 | 文件 | 字节 |
 |---|---|
-| `reports/taiji_n1_v13_v14_cross_face_position_effect_superseded_20261019.json` | 5,551 |
-| `reports/taiji_n1_v14_after_n123_itemwise_attribution_superseded_20261019.json` | 11,297 |
+| `plans/archive/20261103_consolidation/taiji_n1_v13_v14_cross_face_position_effect_superseded_20261019.json` | 5,551 |
+| `plans/archive/20261103_consolidation/taiji_n1_v14_after_n123_itemwise_attribution_superseded_20261019.json` | 11,297 |
 | 合计 | 16,848 |
 
 ### 7.3 明确不删

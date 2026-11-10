@@ -1916,3 +1916,49 @@ R57 是 confirm 分区第 2 次读（D-20261109-60），本次重跑构成**第 
 
 **5. 撤回路径**：本条是规则登记，无代码与数据变更；撤回需 owner 明确裁定，并同时删除 MASTER-PLAN 的 §R-SEAL-1。
 
+## D-20261110-07 n5_38 两条红改判"口径错"，4 个生产者脚本入库并加归档拒写守卫
+
+**1. 编号／时间／类型**：D-20261110-07｜2026-11-10｜**文档与代码入库 + 分类自查更正**（0 训练、0 读数改动、0 封存读取、0 权重写盘）。
+
+**2. 分类更正（上一轮判错，本条为唯一更正处之一）**：上一轮把 `tests/taiji_native/test_n5_38_ledger_cited_reports_contract.py` 的两条红判成 **(b) 真缺件**，**判错**。实为 **(a) 口径错**：七份被引报告全部在库，错的是引用写法本身。逐条落点：
+
+| # | 文件:行 | 原引用（错） | 改为（真实目标） | 错在哪 |
+| --- | --- | --- | --- | --- |
+| 1 | `plans/reference/CONSOLIDATION_20261103.md:162` | `reports/…_superseded_20261019.json` | `plans/archive/20261103_consolidation/…_superseded_20261019.json` | 当年移档未改引用；按 `7.2` 归档路径并在行内标 superseded |
+| 2 | `plans/reference/CONSOLIDATION_20261103.md:163` | 同上另一枚 | `plans/archive/20261103_consolidation/…` | 同上 |
+| 3 | `plans/reference/delivery-runs/20261101-n-goal-coverage/artifacts/03-requirements-coverage.md:33` | `reports/taiji_core_r026_plasticity_arms_20261101.json` | `reports/taiji_core_r026_plasticity_arms_20261031.json` | 日期写反 |
+| 4 | `plans/reference/PLAN-N1-169_execution_closeout_20261025.md:65` | `reports/…_progress.json` | 去链接，改为文字说明"过程中间件，已随 `d9a51bb61` 移除" | 中间件被清理，读数以三份正式件为准 |
+| 5 | `plans/reference/PLAN-N1-175_evaluation_handoff_20261026.md:11` | `reports/…_v3_review_20261026.attempt.json` | `reports/…/blind_review_key.json` | `.attempt.json` 已随 `d9a51bb61` 移除 |
+| 6 | `plans/reference/SPEC-TAIJI-CORE_GATES_R027_20261031.md:33` | `reports/taiji_core_r027_subject_gates_20261031.json` | `reports/taiji_core_r027_subject_gates_20261101.json` | 日期写反（落盘是 11-01） |
+| 7 | `plans/reference/PROJECT_CONSOLIDATION_20261029.md:185` | `reports/taiji_n1_plan177_f_f1_closeout_20261029.json` | `reports/taiji_n1_plan177_f1_closeout_20261029.json` | 多打一个 `_f` |
+
+**3. 更正后的读数**：引用普查 `python scripts/training/audit_taiji_ledger_cited_reports_are_tracked.py` ⇒ `verdict=holds`，`not_tracked=[]`、`missing_on_disk=[]`、`failing_verdicts=[]`；`test_n5_38` **9 passed**。此前 15 条 CI 失败的最终分类改为 **(a) 14 / (b) 1 / (c) 0**，(b) 仅 `test_composition_read_probe_anchor`（缺 `.pt`，处置见 D-20261110-08）。
+
+**4. 4 个生产者脚本入库 + 归档拒写守卫**：`scripts/training/verify_taiji_record_relation_14.py`、`_14_5.py`、`_14_6.py`、`_14_6_preflight.py` 入库。每个脚本的 `write_json()` 首行加 `refuse_archived_overwrite(path)`：当目标**已存在**且相对路径落在 `reports/` 或 `plans/manifests/` 下时，直接 `SystemExit`，不落盘；要出新卡只能用 `--report`／`--manifest` 指一个尚不存在的路径。冒烟实测：指向 `REPORT` 常量被拒、指向 scratch 新路径放行。
+
+**5. C1／C3 措辞写死**（`plans/reference/CAPABILITY-CARD_20261103.md` 两行证据指针内）：「**生产者已入库、输入件未入库、旧报告无运行条件 ⇒ 可交叉检查、不可复核**」。不得写成"已可复核"。
+
+**6. 未做**：未重跑 14.4／14.5／14.6 任一阶段，未改任何旧报告与 manifest，未宣称这四份读数已可机器复核。
+
+## D-20261110-08 `.pt` 判定性实验：`regenerable_exact`，按需生成不入库（常设规则 R-REBUILD-1）
+
+**1. 编号／时间／类型**：D-20261110-08｜2026-11-10｜**读数前判定的实验 + 常设规则**（0 读数改动、0 归档件触碰、产物只写 scratch）。
+
+**2. 生成路径（库内确有，无需反推）**：`scripts/training/verify_taiji_closeout_09.py`（已入库）。依据两条：① `reports/taiji_core_09_closeout_20261101.json:bundle.reproduce` 逐字写着 `python scripts/training/verify_taiji_closeout_09.py --output <path>`；② 脚本内 `torch.manual_seed(20261101)`、`torch.set_num_threads(1)`、全程 `float64`，最后由 `save_subject(bundle_path, child, state, …)` 落 `output/taiji_core_09/subject_bundle.pt`。
+
+**3. 成本先估**：原卡记 **435.2 CPU 秒／446.8 墙钟**，预算 900／1800 ⇒ 在预算内，直接跑。本次为省时只写 bundle、不写卡（`--output` 缺省即不落卡），产物指 `output/_scratch_pt_regen/`。
+
+**4. 实测（决定性）**：重建件 **77,609,636 B、sha256 `ce4c62685d55bb518d234e7407e19b05257d1d761a0430432f7d0f09641321cf`**，与原件**逐字节相同**（字节数与 sha 全等）。第二层（把两份喂进四个脚本看关键读数）**按定义不触发**：字节相同 ⇒ 读数必然相同，不做无意义重跑。
+
+**5. 结论**：**`regenerable_exact`** ⇒ **按需生成，不入库**，也不写 skip。`output/taiji_core_09/subject_bundle.pt` 保持被 `*.pt` 忽略；四个消费者脚本的 `EXPECTED_BUNDLE_SHA`／`EXPECTED_BUNDLE_BYTES` 因此仍然成立。
+
+**6. 附带发现（对后续有用）**：卡里那 7 个 `taiji/*` 模块的 `source_hashes` **全部与当前文件不同**（`5e18c62bc` 类型修复、R24–R35 等新增），但重建仍逐位相同 ⇒ 这些改动没有改变该构造路径的数值内容（只动注解与关闭态旁路）。反过来说："源码哈希变了"不等于"旧 bundle 变了"，判定必须重跑，不能靠比对源码哈希下结论。
+
+**7. 成本如实交代**：本次运行因机器上另有一条长跑任务抢占，跑到 CPU 856 秒时被我手动终止（bundle 早在 21:51 落盘、哈希已核）；因此**本次不产生新的成本读数**，权威成本口径仍是旧卡的 435.2／446.8。
+
+**8. 常设规则 R-REBUILD-1**（本条为规则唯一权威，MASTER-PLAN 只立规则名）：今后凡"某份已入库读数的输入件不在库"，一律 **先找生成路径 → 在干净环境按代码重建并逐字节比对 → 不一致再判"判定与核心计数是否改变" → 三选一**（`regenerable_exact` 按需生成不入库／`regenerable_equivalent` 按需生成并把容差写成显式条件、写明范围／`not_regenerable` 入库并写明为何必须入库）。**默认入库、默认 skip 均为禁止项**；成本先估再跑，超预算按放权流程留档。
+
+**9. 对 CI 的影响（不回避）**：`test_composition_read_probe_anchor` 在干净克隆上仍会红——它直接读 `output/taiji_core_09/subject_bundle.pt`，而该件按本条不入库。它是当前**唯一因缺件而红的用例**；因其已被判定为 `regenerable_exact`，处置方向是"按需生成"（约 435 CPU 秒），既不是 skip，也不是入库。
+
+**10. 撤回路径**：若后续 owner 要求 CI 全绿，唯一合规做法是让该用例在缺件时按 `verify_taiji_closeout_09.py` 的逻辑现场生成到临时目录后再跑，或把该用例从 `pytest-full` 中显式移出并登记原因；两者都要新决策，不得默默 skip。
+

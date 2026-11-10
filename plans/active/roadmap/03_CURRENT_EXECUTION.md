@@ -3050,3 +3050,17 @@ U2统一完整状态、结果信用、自我修改选择与神经成熟闭环，
 按owner“下一步”执行22.1，交付[核验器](../../../scripts/training/verify_taiji_u2_math_22_1.py)、[v2合同](../../manifests/taiji_u2_22_1_contract_20261110_v2.json)、[报告](../../../reports/taiji_u2_math_22_1_20261110.json)与[回执](../../reference/VALIDATION-TAIJI-U2_22_1_20261110.md)。裁决passed_local_math_only，13组、两精度52坐标通过；8项聚焦pytest通过。
 
 修订log_m/log_ζ持久补质量、χ零点右导数、截断残差证书与信用归一。发现旧生长Vh误作U、config.units/门谱系多代缺口，列入22.2/22.3并隔离旧资产。正式核验全进程CPU2.609375，wall2.985；首轮预检成本缺口按回执保守上界分账。0训练/0优化器步/0项目数据/0checkpoint加载。唯一队首转MASTER-PLAN的22.2。
+
+## 2026-11-10 CI 分类结论更正：n5_38 两条由"真缺件"改判"口径错"
+
+**更正（自己上一轮判错的）**：15 条 CI 失败的分类中，`test_n5_38_ledger_cited_reports_contract.py` 那两条**不是**"(b) 真缺件"，是 **(a) 口径错**——七份被引报告全部在库，错在引用写法（日期写反 2、中间件改指正式件 2、多打一个 `_f` 1、移档未改引用 2）。逐条落点与证据见[台账 D-20261110-07](../../reference/DECISION-LEDGER_20261109.md)。
+
+**更正后的分类**（合计 15）：
+
+| 类 | 条数 | 内容 |
+| --- | --- | --- |
+| (a) 口径错，已修 | **14** | 原 12 条 + n5_38 这两条（改引用后普查 `verdict=holds`、`test_n5_38` 9 passed） |
+| (b) 缺件待处置 | **1** | `test_composition_read_probe_anchor`：直接读 `output/taiji_core_09/subject_bundle.pt`，该件不入库 |
+| (c) 真回退 | **0** | — |
+
+(b) 那一条已按[台账 D-20261110-08](../../reference/DECISION-LEDGER_20261109.md)判定为 **`regenerable_exact`**（重建件 77,609,636 B、sha `ce4c6268…` 与原件逐字节相同，成本约 435 CPU 秒）⇒ 处置方向是"按需生成"，不是 skip、也不是入库。它是当前**唯一因缺件而红**的用例。

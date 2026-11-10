@@ -30,4 +30,4 @@ bundle `extra`携带：`activity_env`（message_queue、store记录（含owner/s
 
 - 出口：`passed_r027_gates_engineering_only`／`failed_boundary`／`failed_legality`／`failed_isolation`／`budget_stop`／`engineering_failure`。通过仅表示：八次边界的保存/独立恢复逐位一致、清单逐项核验、来源过滤与query-only隔离、外控/内生根因分账在该合成序列上成立；**不签语义保持、自主性、任务能力**。
 - 预算：全验证≤900 CPU秒/20墙钟分钟。
-- 交付：本合同、`native_activity.py`扩展、`state_migration.py`扩展、`tests/taiji_native/test_subject_gates_r027.py`、`scripts/training/verify_taiji_subject_gates_r027.py`、`reports/taiji_core_r027_subject_gates_20261031.json`（逐边界结果、清单核验表、分账账、费用、源码SHA与R021–R026绑定核对）。
+- 交付：本合同、`native_activity.py`扩展、`state_migration.py`扩展、`tests/taiji_native/test_subject_gates_r027.py`、`scripts/training/verify_taiji_subject_gates_r027.py`、`reports/taiji_core_r027_subject_gates_20261101.json`（逐边界结果、清单核验表、分账账、费用、源码SHA与R021–R026绑定核对；本行原写 `_20261031`，实际落盘日期为 2026-11-01，已按真实路径更正）。

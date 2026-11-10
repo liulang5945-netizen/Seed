@@ -182,7 +182,7 @@ owner 同日签了 F1：候选只训 encoder/bias（V4 冻结）、预算上限 
 
 ## 13. F1 一次性 holdout 结果：所有臂都在地板，判 FAIL_COPY_ONLY（2026-10-29）
 
-12 run 用修正后的目标跑完（合计 1,416.7 CPU 秒；加上被停的首轮 7,212.5 秒，总账约 8.6k，仍不到 121,500 预算的十分之一）。旧保持探针与 holdout 各跑一次，结案件 `reports/taiji_n1_plan177_f_f1_closeout_20261029.json` 的判定是 **FAIL_COPY_ONLY**。
+12 run 用修正后的目标跑完（合计 1,416.7 CPU 秒；加上被停的首轮 7,212.5 秒，总账约 8.6k，仍不到 121,500 预算的十分之一）。旧保持探针与 holdout 各跑一次，结案件 `reports/taiji_n1_plan177_f1_closeout_20261029.json` 的判定是 **FAIL_COPY_ONLY**。
 
 **主读数（holdout 16 家族／64 episode／512 轮／122 个查询轮）**
 

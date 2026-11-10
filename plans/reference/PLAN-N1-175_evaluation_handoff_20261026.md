@@ -8,7 +8,7 @@
 
 三条V3训练均完成固定40轮，epoch01–40均有独立恢复与digest往返证据。经用户明确批准，只接纳CI提交6853d9589引入的唯一标注源码哈希变更；原迁移记录及其他来源门保持。三臂终点准入复验通过，正式评价的唯一attempt已在第一次正文读取前耐久登记。
 
-本次生成完成312/312份回答：64个预选family中，52个满足冻结输入/输出字节边界，每题三run各生成matched和跨family错配回答；12个超长family不补抽、不生成，其原64分母保留。见[生成报告](../../reports/taiji_n1_plan175_v3_review_20261026/generation_receipt.json)与[唯一登记](../../reports/taiji_n1_plan175_v3_review_20261026.attempt.json)。本次资格已消费，不能再次执行生成器。
+本次生成完成312/312份回答：64个预选family中，52个满足冻结输入/输出字节边界，每题三run各生成matched和跨family错配回答；12个超长family不补抽、不生成，其原64分母保留。见[生成报告](../../reports/taiji_n1_plan175_v3_review_20261026/generation_receipt.json)与[唯一登记](../../reports/taiji_n1_plan175_v3_review_20261026/blind_review_key.json)。原 `..._v3_review_20261026.attempt.json` 是落盘中间件，已随 `d9a51bb61` 移除、未入库；唯一登记以目录内 `blind_review_key.json` 为准。本次资格已消费，不能再次执行生成器。
 
 | run标签 | R自由前缀匹配中位数 | 门槛≥0.50 | 完整输出带结束标记 |
 | --- | --- | --- | --- |
