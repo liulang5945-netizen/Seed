@@ -509,7 +509,7 @@ class U2Runtime:
         identity = pending["id"]
         status = self._execution_status(identity)
         if status["status"] == "applied":
-            return self.acknowledge_pending()
+            return cast(dict[str, Any], self.acknowledge_pending())
         if status["status"] != "not_seen":
             return {"status": "awaiting_execution_status", "action_id": identity}
         # An acknowledgment must fit before any irreversible executor effect.
@@ -525,7 +525,7 @@ class U2Runtime:
         self.executor.execute(identity, pending["action"])
         if fault == "after_execute_before_ack":
             raise RuntimeError("injected after_execute_before_ack")
-        result = self.acknowledge_pending()
+        result = cast(dict[str, Any], self.acknowledge_pending())
         self.save(checkpoint)
         return result
 

@@ -191,7 +191,7 @@ class CausalHistory:
 
     @property
     def complete(self) -> bool:
-        return self._root["kind"] == "genesis"
+        return cast(bool, self._root["kind"] == "genesis")
 
     @property
     def root(self) -> dict[str, Any]:
