@@ -235,6 +235,50 @@ def reject_attempt(
     }
 
 
+def accepted_tail(
+    *,
+    ledger: AttemptLedger,
+    identity: str,
+    s12: dict[str, Any],
+    destination: Path,
+    post_checkpoint: str = "post.bin",
+) -> dict[str, Any]:
+    """成功路径的顺序契约：先写回执，再读回回执，最后 close。
+
+    close 必须是账本最后一条事件，且只出现一次；close 行携带回执文件的 sha256，
+    因此"回执先于 close"这件事可以只凭账本复核，不需要相信任何口供。
+    """
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    write_once(destination, s12)
+    read_back = load_json(destination)
+    if read_back != json.loads(json.dumps(s12, ensure_ascii=False)):
+        raise LedgerError(f"the S12 receipt did not read back unchanged: {destination}")
+    receipt_sha = normalized_file_sha(destination)
+    closed = ledger.close(
+        identity,
+        outcome="accepted",
+        post_checkpoint=post_checkpoint,
+        optimizer_step_calls=1,
+        s12_path=(
+            destination.relative_to(ROOT).as_posix()
+            if destination.is_relative_to(ROOT)
+            else str(destination)
+        ),
+        s12_sha256=receipt_sha,
+    )
+    state = ledger.read()
+    closes = [
+        row
+        for row in state["rows"]
+        if row.get("event") == "close" and row.get("attempt_id") == identity
+    ]
+    if len(closes) != 1 or closes[0].get("seq") != closed["seq"]:
+        raise LedgerError("the accepted close is not the only close row for this attempt")
+    if state["rows"][-1].get("seq") != closed["seq"]:
+        raise LedgerError("close is not the last ledger event")
+    return closed
+
+
 def execute(root: Path) -> dict[str, Any]:
     check_selfcheck_gate()
     torch.set_num_threads(1)
@@ -313,27 +357,26 @@ def execute(root: Path) -> dict[str, Any]:
         checks.append(check_r11(post_path, result["post"]))
         checks.append(check_r12(result["activity_receipt"]))
         result["post_sha256"] = normalized_file_sha(post_path)
-        closed = ledger.close(
+        s12 = s12_payload(
+            run,
+            execution,
+            result,
+            {"open_seq": 1, "close_seq": None},
             identity,
-            outcome="accepted",
-            post_checkpoint="post.bin",
-            optimizer_step_calls=1,
+            time.process_time() - started,
+            time.monotonic() - wall,
+        )
+        s12["parent_sha256"] = normalized_file_sha(parent_path)
+        closed = accepted_tail(
+            ledger=ledger,
+            identity=identity,
+            s12=s12,
+            destination=ROOT / run["paths"]["s12"],
         )
     finally:
         torch.optim.Adam.step = original_step
 
     state = ledger.read()
-    s12 = s12_payload(
-        run,
-        execution,
-        result,
-        {"open_seq": 1, "close_seq": closed["seq"]},
-        identity,
-        time.process_time() - started,
-        time.monotonic() - wall,
-    )
-    s12["parent_sha256"] = normalized_file_sha(parent_path)
-    write_once(ROOT / run["paths"]["s12"], s12)
 
     worker = subprocess.run(
         [
@@ -561,6 +604,74 @@ def self_check(directory: Path) -> dict[str, Any]:
                 and generic_outcome["exit_code"] == 3
                 and generic_s12.exists(),
             }
+        )
+
+        # 成功路径：临时 run 根、假优化器（不调用 optimizer.step、不消耗真实额度）。
+        # 走完 回执 → 读回回执 → close 的顺序，断言 close 是账本最后一条事件、
+        # close 只出现一次、close 行携带回执 sha256、计费只加 1 次。
+        success_ledger = AttemptLedger(
+            directory / "attempts_success.ndjson",
+            ledger_run(run),
+            execution["authority"]["source_pins"],
+            precontract(run),
+        )
+        success_ledger.start()
+        success_ledger.open(run["update_id"], parent_checkpoint="parent.bin")
+        fake_before = {
+            name: value.detach().clone() for name, value in runtime.model.state_dict().items()
+        }
+        fake_after = dict(fake_before)
+        for name in execution["arms"][ARM]["active_parameters"]:
+            fake_after[name] = fake_before[name] + 1e-3
+        stub = {name: torch.ones_like(value) for name, value in runtime.model.named_parameters()}
+        fake_receipt = activity_receipt(runtime.model, fake_before, fake_after, stub, execution)
+        # 假优化器只改"读数"，不改模型：这份 post.bin 与父状态相同，仅用来做一次耐久读回。
+        success_post = directory / "post.bin"
+        runtime.save(success_post)
+        success_s12_path = directory / "success_s12.json"
+        fake_s12 = {
+            "schema": "taiji-u2-22.4.1-s12-v1",
+            "status": "accepted",
+            "run_id": run["run_id"],
+            "attempt_id": run["update_id"],
+            "ledger_seq_open": 1,
+            "ledger_seq_close": None,
+            "activity_receipt": fake_receipt,
+            "post_sha256": file_sha(success_post),
+            "conditions": {"threads": torch.get_num_threads()},
+        }
+        accepted_tail(
+            ledger=success_ledger,
+            identity=run["update_id"],
+            s12=fake_s12,
+            destination=success_s12_path,
+        )
+        success_state = success_ledger.read()
+        success_rows = success_state["rows"]
+        success_closes = [row for row in success_rows if row.get("event") == "close"]
+        cases.append(
+            {
+                "case": "accepted_path_order",
+                "expected": "last_event=close,closes=1,s12_sha256_matches,consumed=1",
+                "actual": f"last={success_rows[-1].get('event')},closes={len(success_closes)},"
+                f"s12_sha256_matches="
+                f"{bool(success_closes) and success_closes[0].get('s12_sha256') == file_sha(success_s12_path)},"
+                f"consumed={success_state['consumed']}",
+                "pass": success_rows[-1].get("event") == "close"
+                and len(success_closes) == 1
+                and success_closes[0].get("s12_sha256") == file_sha(success_s12_path)
+                and success_state["consumed"] == 1,
+            }
+        )
+        expect(
+            "duplicate_close_rejected",
+            3,
+            lambda: success_ledger.close(
+                run["update_id"],
+                outcome="accepted",
+                post_checkpoint="post.bin",
+                optimizer_step_calls=1,
+            ),
         )
     finally:
         torch.optim.Adam.step = original_step

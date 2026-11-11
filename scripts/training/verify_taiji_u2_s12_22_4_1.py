@@ -14,7 +14,7 @@ if __package__ in (None, ""):
 
 from scripts.training.u2_attempt_ledger_22_3_4_3 import AttemptLedger
 from scripts.training.u2_update_executor_22_4_1 import load_json, write_once
-from scripts.training.u2_update_support_22_3_4_3 import distributions, readback
+from scripts.training.u2_update_support_22_3_4_3 import distributions, file_sha, readback
 from scripts.training.u2_update_support_22_4_1 import (
     activity_receipt,
     check_adam_equations,
@@ -39,15 +39,14 @@ def receipt_equal(left: dict, right: dict) -> bool:
         row["parameter"] for row in right["parameters"]
     ]:
         return False
-    for old, new in zip(left["parameters"], right["parameters"], strict=True):
+    for old_row, new_row in zip(left["parameters"], right["parameters"], strict=True):
         for key in ("gradient_norm", "change", "margin"):
-            if not close_enough(new[key], old[key]):
+            if not close_enough(new_row[key], old_row[key]):
                 return False
-        if old["barely_live"] != new["barely_live"]:
+        if old_row["barely_live"] != new_row["barely_live"]:
             return False
-    return (
-        close_enough(new["min_margin"], left["min_margin"])
-        and left["barely_live_parameters"] == right["barely_live_parameters"]
+    return close_enough(right["min_margin"], left["min_margin"]) and (
+        left["barely_live_parameters"] == right["barely_live_parameters"]
     )
 
 
@@ -105,8 +104,17 @@ def verify(s12_path: Path) -> dict:
         identity = s12["attempt_id"]
         assert identity in state["opened"] and identity in state["closed"], "ledger mapping"
         assert state["opened"][identity]["seq"] == s12["ledger_seq_open"]
-        assert state["closed"][identity]["seq"] == s12["ledger_seq_close"]
-        assert state["closed"][identity]["outcome"] == s12["status"]
+        close_row = state["closed"][identity]
+        assert close_row["outcome"] == s12["status"]
+        if s12.get("ledger_seq_close") is None:
+            # 顺序契约：回执先写、close 后写，close 行携带回执文件的 sha256。
+            assert close_row.get("s12_sha256") == file_sha(s12_path), "close row s12 attestation"
+            lifecycle = [
+                row for row in state["rows"] if row.get("event") in {"open", "close", "reconcile"}
+            ]
+            assert lifecycle[-1].get("seq") == close_row["seq"], "close is not the last event"
+        else:
+            assert close_row["seq"] == s12["ledger_seq_close"]
 
         parent, parent_proof = readback(
             root / "parent.bin",
@@ -178,8 +186,11 @@ def verify(s12_path: Path) -> dict:
         before = {name: value.detach().clone() for name, value in parent.model.state_dict().items()}
         after = post.model.state_dict()
         recomputed = activity_receipt(parent.model, before, after, gradients, execution)
-        with torch.no_grad():
+        # shadow_terms 内部经 choose_operation 调 torch.autograd.grad，必须允许梯度；
+        # 这里只取数值，取完立刻 detach。
+        with torch.enable_grad():
             post_loss, _ = shadow_terms(post.model, execution)
+        post_loss = post_loss.detach()
         recomputed["output_displacement_descriptive"] = {
             **output_displacement(distributions(parent), distributions(post)),
             "same_fixture_loss_delta": float(post_loss) - float(s12["losses"]["total"]),

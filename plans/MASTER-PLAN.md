@@ -12,7 +12,7 @@
 
 当前设计为[U2完整主体闭环候选](reference/SPEC-TAIJI-CLOSED_LOOP_U2_20261110.md)。U2正式参考图已按[22.2回执](reference/VALIDATION-TAIJI-U2_22_2_20261110.md)完成工程核验，191参数/40状态字段已登记，真实语义任务与持续能力仍待后继验收。唯一后继按[执行包22](reference/PLAN-TAIJI-CLOSED_LOOP_DEVELOPMENT_20261110.md)逐卡准入。22.1已按[v2回执](reference/VALIDATION-TAIJI-U2_22_1_20261110.md)结案为`passed_local_math_only`，13组局部核验与52个差分坐标通过。22.2仅签参考图工程，原等值读数的运行条件缺口已另附零步补证，跨进程更新一致性归22.3。合成夹具目标/标签不一致已记入22.4训练前硬门。
 
-22.4.0已交付[任务语义与信息权利合同](reference/SPEC-TAIJI-U2_TASK_SEMANTICS_22_4_20261111.md)，微型23项检查通过。当前22.4.1处理可学习元数据与逐群接口：接口第一步已按[零更新核验](../reports/taiji_u2_metadata_groups_22_4_20261111.json)通过（11项、0 optimizer step、独立进程后继一致），数据/实价准入与4个工程更新额度仍未动。
+22.4.0已交付[任务语义与信息权利合同](reference/SPEC-TAIJI-U2_TASK_SEMANTICS_22_4_20261111.md)，微型23项检查通过。当前22.4.1处理可学习元数据与逐群接口：接口第一步已按[零更新核验](../reports/taiji_u2_metadata_groups_22_4_20261111.json)通过（11项、0 optimizer step、独立进程后继一致），数据/实价准入已由[准入manifest](manifests/taiji_u2_22_4_1_data_price_admission_20261111.json)冻结，u1候选步已计费完成（读数见下方逐轮一行与[D-20261111-12](reference/DECISION-LEDGER_20261109.md)），u2/u3/u4额度未动。
 
 ## 0a. 算法层诊断（2026-11-08 全局收束，不改任何代码行为）
 
@@ -35,6 +35,8 @@
 **逐轮一行（2026-11-11 执行包22.4.1数据/实价准入）**：四次工程更新的[准入manifest](manifests/taiji_u2_22_4_1_data_price_admission_20261111.json)冻结：输入只限合成影子片段（≤8轮合法窗），不碰项目语料/Task1批/封存集/check/final/confirm；CPU价目120/120/30/30合计300，取自22.4.4「结构/恢复300」分项，attempts仍4且已用0；账本沿用22.3.4.3格式另立run根。本表**不冻结**损失权重、Adam超参、活性参数与变化下限。四次更新都不读项目数据，首次真实读取留到22.5且须另行授权；本轮0 optimizer step、0数据读取。
 
 **逐轮一行（2026-11-11 执行包22.4.1执行参数）**：[执行manifest](manifests/taiji_u2_22_4_1_execution_20261111.json)在读数前冻结Adam、两臂损失权重、活性参数与变化门，仍`run_authorized=false`、0 step。u1为F1式（verbatim=0）、u2为F2式（verbatim=1.0），两臂不要求同权重，同切片/dt/Adam/门/1步，公平性由不比较loss数值承担；变化门1e-8/1e-12并新增`barely_live`余量字段；u1一步约9–11 CPU（帽120的7.5%–9.2%），预算式`C(n)=F+n·s`中F≈8.6、s≈1.9，强基线更大时u2须重测s。本轮0 optimizer step、0数据读取。
+
+**逐轮一行（2026-11-11 执行包22.4.1 u1候选步）**：能力账**未新增条目**——只签"元数据候选的通路活着、读数可复现"（7个活性参数位移4.2e-4~1.0e-3、最小门余量33448.6、`barely_live`全false；194条Adam方程匹配、重建逐位一致、复核进程0 step），不签学习收益、旧能力保持与价格。[账本](../../reports/taiji_u2_22_4_1_attempts_20261111T142919Z.ndjson)4行链有效：第2次attempt 1步accepted，因执行器"重复close"缺陷在写S12前崩溃，S12由`parent.bin`+`post.bin`事后补算并标`recomputed`；accepted close早于S12的顺序违反以`annotation`行留档。五处缺陷（两处在执行器、两处在复核器、一处在重构）与成功路径自检（回执→读回→close、拒绝重复close）记入[D-20261111-12](reference/DECISION-LEDGER_20261109.md)。u1已用2次attempt（1次超支经owner常设授权），u2/u3/u4额度未动；队首仍为22.4.1，剩余u2/u3/u4。
 
 ## 1. 状态表
 

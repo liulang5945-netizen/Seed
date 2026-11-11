@@ -136,6 +136,11 @@ class AttemptLedger:
                 }:
                     raise LedgerError("Invalid reconciliation outcome")
                 reconciled.add(identity)
+            elif event == "annotation":
+                if identity not in opened or identity not in closed:
+                    raise LedgerError("Only a closed attempt can be annotated")
+                if before != len(opened) or after != before:
+                    raise LedgerError("annotation changed budget")
             else:
                 raise LedgerError("Unexpected ledger event")
             rows.append(row)
@@ -266,6 +271,19 @@ class AttemptLedger:
                     )
                 )
         return rows
+
+    def annotate(self, identity: str, **fields: Any) -> dict[str, Any]:
+        """Append a post-close, non-financial note row.
+
+        The state machine has no other slot for "after the settlement was written we
+        discovered something about it". An annotation may only follow an existing close,
+        never change the consumed budget, and is therefore not a settlement event.
+        """
+        state = self.read()
+        if identity not in state["closed"]:
+            raise LedgerError("Only a closed attempt can be annotated")
+        budget = state["consumed"]
+        return self._append("annotation", identity, budget, budget, fields)
 
     def repair_tail(self, destination: Path) -> dict[str, Any]:
         raw = self.path.read_bytes()

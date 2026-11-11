@@ -1,0 +1,39 @@
+{
+  "schema": "taiji-u2-22.4.1-s12-worker-v1",
+  "verdict": "pass",
+  "s12": "E:\\Seed\\reports\\taiji_u2_22_4_1_s12_20261111T142919Z_u1-candidate-float32.json",
+  "status": "accepted_verified",
+  "checkpoints": {
+    "parent": "6973abcd7c0a6114b8a2a1d979b574f467e512c19cc8404520bbe4fd147e5f66",
+    "parent_readback": true,
+    "post": "14f1a6444c2f878432506b1b15d783138041fcc9edecd171ecf2cf288a8156ac",
+    "post_readback": true
+  },
+  "gradient_sha256": "94847b4ddca25835c2dca91be1c7373fb28d917681aefdb664d38252558d64c7",
+  "parameter_rows": 194,
+  "adam_equations": 194,
+  "losses_recomputed": {
+    "total": 1468.243896484375,
+    "predictive": 1468.246337890625,
+    "actor": -0.02447405457496643,
+    "critic": 5.168209463590756e-05,
+    "verbatim": 0.0
+  },
+  "activity_receipt_rederived": true,
+  "optimizer_step_calls": 0,
+  "run_conditions": {
+    "threads": 1,
+    "interop_threads": 12,
+    "device": "cpu",
+    "dtype": "torch.float32",
+    "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+    "torch": "2.13.0+cpu",
+    "environment": {
+      "OMP_NUM_THREADS": null,
+      "MKL_NUM_THREADS": null,
+      "OPENBLAS_NUM_THREADS": null
+    }
+  },
+  "cpu_seconds": 3.859375,
+  "wall_seconds": 4.280999999959022
+}

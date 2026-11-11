@@ -2702,3 +2702,60 @@ u1活性：record_metadata.weight/bias、record_provenance.weight，加22.3.4.3 
 
 删除本manifest并在台账标注superseded，卡片与MASTER-PLAN对应条目改为指向准入manifest；因本轮无运行产物，撤回不涉及读数重跑。
 
+## D-20261111-12 u1候选步：一次计费成功、五处缺陷与成功路径自检
+
+**编号／时间／类型**：D-20261111-12｜2026-11-11｜**执行包22.4.1 u1候选float32（1 step已计费；只补证据、不重跑、不加attempt）**。
+
+### 1. 结论
+
+u1候选float32第2次attempt（`run_id=20261111T142919Z`）完成唯一1步并accepted：账本[run_start/open/close accepted/annotation](../../reports/taiji_u2_22_4_1_attempts_20261111T142919Z.ndjson)共4行，`post.bin` 521447字节，`parent.bin` 231595字节。7个声明活性参数全部远超变化门，`barely_live`全为false。该步只签"通路活着、读数可复现"，不签学习收益。
+
+### 2. 读数（补算，来源见§4）
+
+| 活性参数 | 梯度范数 | change | margin（对1e-8门） | barely_live |
+|---|---:|---:|---:|---|
+| record_metadata.weight | 3.26802e-08 | 7.05383718e-04 | 70538.4 | false |
+| record_metadata.bias | 3.26802e-08 | 7.05383485e-04 | 70538.3 | false |
+| record_provenance.weight | 9.72452e-09 | 3.34486365e-04 | 33448.6 | false |
+| motion.first.weight | 1.28078e-02 | 9.99996439e-04 | 99999.6 | false |
+| native_w | 1.08296e-02 | 9.99998301e-04 | 99999.8 | false |
+| critic.last.weight | 9.06735e-05 | 9.99748707e-04 | 99974.9 | false |
+| actor_parameters.last.weight | 3.89762e-03 | 9.99990851e-04 | 99999.1 | false |
+
+输出位移（只记录不设门）：next_output L1 9.44757e-04、policy L1 4.24683e-07、同fixture损失差 −12.1656494140625（前1468.243896484375，后1456.0782470703125）。194个参数的Adam方程逐项匹配（含`unused_by_loss`），梯度摘要`94847b4ddca25835c2dca91be1c7373fb28d917681aefdb664d38252558d64c7`经方程复核与步进所用梯度一致（冻结容差内），重建状态逐位一致，复核进程0 optimizer step（CPU 3.75、wall 4.14）。原运行的CPU/wall未落入durable记录，S12如实记null；账本utc显示run_start→close约0.72秒，仍远低于120/240帽。
+
+### 3. 证据来源与"哪些是重算"
+
+- 精确可复现（两文件逐参数相减）：7个活性参数的change/margin/barely_live、五项pre/post指纹、输出位移。
+- 重算（`provenance.recomputed=true`）：梯度、后置损失、Adam方程复核。RNG流状态未纳入durable记录，理论上重算向量可能不是原始向量；但它经194条Adam方程与`post.bin`逐参数对上，说明与步进时所用梯度相同（冻结容差内）。不得把这条冒充原始读数。
+- 不可补：原运行的CPU/wall（未daemon记录）、原始梯度张量本身（只存摘要）。
+
+### 4. 五处缺陷与为什么前两轮自检没抓到
+
+| # | 缺陷 | 引入 | 影响 | 未被抓到原因 | 修复提交 |
+|---|---|---|---|---|---|
+| 一 | 后置损失在`torch.no_grad()`里算，而`shadow_terms`内的资格分走`torch.autograd.grad` | 未入库实现 | 第1次attempt在唯一step后崩溃，已计费 | 自检只覆盖拒绝路径，从不进入`perform`的后置损失 | `6355b5622` |
+| 二 | `open`后只捕获`LedgerError`，其他异常不落close | 未入库实现 | 同一次崩溃留下悬空open | 自检没有注入非账本类异常 | `6355b5622` |
+| 三 | accepted tail里close出现两次（重构遗留） | `6355b5622` | 第2次attempt实际成功却被报failed/exit 3，S12与worker均未生成 | 拒绝路径不进入accepted close | `7a952f5` |
+| 四 | 复核器`verify_taiji_u2_s12_22_4_1`同样在`no_grad`里算后置损失 | `6355b5622` | 首次accepted复核exit 1 | 复核器此前只跑过rejected S12，早退分支 | 本次提交 |
+| 五 | 复核器`receipt_equal`循环变量`new/right`遮蔽入参 | `6355b5622` | 第二次复核`KeyError: 'min_margin'` | 同上 | 本次提交 |
+
+缺陷一/二所在的实现当时未入git，故"引入提交号"不存在；它们与修复同存于`6355b5622`。本轮补的是**成功路径测试**：`accepted_path_order`（回执→读回→close，断言close是账本最后一条事件、只出现一次、close行携带回执sha256、计费只加1次）与`duplicate_close_rejected`（重复close必须退3）。自检由9条增至12条，全部通过，`optimizer.step`调用0次。
+
+### 5. 顺序契约违反与账本对账
+
+第2次attempt的accepted close写于S12之前，违反"回执→读回→close"的顺序契约。处置：不改已有3行，追加1条`annotation`（seq=3）记明违反、证据文件与重算字段；独立进程按契约重算4行哈希链有效。`annotation`是新增的**非结算**事件：只能跟在已存在的close之后、不改变已消耗额度，因此不是"第二次close"，也不构成预算事件。生产路径已改为S12先落盘、close后落盘，close行记录`s12_sha256`，顺序可由账本单独证明。
+
+### 6. 仍未被执行过的分支（本轮清点）
+
+- R04准入manifest哈希不符；R05的accepted parent身份/profile/seed/参数数/接口回执verdict不符；R07的digest不符、六个false标志被改、分区越界；R08的Adam/权重/活性清单不符。
+- R06的`cpu_cap>120`、`wall_cap>240`、精度不符、`attempts_authorized≠1`、`steps≠1`（只测过"账本已有attempt"）。
+- R10的"run_start不是唯一首行"；账本`AttemptOrderError`（顺序违约）、`TailTruncated`（截断尾）、run-identity/source-pins不符三条拒绝路径；`repair_tail`与`reconcile`（open无close的事后对账）两个入口。
+- `reject_attempt`的exit 4（R11读回失败）与exit 6（R12活性门失败）两条收尾分支（只测过exit 3）。
+- `execute`末尾独立worker未通过（exit 3）分支；`main`的`within_cap=false`（超帽）分支；同一`run_root`被第二个run复用的分支。
+- `--run`与`--self-check`同时给出的参数冲突分支。
+
+### 7. 撤回路径
+
+若判定该步读数无效：不删账本、不加attempt，改`plans/manifests/taiji_u2_22_4_1_execution_20261111.json`状态并追加`annotation`说明；u1额度已用2/1（1次超支留档于`owner_approval_ref`），撤回不返还额度。
+
