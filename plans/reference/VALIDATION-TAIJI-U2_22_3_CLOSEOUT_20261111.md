@@ -37,6 +37,8 @@ S01–S11每精度13个快照，S12取同一授权run的8个状态，共34组。
 
 接受清单另外核对闭包合同、更新汇总、ledger、每份S12/worker与8个checkpoint的冻结摘要。旧pending条件信用、有限窗、原始链、重编码及正常receive拆分对齐的报告均按其源码身份保留，最终schema通过由本回执单独签署。
 
+本轮NDJSON账务及22.3 manifest命名空间通过目录级.gitattributes固定LF，Git blob与当前文件摘要逐一核对，避免Windows检出转换改变已冻结的原始字节身份。
+
 ## 4. 成本、条件和范围
 
 最终父/worker合计90.671875 CPU秒、96.953 wall秒，低于120/300帽。CPU、intra-op1、interop12、float32/64，Python3.12.10、Torch2.13.0+cpu，OMP/MKL/OPENBLAS未设置。真实更新运行另用70.1875 CPU/91.437 wall，两个核验范围分别记账。

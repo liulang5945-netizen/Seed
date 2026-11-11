@@ -1,0 +1,2 @@
+# U2 attempt chains bind full UTF-8/LF line bytes across platforms.
+taiji_u2_22_3_4_3_attempts_*.ndjson text eol=lf
