@@ -1,0 +1,96 @@
+{
+  "schema": "taiji-u2-22.3.3-cross-process-contract-v1",
+  "created_on": "2026-11-11",
+  "parent_runtime_revision": "f94c35bf3",
+  "source_hash_semantics": "UTF8 without BOM; universal newline to LF",
+  "source_pins": {
+    "taiji/u2_recovery.py": "b1a7686b9b8b84778496828f78228478b8bd2ade73824abeeb7f6d4012e47acc",
+    "taiji/u2_subject.py": "9c6778674f296012ece6e6ab7729a78e81fc9422f98f5243a6007e4bf59a54d1",
+    "taiji/u2_operators.py": "d09f5784bffaf0a3247006c0d67062f18825ba8dc8a431b7c1d0cc778a249559",
+    "taiji/utf8_state.py": "6ec7e96b2994dfa8eea430b3a08ddb5ff0fd877cf70c8cc288f57bab2efcac09",
+    "scripts/training/verify_taiji_u2_runtime_22_3.py": "272e9b728b0cfcc9dfe4647b179ce2f3b2f02679252130700748a5262cd8654b",
+    "scripts/training/verify_taiji_u2_cross_process_22_3.py": "0230d99cab2130a5d8c5d01712fe3b39839b037320bf03c42bde6ae113835b94"
+  },
+  "conditions": {
+    "threads": 1,
+    "interop_threads": "record actual parent and worker value; strict restore equality",
+    "device": "cpu",
+    "precisions": [
+      "float64",
+      "float32"
+    ]
+  },
+  "snapshots": [
+    "S01",
+    "S02",
+    "S03",
+    "S04",
+    "S05",
+    "S06",
+    "S07",
+    "S08",
+    "S09",
+    "S10-replay",
+    "S10-wait",
+    "S11-first",
+    "S11-second"
+  ],
+  "snapshot_families": 11,
+  "precision_snapshot_pairs": 26,
+  "deferred": {
+    "S12": "reuse actual update acceptance/rejection/fault snapshots from 22.3.4; closure in 22.3.5"
+  },
+  "process_isolation": "one fresh child per precision, independently instantiate every restored subject; record pid/ppid and assert parent separation",
+  "continuation": "finish any actual UTF8 prefix, execute or acknowledge the fixed sampled action, receive one generated outcome, measure full teacher-forced byte loss in a noncommitted shadow plus predictive/actor/critic losses",
+  "compared": [
+    "subject state digest",
+    "parameter values digest",
+    "next byte log distribution including forbidden support",
+    "next operation distribution",
+    "191 individual parameter gradients including matched unused entries",
+    "one outcome settlement",
+    "executor effect count",
+    "actual run conditions"
+  ],
+  "negative_controls": {
+    "wrong_thread_processes": 2,
+    "threads": 2,
+    "must_reject": "runtime conditions mismatch before shadow replay"
+  },
+  "executor": "controlled durable simulator; restored branch attaches current ledger, queries action IDs and never overwrites it",
+  "tolerances": {
+    "float64": {
+      "atol": 1e-10,
+      "rtol": 1e-08
+    },
+    "float32": {
+      "atol": 1e-05,
+      "rtol": 0.0001
+    }
+  },
+  "budget": {
+    "cpu_seconds": 360,
+    "wall_seconds": 720,
+    "optimizer_attempts": 0,
+    "project_dataset_reads": 0,
+    "existing_checkpoints_loaded": 0
+  },
+  "budget_scope": "parent process and all reported worker CPU including wrong-thread controls; generated checkpoint I/O and replay included in wall",
+  "development_preflight": {
+    "parent_snapshot_pairs": 26,
+    "cpu_seconds": 29.09375,
+    "optimizer_attempts": 0
+  },
+  "whole_22_3_budget": {
+    "cpu_seconds": 1200,
+    "wall_seconds": 2400,
+    "optimizer_attempts": 8
+  },
+  "exits": {
+    "pass": "passed_S01_S11_cross_process_only",
+    "failure": "engineering_failure",
+    "S12_verified": false,
+    "whole_22_3_passed": false,
+    "task_capability_evaluated": false
+  }
+}

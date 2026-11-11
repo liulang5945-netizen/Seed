@@ -1,0 +1,1383 @@
+{
+  "schema": "taiji-u2-22.3.3-cross-process-v1",
+  "created_at": "2026-11-11T07:10:05.279559+00:00",
+  "verdict": "passed_S01_S11_cross_process_only",
+  "contract_sha256": "b1097b6794e586681b45f47d4004c82f2a1187d5194babf66667121585ee5d69",
+  "source_pins": {
+    "taiji/u2_recovery.py": "b1a7686b9b8b84778496828f78228478b8bd2ade73824abeeb7f6d4012e47acc",
+    "taiji/u2_subject.py": "9c6778674f296012ece6e6ab7729a78e81fc9422f98f5243a6007e4bf59a54d1",
+    "taiji/u2_operators.py": "d09f5784bffaf0a3247006c0d67062f18825ba8dc8a431b7c1d0cc778a249559",
+    "taiji/utf8_state.py": "6ec7e96b2994dfa8eea430b3a08ddb5ff0fd877cf70c8cc288f57bab2efcac09",
+    "scripts/training/verify_taiji_u2_runtime_22_3.py": "272e9b728b0cfcc9dfe4647b179ce2f3b2f02679252130700748a5262cd8654b",
+    "scripts/training/verify_taiji_u2_cross_process_22_3.py": "0230d99cab2130a5d8c5d01712fe3b39839b037320bf03c42bde6ae113835b94"
+  },
+  "run_conditions": {
+    "threads": 1,
+    "interop_threads": 12,
+    "device": "cpu",
+    "dtype": "torch.float64",
+    "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+    "torch": "2.13.0+cpu",
+    "environment": {
+      "OMP_NUM_THREADS": null,
+      "MKL_NUM_THREADS": null,
+      "OPENBLAS_NUM_THREADS": null
+    }
+  },
+  "parent_pid": 38580,
+  "checks": [
+    {
+      "precision": "float64",
+      "snapshot": "S01",
+      "passed": true,
+      "max_abs_delta": 0.0
+    },
+    {
+      "precision": "float64",
+      "snapshot": "S02",
+      "passed": true,
+      "max_abs_delta": 0.0
+    },
+    {
+      "precision": "float64",
+      "snapshot": "S03",
+      "passed": true,
+      "max_abs_delta": 0.0
+    },
+    {
+      "precision": "float64",
+      "snapshot": "S04",
+      "passed": true,
+      "max_abs_delta": 0.0
+    },
+    {
+      "precision": "float64",
+      "snapshot": "S05",
+      "passed": true,
+      "max_abs_delta": 0.0
+    },
+    {
+      "precision": "float64",
+      "snapshot": "S06",
+      "passed": true,
+      "max_abs_delta": 0.0
+    },
+    {
+      "precision": "float64",
+      "snapshot": "S07",
+      "passed": true,
+      "max_abs_delta": 0.0
+    },
+    {
+      "precision": "float64",
+      "snapshot": "S08",
+      "passed": true,
+      "max_abs_delta": 0.0
+    },
+    {
+      "precision": "float64",
+      "snapshot": "S09",
+      "passed": true,
+      "max_abs_delta": 0.0
+    },
+    {
+      "precision": "float64",
+      "snapshot": "S10-replay",
+      "passed": true,
+      "max_abs_delta": 0.0
+    },
+    {
+      "precision": "float64",
+      "snapshot": "S10-wait",
+      "passed": true,
+      "max_abs_delta": 0.0
+    },
+    {
+      "precision": "float64",
+      "snapshot": "S11-first",
+      "passed": true,
+      "max_abs_delta": 0.0
+    },
+    {
+      "precision": "float64",
+      "snapshot": "S11-second",
+      "passed": true,
+      "max_abs_delta": 0.0
+    },
+    {
+      "precision": "float32",
+      "snapshot": "S01",
+      "passed": true,
+      "max_abs_delta": 0.0
+    },
+    {
+      "precision": "float32",
+      "snapshot": "S02",
+      "passed": true,
+      "max_abs_delta": 0.0
+    },
+    {
+      "precision": "float32",
+      "snapshot": "S03",
+      "passed": true,
+      "max_abs_delta": 0.0
+    },
+    {
+      "precision": "float32",
+      "snapshot": "S04",
+      "passed": true,
+      "max_abs_delta": 0.0
+    },
+    {
+      "precision": "float32",
+      "snapshot": "S05",
+      "passed": true,
+      "max_abs_delta": 0.0
+    },
+    {
+      "precision": "float32",
+      "snapshot": "S06",
+      "passed": true,
+      "max_abs_delta": 0.0
+    },
+    {
+      "precision": "float32",
+      "snapshot": "S07",
+      "passed": true,
+      "max_abs_delta": 0.0
+    },
+    {
+      "precision": "float32",
+      "snapshot": "S08",
+      "passed": true,
+      "max_abs_delta": 0.0
+    },
+    {
+      "precision": "float32",
+      "snapshot": "S09",
+      "passed": true,
+      "max_abs_delta": 0.0
+    },
+    {
+      "precision": "float32",
+      "snapshot": "S10-replay",
+      "passed": true,
+      "max_abs_delta": 0.0
+    },
+    {
+      "precision": "float32",
+      "snapshot": "S10-wait",
+      "passed": true,
+      "max_abs_delta": 0.0
+    },
+    {
+      "precision": "float32",
+      "snapshot": "S11-first",
+      "passed": true,
+      "max_abs_delta": 0.0
+    },
+    {
+      "precision": "float32",
+      "snapshot": "S11-second",
+      "passed": true,
+      "max_abs_delta": 0.0
+    }
+  ],
+  "parameter_comparisons": {
+    "modality": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "initial_h": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 22,
+      "unused_snapshots": 4,
+      "max_abs_delta": 0.0
+    },
+    "initial_p": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 22,
+      "unused_snapshots": 4,
+      "max_abs_delta": 0.0
+    },
+    "native_w": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "native_r": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "native_p": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "native_q": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "native_k": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "native_v": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "tau_logit": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "background": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "start_embedding": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "record_null_value": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 0,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "coverage_logit": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "actor_log_std": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "encoder.rgb.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "encoder.rgb.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "encoder.audio.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "encoder.audio.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "encoder.proprio.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "encoder.proprio.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "metadata.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "metadata.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "embedding.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "text_input.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "text_input.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "convolutions.0.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "convolutions.0.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "convolutions.1.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "convolutions.1.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "convolutions.2.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "convolutions.2.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "goal_score.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "goal_value.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "goal_value.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "object_projection.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "object_projection.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "h_query.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "h_query.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "h_key.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "h_value.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "h_value.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "o_query.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "o_query.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "o_key.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "o_value.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "o_value.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "action.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "action.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "f_query.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "f_query.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "f_output.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "f_output.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "relation_query.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "relation_query.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "relation_key.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "relation_value.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "relation_value.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "relation_geometry.first.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "relation_geometry.first.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "relation_geometry.last.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "motion.first.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "motion.first.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "motion.last.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "motion.last.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "native_goal.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "native_goal.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "nu_projection.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "nu_projection.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "bind_query.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "bind_query.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "bind_key.rgb.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "bind_key.rgb.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "bind_key.audio.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "bind_key.audio.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "bind_key.proprio.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "bind_key.proprio.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "bind_key.outcome.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "bind_key.outcome.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "bind_value.rgb.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "bind_value.rgb.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "bind_value.audio.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "bind_value.audio.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "bind_value.proprio.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "bind_value.proprio.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "bind_value.outcome.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "bind_value.outcome.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "null_score.rgb.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "null_score.rgb.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "null_score.audio.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "null_score.audio.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "null_score.proprio.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "null_score.proprio.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "null_score.outcome.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "null_score.outcome.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "reliability.rgb.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "reliability.rgb.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "reliability.audio.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "reliability.audio.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "reliability.proprio.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "reliability.proprio.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "reliability.outcome.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "reliability.outcome.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "corrector.first.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "corrector.first.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "corrector.last.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "corrector.last.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "f_key.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "f_key.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "outcome.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "outcome.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "f_value.first.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "f_value.first.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "f_value.last.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "f_value.last.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "f_beta.first.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "f_beta.first.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "f_beta.last.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "f_beta.last.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "f_alpha.first.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 20,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "f_alpha.first.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 20,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "f_alpha.last.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 20,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "f_alpha.last.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 20,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "f_chi.first.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "f_chi.first.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "f_chi.last.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "f_chi.last.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "post_memory.first.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "post_memory.first.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "post_memory.last.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "post_memory.last.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "decoder_query.rgb.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "decoder_query.rgb.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "decoder_query.audio.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "decoder_query.audio.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "decoder_query.proprio.value": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "decoder_key.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "decoder_value.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "decoder_value.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "decoder.rgb.first.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "decoder.rgb.first.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "decoder.rgb.last.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "decoder.rgb.last.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "decoder.audio.first.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "decoder.audio.first.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "decoder.audio.last.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "decoder.audio.last.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "decoder.proprio.first.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "decoder.proprio.first.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "decoder.proprio.last.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "decoder.proprio.last.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "joint_readout.first.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "joint_readout.first.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "joint_readout.last.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "joint_readout.last.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "byte_head.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "byte_head.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "reward.first.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "reward.first.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "reward.last.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "reward.last.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "actor.first.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 0,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "actor.first.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 0,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "actor.last.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 0,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "critic.first.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "critic.first.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "critic.last.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "critic.last.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "record_goal_query.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "record_query.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "record_query.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "record_key.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "record_position_key.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "record_position_query.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "record_position_query.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "record_null.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "record_null.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "record_value.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 0,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "record_value.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 0,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "record_output.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "record_output.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "copy_gate.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "copy_gate.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "actor_parameters.first.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "actor_parameters.first.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "actor_parameters.last.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "actor_parameters.last.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 26,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "development.first.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 0,
+      "unused_snapshots": 26,
+      "max_abs_delta": 0.0
+    },
+    "development.first.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 0,
+      "unused_snapshots": 26,
+      "max_abs_delta": 0.0
+    },
+    "development.last.weight": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 0,
+      "unused_snapshots": 26,
+      "max_abs_delta": 0.0
+    },
+    "development.last.bias": {
+      "compared_snapshots": 26,
+      "nonzero_snapshots": 0,
+      "unused_snapshots": 26,
+      "max_abs_delta": 0.0
+    }
+  },
+  "workers": [
+    {
+      "cpu_seconds": 16.65625,
+      "wall_seconds": 18.75,
+      "threads": 1,
+      "interop_threads": 12,
+      "pid": 31960,
+      "parent_pid": 38580,
+      "snapshot_count": 13
+    },
+    {
+      "cpu_seconds": 4.65625,
+      "wall_seconds": 5.436999999976251,
+      "threads": 2,
+      "interop_threads": 12,
+      "pid": 29888,
+      "parent_pid": 38580,
+      "snapshot_count": 1
+    },
+    {
+      "cpu_seconds": 17.78125,
+      "wall_seconds": 19.89100000000326,
+      "threads": 1,
+      "interop_threads": 12,
+      "pid": 25736,
+      "parent_pid": 38580,
+      "snapshot_count": 13
+    },
+    {
+      "cpu_seconds": 4.609375,
+      "wall_seconds": 5.889999999955762,
+      "threads": 2,
+      "interop_threads": 12,
+      "pid": 35128,
+      "parent_pid": 38580,
+      "snapshot_count": 1
+    }
+  ],
+  "wrong_thread_negative_controls": 2,
+  "cpu_seconds_including_workers": 80.03125,
+  "wall_seconds": 93.64100000000326,
+  "optimizer_attempts": 0,
+  "training_steps": 0,
+  "project_dataset_reads": 0,
+  "existing_checkpoints_loaded": 0,
+  "S12_verified": false,
+  "post_update_semantic_rebuild_verified": false,
+  "whole_22_3_passed": false,
+  "task_capability_evaluated": false
+}
