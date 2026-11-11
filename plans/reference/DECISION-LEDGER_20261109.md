@@ -3,6 +3,7 @@
 > 用途：记录**由执行者自行决定**的越界决策，一笔一条，可逐条复核。授权来源统一为：**用户 2026-11-09 授权（放权，须留档）**。
 > 覆盖范围：①预算超限；②动封存集或改写已冻结判据；③开新训练窗口；④方向二选一（按“上限更高的方案”取舍）。其余纯实现修复、同口径复测、文档同步不在此立账。
 > 纪律：留档在决策当时写，不事后补；每笔独立提交（不推送）；索引行追加在里程碑简报末尾。
+> **常设规则（2026-11-11 立）**：每次 `git push` 前必须先打印 `git log --oneline origin/main..HEAD`，把本批提交逐条列给用户看，确认其中没有别的线程提交后再推。来历：`0423c42a0..bcaa63265` 那次把另一条线在我工作期间提交进同一工作区的 `f83dd7cc0` 一起推了上去，我事先没列清单，事后才补报。**任何时候都不回退 main 去摘掉别人的提交**（摘除造成的破坏大于带上一笔）。
 > 关联：判据与读数见 [SPEC-TAIJI-ADDRESS-SYSTEM_20261108.md](SPEC-TAIJI-ADDRESS-SYSTEM_20261108.md) §20–§21、[INVARIANT-LEDGER_20261103.md](INVARIANT-LEDGER_20261103.md) §47–§49、[CAPABILITY-CARD_20261103.md](CAPABILITY-CARD_20261103.md) U35–U37。
 
 ## 索引
@@ -2042,6 +2043,8 @@ GitHub 在 job 结束前不发布日志：`gh run view --job` 直接拒绝（`lo
 
 **本轮未做**：没有改 baseline、没有 exclude 任何文件、没有加 `# type: ignore`、没有碰 `taiji/u2_operators.py` 与 `taiji/u2_subject.py`。
 
+**补记（同日，run `42946757225` 实测）**：上一刀自身留下一个同类短路——新加的契约测试 `tests/test_ci_typecheck_gate_contract.py` `import yaml`，而 Windows 腿只装 `pytest`，于是 `ModuleNotFoundError: No module named 'yaml'` 让**整个 pytest 收集阶段中断**（`Interrupted: 1 error during collection`），Windows 腿的 `pytest-windows` 与 `collection-crlf` 两个门禁同时红、全量读数一并丢失。修法不是跳过测试（那会让契约恰在需要它的地方失效），而是把 `pyyaml` 补进两条腿的测试依赖（Ubuntu 的 `Install test dependencies` 一行的末尾、Windows 的 `Install test runner`）：判据、断言、基线一个字未动，撤回路径＝删掉这两处 `pyyaml`。
+
 ## O-20261111-01 让 materialize 真跑之后，composition 探针由"缺件红"变成"1 ULP 漂移红"
 
 Windows 腿（run `42849129318`）实测：`materialize-bundle` **success**（77 秒，脚本自证 sha 相等才会 0 退出），随后的 `test_composition_read_probe_anchor` 断言**真的执行**，并报出末位差：
@@ -2050,5 +2053,37 @@ Windows 腿（run `42849129318`）实测：`materialize-bundle` **success**（77
 - `record_masses` 两条：`0.25059636071949365` vs `0.2505963607194936`、`0.1790966651513409` vs `0.17909666515134093`（各 1 ULP）。
 
 **只记录，未处置**：没有改那条测试的断言、没有加容差、没有改判 `not_regenerable`。待判的是这是**运行条件**（线程预算／BLAS／平台，与 D-20261110-05、能力卡 §13.1 同一族）还是**发布行本身不可逐位复现**。两者处置不同，故不在读数前改口径。
+
+### 补充（2026-11-11）：同输入连跑 3 次的复现性分型
+
+**做法**：用同一台维护机、同一条读取路径（`build_manifest` → `load_candidate` → `resume_subject` → `descriptor_read`），对 15 行发布行逐字段比较（11 个 `COMPARE` 字段 + `record_masses` + 每组 4 个字段），**连跑 3 次**。断言、容差、发布值一律未动——脚本只打印、不 assert。临时脚本与三次输出放在 `output/_scratch_probe/`，跑完即删（不入库）。
+
+**每次运行都记录运行条件**（按 §13：不记运行条件的相等结论不算证据）：
+
+| 次 | torch | python | OS | `threads` | `interop` | CUDA | MKL | 漂移字段数 |
+|---|---|---|---|---|---|---|---|---|
+| 1 | 2.13.0+cpu | 3.12.10 | Windows 11 10.0.26300 | 1（模型加载前 `set_num_threads(1)`） | 12 | None | True | 0 |
+| 2 | 2.13.0+cpu | 3.12.10 | Windows 11 10.0.26300 | 1 | 12 | None | True | 0 |
+| 3 | 2.13.0+cpu | 3.12.10 | Windows 11 10.0.26300 | 1 | 12 | None | True | 0 |
+
+构建侧条件（三次同一进程族、同一取值）：ATen parallel backend = OpenMP，OpenMP 2019，MKL 2026.1，`OMP_NUM_THREADS`/`MKL_NUM_THREADS` 均未设置，`hardware_concurrency=24`。
+
+**三次里每个漂移字段的取值**：三次的漂移集合均为**空集**——`recalled_norm`、`record_masses`（两条）、以及任何 `group.*` 字段都没有出现与发布值的差。三次逐字段取值完全一致（即三次全部逐位等于发布值）。
+
+**三分类判定：`reproduced`**（本机、上述运行条件下）。依据：三次彼此全等，且全等于发布值。
+
+**证据边界（只划范围，不下处置结论）**：
+- 该判定排除的是"同一输入在本机不可复现"，因此**不构成**把"发布行逐位复现"改写成"在给定运行条件下可复现"的证据；
+- 但它**不能**推出"CI 那次 1 ULP 是偶发"——上一轮的漂移观测在 CI 的 Windows runner 上，本机没有复现到那个量；两侧只有"同一个 torch 轮子（`torch==2.13.0+cpu`，cp312 win_amd64，来自 `download.pytorch.org/whl/cpu`，与 [ci.yml](../../../.github/workflows/ci.yml) 第 257／746／885 行的钉法一致）"这一条相同项，宿主 CPU 微架构（AVX-512 与否影响 MKL/ATen kernel 选择）、OS build、`interop` 线程数均未受控、也未记录；
+- 因此本轮只到"本机 `reproduced`"这一格；"CI 宿主是偶发还是稳定偏差"这一格仍是空白，需要 CI 侧重复观测才能填。
+
+### 补充二（同日，run `42946757225` 实测）：materialize 在两腿都没有复现封存 sha
+
+- CI Windows（同一 `windows-latest` 标签、同一 `torch==2.13.0+cpu`、同一钉法）：`python scripts/training/materialize_taiji_core_09_bundle.py` 跑 74 秒后 **exit 1**，报 `rebuild does not match the sealed identity: sha256 12566c9bcff68cefbf92804133876f005ae5339b07597b797ea40383a2e5fe20 != ce4c62685d55bb518d234e7407e19b05257d1d761a0430432f7d0f09641321cf`；上一轮（`42849129318`）同一条命令是 **success 77 秒**。
+- 同一份代码在本机（HEAD `bcaa63265`，构建路径 `set_num_threads(1)` + 固定 seed）重建：**51.6 秒、sha256 `ce4c6268…21cf`、77,609,636 字节，逐字节等于封存值**（输出写到 `output/_scratch_materialize/`，不覆盖本机封存件）。
+- 两轮 CI 之间构建路径上的 Python 代码只有 `taiji/u2_subject.py`（+70 行）发生过改动，而 materialize 的导入链是 `verify_taiji_closeout_09` → `living_core`／`growth_credit`／`native_development`／`birth_direction`／`state_migration`，不含 `u2_subject`；因此**本机复现说明这不是代码回归**。
+- **只记录，不下结论**：与上面 1 ULP 同一族现象（同一平台标签下、同一轮子、同一代码，两次运行的末位结果不同），指向宿主 CPU 微架构／指令集分派而非线程预算（构建路径已钉 `threads=1`）。判"宿主偶发"还是"宿主稳定偏差"仍需 CI 侧重复观测；本机 3/3 逐位复现不能替代那一格的证据。
+- **同轮 Ubuntu 腿**（`test (3.12)`，02:40:28→02:41:29，61 秒）同样 exit 1：`sha256 8dacaf04cf006592a85c4503dea92bd0c2dcd9a9c905cfce11aa2671ab079406 != ce4c6268…21cf`。⇒ **两腿本轮都不等**。
+- 这对能力卡 §13.1 的三结局意味着什么（只陈述事实，不改判）：第一格 `regenerable_exact`（两腿都等）不成立；第三格 `platform_dependent` 的处置写着"降级为仅 Windows 上 exact"，而本轮 Windows 自己也不等 ⇒ **该处置所依赖的前提今天被反例打掉**；第二格 `platform_equivalent` 要求把两份不等 sha 的构件喂进 4 个 `verify_*` 脚本比判定与核心计数，但 materialize 写在 runner 的 `output/` 且**不上传**，本轮那两份件已随 runner 销毁 ⇒ 该判定事后无法补做。**不改预登记、不临场选格**，等 owner 裁定。
 
 

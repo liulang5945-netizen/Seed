@@ -274,7 +274,9 @@ jobs:
         #   钉 CI 实测在跑的版本（run 40203419431 读数）：pytest==9.1.1 / pytest-cov==7.1.0。
         #   判据语义不变，只是把浮动版本变成固定版本；升级 pytest 前必须在本机先跑
         #   split_ci_junit_faces 的自校验（ADR §4.3 失败矩阵）。
-        run: pip install sentencepiece pytest==9.1.1 pytest-cov==7.1.0 httpx fastapi python-multipart pydantic anyio cryptography numpy "psutil>=5.9.0,<7.0.0" ruff==0.16.4 black==26.5.1 mypy==2.3.1 pip-audit==2.10.1
+        # pyyaml：tests/test_ci_typecheck_gate_contract.py 直接读 ci.yml 的结构（D-20261111-01），
+        # 不装它会让整个 pytest 收集阶段中断，比该测试自己要防的"证据被短路"更糟。
+        run: pip install sentencepiece pytest==9.1.1 pytest-cov==7.1.0 httpx fastapi python-multipart pydantic anyio cryptography numpy "psutil>=5.9.0,<7.0.0" ruff==0.16.4 black==26.5.1 mypy==2.3.1 pip-audit==2.10.1 pyyaml
 
       - name: Install package (editable)
         run: pip install -e . --no-deps
@@ -746,7 +748,9 @@ jobs:
         run: pip install torch==2.13.0+cpu --index-url https://download.pytorch.org/whl/cpu
 
       - name: Install test runner
-        run: pip install pytest
+        # pyyaml：tests/test_ci_typecheck_gate_contract.py 读 ci.yml 结构用；缺它会让本腿
+        # pytest 收集阶段整体中断（run 42946757225 实测），连其余用例的读数一起丢。
+        run: pip install pytest pyyaml
 
       - name: Install platform dependencies without Legacy extra
         if: matrix.install-legacy == false
