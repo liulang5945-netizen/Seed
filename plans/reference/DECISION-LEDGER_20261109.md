@@ -2435,7 +2435,7 @@ Owner 的否决理由（原话要点）：基线可以重生成 ⇒ 红的时候
 - 末置 `Verdict over every reading above` 读六个 `steps.<id>.outcome`：只有 `success` 算绿，`failure`／`skipped`／`cancelled`／`missing` 一律判红。`${VAR:-missing}` 兜住未定义变量，否则 `set -u` 会当场退出、汇总步只剩一个空 `exit 1`，等于又回到「遮住读数」。
 - 为什么不是逐个步骤补：这是同一个病（一条红遮住后面全部读数），要一次治完；逐个补会一直追着最新出现的上游红跑。
 - 本机验证（结构＋逻辑）：六个 step 均有 `id` 且 `if: always()`；Verdict 覆盖全部六个 id；用 Git Bash 跑真片段四组——全绿 exit 0；最前面一项 `failure` ⇒ 其余五行照常打印、exit 1；一项 `skipped` ⇒ exit 1；变量未定义 ⇒ 打印 `missing` 并 exit 1。
-- **挂账（不用本地模拟替代）**：本机没有 `act`，「人为让最前面一步红、后面证据步仍执行且汇总判红」的**线上**证据要在下一次快通道 run 的步骤列表里取：六步都应有 outcome、不得出现 `skipped`。
+- **线上反向验证（已收口，不再是挂账）**：推 `9ed5f80b2` 后的快通道 run `43001680169` 的步骤列表——`ruff` ✓、`ruff B/SIM` ✓、`black` ✓、`冻结标记审计` ✓、**`mypy 棘轮` ✗（3 条）**、**`文档链守卫` ✓（在 mypy 红之后照常执行）**、`Verdict` ✗。六项证据读数**全有 outcome、零 `skipped`**，耗时顺序也证明守卫没有因为上游红而停（10:15:49 mypy 判红 → 10:16:13 守卫出结论）。这正是要的反向证据：**一条红不再遮住后面的读数，且汇总仍判红**。唯一红是 mypy 3 条，全在另一线程的 `taiji/u2_history.py:194`、`taiji/u2_recovery.py:512/530`（`Returning Any`），按边界只报不改。
 - 提交：`805d8d2cd`。与 D-20261111-03 §7.2 的关系：那次把守卫移到末尾只解决了「守卫不遮别人」，没解决「别人遮守卫」；`always()` ＋ Verdict 把两个方向一起封死。
 
 ### 5. 撤回路径
