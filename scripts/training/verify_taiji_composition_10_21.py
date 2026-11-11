@@ -45,6 +45,12 @@ from taiji.candidate_manifest import (  # noqa: E402
     load_candidate,
     parameter_digest,
 )
+from taiji.core_09_bundle import (  # noqa: E402
+    EXPECTED_BYTES as EXPECTED_BUNDLE_BYTES,
+)
+from taiji.core_09_bundle import (
+    EXPECTED_SHA256 as EXPECTED_BUNDLE_SHA,
+)
 from taiji.living_core import RawSource  # noqa: E402
 from taiji.native_composition_fixture import (  # noqa: E402
     ACTION_BYTES,
@@ -99,8 +105,6 @@ from taiji.state_migration import resume_subject  # noqa: E402
 BUNDLE = os.environ.get("TAIJI_BUNDLE_PATH", "output/taiji_core_09/subject_bundle.pt")
 CLOSEOUT = "reports/taiji_core_09_closeout_20261101.json"
 EXPECTED_CANDIDATE = "feb0cbcb00e2e16bb66b77db530ae566ce40eecaf2e14852b7cc1661292139dd"
-EXPECTED_BUNDLE_SHA = "ce4c62685d55bb518d234e7407e19b05257d1d761a0430432f7d0f09641321cf"
-EXPECTED_BUNDLE_BYTES = 77609636
 MANIFEST = "plans/manifests/taiji_core_10_21_graph_v2_20261101.json"
 OUTPUT_DIR = "output/taiji_core_10_21_graph"
 

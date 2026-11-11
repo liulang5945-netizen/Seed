@@ -969,12 +969,12 @@ def preflight_main(args) -> int:
         }
         if manifest_path.exists():
             stored = json.loads(manifest_path.read_text(encoding="utf-8"))
-            drift = {
+            manifest_drift = {
                 "candidate_id": stored.get("gate_chain", {}).get("graph", {}).get("candidate_id")
                 != manifest_data["gate_chain"]["graph"]["candidate_id"],
                 "source_hashes": stored.get("source_hashes") != manifest_data["source_hashes"],
             }
-            manifest_ok = not any(drift.values())
+            manifest_ok = not any(manifest_drift.values())
             manifest_written = False
         else:
             manifest_path.parent.mkdir(parents=True, exist_ok=True)
@@ -983,7 +983,7 @@ def preflight_main(args) -> int:
                 encoding="utf-8",
                 newline="\n",
             )
-            drift = {}
+            manifest_drift = {}
             manifest_ok = True
             manifest_written = True
         report["manifest"] = {
@@ -994,10 +994,13 @@ def preflight_main(args) -> int:
             ),
             "sha256": sha256_text(manifest_path),
             "written": manifest_written,
-            "drift": drift,
+            "drift": manifest_drift,
         }
         check(
-            checks, "manifest_identity", manifest_ok, {"written": manifest_written, "drift": drift}
+            checks,
+            "manifest_identity",
+            manifest_ok,
+            {"written": manifest_written, "drift": manifest_drift},
         )
     except PreflightStop as exc:
         error = f"PreflightStop: {exc}"
