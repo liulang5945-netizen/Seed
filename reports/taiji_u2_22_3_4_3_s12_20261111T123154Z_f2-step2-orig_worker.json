@@ -1,0 +1,1000 @@
+{
+  "verdict": "pass",
+  "attempt_id": "f2-step2-orig",
+  "run_id": "20261111T123154Z",
+  "s12_sha256": "f669064d84b4f18d3189f0bde69e3c0ff47c11c3b8fc566db646b34c950503a4",
+  "ledger_seq_open": 9,
+  "ledger_seq_close": 10,
+  "parent_verified": {
+    "state_sha256": "b06740d9662788c658d9f9f98b27f03bd77a7cad8fa3628179dab7578d170cfc",
+    "parameter_sha256": "555e09ff845611ed58059e538ea640825f4ca97c8e73e5e4c6a5797513835f35",
+    "moment_sha256": "c8e0e4f99d9806c1c7cc825a9ca8fa80978185677f4efbac573b451d61c11d09",
+    "history_reference": {
+      "entries": 9,
+      "head": "97062e8d0535f52f306f77cce80515709a7840077c0d9c940d801496e7c3cf8a"
+    },
+    "revision": 1
+  },
+  "post_verified": {
+    "state_sha256": "28e2c93535d4fb862b6b1b9b1cbb79b93abfdd5dc336f359ae5f8c863d852025",
+    "parameter_sha256": "fb2727d5bffa95fbd69afa4e3f272a50f9cef51941011d15e263d5f5c098fae0",
+    "moment_sha256": "ba1444dbdcd255946b9dea71945cedd43a979dab9e985e3096b0dcad6f0cf437",
+    "history_reference": {
+      "entries": 10,
+      "head": "5b72f43e263d049928bca06d8acbf9dac059ef7e5081adc19d08bfa97a90f059"
+    },
+    "revision": 2
+  },
+  "adam_equations": [
+    {
+      "parameter": "modality",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 4.656612873077393e-10
+    },
+    {
+      "parameter": "initial_h",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 3.725290298461914e-09
+    },
+    {
+      "parameter": "initial_p",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "native_w",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 3.725290298461914e-09
+    },
+    {
+      "parameter": "native_r",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 1.862645149230957e-09
+    },
+    {
+      "parameter": "native_p",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 3.725290298461914e-09
+    },
+    {
+      "parameter": "native_q",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "native_k",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "native_v",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 9.313225746154785e-10
+    },
+    {
+      "parameter": "tau_logit",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "background",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "start_embedding",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "record_null_value",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "coverage_logit",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "actor_log_std",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "encoder.rgb.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 3.725290298461914e-09
+    },
+    {
+      "parameter": "encoder.rgb.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "encoder.audio.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 3.725290298461914e-09
+    },
+    {
+      "parameter": "encoder.audio.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "encoder.proprio.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 1.862645149230957e-09
+    },
+    {
+      "parameter": "encoder.proprio.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "metadata.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "metadata.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "embedding.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 9.313225746154785e-10
+    },
+    {
+      "parameter": "text_input.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 1.4901161193847656e-08
+    },
+    {
+      "parameter": "text_input.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 9.313225746154785e-10
+    },
+    {
+      "parameter": "convolutions.0.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 3.725290298461914e-09
+    },
+    {
+      "parameter": "convolutions.0.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "convolutions.1.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 1.862645149230957e-09
+    },
+    {
+      "parameter": "convolutions.1.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "convolutions.2.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 3.725290298461914e-09
+    },
+    {
+      "parameter": "convolutions.2.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 9.313225746154785e-10
+    },
+    {
+      "parameter": "goal_score.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "goal_value.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 1.862645149230957e-09
+    },
+    {
+      "parameter": "goal_value.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "object_projection.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 9.313225746154785e-10
+    },
+    {
+      "parameter": "object_projection.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 9.313225746154785e-10
+    },
+    {
+      "parameter": "h_query.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "h_query.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "h_key.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "h_value.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 1.4901161193847656e-08
+    },
+    {
+      "parameter": "h_value.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 9.313225746154785e-10
+    },
+    {
+      "parameter": "o_query.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 9.313225746154785e-10
+    },
+    {
+      "parameter": "o_query.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "o_key.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "o_value.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 9.313225746154785e-10
+    },
+    {
+      "parameter": "o_value.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "action.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 1.862645149230957e-09
+    },
+    {
+      "parameter": "action.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "f_query.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 3.725290298461914e-09
+    },
+    {
+      "parameter": "f_query.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "f_output.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 1.1641532182693481e-10
+    },
+    {
+      "parameter": "f_output.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 9.313225746154785e-10
+    },
+    {
+      "parameter": "relation_query.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "relation_query.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "relation_key.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "relation_value.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "relation_value.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "relation_geometry.first.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 1.862645149230957e-09
+    },
+    {
+      "parameter": "relation_geometry.first.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "relation_geometry.last.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 1.1641532182693481e-10
+    },
+    {
+      "parameter": "motion.first.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 7.450580596923828e-09
+    },
+    {
+      "parameter": "motion.first.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 9.313225746154785e-10
+    },
+    {
+      "parameter": "motion.last.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 1.862645149230957e-09
+    },
+    {
+      "parameter": "motion.last.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "native_goal.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "native_goal.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "nu_projection.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 1.862645149230957e-09
+    },
+    {
+      "parameter": "nu_projection.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "bind_query.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 9.313225746154785e-10
+    },
+    {
+      "parameter": "bind_query.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 9.313225746154785e-10
+    },
+    {
+      "parameter": "bind_key.rgb.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 1.862645149230957e-09
+    },
+    {
+      "parameter": "bind_key.rgb.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "bind_key.audio.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "bind_key.audio.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "bind_key.proprio.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 3.725290298461914e-09
+    },
+    {
+      "parameter": "bind_key.proprio.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "bind_key.outcome.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "bind_key.outcome.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 9.313225746154785e-10
+    },
+    {
+      "parameter": "bind_value.rgb.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 1.862645149230957e-09
+    },
+    {
+      "parameter": "bind_value.rgb.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "bind_value.audio.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 1.862645149230957e-09
+    },
+    {
+      "parameter": "bind_value.audio.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "bind_value.proprio.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "bind_value.proprio.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "bind_value.outcome.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 7.450580596923828e-09
+    },
+    {
+      "parameter": "bind_value.outcome.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "null_score.rgb.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 1.1641532182693481e-10
+    },
+    {
+      "parameter": "null_score.rgb.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "null_score.audio.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "null_score.audio.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "null_score.proprio.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 1.4901161193847656e-08
+    },
+    {
+      "parameter": "null_score.proprio.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "null_score.outcome.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 7.450580596923828e-09
+    },
+    {
+      "parameter": "null_score.outcome.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "reliability.rgb.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "reliability.rgb.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "reliability.audio.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "reliability.audio.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "reliability.proprio.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "reliability.proprio.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "reliability.outcome.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "reliability.outcome.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "corrector.first.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 7.450580596923828e-09
+    },
+    {
+      "parameter": "corrector.first.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "corrector.last.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 3.725290298461914e-09
+    },
+    {
+      "parameter": "corrector.last.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "f_key.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "f_key.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 9.313225746154785e-10
+    },
+    {
+      "parameter": "outcome.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "outcome.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "f_value.first.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 1.862645149230957e-09
+    },
+    {
+      "parameter": "f_value.first.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 9.313225746154785e-10
+    },
+    {
+      "parameter": "f_value.last.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 9.313225746154785e-10
+    },
+    {
+      "parameter": "f_value.last.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "f_beta.first.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "f_beta.first.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "f_beta.last.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "f_beta.last.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "f_alpha.first.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "f_alpha.first.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "f_alpha.last.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "f_alpha.last.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "f_chi.first.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "f_chi.first.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "f_chi.last.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "f_chi.last.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "post_memory.first.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 3.725290298461914e-09
+    },
+    {
+      "parameter": "post_memory.first.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 9.313225746154785e-10
+    },
+    {
+      "parameter": "post_memory.last.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 7.450580596923828e-09
+    },
+    {
+      "parameter": "post_memory.last.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 9.313225746154785e-10
+    },
+    {
+      "parameter": "decoder_query.rgb.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 1.862645149230957e-09
+    },
+    {
+      "parameter": "decoder_query.rgb.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "decoder_query.audio.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "decoder_query.audio.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "decoder_query.proprio.value",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 2.3283064365386963e-10
+    },
+    {
+      "parameter": "decoder_key.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 3.725290298461914e-09
+    },
+    {
+      "parameter": "decoder_value.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 1.4901161193847656e-08
+    },
+    {
+      "parameter": "decoder_value.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "decoder.rgb.first.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 7.450580596923828e-09
+    },
+    {
+      "parameter": "decoder.rgb.first.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 9.313225746154785e-10
+    },
+    {
+      "parameter": "decoder.rgb.last.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 1.4901161193847656e-08
+    },
+    {
+      "parameter": "decoder.rgb.last.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 9.313225746154785e-10
+    },
+    {
+      "parameter": "decoder.audio.first.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 7.450580596923828e-09
+    },
+    {
+      "parameter": "decoder.audio.first.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 9.313225746154785e-10
+    },
+    {
+      "parameter": "decoder.audio.last.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 7.450580596923828e-09
+    },
+    {
+      "parameter": "decoder.audio.last.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 9.313225746154785e-10
+    },
+    {
+      "parameter": "decoder.proprio.first.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 3.725290298461914e-09
+    },
+    {
+      "parameter": "decoder.proprio.first.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "decoder.proprio.last.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 1.862645149230957e-09
+    },
+    {
+      "parameter": "decoder.proprio.last.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 9.313225746154785e-10
+    },
+    {
+      "parameter": "joint_readout.first.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 7.450580596923828e-09
+    },
+    {
+      "parameter": "joint_readout.first.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 9.313225746154785e-10
+    },
+    {
+      "parameter": "joint_readout.last.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 3.725290298461914e-09
+    },
+    {
+      "parameter": "joint_readout.last.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "byte_head.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 1.4901161193847656e-08
+    },
+    {
+      "parameter": "byte_head.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 9.313225746154785e-10
+    },
+    {
+      "parameter": "reward.first.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 7.450580596923828e-09
+    },
+    {
+      "parameter": "reward.first.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 9.313225746154785e-10
+    },
+    {
+      "parameter": "reward.last.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 1.862645149230957e-09
+    },
+    {
+      "parameter": "reward.last.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "actor.first.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "actor.first.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "actor.last.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "critic.first.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 3.725290298461914e-09
+    },
+    {
+      "parameter": "critic.first.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 9.313225746154785e-10
+    },
+    {
+      "parameter": "critic.last.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "critic.last.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "record_goal_query.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "record_query.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 2.3283064365386963e-10
+    },
+    {
+      "parameter": "record_query.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 9.313225746154785e-10
+    },
+    {
+      "parameter": "record_key.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "record_position_key.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 1.4901161193847656e-08
+    },
+    {
+      "parameter": "record_position_query.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 1.4901161193847656e-08
+    },
+    {
+      "parameter": "record_position_query.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "record_null.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "record_null.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "record_value.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 3.725290298461914e-09
+    },
+    {
+      "parameter": "record_value.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "record_output.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 2.3283064365386963e-10
+    },
+    {
+      "parameter": "record_output.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 2.3283064365386963e-10
+    },
+    {
+      "parameter": "copy_gate.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "copy_gate.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "actor_parameters.first.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 7.450580596923828e-09
+    },
+    {
+      "parameter": "actor_parameters.first.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "actor_parameters.last.weight",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 7.450580596923828e-09
+    },
+    {
+      "parameter": "actor_parameters.last.bias",
+      "status": "adam_equation_matched",
+      "max_abs_delta": 0.0
+    },
+    {
+      "parameter": "development.first.weight",
+      "status": "unused_by_loss"
+    },
+    {
+      "parameter": "development.first.bias",
+      "status": "unused_by_loss"
+    },
+    {
+      "parameter": "development.last.weight",
+      "status": "unused_by_loss"
+    },
+    {
+      "parameter": "development.last.bias",
+      "status": "unused_by_loss"
+    }
+  ],
+  "optimizer_step_calls": 0,
+  "run_conditions": {
+    "threads": 1,
+    "interop_threads": 12,
+    "device": "cpu",
+    "dtype": "torch.float32",
+    "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+    "torch": "2.13.0+cpu",
+    "environment": {
+      "OMP_NUM_THREADS": null,
+      "MKL_NUM_THREADS": null,
+      "OPENBLAS_NUM_THREADS": null
+    }
+  },
+  "schema": "taiji-u2-s12-worker-v1",
+  "pid": 14916,
+  "parent_pid": 2724,
+  "cpu_seconds": 6.46875,
+  "wall_seconds": 7.969000000040978
+}

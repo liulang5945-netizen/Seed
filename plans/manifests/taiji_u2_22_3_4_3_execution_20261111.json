@@ -1,0 +1,190 @@
+{
+  "schema": "taiji-u2-22.3.4.3-execution-manifest-v1",
+  "created_on": "2026-11-11",
+  "status": "frozen",
+  "precontract_revision": "4bb053886",
+  "checkpoint_precheck_revision": "1c7196eae",
+  "owner_approval_ref": "chat:user-next-step-22.3.4.3-20261111",
+  "owner_quote": "下一步",
+  "approval_context": "承接上一轮明确提议的22.3.4.3六次工程优化器更新及两次故障，0正式训练；AGENTS授权可逆在范围内自行推进。",
+  "conditions": {
+    "threads": 1,
+    "device": "cpu",
+    "interop_threads": "record actual; strict parent/worker equality"
+  },
+  "groups": {
+    "F1": {
+      "dtype": "float64",
+      "goal": "观察当前环境并记录反馈。",
+      "records": "original two synthetic sensor records",
+      "target": null,
+      "weights": {
+        "predictive": 1.0,
+        "actor": 0.1,
+        "critic": 0.1,
+        "verbatim": 0.0
+      },
+      "active_parameters": [
+        "motion.first.weight",
+        "native_w",
+        "critic.last.weight",
+        "actor_parameters.last.weight"
+      ]
+    },
+    "F2": {
+      "dtype": "float32",
+      "goal": "逐字输出当前唯一记录的完整原文。",
+      "records": "single red sensor record",
+      "target": "红盒在左边。",
+      "weights": {
+        "predictive": 0.1,
+        "actor": 0.1,
+        "critic": 0.1,
+        "verbatim": 1.0
+      },
+      "active_parameters": [
+        "byte_head.weight",
+        "record_output.weight",
+        "text_input.bias"
+      ]
+    }
+  },
+  "recipe": {
+    "config": "U2Config.small, seed 20261110",
+    "sensor_generator": "synthetic_fixture(config,dtype), seed=config.seed+17",
+    "observations_per_shadow_episode": 2,
+    "legal_operations": "act only",
+    "dt": 0.05,
+    "feedback_records": [
+      "red"
+    ],
+    "parent_preparation": "one normal controlled observation then explicit window boundary; no optimizer updates",
+    "training_scope": "discardable synthetic shadow state using parent model parameters; parent factual history and RNG remain fixed",
+    "predictive_denominator": "mean of event and branch predictive_logp",
+    "actor_critic_denominator": "mean of two returned result losses",
+    "verbatim_denominator": "mean negative log-probability of every raw record byte plus EOS; noncommitted shadow utterance"
+  },
+  "optimizer": {
+    "type": "Adam",
+    "lr": 0.001,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "weight_decay": 0.0,
+    "amsgrad": false,
+    "foreach": false,
+    "maximize": false,
+    "capturable": false,
+    "differentiable": false,
+    "fused": false
+  },
+  "activity_floors": {
+    "float64": {
+      "gradient_norm": 1e-12,
+      "max_parameter_change": 1e-12
+    },
+    "float32": {
+      "gradient_norm": 1e-10,
+      "max_parameter_change": 1e-08
+    }
+  },
+  "tolerances": {
+    "float64": {
+      "atol": 1e-10,
+      "rtol": 1e-08
+    },
+    "float32": {
+      "atol": 1e-05,
+      "rtol": 0.0001
+    }
+  },
+  "fault_candidate": {
+    "text_input.bias_add": 0.15,
+    "critic.last.bias_add": 0.1,
+    "optimizer_step_calls": 0,
+    "source": "F1/step1.bin parameters and actual moments"
+  },
+  "counts": {
+    "attempts": 8,
+    "optimizer_step_calls": 6,
+    "canonical_checkpoints": 8,
+    "s12": 8,
+    "workers": 8
+  },
+  "count_clarifications": {
+    "kill_after_open_complete_lines": 2,
+    "kill_after_open_attempt_event_lines": 1,
+    "readbacks": "canonical coverage=8, all extra parent/intent/fault readback calls counted separately",
+    "s12_close_seq": "reserve next sequence before S12; verify actual close in worker"
+  },
+  "formal_budget": {
+    "cpu_seconds": 100,
+    "wall_seconds": 300,
+    "attempts": 8,
+    "optimizer_steps": 6
+  },
+  "remaining": [
+    "22.3.5 final-schema twelve-family closure",
+    "22.4 task/pricing admission",
+    "capability and learning evidence after admission"
+  ],
+  "run_authorized": true,
+  "execution_design_sha256": "c429d962c6b2bd2c41da351f7cd06b2c65f1f1b1295bdb5642eaa0202242840b",
+  "precontract_path": "plans/manifests/taiji_u2_22_3_4_3_precontract_20261111.json",
+  "precontract_sha256": "968db6ca662d08bf67b49c656d26937672b585eb77282b2366497479b1ff0c3f",
+  "source_hash_semantics": "UTF8 without BOM; universal newline to LF",
+  "source_pins": {
+    "taiji/u2_subject.py": "95607245747eac2b89163c88c11366c20a0198c20e2bc86d5be8988397de94de",
+    "taiji/u2_events.py": "a06ad2b4421ab972b86a03980ab1a736d48d395f2776b5c56cfa69a7664783f6",
+    "taiji/u2_learning_transaction.py": "212ea54cf263cec80a15d05263b7e6f8c0965b726a825576634c8c3fb61a9573",
+    "taiji/u2_recovery.py": "975502035c7f33f8943e57ca22bf93b27c6ac726053b779bb67b6c4c8cd702c4",
+    "taiji/u2_history.py": "e648e53f59418e6ad0b58b7bcc3519e5e09304ef691a6387ec09490b7664d336",
+    "taiji/u2_operators.py": "d09f5784bffaf0a3247006c0d67062f18825ba8dc8a431b7c1d0cc778a249559",
+    "taiji/utf8_state.py": "6ec7e96b2994dfa8eea430b3a08ddb5ff0fd877cf70c8cc288f57bab2efcac09",
+    "scripts/training/u2_attempt_ledger_22_3_4_3.py": "e24c907d26a9c6fc6d2180f36008d04dd3d81f293b60acc00d7024962ebe29f0",
+    "scripts/training/u2_update_support_22_3_4_3.py": "9430c23ceb40a5af74a168602d63322696ecefd648c1c3599954f9218e905999",
+    "scripts/training/u2_update_executor_22_3_4_3.py": "e993ed87fee5c7b5322e7dfd62dc0d92cfdce952878f3a736a862dae76857384",
+    "scripts/training/run_taiji_u2_22_3_4_3.py": "8999ab3972f3cb5c5553524b811efae44033372584572a9b05ba710492e3a77c",
+    "scripts/training/verify_taiji_u2_s12_22_3_4_3.py": "b200c79415a9c20f96fe1a70cb3e6cf27f16e76a59807ab96820e85d0d34374e",
+    "scripts/training/verify_taiji_u2_attempt_ledger_22_3_4_3.py": "7e899347d7fb8cf6067fd0d3ec9476df7de865395ea10637cfe21b5d3d2a9eb0",
+    "scripts/training/check_report_run_conditions.py": "eb71cfe6fcf7c3b520eb5189d382225b1ccec6999b2ab011c211e90f01a5b0aa",
+    "scripts/training/verify_taiji_u2_runtime_22_3.py": "272e9b728b0cfcc9dfe4647b179ce2f3b2f02679252130700748a5262cd8654b",
+    "tests/taiji_native/test_u2_engineering_ledger_22_3_4_3.py": "0943fc137685b0ffcb6e3a8f838d11b0714d77158c282c18676522bec2aed890"
+  },
+  "config": {
+    "d": 8,
+    "groups": 2,
+    "units": 12,
+    "objects": 3,
+    "branches": 2,
+    "key": 3,
+    "side": 16,
+    "patch": 4,
+    "audio_samples": 256,
+    "fft": 64,
+    "hop": 32,
+    "embedding": 4,
+    "max_record_bytes": 512,
+    "max_output_bytes": 64,
+    "seed": 20261110
+  },
+  "checkpoint_precheck": {
+    "path": "reports/taiji_u2_22_3_4_3_checkpoint_precheck_20261111.json",
+    "sha256": "bd65f7cb67ac4ee8bd71fcc150b5ce9208c80c8123a85ea3a8ef1e6bf8f6b6e0"
+  },
+  "ledger_precheck": {
+    "path": "reports/taiji_u2_22_3_4_3_ledger_verification_20261111_v2.json",
+    "sha256": "a3e088ddfefe86f39ace8864bf79127f924aab52def8e34b9a283f8a394fdc2d"
+  },
+  "provenance_notes": {
+    "initial_adam_moments": "legitimate empty lazy optimizer state, no warmup",
+    "step1_moments": "created only by the actual first update",
+    "host_field": "SHA256 of hostname",
+    "ledger_event_digest": "record_sha256 over canonical event body; prev_line hashes full preceding line",
+    "step_claims": "fsynced create-once run-root/internal/step_claims/<attempt_id>.json before optimizer call",
+    "worker_validation": "independent gradients plus closed-form Adam moment/parameter equations, zero worker optimizer calls",
+    "runtime_scope": "parent factual trajectory remains at its fixed save point; learning inputs are registered noncommitted synthetic shadow episodes"
+  }
+}

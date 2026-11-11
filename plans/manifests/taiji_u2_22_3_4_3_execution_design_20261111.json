@@ -1,0 +1,133 @@
+{
+  "schema": "taiji-u2-22.3.4.3-execution-design-v1",
+  "created_on": "2026-11-11",
+  "status": "recipe_frozen_before_readings",
+  "precontract_revision": "4bb053886",
+  "checkpoint_precheck_revision": "1c7196eae",
+  "owner_approval_ref": "chat:user-next-step-22.3.4.3-20261111",
+  "owner_quote": "下一步",
+  "approval_context": "承接上一轮明确提议的22.3.4.3六次工程优化器更新及两次故障，0正式训练；AGENTS授权可逆在范围内自行推进。",
+  "conditions": {
+    "threads": 1,
+    "device": "cpu",
+    "interop_threads": "record actual; strict parent/worker equality"
+  },
+  "groups": {
+    "F1": {
+      "dtype": "float64",
+      "goal": "观察当前环境并记录反馈。",
+      "records": "original two synthetic sensor records",
+      "target": null,
+      "weights": {
+        "predictive": 1.0,
+        "actor": 0.1,
+        "critic": 0.1,
+        "verbatim": 0.0
+      },
+      "active_parameters": [
+        "motion.first.weight",
+        "native_w",
+        "critic.last.weight",
+        "actor_parameters.last.weight"
+      ]
+    },
+    "F2": {
+      "dtype": "float32",
+      "goal": "逐字输出当前唯一记录的完整原文。",
+      "records": "single red sensor record",
+      "target": "红盒在左边。",
+      "weights": {
+        "predictive": 0.1,
+        "actor": 0.1,
+        "critic": 0.1,
+        "verbatim": 1.0
+      },
+      "active_parameters": [
+        "byte_head.weight",
+        "record_output.weight",
+        "text_input.bias"
+      ]
+    }
+  },
+  "recipe": {
+    "config": "U2Config.small, seed 20261110",
+    "sensor_generator": "synthetic_fixture(config,dtype), seed=config.seed+17",
+    "observations_per_shadow_episode": 2,
+    "legal_operations": "act only",
+    "dt": 0.05,
+    "feedback_records": [
+      "red"
+    ],
+    "parent_preparation": "one normal controlled observation then explicit window boundary; no optimizer updates",
+    "training_scope": "discardable synthetic shadow state using parent model parameters; parent factual history and RNG remain fixed",
+    "predictive_denominator": "mean of event and branch predictive_logp",
+    "actor_critic_denominator": "mean of two returned result losses",
+    "verbatim_denominator": "mean negative log-probability of every raw record byte plus EOS; noncommitted shadow utterance"
+  },
+  "optimizer": {
+    "type": "Adam",
+    "lr": 0.001,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "weight_decay": 0.0,
+    "amsgrad": false,
+    "foreach": false,
+    "maximize": false,
+    "capturable": false,
+    "differentiable": false,
+    "fused": false
+  },
+  "activity_floors": {
+    "float64": {
+      "gradient_norm": 1e-12,
+      "max_parameter_change": 1e-12
+    },
+    "float32": {
+      "gradient_norm": 1e-10,
+      "max_parameter_change": 1e-08
+    }
+  },
+  "tolerances": {
+    "float64": {
+      "atol": 1e-10,
+      "rtol": 1e-08
+    },
+    "float32": {
+      "atol": 1e-05,
+      "rtol": 0.0001
+    }
+  },
+  "fault_candidate": {
+    "text_input.bias_add": 0.15,
+    "critic.last.bias_add": 0.1,
+    "optimizer_step_calls": 0,
+    "source": "F1/step1.bin parameters and actual moments"
+  },
+  "counts": {
+    "attempts": 8,
+    "optimizer_step_calls": 6,
+    "canonical_checkpoints": 8,
+    "s12": 8,
+    "workers": 8
+  },
+  "count_clarifications": {
+    "kill_after_open_complete_lines": 2,
+    "kill_after_open_attempt_event_lines": 1,
+    "readbacks": "canonical coverage=8, all extra parent/intent/fault readback calls counted separately",
+    "s12_close_seq": "reserve next sequence before S12; verify actual close in worker"
+  },
+  "formal_budget": {
+    "cpu_seconds": 100,
+    "wall_seconds": 300,
+    "attempts": 8,
+    "optimizer_steps": 6
+  },
+  "remaining": [
+    "22.3.5 final-schema twelve-family closure",
+    "22.4 task/pricing admission",
+    "capability and learning evidence after admission"
+  ]
+}

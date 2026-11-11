@@ -1,0 +1,1335 @@
+{
+  "schema": "taiji-u2-s12-v1",
+  "run_id": "20261111T123154Z",
+  "attempt_id": "f1-step2-recovery",
+  "group": "F1",
+  "dtype": "float64",
+  "status": "accepted",
+  "ledger_seq_open": 5,
+  "ledger_seq_close": 6,
+  "parent_checkpoint": "output/taiji_u2_22_3_4_3_20261111T123154Z/F1/step1.bin",
+  "parent_sha256": "30d29f7d8eef785ba651e6e138b34822595ff66a2acb3cd279c1a53acca9bb87",
+  "post_checkpoint": "output/taiji_u2_22_3_4_3_20261111T123154Z/F1/step2-recovery.bin",
+  "post_sha256": "3b64b6ae259a3abaf365123b80ffca8298d35e8e82767e531d9968144df031a1",
+  "pre_state_sha256": "0bc6ad942d2c1b8bfcf5e90ffd37e3dba9e8ab57f855e0d0c97d21d13f611dae",
+  "pre_parameter_sha256": "c97a2881b02c670c44a0a6cea4157817f2b72a516059454face23b664ae3385b",
+  "pre_moment_sha256": "e14368957114738219bf6b8cf311235cdb0229b73195ef00d4c9b472723a3e9e",
+  "post_state_sha256": "362bcb5d29a3158b2fa4363b68838e0b891a49874060adcbcb844b51d7b47c39",
+  "post_parameter_sha256": "75fc673007d13e23cc0e355b419be02291bbb457a641f3475763014070a0d114",
+  "post_moment_sha256": "fbf95f9ca29fd845370dcce3d92363e82446ef7f8803b9087e21fcb53669f634",
+  "history_reference": {
+    "entries": 10,
+    "head": "31192f6a67d148b7cdc764d3137fa78aa2c42e05b3bab731b2783b6907a7106c"
+  },
+  "revision": 2,
+  "gradient_sha256": "751695811384d9447169e8a520d72cea1bffcea6f574a510b931a167c5da4fcd",
+  "next_output": [
+    0.004602860376995455,
+    0.00457930110941174,
+    0.0046068536961180314,
+    0.0045983600220536516,
+    0.004609580162315167,
+    0.004563959469104255,
+    0.004590480771611143,
+    0.004603281357160907,
+    0.004568728253645619,
+    0.004593009614687821,
+    0.004598632138149671,
+    0.004590069953176502,
+    0.004604751168475412,
+    0.004619132246799424,
+    0.004627095522595262,
+    0.004579314114090441,
+    0.004588377436844959,
+    0.004619709171632587,
+    0.004570102147599153,
+    0.004620123012421676,
+    0.00460045534613523,
+    0.004562050694073629,
+    0.004619032721573943,
+    0.004603935052580726,
+    0.004583323244297113,
+    0.004585144817206681,
+    0.004589082607673516,
+    0.004600328169295455,
+    0.004583737333859238,
+    0.0046306358905609905,
+    0.004606324550492813,
+    0.004609735322159773,
+    0.004593784521551349,
+    0.004609024554701041,
+    0.0045888919025998684,
+    0.004592110176720773,
+    0.004600371268679154,
+    0.004552835971751223,
+    0.004569211724638334,
+    0.004615800925773874,
+    0.004591172683156845,
+    0.004561853007928105,
+    0.004584396474856049,
+    0.004586804905222352,
+    0.004631046304214538,
+    0.004562823448469534,
+    0.004564025855116305,
+    0.0046315310310303705,
+    0.004580571948226503,
+    0.004600145313286741,
+    0.004614176017286218,
+    0.004549876488892382,
+    0.004579175916283896,
+    0.004585606364351705,
+    0.004588939633260633,
+    0.004608145373791618,
+    0.004591119007250997,
+    0.00461441621750434,
+    0.004612017407960597,
+    0.0045833459334397204,
+    0.0045798500926548975,
+    0.004569912042237895,
+    0.004600202826066786,
+    0.004596909016952221,
+    0.004597258446970338,
+    0.004585381448007757,
+    0.004620452225038012,
+    0.004626299805417438,
+    0.004599346382327898,
+    0.004578376448844786,
+    0.004602734321377463,
+    0.004605761291842582,
+    0.004618550151056393,
+    0.00456475408905918,
+    0.004580767289389085,
+    0.00460132847239617,
+    0.004580414925987881,
+    0.004615940266908536,
+    0.0045640583652299185,
+    0.004584028653025844,
+    0.004605659799357063,
+    0.004597747199252252,
+    0.004606974289474995,
+    0.004610176111369504,
+    0.004584609094398869,
+    0.004633507759016674,
+    0.004570373740962562,
+    0.004612526243099891,
+    0.004612894694412965,
+    0.004595232971677141,
+    0.004585797725639045,
+    0.004603185541912866,
+    0.004585999737949442,
+    0.004620669160978673,
+    0.004586020878459542,
+    0.00460219683182274,
+    0.004546920796053816,
+    0.004608765154473794,
+    0.004604462982271221,
+    0.0045924400645633605,
+    0.004581187529771989,
+    0.00457695821827673,
+    0.004616849846666211,
+    0.004610726982782947,
+    0.004588602562322023,
+    0.004595535533038741,
+    0.0046098762892388765,
+    0.004614650133305096,
+    0.004599409111926475,
+    0.004621569497722341,
+    0.004613142318360201,
+    0.004598538805936919,
+    0.004598607167693479,
+    0.004553794696860347,
+    0.0045968838242410786,
+    0.004585836798703763,
+    0.004613426541077739,
+    0.004619771155600963,
+    0.004573917618250735,
+    0.004562520082004489,
+    0.004583246780715776,
+    0.00460091204080056,
+    0.0045928237775524254,
+    0.004626484570547264,
+    0.004595503541149743,
+    0.00460534604291902,
+    0.004574079434318662,
+    0.004616545216188835,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.004598667878263055,
+    0.00456723793556017,
+    0.004601679396279309,
+    0.0045762792260224255,
+    0.004615578945130076,
+    0.004587581409714678,
+    0.004576445307318474,
+    0.004617688926896297,
+    0.004594149308022953,
+    0.004584567920975312,
+    0.004568785984526,
+    0.004578112750224662,
+    0.004608042038044935,
+    0.00463593361405062,
+    0.0046176457251592695,
+    0.004608480186001431,
+    0.004644488959141251,
+    0.004578362274895917,
+    0.00457700896004853,
+    0.004590050309640415,
+    0.004586206140833959,
+    0.004588865075614425,
+    0.004586079040711291,
+    0.004603339618387176,
+    0.004551106000833727,
+    0.004621614018536927,
+    0.004604159022532806,
+    0.004580285841870896,
+    0.004584064629538834,
+    0.004580420302922614,
+    0.004568094796539584,
+    0.004608333549332233,
+    0.0045875267664277145,
+    0.0339903994456013,
+    0.004635747318428183,
+    0.061885220439135226,
+    0.004574008922592939,
+    0.047375468071615946,
+    0.04802611416972463,
+    0.004588504148968063,
+    0.004589140297873095,
+    0.004604576795329028,
+    0.004556096035233739,
+    0.004613412584919838,
+    0.004585256770231185,
+    0.00458813130331537,
+    0.004601222828085774,
+    0.004608046401803877,
+    0.004587772822006161,
+    0.004628197119674086,
+    0.004594347810337243,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.004575493526472389
+  ],
+  "policy": [
+    0.11024149297062776,
+    0.10657815758979376,
+    0.11303978420683729,
+    0.10916803737470608,
+    0.11279013043496425,
+    0.11367398993034325,
+    0.11045412501928391,
+    0.11106014273405282,
+    0.11299413973939088
+  ],
+  "run_conditions": {
+    "threads": 1,
+    "interop_threads": 12,
+    "device": "cpu",
+    "dtype": "torch.float64",
+    "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+    "torch": "2.13.0+cpu",
+    "environment": {
+      "OMP_NUM_THREADS": null,
+      "MKL_NUM_THREADS": null,
+      "OPENBLAS_NUM_THREADS": null
+    }
+  },
+  "parameter_rows": [
+    {
+      "parameter": "modality",
+      "gradient_norm": 0.012887699441868542,
+      "max_parameter_change": 0.0010013035529809955
+    },
+    {
+      "parameter": "initial_h",
+      "gradient_norm": 0.05949402216806117,
+      "max_parameter_change": 0.0010013045021045955
+    },
+    {
+      "parameter": "initial_p",
+      "gradient_norm": 0.20834996744451742,
+      "max_parameter_change": 0.001000463221943523
+    },
+    {
+      "parameter": "native_w",
+      "gradient_norm": 0.012666877433784106,
+      "max_parameter_change": 0.0010013436610243993
+    },
+    {
+      "parameter": "native_r",
+      "gradient_norm": 0.0010418607096243596,
+      "max_parameter_change": 0.001001236194505031
+    },
+    {
+      "parameter": "native_p",
+      "gradient_norm": 0.0004836490612852109,
+      "max_parameter_change": 0.0010011656297375488
+    },
+    {
+      "parameter": "native_q",
+      "gradient_norm": 5.468896861801261e-12,
+      "max_parameter_change": 2.2100938952551719e-07
+    },
+    {
+      "parameter": "native_k",
+      "gradient_norm": 3.618200574599324e-11,
+      "max_parameter_change": 9.655329921698375e-07
+    },
+    {
+      "parameter": "native_v",
+      "gradient_norm": 1.1910968178887728e-05,
+      "max_parameter_change": 0.0009988399233419182
+    },
+    {
+      "parameter": "tau_logit",
+      "gradient_norm": 2.5643758824112542e-05,
+      "max_parameter_change": 0.0009996474778928288
+    },
+    {
+      "parameter": "background",
+      "gradient_norm": 3.2708417723104573,
+      "max_parameter_change": 0.0010010905333048478
+    },
+    {
+      "parameter": "start_embedding",
+      "gradient_norm": 1.6630391609344162e-07,
+      "max_parameter_change": 0.0006674129377576034
+    },
+    {
+      "parameter": "record_null_value",
+      "gradient_norm": 3.386918743552027e-06,
+      "max_parameter_change": 0.0007354575098864422
+    },
+    {
+      "parameter": "coverage_logit",
+      "gradient_norm": 0.0,
+      "max_parameter_change": 0.0
+    },
+    {
+      "parameter": "actor_log_std",
+      "gradient_norm": 0.002457694194367692,
+      "max_parameter_change": 0.000999880341164383
+    },
+    {
+      "parameter": "encoder.rgb.weight",
+      "gradient_norm": 0.023327023676718964,
+      "max_parameter_change": 0.0009540001658929764
+    },
+    {
+      "parameter": "encoder.rgb.bias",
+      "gradient_norm": 0.006830288901135502,
+      "max_parameter_change": 0.0009347811759242118
+    },
+    {
+      "parameter": "encoder.audio.weight",
+      "gradient_norm": 0.01533031074038469,
+      "max_parameter_change": 0.00099681676409253
+    },
+    {
+      "parameter": "encoder.audio.bias",
+      "gradient_norm": 0.006352310765036086,
+      "max_parameter_change": 0.000980533072249103
+    },
+    {
+      "parameter": "encoder.proprio.weight",
+      "gradient_norm": 0.011809340038412558,
+      "max_parameter_change": 0.0010013035529809963
+    },
+    {
+      "parameter": "encoder.proprio.bias",
+      "gradient_norm": 0.0038781173963911603,
+      "max_parameter_change": 0.0010013035529809946
+    },
+    {
+      "parameter": "metadata.weight",
+      "gradient_norm": 0.011422322903619135,
+      "max_parameter_change": 0.0010004970545904046
+    },
+    {
+      "parameter": "metadata.bias",
+      "gradient_norm": 0.009958526603098495,
+      "max_parameter_change": 0.0010012261371316281
+    },
+    {
+      "parameter": "embedding.weight",
+      "gradient_norm": 0.00014949447086788414,
+      "max_parameter_change": 0.0010008882189469631
+    },
+    {
+      "parameter": "text_input.weight",
+      "gradient_norm": 0.0006813875403699498,
+      "max_parameter_change": 0.0010012933096788385
+    },
+    {
+      "parameter": "text_input.bias",
+      "gradient_norm": 0.0016750251065696228,
+      "max_parameter_change": 0.0010010668324493491
+    },
+    {
+      "parameter": "convolutions.0.weight",
+      "gradient_norm": 0.000659862602845432,
+      "max_parameter_change": 0.0010010967034430746
+    },
+    {
+      "parameter": "convolutions.0.bias",
+      "gradient_norm": 0.0017093587492996445,
+      "max_parameter_change": 0.0009934160654902612
+    },
+    {
+      "parameter": "convolutions.1.weight",
+      "gradient_norm": 0.000660330376193872,
+      "max_parameter_change": 0.0010011589004434995
+    },
+    {
+      "parameter": "convolutions.1.bias",
+      "gradient_norm": 0.001910045934731941,
+      "max_parameter_change": 0.0010008002359552012
+    },
+    {
+      "parameter": "convolutions.2.weight",
+      "gradient_norm": 0.0006513155801935824,
+      "max_parameter_change": 0.0010010725940326204
+    },
+    {
+      "parameter": "convolutions.2.bias",
+      "gradient_norm": 0.0018097765214308043,
+      "max_parameter_change": 0.0009990306540481001
+    },
+    {
+      "parameter": "goal_score.weight",
+      "gradient_norm": 0.00021476122716697861,
+      "max_parameter_change": 0.0010008725003278762
+    },
+    {
+      "parameter": "goal_value.weight",
+      "gradient_norm": 0.0024627213070224025,
+      "max_parameter_change": 0.0010012908048966929
+    },
+    {
+      "parameter": "goal_value.bias",
+      "gradient_norm": 0.012354052851633093,
+      "max_parameter_change": 0.0010007457758479561
+    },
+    {
+      "parameter": "object_projection.weight",
+      "gradient_norm": 1.634149600385213,
+      "max_parameter_change": 0.0010013563473992675
+    },
+    {
+      "parameter": "object_projection.bias",
+      "gradient_norm": 4.3977262490572295,
+      "max_parameter_change": 0.0010010511378364343
+    },
+    {
+      "parameter": "h_query.weight",
+      "gradient_norm": 6.021222149627951e-09,
+      "max_parameter_change": 0.00017664554331821986
+    },
+    {
+      "parameter": "h_query.bias",
+      "gradient_norm": 9.970129646186401e-08,
+      "max_parameter_change": 0.00085964389938787
+    },
+    {
+      "parameter": "h_key.weight",
+      "gradient_norm": 8.269822019342537e-09,
+      "max_parameter_change": 0.00024855501635606334
+    },
+    {
+      "parameter": "h_value.weight",
+      "gradient_norm": 0.0013211812853956434,
+      "max_parameter_change": 0.0009885023512008068
+    },
+    {
+      "parameter": "h_value.bias",
+      "gradient_norm": 0.4838251283585824,
+      "max_parameter_change": 0.0010001144121085746
+    },
+    {
+      "parameter": "o_query.weight",
+      "gradient_norm": 8.557994125570429e-09,
+      "max_parameter_change": 0.00013031498239055028
+    },
+    {
+      "parameter": "o_query.bias",
+      "gradient_norm": 3.390495349639261e-07,
+      "max_parameter_change": 0.0009258768937388286
+    },
+    {
+      "parameter": "o_key.weight",
+      "gradient_norm": 4.391160048228269e-08,
+      "max_parameter_change": 0.0005714925307518937
+    },
+    {
+      "parameter": "o_value.weight",
+      "gradient_norm": 8.541821372578905e-05,
+      "max_parameter_change": 0.0010007352639587255
+    },
+    {
+      "parameter": "o_value.bias",
+      "gradient_norm": 0.0017128727946942094,
+      "max_parameter_change": 0.0010008188348626205
+    },
+    {
+      "parameter": "action.weight",
+      "gradient_norm": 0.01236952324626215,
+      "max_parameter_change": 0.0010013385097848576
+    },
+    {
+      "parameter": "action.bias",
+      "gradient_norm": 0.009471961587934138,
+      "max_parameter_change": 0.0010012591490699795
+    },
+    {
+      "parameter": "f_query.weight",
+      "gradient_norm": 1.1400240325832642e-05,
+      "max_parameter_change": 0.0009598146304236992
+    },
+    {
+      "parameter": "f_query.bias",
+      "gradient_norm": 2.771941144225825e-05,
+      "max_parameter_change": 0.0008720909355578611
+    },
+    {
+      "parameter": "f_output.weight",
+      "gradient_norm": 5.203580975493824e-07,
+      "max_parameter_change": 0.0009373722308305688
+    },
+    {
+      "parameter": "f_output.bias",
+      "gradient_norm": 0.0643694950343076,
+      "max_parameter_change": 0.0010002957179523816
+    },
+    {
+      "parameter": "relation_query.weight",
+      "gradient_norm": 5.810206350700297e-08,
+      "max_parameter_change": 0.0007083736923818307
+    },
+    {
+      "parameter": "relation_query.bias",
+      "gradient_norm": 2.1943814384153507e-07,
+      "max_parameter_change": 0.0009270391123910732
+    },
+    {
+      "parameter": "relation_key.weight",
+      "gradient_norm": 5.365417958167706e-08,
+      "max_parameter_change": 0.0005948556713573916
+    },
+    {
+      "parameter": "relation_value.weight",
+      "gradient_norm": 0.00028096943481288145,
+      "max_parameter_change": 0.0010009809904457986
+    },
+    {
+      "parameter": "relation_value.bias",
+      "gradient_norm": 0.006170743068055037,
+      "max_parameter_change": 0.0010012712142252207
+    },
+    {
+      "parameter": "relation_geometry.first.weight",
+      "gradient_norm": 2.5324699115578857e-06,
+      "max_parameter_change": 0.0009906759042468127
+    },
+    {
+      "parameter": "relation_geometry.first.bias",
+      "gradient_norm": 4.5497596451783755e-08,
+      "max_parameter_change": 0.0007788536095448256
+    },
+    {
+      "parameter": "relation_geometry.last.weight",
+      "gradient_norm": 5.044901883089218e-06,
+      "max_parameter_change": 0.0009939230382748994
+    },
+    {
+      "parameter": "motion.first.weight",
+      "gradient_norm": 0.014767586819146455,
+      "max_parameter_change": 0.0010013530961368866
+    },
+    {
+      "parameter": "motion.first.bias",
+      "gradient_norm": 0.055805326064207156,
+      "max_parameter_change": 0.0010013542284646147
+    },
+    {
+      "parameter": "motion.last.weight",
+      "gradient_norm": 0.011465514839617318,
+      "max_parameter_change": 0.0010013326439018422
+    },
+    {
+      "parameter": "motion.last.bias",
+      "gradient_norm": 0.16096499124547423,
+      "max_parameter_change": 0.0010013160310838268
+    },
+    {
+      "parameter": "native_goal.weight",
+      "gradient_norm": 1.471247790114677e-11,
+      "max_parameter_change": 6.657832806317154e-07
+    },
+    {
+      "parameter": "native_goal.bias",
+      "gradient_norm": 2.436138518824609e-10,
+      "max_parameter_change": 1.8204404567309304e-05
+    },
+    {
+      "parameter": "nu_projection.weight",
+      "gradient_norm": 0.004511862399870425,
+      "max_parameter_change": 0.0010006566156450514
+    },
+    {
+      "parameter": "nu_projection.bias",
+      "gradient_norm": 0.0020884043887028614,
+      "max_parameter_change": 0.0010006566156450496
+    },
+    {
+      "parameter": "bind_query.weight",
+      "gradient_norm": 0.00026819517288757133,
+      "max_parameter_change": 0.0009721215959021881
+    },
+    {
+      "parameter": "bind_query.bias",
+      "gradient_norm": 0.0007140499188656952,
+      "max_parameter_change": 0.0008183069384469256
+    },
+    {
+      "parameter": "bind_key.rgb.weight",
+      "gradient_norm": 0.0002534254943856317,
+      "max_parameter_change": 0.0009577527612920043
+    },
+    {
+      "parameter": "bind_key.rgb.bias",
+      "gradient_norm": 0.0006481317662550678,
+      "max_parameter_change": 0.0005185584869990094
+    },
+    {
+      "parameter": "bind_key.audio.weight",
+      "gradient_norm": 1.268727780893678e-06,
+      "max_parameter_change": 0.0009101978746166028
+    },
+    {
+      "parameter": "bind_key.audio.bias",
+      "gradient_norm": 3.7837071054985675e-06,
+      "max_parameter_change": 0.0009426526980169311
+    },
+    {
+      "parameter": "bind_key.proprio.weight",
+      "gradient_norm": 1.445772618704058e-06,
+      "max_parameter_change": 0.0009050072667088488
+    },
+    {
+      "parameter": "bind_key.proprio.bias",
+      "gradient_norm": 1.978162560081891e-06,
+      "max_parameter_change": 0.000944506128507893
+    },
+    {
+      "parameter": "bind_key.outcome.weight",
+      "gradient_norm": 2.352411617388249e-06,
+      "max_parameter_change": 0.0009444257803696843
+    },
+    {
+      "parameter": "bind_key.outcome.bias",
+      "gradient_norm": 5.275469521522064e-06,
+      "max_parameter_change": 0.0009754891059659647
+    },
+    {
+      "parameter": "bind_value.rgb.weight",
+      "gradient_norm": 0.0039460445003857356,
+      "max_parameter_change": 0.0010012524701339537
+    },
+    {
+      "parameter": "bind_value.rgb.bias",
+      "gradient_norm": 0.010714527153423716,
+      "max_parameter_change": 0.000995546997584213
+    },
+    {
+      "parameter": "bind_value.audio.weight",
+      "gradient_norm": 0.005503948353739033,
+      "max_parameter_change": 0.0009997980392527778
+    },
+    {
+      "parameter": "bind_value.audio.bias",
+      "gradient_norm": 0.02088329577816347,
+      "max_parameter_change": 0.0009964523827670664
+    },
+    {
+      "parameter": "bind_value.proprio.weight",
+      "gradient_norm": 0.015805653495511045,
+      "max_parameter_change": 0.0009987896059657497
+    },
+    {
+      "parameter": "bind_value.proprio.bias",
+      "gradient_norm": 0.021627988833141973,
+      "max_parameter_change": 0.000996873821894527
+    },
+    {
+      "parameter": "bind_value.outcome.weight",
+      "gradient_norm": 0.009255350209283197,
+      "max_parameter_change": 0.0009991165395552976
+    },
+    {
+      "parameter": "bind_value.outcome.bias",
+      "gradient_norm": 0.02075585649177141,
+      "max_parameter_change": 0.0009969710087185998
+    },
+    {
+      "parameter": "null_score.rgb.weight",
+      "gradient_norm": 0.006300472277484521,
+      "max_parameter_change": 0.000850939372435737
+    },
+    {
+      "parameter": "null_score.rgb.bias",
+      "gradient_norm": 0.01657399530762237,
+      "max_parameter_change": 0.0005866312206616129
+    },
+    {
+      "parameter": "null_score.audio.weight",
+      "gradient_norm": 4.866772508606193e-05,
+      "max_parameter_change": 0.0007748875802597727
+    },
+    {
+      "parameter": "null_score.audio.bias",
+      "gradient_norm": 9.228981397015233e-05,
+      "max_parameter_change": 0.0007852055966769168
+    },
+    {
+      "parameter": "null_score.proprio.weight",
+      "gradient_norm": 2.6503913536749093e-05,
+      "max_parameter_change": 0.0009957410023151425
+    },
+    {
+      "parameter": "null_score.proprio.bias",
+      "gradient_norm": 3.626537365137591e-05,
+      "max_parameter_change": 0.000994511054119268
+    },
+    {
+      "parameter": "null_score.outcome.weight",
+      "gradient_norm": 7.785309987880171e-05,
+      "max_parameter_change": 0.0008439168993008839
+    },
+    {
+      "parameter": "null_score.outcome.bias",
+      "gradient_norm": 0.00017459174769023702,
+      "max_parameter_change": 0.0008398946319058982
+    },
+    {
+      "parameter": "reliability.rgb.weight",
+      "gradient_norm": 0.006914164829767124,
+      "max_parameter_change": 0.0009046226589361842
+    },
+    {
+      "parameter": "reliability.rgb.bias",
+      "gradient_norm": 0.019056027965172445,
+      "max_parameter_change": 0.0005940740494914647
+    },
+    {
+      "parameter": "reliability.audio.weight",
+      "gradient_norm": 0.0016911709366010251,
+      "max_parameter_change": 0.0006516055953775246
+    },
+    {
+      "parameter": "reliability.audio.bias",
+      "gradient_norm": 0.006403802694670493,
+      "max_parameter_change": 0.0006013943242372446
+    },
+    {
+      "parameter": "reliability.proprio.weight",
+      "gradient_norm": 0.0046834341892443175,
+      "max_parameter_change": 0.0006377453331906369
+    },
+    {
+      "parameter": "reliability.proprio.bias",
+      "gradient_norm": 0.006408292234507197,
+      "max_parameter_change": 0.000591368703982369
+    },
+    {
+      "parameter": "reliability.outcome.weight",
+      "gradient_norm": 0.0027842641403092614,
+      "max_parameter_change": 0.000938664140117923
+    },
+    {
+      "parameter": "reliability.outcome.bias",
+      "gradient_norm": 0.006243933035994756,
+      "max_parameter_change": 0.00058932278352084
+    },
+    {
+      "parameter": "corrector.first.weight",
+      "gradient_norm": 0.20742373147195597,
+      "max_parameter_change": 0.0010013572140282062
+    },
+    {
+      "parameter": "corrector.first.bias",
+      "gradient_norm": 0.38763814509169653,
+      "max_parameter_change": 0.0009990564663870036
+    },
+    {
+      "parameter": "corrector.last.weight",
+      "gradient_norm": 0.19410245294262302,
+      "max_parameter_change": 0.001001356709325843
+    },
+    {
+      "parameter": "corrector.last.bias",
+      "gradient_norm": 1.07690895756099,
+      "max_parameter_change": 0.0010011035014512552
+    },
+    {
+      "parameter": "f_key.weight",
+      "gradient_norm": 9.588063718479873e-06,
+      "max_parameter_change": 0.0009317983659924908
+    },
+    {
+      "parameter": "f_key.bias",
+      "gradient_norm": 1.963389202765867e-06,
+      "max_parameter_change": 0.0009664903723950978
+    },
+    {
+      "parameter": "outcome.weight",
+      "gradient_norm": 0.013498409485968532,
+      "max_parameter_change": 0.0009134715440223322
+    },
+    {
+      "parameter": "outcome.bias",
+      "gradient_norm": 0.007793310350355731,
+      "max_parameter_change": 0.0009134715440223314
+    },
+    {
+      "parameter": "f_value.first.weight",
+      "gradient_norm": 3.769415970938141e-06,
+      "max_parameter_change": 0.0009790772752142976
+    },
+    {
+      "parameter": "f_value.first.bias",
+      "gradient_norm": 8.678295829688141e-06,
+      "max_parameter_change": 0.0009941687054687426
+    },
+    {
+      "parameter": "f_value.last.weight",
+      "gradient_norm": 2.0378881745784478e-06,
+      "max_parameter_change": 0.0009676780393829756
+    },
+    {
+      "parameter": "f_value.last.bias",
+      "gradient_norm": 1.8939355923351917e-05,
+      "max_parameter_change": 0.0009876484262030562
+    },
+    {
+      "parameter": "f_beta.first.weight",
+      "gradient_norm": 3.0818830312138732e-09,
+      "max_parameter_change": 0.00012930215298220804
+    },
+    {
+      "parameter": "f_beta.first.bias",
+      "gradient_norm": 1.0484519685115856e-08,
+      "max_parameter_change": 0.00038654154510742514
+    },
+    {
+      "parameter": "f_beta.last.weight",
+      "gradient_norm": 3.5037363646977544e-09,
+      "max_parameter_change": 0.00014761165930346487
+    },
+    {
+      "parameter": "f_beta.last.bias",
+      "gradient_norm": 3.521287804338194e-08,
+      "max_parameter_change": 0.000791617096516305
+    },
+    {
+      "parameter": "f_alpha.first.weight",
+      "gradient_norm": 3.3503938100870156e-10,
+      "max_parameter_change": 4.909566104695229e-06
+    },
+    {
+      "parameter": "f_alpha.first.bias",
+      "gradient_norm": 4.1340856810814215e-09,
+      "max_parameter_change": 0.00011922162574995454
+    },
+    {
+      "parameter": "f_alpha.last.weight",
+      "gradient_norm": 5.005152542785139e-10,
+      "max_parameter_change": 1.7224595834891554e-05
+    },
+    {
+      "parameter": "f_alpha.last.bias",
+      "gradient_norm": 1.1369151928654805e-08,
+      "max_parameter_change": 0.0004073506386833587
+    },
+    {
+      "parameter": "f_chi.first.weight",
+      "gradient_norm": 1.0246447055761547e-09,
+      "max_parameter_change": 2.870689144844618e-05
+    },
+    {
+      "parameter": "f_chi.first.bias",
+      "gradient_norm": 1.2699637996211612e-08,
+      "max_parameter_change": 0.00044953411933545614
+    },
+    {
+      "parameter": "f_chi.last.weight",
+      "gradient_norm": 1.9088798626929853e-09,
+      "max_parameter_change": 0.00010237195335999899
+    },
+    {
+      "parameter": "f_chi.last.bias",
+      "gradient_norm": 4.433697505056402e-08,
+      "max_parameter_change": 0.000824428581058325
+    },
+    {
+      "parameter": "post_memory.first.weight",
+      "gradient_norm": 0.009499217326325101,
+      "max_parameter_change": 0.0010013480188120288
+    },
+    {
+      "parameter": "post_memory.first.bias",
+      "gradient_norm": 0.12901596433917692,
+      "max_parameter_change": 0.00100135702992675
+    },
+    {
+      "parameter": "post_memory.last.weight",
+      "gradient_norm": 0.01582960470975026,
+      "max_parameter_change": 0.0010013428139290445
+    },
+    {
+      "parameter": "post_memory.last.bias",
+      "gradient_norm": 0.38651628094622453,
+      "max_parameter_change": 0.00100132703892869
+    },
+    {
+      "parameter": "decoder_query.rgb.weight",
+      "gradient_norm": 0.003102537376407008,
+      "max_parameter_change": 0.0010009707067206181
+    },
+    {
+      "parameter": "decoder_query.rgb.bias",
+      "gradient_norm": 0.0006038313484800426,
+      "max_parameter_change": 0.0009872036782587225
+    },
+    {
+      "parameter": "decoder_query.audio.weight",
+      "gradient_norm": 0.009196542325087492,
+      "max_parameter_change": 0.0010011971013466833
+    },
+    {
+      "parameter": "decoder_query.audio.bias",
+      "gradient_norm": 0.006499807650316942,
+      "max_parameter_change": 0.0007455472710518087
+    },
+    {
+      "parameter": "decoder_query.proprio.value",
+      "gradient_norm": 0.00016880305240691928,
+      "max_parameter_change": 0.0009942572632345636
+    },
+    {
+      "parameter": "decoder_key.weight",
+      "gradient_norm": 0.005595432301941291,
+      "max_parameter_change": 0.0010007626581538254
+    },
+    {
+      "parameter": "decoder_value.weight",
+      "gradient_norm": 1.8689797602897542,
+      "max_parameter_change": 0.0010013575494935284
+    },
+    {
+      "parameter": "decoder_value.bias",
+      "gradient_norm": 26.533719206371508,
+      "max_parameter_change": 0.0010013203386744687
+    },
+    {
+      "parameter": "decoder.rgb.first.weight",
+      "gradient_norm": 19.8585904357505,
+      "max_parameter_change": 0.0010013577635569482
+    },
+    {
+      "parameter": "decoder.rgb.first.bias",
+      "gradient_norm": 16.178414797167026,
+      "max_parameter_change": 0.0010006038362639323
+    },
+    {
+      "parameter": "decoder.rgb.last.weight",
+      "gradient_norm": 18.714296192175915,
+      "max_parameter_change": 0.0010013575973201946
+    },
+    {
+      "parameter": "decoder.rgb.last.bias",
+      "gradient_norm": 58.011525251023144,
+      "max_parameter_change": 0.0010002045731432752
+    },
+    {
+      "parameter": "decoder.audio.first.weight",
+      "gradient_norm": 182.37394099977467,
+      "max_parameter_change": 0.0010013573389845917
+    },
+    {
+      "parameter": "decoder.audio.first.bias",
+      "gradient_norm": 128.8856399904053,
+      "max_parameter_change": 0.0010011819729552705
+    },
+    {
+      "parameter": "decoder.audio.last.weight",
+      "gradient_norm": 213.30156760139798,
+      "max_parameter_change": 0.0010013575758423543
+    },
+    {
+      "parameter": "decoder.audio.last.bias",
+      "gradient_norm": 501.41805203622454,
+      "max_parameter_change": 0.0009999415418670554
+    },
+    {
+      "parameter": "decoder.proprio.first.weight",
+      "gradient_norm": 0.18447004696835081,
+      "max_parameter_change": 0.001001357063942429
+    },
+    {
+      "parameter": "decoder.proprio.first.bias",
+      "gradient_norm": 2.9018463943612067,
+      "max_parameter_change": 0.0010012943876075535
+    },
+    {
+      "parameter": "decoder.proprio.last.weight",
+      "gradient_norm": 0.4927478995442922,
+      "max_parameter_change": 0.0010013445817648702
+    },
+    {
+      "parameter": "decoder.proprio.last.bias",
+      "gradient_norm": 11.63429412726476,
+      "max_parameter_change": 0.0009999576268140253
+    },
+    {
+      "parameter": "joint_readout.first.weight",
+      "gradient_norm": null,
+      "max_parameter_change": 0.0
+    },
+    {
+      "parameter": "joint_readout.first.bias",
+      "gradient_norm": null,
+      "max_parameter_change": 0.0
+    },
+    {
+      "parameter": "joint_readout.last.weight",
+      "gradient_norm": null,
+      "max_parameter_change": 0.0
+    },
+    {
+      "parameter": "joint_readout.last.bias",
+      "gradient_norm": null,
+      "max_parameter_change": 0.0
+    },
+    {
+      "parameter": "byte_head.weight",
+      "gradient_norm": null,
+      "max_parameter_change": 0.0
+    },
+    {
+      "parameter": "byte_head.bias",
+      "gradient_norm": null,
+      "max_parameter_change": 0.0
+    },
+    {
+      "parameter": "reward.first.weight",
+      "gradient_norm": 0.4199892747363367,
+      "max_parameter_change": 0.0010012862552467566
+    },
+    {
+      "parameter": "reward.first.bias",
+      "gradient_norm": 0.3217244732542388,
+      "max_parameter_change": 0.0010011731006061755
+    },
+    {
+      "parameter": "reward.last.weight",
+      "gradient_norm": 0.3088167624739478,
+      "max_parameter_change": 0.0010011859312740233
+    },
+    {
+      "parameter": "reward.last.bias",
+      "gradient_norm": 0.9566022413845071,
+      "max_parameter_change": 0.0009999523513761557
+    },
+    {
+      "parameter": "actor.first.weight",
+      "gradient_norm": 0.0,
+      "max_parameter_change": 0.0
+    },
+    {
+      "parameter": "actor.first.bias",
+      "gradient_norm": 0.0,
+      "max_parameter_change": 0.0
+    },
+    {
+      "parameter": "actor.last.weight",
+      "gradient_norm": 0.0,
+      "max_parameter_change": 0.0
+    },
+    {
+      "parameter": "critic.first.weight",
+      "gradient_norm": 3.910093843360139e-05,
+      "max_parameter_change": 0.0010002279156681101
+    },
+    {
+      "parameter": "critic.first.bias",
+      "gradient_norm": 0.0005772323979847247,
+      "max_parameter_change": 0.0010002870773296105
+    },
+    {
+      "parameter": "critic.last.weight",
+      "gradient_norm": 8.281691262258e-05,
+      "max_parameter_change": 0.0010008233250585821
+    },
+    {
+      "parameter": "critic.last.bias",
+      "gradient_norm": 0.0020008926116372454,
+      "max_parameter_change": 0.0009998795051406467
+    },
+    {
+      "parameter": "record_goal_query.weight",
+      "gradient_norm": 4.930672473467205e-11,
+      "max_parameter_change": 1.17606328647879e-06
+    },
+    {
+      "parameter": "record_query.weight",
+      "gradient_norm": 1.2493894726943263e-07,
+      "max_parameter_change": 0.0005835245268111522
+    },
+    {
+      "parameter": "record_query.bias",
+      "gradient_norm": 6.626700716656645e-07,
+      "max_parameter_change": 0.000714092549677775
+    },
+    {
+      "parameter": "record_key.weight",
+      "gradient_norm": 2.6639568777567752e-08,
+      "max_parameter_change": 0.0003502430514577548
+    },
+    {
+      "parameter": "record_position_key.weight",
+      "gradient_norm": 6.773764918010682e-08,
+      "max_parameter_change": 0.0004450553957861536
+    },
+    {
+      "parameter": "record_position_query.weight",
+      "gradient_norm": 2.216646027498152e-08,
+      "max_parameter_change": 0.00026576869120581437
+    },
+    {
+      "parameter": "record_position_query.bias",
+      "gradient_norm": 5.136655811652065e-08,
+      "max_parameter_change": 0.000523778908099598
+    },
+    {
+      "parameter": "record_null.weight",
+      "gradient_norm": 3.604505899556665e-07,
+      "max_parameter_change": 0.0007000882267046982
+    },
+    {
+      "parameter": "record_null.bias",
+      "gradient_norm": 9.614029752051502e-07,
+      "max_parameter_change": 0.0007333519909132197
+    },
+    {
+      "parameter": "record_value.weight",
+      "gradient_norm": 1.5767935926304677e-06,
+      "max_parameter_change": 0.0007200976482092947
+    },
+    {
+      "parameter": "record_value.bias",
+      "gradient_norm": 7.56793412065459e-06,
+      "max_parameter_change": 0.0007402273312081542
+    },
+    {
+      "parameter": "record_output.weight",
+      "gradient_norm": 0.000537191936205054,
+      "max_parameter_change": 0.0010011539917768057
+    },
+    {
+      "parameter": "record_output.bias",
+      "gradient_norm": 0.0017508831312806005,
+      "max_parameter_change": 0.0010010951201398837
+    },
+    {
+      "parameter": "copy_gate.weight",
+      "gradient_norm": null,
+      "max_parameter_change": 0.0
+    },
+    {
+      "parameter": "copy_gate.bias",
+      "gradient_norm": null,
+      "max_parameter_change": 0.0
+    },
+    {
+      "parameter": "actor_parameters.first.weight",
+      "gradient_norm": 0.000270646260599208,
+      "max_parameter_change": 0.0010010928070870728
+    },
+    {
+      "parameter": "actor_parameters.first.bias",
+      "gradient_norm": 0.003986978054737583,
+      "max_parameter_change": 0.0010011926157444118
+    },
+    {
+      "parameter": "actor_parameters.last.weight",
+      "gradient_norm": 0.004323447919907726,
+      "max_parameter_change": 0.0010006761583749302
+    },
+    {
+      "parameter": "actor_parameters.last.bias",
+      "gradient_norm": 0.008153747533820532,
+      "max_parameter_change": 0.0009999094887469528
+    },
+    {
+      "parameter": "development.first.weight",
+      "gradient_norm": null,
+      "max_parameter_change": 0.0
+    },
+    {
+      "parameter": "development.first.bias",
+      "gradient_norm": null,
+      "max_parameter_change": 0.0
+    },
+    {
+      "parameter": "development.last.weight",
+      "gradient_norm": null,
+      "max_parameter_change": 0.0
+    },
+    {
+      "parameter": "development.last.bias",
+      "gradient_norm": null,
+      "max_parameter_change": 0.0
+    }
+  ],
+  "losses": {
+    "total": 1463.1864485995939,
+    "predictive": 1463.1906909034176,
+    "actor": -0.042473143620681636,
+    "critic": 5.010538385043648e-05,
+    "verbatim": 0.0
+  },
+  "optimizer_step_calls": 1,
+  "migration": {
+    "status": "committed",
+    "revision": 2,
+    "parameter_digest": "75fc673007d13e23cc0e355b419be02291bbb457a641f3475763014070a0d114",
+    "rebuild": {
+      "entries": 9,
+      "observations": 1,
+      "duplicates": 0,
+      "bytes": 0,
+      "internal": 0,
+      "births": 0,
+      "updates": 1,
+      "cpu_seconds": 0.03125,
+      "history_reference": {
+        "entries": 9,
+        "head": "53eac82652aadc58fb559a5a35899f009620d9f2d20d6484d1b0c55b8f29e1e3"
+      },
+      "eligibility_reset": true
+    },
+    "cpu_seconds": 0.109375
+  },
+  "cpu_seconds": 5.984375,
+  "wall_seconds": 7.9689999999827705,
+  "execution_manifest": "plans/manifests/taiji_u2_22_3_4_3_execution_20261111.json",
+  "manifest_sha256": "309a756c5163456faa0e0403fe9abbddd139eb4acd4073dab256b441db511185",
+  "run_root": "output/taiji_u2_22_3_4_3_20261111T123154Z",
+  "parent_readback": {
+    "path": "E:\\Seed\\output\\taiji_u2_22_3_4_3_20261111T123154Z\\F1\\step1.bin",
+    "sha256": "30d29f7d8eef785ba651e6e138b34822595ff66a2acb3cd279c1a53acca9bb87",
+    "bytes": 790975,
+    "readback_ok": true,
+    "cpu_seconds": 0.046875,
+    "fingerprint": {
+      "state_sha256": "0bc6ad942d2c1b8bfcf5e90ffd37e3dba9e8ab57f855e0d0c97d21d13f611dae",
+      "parameter_sha256": "c97a2881b02c670c44a0a6cea4157817f2b72a516059454face23b664ae3385b",
+      "moment_sha256": "e14368957114738219bf6b8cf311235cdb0229b73195ef00d4c9b472723a3e9e",
+      "history_reference": {
+        "entries": 9,
+        "head": "53eac82652aadc58fb559a5a35899f009620d9f2d20d6484d1b0c55b8f29e1e3"
+      },
+      "revision": 1
+    }
+  },
+  "post_readback": {
+    "path": "E:\\Seed\\output\\taiji_u2_22_3_4_3_20261111T123154Z\\F1\\step2-recovery.bin",
+    "sha256": "3b64b6ae259a3abaf365123b80ffca8298d35e8e82767e531d9968144df031a1",
+    "bytes": 792703,
+    "readback_ok": true,
+    "cpu_seconds": 0.046875,
+    "fingerprint": {
+      "state_sha256": "362bcb5d29a3158b2fa4363b68838e0b891a49874060adcbcb844b51d7b47c39",
+      "parameter_sha256": "75fc673007d13e23cc0e355b419be02291bbb457a641f3475763014070a0d114",
+      "moment_sha256": "fbf95f9ca29fd845370dcce3d92363e82446ef7f8803b9087e21fcb53669f634",
+      "history_reference": {
+        "entries": 10,
+        "head": "31192f6a67d148b7cdc764d3137fa78aa2c42e05b3bab731b2783b6907a7106c"
+      },
+      "revision": 2
+    }
+  },
+  "failed_checkpoint": null
+}

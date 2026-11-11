@@ -54,7 +54,7 @@ R63后的D-75已要求全局收束，本包承接该出口。以上结果提供�
 | 22.0 本轮收束与设计 | HEAD `ab1aeab1a…`及原始报告 | 六轴矩阵、U2规格、入口重编、历史恢复登记 | 已完成，设计提交7335c85d0 |
 | 22.1 正式方程与反例核验 | 7335c85d0及v2规范摘要 | 14条覆盖映射，13组局部检查、52差分坐标、数值补质量与边界信用修订 | 已结案passed_local_math_only，进入22.2 |
 | 22.2 同一主体参考图 | 22.1规格SHA及22.2合同 | 191参数/40状态/名义尺度反向，2次工程更新、二代中性与条件化初态往返 | 已结案passed_reference_graph_only，语义夹具问题另账，进入22.3 |
-| 22.3 完整保存恢复 | 22.2源码SHA及零步bundle | 状态registry、跨进程下一决策/更新、故障注入 | 通过后22.4 |
+| 22.3 完整保存恢复 | 22.2源码SHA及零步bundle | 最终schema十二类/34组恢复、6次实际更新与2次故障、接受父身份 | 已结案passed_engineering_recovery_only，进入22.4 |
 | 22.4 环境与价格冻结 | 22.3 bundle/源码/schema | 同主体连续任务、数据权利、经验必要性、定价与数值manifest | 通过后22.5 |
 | 22.5 学习与保持父版本 | 22.4冻结候选与分区 | 有界学习、旧能力保持、负责模块贡献 | 得到合格父后22.6 |
 | 22.6 自驱与递归选择 | 22.5合格父bundle | 模型选择求证/重放/巩固/等待，预测实际发展后果 | 学习父保留且选择有效后22.7 |
@@ -212,11 +212,21 @@ normal entry points包括goal/records、采样、issue/ack、观测、输出、�
 
 ##### 22.3.4.3 更新、故障与实际资源合同
 
+本子卡已按[更新回执](VALIDATION-TAIJI-U2_22_3_UPDATES_20261111.md)完成。run_id20261111T123154Z的8个attempt全部闭合，实际6次Adam.step、8个规范checkpoint/8份S12 worker通过，两路step2的状态/参数/moment/输出精确一致。正式CPU70.1875/wall91.437，以下保留本卡冻结设计与计数解释。
+
 原始链及重建入口零步通过后，冻结源码、F1/F2输入、损失、目标参数、数据权限、两种精度及8次attempt顺序。F1用float64、F2用float32，均从同配置的新鲜主体开始，至少覆盖实际Θ更新与条件Ψ路径。工程权重完成核验后丢弃，能力训练仍待22.4/5。
 
 工程父按本轮实现、配置/seed和合成recipe重建。F1采用两次实际传入观测的预测损失及结果actor/critic损失；F2采用同主体影子话语的逐字原文重现损失，并保留预测/结果目标。F2另冻结明确的当前输出请求与原始记录目标，使用合法字节序列及EOS，不能继续沿用22.2已登记的目标错配。损失权重、Adam超参数、目标活性参数和实际变化下限在读数前写入manifest，weight_decay为0。
 
 正常前向在父当前信用窗计算梯度，候选fork的参数摘要及初始moments与该父匹配，按参数名复制该次梯度到fork再执行唯一一次optimizer.step。保持父参数可回滚，之后标记候选版本并调用已验的migrate_parameters。每次before-step均核对参数/梯度来源和预算，保存可恢复父后才开始step1。原/恢复两路step2各自重新计算相同后继损失，梯度、实际参数变化及moments逐项比较。
+
+实际执行采用4bb053886的[产物预合同](../manifests/taiji_u2_22_3_4_3_precontract_20261111.json)及1c7196eae的零step检查点预检。当前owner“下一步”承接已明确的本卡工程范围，执行manifest/run.json登记该授权引用，冻结原件保留其创建时的run_authorized=false身份。attempt总数8，其中6次optimizer.step，两次故障使用上一卡已声明的参数扰动候选及真实父moments，分别拒绝/提交前异常，0额外step。
+
+F1/F2的训练图为父模型参数拥有的可丢弃合成影子片段，经正常issue/receive处理两次观测。片段事实和当前主体历史分别登记，主体保持固定parent/step1保存点，梯度按参数名复制到同值fork后更新。影子片段数据、请求/目标、RNG及损失recipe进入manifest，工程结论限更新/恢复一致性，在线经验收益由22.5验收。
+
+预合同计数口径另在执行manifest明确。run_start为头行，kill-after-open为头行+1条attempt事件，共2个完整行。8/8 readback指8个规范checkpoint的覆盖，逐attempt父读取、故障后读取及临时intent存档的即时读回另列实际次数。S12先预留下一close序号，close写盘后由worker核对真实序号。重启只对账已消耗attempt，已open的尝试保持占额。
+
+每行另存record_sha256，完整账SHA写入汇总，配合prev_line_sha256检出末行局部改写。每次实际step前在run根写入并fsync一次性claim，恢复worker重启也不能重复同一attempt。该辅助状态进入执行manifest，owner授权、账务open与claim均完成后才进入optimizer。独立S12 worker以冻结梯度重算及Adam闭式方程核验参数/moments，全程0额外step。
 
 影子流程为保存父→外层扣attempt→optimizer更新→标记新版本→固定历史重建→一致性/保持回调→整体提交。新candidate的参数、optimizer、派生状态、原始链位置与版本同笔提交。异常/拒绝恢复父模型及moment，真实attempt费用保留。两次故障预设为重建后准入拒绝、提交前注入异常，各只占一次attempt。
 
@@ -226,13 +236,15 @@ normal entry points包括goal/records、采样、issue/ack、观测、输出、�
 
 #### 22.3.5 验收、产物与唯一后继
 
+已按[最终工程回执](VALIDATION-TAIJI-U2_22_3_CLOSEOUT_20261111.md)合拢runtime v3/原始链v2下12类状态、34组双精度独立接续，191参数逐项最大梯度差0，0新增step，CPU90.671875/wall96.953。[接受父](../manifests/taiji_u2_22_3_accepted_parent_20261111.json)绑定small profile初始权重配方，能力资格为空。22.3工程卡通过，后继22.4。
+
 计划产出包括恢复合同manifest、版本化源码、独立worker、测试、运行条件报告和结案回执。验收需要十二点覆盖、正负例有效、两组更新与完整窗梯度符合冻结门、无重复动作/奖励、无半提交、预算在线。
 
 只有条件critic通过或只有值相等时出口为partial_credit_recovery，继续本卡剩余子卡。缺历史/字段为coverage_incomplete，真实不一致为recovery_mismatch，系统故障为engineering_failure，超帽为budget_stop。全部通过才输出accepted_parent供22.4绑定。
 
 ### 2.4 卡22.4 有效任务、结构与价格冻结
 
-父身份严格取22.3.accepted_parent的源码/schema/config/参数身份。目标是交付可学习且可裁决的任务与实际价格。22.2的红盒target/蓝盒位置goal错配保留工程复现身份，训练数据另由通过语义核验的生成器产生。
+父身份严格取[22.3接受清单](../manifests/taiji_u2_22_3_accepted_parent_20261111.json)的accepted_parent、源码/schema/config/初值身份。当前接受CPU small profile的float32/64初始化。若选用nominal或改变逐群结构，先对该实际profile/schema重签相关恢复，再定价。目标是交付可学习且可裁决的任务与实际价格。22.2已登记的目标错配保留工程身份，训练数据由通过语义核验的生成器产生。
 
 #### 22.4.0 意图、反馈与标签
 
@@ -535,3 +547,11 @@ U1及11-08勘误保留其历史数学内容并加当前失效指针。U2 §6替�
 先冻结[40字段设计](../manifests/taiji_u2_22_3_rebuild_design_20261111.json)，再按[回执](VALIDATION-TAIJI-U2_22_3_REENCODING_20261111.md)交付共享同化/独立信用及完整prefix重编码。93项检查通过，正式CPU41.9375/wall49.797，0optimizerattempt。
 
 当前参数及已接受结构解释历史，过去动作、输出、概率和结果保留事实身份，资格迹在慢更新边界截断。正常receive数值/梯度与父源码一致；编码器扰动后H/F/键值真实变化，双精度两次迁移与独立后继逐参数梯度差0。当前队首先冻结22.3.4.3的实际更新配方，完成原定6次更新及2次故障，随后合拢S12与最终schema回归。
+
+## 14. 六次真实更新与22.3整卡收束
+
+22.3.4.3按[回执](VALIDATION-TAIJI-U2_22_3_UPDATES_20261111.md)闭合8次attempt，其中6次真实Adam.step和2次无step故障。8个规范checkpoint及8份S12独立worker通过，原/恢复step2状态、参数、moment及输出精确一致，CPU70.1875/wall91.437。
+
+随后22.3.5按[最终合同](../manifests/taiji_u2_22_3_closeout_contract_20261111.json)核验12类/34组跨进程接续，191参数逐项梯度最大差0，0额外step，CPU90.671875/wall96.953。[接受清单](../manifests/taiji_u2_22_3_accepted_parent_20261111.json)绑定当前源、schema、small配置及初值摘要，能力资格为空。
+
+当前22.4.0以该初始化父冻结合法任务和信息/反馈权利。nominal或结构变化按实际profile补恢复；目标/标签、记录元数据入口、经历必要性及三架构价格全部冻结后进入22.5。全局能力账保持工程/任务分层，长期23–28路线按各包实际资格承接。

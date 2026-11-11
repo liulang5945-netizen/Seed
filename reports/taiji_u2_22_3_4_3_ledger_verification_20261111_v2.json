@@ -1,0 +1,64 @@
+{
+  "schema": "taiji-u2-22.3.4.3-attempt-ledger-verification-v1",
+  "created_at": "2026-11-11T12:31:05.751896+00:00",
+  "verdict": "pass",
+  "conditions": {
+    "platform": "win32",
+    "torch_imported": false,
+    "crash_mechanism": "os._exit without cleanup after fsync"
+  },
+  "checks": [
+    {
+      "check": "complete_header_plus_open",
+      "passed": true
+    },
+    {
+      "check": "chain_and_budget_after_crash",
+      "passed": true
+    },
+    {
+      "check": "consumed_attempt_cannot_reopen",
+      "passed": true
+    },
+    {
+      "check": "reconciliation_keeps_budget",
+      "passed": true
+    },
+    {
+      "check": "next_attempt_consumes_once",
+      "passed": true
+    },
+    {
+      "check": "half_close_refuses_with_exit_3",
+      "passed": true
+    },
+    {
+      "check": "half_close_cannot_continue",
+      "passed": true
+    },
+    {
+      "check": "repair_records_removed_bytes",
+      "passed": true
+    },
+    {
+      "check": "repair_preserves_budget",
+      "passed": true
+    },
+    {
+      "check": "repaired_reconciliation_consumes_no_attempt",
+      "passed": true
+    },
+    {
+      "check": "last_row_tampering_detected",
+      "passed": true
+    },
+    {
+      "check": "optimizer_step_calls_zero",
+      "passed": true
+    }
+  ],
+  "optimizer_step_calls": 0,
+  "cpu_seconds": 0.71875,
+  "wall_seconds": 1.3439999999827705,
+  "counter_interpretation": "run_start + open = 2 total lines and 1 attempt event"
+}

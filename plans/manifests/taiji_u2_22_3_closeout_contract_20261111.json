@@ -1,0 +1,135 @@
+{
+  "schema": "taiji-u2-22.3-final-closure-contract-v1",
+  "created_on": "2026-11-11",
+  "source_pins": {
+    "taiji/u2_subject.py": "95607245747eac2b89163c88c11366c20a0198c20e2bc86d5be8988397de94de",
+    "taiji/u2_events.py": "a06ad2b4421ab972b86a03980ab1a736d48d395f2776b5c56cfa69a7664783f6",
+    "taiji/u2_learning_transaction.py": "212ea54cf263cec80a15d05263b7e6f8c0965b726a825576634c8c3fb61a9573",
+    "taiji/u2_recovery.py": "975502035c7f33f8943e57ca22bf93b27c6ac726053b779bb67b6c4c8cd702c4",
+    "taiji/u2_history.py": "e648e53f59418e6ad0b58b7bcc3519e5e09304ef691a6387ec09490b7664d336",
+    "taiji/u2_operators.py": "d09f5784bffaf0a3247006c0d67062f18825ba8dc8a431b7c1d0cc778a249559",
+    "taiji/utf8_state.py": "6ec7e96b2994dfa8eea430b3a08ddb5ff0fd877cf70c8cc288f57bab2efcac09",
+    "scripts/training/verify_taiji_u2_closeout_22_3.py": "2fa41997c2f9a832afdd1c6ba050f5bca60d0912a28edcba70f7cfbd4108b6f8",
+    "scripts/training/verify_taiji_u2_cross_process_22_3.py": "0230d99cab2130a5d8c5d01712fe3b39839b037320bf03c42bde6ae113835b94",
+    "scripts/training/u2_update_support_22_3_4_3.py": "9430c23ceb40a5af74a168602d63322696ecefd648c1c3599954f9218e905999",
+    "scripts/training/u2_update_executor_22_3_4_3.py": "e993ed87fee5c7b5322e7dfd62dc0d92cfdce952878f3a736a862dae76857384",
+    "scripts/training/verify_taiji_u2_runtime_22_3.py": "272e9b728b0cfcc9dfe4647b179ce2f3b2f02679252130700748a5262cd8654b",
+    "scripts/training/check_report_run_conditions.py": "eb71cfe6fcf7c3b520eb5189d382225b1ccec6999b2ab011c211e90f01a5b0aa"
+  },
+  "core_source_pins": {
+    "taiji/u2_subject.py": "95607245747eac2b89163c88c11366c20a0198c20e2bc86d5be8988397de94de",
+    "taiji/u2_events.py": "a06ad2b4421ab972b86a03980ab1a736d48d395f2776b5c56cfa69a7664783f6",
+    "taiji/u2_learning_transaction.py": "212ea54cf263cec80a15d05263b7e6f8c0965b726a825576634c8c3fb61a9573",
+    "taiji/u2_recovery.py": "975502035c7f33f8943e57ca22bf93b27c6ac726053b779bb67b6c4c8cd702c4",
+    "taiji/u2_history.py": "e648e53f59418e6ad0b58b7bcc3519e5e09304ef691a6387ec09490b7664d336",
+    "taiji/u2_operators.py": "d09f5784bffaf0a3247006c0d67062f18825ba8dc8a431b7c1d0cc778a249559",
+    "taiji/utf8_state.py": "6ec7e96b2994dfa8eea430b3a08ddb5ff0fd877cf70c8cc288f57bab2efcac09"
+  },
+  "update_summary": "reports/taiji_u2_22_3_4_3_summary_20261111T123154Z.json",
+  "update_summary_sha256": "31b8227b0cfb74b6367fb3baa1f68f24855de9bdb22abd9481d10e67c4c95012",
+  "base_snapshots": [
+    "S01",
+    "S02",
+    "S03",
+    "S04",
+    "S05",
+    "S06",
+    "S07",
+    "S08",
+    "S09",
+    "S10-replay",
+    "S10-wait",
+    "S11-first",
+    "S11-second"
+  ],
+  "s12_snapshots": [
+    {
+      "id": "S12-f1-step1",
+      "precision": "float64",
+      "path": "reports/taiji_u2_22_3_4_3_s12_20261111T123154Z_f1-step1.json",
+      "sha256": "723fc801657b2044ebb163ca86ce181ec1c93e91b2bf410e49df106600dc09d4",
+      "worker": "reports/taiji_u2_22_3_4_3_s12_20261111T123154Z_f1-step1_worker.json"
+    },
+    {
+      "id": "S12-f1-step2-orig",
+      "precision": "float64",
+      "path": "reports/taiji_u2_22_3_4_3_s12_20261111T123154Z_f1-step2-orig.json",
+      "sha256": "c11506cff2b10442617c2ef51b7b7b30e9cb2eaff8d6de2687d3db1ad8891d71",
+      "worker": "reports/taiji_u2_22_3_4_3_s12_20261111T123154Z_f1-step2-orig_worker.json"
+    },
+    {
+      "id": "S12-f1-step2-recovery",
+      "precision": "float64",
+      "path": "reports/taiji_u2_22_3_4_3_s12_20261111T123154Z_f1-step2-recovery.json",
+      "sha256": "b98f5f8da4788a80a41af5363618281beaaf353621f6cc190c9ff07327a263d8",
+      "worker": "reports/taiji_u2_22_3_4_3_s12_20261111T123154Z_f1-step2-recovery_worker.json"
+    },
+    {
+      "id": "S12-f2-step1",
+      "precision": "float32",
+      "path": "reports/taiji_u2_22_3_4_3_s12_20261111T123154Z_f2-step1.json",
+      "sha256": "5751ae60068c643c8407b3894fe297644baa41f2d665b992dd75037fd234afbc",
+      "worker": "reports/taiji_u2_22_3_4_3_s12_20261111T123154Z_f2-step1_worker.json"
+    },
+    {
+      "id": "S12-f2-step2-orig",
+      "precision": "float32",
+      "path": "reports/taiji_u2_22_3_4_3_s12_20261111T123154Z_f2-step2-orig.json",
+      "sha256": "f669064d84b4f18d3189f0bde69e3c0ff47c11c3b8fc566db646b34c950503a4",
+      "worker": "reports/taiji_u2_22_3_4_3_s12_20261111T123154Z_f2-step2-orig_worker.json"
+    },
+    {
+      "id": "S12-f2-step2-recovery",
+      "precision": "float32",
+      "path": "reports/taiji_u2_22_3_4_3_s12_20261111T123154Z_f2-step2-recovery.json",
+      "sha256": "5549104e6e4651a43452fb8ae6e7ff87bbfdeaeb1eebf4b9f8040f3cce81beeb",
+      "worker": "reports/taiji_u2_22_3_4_3_s12_20261111T123154Z_f2-step2-recovery_worker.json"
+    },
+    {
+      "id": "S12-fault-rejection",
+      "precision": "float64",
+      "path": "reports/taiji_u2_22_3_4_3_s12_20261111T123154Z_fault-rejection.json",
+      "sha256": "462424881bcd5ffa430d650853024b3dc50daf45f022dcb91c34e6d9a3c399ee",
+      "worker": "reports/taiji_u2_22_3_4_3_s12_20261111T123154Z_fault-rejection_worker.json"
+    },
+    {
+      "id": "S12-fault-before-commit",
+      "precision": "float64",
+      "path": "reports/taiji_u2_22_3_4_3_s12_20261111T123154Z_fault-before-commit.json",
+      "sha256": "516e125656b27bfad4db0cd3a16ec1e6235cc794b183d41b5fcae28c2e8150f4",
+      "worker": "reports/taiji_u2_22_3_4_3_s12_20261111T123154Z_fault-before-commit_worker.json"
+    }
+  ],
+  "snapshot_comparisons": 34,
+  "state_families": 12,
+  "conditions": {
+    "threads": 1,
+    "interop_threads": "record actual parent/worker equality",
+    "device": "cpu",
+    "precisions": [
+      "float64",
+      "float32"
+    ]
+  },
+  "tolerances": {
+    "float64": {
+      "atol": 1e-10,
+      "rtol": 1e-08
+    },
+    "float32": {
+      "atol": 1e-05,
+      "rtol": 0.0001
+    }
+  },
+  "endpoint": "capture initial state/parameters/moments/next-output/policy; complete the actual next legal action/outcome; explicit unique-record verbatim probe; per-parameter zero-update gradients",
+  "executor_scope": "isolated controlled-simulator replicas materialized from verified snapshots; original eight checkpoint worlds are preserved",
+  "accepted_parent_scope": "untrained engineering initialization from U2Config.small seed 20261110, CPU float32/64; no capability qualifications and no nominal-profile recovery claim",
+  "budget": {
+    "cpu_seconds": 120,
+    "wall_seconds": 300,
+    "additional_optimizer_step_calls": 0,
+    "project_dataset_reads": 0,
+    "confirm_reads": 0
+  },
+  "closure_inputs": "eight checkpoints and S12 workers from the same authorized run, plus fresh S01-S11 fixtures; no external weights or datasets"
+}

@@ -317,4 +317,6 @@ U1/MGW1仍为设计来源，历史数学回执按各自已声明的失效项解�
 
 22.3.3按原来源完成S01–S11独立进程核验。22.3.4.1交付跨学习窗原始历史，22.3.4.2按[重编码回执](VALIDATION-TAIJI-U2_22_3_REENCODING_20261111.md)交付当前参数/结构下固定历史的影子重建，过去动作、输出及结果保留事实身份。genesis与值导入partial来源明确登记，有限梯度窗与原始链分别计数。真实optimizer更新后的S12及最终schema全量恢复仍待合验。
 
-当前共享同化入口执行事件校验、感知/FP1及ν测量，正常receive另计算原行为的actor/critic信用。历史重编码在no_grad区间进行，提交后以显式值锚点开启新信用窗并清零资格迹。缓存packet/观测packet/receipt/行为版本与当前parameter_revision分别登记。参数事务接收独立fork，校验同配置、结构、布局和父+1版本，经只读验收及父/源复核后提交完整状态与moment。runtime v3/原始链v2记录update边界，现有实际范围为固定结构的参数扰动迁移。实施及40字段迁移矩阵见[22.3.4](PLAN-TAIJI-CLOSED_LOOP_DEVELOPMENT_20261110.md#2234-八步内的更新及故障核验)。
+当前共享同化入口执行事件校验、感知/FP1及ν测量，正常receive另计算原行为的actor/critic信用。历史重编码在no_grad区间进行，提交后以显式值锚点开启新信用窗并清零资格迹。缓存packet/观测packet/receipt/行为版本与当前parameter_revision分别登记。参数事务接收独立fork，校验同配置、结构、布局和父+1版本，经只读验收及父/源复核后提交完整状态与moment。runtime v3/原始链v2记录update边界，实施及40字段迁移矩阵见[22.3.4](PLAN-TAIJI-CLOSED_LOOP_DEVELOPMENT_20261110.md#2234-八步内的更新及故障核验)。
+
+22.3.4.3/5现按[工程结案](VALIDATION-TAIJI-U2_22_3_CLOSEOUT_20261111.md)完成6次实际Adam更新、2次无step故障及最终schema的12类/34组独立接续，逐参数梯度最大差0。接受范围为CPU small profile未训练初始化的图/恢复/更新语义，实际新旧任务收益、成熟生长、主动选择及nominal恢复按后继范围签署。

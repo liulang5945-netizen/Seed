@@ -6,9 +6,9 @@
 
 ## 按顺序推进只读一份
 
-[MAINLINE](MAINLINE.md)是唯一入口，状态与队首归[MASTER-PLAN](MASTER-PLAN.md)，[ROADMAP-NEXT](reference/ROADMAP-NEXT_20261104.md)只同步依赖。2026-11-10已按R63后的全局收束修订[U2完整主体闭环候选](reference/SPEC-TAIJI-CLOSED_LOOP_U2_20261110.md)与[执行包22](reference/PLAN-TAIJI-CLOSED_LOOP_DEVELOPMENT_20261110.md)。[22.1正式规格与反例核验](reference/VALIDATION-TAIJI-U2_22_1_20261110.md)已局部通过，[22.2参考图工程](reference/VALIDATION-TAIJI-U2_22_2_20261110.md)已结案，当前22.3完整恢复，六项目标按同一主体逐层取证。S18–S22为长期责任轴，与执行包号独立。
+[MAINLINE](MAINLINE.md)是唯一入口，状态与队首归[MASTER-PLAN](MASTER-PLAN.md)，[ROADMAP-NEXT](reference/ROADMAP-NEXT_20261104.md)同步依赖。[U2完整主体闭环候选](reference/SPEC-TAIJI-CLOSED_LOOP_U2_20261110.md)沿[执行包22](reference/PLAN-TAIJI-CLOSED_LOOP_DEVELOPMENT_20261110.md)推进，22.1局部数学、22.2参考图及22.3恢复工程均已结案。当前22.4冻结有效任务与实价，六项目标按同一主体逐层取证。S18–S22为长期责任轴，与执行包号独立。
 
-本轮范围、顺序、预算、风险与具名出口见[闭环开发卡](reference/PLAN-TAIJI-CLOSED_LOOP_DEVELOPMENT_20261110.md)。包20、包21、v2 F学习线与桥/边界线按各自结案保存，阶段编号不表示长期能力完成比例。
+本轮范围、顺序、预算、风险与具名出口见[闭环开发卡](reference/PLAN-TAIJI-CLOSED_LOOP_DEVELOPMENT_20261110.md)。22.3已按[工程结案](reference/VALIDATION-TAIJI-U2_22_3_CLOSEOUT_20261111.md)交付small初始化接受父，当前22.4冻结任务与实价。包20、包21、v2 F学习线与桥/边界线按各自结案保存，阶段编号不表示长期能力完成比例。
 
 [N长期路线](reference/PLAN-TAIJI-N_LONG_HORIZON_20261111.md)将包22之后的23–28展开为组合泛化、跨会话知识、结构演化、递归发展、物理迁移和长期联合运行，列明父资格、算法责任、对照及有限出口。
 

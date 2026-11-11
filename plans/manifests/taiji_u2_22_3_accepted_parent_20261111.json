@@ -1,0 +1,131 @@
+{
+  "schema": "taiji-u2-22.3-accepted-parent-v1",
+  "status": "accepted_engineering_initialization",
+  "accepted_parent": {
+    "status": "accepted_engineering_initialization",
+    "algorithm": "U2",
+    "profile": "U2Config.small",
+    "seed": 20261110,
+    "device": "cpu",
+    "precisions": [
+      "float64",
+      "float32"
+    ],
+    "initial_parameter_sha256": {
+      "float64": "6ec1c6db11373b5aba8676f25ef5a1bcd48f71430bc44dce9e228a8b833b3842",
+      "float32": "b3e8a106ecdd34ad40f8983a7cb8c4c756097d0c089b013d1587f70a6397acfc"
+    },
+    "runtime_schema": "taiji-u2-runtime-envelope-v3",
+    "history_schema": "taiji-u2-raw-history-v2",
+    "subject_schema": "taiji-u2-subject-v2",
+    "state_fields": 40,
+    "parameter_tensors": 191,
+    "capability_qualifications": [],
+    "source_pins": {
+      "taiji/u2_subject.py": "95607245747eac2b89163c88c11366c20a0198c20e2bc86d5be8988397de94de",
+      "taiji/u2_events.py": "a06ad2b4421ab972b86a03980ab1a736d48d395f2776b5c56cfa69a7664783f6",
+      "taiji/u2_learning_transaction.py": "212ea54cf263cec80a15d05263b7e6f8c0965b726a825576634c8c3fb61a9573",
+      "taiji/u2_recovery.py": "975502035c7f33f8943e57ca22bf93b27c6ac726053b779bb67b6c4c8cd702c4",
+      "taiji/u2_history.py": "e648e53f59418e6ad0b58b7bcc3519e5e09304ef691a6387ec09490b7664d336",
+      "taiji/u2_operators.py": "d09f5784bffaf0a3247006c0d67062f18825ba8dc8a431b7c1d0cc778a249559",
+      "taiji/utf8_state.py": "6ec7e96b2994dfa8eea430b3a08ddb5ff0fd877cf70c8cc288f57bab2efcac09"
+    }
+  },
+  "materialization": {
+    "default_dtype": "torch.float32",
+    "construction": "U2Subject(U2Config.small()).to(dtype=selected_precision,device=cpu)",
+    "seed": 20261110,
+    "initial_state": "model.initial with a newly declared subject_id",
+    "optimizer_state": "uninitialized; supplied by the next frozen task contract"
+  },
+  "closure_report": "reports/taiji_u2_22_3_final_closure_20261111.json",
+  "closure_report_sha256": "58cbee309a6574cb0953c17510226acea6f8b75e11c6674647f76f2dfc2db2d6",
+  "closure_contract_sha256": "12b354637c56f9b4a1b327011ca116f2491b106cc1633b296d3f9d9f269f1c35",
+  "update_summary": "reports/taiji_u2_22_3_4_3_summary_20261111T123154Z.json",
+  "update_summary_sha256": "31b8227b0cfb74b6367fb3baa1f68f24855de9bdb22abd9481d10e67c4c95012",
+  "ledger": "reports/taiji_u2_22_3_4_3_attempts_20261111T123154Z.ndjson",
+  "ledger_sha256": "0e4ceee7a26dfcaef051c116837f030371cb05f9a717ff57f3abfb398e5cb9b9",
+  "s12_artifacts": [
+    {
+      "s12": "reports/taiji_u2_22_3_4_3_s12_20261111T123154Z_f1-step1.json",
+      "s12_sha256": "723fc801657b2044ebb163ca86ce181ec1c93e91b2bf410e49df106600dc09d4",
+      "worker": "reports/taiji_u2_22_3_4_3_s12_20261111T123154Z_f1-step1_worker.json",
+      "worker_sha256": "0fbb11750484437ee4ce55c1db0d353681e596de9b40e5549b9b559e62c1854c"
+    },
+    {
+      "s12": "reports/taiji_u2_22_3_4_3_s12_20261111T123154Z_f1-step2-orig.json",
+      "s12_sha256": "c11506cff2b10442617c2ef51b7b7b30e9cb2eaff8d6de2687d3db1ad8891d71",
+      "worker": "reports/taiji_u2_22_3_4_3_s12_20261111T123154Z_f1-step2-orig_worker.json",
+      "worker_sha256": "1413145eb682dd061e04335ec4bda44eae65559fe547b19fff247c02fb25a39a"
+    },
+    {
+      "s12": "reports/taiji_u2_22_3_4_3_s12_20261111T123154Z_f1-step2-recovery.json",
+      "s12_sha256": "b98f5f8da4788a80a41af5363618281beaaf353621f6cc190c9ff07327a263d8",
+      "worker": "reports/taiji_u2_22_3_4_3_s12_20261111T123154Z_f1-step2-recovery_worker.json",
+      "worker_sha256": "90af006f25d1f7c95a669879333425771bb90523b88ef8a93a96ddf3148dc150"
+    },
+    {
+      "s12": "reports/taiji_u2_22_3_4_3_s12_20261111T123154Z_f2-step1.json",
+      "s12_sha256": "5751ae60068c643c8407b3894fe297644baa41f2d665b992dd75037fd234afbc",
+      "worker": "reports/taiji_u2_22_3_4_3_s12_20261111T123154Z_f2-step1_worker.json",
+      "worker_sha256": "30ac8eefefe9128c840ea5e6b9f0131c854a3dae966d03ca917f0419b21eaa31"
+    },
+    {
+      "s12": "reports/taiji_u2_22_3_4_3_s12_20261111T123154Z_f2-step2-orig.json",
+      "s12_sha256": "f669064d84b4f18d3189f0bde69e3c0ff47c11c3b8fc566db646b34c950503a4",
+      "worker": "reports/taiji_u2_22_3_4_3_s12_20261111T123154Z_f2-step2-orig_worker.json",
+      "worker_sha256": "bc8aec765e0ea63eb835ff0b6aa9206791c8fec94dcecd40ba834e8ca5eb4372"
+    },
+    {
+      "s12": "reports/taiji_u2_22_3_4_3_s12_20261111T123154Z_f2-step2-recovery.json",
+      "s12_sha256": "5549104e6e4651a43452fb8ae6e7ff87bbfdeaeb1eebf4b9f8040f3cce81beeb",
+      "worker": "reports/taiji_u2_22_3_4_3_s12_20261111T123154Z_f2-step2-recovery_worker.json",
+      "worker_sha256": "29641007684e024f3143456dd8d5f6acb8bee1f3a488e53d20cca42b39a0ca62"
+    },
+    {
+      "s12": "reports/taiji_u2_22_3_4_3_s12_20261111T123154Z_fault-rejection.json",
+      "s12_sha256": "462424881bcd5ffa430d650853024b3dc50daf45f022dcb91c34e6d9a3c399ee",
+      "worker": "reports/taiji_u2_22_3_4_3_s12_20261111T123154Z_fault-rejection_worker.json",
+      "worker_sha256": "61c0e1264c35573d61f60fb88e5d0171e3e9ed18ec7bb1efde834e7e6cb85bab"
+    },
+    {
+      "s12": "reports/taiji_u2_22_3_4_3_s12_20261111T123154Z_fault-before-commit.json",
+      "s12_sha256": "516e125656b27bfad4db0cd3a16ec1e6235cc794b183d41b5fcae28c2e8150f4",
+      "worker": "reports/taiji_u2_22_3_4_3_s12_20261111T123154Z_fault-before-commit_worker.json",
+      "worker_sha256": "73513f059e157c98c6d97f0f70cf94e009b1f1860ee890c583b1302e3d6232f2"
+    }
+  ],
+  "canonical_checkpoint_count": 8,
+  "snapshot_comparisons": 34,
+  "state_families": 12,
+  "actual_optimizer_step_calls": 6,
+  "attempts_consumed": 8,
+  "additional_closure_optimizer_steps": 0,
+  "next_card": "22.4",
+  "next_card_requires": [
+    "valid semantic data and information rights",
+    "candidate-specific structure and metadata entry",
+    "actual matched-resource pricing",
+    "fresh source/config/data/budget manifest"
+  ],
+  "capability_qualifications": [],
+  "scope_limits": [
+    "CPU small profile recovery",
+    "no nominal-profile recovery certificate",
+    "no learned A parent",
+    "no task or architecture net-gain claim"
+  ],
+  "run_conditions": {
+    "threads": 1,
+    "interop_threads": 12,
+    "device": "cpu",
+    "dtype": "torch.float32",
+    "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+    "torch": "2.13.0+cpu",
+    "environment": {
+      "OMP_NUM_THREADS": null,
+      "MKL_NUM_THREADS": null,
+      "OPENBLAS_NUM_THREADS": null
+    }
+  }
+}

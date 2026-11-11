@@ -1,0 +1,48 @@
+{
+  "verdict": "pass",
+  "attempt_id": "fault-before-commit",
+  "run_id": "20261111T123154Z",
+  "s12_sha256": "516e125656b27bfad4db0cd3a16ec1e6235cc794b183d41b5fcae28c2e8150f4",
+  "ledger_seq_open": 15,
+  "ledger_seq_close": 16,
+  "parent_verified": {
+    "state_sha256": "0bc6ad942d2c1b8bfcf5e90ffd37e3dba9e8ab57f855e0d0c97d21d13f611dae",
+    "parameter_sha256": "c97a2881b02c670c44a0a6cea4157817f2b72a516059454face23b664ae3385b",
+    "moment_sha256": "e14368957114738219bf6b8cf311235cdb0229b73195ef00d4c9b472723a3e9e",
+    "history_reference": {
+      "entries": 9,
+      "head": "53eac82652aadc58fb559a5a35899f009620d9f2d20d6484d1b0c55b8f29e1e3"
+    },
+    "revision": 1
+  },
+  "post_verified": {
+    "state_sha256": "0bc6ad942d2c1b8bfcf5e90ffd37e3dba9e8ab57f855e0d0c97d21d13f611dae",
+    "parameter_sha256": "c97a2881b02c670c44a0a6cea4157817f2b72a516059454face23b664ae3385b",
+    "moment_sha256": "e14368957114738219bf6b8cf311235cdb0229b73195ef00d4c9b472723a3e9e",
+    "history_reference": {
+      "entries": 9,
+      "head": "53eac82652aadc58fb559a5a35899f009620d9f2d20d6484d1b0c55b8f29e1e3"
+    },
+    "revision": 1
+  },
+  "adam_equations": [],
+  "optimizer_step_calls": 0,
+  "run_conditions": {
+    "threads": 1,
+    "interop_threads": 12,
+    "device": "cpu",
+    "dtype": "torch.float64",
+    "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+    "torch": "2.13.0+cpu",
+    "environment": {
+      "OMP_NUM_THREADS": null,
+      "MKL_NUM_THREADS": null,
+      "OPENBLAS_NUM_THREADS": null
+    }
+  },
+  "schema": "taiji-u2-s12-worker-v1",
+  "pid": 11984,
+  "parent_pid": 2724,
+  "cpu_seconds": 5.046875,
+  "wall_seconds": 6.202999999979511
+}

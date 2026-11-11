@@ -1,0 +1,1017 @@
+{
+  "schema": "taiji-u2-22.3.4.3-engineering-updates-v1",
+  "created_at": "2026-11-11T12:34:02.246388+00:00",
+  "verdict": "passed_six_updates_two_faults_only",
+  "run_id": "20261111T123154Z",
+  "execution_manifest": "plans/manifests/taiji_u2_22_3_4_3_execution_20261111.json",
+  "manifest_sha256": "309a756c5163456faa0e0403fe9abbddd139eb4acd4073dab256b441db511185",
+  "ledger": "reports/taiji_u2_22_3_4_3_attempts_20261111T123154Z.ndjson",
+  "ledger_sha256": "0e4ceee7a26dfcaef051c116837f030371cb05f9a717ff57f3abfb398e5cb9b9",
+  "attempt_open": 8,
+  "attempt_close": 8,
+  "optimizer_step_calls": 6,
+  "canonical_checkpoints": {
+    "F1/parent.bin": {
+      "path": "E:\\Seed\\output\\taiji_u2_22_3_4_3_20261111T123154Z\\F1\\parent.bin",
+      "sha256": "123cf0c6bda570b808ef8b2ee1fb70322185ae077d5b27148137fa2bba17fdb6",
+      "bytes": 354225,
+      "readback_ok": true,
+      "cpu_seconds": 0.046875,
+      "fingerprint": {
+        "state_sha256": "bdd95975573efe4a238b4a9d28dad946ed50cc164bd0d26e859c202d4c52c076",
+        "parameter_sha256": "6ec1c6db11373b5aba8676f25ef5a1bcd48f71430bc44dce9e228a8b833b3842",
+        "moment_sha256": "db3772d0873db4795a5d81eee2b29bdd3f0664a8780b08dad971b11d1f344c8a",
+        "history_reference": {
+          "entries": 8,
+          "head": "783205a1e84fbc0558ced8fd71da4bca0f5b209e7dea13f53de16f758bb364d9"
+        },
+        "revision": 0
+      }
+    },
+    "F2/parent.bin": {
+      "path": "E:\\Seed\\output\\taiji_u2_22_3_4_3_20261111T123154Z\\F2\\parent.bin",
+      "sha256": "a40e0448d471696926aeab6c914d3c1fa86962e8a2a3a29dae8296b5eb899d5c",
+      "bytes": 229041,
+      "readback_ok": true,
+      "cpu_seconds": 0.046875,
+      "fingerprint": {
+        "state_sha256": "355c428970f9ba0b5db70af6d41e00148087518cebb1e0da6a42b2ed493b9b79",
+        "parameter_sha256": "b3e8a106ecdd34ad40f8983a7cb8c4c756097d0c089b013d1587f70a6397acfc",
+        "moment_sha256": "db3772d0873db4795a5d81eee2b29bdd3f0664a8780b08dad971b11d1f344c8a",
+        "history_reference": {
+          "entries": 8,
+          "head": "ee082e8f44ba3ccff2c034d45a1cec86812ff0f19aa593d49653b5fbeb0307a9"
+        },
+        "revision": 0
+      }
+    },
+    "F1/step1.bin": {
+      "path": "E:\\Seed\\output\\taiji_u2_22_3_4_3_20261111T123154Z\\F1\\step1.bin",
+      "sha256": "30d29f7d8eef785ba651e6e138b34822595ff66a2acb3cd279c1a53acca9bb87",
+      "bytes": 790975,
+      "readback_ok": true,
+      "cpu_seconds": 0.0625,
+      "fingerprint": {
+        "state_sha256": "0bc6ad942d2c1b8bfcf5e90ffd37e3dba9e8ab57f855e0d0c97d21d13f611dae",
+        "parameter_sha256": "c97a2881b02c670c44a0a6cea4157817f2b72a516059454face23b664ae3385b",
+        "moment_sha256": "e14368957114738219bf6b8cf311235cdb0229b73195ef00d4c9b472723a3e9e",
+        "history_reference": {
+          "entries": 9,
+          "head": "53eac82652aadc58fb559a5a35899f009620d9f2d20d6484d1b0c55b8f29e1e3"
+        },
+        "revision": 1
+      }
+    },
+    "F1/step2-orig.bin": {
+      "path": "E:\\Seed\\output\\taiji_u2_22_3_4_3_20261111T123154Z\\F1\\step2-orig.bin",
+      "sha256": "8ab47c0f020f797d480003e1f7dd9d8f0c5709689d225f82913e7883ff9463cf",
+      "bytes": 792703,
+      "readback_ok": true,
+      "cpu_seconds": 0.0625,
+      "fingerprint": {
+        "state_sha256": "362bcb5d29a3158b2fa4363b68838e0b891a49874060adcbcb844b51d7b47c39",
+        "parameter_sha256": "75fc673007d13e23cc0e355b419be02291bbb457a641f3475763014070a0d114",
+        "moment_sha256": "fbf95f9ca29fd845370dcce3d92363e82446ef7f8803b9087e21fcb53669f634",
+        "history_reference": {
+          "entries": 10,
+          "head": "31192f6a67d148b7cdc764d3137fa78aa2c42e05b3bab731b2783b6907a7106c"
+        },
+        "revision": 2
+      }
+    },
+    "F1/step2-recovery.bin": {
+      "path": "E:\\Seed\\output\\taiji_u2_22_3_4_3_20261111T123154Z\\F1\\step2-recovery.bin",
+      "sha256": "3b64b6ae259a3abaf365123b80ffca8298d35e8e82767e531d9968144df031a1",
+      "bytes": 792703,
+      "readback_ok": true,
+      "cpu_seconds": 0.046875,
+      "fingerprint": {
+        "state_sha256": "362bcb5d29a3158b2fa4363b68838e0b891a49874060adcbcb844b51d7b47c39",
+        "parameter_sha256": "75fc673007d13e23cc0e355b419be02291bbb457a641f3475763014070a0d114",
+        "moment_sha256": "fbf95f9ca29fd845370dcce3d92363e82446ef7f8803b9087e21fcb53669f634",
+        "history_reference": {
+          "entries": 10,
+          "head": "31192f6a67d148b7cdc764d3137fa78aa2c42e05b3bab731b2783b6907a7106c"
+        },
+        "revision": 2
+      }
+    },
+    "F2/step1.bin": {
+      "path": "E:\\Seed\\output\\taiji_u2_22_3_4_3_20261111T123154Z\\F2\\step1.bin",
+      "sha256": "d49927729f7164e066878eba4a688363080b0f4a7d6e652b00f5052d68e1d98c",
+      "bytes": 554319,
+      "readback_ok": true,
+      "cpu_seconds": 0.046875,
+      "fingerprint": {
+        "state_sha256": "b06740d9662788c658d9f9f98b27f03bd77a7cad8fa3628179dab7578d170cfc",
+        "parameter_sha256": "555e09ff845611ed58059e538ea640825f4ca97c8e73e5e4c6a5797513835f35",
+        "moment_sha256": "c8e0e4f99d9806c1c7cc825a9ca8fa80978185677f4efbac573b451d61c11d09",
+        "history_reference": {
+          "entries": 9,
+          "head": "97062e8d0535f52f306f77cce80515709a7840077c0d9c940d801496e7c3cf8a"
+        },
+        "revision": 1
+      }
+    },
+    "F2/step2-orig.bin": {
+      "path": "E:\\Seed\\output\\taiji_u2_22_3_4_3_20261111T123154Z\\F2\\step2-orig.bin",
+      "sha256": "73f6ef10239c73708e2f01d42c41c27024f2fcfbb7143828483ab16bd9dab27a",
+      "bytes": 556047,
+      "readback_ok": true,
+      "cpu_seconds": 0.0625,
+      "fingerprint": {
+        "state_sha256": "28e2c93535d4fb862b6b1b9b1cbb79b93abfdd5dc336f359ae5f8c863d852025",
+        "parameter_sha256": "fb2727d5bffa95fbd69afa4e3f272a50f9cef51941011d15e263d5f5c098fae0",
+        "moment_sha256": "ba1444dbdcd255946b9dea71945cedd43a979dab9e985e3096b0dcad6f0cf437",
+        "history_reference": {
+          "entries": 10,
+          "head": "5b72f43e263d049928bca06d8acbf9dac059ef7e5081adc19d08bfa97a90f059"
+        },
+        "revision": 2
+      }
+    },
+    "F2/step2-recovery.bin": {
+      "path": "E:\\Seed\\output\\taiji_u2_22_3_4_3_20261111T123154Z\\F2\\step2-recovery.bin",
+      "sha256": "1e1d8afa5180d3e12c7aa57f4700e624311633ea51fcd2fc0db9275caf3c2d43",
+      "bytes": 556047,
+      "readback_ok": true,
+      "cpu_seconds": 0.046875,
+      "fingerprint": {
+        "state_sha256": "28e2c93535d4fb862b6b1b9b1cbb79b93abfdd5dc336f359ae5f8c863d852025",
+        "parameter_sha256": "fb2727d5bffa95fbd69afa4e3f272a50f9cef51941011d15e263d5f5c098fae0",
+        "moment_sha256": "ba1444dbdcd255946b9dea71945cedd43a979dab9e985e3096b0dcad6f0cf437",
+        "history_reference": {
+          "entries": 10,
+          "head": "5b72f43e263d049928bca06d8acbf9dac059ef7e5081adc19d08bfa97a90f059"
+        },
+        "revision": 2
+      }
+    }
+  },
+  "checkpoint_coverage": 8,
+  "readback_calls": 24,
+  "attempts": [
+    {
+      "schema": "taiji-u2-s12-v1",
+      "run_id": "20261111T123154Z",
+      "attempt_id": "f1-step1",
+      "group": "F1",
+      "dtype": "float64",
+      "status": "accepted",
+      "ledger_seq_open": 1,
+      "ledger_seq_close": 2,
+      "parent_checkpoint": "output/taiji_u2_22_3_4_3_20261111T123154Z/F1/parent.bin",
+      "parent_sha256": "123cf0c6bda570b808ef8b2ee1fb70322185ae077d5b27148137fa2bba17fdb6",
+      "post_checkpoint": "output/taiji_u2_22_3_4_3_20261111T123154Z/F1/step1.bin",
+      "post_sha256": "30d29f7d8eef785ba651e6e138b34822595ff66a2acb3cd279c1a53acca9bb87",
+      "pre_state_sha256": "bdd95975573efe4a238b4a9d28dad946ed50cc164bd0d26e859c202d4c52c076",
+      "pre_parameter_sha256": "6ec1c6db11373b5aba8676f25ef5a1bcd48f71430bc44dce9e228a8b833b3842",
+      "pre_moment_sha256": "db3772d0873db4795a5d81eee2b29bdd3f0664a8780b08dad971b11d1f344c8a",
+      "post_state_sha256": "0bc6ad942d2c1b8bfcf5e90ffd37e3dba9e8ab57f855e0d0c97d21d13f611dae",
+      "post_parameter_sha256": "c97a2881b02c670c44a0a6cea4157817f2b72a516059454face23b664ae3385b",
+      "post_moment_sha256": "e14368957114738219bf6b8cf311235cdb0229b73195ef00d4c9b472723a3e9e",
+      "history_reference": {
+        "entries": 9,
+        "head": "53eac82652aadc58fb559a5a35899f009620d9f2d20d6484d1b0c55b8f29e1e3"
+      },
+      "revision": 1,
+      "gradient_sha256": "8f2c484adc19e1d74d74791c180ed8ac246197f0070db6ec8cc699e1ec891996",
+      "run_conditions": {
+        "threads": 1,
+        "interop_threads": 12,
+        "device": "cpu",
+        "dtype": "torch.float64",
+        "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+        "torch": "2.13.0+cpu",
+        "environment": {
+          "OMP_NUM_THREADS": null,
+          "MKL_NUM_THREADS": null,
+          "OPENBLAS_NUM_THREADS": null
+        }
+      },
+      "losses": {
+        "total": 1475.5215389948867,
+        "predictive": 1475.5256839804078,
+        "actor": -0.04150038983600965,
+        "critic": 5.053462469670305e-05,
+        "verbatim": 0.0
+      },
+      "optimizer_step_calls": 1,
+      "migration": {
+        "status": "committed",
+        "revision": 1,
+        "parameter_digest": "c97a2881b02c670c44a0a6cea4157817f2b72a516059454face23b664ae3385b",
+        "rebuild": {
+          "entries": 8,
+          "observations": 1,
+          "duplicates": 0,
+          "bytes": 0,
+          "internal": 0,
+          "births": 0,
+          "updates": 0,
+          "cpu_seconds": 0.015625,
+          "history_reference": {
+            "entries": 8,
+            "head": "783205a1e84fbc0558ced8fd71da4bca0f5b209e7dea13f53de16f758bb364d9"
+          },
+          "eligibility_reset": true
+        },
+        "cpu_seconds": 0.09375
+      },
+      "cpu_seconds": 0.5,
+      "wall_seconds": 0.5469999999622814,
+      "execution_manifest": "plans/manifests/taiji_u2_22_3_4_3_execution_20261111.json",
+      "manifest_sha256": "309a756c5163456faa0e0403fe9abbddd139eb4acd4073dab256b441db511185",
+      "run_root": "output/taiji_u2_22_3_4_3_20261111T123154Z",
+      "parent_readback": {
+        "path": "E:\\Seed\\output\\taiji_u2_22_3_4_3_20261111T123154Z\\F1\\parent.bin",
+        "sha256": "123cf0c6bda570b808ef8b2ee1fb70322185ae077d5b27148137fa2bba17fdb6",
+        "bytes": 354225,
+        "readback_ok": true,
+        "cpu_seconds": 0.046875,
+        "fingerprint": {
+          "state_sha256": "bdd95975573efe4a238b4a9d28dad946ed50cc164bd0d26e859c202d4c52c076",
+          "parameter_sha256": "6ec1c6db11373b5aba8676f25ef5a1bcd48f71430bc44dce9e228a8b833b3842",
+          "moment_sha256": "db3772d0873db4795a5d81eee2b29bdd3f0664a8780b08dad971b11d1f344c8a",
+          "history_reference": {
+            "entries": 8,
+            "head": "783205a1e84fbc0558ced8fd71da4bca0f5b209e7dea13f53de16f758bb364d9"
+          },
+          "revision": 0
+        }
+      },
+      "post_readback": {
+        "path": "E:\\Seed\\output\\taiji_u2_22_3_4_3_20261111T123154Z\\F1\\step1.bin",
+        "sha256": "30d29f7d8eef785ba651e6e138b34822595ff66a2acb3cd279c1a53acca9bb87",
+        "bytes": 790975,
+        "readback_ok": true,
+        "cpu_seconds": 0.0625,
+        "fingerprint": {
+          "state_sha256": "0bc6ad942d2c1b8bfcf5e90ffd37e3dba9e8ab57f855e0d0c97d21d13f611dae",
+          "parameter_sha256": "c97a2881b02c670c44a0a6cea4157817f2b72a516059454face23b664ae3385b",
+          "moment_sha256": "e14368957114738219bf6b8cf311235cdb0229b73195ef00d4c9b472723a3e9e",
+          "history_reference": {
+            "entries": 9,
+            "head": "53eac82652aadc58fb559a5a35899f009620d9f2d20d6484d1b0c55b8f29e1e3"
+          },
+          "revision": 1
+        }
+      },
+      "failed_checkpoint": null
+    },
+    {
+      "schema": "taiji-u2-s12-v1",
+      "run_id": "20261111T123154Z",
+      "attempt_id": "f1-step2-orig",
+      "group": "F1",
+      "dtype": "float64",
+      "status": "accepted",
+      "ledger_seq_open": 3,
+      "ledger_seq_close": 4,
+      "parent_checkpoint": "output/taiji_u2_22_3_4_3_20261111T123154Z/F1/step1.bin",
+      "parent_sha256": "30d29f7d8eef785ba651e6e138b34822595ff66a2acb3cd279c1a53acca9bb87",
+      "post_checkpoint": "output/taiji_u2_22_3_4_3_20261111T123154Z/F1/step2-orig.bin",
+      "post_sha256": "8ab47c0f020f797d480003e1f7dd9d8f0c5709689d225f82913e7883ff9463cf",
+      "pre_state_sha256": "0bc6ad942d2c1b8bfcf5e90ffd37e3dba9e8ab57f855e0d0c97d21d13f611dae",
+      "pre_parameter_sha256": "c97a2881b02c670c44a0a6cea4157817f2b72a516059454face23b664ae3385b",
+      "pre_moment_sha256": "e14368957114738219bf6b8cf311235cdb0229b73195ef00d4c9b472723a3e9e",
+      "post_state_sha256": "362bcb5d29a3158b2fa4363b68838e0b891a49874060adcbcb844b51d7b47c39",
+      "post_parameter_sha256": "75fc673007d13e23cc0e355b419be02291bbb457a641f3475763014070a0d114",
+      "post_moment_sha256": "fbf95f9ca29fd845370dcce3d92363e82446ef7f8803b9087e21fcb53669f634",
+      "history_reference": {
+        "entries": 10,
+        "head": "31192f6a67d148b7cdc764d3137fa78aa2c42e05b3bab731b2783b6907a7106c"
+      },
+      "revision": 2,
+      "gradient_sha256": "751695811384d9447169e8a520d72cea1bffcea6f574a510b931a167c5da4fcd",
+      "run_conditions": {
+        "threads": 1,
+        "interop_threads": 12,
+        "device": "cpu",
+        "dtype": "torch.float64",
+        "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+        "torch": "2.13.0+cpu",
+        "environment": {
+          "OMP_NUM_THREADS": null,
+          "MKL_NUM_THREADS": null,
+          "OPENBLAS_NUM_THREADS": null
+        }
+      },
+      "losses": {
+        "total": 1463.1864485995939,
+        "predictive": 1463.1906909034176,
+        "actor": -0.042473143620681636,
+        "critic": 5.010538385043648e-05,
+        "verbatim": 0.0
+      },
+      "optimizer_step_calls": 1,
+      "migration": {
+        "status": "committed",
+        "revision": 2,
+        "parameter_digest": "75fc673007d13e23cc0e355b419be02291bbb457a641f3475763014070a0d114",
+        "rebuild": {
+          "entries": 9,
+          "observations": 1,
+          "duplicates": 0,
+          "bytes": 0,
+          "internal": 0,
+          "births": 0,
+          "updates": 1,
+          "cpu_seconds": 0.03125,
+          "history_reference": {
+            "entries": 9,
+            "head": "53eac82652aadc58fb559a5a35899f009620d9f2d20d6484d1b0c55b8f29e1e3"
+          },
+          "eligibility_reset": true
+        },
+        "cpu_seconds": 0.109375
+      },
+      "cpu_seconds": 0.5,
+      "wall_seconds": 0.5470000000204891,
+      "execution_manifest": "plans/manifests/taiji_u2_22_3_4_3_execution_20261111.json",
+      "manifest_sha256": "309a756c5163456faa0e0403fe9abbddd139eb4acd4073dab256b441db511185",
+      "run_root": "output/taiji_u2_22_3_4_3_20261111T123154Z",
+      "parent_readback": {
+        "path": "E:\\Seed\\output\\taiji_u2_22_3_4_3_20261111T123154Z\\F1\\step1.bin",
+        "sha256": "30d29f7d8eef785ba651e6e138b34822595ff66a2acb3cd279c1a53acca9bb87",
+        "bytes": 790975,
+        "readback_ok": true,
+        "cpu_seconds": 0.046875,
+        "fingerprint": {
+          "state_sha256": "0bc6ad942d2c1b8bfcf5e90ffd37e3dba9e8ab57f855e0d0c97d21d13f611dae",
+          "parameter_sha256": "c97a2881b02c670c44a0a6cea4157817f2b72a516059454face23b664ae3385b",
+          "moment_sha256": "e14368957114738219bf6b8cf311235cdb0229b73195ef00d4c9b472723a3e9e",
+          "history_reference": {
+            "entries": 9,
+            "head": "53eac82652aadc58fb559a5a35899f009620d9f2d20d6484d1b0c55b8f29e1e3"
+          },
+          "revision": 1
+        }
+      },
+      "post_readback": {
+        "path": "E:\\Seed\\output\\taiji_u2_22_3_4_3_20261111T123154Z\\F1\\step2-orig.bin",
+        "sha256": "8ab47c0f020f797d480003e1f7dd9d8f0c5709689d225f82913e7883ff9463cf",
+        "bytes": 792703,
+        "readback_ok": true,
+        "cpu_seconds": 0.0625,
+        "fingerprint": {
+          "state_sha256": "362bcb5d29a3158b2fa4363b68838e0b891a49874060adcbcb844b51d7b47c39",
+          "parameter_sha256": "75fc673007d13e23cc0e355b419be02291bbb457a641f3475763014070a0d114",
+          "moment_sha256": "fbf95f9ca29fd845370dcce3d92363e82446ef7f8803b9087e21fcb53669f634",
+          "history_reference": {
+            "entries": 10,
+            "head": "31192f6a67d148b7cdc764d3137fa78aa2c42e05b3bab731b2783b6907a7106c"
+          },
+          "revision": 2
+        }
+      },
+      "failed_checkpoint": null
+    },
+    {
+      "schema": "taiji-u2-s12-v1",
+      "run_id": "20261111T123154Z",
+      "attempt_id": "f1-step2-recovery",
+      "group": "F1",
+      "dtype": "float64",
+      "status": "accepted",
+      "ledger_seq_open": 5,
+      "ledger_seq_close": 6,
+      "parent_checkpoint": "output/taiji_u2_22_3_4_3_20261111T123154Z/F1/step1.bin",
+      "parent_sha256": "30d29f7d8eef785ba651e6e138b34822595ff66a2acb3cd279c1a53acca9bb87",
+      "post_checkpoint": "output/taiji_u2_22_3_4_3_20261111T123154Z/F1/step2-recovery.bin",
+      "post_sha256": "3b64b6ae259a3abaf365123b80ffca8298d35e8e82767e531d9968144df031a1",
+      "pre_state_sha256": "0bc6ad942d2c1b8bfcf5e90ffd37e3dba9e8ab57f855e0d0c97d21d13f611dae",
+      "pre_parameter_sha256": "c97a2881b02c670c44a0a6cea4157817f2b72a516059454face23b664ae3385b",
+      "pre_moment_sha256": "e14368957114738219bf6b8cf311235cdb0229b73195ef00d4c9b472723a3e9e",
+      "post_state_sha256": "362bcb5d29a3158b2fa4363b68838e0b891a49874060adcbcb844b51d7b47c39",
+      "post_parameter_sha256": "75fc673007d13e23cc0e355b419be02291bbb457a641f3475763014070a0d114",
+      "post_moment_sha256": "fbf95f9ca29fd845370dcce3d92363e82446ef7f8803b9087e21fcb53669f634",
+      "history_reference": {
+        "entries": 10,
+        "head": "31192f6a67d148b7cdc764d3137fa78aa2c42e05b3bab731b2783b6907a7106c"
+      },
+      "revision": 2,
+      "gradient_sha256": "751695811384d9447169e8a520d72cea1bffcea6f574a510b931a167c5da4fcd",
+      "run_conditions": {
+        "threads": 1,
+        "interop_threads": 12,
+        "device": "cpu",
+        "dtype": "torch.float64",
+        "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+        "torch": "2.13.0+cpu",
+        "environment": {
+          "OMP_NUM_THREADS": null,
+          "MKL_NUM_THREADS": null,
+          "OPENBLAS_NUM_THREADS": null
+        }
+      },
+      "losses": {
+        "total": 1463.1864485995939,
+        "predictive": 1463.1906909034176,
+        "actor": -0.042473143620681636,
+        "critic": 5.010538385043648e-05,
+        "verbatim": 0.0
+      },
+      "optimizer_step_calls": 1,
+      "migration": {
+        "status": "committed",
+        "revision": 2,
+        "parameter_digest": "75fc673007d13e23cc0e355b419be02291bbb457a641f3475763014070a0d114",
+        "rebuild": {
+          "entries": 9,
+          "observations": 1,
+          "duplicates": 0,
+          "bytes": 0,
+          "internal": 0,
+          "births": 0,
+          "updates": 1,
+          "cpu_seconds": 0.03125,
+          "history_reference": {
+            "entries": 9,
+            "head": "53eac82652aadc58fb559a5a35899f009620d9f2d20d6484d1b0c55b8f29e1e3"
+          },
+          "eligibility_reset": true
+        },
+        "cpu_seconds": 0.109375
+      },
+      "cpu_seconds": 5.984375,
+      "wall_seconds": 7.9689999999827705,
+      "execution_manifest": "plans/manifests/taiji_u2_22_3_4_3_execution_20261111.json",
+      "manifest_sha256": "309a756c5163456faa0e0403fe9abbddd139eb4acd4073dab256b441db511185",
+      "run_root": "output/taiji_u2_22_3_4_3_20261111T123154Z",
+      "parent_readback": {
+        "path": "E:\\Seed\\output\\taiji_u2_22_3_4_3_20261111T123154Z\\F1\\step1.bin",
+        "sha256": "30d29f7d8eef785ba651e6e138b34822595ff66a2acb3cd279c1a53acca9bb87",
+        "bytes": 790975,
+        "readback_ok": true,
+        "cpu_seconds": 0.046875,
+        "fingerprint": {
+          "state_sha256": "0bc6ad942d2c1b8bfcf5e90ffd37e3dba9e8ab57f855e0d0c97d21d13f611dae",
+          "parameter_sha256": "c97a2881b02c670c44a0a6cea4157817f2b72a516059454face23b664ae3385b",
+          "moment_sha256": "e14368957114738219bf6b8cf311235cdb0229b73195ef00d4c9b472723a3e9e",
+          "history_reference": {
+            "entries": 9,
+            "head": "53eac82652aadc58fb559a5a35899f009620d9f2d20d6484d1b0c55b8f29e1e3"
+          },
+          "revision": 1
+        }
+      },
+      "post_readback": {
+        "path": "E:\\Seed\\output\\taiji_u2_22_3_4_3_20261111T123154Z\\F1\\step2-recovery.bin",
+        "sha256": "3b64b6ae259a3abaf365123b80ffca8298d35e8e82767e531d9968144df031a1",
+        "bytes": 792703,
+        "readback_ok": true,
+        "cpu_seconds": 0.046875,
+        "fingerprint": {
+          "state_sha256": "362bcb5d29a3158b2fa4363b68838e0b891a49874060adcbcb844b51d7b47c39",
+          "parameter_sha256": "75fc673007d13e23cc0e355b419be02291bbb457a641f3475763014070a0d114",
+          "moment_sha256": "fbf95f9ca29fd845370dcce3d92363e82446ef7f8803b9087e21fcb53669f634",
+          "history_reference": {
+            "entries": 10,
+            "head": "31192f6a67d148b7cdc764d3137fa78aa2c42e05b3bab731b2783b6907a7106c"
+          },
+          "revision": 2
+        }
+      },
+      "failed_checkpoint": null
+    },
+    {
+      "schema": "taiji-u2-s12-v1",
+      "run_id": "20261111T123154Z",
+      "attempt_id": "f2-step1",
+      "group": "F2",
+      "dtype": "float32",
+      "status": "accepted",
+      "ledger_seq_open": 7,
+      "ledger_seq_close": 8,
+      "parent_checkpoint": "output/taiji_u2_22_3_4_3_20261111T123154Z/F2/parent.bin",
+      "parent_sha256": "a40e0448d471696926aeab6c914d3c1fa86962e8a2a3a29dae8296b5eb899d5c",
+      "post_checkpoint": "output/taiji_u2_22_3_4_3_20261111T123154Z/F2/step1.bin",
+      "post_sha256": "d49927729f7164e066878eba4a688363080b0f4a7d6e652b00f5052d68e1d98c",
+      "pre_state_sha256": "355c428970f9ba0b5db70af6d41e00148087518cebb1e0da6a42b2ed493b9b79",
+      "pre_parameter_sha256": "b3e8a106ecdd34ad40f8983a7cb8c4c756097d0c089b013d1587f70a6397acfc",
+      "pre_moment_sha256": "db3772d0873db4795a5d81eee2b29bdd3f0664a8780b08dad971b11d1f344c8a",
+      "post_state_sha256": "b06740d9662788c658d9f9f98b27f03bd77a7cad8fa3628179dab7578d170cfc",
+      "post_parameter_sha256": "555e09ff845611ed58059e538ea640825f4ca97c8e73e5e4c6a5797513835f35",
+      "post_moment_sha256": "c8e0e4f99d9806c1c7cc825a9ca8fa80978185677f4efbac573b451d61c11d09",
+      "history_reference": {
+        "entries": 9,
+        "head": "97062e8d0535f52f306f77cce80515709a7840077c0d9c940d801496e7c3cf8a"
+      },
+      "revision": 1,
+      "gradient_sha256": "8dc21406a03be10c85f67c9e29a1eac9de27fd3e3b46fb669d06662007e6b61c",
+      "run_conditions": {
+        "threads": 1,
+        "interop_threads": 12,
+        "device": "cpu",
+        "dtype": "torch.float32",
+        "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+        "torch": "2.13.0+cpu",
+        "environment": {
+          "OMP_NUM_THREADS": null,
+          "MKL_NUM_THREADS": null,
+          "OPENBLAS_NUM_THREADS": null
+        }
+      },
+      "losses": {
+        "total": 148.0323028564453,
+        "predictive": 1467.61865234375,
+        "actor": -0.04150647670030594,
+        "critic": 5.0554601330077276e-05,
+        "verbatim": 1.2745869159698486
+      },
+      "optimizer_step_calls": 1,
+      "migration": {
+        "status": "committed",
+        "revision": 1,
+        "parameter_digest": "555e09ff845611ed58059e538ea640825f4ca97c8e73e5e4c6a5797513835f35",
+        "rebuild": {
+          "entries": 8,
+          "observations": 1,
+          "duplicates": 0,
+          "bytes": 0,
+          "internal": 0,
+          "births": 0,
+          "updates": 0,
+          "cpu_seconds": 0.015625,
+          "history_reference": {
+            "entries": 8,
+            "head": "ee082e8f44ba3ccff2c034d45a1cec86812ff0f19aa593d49653b5fbeb0307a9"
+          },
+          "eligibility_reset": true
+        },
+        "cpu_seconds": 0.109375
+      },
+      "cpu_seconds": 1.875,
+      "wall_seconds": 1.9209999999729916,
+      "execution_manifest": "plans/manifests/taiji_u2_22_3_4_3_execution_20261111.json",
+      "manifest_sha256": "309a756c5163456faa0e0403fe9abbddd139eb4acd4073dab256b441db511185",
+      "run_root": "output/taiji_u2_22_3_4_3_20261111T123154Z",
+      "parent_readback": {
+        "path": "E:\\Seed\\output\\taiji_u2_22_3_4_3_20261111T123154Z\\F2\\parent.bin",
+        "sha256": "a40e0448d471696926aeab6c914d3c1fa86962e8a2a3a29dae8296b5eb899d5c",
+        "bytes": 229041,
+        "readback_ok": true,
+        "cpu_seconds": 0.140625,
+        "fingerprint": {
+          "state_sha256": "355c428970f9ba0b5db70af6d41e00148087518cebb1e0da6a42b2ed493b9b79",
+          "parameter_sha256": "b3e8a106ecdd34ad40f8983a7cb8c4c756097d0c089b013d1587f70a6397acfc",
+          "moment_sha256": "db3772d0873db4795a5d81eee2b29bdd3f0664a8780b08dad971b11d1f344c8a",
+          "history_reference": {
+            "entries": 8,
+            "head": "ee082e8f44ba3ccff2c034d45a1cec86812ff0f19aa593d49653b5fbeb0307a9"
+          },
+          "revision": 0
+        }
+      },
+      "post_readback": {
+        "path": "E:\\Seed\\output\\taiji_u2_22_3_4_3_20261111T123154Z\\F2\\step1.bin",
+        "sha256": "d49927729f7164e066878eba4a688363080b0f4a7d6e652b00f5052d68e1d98c",
+        "bytes": 554319,
+        "readback_ok": true,
+        "cpu_seconds": 0.046875,
+        "fingerprint": {
+          "state_sha256": "b06740d9662788c658d9f9f98b27f03bd77a7cad8fa3628179dab7578d170cfc",
+          "parameter_sha256": "555e09ff845611ed58059e538ea640825f4ca97c8e73e5e4c6a5797513835f35",
+          "moment_sha256": "c8e0e4f99d9806c1c7cc825a9ca8fa80978185677f4efbac573b451d61c11d09",
+          "history_reference": {
+            "entries": 9,
+            "head": "97062e8d0535f52f306f77cce80515709a7840077c0d9c940d801496e7c3cf8a"
+          },
+          "revision": 1
+        }
+      },
+      "failed_checkpoint": null
+    },
+    {
+      "schema": "taiji-u2-s12-v1",
+      "run_id": "20261111T123154Z",
+      "attempt_id": "f2-step2-orig",
+      "group": "F2",
+      "dtype": "float32",
+      "status": "accepted",
+      "ledger_seq_open": 9,
+      "ledger_seq_close": 10,
+      "parent_checkpoint": "output/taiji_u2_22_3_4_3_20261111T123154Z/F2/step1.bin",
+      "parent_sha256": "d49927729f7164e066878eba4a688363080b0f4a7d6e652b00f5052d68e1d98c",
+      "post_checkpoint": "output/taiji_u2_22_3_4_3_20261111T123154Z/F2/step2-orig.bin",
+      "post_sha256": "73f6ef10239c73708e2f01d42c41c27024f2fcfbb7143828483ab16bd9dab27a",
+      "pre_state_sha256": "b06740d9662788c658d9f9f98b27f03bd77a7cad8fa3628179dab7578d170cfc",
+      "pre_parameter_sha256": "555e09ff845611ed58059e538ea640825f4ca97c8e73e5e4c6a5797513835f35",
+      "pre_moment_sha256": "c8e0e4f99d9806c1c7cc825a9ca8fa80978185677f4efbac573b451d61c11d09",
+      "post_state_sha256": "28e2c93535d4fb862b6b1b9b1cbb79b93abfdd5dc336f359ae5f8c863d852025",
+      "post_parameter_sha256": "fb2727d5bffa95fbd69afa4e3f272a50f9cef51941011d15e263d5f5c098fae0",
+      "post_moment_sha256": "ba1444dbdcd255946b9dea71945cedd43a979dab9e985e3096b0dcad6f0cf437",
+      "history_reference": {
+        "entries": 10,
+        "head": "5b72f43e263d049928bca06d8acbf9dac059ef7e5081adc19d08bfa97a90f059"
+      },
+      "revision": 2,
+      "gradient_sha256": "9e413a146cb250dd089d03e683d8ac278dc5abc2132c2d84db36c3c6aee060e3",
+      "run_conditions": {
+        "threads": 1,
+        "interop_threads": 12,
+        "device": "cpu",
+        "dtype": "torch.float32",
+        "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+        "torch": "2.13.0+cpu",
+        "environment": {
+          "OMP_NUM_THREADS": null,
+          "MKL_NUM_THREADS": null,
+          "OPENBLAS_NUM_THREADS": null
+        }
+      },
+      "losses": {
+        "total": 146.80291748046875,
+        "predictive": 1455.3837890625,
+        "actor": -0.042535051703453064,
+        "critic": 4.9974845751421526e-05,
+        "verbatim": 1.268802285194397
+      },
+      "optimizer_step_calls": 1,
+      "migration": {
+        "status": "committed",
+        "revision": 2,
+        "parameter_digest": "fb2727d5bffa95fbd69afa4e3f272a50f9cef51941011d15e263d5f5c098fae0",
+        "rebuild": {
+          "entries": 9,
+          "observations": 1,
+          "duplicates": 0,
+          "bytes": 0,
+          "internal": 0,
+          "births": 0,
+          "updates": 1,
+          "cpu_seconds": 0.015625,
+          "history_reference": {
+            "entries": 9,
+            "head": "97062e8d0535f52f306f77cce80515709a7840077c0d9c940d801496e7c3cf8a"
+          },
+          "eligibility_reset": true
+        },
+        "cpu_seconds": 0.125
+      },
+      "cpu_seconds": 1.890625,
+      "wall_seconds": 1.937000000034459,
+      "execution_manifest": "plans/manifests/taiji_u2_22_3_4_3_execution_20261111.json",
+      "manifest_sha256": "309a756c5163456faa0e0403fe9abbddd139eb4acd4073dab256b441db511185",
+      "run_root": "output/taiji_u2_22_3_4_3_20261111T123154Z",
+      "parent_readback": {
+        "path": "E:\\Seed\\output\\taiji_u2_22_3_4_3_20261111T123154Z\\F2\\step1.bin",
+        "sha256": "d49927729f7164e066878eba4a688363080b0f4a7d6e652b00f5052d68e1d98c",
+        "bytes": 554319,
+        "readback_ok": true,
+        "cpu_seconds": 0.046875,
+        "fingerprint": {
+          "state_sha256": "b06740d9662788c658d9f9f98b27f03bd77a7cad8fa3628179dab7578d170cfc",
+          "parameter_sha256": "555e09ff845611ed58059e538ea640825f4ca97c8e73e5e4c6a5797513835f35",
+          "moment_sha256": "c8e0e4f99d9806c1c7cc825a9ca8fa80978185677f4efbac573b451d61c11d09",
+          "history_reference": {
+            "entries": 9,
+            "head": "97062e8d0535f52f306f77cce80515709a7840077c0d9c940d801496e7c3cf8a"
+          },
+          "revision": 1
+        }
+      },
+      "post_readback": {
+        "path": "E:\\Seed\\output\\taiji_u2_22_3_4_3_20261111T123154Z\\F2\\step2-orig.bin",
+        "sha256": "73f6ef10239c73708e2f01d42c41c27024f2fcfbb7143828483ab16bd9dab27a",
+        "bytes": 556047,
+        "readback_ok": true,
+        "cpu_seconds": 0.0625,
+        "fingerprint": {
+          "state_sha256": "28e2c93535d4fb862b6b1b9b1cbb79b93abfdd5dc336f359ae5f8c863d852025",
+          "parameter_sha256": "fb2727d5bffa95fbd69afa4e3f272a50f9cef51941011d15e263d5f5c098fae0",
+          "moment_sha256": "ba1444dbdcd255946b9dea71945cedd43a979dab9e985e3096b0dcad6f0cf437",
+          "history_reference": {
+            "entries": 10,
+            "head": "5b72f43e263d049928bca06d8acbf9dac059ef7e5081adc19d08bfa97a90f059"
+          },
+          "revision": 2
+        }
+      },
+      "failed_checkpoint": null
+    },
+    {
+      "schema": "taiji-u2-s12-v1",
+      "run_id": "20261111T123154Z",
+      "attempt_id": "f2-step2-recovery",
+      "group": "F2",
+      "dtype": "float32",
+      "status": "accepted",
+      "ledger_seq_open": 11,
+      "ledger_seq_close": 12,
+      "parent_checkpoint": "output/taiji_u2_22_3_4_3_20261111T123154Z/F2/step1.bin",
+      "parent_sha256": "d49927729f7164e066878eba4a688363080b0f4a7d6e652b00f5052d68e1d98c",
+      "post_checkpoint": "output/taiji_u2_22_3_4_3_20261111T123154Z/F2/step2-recovery.bin",
+      "post_sha256": "1e1d8afa5180d3e12c7aa57f4700e624311633ea51fcd2fc0db9275caf3c2d43",
+      "pre_state_sha256": "b06740d9662788c658d9f9f98b27f03bd77a7cad8fa3628179dab7578d170cfc",
+      "pre_parameter_sha256": "555e09ff845611ed58059e538ea640825f4ca97c8e73e5e4c6a5797513835f35",
+      "pre_moment_sha256": "c8e0e4f99d9806c1c7cc825a9ca8fa80978185677f4efbac573b451d61c11d09",
+      "post_state_sha256": "28e2c93535d4fb862b6b1b9b1cbb79b93abfdd5dc336f359ae5f8c863d852025",
+      "post_parameter_sha256": "fb2727d5bffa95fbd69afa4e3f272a50f9cef51941011d15e263d5f5c098fae0",
+      "post_moment_sha256": "ba1444dbdcd255946b9dea71945cedd43a979dab9e985e3096b0dcad6f0cf437",
+      "history_reference": {
+        "entries": 10,
+        "head": "5b72f43e263d049928bca06d8acbf9dac059ef7e5081adc19d08bfa97a90f059"
+      },
+      "revision": 2,
+      "gradient_sha256": "9e413a146cb250dd089d03e683d8ac278dc5abc2132c2d84db36c3c6aee060e3",
+      "run_conditions": {
+        "threads": 1,
+        "interop_threads": 12,
+        "device": "cpu",
+        "dtype": "torch.float32",
+        "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+        "torch": "2.13.0+cpu",
+        "environment": {
+          "OMP_NUM_THREADS": null,
+          "MKL_NUM_THREADS": null,
+          "OPENBLAS_NUM_THREADS": null
+        }
+      },
+      "losses": {
+        "total": 146.80291748046875,
+        "predictive": 1455.3837890625,
+        "actor": -0.042535051703453064,
+        "critic": 4.9974845751421526e-05,
+        "verbatim": 1.268802285194397
+      },
+      "optimizer_step_calls": 1,
+      "migration": {
+        "status": "committed",
+        "revision": 2,
+        "parameter_digest": "fb2727d5bffa95fbd69afa4e3f272a50f9cef51941011d15e263d5f5c098fae0",
+        "rebuild": {
+          "entries": 9,
+          "observations": 1,
+          "duplicates": 0,
+          "bytes": 0,
+          "internal": 0,
+          "births": 0,
+          "updates": 1,
+          "cpu_seconds": 0.015625,
+          "history_reference": {
+            "entries": 9,
+            "head": "97062e8d0535f52f306f77cce80515709a7840077c0d9c940d801496e7c3cf8a"
+          },
+          "eligibility_reset": true
+        },
+        "cpu_seconds": 0.09375
+      },
+      "cpu_seconds": 6.953125,
+      "wall_seconds": 8.875,
+      "execution_manifest": "plans/manifests/taiji_u2_22_3_4_3_execution_20261111.json",
+      "manifest_sha256": "309a756c5163456faa0e0403fe9abbddd139eb4acd4073dab256b441db511185",
+      "run_root": "output/taiji_u2_22_3_4_3_20261111T123154Z",
+      "parent_readback": {
+        "path": "E:\\Seed\\output\\taiji_u2_22_3_4_3_20261111T123154Z\\F2\\step1.bin",
+        "sha256": "d49927729f7164e066878eba4a688363080b0f4a7d6e652b00f5052d68e1d98c",
+        "bytes": 554319,
+        "readback_ok": true,
+        "cpu_seconds": 0.0625,
+        "fingerprint": {
+          "state_sha256": "b06740d9662788c658d9f9f98b27f03bd77a7cad8fa3628179dab7578d170cfc",
+          "parameter_sha256": "555e09ff845611ed58059e538ea640825f4ca97c8e73e5e4c6a5797513835f35",
+          "moment_sha256": "c8e0e4f99d9806c1c7cc825a9ca8fa80978185677f4efbac573b451d61c11d09",
+          "history_reference": {
+            "entries": 9,
+            "head": "97062e8d0535f52f306f77cce80515709a7840077c0d9c940d801496e7c3cf8a"
+          },
+          "revision": 1
+        }
+      },
+      "post_readback": {
+        "path": "E:\\Seed\\output\\taiji_u2_22_3_4_3_20261111T123154Z\\F2\\step2-recovery.bin",
+        "sha256": "1e1d8afa5180d3e12c7aa57f4700e624311633ea51fcd2fc0db9275caf3c2d43",
+        "bytes": 556047,
+        "readback_ok": true,
+        "cpu_seconds": 0.046875,
+        "fingerprint": {
+          "state_sha256": "28e2c93535d4fb862b6b1b9b1cbb79b93abfdd5dc336f359ae5f8c863d852025",
+          "parameter_sha256": "fb2727d5bffa95fbd69afa4e3f272a50f9cef51941011d15e263d5f5c098fae0",
+          "moment_sha256": "ba1444dbdcd255946b9dea71945cedd43a979dab9e985e3096b0dcad6f0cf437",
+          "history_reference": {
+            "entries": 10,
+            "head": "5b72f43e263d049928bca06d8acbf9dac059ef7e5081adc19d08bfa97a90f059"
+          },
+          "revision": 2
+        }
+      },
+      "failed_checkpoint": null
+    },
+    {
+      "schema": "taiji-u2-s12-v1",
+      "run_id": "20261111T123154Z",
+      "attempt_id": "fault-rejection",
+      "group": "F1",
+      "dtype": "float64",
+      "status": "rejected",
+      "ledger_seq_open": 13,
+      "ledger_seq_close": 14,
+      "parent_checkpoint": "output/taiji_u2_22_3_4_3_20261111T123154Z/F1/step1.bin",
+      "parent_sha256": "30d29f7d8eef785ba651e6e138b34822595ff66a2acb3cd279c1a53acca9bb87",
+      "post_checkpoint": null,
+      "post_sha256": null,
+      "pre_state_sha256": "0bc6ad942d2c1b8bfcf5e90ffd37e3dba9e8ab57f855e0d0c97d21d13f611dae",
+      "pre_parameter_sha256": "c97a2881b02c670c44a0a6cea4157817f2b72a516059454face23b664ae3385b",
+      "pre_moment_sha256": "e14368957114738219bf6b8cf311235cdb0229b73195ef00d4c9b472723a3e9e",
+      "post_state_sha256": "0bc6ad942d2c1b8bfcf5e90ffd37e3dba9e8ab57f855e0d0c97d21d13f611dae",
+      "post_parameter_sha256": "c97a2881b02c670c44a0a6cea4157817f2b72a516059454face23b664ae3385b",
+      "post_moment_sha256": "e14368957114738219bf6b8cf311235cdb0229b73195ef00d4c9b472723a3e9e",
+      "history_reference": {
+        "entries": 9,
+        "head": "53eac82652aadc58fb559a5a35899f009620d9f2d20d6484d1b0c55b8f29e1e3"
+      },
+      "revision": 1,
+      "gradient_sha256": "b483a4ba291c44c6b495f929cc54f7a5839495ee03a91f02ef1b6fac535cd3ed",
+      "run_conditions": {
+        "threads": 1,
+        "interop_threads": 12,
+        "device": "cpu",
+        "dtype": "torch.float64",
+        "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+        "torch": "2.13.0+cpu",
+        "environment": {
+          "OMP_NUM_THREADS": null,
+          "MKL_NUM_THREADS": null,
+          "OPENBLAS_NUM_THREADS": null
+        }
+      },
+      "losses": null,
+      "optimizer_step_calls": 0,
+      "migration": {
+        "status": "rejected",
+        "rebuild": {
+          "entries": 9,
+          "observations": 1,
+          "duplicates": 0,
+          "bytes": 0,
+          "internal": 0,
+          "births": 0,
+          "updates": 1,
+          "cpu_seconds": 0.015625,
+          "history_reference": {
+            "entries": 9,
+            "head": "53eac82652aadc58fb559a5a35899f009620d9f2d20d6484d1b0c55b8f29e1e3"
+          },
+          "eligibility_reset": true
+        },
+        "cpu_seconds": 0.046875
+      },
+      "cpu_seconds": 0.203125,
+      "wall_seconds": 0.2190000000409782,
+      "execution_manifest": "plans/manifests/taiji_u2_22_3_4_3_execution_20261111.json",
+      "manifest_sha256": "309a756c5163456faa0e0403fe9abbddd139eb4acd4073dab256b441db511185",
+      "run_root": "output/taiji_u2_22_3_4_3_20261111T123154Z",
+      "parent_readback": {
+        "path": "E:\\Seed\\output\\taiji_u2_22_3_4_3_20261111T123154Z\\F1\\step1.bin",
+        "sha256": "30d29f7d8eef785ba651e6e138b34822595ff66a2acb3cd279c1a53acca9bb87",
+        "bytes": 790975,
+        "readback_ok": true,
+        "cpu_seconds": 0.046875,
+        "fingerprint": {
+          "state_sha256": "0bc6ad942d2c1b8bfcf5e90ffd37e3dba9e8ab57f855e0d0c97d21d13f611dae",
+          "parameter_sha256": "c97a2881b02c670c44a0a6cea4157817f2b72a516059454face23b664ae3385b",
+          "moment_sha256": "e14368957114738219bf6b8cf311235cdb0229b73195ef00d4c9b472723a3e9e",
+          "history_reference": {
+            "entries": 9,
+            "head": "53eac82652aadc58fb559a5a35899f009620d9f2d20d6484d1b0c55b8f29e1e3"
+          },
+          "revision": 1
+        }
+      },
+      "post_readback": {
+        "path": "E:\\Seed\\output\\taiji_u2_22_3_4_3_20261111T123154Z\\F1\\step1.bin",
+        "sha256": "30d29f7d8eef785ba651e6e138b34822595ff66a2acb3cd279c1a53acca9bb87",
+        "bytes": 790975,
+        "readback_ok": true,
+        "cpu_seconds": 0.046875,
+        "fingerprint": {
+          "state_sha256": "0bc6ad942d2c1b8bfcf5e90ffd37e3dba9e8ab57f855e0d0c97d21d13f611dae",
+          "parameter_sha256": "c97a2881b02c670c44a0a6cea4157817f2b72a516059454face23b664ae3385b",
+          "moment_sha256": "e14368957114738219bf6b8cf311235cdb0229b73195ef00d4c9b472723a3e9e",
+          "history_reference": {
+            "entries": 9,
+            "head": "53eac82652aadc58fb559a5a35899f009620d9f2d20d6484d1b0c55b8f29e1e3"
+          },
+          "revision": 1
+        }
+      },
+      "failed_checkpoint": null
+    },
+    {
+      "schema": "taiji-u2-s12-v1",
+      "run_id": "20261111T123154Z",
+      "attempt_id": "fault-before-commit",
+      "group": "F1",
+      "dtype": "float64",
+      "status": "exception",
+      "ledger_seq_open": 15,
+      "ledger_seq_close": 16,
+      "parent_checkpoint": "output/taiji_u2_22_3_4_3_20261111T123154Z/F1/step1.bin",
+      "parent_sha256": "30d29f7d8eef785ba651e6e138b34822595ff66a2acb3cd279c1a53acca9bb87",
+      "post_checkpoint": null,
+      "post_sha256": null,
+      "pre_state_sha256": "0bc6ad942d2c1b8bfcf5e90ffd37e3dba9e8ab57f855e0d0c97d21d13f611dae",
+      "pre_parameter_sha256": "c97a2881b02c670c44a0a6cea4157817f2b72a516059454face23b664ae3385b",
+      "pre_moment_sha256": "e14368957114738219bf6b8cf311235cdb0229b73195ef00d4c9b472723a3e9e",
+      "post_state_sha256": "0bc6ad942d2c1b8bfcf5e90ffd37e3dba9e8ab57f855e0d0c97d21d13f611dae",
+      "post_parameter_sha256": "c97a2881b02c670c44a0a6cea4157817f2b72a516059454face23b664ae3385b",
+      "post_moment_sha256": "e14368957114738219bf6b8cf311235cdb0229b73195ef00d4c9b472723a3e9e",
+      "history_reference": {
+        "entries": 9,
+        "head": "53eac82652aadc58fb559a5a35899f009620d9f2d20d6484d1b0c55b8f29e1e3"
+      },
+      "revision": 1,
+      "gradient_sha256": "b483a4ba291c44c6b495f929cc54f7a5839495ee03a91f02ef1b6fac535cd3ed",
+      "run_conditions": {
+        "threads": 1,
+        "interop_threads": 12,
+        "device": "cpu",
+        "dtype": "torch.float64",
+        "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+        "torch": "2.13.0+cpu",
+        "environment": {
+          "OMP_NUM_THREADS": null,
+          "MKL_NUM_THREADS": null,
+          "OPENBLAS_NUM_THREADS": null
+        }
+      },
+      "losses": null,
+      "optimizer_step_calls": 0,
+      "migration": {
+        "status": "exception",
+        "error": "injected before_commit"
+      },
+      "cpu_seconds": 0.234375,
+      "wall_seconds": 0.28200000000651926,
+      "execution_manifest": "plans/manifests/taiji_u2_22_3_4_3_execution_20261111.json",
+      "manifest_sha256": "309a756c5163456faa0e0403fe9abbddd139eb4acd4073dab256b441db511185",
+      "run_root": "output/taiji_u2_22_3_4_3_20261111T123154Z",
+      "parent_readback": {
+        "path": "E:\\Seed\\output\\taiji_u2_22_3_4_3_20261111T123154Z\\F1\\step1.bin",
+        "sha256": "30d29f7d8eef785ba651e6e138b34822595ff66a2acb3cd279c1a53acca9bb87",
+        "bytes": 790975,
+        "readback_ok": true,
+        "cpu_seconds": 0.046875,
+        "fingerprint": {
+          "state_sha256": "0bc6ad942d2c1b8bfcf5e90ffd37e3dba9e8ab57f855e0d0c97d21d13f611dae",
+          "parameter_sha256": "c97a2881b02c670c44a0a6cea4157817f2b72a516059454face23b664ae3385b",
+          "moment_sha256": "e14368957114738219bf6b8cf311235cdb0229b73195ef00d4c9b472723a3e9e",
+          "history_reference": {
+            "entries": 9,
+            "head": "53eac82652aadc58fb559a5a35899f009620d9f2d20d6484d1b0c55b8f29e1e3"
+          },
+          "revision": 1
+        }
+      },
+      "post_readback": {
+        "path": "E:\\Seed\\output\\taiji_u2_22_3_4_3_20261111T123154Z\\F1\\step1.bin",
+        "sha256": "30d29f7d8eef785ba651e6e138b34822595ff66a2acb3cd279c1a53acca9bb87",
+        "bytes": 790975,
+        "readback_ok": true,
+        "cpu_seconds": 0.046875,
+        "fingerprint": {
+          "state_sha256": "0bc6ad942d2c1b8bfcf5e90ffd37e3dba9e8ab57f855e0d0c97d21d13f611dae",
+          "parameter_sha256": "c97a2881b02c670c44a0a6cea4157817f2b72a516059454face23b664ae3385b",
+          "moment_sha256": "e14368957114738219bf6b8cf311235cdb0229b73195ef00d4c9b472723a3e9e",
+          "history_reference": {
+            "entries": 9,
+            "head": "53eac82652aadc58fb559a5a35899f009620d9f2d20d6484d1b0c55b8f29e1e3"
+          },
+          "revision": 1
+        }
+      },
+      "failed_checkpoint": null
+    }
+  ],
+  "worker_reports": [
+    "f1-step1",
+    "f1-step2-orig",
+    "f1-step2-recovery",
+    "f2-step1",
+    "f2-step2-orig",
+    "f2-step2-recovery",
+    "fault-rejection",
+    "fault-before-commit"
+  ],
+  "cpu_seconds_including_workers": 70.1875,
+  "wall_seconds": 91.43699999997625,
+  "training_steps": 0,
+  "project_dataset_reads": 0,
+  "confirm_reads": 0,
+  "whole_22_3_passed": false,
+  "run_conditions": {
+    "threads": 1,
+    "interop_threads": 12,
+    "device": "cpu",
+    "dtype": "torch.float64",
+    "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+    "torch": "2.13.0+cpu",
+    "environment": {
+      "OMP_NUM_THREADS": null,
+      "MKL_NUM_THREADS": null,
+      "OPENBLAS_NUM_THREADS": null
+    }
+  }
+}
