@@ -2472,7 +2472,7 @@ Owner 的否决理由（原话要点）：基线可以重生成 ⇒ 红的时候
 - `mypy --follow-imports=silent seed taiji`：**3 → 0**，`Success: no issues found in 236 source files`。
 - `ruff check` 两文件：通过；`black_check_gate.py` 两文件：`black in-process check OK`。
 - `pytest tests/taiji_native -k u2 -q`：**125 passed**，0 failed。
-- 线上：下一笔推送后的快通道 run 才给出最终读数（本条落档时尚未推送）。
+- 线上：推 `eaddc0c35` 后的快通道 run `43003247230` **六项读数全绿、Verdict ✓**（mypy 棘轮 0 errors），即本条把快通道从「只差 mypy」推到全绿。
 
 ### 5. 可单独回退
 
