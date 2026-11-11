@@ -16,6 +16,8 @@ U2同一主体参考图已完成[22.2工程核验](reference/VALIDATION-TAIJI-U2
 
 执行包号与S18–S22长期责任轴独立。R3b等旧编号保留原合同身份。旧包20/21、F线和R系列的“下一步”只解释其历史时点。
 
+[23–28长期路线](reference/PLAN-TAIJI-N_LONG_HORIZON_20261111.md)承接包22收束，展开中文组合、持续知识维护、结构演化、递归发展、物理迁移和长期联合运行。每包按实际父与实价准入，当前唯一队首先完成22.3.4.1。
+
 ## 4. 顺序执行工作卡
 
 [详细开发计划](reference/PLAN-TAIJI-CLOSED_LOOP_DEVELOPMENT_20261110.md)含父身份、数据分区、数值门、预算、风险、触发后的处置与有限出口。[核心规格](reference/SPEC-TAIJI-CLOSED_LOOP_U2_20261110.md)含状态/参数/信用/恢复覆盖合同。

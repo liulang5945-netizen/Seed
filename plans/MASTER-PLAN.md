@@ -46,6 +46,8 @@
 
 首图包含六项目标的状态与操作，训练干预逐卡释放。未达前置门按具名出口结案。执行包22与长期责任轴S22独立。原R3b合同及01–21保留证据身份。
 
+22.8收束后按[长期路线](reference/PLAN-TAIJI-N_LONG_HORIZON_20261111.md)依次评审23中文/组合泛化、24跨会话知识维护、25多类型结构演化、26递归发展机制、27物理迁移、28长跨度联合主体。各包取实际接受父并重新冻结数据、价格与出口。长期路线中的数量/门值为准入草案，当前执行继续沿包22。
+
 ## 3. 单一权威源（每条事实只允许一处正文）
 
 | 事实 | 权威 |
@@ -53,6 +55,7 @@
 | 当前状态与唯一队首 | 本文件，MAINLINE与ROADMAP仅同步短指针 |
 | 当前算法 | [U2规格](reference/SPEC-TAIJI-CLOSED_LOOP_U2_20261110.md) |
 | 当前工作卡、预算、风险与出口 | [执行包22](reference/PLAN-TAIJI-CLOSED_LOOP_DEVELOPMENT_20261110.md) |
+| 23–28长期依赖、算法责任与准入预案 | [N长期路线](reference/PLAN-TAIJI-N_LONG_HORIZON_20261111.md) |
 | 长期使命与CR需求 | [根需求](active/TAIJI_CORE_REQUIREMENTS.md) |
 | 数学/能力历史解释 | [命题账本](reference/INVARIANT-LEDGER_20261103.md)及[能力卡](reference/CAPABILITY-CARD_20261103.md) |
 | 原始数值与审批 | reports原件、03及决策账，按各自冻结身份 |

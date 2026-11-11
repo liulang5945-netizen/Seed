@@ -1,6 +1,6 @@
 # Taiji VISION：下一主线统一架构、内生驱动与开发落地方案
 
-> 文档状态：[组件] — 长期设计储备，不产生当前工单；不发布当前队首。2026-11-10采用关系更新为[U2](SPEC-TAIJI-CLOSED_LOOP_U2_20261110.md)与[执行包22](PLAN-TAIJI-CLOSED_LOOP_DEVELOPMENT_20261110.md)，旧VX和17–22是来源编号。
+> 文档状态：[组件] — 长期设计储备，不产生当前工单；不发布当前队首。现行采用关系见[U2](SPEC-TAIJI-CLOSED_LOOP_U2_20261110.md)、[执行包22](PLAN-TAIJI-CLOSED_LOOP_DEVELOPMENT_20261110.md)及[N长期路线23–28](PLAN-TAIJI-N_LONG_HORIZON_20261111.md#12-vision与旧资产采用关系)，旧VX和17–22是来源编号。
 
 > 2026-11-03采用映射。当前模型为LivingCore/SelectionRouting谱系，本文N177、旧TaskCore与VX编号作为设计来源。已采纳的共同语义/精确证据、持续状态、反馈保持、条件价值、活动与结构成长统一映射到[17–22系统计划](PLAN-NATIVE-COGNITIVE_SYSTEM_DEVELOPMENT_20261103.md)，实际排期见[MAINLINE](../MAINLINE.md)。
 
