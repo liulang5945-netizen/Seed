@@ -85,14 +85,6 @@ jobs:
       - name: Format check with black
         run: black --check .
 
-      # 快通道专属（ci.yml 不重复）：计划文档链到未入库文件这件事，已经两次进 main
-      # 才被 1.5h 全量腿里的 `test_active_plans_have_one_execution_owner_and_resolvable_links`
-      # 抓到。本步在 ~1s 内给出 `file:line`，把"事后抓到"变成"落地即报"。
-      # 只依赖 git + stdlib，不装任何工具 ⇒ 不受 R7 钉版本约束，也不会拖慢 6m 预算。
-      # 与 .pre-commit-config.yaml 的 `doc-evidence-links` 同源同一个脚本。
-      - name: Check plan evidence links
-        run: python scripts/ci/check_doc_links.py
-
       - name: Audit frozen markers against the formatter
         run: python scripts/training/audit_frozen_marker_formatter_conflict.py --no-write
 
@@ -120,3 +112,13 @@ jobs:
           if [ "$errors" -lt "$MYPY_CORE_BASELINE" ]; then
             echo "::notice::核心类型错误已降至 $errors，请把 MYPY_CORE_BASELINE 下调至该值以单向收紧棘轮"
           fi
+
+      # 快通道专属（ci.yml 不重复）：计划文档链到未入库文件这件事，已经两次进 main
+      # 才被 1.5h 全量腿里的 `test_active_plans_have_one_execution_owner_and_resolvable_links`
+      # 抓到。本步在 ~1s 内给出 `file:line`，把"事后抓到"变成"落地即报"。
+      # 只依赖 git + stdlib，不装任何工具 ⇒ 不受 R7 钉版本约束，也不会拖慢 6m 预算。
+      # 与 .pre-commit-config.yaml 的 `doc-evidence-links` 同源同一个脚本。
+      # 放在最后：它第一次真跑（run 42985658922）在 black 之后失败，把后面的
+      # 冻结标记审计与 mypy 棘轮一起 skip 掉了——一条文档红不该遮住两份类型读数。
+      - name: Check plan evidence links
+        run: python scripts/ci/check_doc_links.py
