@@ -7,139 +7,33 @@ calling an external executor. Real execution remains behind a durable intent.
 
 from __future__ import annotations
 
-import copy
 import hashlib
-import io
 import math
 import os
-import struct
 import sys
 import time
 import uuid
 from collections.abc import Callable, Mapping, Sequence
-from dataclasses import fields, is_dataclass
+from dataclasses import asdict
+from functools import wraps
 from pathlib import Path
 from typing import Any, cast
 
 import torch
 
+from .u2_history import (
+    CausalHistory,
+    assert_values_equal,
+    atomic_load,
+    atomic_save,
+    detached_tree,
+    value_digest,
+)
 from .u2_operators import _validate_cursor
 from .u2_subject import U2Packet, U2Record, U2Subject
 
-MAGIC = b"TAIJI-U2-RECOVERY-1\x00"
-ENVELOPE_SCHEMA = "taiji-u2-runtime-envelope-v1"
+ENVELOPE_SCHEMA = "taiji-u2-runtime-envelope-v2"
 EXECUTOR_SCHEMA = "taiji-u2-reference-executor-v1"
-
-
-def detached_tree(value: Any) -> Any:
-    if isinstance(value, torch.Tensor):
-        return value.detach().clone()
-    if is_dataclass(value) and not isinstance(value, type):
-        return type(value)(
-            **{field.name: detached_tree(getattr(value, field.name)) for field in fields(value)}
-        )
-    if isinstance(value, dict):
-        return {key: detached_tree(item) for key, item in value.items()}
-    if isinstance(value, list):
-        return [detached_tree(item) for item in value]
-    if isinstance(value, tuple):
-        return tuple(detached_tree(item) for item in value)
-    return copy.deepcopy(value)
-
-
-def assert_values_equal(left: Any, right: Any, path: str = "state") -> None:
-    """Compare supported values exactly, including signed infinities in log state."""
-    if isinstance(left, torch.Tensor):
-        if (
-            not isinstance(right, torch.Tensor)
-            or left.dtype != right.dtype
-            or left.shape != right.shape
-            or not torch.equal(left.detach().cpu(), right.detach().cpu())
-        ):
-            raise ValueError(f"Recovery value mismatch at {path}")
-    elif is_dataclass(left) and not isinstance(left, type):
-        if type(left) is not type(right):
-            raise ValueError(f"Recovery type mismatch at {path}")
-        for field in fields(left):
-            assert_values_equal(
-                getattr(left, field.name), getattr(right, field.name), f"{path}.{field.name}"
-            )
-    elif isinstance(left, Mapping):
-        if not isinstance(right, Mapping) or set(left) != set(right):
-            raise ValueError(f"Recovery field mismatch at {path}")
-        for key, value in left.items():
-            assert_values_equal(value, right[key], f"{path}.{key}")
-    elif isinstance(left, (list, tuple)):
-        if type(left) is not type(right) or len(left) != len(right):
-            raise ValueError(f"Recovery sequence mismatch at {path}")
-        for index, (a, b) in enumerate(zip(left, right, strict=True)):
-            assert_values_equal(a, b, f"{path}[{index}]")
-    elif left != right:
-        raise ValueError(f"Recovery value mismatch at {path}")
-
-
-def _hash_value(hasher: Any, value: Any) -> None:
-    if isinstance(value, torch.Tensor):
-        tensor = value.detach().cpu().contiguous()
-        hasher.update(b"tensor" + str(tensor.dtype).encode() + repr(tuple(tensor.shape)).encode())
-        hasher.update(tensor.numpy().tobytes())
-    elif is_dataclass(value) and not isinstance(value, type):
-        hasher.update(type(value).__qualname__.encode())
-        for field in fields(value):
-            hasher.update(field.name.encode())
-            _hash_value(hasher, getattr(value, field.name))
-    elif isinstance(value, Mapping):
-        hasher.update(b"mapping")
-        for key in sorted(value):
-            _hash_value(hasher, key)
-            _hash_value(hasher, value[key])
-    elif isinstance(value, (tuple, list)):
-        hasher.update(type(value).__name__.encode() + str(len(value)).encode())
-        for item in value:
-            _hash_value(hasher, item)
-    else:
-        hasher.update(type(value).__name__.encode() + repr(value).encode("utf-8"))
-
-
-def value_digest(value: Any) -> str:
-    hasher = hashlib.sha256()
-    _hash_value(hasher, value)
-    return hasher.hexdigest()
-
-
-def atomic_save(payload: Any, destination: str | Path) -> Path:
-    """Write a trusted local payload with length/SHA framing and atomic replace."""
-    path = Path(destination)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    buffer = io.BytesIO()
-    torch.save(payload, buffer)
-    data = buffer.getvalue()
-    temporary = path.with_name(f".{path.name}.{uuid.uuid4().hex}.writing")
-    try:
-        with temporary.open("xb") as stream:
-            stream.write(MAGIC)
-            stream.write(struct.pack(">Q", len(data)))
-            stream.write(hashlib.sha256(data).digest())
-            stream.write(data)
-            stream.flush()
-            os.fsync(stream.fileno())
-        temporary.replace(path)
-    finally:
-        temporary.unlink(missing_ok=True)
-    return path
-
-
-def atomic_load(source: str | Path) -> Any:
-    """Verify framing before unpickling an artifact generated by this application."""
-    raw = Path(source).read_bytes()
-    prefix = len(MAGIC) + 8 + 32
-    if len(raw) < prefix or raw[: len(MAGIC)] != MAGIC:
-        raise ValueError("Invalid recovery file header")
-    size = struct.unpack(">Q", raw[len(MAGIC) : len(MAGIC) + 8])[0]
-    data = raw[prefix:]
-    if len(data) != size or hashlib.sha256(data).digest() != raw[len(MAGIC) + 8 : prefix]:
-        raise ValueError("Recovery file length or checksum mismatch")
-    return torch.load(io.BytesIO(data), map_location="cpu", weights_only=False)
 
 
 def run_conditions(model: U2Subject) -> dict[str, Any]:
@@ -159,7 +53,7 @@ def run_conditions(model: U2Subject) -> dict[str, Any]:
 
 def _source_pins() -> dict[str, str]:
     directory = Path(__file__).parent
-    names = ("u2_recovery.py", "u2_subject.py", "u2_operators.py", "utf8_state.py")
+    names = ("u2_recovery.py", "u2_history.py", "u2_subject.py", "u2_operators.py", "utf8_state.py")
     return {
         name: hashlib.sha256(
             (directory / name).read_text(encoding="utf-8-sig").encode()
@@ -439,6 +333,26 @@ class ReferenceExecutor:
                 lock.unlink(missing_ok=True)
 
 
+def _history_atomic(method: Callable[..., Any]) -> Callable[..., Any]:
+    """Roll back local operations if recording their raw history fails."""
+
+    @wraps(method)
+    def apply(runtime: U2Runtime, *args: Any, **kwargs: Any) -> Any:
+        before = runtime.__dict__.copy()
+        runtime._operations = detached_tree(runtime._operations)
+        runtime.data_cursor = dict(runtime.data_cursor)
+        runtime.execution = detached_tree(runtime.execution)
+        runtime.audit = list(runtime.audit)
+        try:
+            return method(runtime, *args, **kwargs)
+        except BaseException:
+            runtime.__dict__.clear()
+            runtime.__dict__.update(before)
+            raise
+
+    return apply
+
+
 class U2Runtime:
     """Single-writer subject operations with an explicit finite learning window."""
 
@@ -483,6 +397,19 @@ class U2Runtime:
             "data_cursor": detached_tree(self.data_cursor),
             "execution": detached_tree(self.execution),
         }
+        self.history = CausalHistory(
+            {
+                "kind": "genesis" if state is None else "values",
+                "subject_id": self.state["subject_id"],
+                "config": asdict(model.c),
+                "parameter_revision": self._revision,
+                "parameter_digest": self._parameter_digest,
+                "source_pins": self._sources,
+                "anchor_state": None if state is None else self.state,
+            }
+        )
+        self._history_segment = 0
+        self._history_anchor = self.history.reference()
         self.host_clock: dict[str, Any] = {
             "epoch": uuid.uuid4().hex,
             "origin": time.monotonic() - float(self.state["process_time"]),
@@ -500,27 +427,41 @@ class U2Runtime:
         if len(self._operations) >= self.max_operations and not coalesced:
             raise ValueError("learning_window_budget_stop")
 
-    def _record(self, kind: str, arguments: dict[str, Any], expected: Any = None) -> None:
-        self._operations.append(
-            {
-                "kind": kind,
-                "arguments": detached_tree(arguments),
-                "expected": detached_tree(expected),
-            }
-        )
+    def _history_payload(self, kind: str, arguments: dict[str, Any], expected: Any = None) -> Any:
+        return {
+            "operation": {"kind": kind, "arguments": arguments, "expected": expected},
+            "parameter_revision": self._revision,
+            "parameter_digest": self._parameter_digest,
+            "segment": self._history_segment,
+        }
 
+    def _append_history(self, kind: str, arguments: dict[str, Any], expected: Any = None) -> None:
+        if not self._shadow:
+            self.history = self.history.append(self._history_payload(kind, arguments, expected))
+
+    def _record(
+        self, kind: str, arguments: dict[str, Any], expected: Any = None, *, archive: bool = True
+    ) -> None:
+        operation = detached_tree({"kind": kind, "arguments": arguments, "expected": expected})
+        if archive:
+            self._append_history(kind, arguments, expected)
+        self._operations.append(operation)
+
+    @_history_atomic
     def set_goal(self, raw: str | bytes, version: int | None = None) -> dict[str, Any]:
         self._check_window()
         self.state = self.model.set_goal(self.state, raw, version)
         self._record("goal", {"raw": raw, "version": version})
         return self.state
 
+    @_history_atomic
     def set_records(self, records: Sequence[U2Record]) -> dict[str, Any]:
         self._check_window()
         self.state = self.model.set_records(self.state, records)
         self._record("records", {"records": tuple(records)})
         return self.state
 
+    @_history_atomic
     def choose(self, legal_mask: torch.Tensor | None = None) -> dict[str, Any]:
         self._check_window()
         self.state, decision = self.model.choose_operation(self.state, legal_mask)
@@ -528,6 +469,7 @@ class U2Runtime:
         self._record("choose", {"legal_mask": legal_mask}, decision)
         return cast(dict[str, Any], decision)
 
+    @_history_atomic
     def issue(self, decision: dict[str, Any] | None = None, dt: float = 0.05) -> str:
         self._check_window()
         chosen = self.last_decision if decision is None else decision
@@ -564,6 +506,7 @@ class U2Runtime:
             return {"status": "awaiting_execution_status", "action_id": identity}
         # An acknowledgment must fit before any irreversible executor effect.
         self._check_window()
+        self.history.append(self._history_payload("ack", {"identity": identity}))
         if checkpoint is None:
             raise ValueError("A durable checkpoint is required before execution")
         self.save(checkpoint)
@@ -578,6 +521,7 @@ class U2Runtime:
         self.save(checkpoint)
         return result
 
+    @_history_atomic
     def acknowledge_pending(self) -> dict[str, Any]:
         pending = self.state["pending"]
         if pending is None:
@@ -613,6 +557,7 @@ class U2Runtime:
                 row["status"] = "executed"
         self.state = {**self.state, "journal": rows}
 
+    @_history_atomic
     def set_process_time(self, value: float) -> None:
         self._check_window()
         if not math.isfinite(value) or value < self.state["process_time"]:
@@ -626,6 +571,7 @@ class U2Runtime:
             max(float(self.state["process_time"]), current - float(self.host_clock["origin"]))
         )
 
+    @_history_atomic
     def receive(self, packet: U2Packet) -> dict[str, Any]:
         self._check_window()
         pending = self.state["pending"]
@@ -641,6 +587,7 @@ class U2Runtime:
         self._record("receive", {"packet": packet})
         return cast(dict[str, Any], result)
 
+    @_history_atomic
     def begin_utterance(self) -> dict[str, Any]:
         self._check_window()
         self.state = self.model.begin_utterance(self.state)
@@ -654,6 +601,7 @@ class U2Runtime:
             self.model.output(self.state, goal, self.state["prediction_action"]),
         )
 
+    @_history_atomic
     def accept_byte(self, symbol: int, output: Any = None) -> dict[str, Any]:
         self._check_window(coalesce_emit=True)
         if not self.state["utterance_active"]:
@@ -664,9 +612,11 @@ class U2Runtime:
         if self._operations and self._operations[-1]["kind"] == "emit":
             self._operations[-1]["arguments"]["symbols"].append(int(symbol))
         else:
-            self._record("emit", {"symbols": [int(symbol)]})
+            self._record("emit", {"symbols": [int(symbol)]}, archive=False)
+        self._append_history("emit", {"symbols": [int(symbol)]})
         return self.state
 
+    @_history_atomic
     def internal(self, decision: dict[str, Any] | None = None) -> dict[str, Any]:
         self._check_window()
         chosen = self.last_decision if decision is None else decision
@@ -678,6 +628,7 @@ class U2Runtime:
         self._record("internal", {})
         return self.state
 
+    @_history_atomic
     def begin_new_window(self) -> None:
         if (
             self.state["pending"] is not None
@@ -687,6 +638,9 @@ class U2Runtime:
             raise ValueError("A new window requires a committed subject boundary")
         self._check_window_for_save()
         validate_subject_state(self.model, self.state)
+        self._history_segment += 1
+        self._append_history("window", {"reason": "truncate"})
+        self._history_anchor = self.history.reference()
         self.state = detached_tree(self.state)
         self._anchor = {"kind": "values", "state": detached_tree(self.state)}
         self._anchor_runtime = {
@@ -697,6 +651,7 @@ class U2Runtime:
         self._revision = self.model.parameter_revision
         self._parameter_digest = value_digest(self.model.state_dict())
 
+    @_history_atomic
     def birth_transaction(
         self,
         credits: torch.Tensor,
@@ -739,6 +694,13 @@ class U2Runtime:
         }
         next_digest = value_digest(model.state_dict())
         self._check_window_for_save()
+        self._history_segment += 1
+        self._append_history(
+            "birth",
+            {"credits": credits, "count": count, "branch": branch, "birth_id": result["birth_id"]},
+            {"result": result, "structure": model.structure(), "parameter_digest": next_digest},
+        )
+        self._history_anchor = self.history.reference()
         # All fallible shadow work precedes the single-writer commit.
         self.model, self.state, self.optimizer = model, next_state, optimizer
         self._anchor, self._anchor_runtime = next_anchor, next_anchor_runtime
@@ -759,6 +721,7 @@ class U2Runtime:
             "source_pins": dict(self._sources),
             "subject_bundle": self.model.export_bundle(self.state, optimizer_state),
             "optimizer_layout": _optimizer_layout(self.model, self.optimizer),
+            "history": self.history.export(),
             "window": {
                 "anchor": detached_tree(self._anchor),
                 "anchor_runtime": detached_tree(self._anchor_runtime),
@@ -766,6 +729,8 @@ class U2Runtime:
                 "parameter_digest": self._parameter_digest,
                 "parameter_revision": self._revision,
                 "max_operations": self.max_operations,
+                "history_anchor": detached_tree(self._history_anchor),
+                "history_segment": self._history_segment,
             },
             "runtime": {
                 "last_decision": detached_tree(self.last_decision),
@@ -788,6 +753,7 @@ class U2Runtime:
             raise ValueError("Frozen window parameters changed without a declared boundary")
         if len(self._operations) > self.max_operations:
             raise ValueError("Learning window exceeds its declared operation budget")
+        assert_values_equal(self.history.operations_since(self._history_anchor), self._operations)
 
     def save(self, path: str | Path) -> Path:
         return atomic_save(self.to_envelope(), path)
@@ -818,6 +784,7 @@ class U2Runtime:
             "source_pins",
             "subject_bundle",
             "optimizer_layout",
+            "history",
             "window",
             "runtime",
             "executor_snapshot",
@@ -842,8 +809,32 @@ class U2Runtime:
             "parameter_digest",
             "parameter_revision",
             "max_operations",
+            "history_anchor",
+            "history_segment",
         }:
             raise ValueError("Incomplete causal learning window")
+        history = CausalHistory.restore(envelope["history"])
+        assert_values_equal(
+            history.operations_since(window["history_anchor"]), window["operations"]
+        )
+        root = history.root
+        if root["subject_id"] != saved_state["subject_id"] or root["source_pins"] != _source_pins():
+            raise ValueError("Raw history belongs to another subject or source")
+        expected_config = asdict(model.c)
+        if (
+            set(root["config"]) != set(expected_config)
+            or any(
+                value != expected_config[name]
+                for name, value in root["config"].items()
+                if name != "units"
+            )
+            or not 1 <= root["config"]["units"] <= model.c.units
+        ):
+            raise ValueError("Raw history root configuration mismatch")
+        entries = envelope["history"]["entries"]
+        segment = entries[-1]["payload"]["segment"] if entries else 0
+        if window["history_segment"] != segment:
+            raise ValueError("Raw history window segment mismatch")
         if (
             value_digest(model.state_dict()) != window["parameter_digest"]
             or model.parameter_revision != window["parameter_revision"]
@@ -906,6 +897,9 @@ class U2Runtime:
         result.audit = detached_tree(envelope["runtime"]["audit"])
         result._operations = detached_tree(window["operations"])
         result._anchor = detached_tree(anchor)
+        result.history = history
+        result._history_anchor = detached_tree(window["history_anchor"])
+        result._history_segment = segment
         validate_subject_state(result.model, result.state)
         result.host_clock = {
             "epoch": uuid.uuid4().hex,

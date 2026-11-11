@@ -165,6 +165,8 @@ S01–S11现已按[跨进程回执](VALIDATION-TAIJI-U2_22_3_CROSS_PROCESS_20261
 
 ##### 22.3.4.1 原始因果链与准入边界
 
+本子卡已按[原始链回执](VALIDATION-TAIJI-U2_22_3_HISTORY_20261111.md)完成。runtime envelope升级v2，64项检查及float32/64独立进程接续通过，191参数比较最大差0，0optimizerattempt。旧v1输入按历史源码恢复，当前链可完整追溯的资格与值导入的partial资格分别登记。下列设计责任已在该范围落实。
+
 22.3.2的有限BPTT窗口在边界释放旧操作日志，当前history只保存编码后的快写量，evidence中的原始观测也不足以恢复全部记录变更、自输出和内部顺序。先在`taiji/u2_history.py`实现具版本、顺序号、父摘要、长度与载荷摘要的原始事件链，按窗口分段持久保存。有限学习窗锚点引用该链的prefix位置，日志保留与梯度截断独立声明。
 
 原始条目覆盖合法观测、实际动作与action_id、goal/记录/权限变化、实际自输出、内部重放/等待及其来源版本。行为packet保留当时行为概率和RNG，旧数据的观测权限及反馈释放权沿原记录保存。窗口截断或中性出生后保留可重建前缀。缺原始片段时输出coverage_incomplete。
@@ -176,6 +178,8 @@ S01–S11现已按[跨进程回执](VALIDATION-TAIJI-U2_22_3_CROSS_PROCESS_20261
 normal entry points包括goal/records、采样、issue/ack、观测、输出、内部活动、窗口切换与出生。原始链超限或写入失败时，本地状态/RNG/窗口日志须回滚。外部执行前预检ack记录容量，已执行状态仍由现场幂等表判定。shadow重放读取已保存原始链，恢复审计单列。首版完整前缀随包保存，后续分层历史和可支付压缩由包24比较。
 
 ##### 22.3.4.2 固定过去行动的表征重建
+
+当前队首先交付本子卡。已有原始prefix可作为输入，感知同化/行为信用拆分、新参数下H/F/对象/history重建、过去动作固定及保持/成本回调仍待实施。
 
 以`taiji/u2_learning_transaction.py`承载影子慢参数升级事务。复用主体的预测/感知校正/FP1/自输出递推，将receive中的感知同化与行为信用结算整理成共享入口，保持现有receive调用行为。重建从合法genesis及完整原始prefix推导新表征，显式注入过去实际动作和已发字节。重建路径只计算声明的派生状态，外部执行及历史奖励结算由原事实链约束。
 
@@ -393,7 +397,7 @@ check①裁第一代成熟候选，check②裁由已接受第一代继续产生�
 | 范围 | 计划实现与产物位置 |
 |---|---|
 | 22.3.0/1 | plans/manifests/taiji_u2_22_3_recovery_contract_20261110.json，taiji/u2_subject.py的v2行为信用字段，tests/taiji_native/test_u2_recovery_credit_22_3.py |
-| 22.3.2–5 | taiji/u2_recovery.py，scripts/training/u2_recovery_worker_22_3.py及verify_taiji_u2_recovery_22_3.py，报告统一在reports/ |
+| 22.3.2–5 | taiji/u2_recovery.py、u2_history.py及后继u2_learning_transaction.py；现有verify_taiji_u2_runtime/history/cross_process_22_3.py承担对应核验，更新/S12入口在该子卡冻结，报告统一在reports/ |
 | 22.4 | taiji/u2_task_world.py与u2_task_contract.py，生成/语义/分区/定价验证脚本，recipe/清单在plans/manifests/，原始运行数据走外部数据根 |
 | 22.5 | taiji/u2_continual_learning.py及有界学习runner，按A父/B子身份生成报告和bundle清单 |
 | 22.6 | 同一U2的policy/development接口，真实活动执行/回执runner与四策略对照 |
@@ -507,3 +511,9 @@ U1及11-08勘误保留其历史数学内容并加当前失效指针。U2 §6替�
 [独立进程回执](VALIDATION-TAIJI-U2_22_3_CROSS_PROCESS_20261111.md)已完成S01–S11的26组float32/64接续，最大梯度差0，两次错线程负对照检出，0optimizerattempt。S12尚未产生，22.3总体未通过。
 
 继续源码审查确认跨窗原始链尚不完整，慢参数升级后的重建无法只靠现有值锚点和编码history实现。22.3.4现先交付原始因果链、共享同化入口和影子重建，再消费原定八次工程attempt。该修订直接承接持续可塑与主体连续性的责任，模型能力仍由22.4之后的有效任务验收。
+
+## 12. 长期路线先提交与22.3.4.1交付
+
+按owner要求先以780001473提交[23–28长期路线](PLAN-TAIJI-N_LONG_HORIZON_20261111.md)，随后实现[原始因果链](VALIDATION-TAIJI-U2_22_3_HISTORY_20261111.md)。正式64检查及两种精度独立进程接续通过，CPU32.46875/wall40.703，0optimizerattempt。根来源、完整/部分prefix、窗口截断、实际输出、两代出生及容量/异常回滚已接到正常入口。
+
+当前推进22.3.4.2的共享同化与新参数重建。S12及最终schema全量恢复待后续合验，六轴任务能力按原范围维持。长期阶段门值及预算为准入草案，包22现有总帽和22.8收束保持原合同身份。

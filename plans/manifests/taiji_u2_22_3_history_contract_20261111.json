@@ -1,0 +1,179 @@
+{
+  "schema": "taiji-u2-22.3.4.1-history-contract-v1",
+  "created_on": "2026-11-11",
+  "plan_revision": "780001473",
+  "parent_implementation_revision": "cc55752d7",
+  "source_hash_semantics": "UTF8 without BOM; universal newline to LF",
+  "source_pins": {
+    "taiji/u2_history.py": "2c81948f0cf2cd36eb9bec62f2952bf46cce40d4539b9553e61845587aa88766",
+    "taiji/u2_recovery.py": "e880327b0e536acf105dafe968d3a1f4b61258160aac8bde84c695523a231aae",
+    "taiji/u2_subject.py": "9c6778674f296012ece6e6ab7729a78e81fc9422f98f5243a6007e4bf59a54d1",
+    "taiji/u2_operators.py": "d09f5784bffaf0a3247006c0d67062f18825ba8dc8a431b7c1d0cc778a249559",
+    "taiji/utf8_state.py": "6ec7e96b2994dfa8eea430b3a08ddb5ff0fd877cf70c8cc288f57bab2efcac09",
+    "tests/taiji_native/test_u2_runtime_recovery_22_3.py": "1c1c7ff563a62043fa212dec5eac2288e5fd1eac36b6ba34d05f06618fe53552",
+    "tests/taiji_native/test_u2_history_22_3.py": "474558821db7c30630e3a7eff427c20f92ca5e3a60c4593290787d882672a4df",
+    "scripts/training/verify_taiji_u2_history_22_3.py": "6a51be3a7d790d20408f2e667a923a68d757d711e442571042a361cf5c33c416",
+    "scripts/training/verify_taiji_u2_runtime_22_3.py": "272e9b728b0cfcc9dfe4647b179ce2f3b2f02679252130700748a5262cd8654b",
+    "scripts/training/verify_taiji_u2_cross_process_22_3.py": "0230d99cab2130a5d8c5d01712fe3b39839b037320bf03c42bde6ae113835b94"
+  },
+  "runtime_schema": "taiji-u2-runtime-envelope-v2",
+  "raw_history_schema": "taiji-u2-raw-history-v1",
+  "history_root": [
+    "kind",
+    "subject_id",
+    "config",
+    "parameter_revision",
+    "parameter_digest",
+    "source_pins",
+    "anchor_state"
+  ],
+  "node_fields": [
+    "sequence",
+    "parent",
+    "payload",
+    "payload_bytes",
+    "payload_digest",
+    "head"
+  ],
+  "payload_fields": [
+    "operation",
+    "parameter_revision",
+    "parameter_digest",
+    "segment"
+  ],
+  "raw_operations": [
+    "goal",
+    "records",
+    "choose",
+    "issue",
+    "ack",
+    "process_time",
+    "receive",
+    "begin_utterance",
+    "emit",
+    "internal",
+    "window",
+    "birth"
+  ],
+  "limits": {
+    "raw_entries": 96,
+    "raw_payload_bytes": 16777216,
+    "gradient_window_operations": 32,
+    "actual_output_data_bytes": 64
+  },
+  "persistence": "full verified chain plus segment/prefix reference embedded in the atomic subject envelope",
+  "raw_vs_credit": "each actual byte is archived, while consecutive bytes may share one gradient-window emit block",
+  "provenance": "genesis roots support complete history; supplied values anchors are partial and require_complete rejects them",
+  "atomicity": "local state, RNG, decisions, execution metadata and window operations roll back if archiving fails; ack archive capacity is checked before external effects",
+  "restore": "verify every node, prefix, subject/source/config binding and normalized window suffix; shadow replay adds no raw facts",
+  "legacy": "runtime envelope v1 lacks complete raw prefix and is rejected explicitly; historical source remains in cc55752d7/f94c35bf3",
+  "conditions": {
+    "threads": 1,
+    "interop_threads": "record actual and require strict equality",
+    "device": "cpu",
+    "precisions": [
+      "float64",
+      "float32"
+    ]
+  },
+  "tolerances": {
+    "float64": {
+      "atol": 1e-10,
+      "rtol": 1e-08
+    },
+    "float32": {
+      "atol": 1e-05,
+      "rtol": 0.0001
+    }
+  },
+  "budget": {
+    "cpu_seconds": 80,
+    "wall_seconds": 160,
+    "optimizer_attempts": 0,
+    "project_dataset_reads": 0,
+    "existing_checkpoints_loaded": 0
+  },
+  "budget_scope": "formal parent checks and both reported worker CPU; developmental pytest wall is separate",
+  "expected_checks": {
+    "runtime": [
+      "test_atomic_file_rejects_corruption_before_deserializing[truncate]",
+      "test_atomic_file_rejects_corruption_before_deserializing[payload]",
+      "test_atomic_file_rejects_corruption_before_deserializing[header]",
+      "test_bad_envelope_never_falls_back_to_a_values_only_success[schema]",
+      "test_bad_envelope_never_falls_back_to_a_values_only_success[source]",
+      "test_bad_envelope_never_falls_back_to_a_values_only_success[window]",
+      "test_bad_envelope_never_falls_back_to_a_values_only_success[operations]",
+      "test_bad_envelope_never_falls_back_to_a_values_only_success[parameters]",
+      "test_execute_before_ack_recovery_does_not_repeat_external_effect",
+      "test_failed_atomic_replace_keeps_previous_checkpoint_and_cleans_staging",
+      "test_failed_shadow_birth_keeps_parent_and_optimizer_untouched",
+      "test_full_window_rejects_execution_before_any_external_effect",
+      "test_goal_switch_unknown_outcome_and_duplicate_packet_survive_window_replay",
+      "test_internal_replay_and_wait_preserve_physical_clock_on_restore",
+      "test_invalid_value_anchor_cannot_certify_itself_by_roundtrip[H]",
+      "test_invalid_value_anchor_cannot_certify_itself_by_roundtrip[F]",
+      "test_invalid_value_anchor_cannot_certify_itself_by_roundtrip[logw]",
+      "test_invalid_value_anchor_cannot_certify_itself_by_roundtrip[records]",
+      "test_invalid_value_anchor_cannot_certify_itself_by_roundtrip[eligibility]",
+      "test_invalid_value_anchor_cannot_certify_itself_by_roundtrip[resources]",
+      "test_mid_character_and_actual_self_output_replay_without_world_fact_write",
+      "test_parameter_change_cannot_be_blessed_as_a_new_boundary[window]",
+      "test_parameter_change_cannot_be_blessed_as_a_new_boundary[birth]",
+      "test_pending_values_cannot_become_an_undeclared_truncated_anchor",
+      "test_repeated_acknowledgment_is_idempotent_at_window_limit",
+      "test_restored_rng_and_next_decision_reproduce_recorded_actor",
+      "test_source_change_cannot_be_relabelled_at_save_or_boundary",
+      "test_two_shadow_births_preserve_moments_lineage_and_neutral_outputs",
+      "test_uncertain_executor_status_waits_without_reissuing",
+      "test_unregistered_runtime_nested_fields_are_rejected[runtime]",
+      "test_unregistered_runtime_nested_fields_are_rejected[anchor_runtime]",
+      "test_unregistered_runtime_nested_fields_are_rejected[anchor]",
+      "test_unregistered_runtime_nested_fields_are_rejected[operation]",
+      "test_values_only_restore_is_a_discriminating_theta_credit_negative_control",
+      "test_window_overflow_is_rejected_before_mutating_rng",
+      "test_window_replay_restores_pending_motion_native_fast_and_critic_credit"
+    ],
+    "history": [
+      "test_each_actual_byte_is_archived_and_window_emit_is_coalesced",
+      "test_failed_bundle_replace_preserves_previous_complete_raw_prefix",
+      "test_history_and_runtime_binding_are_verified[prefix]",
+      "test_history_and_runtime_binding_are_verified[segment]",
+      "test_history_and_runtime_binding_are_verified[window]",
+      "test_history_and_runtime_binding_are_verified[subject]",
+      "test_history_byte_quota_is_atomic_for_new_content",
+      "test_history_capacity_checked_before_external_execution",
+      "test_history_corruption_is_rejected[order]",
+      "test_history_corruption_is_rejected[missing]",
+      "test_history_corruption_is_rejected[duplicate]",
+      "test_history_corruption_is_rejected[payload]",
+      "test_history_corruption_is_rejected[parent]",
+      "test_history_corruption_is_rejected[size]",
+      "test_history_corruption_is_rejected[head]",
+      "test_history_corruption_is_rejected[extra]",
+      "test_history_keeps_two_births_and_original_prefix",
+      "test_history_quota_preserves_parent_at_boundary[window]",
+      "test_history_quota_preserves_parent_at_boundary[birth]",
+      "test_history_quota_rolls_back_coalesced_utf8_prefix",
+      "test_history_quota_rolls_back_receipt_and_fast_memory",
+      "test_history_quota_rolls_back_sampled_rng_and_decision",
+      "test_history_survives_truncation_save_restore_and_next_window",
+      "test_legacy_runtime_without_raw_prefix_is_explicitly_rejected",
+      "test_raw_history_parameter_revisions_cannot_regress",
+      "test_raw_recording_exception_rolls_back_local_operation",
+      "test_shadow_restore_preserves_history_without_appending_replayed_facts",
+      "test_values_anchor_is_explicitly_partial_for_future_migration"
+    ]
+  },
+  "independent_process_cases": {
+    "float64": "original genesis prefix, first observation, two births, explicit window truncation, next action/outcome and gradients",
+    "float32": "original observation and actual mid-UTF8 prefix, next bytes/action/outcome and gradients"
+  },
+  "remaining": [
+    "22.3.4.2 slow-parameter causal state rebuild",
+    "22.3.4.3 six updates plus two fault attempts",
+    "S12 and whole 22.3 closure"
+  ],
+  "post_update_semantic_rebuild_verified": false,
+  "whole_22_3_passed": false,
+  "task_capability_evaluated": false
+}
