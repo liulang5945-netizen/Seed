@@ -272,7 +272,7 @@ predictive_head | recurrent_core | output_head = {
 |---|---|---|
 | 基线身份清单 | `plans/manifests/taiji_u2_22_4_4_baseline_identity_20261111.json` | `e5c776c4f12e4633bf7366d66ee22e6095efac7fa2147e5c6973653797335b29` |
 | u2 执行图版执行清单 | `plans/manifests/taiji_u2_22_4_1_execution_20261111_v2.json` | `4fc2d0429c9f26687465d76642459c3682eb4a047446b04a0f2e059c46f14965` |
-| u2 `run.json` 草稿（未授权） | `plans/manifests/taiji_u2_22_4_1_u2_run_draft_20261111.json` | `e4a7d3e00579a7a29fa27f45744a481d57c189b9b1e2022e5c51f510b2149d68` |
+| u2 `run.json` 草稿（未授权） | `plans/manifests/taiji_u2_22_4_1_u2_run_draft_20261111.json` | `638cbc2375b079eed35a64dc2a573850bcda234269adc6225ed5ab3349b928c9` |
 | 测量报告 | `reports/taiji_u2_22_4_4_identity_measurement_20261111.json` | `4c77d318771ea9a0b68cb43530eb31bd756f38cd1ab4276c0206b8a4f3d196d2` |
 | 测量脚本 | `scripts/training/baseline_identity_22_4_4.py` | `384b404560f827e0868a8d8f9fbfc27aff5aa885b182cd443ade79972e4145cf` |
 | U2 前端复制源 | `taiji/u2_subject.py` | `aa7a23249ad6fdaff1900000c665d575651debc498e800b8c292839ea4f736a8` |

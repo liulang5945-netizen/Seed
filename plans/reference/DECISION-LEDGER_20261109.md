@@ -3181,3 +3181,38 @@ v2 的 u2 臂行挂着 `baseline_identity_sha256 = e5c776c4…5b29`，而该身�
 6. **未决点**：身份测量报告是否在冻结前重签（其 `outputs.identity_sha256=820646c7…`、`execution_v2_sha256=56017e2f…` 是 limitations 追加前的历史值；现行清单 `e5c776c4…5b29`、v2 `4fc2d042…4965`）；第 8 项是否顺带检查 `threads==1`（建议只记录不判假）。
 
 **下一步**：等 owner 对上述两个未决点裁定并把草案冻结（哈希写入 run 草稿 `references.r05_prereg_sha256`）后，再实现 `check_r05_baseline`；在此之前不动代码、不申请 u2 放行。
+
+---
+
+## D-20261112-23　R05 预注册冻结与 `check_r05_baseline` 接入（按臂分派）
+
+**类型**：预注册冻结＋机制实现（声明＝实现）。**授权来源**：用户 2026-11-12 两条裁定。**范围**：0 训练／0 `optimizer.step`／0 数据读取／未生成 `run.json`／不申请 u2 放行／R01–R12 编号、检查内容与退出码一字未改。
+
+### 1. 冻结
+
+[PREREG-TAIJI-U2_22_4_1_R05_PARENT_IDENTITY_DRAFT_20261112.md](PREREG-TAIJI-U2_22_4_1_R05_PARENT_IDENTITY_DRAFT_20261112.md) 由草案转 `status=frozen`（2026-11-12），冻结哈希（规范化 sha256）**`fbad62d42c31de94f1d5de65c1a7ff3a6c15c676d9296c56e265ae23e5809dfd`**，写入 u2 草稿 `references.r05_prereg_sha256`。新增 §0 冻结记录表，记两条裁定原文：①**身份测量报告不重签、只登记**——报告记的是"当时测了什么、结论是什么"，后来给身份清单追加 `limitations` 不改变测量数值；把哈希硬对齐等于宣称"在改过的文件上重测过"，是失真；旧报告**不补** `post_hoc_note`（补字段同样改字节，等于变相重签）；`outputs.identity_sha256=820646c7…6f75`、`execution_v2_sha256=56017e2f…` 只登记 `matches`/`historical`，等值由第 2 项与 R03 承担。②**线程数只记录、不判假**：不检 `threads==1`。§6 改"实施边界（已按此实现）"，§7 改"已裁定的未决点"。
+
+### 2. 实现
+
+1. `scripts/training/u2_update_executor_22_4_1.py`：新增 `check_r05_baseline(run, execution, runtime, *, arm)`（**143 行插入、0 行删除**），10 项对应预注册：父存在且 `status=frozen`／身份哈希绑定 run 与臂／架构唯一（`transformer_sequence`）／规模 21,977 标量 35 张量／参数清单摘要／初始化可复现（`post_init`＝`second_construction`＝重建实测）／构造件模块 sha `384b4045…45cf`／**无训练祖先**（`training_runs=0`、`optimizer_steps=0`、`revision=0`）／测量报告哈希＋`verdict=selected`＋`selected=transformer_sequence`／`selection_path=tie_break`／`tie_break_level=L1`／source pins 逐项一致；历史哈希进 `measurement_historical_hashes`（`matches`/`historical`），另记 `measurement_policy` 与 `threads_policy`。任一判假抛 `ContractError` 退 **5**。
+2. `scripts/training/run_taiji_u2_22_4_1.py`：`execute()` 按臂分派——u1 仍调原 `check_r05`（同一行、同一参数、同一位置），u2 在重建 `runtime` 后 `checks.insert(4, check_r05_baseline(...))`，R05 仍位于 R04 与 R06 之间；`u2_binding_preflight.semantic_gaps` 第 2 条由"R05 仍绑 191 参数父"改为预注册口径的局限原文。自检替换 1 条（`u2_bound_r05_interface_receipt` → `u2_bound_r05_frozen_identity`）并新增 5 条。
+
+### 3. 0 步自检
+
+**61 条**（56→61：替换不增数、新增 5 条）、`verdict=pass`、`failed=0`、`optimizer_step_calls=0`、cpu 8.72／wall 17.63。新增用例：`u2_r05_identity_hash_drift_rejected`（改 run 的身份哈希 → `R05 baseline identity hash does not match the run/arm pin`）、`u2_r05_training_ancestor_rejected`（`training_runs=1` → `R05 baseline parent is not a training-free initialization`）、`u2_r05_module_pin_drift_rejected`（改模块哈希 → `R05 frozen baseline module source changed`）、`u2_r05_measurement_not_selected_rejected`（改 `selection.selected` → 退 5）、`u2_r05_threads_recorded_not_judged`（`threads=4` 仍 pass，读数原样记录）。
+
+**首跑曾 2 条 fail（已修）**：`check_r05_baseline` 用 `canonical_sha256(inventory(model))` 比对清单摘要，而 `inventory()` 按注册顺序返回、身份清单按 `param_inventory_rule`（sorted by name）计算，导致 4 条用例都以 `inventory digest is not reproducible` 被拒绝（其中 2 条本应通过）。改为 `canonical_sha256(sorted(inventory(model)))` 后，2 条正向全过，4 条漂移各自命中预期检查项。
+
+### 4. u1 回归
+
+- `u2_update_executor_22_4_1.py` 相对 HEAD **143 插入、0 删除** → `check_r05` 与 u1 相关代码一字未改；`u2_update_support_22_4_1.py`、`verify_taiji_u2_s12_22_4_1.py` 本轮未改。
+- u1 五个产物在 `git status` 中无变更，实测 sha256：`attempts_..._20261111T140217Z.ndjson` `bf0c9a0a…497f`、`attempts_..._20261111T142919Z.ndjson` `c6e5d57c…f1c4`、`s12_..._T140217Z` `b80ec1d7…3db5`、`s12_..._T142919Z` `d7a9ac83…c047`、`s12_..._T142919Z_worker` `bcfb08ad…c7b6`。
+- `slice_digest` 所在支持模块未改、数据未改，故仍为 `9a06eb84…da29`（本轮未重算它，依据是代码与数据均未触碰）。
+
+### 5. 覆盖与不一致
+
+覆盖台账 64→**69 行**（新增 #65–#69），未覆盖 **18**、不可达 2 不变（新五行均覆盖）。四条"声明-实现不一致"：①一步执行 → 已消（上轮）；②R05 口径 → **本轮已消**；③actor/critic 结构零 → 仍在（已如实声明）；④摘要线程依赖 → 仍在（只登记）。即**消 2 条、剩 2 条**。
+
+### 6. 下一步
+
+唯一建议：**对 u2 的真实一步做一次放行前的离线端到端复算清单校核**（覆盖台账 #64 是唯一"分段全绿但端到端未入自检"的缺口），把离线探针的读数固化成可复核证据后再申请 u2 放行；在此之前不申请放行。

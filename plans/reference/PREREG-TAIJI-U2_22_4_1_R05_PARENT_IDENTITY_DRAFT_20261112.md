@@ -1,8 +1,17 @@
-# 预注册草案：u2 的 R05 父身份口径（22.4.1）
+# 预注册：u2 的 R05 父身份口径（22.4.1）
 
-**状态**：`draft_unfrozen`——**未冻结、未获 owner 批准、未改代码**。本文件只定义“u2 的父是谁、R05 要检什么”，不改变 12 条退出码契约的编号、文本与退码，也不触碰 `check_r05`。
-**关联**：[D-20261111-21](DECISION-LEDGER_20261109.md)（u2 一步执行路径接入；R05 口径缺口登记）、[PREREG-TAIJI-U2_22_4_4_BASELINE_IDENTITY_20261111.md](PREREG-TAIJI-U2_22_4_4_BASELINE_IDENTITY_20261111.md)（执行图身份）。
-**冻结条件**：owner 书面批准 + 本文件规范化 sha256 写入 u2 `run.json` 的 `references`；在此之前任何实现都不得启用。
+**状态**：`frozen`（2026-11-12 冻结；owner 已裁定两个未决点）。本文件定义“u2 的父是谁、R05 要检什么”，不改变 12 条退出码契约的编号、文本与退码，也不触碰 `check_r05`。
+**冻结哈希**：本文件的规范化 sha256 写入 u2 `run.json` 草稿 `references.r05_prereg_sha256`（自引用无法写入文内）。
+**关联**：[D-20261111-21](DECISION-LEDGER_20261109.md)（u2 一步执行路径接入；R05 口径缺口登记）、[D-20261112-22](DECISION-LEDGER_20261109.md)（本草案）、[D-20261112-23](DECISION-LEDGER_20261109.md)（冻结与实现）、[PREREG-TAIJI-U2_22_4_4_BASELINE_IDENTITY_20261111.md](PREREG-TAIJI-U2_22_4_4_BASELINE_IDENTITY_20261111.md)（执行图身份）。
+
+## 0. 冻结记录（owner 裁定）
+
+| 未决点 | 裁定 | 理由与实现约束 |
+| --- | --- | --- |
+| 身份测量报告是否重签 | **不重签，只登记** | 报告记录的是“当时测了什么、结论是什么”；后来给身份清单追加 `limitations` 不改变测量数值。把哈希硬对齐等于宣称“在改过的文件上重测过”，是失真。历史差异按第 10 项只登记；**不给旧报告补 `post_hoc_note` 之类字段**——那同样会改它的字节，等于变相重签。 |
+| 第 8 项是否顺带检 `threads==1` | **只记录、不判假** | 线程环境差异不等于“父不对”；`conditions.threads` 原样写入 R05 返回值与 S12，供审计。 |
+
+**为什么选择不重签（原文）**：测量报告的职责是留下“测量当时”的证据；身份清单后来只追加了 `limitations` 与重签哈希，测量数值未变。重签会让报告哈希与 run 草稿的 `measurement_report_sha256` 一起变，却无法增加任何新信息，反而抹掉了“报告早于 limitations”这一事实。历史哈希由第 10 项以 `matches`／`historical` 标注登记，真假判断由第 2 项（身份清单哈希）与 R03（执行 manifest 哈希）独立承担。
 
 ---
 
@@ -75,7 +84,7 @@ u1 的父**原样保留**：`plans/manifests/taiji_u2_22_3_accepted_parent_20261
 
 ---
 
-## 6. 冻结后的实施边界（本次不做）
+## 6. 实施边界（已按此实现，见 D-20261112-23）
 
 1. 新增 `check_r05_baseline`（上述 10 项），复用 `baseline_identity` 重建，不复制 191 参数逻辑。
 2. `execute()` 增加 R05 的按臂分派；u1 分支调用原 `check_r05` 不变。
@@ -85,7 +94,7 @@ u1 的父**原样保留**：`plans/manifests/taiji_u2_22_3_accepted_parent_20261
 
 ---
 
-## 7. 未决点（冻结前须 owner 裁定）
+## 7. 已裁定的未决点（原草案遗留）
 
-1. 身份测量报告是否需要在冻结前重签一次，使其 `outputs.identity_sha256/execution_v2_sha256` 追上现行值？重签会把 `measurement_report_sha256` 从 `4c77d318…` 改掉，并连锁改 run 草稿哈希；不重签则按第 10 项“只登记”。
-2. 第 8 项是否也要检查 `conditions.threads==1`（当前清单记录 1；u2 的 `run_conditions` 已单独记录线程环境）。建议只记录、不判假，避免把“线程数不同”误判成“父不对”。
+1. **身份测量报告不重签**：其 `outputs.identity_sha256=820646c7…`、`execution_v2_sha256=56017e2f…` 是 `limitations` 追加前的历史值（现行清单 `e5c776c4…5b29`、v2 `4fc2d042…4965`）；按第 10 项只登记、不复核，且不改旧报告的字节。
+2. **线程数只记录、不判假**：`conditions.threads` 写入 R05 返回值与 S12，不作为判假条件。

@@ -29,10 +29,22 @@
     "baseline_identity_module_sha256": "384b404560f827e0868a8d8f9fbfc27aff5aa885b182cd443ade79972e4145cf",
     "measurement_report": "reports/taiji_u2_22_4_4_identity_measurement_20261111.json",
     "measurement_report_sha256": "4c77d318771ea9a0b68cb43530eb31bd756f38cd1ab4276c0206b8a4f3d196d2",
+    "r05_prereg": "plans/reference/PREREG-TAIJI-U2_22_4_1_R05_PARENT_IDENTITY_DRAFT_20261112.md",
+    "r05_prereg_sha256": "fbad62d42c31de94f1d5de65c1a7ff3a6c15c676d9296c56e265ae23e5809dfd",
     "hash_semantics": "UTF8 without BOM; universal newline to LF",
     "accepted_parent": "plans/manifests/taiji_u2_22_3_accepted_parent_20261111.json",
     "interface_receipt": "reports/taiji_u2_metadata_groups_22_4_20261111.json",
     "baseline_identity_semantics": "本臂执行图"
+  },
+  "r05_parent_identity": {
+    "object": "本臂执行图身份（冻结初始化，不是 22.3 的训练接受父）",
+    "identity": "plans/manifests/taiji_u2_22_4_4_baseline_identity_20261111.json",
+    "prereg": "plans/reference/PREREG-TAIJI-U2_22_4_1_R05_PARENT_IDENTITY_DRAFT_20261112.md",
+    "check_items": 10,
+    "fail_exit": 5,
+    "u1_unchanged": "check_r05 与 u1 调用顺序逐字不变",
+    "measurement_report_policy": "不重签；历史哈希只登记、不复核（等值由第 2 项与 R03 承担）",
+    "threads_policy": "threads 只记录、不判假"
   },
   "identity_slots": {
     "predictive_head": {
@@ -80,7 +92,8 @@
     "已清（D-20261111-18）：执行器 UPDATE_ID/ARM 不再硬编码，改为从 run.json 的 update_id 读取；R01/R02 的字面量同步改为按 run.json 取值，判据编号、检查内容与退出码未变。",
     "已清（D-20261111-20）：u2 的执行图改为身份清单冻结的 TransformerSequenceBaseline（21,977/35），三槽由该图回填，119 个 U2 参数名已全部撤下。",
     "已清（D-20261111-20）：u2 的 F2 口径已落地——shadow_terms 按臂取片段，verbatim 项按 byte_head 逐字教师强制（目标“红盒在左边。”，18 字节，train_label），不再乘在零张量上；actor/critic 在该图上不存在，已声明为结构零。",
-    "已清（D-20261111-21）：u2 的一步执行路径已接入——perform_baseline 只用该图 35 项活性参数走 Adam 单步，产出 35 项活性回执（change/margin/barely_live），post.bin 写出后立即读回五项，并落 s12_payload；execute() 在 u2 上走该路径，R09/R11 改用同口径基线实现（判据编号、检查内容与退出码未变）。0 步自检 56 条全过（step=0）；离线段实测 35/35 参数更新、位移中位数 1.000e-3（与 u1 同 lr）、worker 基线分支 verdict=pass。真实 attempt 仍待 owner 放行。",
+    "已清（D-20261111-21）：u2 的一步执行路径已接入——perform_baseline 只用该图 35 项活性参数走 Adam 单步，产出 35 项活性回执（change/margin/barely_live），post.bin 写出后立即读回五项，并落 s12_payload；execute() 在 u2 上走该路径，R09/R11 改用同口径基线实现（判据编号、检查内容与退出码未变）。0 步自检 step=0。",
+    "已清（D-20261112-23）：R05 的 u2 口径已按冻结预注册（fbad62d4…9dfd）落地——新增 check_r05_baseline 并接入按臂分派，检查对象换成本臂冻结执行图身份（21,977/35，training_runs=0、optimizer_steps=0），检查项 10 项、任一失败退 5；u1 的 check_r05 与调用顺序逐字不变，u1 五个产物哈希未变。0 步自检 61 条全过（step=0）。身份测量报告不重签，历史哈希只登记。",
     "未清（owner 侧）：owner 放行时须给出 run_id 与含 u2-strong-baseline 的 owner_approval_ref，并把 authorized 改为 true。"
   ],
   "data_scope": {

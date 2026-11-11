@@ -29,6 +29,7 @@ from scripts.training.u2_update_executor_22_4_1 import (
     check_r03,
     check_r04,
     check_r05,
+    check_r05_baseline,
     check_r06,
     check_r07,
     check_r08,
@@ -58,6 +59,7 @@ from scripts.training.u2_update_support_22_4_1 import (
     baseline_fingerprint,
     baseline_outputs,
     fingerprint,
+    normalized_sha256,
     prepare_parent,
     readback_baseline,
     recipe_digest,
@@ -383,15 +385,19 @@ def execute(root: Path) -> dict[str, Any]:
     checks.append(check_r04(run))
     execution, _ = execution_manifest(run)
     admission, _ = admission_manifest(run)
-    evidence = fork_evidence(torch.float32)
-    checks.append(check_r05(run, execution, evidence["base_digest"], evidence))
+    if run["update_id"] == DEFAULT_ARM:
+        evidence = fork_evidence(torch.float32)
+        checks.append(check_r05(run, execution, evidence["base_digest"], evidence))
     ledger_path = ROOT / run["paths"]["ledger"]
     consumed = 1 if ledger_path.exists() else 0
     checks.append(check_r06(run, admission, consumed))
 
     runtime = prepare_parent(execution, root, arm=run["update_id"])
-    checks.append(check_r08(execution, runtime.model, runtime.optimizer, arm=run["update_id"]))
     baseline = isinstance(runtime, BaselineRuntime)
+    if baseline:
+        # u2 的父是冻结执行图身份，R05 需要重建后的 runtime；判据编号与退码不变。
+        checks.insert(4, check_r05_baseline(run, execution, runtime, arm=run["update_id"]))
+    checks.append(check_r08(execution, runtime.model, runtime.optimizer, arm=run["update_id"]))
 
     recipe_sha = recipe_digest(execution)
     slice_sha = slice_digest(execution, runtime.model, arm=run["update_id"])
@@ -520,9 +526,11 @@ def execute(root: Path) -> dict[str, Any]:
     if baseline:
         summary["execution_graph"] = dict(runtime.graph)
         summary["known_gaps"] = [
-            "R05 仍按 22.3 的 U2 接受父（191 参数）核对接口回执，与本臂执行图 21,977/35 不同；"
-            "12 条判据未改，属需单独预注册的口径缺口。",
+            "u2 的父是冻结初始化（training_runs=0、optimizer_steps=0），R05 按"
+            "预注册 PREREG-TAIJI-U2_22_4_1_R05_PARENT_IDENTITY 检查执行图身份；"
+            "它不签“从已训练状态继续”，不得引用为续训证据。",
             "该图没有策略头与主体 state，policy 与 state 迁移是结构空，已如实声明。",
+            "摘要依赖 threads=1 才可复现，跨线程数不同；只登记，须单独预注册才能修。",
         ]
     write_once(root / "run_summary.json", summary)
     return summary
@@ -1220,15 +1228,19 @@ def self_check(directory: Path) -> dict[str, Any]:
             "optimizer_steps_authorized": 1,
         }
         u2_execution, _ = execution_manifest(bound)
-        u2_evidence = fork_evidence(torch.float32)
+        u2_dir = directory / "u2-parent"
+        u2_dir.mkdir(parents=True, exist_ok=True)
+        u2_runtime = prepare_parent(u2_execution, u2_dir, arm="u2-strong-baseline")
         for name, action in (
             ("u2_bound_r01_identity_binds_arm", lambda: check_r01(bound, u2_root)),
             ("u2_bound_r02_authorization_binds_arm", lambda: check_r02(bound)),
             ("u2_bound_r03_execution_manifest_sha", lambda: check_r03(bound)),
             ("u2_bound_r04_admission_and_identity_sha", lambda: check_r04(bound)),
             (
-                "u2_bound_r05_interface_receipt",
-                lambda: check_r05(bound, u2_execution, u2_evidence["base_digest"], u2_evidence),
+                "u2_bound_r05_frozen_identity",
+                lambda: check_r05_baseline(
+                    bound, u2_execution, u2_runtime, arm="u2-strong-baseline"
+                ),
             ),
         ):
             try:
@@ -1252,10 +1264,108 @@ def self_check(directory: Path) -> dict[str, Any]:
                         "detail": json.dumps(detail, ensure_ascii=False)[:160],
                     }
                 )
+
+        # ---- u2 R05：父身份漂移/有训练祖先/未选中/模块 pin 漂移都退 5；threads 只记录 ----
+        def write_variant(payload: dict[str, Any], filename: str) -> Path:
+            path = directory / filename
+            path.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+            return path
+
+        def run_with(**overrides: Any) -> dict[str, Any]:
+            return {**bound, "references": {**bound["references"], **overrides}}
+
+        def execution_with(identity_path: Path) -> dict[str, Any]:
+            variant = json.loads(json.dumps(u2_execution, ensure_ascii=False))
+            row = variant["arms"]["u2-strong-baseline"]
+            row["baseline_identity_ref"] = str(identity_path)
+            row["baseline_identity_sha256"] = normalized_sha256(identity_path)
+            return variant
+
+        identity_payload = load_json(
+            ROOT / u2_execution["arms"]["u2-strong-baseline"]["baseline_identity_ref"]
+        )
+        expect(
+            "u2_r05_identity_hash_drift_rejected",
+            5,
+            lambda: check_r05_baseline(
+                run_with(baseline_identity_sha256="0" * 64),
+                u2_execution,
+                u2_runtime,
+                arm="u2-strong-baseline",
+            ),
+        )
+        ancestor = json.loads(json.dumps(identity_payload, ensure_ascii=False))
+        ancestor["conditions"]["training_runs"] = 1
+        ancestor_path = write_variant(ancestor, "r05-identity-trained.json")
+        expect(
+            "u2_r05_training_ancestor_rejected",
+            5,
+            lambda: check_r05_baseline(
+                run_with(baseline_identity_sha256=normalized_sha256(ancestor_path)),
+                execution_with(ancestor_path),
+                u2_runtime,
+                arm="u2-strong-baseline",
+            ),
+        )
+        module_drift = json.loads(json.dumps(identity_payload, ensure_ascii=False))
+        module_drift["architecture"]["module_sha256"] = "0" * 64
+        module_drift_path = write_variant(module_drift, "r05-identity-module-drift.json")
+        expect(
+            "u2_r05_module_pin_drift_rejected",
+            5,
+            lambda: check_r05_baseline(
+                run_with(baseline_identity_sha256=normalized_sha256(module_drift_path)),
+                execution_with(module_drift_path),
+                u2_runtime,
+                arm="u2-strong-baseline",
+            ),
+        )
+        report_payload = load_json(ROOT / bound["references"]["measurement_report"])
+        report_payload["selection"]["selected"] = "gru_sequence"
+        report_path = write_variant(report_payload, "r05-report-not-selected.json")
+        expect(
+            "u2_r05_measurement_not_selected_rejected",
+            5,
+            lambda: check_r05_baseline(
+                run_with(
+                    measurement_report=str(report_path),
+                    measurement_report_sha256=normalized_sha256(report_path),
+                ),
+                u2_execution,
+                u2_runtime,
+                arm="u2-strong-baseline",
+            ),
+        )
+        threads_variant = json.loads(json.dumps(identity_payload, ensure_ascii=False))
+        threads_variant["conditions"]["threads"] = 4
+        threads_path = write_variant(threads_variant, "r05-identity-threads.json")
+        try:
+            threads_detail = check_r05_baseline(
+                run_with(baseline_identity_sha256=normalized_sha256(threads_path)),
+                execution_with(threads_path),
+                u2_runtime,
+                arm="u2-strong-baseline",
+            )
+        except ContractError as error:
+            cases.append(
+                {
+                    "case": "u2_r05_threads_recorded_not_judged",
+                    "expected": "pass",
+                    "actual": f"exit {error.exit_code}",
+                    "pass": False,
+                }
+            )
+        else:
+            cases.append(
+                {
+                    "case": "u2_r05_threads_recorded_not_judged",
+                    "expected": "pass",
+                    "actual": "pass",
+                    "pass": threads_detail["threads_policy"] == "threads 只记录、不判假",
+                    "detail": f"threads={threads_detail['conditions']['threads']}",
+                }
+            )
         # ---- u2 臂可执行性：R08 按 F2 profile 通过，权重漂移与未知 profile 会被拦 ----
-        u2_dir = directory / "u2-parent"
-        u2_dir.mkdir(parents=True, exist_ok=True)
-        u2_runtime = prepare_parent(u2_execution, u2_dir, arm="u2-strong-baseline")
         try:
             u2_r08 = check_r08(
                 u2_execution, u2_runtime.model, u2_runtime.optimizer, arm="u2-strong-baseline"
@@ -1559,7 +1669,9 @@ def self_check(directory: Path) -> dict[str, Any]:
             },
             "semantic_gaps": [
                 "actor/critic 在该基线上没有对应头，两项是结构零（已声明，不冒充 U2 参数）。",
-                "R05 仍把 u2 的父身份绑在 22.3 的 U2 接受父（191 参数），而本臂执行图是 21,977/35 的基线；12 条判据未改，属已知口径缺口。",
+                "R05 已按预注册改查本臂执行图身份（10 项，含无训练祖先）：u2 的父是冻结初始化，"
+                "只签“更新能落地、状态能往返、独立进程能复现”，不签“从已训练状态继续”，"
+                "不得引用为续训证据。",
                 "该图没有策略头与主体 state：policy 与 state 迁移是结构空，一步是原地更新，不做 U2 式参数迁移。",
             ],
             "blocking_gaps": [],

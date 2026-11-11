@@ -32,6 +32,7 @@ from scripts.training.u2_update_support_22_4_1 import (
     baseline_fingerprint,
     baseline_outputs,
     baseline_run_conditions,
+    canonical_sha256,
     fingerprint,
     fork_candidate,
     gradients_for,
@@ -267,6 +268,148 @@ def check_r05(
             "manifest_only": sorted(set(pins) - set(recorded_pins)),
             "receipt_only": sorted(set(recorded_pins) - set(pins)),
         },
+    }
+
+
+def check_r05_baseline(
+    run: dict[str, Any],
+    execution: dict[str, Any],
+    runtime: BaselineRuntime,
+    *,
+    arm: str,
+) -> dict[str, Any]:
+    """R05 的 u2 口径：检查对象换成冻结执行图身份，检查项与退出码不变。
+
+    与 check_r05 一一对应：父存在（1）、身份绑定（2）、架构唯一（3）、规模（4）、
+    参数清单（5）、初始化可复现（6）、构造件未变（7）、无训练祖先（8，u2 新增）、
+    回执通过（9）、源件未漂移（10）。任一项判假抛 ContractError 退 5。
+    """
+    from scripts.training.baseline_identity_22_4_4 import inventory, state_dict_digest
+
+    row = execution["arms"][arm]
+    reference = row.get("baseline_identity_ref")
+    if not reference:
+        raise ContractError(f"R05 {arm} has no frozen baseline identity")
+    identity_path = ROOT / reference
+    identity = load_json(identity_path)
+    identity_sha = normalized_sha256(identity_path)
+
+    if identity.get("schema") != "taiji-u2-22.4.4-baseline-identity-v1":
+        raise ContractError("R05 baseline identity schema changed")
+    if identity.get("status") != "frozen":
+        raise ContractError("R05 baseline identity is not frozen")
+    expected_sha = run["references"]["baseline_identity_sha256"]
+    if identity_sha != expected_sha or identity_sha != row.get("baseline_identity_sha256"):
+        raise ContractError("R05 baseline identity hash does not match the run/arm pin")
+
+    architecture = identity["architecture"]
+    if identity.get("architecture_id") != "transformer_sequence":
+        raise ContractError("R05 baseline identity is not the selected transformer graph")
+    if getattr(runtime.model, "architecture_id", None) != identity["architecture_id"]:
+        raise ContractError("R05 rebuilt graph architecture differs from the identity")
+    if identity["architecture_id"] != architecture.get("architecture_id"):
+        raise ContractError("R05 baseline identity architecture fields disagree")
+
+    totals = (int(identity["param_total"]), int(identity["param_tensors"]))
+    rebuilt = (
+        int(runtime.graph["param_total"]),
+        int(runtime.graph["param_tensors"]),
+    )
+    actual = (
+        int(sum(parameter.numel() for parameter in runtime.model.parameters())),
+        len(list(runtime.model.named_parameters())),
+    )
+    if not (totals == rebuilt == actual):
+        raise ContractError(f"R05 rebuilt baseline size differs: {totals} {rebuilt} {actual}")
+
+    identity_inventory = identity["param_inventory_sha256"]
+    if identity_inventory != runtime.graph["param_inventory_sha256"]:
+        raise ContractError("R05 rebuilt baseline inventory differs from the identity")
+    # 身份清单的 param_inventory_sha256 按 param_inventory_rule 对 [name, shape, dtype]
+    # 排序后取 canonical JSON；inventory() 按注册顺序返回，比较前必须同样排序。
+    if canonical_sha256(sorted(inventory(runtime.model))) != identity_inventory:
+        raise ContractError("R05 rebuilt baseline inventory digest is not reproducible")
+
+    init = identity["init"]
+    if init.get("post_init_state_dict_sha256") != init.get("second_construction_sha256"):
+        raise ContractError("R05 baseline identity records two different init digests")
+    if state_dict_digest(runtime.model) != init["post_init_state_dict_sha256"]:
+        raise ContractError("R05 rebuilt baseline initialization is not reproducible")
+
+    module_path = ROOT / architecture["module_path"]
+    if normalized_sha256(module_path) != architecture["module_sha256"]:
+        raise ContractError("R05 frozen baseline module source changed")
+    if (
+        architecture["module_sha256"]
+        != "384b404560f827e0868a8d8f9fbfc27aff5aa885b182cd443ade79972e4145cf"
+    ):
+        raise ContractError("R05 baseline module pin is not the frozen 22.4.4 module")
+
+    conditions = identity["conditions"]
+    if conditions.get("training_runs") != 0 or conditions.get("optimizer_steps") != 0:
+        raise ContractError("R05 baseline parent is not a training-free initialization")
+    if runtime.revision != 0:
+        raise ContractError("R05 baseline parent revision is not 0")
+
+    report_path = ROOT / run["references"]["measurement_report"]
+    if normalized_sha256(report_path) != run["references"]["measurement_report_sha256"]:
+        raise ContractError("R05 identity measurement report hash changed")
+    report = load_json(report_path)
+    if report.get("verdict") != "selected":
+        raise ContractError("R05 identity measurement report did not select a baseline")
+    selection = report.get("selection", {})
+    if (
+        selection.get("selected") != "transformer_sequence"
+        or selection.get("selection_path") != "tie_break"
+        or selection.get("tie_break_level") != "L1"
+    ):
+        raise ContractError("R05 identity measurement selection differs from the identity")
+
+    pins = execution["authority"]["source_pins"]
+    for name, expected in pins.items():
+        if normalized_sha256(ROOT / name) != expected:
+            raise ContractError(f"R05 frozen source changed: {name}")
+
+    outputs = report.get("outputs", {})
+    historical = {}
+    for name, value, current in (
+        ("identity_sha256", outputs.get("identity_sha256"), identity_sha),
+        (
+            "execution_v2_sha256",
+            outputs.get("execution_v2_sha256"),
+            run["references"]["manifest_sha256"],
+        ),
+    ):
+        historical[name] = {
+            "recorded": value,
+            "current": current,
+            "status": "matches" if value == current else "historical",
+        }
+    return {
+        "id": "R05",
+        "arm": arm,
+        "accepted_parent_object": "frozen_execution_graph_identity",
+        "baseline_identity": reference,
+        "baseline_identity_sha256": identity_sha,
+        "baseline_identity_note": "u2 的父是冻结初始化，不是 22.3 的训练接受父；R05 的检查项与退出码不变。",
+        "graph": {
+            "architecture_id": identity["architecture_id"],
+            "param_total": totals[0],
+            "param_tensors": totals[1],
+            "param_inventory_sha256": identity_inventory,
+            "module_sha256": architecture["module_sha256"],
+            "init_state_dict_sha256": init["post_init_state_dict_sha256"],
+            "training_runs": 0,
+            "optimizer_steps": 0,
+            "revision": 0,
+        },
+        "measurement_report": str(report_path.relative_to(ROOT).as_posix()),
+        "measurement_report_sha256": run["references"]["measurement_report_sha256"],
+        "measurement_historical_hashes": historical,
+        "measurement_policy": "不重签；历史哈希只登记、不复核（等值由 R03/第 2 项承担）",
+        "threads_policy": "threads 只记录、不判假",
+        "conditions": conditions,
+        "source_pins": pins,
     }
 
 
