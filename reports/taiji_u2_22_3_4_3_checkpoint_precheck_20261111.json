@@ -1,0 +1,85 @@
+{
+  "schema": "taiji-u2-22.3.4.3-checkpoint-precheck-v1",
+  "created_at": "2026-11-11T10:41:57.199621+00:00",
+  "verdict": "checkpoint_persistence_verified",
+  "run_conditions": {
+    "threads": 1,
+    "interop_threads": 12,
+    "device": "cpu",
+    "dtype": "torch.float64",
+    "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+    "torch": "2.13.0+cpu",
+    "environment": {
+      "OMP_NUM_THREADS": null,
+      "MKL_NUM_THREADS": null,
+      "OPENBLAS_NUM_THREADS": null
+    }
+  },
+  "criteria": {
+    "parent_roundtrip": "父存档 save→load 后 state/参数/optimizer moments/历史引用逐项相等",
+    "truncated_rejected": "截掉尾部 8 字节的存档必须被 atomic_load 拒载",
+    "payload_flip_rejected": "载荷末字节翻一位的存档必须被 atomic_load 拒载",
+    "fault_after_rebuild": "重建后注入异常 ⇒ RuntimeError，父 envelope 摘要不变，父文件仍可读回",
+    "fault_before_commit": "提交前注入异常 ⇒ RuntimeError，父 envelope 摘要不变，父文件仍可读回",
+    "rejection_keeps_parent": "准入拒绝 ⇒ status=rejected，父 envelope 摘要不变，父文件仍可读回",
+    "commit_roundtrip": "一次参数迁移提交后 save→load，state/参数/moments/历史引用相等且 revision=1",
+    "zero_optimizer_steps": "全程 Adam/SGD.step 被拦截，计数为 0"
+  },
+  "source_pins": {
+    "taiji/u2_recovery.py": "975502035c7f33f8943e57ca22bf93b27c6ac726053b779bb67b6c4c8cd702c4",
+    "taiji/u2_history.py": "e648e53f59418e6ad0b58b7bcc3519e5e09304ef691a6387ec09490b7664d336",
+    "taiji/u2_learning_transaction.py": "212ea54cf263cec80a15d05263b7e6f8c0965b726a825576634c8c3fb61a9573",
+    "taiji/u2_subject.py": "95607245747eac2b89163c88c11366c20a0198c20e2bc86d5be8988397de94de"
+  },
+  "results": [
+    {
+      "check": "parent_roundtrip",
+      "passed": true,
+      "detail": "parent.bin bytes=856913"
+    },
+    {
+      "check": "truncated_rejected",
+      "passed": true,
+      "detail": "Recovery file length or checksum mismatch"
+    },
+    {
+      "check": "payload_flip_rejected",
+      "passed": true,
+      "detail": "Recovery file length or checksum mismatch"
+    },
+    {
+      "check": "fault_after_rebuild",
+      "passed": true,
+      "detail": "injected after_rebuild; parent_unchanged=True; reload=True"
+    },
+    {
+      "check": "fault_before_commit",
+      "passed": true,
+      "detail": "injected before_commit; parent_unchanged=True; reload=True"
+    },
+    {
+      "check": "rejection_keeps_parent",
+      "passed": true,
+      "detail": "status=rejected; parent_unchanged=True; reload=True"
+    },
+    {
+      "check": "commit_roundtrip",
+      "passed": true,
+      "detail": "status=committed; revision=1; bytes=870647"
+    },
+    {
+      "check": "zero_optimizer_steps",
+      "passed": true,
+      "detail": "optimizer_steps=0"
+    }
+  ],
+  "cpu_seconds": 9.921875,
+  "wall_seconds": 11.297000000020489,
+  "gaps_before_22_3_4_3": [
+    "外层不可回滚 attempt 总账未实现：resources.updates 随父回滚，不是独立写盘计费",
+    "每组 step1 后的状态+真实 moment 的落盘目录/命名未冻结",
+    "接受/拒绝/异常后的 S12 包保存与独立 worker 输入未实现",
+    "六次更新执行器（F1/F2 各三步）尚不存在，当前只有单次迁移事务",
+    "atomic_save 只 fsync 文件不 fsync 目录，掉电下 rename 持久性靠每次 save 后立即读回兜底"
+  ]
+}
