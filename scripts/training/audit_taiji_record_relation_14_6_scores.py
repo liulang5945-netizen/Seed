@@ -603,7 +603,7 @@ def main() -> int:
             candidate["step300"][condition]["summary"] = summarize(
                 candidate["step300"][condition]["rows"]
             )
-        for name, block in candidate["step300"]["structural"]["conditions"].items():
+        for _name, block in candidate["step300"]["structural"]["conditions"].items():
             for row in block["rows"]:
                 updated, mode = rescore_row(row)
                 tuple_rows += 1

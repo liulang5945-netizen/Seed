@@ -109,7 +109,9 @@ def scripted_arm(chooser, seed: int = SEED + 1) -> dict:
         cumulative += reward
         activities.append(entry["activity"])
         rewards.append(reward)
-    interacts = [value for name, value in zip(activities, rewards) if name == "interact"]
+    interacts = [
+        value for name, value in zip(activities, rewards, strict=False) if name == "interact"
+    ]
     return {
         "cumulative_reward": cumulative,
         "activities": activities,
@@ -131,7 +133,7 @@ def trained_seed_diagnostic(seeds, guard) -> list[dict]:
         learner = ActivityLearner.build(pricing.SMALL.width)
         guard()
         _, _, _ = pricing.timed(
-            lambda: train_activity_episode(
+            lambda model=model, state=state, env=env, learner=learner: train_activity_episode(
                 model,
                 state,
                 env,

@@ -55,7 +55,7 @@ def explained_fraction(residuals, labels) -> float:
     if total == 0.0:
         return 0.0
     groups: dict[str, list[torch.Tensor]] = {}
-    for residual, label in zip(residuals, labels):
+    for residual, label in zip(residuals, labels, strict=False):
         groups.setdefault(label, []).append(residual)
     explained = 0.0
     for values in groups.values():
@@ -66,7 +66,7 @@ def explained_fraction(residuals, labels) -> float:
 
 def within_cosine(residuals, labels):
     groups: dict[str, list[torch.Tensor]] = {}
-    for residual, label in zip(residuals, labels):
+    for residual, label in zip(residuals, labels, strict=False):
         groups.setdefault(label, []).append(residual)
     out = {}
     for name, values in groups.items():

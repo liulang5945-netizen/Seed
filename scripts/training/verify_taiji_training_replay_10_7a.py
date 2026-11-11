@@ -46,7 +46,7 @@ def compare_arm(stored: dict, replay: dict) -> dict:
     deltas = []
     present = True
     hits_match = len(stored_rows) == len(replay_rows) and bool(replay_rows)
-    for old, new in zip(stored_rows, replay_rows):
+    for old, new in zip(stored_rows, replay_rows, strict=False):
         for key in ("correct_verdict", "other_verdict"):
             if not isinstance(old.get(key), (int, float)) or not isinstance(
                 new.get(key), (int, float)
