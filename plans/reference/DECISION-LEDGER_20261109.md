@@ -2442,3 +2442,43 @@ Owner 的否决理由（原话要点）：基线可以重生成 ⇒ 红的时候
 
 去掉六个 `if: always()` 与末置 Verdict 步，即回到默认短路语义；不影响任何读数与产物。
 
+---
+
+## D-20261111-06 代另一条线修 3 条 mypy `Returning Any`（3 行 cast，可单独撤回）
+
+**编号／时间／类型**：D-20261111-06｜2026-11-11｜**跨线代改（类型收敛，0 行为改动、0 读数改动）**。
+
+### 1. 边界与前提
+
+快通道唯一残留的红是 mypy 3 条 `Returning Any`，全在另一条线的 u2 模块里。动手前先核了前提：`git status --porcelain -- taiji/u2_history.py taiji/u2_recovery.py` **零输出**，即两文件在工作树里干净、该线不在编辑状态。owner 的口径是「干净 ⇒ 可代改；有未提交改动 ⇒ 停手」。按前者执行。
+
+### 2. 谁产出、谁代改
+
+- **产出**：另一条线，`f43283717`（2026-11-11，`reencode fixed history across parameter migrations`）引入这 3 条。
+- **代改**：本线，经 owner 指令（A 分支）执行；提交 `92be1de78`，独立一笔，便于把 3 行单独还回去。
+
+### 3. 改动行号与内容（只有 `cast`，不碰签名、不碰其它行）
+
+| 文件:行 | 原 | 现 | 为什么 |
+|---|---|---|---|
+| `taiji/u2_history.py:194` | `return self._root["kind"] == "genesis"` | `return cast(bool, self._root["kind"] == "genesis")` | `_root` 是 `dict[str, Any]`，比较结果被 mypy 当 `Any` |
+| `taiji/u2_recovery.py:512` | `return self.acknowledge_pending()` | `return cast(dict[str, Any], ...)` | 装饰器 `_history_atomic` 未标注返回值 ⇒ 调用结果是 `Any` |
+| `taiji/u2_recovery.py:528` | `result = self.acknowledge_pending()` | `result = cast(dict[str, Any], ...)` | 同上；第 530 行的 `return result` 因此转绿，该行未改 |
+
+`cast` 在运行时是恒等函数，**不改行为**；三处都没有放宽判据，只是把「mypy 看不出来的前提」写成显式断言。
+
+### 4. 本机读数（「292→0 或仍有残留」的实测）
+
+- `mypy --follow-imports=silent seed taiji`：**3 → 0**，`Success: no issues found in 236 source files`。
+- `ruff check` 两文件：通过；`black_check_gate.py` 两文件：`black in-process check OK`。
+- `pytest tests/taiji_native -k u2 -q`：**125 passed**，0 failed。
+- 线上：下一笔推送后的快通道 run 才给出最终读数（本条落档时尚未推送）。
+
+### 5. 可单独回退
+
+`git revert 92be1de78`。它只动这 3 行，不含任何读数、产物、manifest 或判据；回退后 mypy 棘轮会重新变红 3 条，其余五项读数不受影响。
+
+### 6. 与 D-20261111-05 的关系
+
+05 里写的是「只报不改」；本条把边界更新为**「对方工作树干净时代改、并单独记一笔」**——因为长期让一条 mypy 红压着快通道，会让整条通道的读数习惯性被忽视，代价高于 3 行代改。
+
