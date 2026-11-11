@@ -12,8 +12,12 @@ to the ``save_subject`` call -- the declared eight updates and one career step -
 and stops there.  The activity training that follows in the closeout runs after
 the bundle is already on disk and does not feed it.
 
-The produced file must match the sealed sha256 and byte count exactly; anything
-else exits non-zero.  An existing file that already matches is left untouched.
+The produced file must be a loadable subject bundle; that is the only condition
+this step enforces.  The sealed sha256 and byte count are printed as diagnostics,
+because ledger D-20261111-03 moved equivalence to the readout determinism gate:
+the same job rebuilds twice and compares the readouts, so a host that serialises
+a different (but equivalent) file is not a failure here.  An existing file that
+already matches the sealed identity is left untouched.
 """
 
 from __future__ import annotations
@@ -116,18 +120,29 @@ def main() -> int:
     written = build(bundle_path)
     wall_seconds = time.perf_counter() - started
 
-    reason = mismatch(bundle_path)
-    if reason is not None or written != EXPECTED_SHA256:
-        print(
-            f"rebuild does not match the sealed identity: "
-            f"{reason or f'sha256 {written} != {EXPECTED_SHA256}'}",
-            file=sys.stderr,
-        )
+    try:
+        payload = torch.load(bundle_path, map_location="cpu", weights_only=True)
+    except Exception as error:  # noqa: BLE001 - a corrupt rebuild must be reported as such
+        print(f"rebuilt file is not loadable: {error}", file=sys.stderr)
         return 1
+    if not isinstance(payload, dict) or not {"parameters", "optimizer_state", "rng_state"} <= set(
+        payload
+    ):
+        print("rebuilt file is loadable but is not a subject bundle", file=sys.stderr)
+        return 1
+
+    reason = mismatch(bundle_path)
+    seal = "sealed identity" if reason is None else "not the sealed identity"
     print(
         f"rebuilt {display(bundle_path)} in {wall_seconds:.1f}s "
-        f"sha256={written} bytes={bundle_path.stat().st_size}"
+        f"sha256={written} bytes={bundle_path.stat().st_size} ({seal})"
     )
+    if reason is not None:
+        print(
+            f"diagnostic: {reason or f'sha256 {written} != {EXPECTED_SHA256}'}; "
+            "equivalence is decided by the readout determinism gate",
+            file=sys.stderr,
+        )
     return 0
 
 

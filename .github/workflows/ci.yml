@@ -517,6 +517,23 @@ jobs:
         continue-on-error: true
         run: python scripts/training/materialize_taiji_core_09_bundle.py
 
+      # 台账 D-20261111-03（取代能力卡 §13.1 的逐字节自证门）：本步判的是
+      # 「同一次 job 内两次独立重建的读数是否等价」，不是「重建件是否等于封存件」。
+      # 动机：字节相等测的是**宿主**的序列化行为——同两枚提交在维护机上逐字节复现
+      # 封存件，在 windows-2025-vs2026 runner 上不复现（O-20261111-01）；用它当门
+      # 等于拿宿主属性判红。两次重建互相比对，不含随代码漂移的参照物，无需维护基线。
+      # 三出口（固定）：equivalent=0 / not_equivalent=1 / indeterminate=2。
+      # 两枚重建件的 sha256 与字节数只写进报告作诊断，不参与判定，也不上传
+      # （各 77 MB；需要时按报告里的 sha 在本地重放）。
+      # 成本（本机实测）：两次重建 ≈2×65 s + 两组消费者 ≈2×8 min ⇒ ≈20 min。
+      # 14.6 全量 compare（≈3.15 h）**不在此门内**：见 equivalence-deep.yml。
+      - name: Rebuild twice and compare readouts (D-20261111-03)
+        id: bundle-determinism
+        continue-on-error: true
+        run: >-
+          python -X utf8 -u scripts/training/verify_taiji_bundle_rebuild_determinism.py
+          --out reports/ci_verify/bundle_rebuild_determinism.json
+
       - name: Run complete regression suite
         id: pytest-full
         continue-on-error: true
@@ -606,6 +623,19 @@ jobs:
             report.xml
             coverage.xml
 
+      # 判定全文 + 两组消费者读数 + 锚点测试记录的分支（published_rows /
+      # structural_invariants）。放在 pytest 之后，分支文件那时才存在。
+      - name: Upload bundle determinism evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bundle-determinism-${{ matrix.python-version }}
+          if-no-files-found: warn
+          path: |
+            reports/ci_verify/bundle_rebuild_determinism.json
+            output/ci_verify/**/*.json
+            output/ci_verify/*.json
+
       - name: Summarize CI gate outcomes
         id: gate-summary
         if: always()
@@ -625,6 +655,7 @@ jobs:
           OUT_TYPES: ${{ steps.typecheck-core.outcome }}
           OUT_COND: ${{ steps.report-conditions.outcome }}
           OUT_BUNDLE: ${{ steps.materialize-bundle.outcome }}
+          OUT_DET: ${{ steps.bundle-determinism.outcome }}
           OUT_PYTEST: ${{ steps.pytest-full.outcome }}
           OUT_FACES: ${{ steps.junit-faces.outcome }}
           OUT_COVER: ${{ steps.coverage-gate.outcome }}
@@ -649,6 +680,7 @@ jobs:
             check "typecheck-core" "$OUT_TYPES"
             check "report-conditions" "$OUT_COND"
             check "materialize-bundle" "$OUT_BUNDLE"
+            check "bundle-determinism" "$OUT_DET"
             check "pytest-full"    "$OUT_PYTEST"
             check "junit-faces"    "$OUT_FACES"
             check "coverage-gate"  "$OUT_COVER"
@@ -918,6 +950,16 @@ jobs:
         continue-on-error: true
         run: python scripts/training/materialize_taiji_core_09_bundle.py
 
+      # 与 Ubuntu 腿同一件（台账 D-20261111-03）：本腿是「重建件不等于封存件」的
+      # 原始观测面，所以本步是这条门最该在的地方——它判的是本腿自身两次重建的读数
+      # 是否等价，与本腿是否复现封存 sha 无关。成本 ≈20 min。
+      - name: Rebuild twice and compare readouts (D-20261111-03)
+        id: bundle-determinism
+        continue-on-error: true
+        run: >-
+          python -X utf8 -u scripts/training/verify_taiji_bundle_rebuild_determinism.py
+          --out reports/ci_verify/bundle_rebuild_determinism.json
+
       - name: Run full regression tests on Windows
         id: pytest-windows
         continue-on-error: true
@@ -939,6 +981,17 @@ jobs:
           path: |
             report-win.xml
             coverage-win.xml
+
+      - name: Upload bundle determinism evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bundle-determinism-windows
+          if-no-files-found: warn
+          path: |
+            reports/ci_verify/bundle_rebuild_determinism.json
+            output/ci_verify/**/*.json
+            output/ci_verify/*.json
 
       - name: Collect all tests under CRLF checkout
         id: collection-crlf
@@ -1009,6 +1062,7 @@ jobs:
           OUT_PYTEST: ${{ steps.pytest-windows.outcome }}
           OUT_COLLECT: ${{ steps.collection-crlf.outcome }}
           OUT_BUNDLE: ${{ steps.materialize-bundle.outcome }}
+          OUT_DET: ${{ steps.bundle-determinism.outcome }}
         shell: bash
         run: |
           set -u
@@ -1030,6 +1084,7 @@ jobs:
             check "pytest-windows" "$OUT_PYTEST"
             check "collection-crlf" "$OUT_COLLECT"
             check "materialize-bundle" "$OUT_BUNDLE"
+            check "bundle-determinism" "$OUT_DET"
           } > "$table"
           cat "$table"
           cat "$table" >> "$GITHUB_STEP_SUMMARY"

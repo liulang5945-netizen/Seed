@@ -2111,6 +2111,17 @@ Windows 腿（run `42849129318`）实测：`materialize-bundle` **success**（77
 
 **证据缺口（本轮必须记下）**：`ci.yml` 里没有任何一步打印 CPU 型号、指令集或 BLAS 版本（已 grep 确认），两腿日志只有安装阶段的轮子文件名。因此"CI 侧到底是哪一项环境变量在动"**仍然无证据**——本机对照只能排除代码，不能指认环境里的具体那一项。这也正是 owner 第 2 条要求加 artifact 上传的动因：把重建件与判定摘要带出来，才可能事后归因。
 
+### 补充四（2026-11-11）：两次 run 的 runner 镜像对照——镜像未变
+
+按 owner 要求，从两次 run 的 `Set up job` 日志取 `Runner Image`／`Image Version` 两行：
+
+| run | 提交 | Windows 腿 `Runner Image` | `Image Version` | Provisioner |
+|---|---|---|---|---|
+| `42849129318`（成功） | `de0bf7554` | `windows-2025-vs2026` | `20261103.298.1` | `20261103.629` |
+| `42946757225`（失败） | `bcaa63265` | `windows-2025-vs2026` | `20261103.298.1` | `20261103.629` |
+
+**读法**：两次的镜像名、镜像版本、provisioner 三者完全相同 ⇒ **镜像本身不是变量**，可以排除"runner 镜像升级"这一类解释。补充三已用同机双提交排除代码 ⇒ 可变项只剩物理机（CPU 型号／ISA／BLAS 分派）。三选一判定维持 `environment_is_cause`；具体是哪一项仍无证据——CI 日志不打印 CPU 型号、ISA 与 BLAS，这条缺口不因镜像对照而关闭。**这也不构成"宿主差异得到第二次独立复现"**：成功那次与失败那次之间代码也变了，两次观测属同一混淆，不能互相当复现。
+
 ## D-20261111-02 CI 判据：materialize 的自证门从「字节相等」改为「读数等价」（预注册）
 
 **类别**：CI 结构／判据。**状态**：预注册，先于实现与读数。**依据**：补充二、补充三——字节门在两腿上都不成立（`42946757225`），而代码在两提交上都逐字节复现，说明"逐字节相等"这个判据只在封存它的那台机器上可达，不可作为跨环境的门。
@@ -2156,6 +2167,73 @@ Windows 腿（run `42849129318`）实测：`materialize-bundle` **success**（77
 ### 实施顺序（先写定义，后写代码）
 
 ① 本节预注册 → ② 写比较器与消费脚本接线 → ③ 加运行条件打印与 artifact 上传 → ④ 用本机两件跑一次自检（期望 `equivalent`，因为本机两件字节相同）→ ⑤ 推上去用 CI 两腿的真实读数判。**⑤ 的读数不许反过来改 ①。**
+
+**已被取代（2026-11-11）**：本条 §判据 L3 的"与已发布报告比较"与 §出口表的"上传两件"被 `D-20261111-03` 取代——发布件比对移出 CI、两枚重建件不上传、门改为同 job 两次重建互比。本条作为预注册历史保留，不删。
+
+## D-20261111-03 CI 门改为「同 job 两次重建读数等价」；发布件比对移出 CI
+
+**编号／时间／类型**：D-20261111-03｜2026-11-11｜**判据变更 + 流程变更**（0 训练、0 读数改动、0 封存件触碰、0 归档件改写）。取代 `D-20261111-02` 的判据设计；该条保留为历史预注册，不删。
+
+### 1. 为什么否掉「每个提交生成一份读数基线」
+
+Owner 的否决理由（原话要点）：基线可以重生成 ⇒ 红的时候最省事的动作就是重生成，等于把判据交给"想不想让它绿"。展开成三条：
+
+1. 基线是"当前代码的读数"，它随代码漂移；冻结成期望值之后任何合法代码变更都要重生成，而"重生成"与"修好了"在产物上不可区分。
+2. 已观测到的漂移（O-20261111-01）本来就不是代码对发布件的漂移，而是宿主对末位的影响；用基线追它，等于每换一台宿主机就重做一次基准。
+3. 结论：判据里不能再出现任何"由被检对象自己生成"的参照物。
+
+### 2. 新门测什么、不测什么
+
+**测**：同一次 job 内，两个独立进程各跑一次同一个 `materialize_taiji_core_09_bundle.py`，再把两份重建件分别喂给同一组消费者（`verify_taiji_10_21_1.py`、`verify_taiji_composition_10_21.py --stage graph`、`verify_taiji_record_relation_14_5.py --stage price`、`verify_taiji_record_relation_14_6_preflight.py --stage preflight`）。两次的读数必须等价。被测对象是**重建过程确定不确定**。
+
+**不测**：① 重建件是否等于封存件（这是宿主属性：O-20261111-01 两腿都不等，而本机两个提交都等）；② 是否等于历史发布读数（发布行绑定发布时的代码，见 §3）。
+
+**三层**：
+
+| 层 | 判据 |
+|---|---|
+| L1 结构 | 键集合（不多不少）、列表长度、张量 `dtype` 与 `shape` 完全相同 |
+| L2 数值 | `float64` ≤ 1 ULP（2^-52 相对）、`float32` ≤ 2^-23、`float16` ≤ 2^-10；整数张量逐位相等 |
+| L3 读数 | 四份消费者报告，排除诊断键后，枚举/计数/整数精确相等，浮点 `1e-12` 相对容差 |
+
+**三出口（固定名）**：`equivalent`=0／`not_equivalent`=1／`indeterminate`=2（构建失败、消费者无报告、运行条件未记录）。
+
+**诊断、不参与判定**：两枚重建件的 sha256 与字节数、耗时、内存、identity／provenance、路径、`grad_fn`、type_check／lint。两枚重建件**不上传**（各 77,609,636 B），报告里留 sha／bytes 供本地重放。
+
+**没有基线要维护**：参照物是同一次 job 里自己产出的第二份重建件。
+
+### 3. 与历史发布件的比对移出 CI
+
+写成审阅清单 [REVIEW-CHECKLIST_bundle_equivalence.md](REVIEW-CHECKLIST_bundle_equivalence.md)：在**持有封存件的那台机器**上、按声明的运行条件跑，结果附运行条件与代码提交号；**不设自动门**。清单包含：前提（封存 sha／bytes、提交号）、必记运行条件、身份核对（记录，不判红）、四个消费者的命令与报告位置、两套断言分支、14.6 全量 compare 按需、结果表模板、不一致判读顺序（先代码 → 再运行条件 → 最后才谈发布行）、归档位置、撤回。
+
+### 4. 需要 `.pt` 的那个测试：按条件分叉，禁止 skip
+
+`tests/taiji_native/test_composition_read_probe_anchor.py`：
+
+- 重建件 sha256 == 封存值 ⇒ 走 `published_rows`：发布行逐项相等（原严格断言，未加容差）；
+- 否则 ⇒ 走 `structural_invariants`：字段集合、`target_mass∈[0,1]`、`null_mass≥0` 且全行恒定、`recalled_norm` 有限非负、`target_index` 合法、`record_masses` 4 项、`groups` 4 项、bool 类型、reversed 与 real 的 `target_mass` 逐行相等、`top1_source_id` 属于发布集合；
+- 实际分支写进 `output/ci_verify/composition_probe_branch.json` 并随 artifact 上传；报告必须写明走了哪一支。
+- **不许 skip**：skip 会让这条断言在 CI 里永远不执行，比红更糟。
+
+### 5. 14.6 全量 compare 不进 CI 门
+
+实测 ≈10,898.6 CPU s / 11,341 s wall（≈3.15 h），超过主门 job 预算。改挂 `.github/workflows/equivalence-deep.yml`（`workflow_dispatch`，`timeout-minutes: 360`）。该工作流先实测重建 sha，不等于封存值就直接失败——`load_chain` 必在父身份上中止，跑满三小时没有意义。
+
+### 6. 证据缺口补入库
+
+`scripts/training/verify_taiji_composition_10_21.py` 此前**报告在库、脚本不在库**，本轮补入 git。与 D-20261110-07 的 4 个生产者同性质：产出的报告是可审阅的，生成它的代码必须可审阅。
+
+### 7. 实施与冻结
+
+- 判据实现：`scripts/training/verify_taiji_bundle_rebuild_determinism.py`。
+- CI：两腿各加 `bundle-determinism` 步（`continue-on-error: true`，红由末置汇总按 `steps.bundle-determinism.outcome` 判；Ubuntu 加 `OUT_DET`），并上传判定 JSON、两组消费者读数与分支 JSON。
+- 契约测试：`tests/taiji_native/test_bundle_rebuild_determinism_gate_contract.py`（19 条：三出口、1 ULP 边界、诊断键/后缀/前缀排除、缺运行条件→`indeterminate`、两类就绪条件）。
+- **本地自检（实施顺序 ④，2026-11-11 12:12）**：`equivalent`（exit 0）。两枚重建件 sha 均为 `ce4c6268…`、77,609,636 B，重建各 ≈54–60 s；四组消费者读数 0 差异。首轮自检（11:44）判 `not_equivalent`，88 条问题**全部**落在计时与 autograd 节点（`*_cpu`、`*_seconds`、`*_grad_fn`、`cpu_seconds_including_prior_attempts`），没有一条是读数 ⇒ 诊断排除从"逐键列名"改为"键名后缀／前缀谓词"，谓词清单原样写进报告（`readout_diagnostic_suffixes`／`readout_diagnostic_prefixes`）；同时给读数目录加"先清空"（消费者是 write-once，旧报告会冒充新读数）。这次调整发生在任何 CI 读数之前，属实施顺序 ④ 的自检修正，不是读数后放宽。
+- **冻结**：三出口名、1 ULP／2^-23／2^-10、1e-12、诊断谓词清单。读数之后不许调；确需调整须新开条目并保留旧读数。
+
+### 8. 撤回路径
+
+删两腿的 `bundle-determinism` 步、汇总里的 `OUT_DET` 与 `check "bundle-determinism"`、以及新门脚本与契约测试，即回到"materialize 自证 + 发布行严格比对"。只撤一半会让契约测试变红提醒。**禁止的撤回方式**是把门改回字节相等：两腿都不等，等于永久红。
 
 
 

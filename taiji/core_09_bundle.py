@@ -14,11 +14,29 @@ sha256 drift apart silently the first time one of them is edited.
 from __future__ import annotations
 
 import hashlib
+import os
 from pathlib import Path
 
 BUNDLE_RELATIVE_PATH = "output/taiji_core_09/subject_bundle.pt"
 EXPECTED_SHA256 = "ce4c62685d55bb518d234e7407e19b05257d1d761a0430432f7d0f09641321cf"
 EXPECTED_BYTES = 77609636
+
+#: Set by ``verify_taiji_bundle_rebuild_determinism`` when it feeds a deliberately
+#: non-sealed rebuild through a consumer.  In this mode the provenance checks
+#: (sha256, byte count, candidate id) are still measured and reported but they do
+#: not abort the run; the comparison then excludes them.  D-20261111-03.
+READOUT_MODE_ENV = "TAIJI_BUNDLE_READOUT_MODE"
+
+
+def readout_mode() -> bool:
+    """True when a consumer is being replayed against a non-sealed rebuild."""
+    value = os.environ.get(READOUT_MODE_ENV, "").strip().lower()
+    return value in {"1", "true", "yes"}
+
+
+def bundle_path(default: str = BUNDLE_RELATIVE_PATH) -> str:
+    """The bundle a consumer should open; the determinism gate overrides it."""
+    return os.environ.get("TAIJI_BUNDLE_PATH", default)
 
 
 def sha256_of_file(path: Path | str) -> str:

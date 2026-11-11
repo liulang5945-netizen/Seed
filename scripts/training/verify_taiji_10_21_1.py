@@ -18,6 +18,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import sys
 import tempfile
 import time
@@ -48,7 +49,7 @@ from taiji.native_goal_attributes import (  # noqa: E402
 from taiji.native_goal_glossary import glossary_records  # noqa: E402
 from taiji.state_migration import resume_subject  # noqa: E402
 
-BUNDLE = CORE_09_BUNDLE_PATH
+BUNDLE = os.environ.get("TAIJI_BUNDLE_PATH", CORE_09_BUNDLE_PATH)
 CLOSEOUT = "reports/taiji_core_09_closeout_20261101.json"
 EXPECTED_CANDIDATE = "feb0cbcb00e2e16bb66b77db530ae566ce40eecaf2e14852b7cc1661292139dd"
 EXPECTED_BUNDLE_SHA = CORE_09_BUNDLE_SHA

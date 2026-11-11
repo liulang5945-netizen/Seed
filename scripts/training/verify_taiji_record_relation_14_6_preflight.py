@@ -22,6 +22,7 @@ import argparse
 import hashlib
 import json
 import multiprocessing
+import os
 import random
 import subprocess
 import sys
@@ -41,6 +42,7 @@ from taiji.candidate_manifest import build_manifest, parameter_digest  # noqa: E
 from taiji.core_09_bundle import BUNDLE_RELATIVE_PATH as CORE_09_BUNDLE_PATH  # noqa: E402
 from taiji.core_09_bundle import EXPECTED_BYTES as CORE_09_BUNDLE_BYTES  # noqa: E402
 from taiji.core_09_bundle import EXPECTED_SHA256 as CORE_09_BUNDLE_SHA  # noqa: E402
+from taiji.core_09_bundle import readout_mode  # noqa: E402
 from taiji.living_core import EOS  # noqa: E402
 from taiji.native_composition_fixture import (  # noqa: E402
     build_split,
@@ -66,7 +68,7 @@ from taiji.record_relation_core import (  # noqa: E402
     score_example,
 )
 
-BUNDLE = CORE_09_BUNDLE_PATH
+BUNDLE = os.environ.get("TAIJI_BUNDLE_PATH", CORE_09_BUNDLE_PATH)
 EXPECTED_PARENT = "feb0cbcb00e2e16bb66b77db530ae566ce40eecaf2e14852b7cc1661292139dd"
 EXPECTED_BUNDLE_SHA = CORE_09_BUNDLE_SHA
 EXPECTED_BUNDLE_BYTES = CORE_09_BUNDLE_BYTES
@@ -646,11 +648,16 @@ def preflight_main(args) -> int:
     try:
         parent = torch.load(parent_path, map_location="cpu", weights_only=True)
         parent_manifest = build_manifest(ROOT, parent_path)
-        if (
-            parent_manifest["candidate_id"] != EXPECTED_PARENT
-            or parent_manifest["provenance"]["sha256"] != EXPECTED_BUNDLE_SHA
-            or parent_manifest["provenance"]["bytes"] != EXPECTED_BUNDLE_BYTES
-        ):
+        drift = [
+            name
+            for name, observed, expected in (
+                ("candidate_id", parent_manifest["candidate_id"], EXPECTED_PARENT),
+                ("bundle_sha256", parent_manifest["provenance"]["sha256"], EXPECTED_BUNDLE_SHA),
+                ("bundle_bytes", parent_manifest["provenance"]["bytes"], EXPECTED_BUNDLE_BYTES),
+            )
+            if observed != expected
+        ]
+        if drift and not readout_mode():
             raise InstrumentError("Parent identity drifted from the fixed 09.8 asset")
         graph_report = json.loads((ROOT / GRAPH_REPORT).read_text(encoding="utf-8"))
         graph_manifest = json.loads((ROOT / GRAPH_MANIFEST).read_text(encoding="utf-8"))
@@ -668,6 +675,8 @@ def preflight_main(args) -> int:
             "parent_candidate_id": parent_manifest["candidate_id"],
             "parent_bundle_sha256": parent_manifest["provenance"]["sha256"],
             "parent_bundle_bytes": parent_manifest["provenance"]["bytes"],
+            "identity_drift": drift,
+            "readout_mode": readout_mode(),
             "graph_report": GRAPH_REPORT,
             "graph_report_sha256": sha256_text(ROOT / GRAPH_REPORT),
             "graph_candidate_id": graph_manifest["candidate"]["candidate_id"],

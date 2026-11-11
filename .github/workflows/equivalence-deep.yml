@@ -1,0 +1,86 @@
+# 按需（workflow_dispatch）的深度重放：14.6 全量 compare。
+#
+# 台账 D-20261111-03 第 4 条：这条重放实测 ≈10,898.6 CPU s / 11,341 s wall（≈3.15 h），
+# 装不进 CI 主门 job 的预算，**不进 CI 门**，也不充当判据——判据是 ci.yml 里的
+# 「同一次 job 内两次重建读数等价」。本工作流只是 owner 按需取证时的同一件工具。
+#
+# 与历史发布件的逐项比对仍是人工审阅流程，不在这里自动化：
+# plans/reference/REVIEW-CHECKLIST_bundle_equivalence.md。发布行绑定的是发布时的代码，
+# 不是当前 HEAD，把它做成门等于让代码漂移去判发布件的对错。
+#
+# fail fast：14.6 compare 的 load_chain 要求父 bundle 的候选身份等于封存值。若本机
+# 重建件不是封存件，后面 3 小时注定在第一步中止——这里先实测 sha 并明确失败，
+# 把「哪台机器能跑这条重放」写在日志里，而不是让 owner 等三小时看一个已知结论。
+name: equivalence-deep
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: equivalence-deep-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  record-relation-compare:
+    name: 14.6 full compare (ubuntu, manual)
+    runs-on: ubuntu-latest
+    # 本机实测 11,341 s wall；公开 runner 慢机按 ~2× 计，6 h 是上限兜底。
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install torch (CPU)
+        run: pip install torch==2.13.0+cpu --index-url https://download.pytorch.org/whl/cpu
+
+      - name: Install dependencies
+        # ruff 是 14.6 报告里的 lint 字段（black 在该脚本里显式声明为 not_run）。
+        run: pip install sentencepiece numpy "psutil>=5.9.0,<7.0.0" ruff==0.16.4
+
+      - name: Install package (editable)
+        run: pip install -e . --no-deps
+
+      - name: Materialize the 09.8 subject bundle
+        run: python scripts/training/materialize_taiji_core_09_bundle.py
+
+      - name: Refuse to spend hours on a non-sealed parent
+        shell: bash
+        run: |
+          set -u
+          actual=$(python -c "from pathlib import Path; from taiji.core_09_bundle import BUNDLE_RELATIVE_PATH, sha256_of_file; print(sha256_of_file(Path(BUNDLE_RELATIVE_PATH)))")
+          expected=$(python -c "from taiji.core_09_bundle import EXPECTED_SHA256; print(EXPECTED_SHA256)")
+          echo "rebuilt sha256: $actual"
+          echo "sealed  sha256: $expected"
+          echo "code commit: ${GITHUB_SHA}"
+          if [ "$actual" != "$expected" ]; then
+            echo "::error::this host does not reproduce the sealed bundle; 14.6 compare aborts at parent identity. Replay on the machine holding the sealed asset (review checklist), not here."
+            exit 1
+          fi
+
+      - name: Run 14.6 full compare
+        run: >-
+          python -X utf8 -u scripts/training/verify_taiji_record_relation_14_6.py
+          --stage compare
+          --report reports/equivalence/deep_14_6_compare.json
+          --manifest plans/manifests/deep_14_6_compare.json
+          --payload-dir output/equivalence/deep_14_6_compare
+
+      - name: Upload compare report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: equivalence-deep-14-6-compare
+          if-no-files-found: warn
+          path: |
+            reports/equivalence/
+            plans/manifests/deep_14_6_compare.json
+            output/equivalence/**/*.json
