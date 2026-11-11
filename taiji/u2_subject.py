@@ -10,7 +10,7 @@ from __future__ import annotations
 import copy
 import math
 from dataclasses import asdict, dataclass, replace
-from typing import Any
+from typing import Any, cast
 
 import torch
 from torch import nn
@@ -253,8 +253,8 @@ class _WorldKernel(nn.Module):
         self.byte_head = nn.Linear(d + c.embedding, 257)
         self.reward = MLP(d + 15, 4, d)
         self.actor = MLP(2 * d + 18, 1, d)
-        self.actor.last.bias = None
-        self.relation_geometry.last.bias = None
+        self.actor.last.register_parameter("bias", None)
+        self.relation_geometry.last.register_parameter("bias", None)
         self.critic = MLP(2 * d, 1, d)
         for module in self.modules():
             if isinstance(module, (nn.Linear, nn.Conv1d)):
@@ -375,6 +375,9 @@ class _WorldKernel(nn.Module):
         result["prediction_goal"] = goal.clone()
         result["prediction_action"] = action.clone()
         return result
+
+    def native(self, state: Any, goal: Any, action: Any, event: Any) -> Any:
+        raise NotImplementedError("The subject supplies the native state transition")
 
     def encode(self, observations: Any, coordinates: Any, outcome: Any = None) -> Any:
         result = {}
@@ -497,6 +500,10 @@ class _WorldKernel(nn.Module):
 
 class U2Subject(_WorldKernel):
     """One differentiable candidate with explicit event and development state."""
+
+    _capture_credit: bool
+    _credit_tape: list[dict[str, torch.Tensor]]
+    _verification_cuts: frozenset[str]
 
     def __init__(self, config: U2Config = DEFAULT_CONFIG) -> None:
         with torch.random.fork_rng(devices=[]):
@@ -1135,7 +1142,7 @@ class U2Subject(_WorldKernel):
         rebuilt = (weights.detach() * 2 * self.critic(features.detach()).tanh().squeeze(-1)).sum()
         if not torch.allclose(rebuilt.detach(), cached.detach(), atol=tolerance, rtol=tolerance):
             raise ValueError("pending critic cached value is inconsistent")
-        return rebuilt
+        return cast(torch.Tensor, rebuilt)
 
     def choose_operation(self, state: Any, legal_mask: Any = None) -> Any:
         policy = self.policy(state, legal_mask)

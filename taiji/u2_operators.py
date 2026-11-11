@@ -8,7 +8,7 @@ no dependency on verification scripts, datasets, optimizers or checkpoints.
 from __future__ import annotations
 
 from collections.abc import Sequence
-from typing import Any
+from typing import Any, cast
 
 import torch
 
@@ -187,7 +187,7 @@ def fp1(
     eye = torch.eye(memory.shape[0], dtype=memory.dtype, device=memory.device)
     hessian = eye + (keys * beta) @ keys.T
     rhs = baseline + (keys * beta) @ values.T
-    return SphereQuadratic.apply(hessian, rhs, radius)
+    return cast(torch.Tensor, SphereQuadratic.apply(hessian, rhs, radius))
 
 
 def initial_cursor(
@@ -204,7 +204,10 @@ def initial_cursor(
     _floating(reference, "cursor")
     if log_eta is None:
         eta = torch.full(
-            (branches,), -torch.log(reference.new_tensor(branches)), device=device, dtype=dtype
+            (branches,),
+            float(-torch.log(reference.new_tensor(branches))),
+            device=device,
+            dtype=dtype,
         )
     else:
         _same_layout(reference, log_eta)

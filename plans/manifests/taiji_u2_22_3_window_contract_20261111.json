@@ -1,0 +1,169 @@
+{
+  "schema": "taiji-u2-22.3.2-window-contract-v1",
+  "created_on": "2026-11-11",
+  "parent_plan_revision": "13ede2810",
+  "parent_pending_credit_revision": "f83dd7cc0",
+  "source_hash_semantics": "UTF8 without BOM; universal newline to LF",
+  "source_pins": {
+    "taiji/u2_recovery.py": "b1a7686b9b8b84778496828f78228478b8bd2ade73824abeeb7f6d4012e47acc",
+    "taiji/u2_subject.py": "9c6778674f296012ece6e6ab7729a78e81fc9422f98f5243a6007e4bf59a54d1",
+    "taiji/u2_operators.py": "d09f5784bffaf0a3247006c0d67062f18825ba8dc8a431b7c1d0cc778a249559",
+    "taiji/utf8_state.py": "6ec7e96b2994dfa8eea430b3a08ddb5ff0fd877cf70c8cc288f57bab2efcac09",
+    "tests/taiji_native/test_u2_runtime_recovery_22_3.py": "1c1c7ff563a62043fa212dec5eac2288e5fd1eac36b6ba34d05f06618fe53552",
+    "scripts/training/verify_taiji_u2_runtime_22_3.py": "272e9b728b0cfcc9dfe4647b179ce2f3b2f02679252130700748a5262cd8654b"
+  },
+  "envelope_schema": "taiji-u2-runtime-envelope-v1",
+  "body_schema": "taiji-u2-subject-v2",
+  "executor_schema": "taiji-u2-reference-executor-v1",
+  "conditions": {
+    "threads": 1,
+    "device": "cpu",
+    "dtype": "torch.float64",
+    "interop_threads": "record actual parent value; strict equality at restore"
+  },
+  "budget": {
+    "cpu_seconds": 240,
+    "wall_seconds": 480,
+    "optimizer_attempts": 0,
+    "project_dataset_reads": 0,
+    "existing_checkpoints_loaded": 0
+  },
+  "budget_scope": "formal verifier including every listed check, gradient metrics and historical typing equivalence; development checks reported separately",
+  "whole_22_3_budget": {
+    "cpu_seconds": 1200,
+    "wall_seconds": 2400,
+    "optimizer_attempts": 8
+  },
+  "window": {
+    "max_operations": 32,
+    "max_actual_output_bytes": 64,
+    "anchor_kinds": [
+      "genesis",
+      "values_at_committed_boundary"
+    ],
+    "parameters": "frozen identity, revision and source throughout the window",
+    "genesis_credit": "rebuild model.initial graph",
+    "values_credit": "explicit matched stop-gradient on both control and restore at committed boundary",
+    "post_theta_update": "rejected until a separately validated semantic rebuild or migration boundary"
+  },
+  "envelope_fields": [
+    "schema",
+    "conditions",
+    "source_pins",
+    "subject_bundle",
+    "optimizer_layout",
+    "window",
+    "runtime",
+    "executor_snapshot",
+    "host_clock",
+    "credit_scope"
+  ],
+  "typed_operations": {
+    "goal": [
+      "raw",
+      "version"
+    ],
+    "records": [
+      "records"
+    ],
+    "choose": [
+      "legal_mask"
+    ],
+    "issue": [
+      "dt"
+    ],
+    "ack": [
+      "identity"
+    ],
+    "process_time": [
+      "value"
+    ],
+    "receive": [
+      "packet"
+    ],
+    "begin_utterance": [],
+    "emit": [
+      "symbols"
+    ],
+    "internal": []
+  },
+  "execution_protocol": [
+    "durable_intent",
+    "authoritative_query_by_action_id",
+    "idempotent_atomic_simulator_effect",
+    "ack",
+    "settle_outcome_once"
+  ],
+  "executor_limits": "controlled local simulator, single writer; unknown live execution status waits; snapshot never overwrites an attached live executor ledger",
+  "atomic_file": "magic + payload length + SHA256 + torch payload, unique staging + fsync + atomic replace; corruption rejected before trusted-local deserialization",
+  "shadow_birth": "all shape, lineage, optimizer migration and validation work in a clone before live commit; failed/rejected child preserves parent",
+  "time_equivalence": {
+    "subject": "world_time and logical process_time exact",
+    "host": "fresh host epoch, origin = monotonic_now - saved logical process_time",
+    "audit": "host-only restore record, excluded from subject action identity"
+  },
+  "tolerances": {
+    "float64": {
+      "atol": 1e-10,
+      "rtol": 1e-08
+    },
+    "float32": {
+      "atol": 1e-05,
+      "rtol": 0.0001
+    }
+  },
+  "type_equivalence_parent": {
+    "revision": "f83dd7cc0",
+    "expected_sha": "4b3d33b53e2d9b7b1bb2579e83a5d586fc825035b3218de82bb1b0ad446f3888"
+  },
+  "expected_checks": [
+    "test_atomic_file_rejects_corruption_before_deserializing[truncate]",
+    "test_atomic_file_rejects_corruption_before_deserializing[payload]",
+    "test_atomic_file_rejects_corruption_before_deserializing[header]",
+    "test_bad_envelope_never_falls_back_to_a_values_only_success[schema]",
+    "test_bad_envelope_never_falls_back_to_a_values_only_success[source]",
+    "test_bad_envelope_never_falls_back_to_a_values_only_success[window]",
+    "test_bad_envelope_never_falls_back_to_a_values_only_success[operations]",
+    "test_bad_envelope_never_falls_back_to_a_values_only_success[parameters]",
+    "test_execute_before_ack_recovery_does_not_repeat_external_effect",
+    "test_failed_atomic_replace_keeps_previous_checkpoint_and_cleans_staging",
+    "test_failed_shadow_birth_keeps_parent_and_optimizer_untouched",
+    "test_full_window_rejects_execution_before_any_external_effect",
+    "test_goal_switch_unknown_outcome_and_duplicate_packet_survive_window_replay",
+    "test_internal_replay_and_wait_preserve_physical_clock_on_restore",
+    "test_invalid_value_anchor_cannot_certify_itself_by_roundtrip[H]",
+    "test_invalid_value_anchor_cannot_certify_itself_by_roundtrip[F]",
+    "test_invalid_value_anchor_cannot_certify_itself_by_roundtrip[logw]",
+    "test_invalid_value_anchor_cannot_certify_itself_by_roundtrip[records]",
+    "test_invalid_value_anchor_cannot_certify_itself_by_roundtrip[eligibility]",
+    "test_invalid_value_anchor_cannot_certify_itself_by_roundtrip[resources]",
+    "test_mid_character_and_actual_self_output_replay_without_world_fact_write",
+    "test_parameter_change_cannot_be_blessed_as_a_new_boundary[window]",
+    "test_parameter_change_cannot_be_blessed_as_a_new_boundary[birth]",
+    "test_pending_values_cannot_become_an_undeclared_truncated_anchor",
+    "test_repeated_acknowledgment_is_idempotent_at_window_limit",
+    "test_restored_rng_and_next_decision_reproduce_recorded_actor",
+    "test_source_change_cannot_be_relabelled_at_save_or_boundary",
+    "test_two_shadow_births_preserve_moments_lineage_and_neutral_outputs",
+    "test_uncertain_executor_status_waits_without_reissuing",
+    "test_unregistered_runtime_nested_fields_are_rejected[runtime]",
+    "test_unregistered_runtime_nested_fields_are_rejected[anchor_runtime]",
+    "test_unregistered_runtime_nested_fields_are_rejected[anchor]",
+    "test_unregistered_runtime_nested_fields_are_rejected[operation]",
+    "test_values_only_restore_is_a_discriminating_theta_credit_negative_control",
+    "test_window_overflow_is_rejected_before_mutating_rng",
+    "test_window_replay_restores_pending_motion_native_fast_and_critic_credit"
+  ],
+  "required_positive": "same finite window restores old motion/native/F/critic credit; report per-parameter comparisons including inactive entries",
+  "required_negative": "values-only body restore still loses old motion credit",
+  "scope_exits": {
+    "pass": "passed_finite_window_runtime_only",
+    "remaining": [
+      "22.3.3 twelve independent-process snapshot families",
+      "22.3.4 six shared-prefix optimizer updates and two fault attempts",
+      "22.3.5 whole-card closure"
+    ],
+    "whole_22_3_passed": false,
+    "task_capability_evaluated": false
+  }
+}

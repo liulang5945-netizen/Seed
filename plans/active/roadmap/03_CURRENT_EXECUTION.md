@@ -3087,3 +3087,11 @@ U2统一完整状态、结果信用、自我修改选择与神经成熟闭环，
 随后交付[恢复合同](../../manifests/taiji_u2_22_3_recovery_contract_20261110.json)及[挂起信用回执](../../reference/VALIDATION-TAIJI-U2_22_3_PENDING_CREDIT_20261110.md)。bundle v2保存逐分支critic输入/权重/Ψ版本并重建旧V，16项检查通过，正式CPU4.96875/wall6.609、0optimizerattempt。
 
 完整Θ旧预测窗仍丢图，motion原信用范数0.0206371而值恢复后None，作为预期负例保留。只签条件actor/critic子卡，22.3总体未通过，唯一后继22.3.2有限窗回放与幂等runtime。
+
+## 2026-11-11 U2 22.3.2有限窗恢复与事务
+
+按已提交详细计划交付[窗口合同](../../manifests/taiji_u2_22_3_window_contract_20261111.json)、运行承载及[核验回执](../../reference/VALIDATION-TAIJI-U2_22_3_WINDOW_20261111.md)。36项正式检查通过，CPU13.875/wall16.906，0optimizerattempt、0正式训练、0项目数据与既有checkpoint读取。
+
+同一冻结窗恢复后，191项参数逐项比较，179项参与本预测/结果端点，其中158项非零，最大梯度差0。仅恢复主体值的旧motion梯度仍为None，保留判别力。新runtime同时覆盖durable intent/幂等执行/ack、重复结果、UTF-8中间态、影子出生、损坏文件及非法值锚点。完整算法的窗口/版本信用语义补入[U2 §16](../../reference/SPEC-TAIJI-CLOSED_LOOP_U2_20261110.md#16-有限学习窗的信用与恢复语义)。
+
+当前仅签同进程有限窗工程。跨进程十二类、float32、真实更新后的语义重建与接续仍待22.3.3/4。S12复用真实更新产物后在22.3.5合拢，accepted_parent尚未签署。22.4新增合法记录元数据的模型可见与可辨性检查。owner明确CI另行处理，后继聚焦主体算法和闭环。
