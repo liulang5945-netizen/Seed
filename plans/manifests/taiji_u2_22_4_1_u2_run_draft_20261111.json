@@ -21,9 +21,9 @@
   ],
   "references": {
     "execution_manifest": "plans/manifests/taiji_u2_22_4_1_execution_20261111_v2.json",
-    "manifest_sha256": "4fc2d0429c9f26687465d76642459c3682eb4a047446b04a0f2e059c46f14965",
+    "manifest_sha256": "b80f8b5662abefbb0dd7fea89aca542bad780e1503042f2addaad18d9ae07f87",
     "admission_manifest": "plans/manifests/taiji_u2_22_4_1_data_price_admission_20261111.json",
-    "admission_manifest_sha256": "05d8bc684cb441659d2a3c7608d8ade62f95edd211e79307b91dbbff1b0e52bc",
+    "admission_manifest_sha256": "34792bfbd2205ce9f30112aa8d6397feb8b6d2130a6eb06080fead080dee4329",
     "baseline_identity": "plans/manifests/taiji_u2_22_4_4_baseline_identity_20261111.json",
     "baseline_identity_sha256": "e5c776c4f12e4633bf7366d66ee22e6095efac7fa2147e5c6973653797335b29",
     "baseline_identity_module_sha256": "384b404560f827e0868a8d8f9fbfc27aff5aa885b182cd443ade79972e4145cf",
@@ -94,6 +94,7 @@
     "已清（D-20261111-20）：u2 的 F2 口径已落地——shadow_terms 按臂取片段，verbatim 项按 byte_head 逐字教师强制（目标“红盒在左边。”，18 字节，train_label），不再乘在零张量上；actor/critic 在该图上不存在，已声明为结构零。",
     "已清（D-20261111-21）：u2 的一步执行路径已接入——perform_baseline 只用该图 35 项活性参数走 Adam 单步，产出 35 项活性回执（change/margin/barely_live），post.bin 写出后立即读回五项，并落 s12_payload；execute() 在 u2 上走该路径，R09/R11 改用同口径基线实现（判据编号、检查内容与退出码未变）。0 步自检 step=0。",
     "已清（D-20261112-23）：R05 的 u2 口径已按冻结预注册（fbad62d4…9dfd）落地——新增 check_r05_baseline 并接入按臂分派，检查对象换成本臂冻结执行图身份（21,977/35，training_runs=0、optimizer_steps=0），检查项 10 项、任一失败退 5；u1 的 check_r05 与调用顺序逐字不变，u1 五个产物哈希未变。0 步自检 61 条全过（step=0）。身份测量报告不重签，历史哈希只登记。",
+    "已清（D-20261112-25）：F-20261112-E2E-01 按 owner 裁定 A 处理——准入 manifest 的 u2 行 precision 由占位文案改为实测 float32，R06 判据文字未动；准入表与执行清单中同类占位已一次性扫清（u1/u2 全部 measured，u3/u4 的 model 标 pending_identity 并写明 C10/C11 与补齐责任）；本草稿的 manifest_sha256 与 admission_manifest_sha256 已重钉到新值。",
     "未清（owner 侧）：owner 放行时须给出 run_id 与含 u2-strong-baseline 的 owner_approval_ref，并把 authorized 改为 true。"
   ],
   "data_scope": {

@@ -1,6 +1,6 @@
 # 分支覆盖台账：22.4.1 执行器（`scripts/training/run_taiji_u2_22_4_1.py`）
 
-**建立时间**：2026-11-11｜**对应自检**：`python -m scripts.training.run_taiji_u2_22_4_1 --self-check`（**61 条**，`optimizer_step_calls=0`，cpu 8.72 s／wall 17.63 s；臂参数化后由 36 条增至 43 条，u2 臂行回填后增至 46 条，u2 执行图改为基线并落 F2 逐字项后增至 51 条，u2 一步执行路径接入后增至 56 条，u2 的 R05 父身份口径接入后增至 61 条，见 D-20261111-18／-19／-20／-21／-23）。
+**建立时间**：2026-11-11｜**对应自检**：`python -m scripts.training.run_taiji_u2_22_4_1 --self-check`（**62 条**，`optimizer_step_calls=0`，cpu 7.48 s／wall 19.86 s；臂参数化后由 36 条增至 43 条，u2 臂行回填后增至 46 条，u2 执行图改为基线并落 F2 逐字项后增至 51 条，u2 一步执行路径接入后增至 56 条，u2 的 R05 父身份口径接入后增至 61 条，F-01 改实后补 1 条 R06 正向见证增至 62 条，见 D-20261111-18／-19／-20／-21／-23／-25）。
 **规则**：执行器每新增一个可退出分支，必须在本表加一行；只加代码不加账视为未完成。标"未覆盖"的不得写成"已验证"。
 
 ## 1. 退出码 5（授权、身份、合同）
@@ -86,6 +86,7 @@
 | 67 | R05-u2 构造件模块源码漂移 | 已覆盖 | `u2_r05_module_pin_drift_rejected`（内存副本改 `architecture.module_sha256` → `R05 frozen baseline module source changed`，退 5） |
 | 68 | R05-u2 测量报告未选中本图或选择路径不是 `tie_break`／L1 | 已覆盖 | `u2_r05_measurement_not_selected_rejected`（内存副本改 `selection.selected` → `R05 identity measurement selection differs from the identity`，退 5） |
 | 69 | R05-u2 线程数：只记录、不判假（`threads≠1` 不得拒绝） | 已覆盖 | `u2_r05_threads_recorded_not_judged`（实测 `threads=4` 仍通过，读数原样记录） |
+| 70 | R06 正向：准入 u2 行 `precision` 与 run 逐字一致时**放行**（F-20261112-E2E-01 改实的见证） | 已覆盖 | `u2_bound_r06_real_precision_accepted`（读真实准入文件与 u2 绑定副本，`consumed=0`，pass；判据代码未动） |
 
 ## 4. 未覆盖项的合计风险
 

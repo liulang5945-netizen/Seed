@@ -3262,3 +3262,61 @@ v2 的 u2 臂行挂着 `baseline_identity_sha256 = e5c776c4…5b29`，而该身�
 ### 6. 下一步
 
 唯一建议：**先裁定 F-20261112-E2E-01 并选 A**（把 admission 的 u2 行 precision 改为 `float32`、同步重签 pin），再重跑 61 条自检；在此之前不申请 u2 放行。本轮证据只证明代码路径可跑通，不构成放行依据。
+
+---
+
+## D-20261112-25　F-01 裁定 A：准入 u2 行 precision 改实、同类占位一次扫清、下游重钉
+
+**类型**：冻结文件重签（owner 裁定）＋占位清算。**授权来源**：owner 2026-11-12 裁定「选 A」及四步要求。**范围**：0 训练／0 `optimizer.step`／0 项目数据读取／未申请放行；R01–R12 的编号、判据与退码未动。
+
+### 1. 改值与留档
+
+| 项 | 内容 |
+|---|---|
+| 字段 | `updates[u2-strong-baseline].precision` |
+| before → after | `"按22.4.4冻结身份"` → `"float32"` |
+| 理由 | 身份已由 22.4.4 冻结为 TransformerSequenceBaseline，dtype 实测 float32（身份清单与 param_inventory 均记 float32） |
+| 判据未动 | `check_r06` 的判据文字、编号、退出码一字未改，仍是 `run.precision == 准入行 precision`，越帽退 3 |
+| 强度不降 | 改前该行让 R06 对 u2 永久退 3（闸门常年关闭）；改后第一次能真正判真。新增正向用例 `u2_bound_r06_real_precision_accepted` 证明放行，5 条 R06 负向用例仍退 3 |
+
+同批把 `u2.model` 由「常规GRU或Transformer之一」改为实际基线图描述。before/after/理由/判据未动/强度论证同时写进准入 manifest 的 `amendments` 机读块，不只写在台账里。
+
+### 2. 同类占位清单（准入表＋执行清单，一次扫清）
+
+| 字段 | 处置 | 拒门／补齐责任 |
+|---|---|---|
+| 准入 u1/u2 的 `precision`、`model` | measured（实值） | — |
+| 准入 u3/u4 的 `precision` | measured `float32`（原值即实值） | — |
+| 准入 u3 的 `model` | **pending_identity** | C10；执行线在 u1/u2 读数后判定「需迁移→冻结方案+22.3 回归」或「不需→按 `no_migration_rule` 转 0 step 恢复检查」 |
+| 准入 u4 的 `model` | **pending_identity** | C10、C11；同上，另需独立进程加载 u3 checkpoint |
+| 执行清单 u1 臂 | 补 `identity_status="filled"` | — |
+| 执行清单 u3/u4 臂 | 补 `pending_identity`＋`pending_reason/pending_gate/pending_filled_by` | C10／C10+C11 |
+| 执行清单 `conditions.interop_threads` | `runtime_measured`（运行时实测登记，不判真假） | — |
+
+两份文件各新增 `identity_settlement` 段，机读取上述判定。
+
+### 3. 下游重钉
+
+| 引用点 | 旧 → 新 | 理由 |
+|---|---|---|
+| 准入 manifest 本体 | `05d8bc68…52bc` → `34792bfb…4329` | 唯一改值文件 |
+| execution v2（authority＋authorization 两处） | 内嵌 pin 同上；文件 `4fc2d042…4965` → `b80f8b56…7f87` | 活引用 |
+| u2 草稿（`manifest_sha256`＋`admission_manifest_sha256`） | 同上；文件 `638cbc23…28c9` → `70ae1f25…4bc2` | 活模板 |
+| u1 草稿 | **不改**（仍记 `05d8bc68…`） | u1 已执行 attempt 的原始环境记录（run_id `20261111T142919Z`，attempt 2）；改它等于宣称那次跑在新准入下。重放按 R04 退 5 属预期 |
+| execution v1（两处） | **不改** | 预注册声明「原样保留只读，u1 仍 pin v1」；与 u1 草稿构成历史对 |
+| 证据产物（`…TEVID01Z/run.json`、S12、证据报告）与两份 u1 S12 | **不改** | 已入库历史读数，只登记 |
+| PREREG-22.4.4 产物表 | 更新 v2／草稿哈希并加「F-01 重签」段 | 活索引 |
+| 闭环计划／MASTER-PLAN 的历史轮次行 | **不改** | 当轮记录值 |
+
+### 4. 0 步自检读数
+
+- **62 条全过**（61＋1 条 R06 正向见证）、`failed=0`、`optimizer_step_calls=0`、cpu 7.48／wall 19.86。
+- 关键用例：`u2_bound_r04_admission_and_identity_sha`=pass、`u2_bound_r06_real_precision_accepted`=pass、`r06_precision_mismatch` 仍退 3、`u2_bound_r05_frozen_identity` 与四条 R05 漂移用例不变。
+- u1 回归：u1 五个产物在 `git status` 中无变更（`bf0c9a0a…`／`c6e5d57c…`／`b80ec1d7…`／`d7a9ac83…`／`bcfb08ad…`），`check_r05` 与 u1 调用顺序一字未改。
+- 覆盖台账：69 → **70** 行，未覆盖仍 18，不可达 2。
+- 仍为 `pending_identity`：准入 u3/u4 的 `model`；执行清单 u3/u4 的 `model/weights/active_parameters`（只影响 u3/u4）。
+- **u2 因占位被拒的门：0**（改前 1，即 R06）；u3/u4 各 2 道（C10／C11），成因是迁移方案未冻结，不是文案。
+
+### 5. 下一步
+
+唯一建议：F-01 已闭合、u2 的占位类阻塞清零，下一步只差授权输入——由 owner 给出本次 u2 的 `run_id`、`owner_approval_ref`（含 attempt 序号），执行线据此把草稿落地为正式 `run.json`；在此之前不申请放行、不写账本。

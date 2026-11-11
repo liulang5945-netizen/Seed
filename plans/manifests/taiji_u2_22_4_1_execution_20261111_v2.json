@@ -9,7 +9,7 @@
     "card": "plans/reference/PLAN-TAIJI-CLOSED_LOOP_DEVELOPMENT_20261110.md",
     "card_section": "22.4.1记录元数据与逐群结构",
     "admission_manifest": "plans/manifests/taiji_u2_22_4_1_data_price_admission_20261111.json",
-    "admission_manifest_sha256": "05d8bc684cb441659d2a3c7608d8ade62f95edd211e79307b91dbbff1b0e52bc",
+    "admission_manifest_sha256": "34792bfbd2205ce9f30112aa8d6397feb8b6d2130a6eb06080fead080dee4329",
     "interface_spec": "plans/reference/SPEC-TAIJI-U2_METADATA_GROUPS_22_4_20261111.md",
     "interface_receipt": "reports/taiji_u2_metadata_groups_22_4_20261111.json",
     "interface_receipt_sha256": "275291d812799ce509d81b903eb0f17eb2d54c392a9cf1bb0fd9f7491688b2d8",
@@ -65,6 +65,7 @@
     "u1-candidate-float32": {
       "dtype": "float32",
       "model": "22.4.1元数据候选（record_metadata=True，自22.3接受父复制同名参数）",
+      "identity_status": "filled",
       "weight_profile": "F1-style",
       "weights": {
         "predictive": 1.0,
@@ -214,14 +215,55 @@
     },
     "u3-migration-original": {
       "inherits": "u1-candidate-float32的weights与活性清单",
+      "identity_status": "pending_identity",
+      "pending_reason": "model/weights/active_parameters 随 u1/u2 的实际宽度与迁移是否发生而定；迁移方案尚未冻结",
+      "pending_gate": "C10（迁移方案冻结 + 22.3 恢复回归通过）",
+      "pending_filled_by": "执行线在 u1/u2 读数后判定：需迁移则先冻结方案并回归；不需要则按 no_migration_rule 转 0 step 具名恢复检查",
       "optimizer_steps": 1,
       "zero_step_rule": "若u1/u2实际宽度仍等于基座（group_units为None），按准入manifest的no_migration_rule转为0 step具名恢复检查，仍计费、仍须独立进程"
     },
     "u4-migration-recovery": {
       "inherits": "u1-candidate-float32的weights与活性清单",
+      "identity_status": "pending_identity",
+      "pending_reason": "同 u3；另需独立进程从 u3 checkpoint 读回并逐位比对",
+      "pending_gate": "C10、C11（独立进程重建 state）",
+      "pending_filled_by": "执行线在 u3 完成后按同一迁移方案回填",
       "optimizer_steps": 1,
       "zero_step_rule": "同u3；且必须在独立Python进程从u3 checkpoint加载并重建state"
     }
+  },
+  "identity_settlement": {
+    "surveyed_at": "2026-11-12",
+    "summary": "身份落定前的说明文字已逐项处置：u1/u2 两臂全部 measured/filled；u3/u4 两臂的 model/weights/active_parameters 为 pending_identity；conditions.interop_threads 属运行时实测登记，不参与身份判定。",
+    "items": [
+      {
+        "where": "arms[u1-candidate-float32].dtype/model/weight_profile/weights/active_parameters",
+        "status": "measured",
+        "note": "22.4.1 候选已落定，precision 与准入行一致（float32）"
+      },
+      {
+        "where": "arms[u2-strong-baseline].*",
+        "status": "measured",
+        "note": "由 22.4.4 身份清单回填（21,977/35），见 baseline_identity_sha256"
+      },
+      {
+        "where": "arms[u3-migration-original].model/weights/active_parameters",
+        "status": "pending_identity",
+        "reject_gate": "C10",
+        "filled_by": "执行线在 u1/u2 后判定迁移是否发生"
+      },
+      {
+        "where": "arms[u4-migration-recovery].model/weights/active_parameters",
+        "status": "pending_identity",
+        "reject_gate": "C10、C11",
+        "filled_by": "同上，另需独立进程加载 u3 checkpoint"
+      },
+      {
+        "where": "conditions.interop_threads",
+        "status": "runtime_measured",
+        "note": "threads=1 已冻结；interop 线程数按运行时实测登记，不判真假（R05 预注册口径）"
+      }
+    ]
   },
   "loss": {
     "terms": [
@@ -440,7 +482,7 @@
         "authorized": true,
         "owner_approval_ref": "non-empty string，绑定具体update id",
         "manifest_sha256": "本文件的实际sha256",
-        "admission_manifest_sha256": "05d8bc684cb441659d2a3c7608d8ade62f95edd211e79307b91dbbff1b0e52bc",
+        "admission_manifest_sha256": "34792bfbd2205ce9f30112aa8d6397feb8b6d2130a6eb06080fead080dee4329",
         "run_id": "YYYYMMDDTHHMMSSZ"
       },
       "must_precede": "任何ledger open行；缺run_start或缺owner_approval_ref则exit 5",

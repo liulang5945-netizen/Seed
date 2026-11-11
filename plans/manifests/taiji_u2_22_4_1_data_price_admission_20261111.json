@@ -5,6 +5,30 @@
   "run_authorized": false,
   "authorization_note": "本文件只冻结22.4.1四次工程更新的输入分区、反馈边界、CPU价目、准入/拒绝条件与不可回滚记账。开跑需owner明确授权，由执行线在run.json写入owner_approval_ref与authorized=true；本文件不因授权而改写。",
   "scope": "不冻结损失权重、Adam超参数（lr/betas/eps）、目标活性参数、实际变化下限与迁移触发阈值——那些按卡在读数前另行冻结到执行manifest。本文件不新增算法参数，不改动任何既有冻结判据，不分配新额度。",
+  "amendments": [
+    {
+      "id": "A-20261112-01",
+      "date": "2026-11-12",
+      "decided_by": "owner",
+      "decision_ref": "F-20261112-E2E-01 选项 A（owner 2026-11-12 裁定）",
+      "field": "updates[u2-strong-baseline].precision",
+      "before": "按22.4.4冻结身份",
+      "after": "float32",
+      "reason": "该行是身份落定前的说明文字。22.4.4 已冻结执行图为 TransformerSequenceBaseline，dtype 实测 float32（身份清单与 param_inventory 均记 float32），故替成实值。",
+      "criteria_unchanged": "R06 的判据文字、编号与退出码一字未动：仍是 run.precision == 本行 precision，越帽仍退 3。",
+      "strength_argument": "改后比的是真实 dtype 而非说明文字。此前该行让 R06 对 u2 永久无法通过（真实 run.json 写 float32 即退 3），闸门等于常年关闭；改后闸门第一次能真正判真，强度不降、只增可判性。",
+      "untouched": [
+        "quota",
+        "data_partitions",
+        "feedback_boundary",
+        "common_admission",
+        "common_rejection",
+        "ledger",
+        "invariants"
+      ],
+      "downstream": "本文件 sha256 变化后，execution_20261111_v2.json 与 u1/u2 run 草稿同步重钉；已入库的 run.json/S12/证据报告保留旧值，只登记不复核。"
+    }
+  ],
   "authority": {
     "card": "plans/reference/PLAN-TAIJI-CLOSED_LOOP_DEVELOPMENT_20261110.md",
     "card_section": "22.4.1记录元数据与逐群结构",
@@ -106,8 +130,8 @@
     {
       "id": "u2-strong-baseline",
       "role": "主强基线的接口对齐更新",
-      "model": "22.4.4冻结的主强基线臂（常规GRU或Transformer之一），与U2同信息权利与可学习多模态编码/表达接口",
-      "precision": "按22.4.4冻结身份",
+      "model": "22.4.4冻结的 TransformerSequenceBaseline（21,977 标量/35 张量，float32）：与 U2 同信息权利与可学习多模态编码/表达接口",
+      "precision": "float32",
       "data": "engineering_slice",
       "feedback": [
         "train_label"
@@ -191,6 +215,62 @@
       ]
     }
   ],
+  "identity_settlement": {
+    "surveyed_at": "2026-11-12",
+    "rule": "身份落定前填的说明文字逐项分两类：能替成实测实值的当场替（measured）；尚不可判的保留原文并标 pending_identity，写明拒门与补齐责任。",
+    "items": [
+      {
+        "where": "updates[u1-candidate-float32].precision",
+        "value": "float32",
+        "status": "measured",
+        "note": "22.4.1 候选按 float32 构造，无占位"
+      },
+      {
+        "where": "updates[u1-candidate-float32].model",
+        "value": "22.4.1元数据候选（record_metadata=True，191 同名参数，float32）",
+        "status": "measured"
+      },
+      {
+        "where": "updates[u2-strong-baseline].precision",
+        "value": "float32",
+        "status": "measured",
+        "note": "由本表 A-20261112-01 改实；原值“按22.4.4冻结身份”是占位"
+      },
+      {
+        "where": "updates[u2-strong-baseline].model",
+        "value": "22.4.4 冻结的 TransformerSequenceBaseline（21,977 标量/35 张量）",
+        "status": "measured",
+        "note": "原值“常规GRU或Transformer之一”已由 22.4.4 的 tie-break（停在 L1 参数量）落定为 Transformer"
+      },
+      {
+        "where": "updates[u3-migration-original].precision",
+        "value": "float32",
+        "status": "measured",
+        "note": "随 u1 候选，精度不随迁移改变"
+      },
+      {
+        "where": "updates[u3-migration-original].model",
+        "value": "迁移后的同一候选，原路径",
+        "status": "pending_identity",
+        "reject_gate": "C10",
+        "filled_by": "执行线在 u1/u2 结束后按实际 group_units 宽度判定：需要迁移则先冻结迁移方案并重跑 22.3 恢复回归；不需要则按 no_migration_rule 转为 0 step 具名恢复检查"
+      },
+      {
+        "where": "updates[u4-migration-recovery].precision",
+        "value": "float32",
+        "status": "measured",
+        "note": "同上"
+      },
+      {
+        "where": "updates[u4-migration-recovery].model",
+        "value": "从u3保存的checkpoint读回后的同一候选",
+        "status": "pending_identity",
+        "reject_gate": "C10、C11",
+        "filled_by": "同 u3；另需独立进程从 u3 checkpoint 加载并逐位比对"
+      }
+    ],
+    "summary": "u1/u2 两行已无占位；u3/u4 只有 model 为 pending_identity（均取决于迁移是否发生），其 precision 已是实值。"
+  },
   "common_admission": [
     {
       "id": "C01",

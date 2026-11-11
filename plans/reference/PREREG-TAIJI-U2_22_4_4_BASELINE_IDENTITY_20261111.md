@@ -271,8 +271,8 @@ predictive_head | recurrent_core | output_head = {
 | 产物 | 路径 | sha256 |
 |---|---|---|
 | 基线身份清单 | `plans/manifests/taiji_u2_22_4_4_baseline_identity_20261111.json` | `e5c776c4f12e4633bf7366d66ee22e6095efac7fa2147e5c6973653797335b29` |
-| u2 执行图版执行清单 | `plans/manifests/taiji_u2_22_4_1_execution_20261111_v2.json` | `4fc2d0429c9f26687465d76642459c3682eb4a047446b04a0f2e059c46f14965` |
-| u2 `run.json` 草稿（未授权） | `plans/manifests/taiji_u2_22_4_1_u2_run_draft_20261111.json` | `638cbc2375b079eed35a64dc2a573850bcda234269adc6225ed5ab3349b928c9` |
+| u2 执行图版执行清单 | `plans/manifests/taiji_u2_22_4_1_execution_20261111_v2.json` | `b80f8b5662abefbb0dd7fea89aca542bad780e1503042f2addaad18d9ae07f87` |
+| u2 `run.json` 草稿（未授权） | `plans/manifests/taiji_u2_22_4_1_u2_run_draft_20261111.json` | `70ae1f258dd457fd747435ea60da54a22e55f04d3cfbf19ab463127f86b04bc2` |
 | 测量报告 | `reports/taiji_u2_22_4_4_identity_measurement_20261111.json` | `4c77d318771ea9a0b68cb43530eb31bd756f38cd1ab4276c0206b8a4f3d196d2` |
 | 测量脚本 | `scripts/training/baseline_identity_22_4_4.py` | `384b404560f827e0868a8d8f9fbfc27aff5aa885b182cd443ade79972e4145cf` |
 | U2 前端复制源 | `taiji/u2_subject.py` | `aa7a23249ad6fdaff1900000c665d575651debc498e800b8c292839ea4f736a8` |
@@ -281,6 +281,8 @@ predictive_head | recurrent_core | output_head = {
 **证据索引限制（2026-11-12，D-20261112-24）**：上表最后一行是**证据专用**产物，不在本预注册的判定链内。它只签"代码路径可跑通"（账本三步齐全、一步落参、checkpoint 读写五项、S12 与 worker 复算一致），**不得**当作 u2 的机制证据或性能证据，**不得**引用为放行依据；其账本名为 `..._EVIDENCE_ONLY_...`、`run_id` 含 `TEVID`、`run.json` 带 `evidence_only=true`，与真实运行可区分。同一轮还暴露 `check_r06` 与准入 u2 行 `precision` 文案的矛盾（F-20261112-E2E-01），待 owner 裁定后另行重签。
 
 **追加局限字段（2026-11-11，纯增量，不改 §1–§10 判据）**：身份清单新增 `limitations` 四条的机读条目——L1 等算力缺口、L2 计时粒度与重复均值口径、L3 参照图为基座而非候选、L4 单片段最近点。追加后身份清单哈希由 `820646c7…6f75` 变为 `e5c776c4…5b29`，v2 随之重钉（`56017e2f…0054` → `3c1c2195…3e56`）；三槽参数名与 dtype、12 条判据、v1 均未改。
+
+**F-01 重签（2026-11-12，D-20261112-25，owner 裁定 A）**：准入 manifest 的 u2 行 `precision` 由占位文案 `"按22.4.4冻结身份"` 改为实测 `"float32"`，`check_r06` 的判据文字、编号与退出码一字未动（仍是 `run.precision == 准入行 precision`，越帽退 3）。准入哈希 `05d8bc68…52bc` → `34792bfb…4329`；v2 中两处 `admission_manifest_sha256` 同步重钉，v2 哈希 `4fc2d042…4965` → `b80f8b56…7f87`；u2 草稿两处 pin 同步重钉，哈希 `638cbc23…28c9` → `70ae1f25…4bc2`（即上表现行值）。**历史值不改、只登记**：u1 的 `run.json` 草稿与 `execution_20261111.json`（v1）仍记 `05d8bc68…`——它们是 u1 已执行 attempt 的原始环境记录，v1 按本预注册"原样保留只读"不动，重放会按 R04 退 5 属预期；证据产物（`..._TEVID01Z/run.json`、S12、证据报告）与两份 u1 S12 同样保留旧值。同类占位已一次性扫清：准入表 u2 的 `model` 改实，u3/u4 的 `model` 标 `pending_identity`（拒门 C10／C10+C11，补齐责任在 u1/u2 读数后的执行线），执行清单 u1 补 `identity_status=filled`、u3/u4 补 `pending_*` 字段并新增 `identity_settlement` 清单。
 
 **测量局限（必须与读数一起引用，不得省略）**：
 

@@ -1228,6 +1228,7 @@ def self_check(directory: Path) -> dict[str, Any]:
             "optimizer_steps_authorized": 1,
         }
         u2_execution, _ = execution_manifest(bound)
+        u2_admission, _ = admission_manifest(bound)
         u2_dir = directory / "u2-parent"
         u2_dir.mkdir(parents=True, exist_ok=True)
         u2_runtime = prepare_parent(u2_execution, u2_dir, arm="u2-strong-baseline")
@@ -1242,6 +1243,9 @@ def self_check(directory: Path) -> dict[str, Any]:
                     bound, u2_execution, u2_runtime, arm="u2-strong-baseline"
                 ),
             ),
+            # F-20261112-E2E-01（裁定 A）的正向见证：准入 u2 行的 precision 改实后，
+            # R06 必须真的放行；判据本身未动，此条只证明闸门不再常年关闭。
+            ("u2_bound_r06_real_precision_accepted", lambda: check_r06(bound, u2_admission, 0)),
         ):
             try:
                 detail = action()
