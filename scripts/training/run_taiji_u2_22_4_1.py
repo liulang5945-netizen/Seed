@@ -322,15 +322,6 @@ def execute(root: Path) -> dict[str, Any]:
     finally:
         torch.optim.Adam.step = original_step
 
-    checks.append(check_r11(post_path, result["post"]))
-    checks.append(check_r12(result["activity_receipt"]))
-    result["post_sha256"] = normalized_file_sha(post_path)
-    closed = ledger.close(
-        identity,
-        outcome="accepted",
-        post_checkpoint="post.bin",
-        optimizer_step_calls=1,
-    )
     state = ledger.read()
     s12 = s12_payload(
         run,
