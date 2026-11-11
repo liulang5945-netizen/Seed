@@ -41,6 +41,12 @@ from taiji.u2_recovery import run_conditions
 ROOT = Path(__file__).resolve().parents[2]
 RUN_SCHEMA = "taiji-u2-22.4.1-run-v1"
 PARENT_MANIFEST = ROOT / "plans/manifests/taiji_u2_22_3_accepted_parent_20261111.json"
+# 冻结的损失口径。非默认臂不能只跟自己那份 manifest 比对（那是同义反复），
+# 而要按它声明的 profile 名对照这张表：改权重但留着 profile 名就会被 R08 拦下。
+FROZEN_WEIGHT_PROFILES = {
+    "F1-style": {"predictive": 1.0, "actor": 0.1, "critic": 0.1, "verbatim": 0.0},
+    "F2-style": {"predictive": 0.1, "actor": 0.1, "critic": 0.1, "verbatim": 1.0},
+}
 
 
 class ContractError(LedgerError):
@@ -340,8 +346,16 @@ def check_r08(
     if arm == DEFAULT_ARM:
         if weights != {"predictive": 1.0, "actor": 0.1, "critic": 0.1, "verbatim": 0.0}:
             raise ContractError(f"R08 u1 weights are not the frozen F1 profile: {weights}")
-    elif weights != dict(row["weights"]):
-        raise ContractError(f"R08 {arm} weights drift from the execution manifest: {weights}")
+    else:
+        frozen_profile = FROZEN_WEIGHT_PROFILES.get(row.get("weight_profile"))
+        if frozen_profile is None:
+            raise ContractError(
+                f"R08 {arm} declares an unknown weight profile {row.get('weight_profile')!r}"
+            )
+        if weights != frozen_profile:
+            raise ContractError(
+                f"R08 {arm} weights drift from the frozen {row['weight_profile']} profile: {weights}"
+            )
     if manifest["warmup"]["enabled"] or manifest["gradient_clip"]["enabled"]:
         raise ContractError("R08 warmup or clipping was enabled outside the freeze")
     names = active_parameters(model, manifest, arm=arm)

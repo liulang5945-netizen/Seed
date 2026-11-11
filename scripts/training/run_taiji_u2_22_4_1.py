@@ -1191,7 +1191,7 @@ def self_check(directory: Path) -> dict[str, Any]:
                     {
                         "case": name,
                         "expected": "pass",
-                        "actual": f"exit {error.code}",
+                        "actual": f"exit {error.exit_code}",
                         "pass": False,
                     }
                 )
@@ -1205,22 +1205,91 @@ def self_check(directory: Path) -> dict[str, Any]:
                         "detail": json.dumps(detail, ensure_ascii=False)[:160],
                     }
                 )
-        # 臂行是否真能构造父子图：u2 的 dtype/active_parameters 若仍是占位，执行器无法开跑。
+        # ---- u2 臂可执行性：R08 按 F2 profile 通过，权重漂移与未知 profile 会被拦 ----
+        u2_dir = directory / "u2-parent"
+        u2_dir.mkdir(parents=True, exist_ok=True)
+        u2_runtime = prepare_parent(u2_execution, u2_dir, arm="u2-strong-baseline")
+        try:
+            u2_r08 = check_r08(
+                u2_execution, u2_runtime.model, u2_runtime.optimizer, arm="u2-strong-baseline"
+            )
+        except (ContractError, BudgetError) as error:
+            cases.append(
+                {
+                    "case": "u2_bound_r08_weights_and_active_set",
+                    "expected": "pass",
+                    "actual": f"exit {error.exit_code}",
+                    "pass": False,
+                }
+            )
+        else:
+            cases.append(
+                {
+                    "case": "u2_bound_r08_weights_and_active_set",
+                    "expected": "pass",
+                    "actual": "pass",
+                    "pass": True,
+                    "detail": (
+                        f"active={len(u2_r08['active_parameters'])}, "
+                        f"weights={u2_r08['weights']}"
+                    ),
+                }
+            )
+        drifted = json.loads(json.dumps(u2_execution, ensure_ascii=False))
+        drifted["arms"]["u2-strong-baseline"]["weights"]["verbatim"] = 0.5
+        expect(
+            "u2_r08_weight_drift_rejected",
+            5,
+            lambda: check_r08(
+                drifted, u2_runtime.model, u2_runtime.optimizer, arm="u2-strong-baseline"
+            ),
+        )
+        unknown_profile = json.loads(json.dumps(u2_execution, ensure_ascii=False))
+        unknown_profile["arms"]["u2-strong-baseline"]["weight_profile"] = "F9-style"
+        expect(
+            "u2_r08_unknown_profile_rejected",
+            5,
+            lambda: check_r08(
+                unknown_profile, u2_runtime.model, u2_runtime.optimizer, arm="u2-strong-baseline"
+            ),
+        )
+        # 臂行是否真能构造父子图：dtype、活性清单与草稿三槽必须互相对得上。
         u2_row = u2_execution["arms"]["u2-strong-baseline"]
+        u2_slot_names = [
+            name
+            for role in ("predictive_head", "recurrent_core", "output_head")
+            for name in u2_draft["identity_slots"][role]["param_names"]
+        ]
+        u2_declared = list(u2_row.get("active_parameters") or [])
+        u2_model_names = set(dict(u2_runtime.model.named_parameters()))
         u2_preflight = {
             "arm": "u2-strong-baseline",
             "dtype_field": u2_row.get("dtype"),
             "dtype_is_torch_dtype": hasattr(torch, str(u2_row.get("dtype"))),
-            "active_parameters_present": "active_parameters" in u2_row,
-            "active_parameter_roles": sorted(u2_row.get("active_parameter_roles", {})),
+            "active_parameters_present": bool(u2_declared),
+            "active_parameters_count": len(u2_declared),
+            "identity_slots_count": len(u2_slot_names),
+            "matches_identity_slots": u2_declared == u2_slot_names,
+            "missing_in_model": sorted(set(u2_declared) - u2_model_names),
+            "conditional_active_parameters_present": bool(
+                u2_row.get("conditional_active_parameters")
+            ),
+            "semantic_gaps": [
+                "shadow_terms 仍固定用 recipe.u1_shadow 且 verbatim 项恒为 0，"
+                "u2 的 F2 口径（verbatim=1.0）尚未落地"
+            ],
             "blocking_gaps": [],
         }
         if not u2_preflight["dtype_is_torch_dtype"]:
             u2_preflight["blocking_gaps"].append("dtype 字段是说明文字而非 torch dtype")
         if not u2_preflight["active_parameters_present"]:
-            u2_preflight["blocking_gaps"].append(
-                "缺 active_parameters 扁平表（只有 active_parameter_roles）"
-            )
+            u2_preflight["blocking_gaps"].append("缺 active_parameters 扁平表")
+        if not u2_preflight["matches_identity_slots"]:
+            u2_preflight["blocking_gaps"].append("臂行活性清单与草稿 identity_slots 不一致")
+        if u2_preflight["missing_in_model"]:
+            u2_preflight["blocking_gaps"].append("臂行声明的活性参数不在 u2 模型里")
+        if not u2_preflight["conditional_active_parameters_present"]:
+            u2_preflight["blocking_gaps"].append("缺 conditional_active_parameters 文本")
         u2_preflight["executable"] = not u2_preflight["blocking_gaps"]
     finally:
         torch.optim.Adam.step = original_step

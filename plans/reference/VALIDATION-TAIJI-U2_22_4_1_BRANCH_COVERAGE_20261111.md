@@ -1,6 +1,6 @@
 # 分支覆盖台账：22.4.1 执行器（`scripts/training/run_taiji_u2_22_4_1.py`）
 
-**建立时间**：2026-11-11｜**对应自检**：`python -m scripts.training.run_taiji_u2_22_4_1 --self-check`（43 条，`optimizer_step_calls=0`，cpu 6.17 s／wall 7.50 s；臂参数化后由 36 条增至 43 条，见 D-20261111-18）。
+**建立时间**：2026-11-11｜**对应自检**：`python -m scripts.training.run_taiji_u2_22_4_1 --self-check`（46 条，`optimizer_step_calls=0`，cpu 6.75 s／wall 8.14 s；臂参数化后由 36 条增至 43 条，u2 臂行回填后增至 46 条，见 D-20261111-18／D-20261111-19）。
 **规则**：执行器每新增一个可退出分支，必须在本表加一行；只加代码不加账视为未完成。标"未覆盖"的不得写成"已验证"。
 
 ## 1. 退出码 5（授权、身份、合同）
@@ -69,13 +69,14 @@
 | 50 | R01 `run_id=null`（未授权草稿形态） | 已覆盖 | `u2_draft_r01_rejects_null_run_id`（u2 草稿原样，退 5） |
 | 51 | R02 未授权草稿形态（`authorized=false`、`owner_approval_ref=null`） | 已覆盖 | `u2_draft_r02_rejects_missing_authorization`（退 5） |
 | 52 | R01–R05 对 u2 臂全通过（仅在内存绑定 run_id／授权／额度，不落盘） | 已覆盖 | `u2_bound_r01_identity_binds_arm`、`u2_bound_r02_authorization_binds_arm`、`u2_bound_r03_execution_manifest_sha`、`u2_bound_r04_admission_and_identity_sha`、`u2_bound_r05_interface_receipt` |
-| 53 | R08 非默认臂（u2）权重与 manifest 漂移 | **未覆盖**（当前不可达） | v2 的 u2 臂行 `dtype` 仍是说明文字、缺 `active_parameters`，`prepare_parent` 在 R08 之前就失败（自检 `u2_binding_preflight.executable=false`）；臂行补齐后补覆盖 |
+| 53 | R08 非默认臂（u2）权重与臂声明的 `weight_profile` 漂移 | 已覆盖 | `u2_r08_weight_drift_rejected`（内存副本把 `verbatim` 改成 0.5，仍留 `F2-style` 名 → 退 5）；**该分支原为同义反复**（`weights != dict(row["weights"])` 恒假），D-20261111-19 改为对照冻结表 `F1-style`／`F2-style` 后才可覆盖 |
+| 54 | R08 非默认臂声明未知 `weight_profile` | 已覆盖 | `u2_r08_unknown_profile_rejected`（内存副本把 profile 改成 `F9-style` → 退 5） |
 
 ## 4. 未覆盖项的合计风险
 
-高风险未覆盖项只剩"账本根信任"#23（手改任意一行）：只能靠独立复算兜底，注入断链会污染真账本，故不在自检内做。原 #10（R06 帽/精度/步数）与 #25（额度闸门）均已覆盖（#25 与 #10 分别见 D-20261111-14／D-20261111-15）。臂参数化（D-20261111-18）新增 #48–#53 六行，其中 #49、#53 未覆盖。当前共 **53 行**，未覆盖 **18 行**、另有 **2 行不可达**（#20 群单元扩展、#22 中 R10 自身文案分支），全部是"要真跑、要造故障或要篡改账本"才能触发的分支。
+高风险未覆盖项只剩"账本根信任"#23（手改任意一行）：只能靠独立复算兜底，注入断链会污染真账本，故不在自检内做。原 #10（R06 帽/精度/步数）与 #25（额度闸门）均已覆盖（#25 与 #10 分别见 D-20261111-14／D-20261111-15）。臂参数化（D-20261111-18）新增 #48–#53 六行、臂行回填（D-20261111-19）新增 #54。当前共 **54 行**，未覆盖 **17 行**、另有 **2 行不可达**（#20 群单元扩展、#22 中 R10 自身文案分支），全部是"要真跑、要造故障或要篡改账本"才能触发的分支。
 
-**u2 臂的现状（未清阻塞，必读）**：自检把 `u2_binding_preflight` 写进 `selfcheck.json`——`dtype_field="按22.4.4冻结身份"`（不是 torch dtype）、`active_parameters_present=false`、`executable=false`。因此 #53 目前不可达：u2 即便 owner 放行，`prepare_parent` 也会在构造父图时失败。补齐 v2 的 u2 臂行（`dtype` 写成 `float32`、补 `active_parameters` 扁平表）后，u2 才真正可执行。
+**u2 臂的现状（结构已可执行，语义有一处未清）**：自检把 `u2_binding_preflight` 写进 `selfcheck.json`——`dtype_field="float32"`（真 torch dtype）、`active_parameters_count=119`、`matches_identity_slots=true`、`missing_in_model=[]`、`conditional_active_parameters_present=true`、`executable=true`。R08 的 u2 正例/权重漂移/未知 profile 三条全部通过。**但 `semantic_gaps` 仍记着一条**：`shadow_terms` 固定用 `recipe.u1_shadow`、verbatim 项恒为 0，F2 的 `verbatim=1.0` 乘在零张量上——u2 即便 owner 放行，跑出来的也还不是它声明的口径。开跑前须先决定改 `shadow_terms` 还是改 u2 的权重表。
 
 **守卫与现存证据的差距（必读）**：`close_receipt_guard` 是**向前生效**的。已落盘的那条 accepted close（`reports/taiji_u2_22_4_1_attempts_20261111T142919Z.ndjson` 第 2 行）**没有** `s12_sha256`，对应的补算 S12 也**没有** `cpu_seconds`/`wall_seconds`（两个字段为 null）——它是在守卫和顺序契约存在之前写下的。不能用新守卫反判旧证据，也不能改写旧行（改写即破坏哈希链）；差距记在 `DECISION-LEDGER` 的 D-20261111-14，等下一次真实 attempt 用新代码自然补齐。
 

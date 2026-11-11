@@ -3016,7 +3016,64 @@ v2 只改 `arms.u2-strong-baseline.baseline_identity_sha256` 并加 `baseline_id
 
 另有一条**早于本次改动的观察**（非本轮引入）：用改动前代码与改动后代码重算 u1 `slice_digest` 都得到 `947c0958…f1cd`，但 `output/taiji_u2_22_4_1_20261111T142919Z/run.json` 里记录的是 `9a06eb84…`。说明该记录值出自更早的工作树版本，当前代码无法复现。R07 是硬门（digest 不符即退 5），重跑旧 root 会直接停下，不会静默接纳；本轮不修，留作独立事项。
 
+> **更正（D-20261111-19）**：上面这段的归因是错的。`9a06eb84…` 不是"更早的工作树版本"留下的——同一版函数在同一份清单上，**单线程**算出 `9a06eb84…`，**≥2 线程**算出 `947c0958…`。`execute()` 落盘前调用了 `torch.set_num_threads(1)`，所以 run.json 记的是单线程值；本轮的复算没有固定线程数才"对不上"。因此"重跑旧 root 会被 R07 拒"也不成立（走正式入口仍是单线程，会复现 `9a06eb84…`）。详见 D-20261111-19。
+
 ### 6. 下一步
 
 唯一建议：先把 v2 的 `u2-strong-baseline` 臂行从占位补成可执行（`dtype="float32"`、写入 119 个 `active_parameters` 与 `conditional_active_parameters`），补完后跑同一套 0 步自检把 #53 覆盖掉；在此之前不申请 u2 放行。
+
+---
+
+## D-20261111-19　u2 臂行回填 + R08 权重口径去同义反复 + 切片摘要线程数溯源
+
+（2026-11-11／2026-11-12，0 训练、0 `optimizer.step`、0 项目数据读取、未生成 `run.json`、未写账本、未申请 u2 授权。）
+
+### 1. 改了什么
+
+1. `plans/manifests/taiji_u2_22_4_1_execution_20261111_v2.json` 的 `u2-strong-baseline` 臂行从占位改为实值：
+   - `dtype`: `"按22.4.4冻结身份"` → `"float32"`；
+   - 新增 `active_parameters`：**119 项**（`predictive_head` 24 → `recurrent_core` 93 → `output_head` 2），取自草稿 `identity_slots` 三槽的 `param_names`，逐一相等、无重复；
+   - 新增 `conditional_active_parameters`：与 u1 同一条口径（带 `group_units` 时才要求 `incoming`/`outgoing` 同时在活性清单里）；
+   - `identity_rule` 改为"已回填 + 与 `identity_slots` 必须逐一相等"；新增 `identity_scope_note` 记录身份清单与执行图不是同一张图（见 §5）。
+   - 哈希 `3c1c219575e8…3e56` → **`595bd0c8f8e3…1b42b`**。
+2. `plans/manifests/taiji_u2_22_4_1_u2_run_draft_20261111.json`：`references.manifest_sha256` 重钉为新 v2；`open_items_before_authorization` 由三条改为四条（②臂行改为已清、新增③F2 语义缺口、④owner 侧）；R08 的 `check` 文字改为"四项权重按臂声明的 `weight_profile` 对冻结表核对"。哈希 `a247f704…7bbc` → **`23e9b3fc157e…0e04`**。
+3. `scripts/training/u2_update_executor_22_4_1.py`：新增 `FROZEN_WEIGHT_PROFILES = {"F1-style": {...}, "F2-style": {...}}`；R08 的非默认臂分支由 `weights != dict(row["weights"])`（**自比自，恒假，永不可触发的死分支**）改为按 `weight_profile` 查冻结表；未知 profile 另行退 5。**u1 分支一字未动。**
+4. `scripts/training/run_taiji_u2_22_4_1.py`：自检新增 3 条 u2 R08 用例（正例、权重漂移、未知 profile），`u2_binding_preflight` 扩为 9 个字段（含 `matches_identity_slots`、`missing_in_model`、`semantic_gaps`）；顺手修掉一个 latent bug——u2 绑定循环里 `error.code` 改为 `error.exit_code`（前者在真触发时会 AttributeError 把自检打断）。
+
+### 2. 自检与覆盖
+
+- 自检 43 → **46 条**，`verdict=pass`、`optimizer_step_calls=0`、cpu 6.75／wall 8.14。
+- `u2_binding_preflight.executable=**true**`：`dtype_is_torch_dtype=true`、`active_parameters_count=119`、`matches_identity_slots=true`、`missing_in_model=[]`、`conditional_active_parameters_present=true`。
+- 覆盖台账 53 → **54 行**：#53 由"不可覆盖"转**已覆盖**（`u2_r08_weight_drift_rejected`），新增 #54（未知 profile，已覆盖）；未覆盖 18 → **17**，不可达仍 2。
+- u1 未受影响：v1 清单、u1 草稿、两条账本与两份 S12 一个字节都没动；R08 的 u1 分支原样保留。
+
+### 3. 仍缺什么（回答"executable=true 是不是就能开跑"）
+
+**不能。** 结构上能构造 u2 父子图、能过 R08，但语义上还缺一条：`shadow_terms` 固定用 `recipe["u1_shadow"]`，且 `verbatim` 项写死为 `model.native_w.new_zeros(())`。u2 的 F2 权重是 `verbatim=1.0`，乘在零张量上等于没有这一项——真跑出来的不会是它声明的"逐字输出"口径。这条已写进 `u2_binding_preflight.semantic_gaps` 与草稿 open items ③。开跑前必须二选一：改 `shadow_terms` 按臂取 shadow 片段并实现 verbatim 项，或把 u2 的权重表改成不声明 verbatim。
+
+### 4. `9a06eb84…` 的出处：结论
+
+**既不是"旧算法留下的历史值"，也不是"当时写错了"。** 同一版 `slice_descriptor`／`slice_digest`、同一份 v1 清单（`1b5229…e750`，`data_recipe_sha256=abbb1ac0…d9f6` 与记录一致）、同一份 `taiji/u2_subject.py`（`aa7a2324…`，与冻结 pin 一致）——唯一变量是 **torch 线程数**：
+
+| 复算方式 | `slice_digest` |
+|---|---|
+| `torch.set_num_threads(1)`（或新进程 `OMP_NUM_THREADS=1`） | `9a06eb84bbff40b266d6e8e70af4376aee4c87d76b475068457b765fa1fcda29` |
+| 默认线程数（本机 12，试过 2／4／8） | `947c0958b5f0aefda8c9d058d85e63833c63aca1635e1fb88f13ea8c0acdf1cd` |
+
+- 两次正式运行（`20261111T140217Z` 拒、`20261111T142919Z` 收）的 `run.json` 都记 `9a06eb84…`；`execute()` 在算摘要前调用 `torch.set_num_threads(1)`（[run_taiji_u2_22_4_1.py#L345](file:///e:/Seed/scripts/training/run_taiji_u2_22_4_1.py)），所以记录值是单线程读数。
+- 全仓只有一处实现（`scripts/training/u2_update_support_22_4_1.py`），没有第二个模块算过同名摘要；`run.json` 由 `execute()`／`bind_run()` 写出，且 `output/` 被 gitignore，所以 git 历史里查不到它，只有工作树里的文件。
+- 函数自 `6355b5622` 创建到 `1e332b14f` 只多了 `arm=` 参数，body 未变。
+
+**为什么会有两个值**：描述符把 `torch.stft` 生成观测的 **float32 原始字节**哈希进去；FFT 的末位在不同线程数下不同，于是"数据切片身份"随线程数变化。这是架构层面的可复现性缺陷（不是本轮引入，也不是算错）：**摘要只在 `threads=1` 下可复现**，而 R07 只在正式入口内复算，才一直自洽。
+
+影响面：①审计方在入口之外独立复算会得到另一个值，进而误判 R07；②换机器／换 torch 的线程默认值同样会漂。已记录不改数据。若要修，最小改法是让 `slice_descriptor` 自己声明环境（把 `threads` 写进描述符并在固定线程数下生成片段），但那会改变新运行的摘要值，须单独一轮预注册；已收的 u1 记录不受影响（u1 已消费、不再重跑）。
+
+### 5. 另记一处架构不一致（未改，只记录）
+
+v2 的 u2 臂行挂着 `baseline_identity_sha256 = e5c776c4…5b29`，而该身份清单冻结的是 **`TransformerSequenceBaseline`**（21,977 标量／35 张量，`architecture_id=transformer_sequence`）；但执行器 `prepare_parent` 对任何臂都构造 **`U2Subject(U2Config.small()).metadata_candidate()`**（22,742 标量／194 张量），119 个活性参数也来自后者。也就是说：这个臂**跑的不是被测量的那张图**。身份清单的 `limitations` 只说了"参照臂是 22,638 基座而非 22,742 候选"，没说"参照臂是另一种架构"。本轮只在臂行里加了 `identity_scope_note` 把事实写明，未改语义——u2 究竟是"U2 主体全活性臂"还是"transformer 强基线"，须在放行前明确，否则 22.4.1 拿到的读数无法与 22.4.4 的身份对照。
+
+### 6. 下一步
+
+唯一建议：先把 u2 的口径定死——在"改 `shadow_terms` 按臂取 shadow 片段并实现 verbatim 项"与"把 u2 权重表降为不声明 verbatim"之间选一个（前者上限更高，能让 22.4.1 真正测到 F2 的逐字能力；后者只是让声明与实现对齐），并同步把臂行 `baseline_identity_sha256` 的口径改成"本臂执行图"或注明它只用于 22.5 对照。做完再跑同一套 0 步自检；在此之前不申请 u2 放行。
+
 
