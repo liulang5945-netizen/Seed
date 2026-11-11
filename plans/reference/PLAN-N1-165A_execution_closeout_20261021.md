@@ -31,7 +31,7 @@ N1-165A按冻结恢复方案完成了剩余训练和复核，不能把原中断a
 ## 留档与范围
 
 - 恢复结果：[N1-165A result](../../reports/taiji_n1_plan165a_partial_attempt_completion_result_20261020.json)
-- 恢复progress：[N1-165A progress](../../reports/taiji_n1_plan165a_partial_attempt_completion_progress_20261020.jsonl)
+- 恢复progress：`taiji_n1_plan165a_partial_attempt_completion_progress_20261020.jsonl`（未入库，不提供链接）
 - 原中断attempt、progress、zero preflight与seed11 final均保留，不覆盖。
 - 未执行的[N1-166组合迁移确认](PLAN-N1-166_compositional_transfer_confirmation_20261020.md)保持未消费，按用户最新优先级延后。
 

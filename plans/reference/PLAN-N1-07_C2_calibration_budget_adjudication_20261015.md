@@ -25,8 +25,8 @@
 正式保留件：
 
 - [支持报告](../../reports/taiji_n1_c2_support_20261015.json)、[独立恢复](../../reports/taiji_n1_c2_restore_20261015.json)。
-- [首段报告](../../reports/taiji_n1_c2_final_20261015.json)、[首段事件](../../reports/taiji_n1_c2_events_20261015.jsonl)。
-- [一次修复后报告](../../reports/taiji_n1_c2_final_20261015_r1.json)、[修复后事件](../../reports/taiji_n1_c2_events_20261015_r1.jsonl)。修复后报告 SHA-256 `07a373c312aaea2bfd59abe8d79e7eedb41c15f9ad023e1b5eebd1c9670385e5`。
+- [首段报告](../../reports/taiji_n1_c2_final_20261015.json)、`taiji_n1_c2_events_20261015.jsonl`（未入库，不提供链接）。
+- [一次修复后报告](../../reports/taiji_n1_c2_final_20261015_r1.json)、`taiji_n1_c2_events_20261015_r1.jsonl`（未入库，不提供链接）。修复后报告 SHA-256 `07a373c312aaea2bfd59abe8d79e7eedb41c15f9ad023e1b5eebd1c9670385e5`。
 
 ## 4. 唯一下一步与决策
 

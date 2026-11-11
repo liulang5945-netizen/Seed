@@ -29,3 +29,18 @@ repos:
       - id: check-toml
       - id: check-added-large-files
         args: ["--maxkb=1024"]
+
+  # 2026-11-11：计划文档链到"本机有、仓库没有"的文件，已经两次进 main 才被事后测试
+  # 抓到（`03_CURRENT_EXECUTION.md` 一次；`taiji_scale_20261108_outputs.jsonl` 这次，
+  # 报错要等 1 小时全量回归）。同一类错误不能靠"下次注意"，所以把它挪到提交路径上：
+  # `plans/active` 的每条相对链接必须解析到**已入库**文件；全 `plans` 树禁止 `.jsonl`
+  # 链接（.gitignore 排除所有 `*.jsonl`，这种链接在别人机器上永远 404）。
+  # 判据与 `tests/seed/test_project_identity.py` 的契约一致，只是提前到提交时。
+  - repo: local
+    hooks:
+      - id: doc-evidence-links
+        name: doc evidence links (plans)
+        entry: python scripts/ci/check_doc_links.py
+        language: system
+        files: ^plans/.*\.md$
+        pass_filenames: false

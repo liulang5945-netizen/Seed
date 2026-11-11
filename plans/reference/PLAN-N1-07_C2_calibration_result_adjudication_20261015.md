@@ -6,7 +6,7 @@ C1持久载体两批已完成；本次落实owner批准的累计CPU上限600→7
 
 ## 2. 身份、预算与证据
 
-- 完整[最终报告](../../reports/taiji_n1_c2_final_20261015_r2.json)，SHA-256 `82cfde7d0f62606310a96f5a30db16ac13d6e52ff98e09b14d4b41a5f80b7184`；[query报告](../../reports/taiji_n1_c2_calibration_20261015_r2.json)、[事件](../../reports/taiji_n1_c2_events_20261015_r2.jsonl)。
+- 完整[最终报告](../../reports/taiji_n1_c2_final_20261015_r2.json)，SHA-256 `82cfde7d0f62606310a96f5a30db16ac13d6e52ff98e09b14d4b41a5f80b7184`；[query报告](../../reports/taiji_n1_c2_calibration_20261015_r2.json)、`taiji_n1_c2_events_20261015_r2.jsonl`（未入库，不提供链接）。
 - 只新测68臂；原r1的44行与新报告前缀逐字段全等，112对item/arm唯一，八kind/两个位置/七臂齐全。单次摘要机械修复计数仍1，没有第二次修复或重复测量。
 - 本次从r1尾端500.890625秒接账；完整报告端点 **601.828125秒CPU**，事件尾端601.90625秒，控制台打印端点601.90625秒，均低于720秒。新增段墙钟约101.69秒；序列化/打印端点分别披露，不把墙钟当CPU。
 - 模型/manifest/支持检查点身份不变；恢复与query无写入守卫全true；新报告三份源文件哈希均与运行后磁盘一致。保留原始两段部分报告与事件；原支持档继续本地忽略，不提交权重。

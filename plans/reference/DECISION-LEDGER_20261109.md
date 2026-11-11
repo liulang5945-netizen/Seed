@@ -224,7 +224,7 @@
 - 实际执行（逐字，runner 常量）：`IDLE_LIMIT = 900.0`（模型加载/下载期间允许的空闲上限，秒）；加载路径不再短路为 `unavailable`。
 - 实际后果：Hugging Face 缓存目录 `models--sentence-transformers--paraphrase-multilingual-MiniLM-L12-v2` 于 **2026-11-09T10:35:02** 落盘；权重解析为 `revision e8f8c211226b894fcb81acc59f3b34ba3efd5f42`、`config_digest 584d721354a4443103960a80b1a3a61226765bc470bd4077d96e37beb85b433f`，均写入 [R3 报告](../../reports/taiji_representation_20261109_r3.json) 的 `model.payload`。
 
-**3. 触发原因**：R3 是唯一能回答“这个夹具是否存在可分上界”的臂；而 §21.9 已写死“不能回答……R3 本机无缓存、本轮未下载，留待下一臂”。若继续坚持“仅缓存”，该问题将永久悬空，且后续任何“是否值得给桥／是否值得开训练窗”的判断都失去参照。读数出处：[R3 报告](../../reports/taiji_representation_20261109_r3.json) 的 `reading`／`model.status=available`；[进度日志](../../reports/taiji_representation_20261109_r3_progress.jsonl) 的 `loading_model → model_loaded`。
+**3. 触发原因**：R3 是唯一能回答“这个夹具是否存在可分上界”的臂；而 §21.9 已写死“不能回答……R3 本机无缓存、本轮未下载，留待下一臂”。若继续坚持“仅缓存”，该问题将永久悬空，且后续任何“是否值得给桥／是否值得开训练窗”的判断都失去参照。读数出处：[R3 报告](../../reports/taiji_representation_20261109_r3.json) 的 `reading`／`model.status=available`；`taiji_representation_20261109_r3_progress.jsonl`（未入库，不提供链接） 的 `loading_model → model_loaded`。
 
 **4. 代价**：
 
@@ -2251,6 +2251,16 @@ Owner 的否决理由（原话要点）：基线可以重生成 ⇒ 红的时候
   - **两腿对照的第一条硬事实**：同一份代码、同一天，Windows 腿重建出**封存值本身**（`ce4c6268…`），Ubuntu 腿重建出 `de17f17e…`（两腿各自两次都自洽）。这既是 `environment_is_cause` 的最强一枚证据（封存值在至少一台干净 CI 机上可复现），也是新门为什么必须按读数而不按字节判的直接理由。
   - fast-lint（`480cc0e0f`）：14 条 mypy core 错误，全部在 `taiji/u2_operators.py` 与 `taiji/u2_subject.py`，来自 `13466c975`／`f83dd7cc0` 的 u2 批次，非本轮改动；按"`taiji/u2_*` 不碰"的约束本轮不处置。本机对这两个文件跑测试 **48 passed（29.86 s）**，留作"这 14 条是静态类型问题、不是行为回退"的读数。
 - **冻结**：三出口名、1 ULP／2^-23／2^-10、1e-12、诊断谓词清单。读数之后不许调；确需调整须新开条目并保留旧读数。
+
+### 7.1 收束：合推三笔、老红根治、能力卡判死（2026-11-11 晚）
+
+- **合推与代价（必须写在读数旁边）**：`fb767944f..9a4f0b0c2` 三笔（`f94c35bf3`、`cc55752d7`、`9a4f0b0c2`）一起推到 main。前两笔是本地 main 上已经存在的提交，单独摘掉等于重写别人的历史；因此只能整段推。**代价：上文 §7 那批两腿读数验的是 `fb767944f`（经 PR #32 的空提交 `c55e0fa53`），三笔合并后的状态尚未被 CI 验过**——`9a4f0b0c2` 的 `CI`（run `42979760915`）在本条写下时仍在串行队列里 pending。结果出来后逐笔归因：哪条红由哪笔带出；别人带出的红只报不改。
+- **老红根治（`test_active_plans_have_one_execution_owner_and_resolvable_links`）**：这条已经因"计划文档链到被 `.gitignore` 排除的文件"红过两次（`03_CURRENT_EXECUTION.md` 一次；`reports/taiji_scale_20261108_outputs.jsonl` 这次）。本轮不只改字：
+  1. **口径统一**：plans 下 21 处 `.jsonl` 链接全部改为`` `文件名`（未入库，不提供链接） ``；`output/` 下的 `select_v1.json` 同口径。改的是"承诺可点开"的措辞，不动任何读数、链接背后的证据一字未删。
+  2. **前置拦截**：`scripts/ci/check_doc_links.py`，两层规则——`plans/active` 的每条相对链接必须解析到**已入库**文件（与上面那条测试同契约，只是更早）；全 `plans` 树禁止 `.jsonl` 链接（`.gitignore` 排除所有 `*.jsonl`，这种链接在别人的克隆里永远 404）。历史散文里 2,400+ 条旧死链不在本轮回改范围，只挡"再也解析不到的写法"。
+  3. **接两条路径**：`.pre-commit-config.yaml` 的 `doc-evidence-links`（`files: ^plans/.*\.md$`）拦在提交时；`ci-fast-lint.yml` 的 `Check plan evidence links` 步拦在落地后 ≤6 分钟内。两处同源同一脚本，输出 `file:line`。`ci.yml` 的全量腿仍是契约级兜底，不重复加步。
+- **能力卡写死（不是只写台账）**：`CAPABILITY-CARD_20261103.md` §13.1 新增"判死"段，原文："**字节相等不能作为跨机器判据**——同一提交在 Windows 重建出封存字节、在 Ubuntu 重建出另一份但自身两次一致；因此任何'逐字节相同'的结论必须带运行条件标签，否则降级为报告级声明。" 判死的依据是 §7 两腿对照（Windows `ce4c6268…`／Ubuntu `de17f17e…`，各自两次自洽）。
+- **归属澄清（`14_5`／`14_6` 不混进"本线已清"）**：这两个消费者在 Ubuntu 上 exit 1 有两因——父身份随重建漂移（`parent_candidate_id` 变）、内置 `type_check` 三条 mypy 错。它们**按设计会因机器而变**，属"重建件消费面"的观测，**不进本线（新门）的分母**：门判 `equivalent` 只问两次读数是否相同，不问消费者绿不绿。mypy 那三条已在本轮代码里修掉（`drift` 改名 `manifest_drift`），身份漂移仍会发生且**不应被修掉**——它正是"重建件不等于封存件"的诚实记账。
 
 ### 8. 撤回路径
 

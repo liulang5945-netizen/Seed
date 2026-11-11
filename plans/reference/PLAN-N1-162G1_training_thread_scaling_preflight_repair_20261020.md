@@ -3,7 +3,7 @@
 **状态：已依用户授予的执行计划批准权批准并冻结**<br>
 **日期：2026-10-20**<br>
 **父方案：** [PLAN-N1-162G](PLAN-N1-162G_training_thread_scaling_benchmark_20261020.md)<br>
-**首次尝试：** [attempt](../../../reports/taiji_n1_plan162g_training_thread_scaling_attempt_20261020.json)、[空progress](../../../reports/taiji_n1_plan162g_training_thread_scaling_progress_20261020.jsonl)、[失败结果](../../../reports/taiji_n1_plan162g_training_thread_scaling_20261020.json)
+**首次尝试：** [attempt](../../../reports/taiji_n1_plan162g_training_thread_scaling_attempt_20261020.json)、`taiji_n1_plan162g_training_thread_scaling_progress_20261020.jsonl`（未入库，不提供链接）、[失败结果](../../../reports/taiji_n1_plan162g_training_thread_scaling_20261020.json)
 
 ## 首次尝试结论
 

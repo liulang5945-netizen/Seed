@@ -85,6 +85,14 @@ jobs:
       - name: Format check with black
         run: black --check .
 
+      # 快通道专属（ci.yml 不重复）：计划文档链到未入库文件这件事，已经两次进 main
+      # 才被 1.5h 全量腿里的 `test_active_plans_have_one_execution_owner_and_resolvable_links`
+      # 抓到。本步在 ~1s 内给出 `file:line`，把"事后抓到"变成"落地即报"。
+      # 只依赖 git + stdlib，不装任何工具 ⇒ 不受 R7 钉版本约束，也不会拖慢 6m 预算。
+      # 与 .pre-commit-config.yaml 的 `doc-evidence-links` 同源同一个脚本。
+      - name: Check plan evidence links
+        run: python scripts/ci/check_doc_links.py
+
       - name: Audit frozen markers against the formatter
         run: python scripts/training/audit_frozen_marker_formatter_conflict.py --no-write
 

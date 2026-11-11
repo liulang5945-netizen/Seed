@@ -1156,7 +1156,7 @@ manifest：`plans/manifests/taiji_a1_offfixture_20261108.json`（`freeze_revisio
 
 **唯一后继**：回退轴。定义已把“能不能进表”这个问题关掉，剩下的 1,108 条回退里 1,100 条是**库里没有答案**——所以下一步不是改排序，而是**先把“该不该答”与“答哪个”分开**：用同一语料测“查询的窗口集合在库内是否真的无覆盖”能否作为 `no_answer` 的判据（0 训练、0 新参数），把 1,100 条本不该出答案的查询从回退分母里正当地摘出去，再看剩下 8 条有答案回退是否可达线。**不得**为了过 0.5 去改回退排序或加重合度阈值。
 
-**回执（2026-11-08，0 训练／0 优化器步／0 Adam／0 confirm／0 新容差）**：[开启态报告](../../reports/taiji_window_20261108.json)＋[全量输出](../../reports/taiji_window_20261108_outputs.jsonl)（2,200 条逐条输出、锚点、重合度与出处）＋[关闭态](../../reports/taiji_window_20261108_closed.json)（176/176、`max|Δ|=0`、无表）＋[人工打分](../../reports/taiji_window_20261108_scores.json)（20 条三档）＋[manifest](../manifests/taiji_window_20261108.json)（freeze_revision 4）＋runner [probe_taiji_window_20261108.py](../../scripts/training/probe_taiji_window_20261108.py)（双列 sha `35603da8…`）＋能力卡 U33＋账本 §45。判定 **`fallback_still_irrelevant`**。
+**回执（2026-11-08，0 训练／0 优化器步／0 Adam／0 confirm／0 新容差）**：[开启态报告](../../reports/taiji_window_20261108.json)＋`taiji_window_20261108_outputs.jsonl`（未入库，不提供链接）（2,200 条逐条输出、锚点、重合度与出处）＋[关闭态](../../reports/taiji_window_20261108_closed.json)（176/176、`max|Δ|=0`、无表）＋[人工打分](../../reports/taiji_window_20261108_scores.json)（20 条三档）＋[manifest](../manifests/taiji_window_20261108.json)（freeze_revision 4）＋runner [probe_taiji_window_20261108.py](../../scripts/training/probe_taiji_window_20261108.py)（双列 sha `35603da8…`）＋能力卡 U33＋账本 §45。判定 **`fallback_still_irrelevant`**。
 
 ---
 
@@ -1268,7 +1268,7 @@ manifest：`plans/manifests/taiji_a1_offfixture_20261108.json`（`freeze_revisio
 
 **唯一后继**：把未知集门从“任何锚定”改成“**锚定且未被该查询逐字包含**”（`anchored ∧ not contained`），用同一 550 条语料、同一地址层、0 训练、0 新参数重跑同一读数（成本约 46 CPU）。预期 `unknown_false_anchor = 0`、判定 `continuity_restored`；若仍有违反，则说明确有误锚，届时才回到地址层。**不改回退排序、不加阈值、不改语料。**
 
-**回执（2026-11-09，0 训练／0 优化器步／0 Adam／0 confirm／0 新容差）**：[开启态报告](../../reports/taiji_contig_20261109.json)＋[全量输出](../../reports/taiji_contig_20261109_outputs.jsonl)（2,200 条逐条输出、锚点、重合度与出处）＋[关闭态](../../reports/taiji_contig_20261109_closed.json)（176/176、`max|Δ|=0`、无表）＋[人工打分](../../reports/taiji_contig_20261109_scores.json)（分母 census 9 条）＋[manifest](../manifests/taiji_contig_20261109.json)（freeze_revision 3）＋runner [probe_taiji_contig_20261109.py](../../scripts/training/probe_taiji_contig_20261109.py)（双列 sha `3089e1fb…`）＋能力卡 U34＋账本 §46。判定 **`false_anchor_remains`**。
+**回执（2026-11-09，0 训练／0 优化器步／0 Adam／0 confirm／0 新容差）**：[开启态报告](../../reports/taiji_contig_20261109.json)＋`taiji_contig_20261109_outputs.jsonl`（未入库，不提供链接）（2,200 条逐条输出、锚点、重合度与出处）＋[关闭态](../../reports/taiji_contig_20261109_closed.json)（176/176、`max|Δ|=0`、无表）＋[人工打分](../../reports/taiji_contig_20261109_scores.json)（分母 census 9 条）＋[manifest](../manifests/taiji_contig_20261109.json)（freeze_revision 3）＋runner [probe_taiji_contig_20261109.py](../../scripts/training/probe_taiji_contig_20261109.py)（双列 sha `3089e1fb…`）＋能力卡 U34＋账本 §46。判定 **`false_anchor_remains`**。
 
 ---
 
@@ -1338,7 +1338,7 @@ manifest：`plans/manifests/taiji_a1_offfixture_20261108.json`（`freeze_revisio
 
 **收束**：连续性子序列线到此关闭，后续只在四个方向之一继续（默认建议见队首）：① 表示层（语义匹配）；② 训练合流；③ 更短地址（<16 B）；④ 外部语料复核。本轮不启动任何新方向。
 
-**回执（2026-11-09，0 训练／0 优化器步／0 Adam／0 confirm／0 新容差）**：[开启态报告](../../reports/taiji_contig_20261109.json)＋[全量输出](../../reports/taiji_contig_20261109_outputs.jsonl)＋[关闭态](../../reports/taiji_contig_20261109_closed.json)＋[人工打分](../../reports/taiji_contig_20261109_scores.json)（census 9 条）＋[manifest](../manifests/taiji_contig_20261109.json)（freeze_revision 4）＋runner [probe_taiji_contig_20261109.py](../../scripts/training/probe_taiji_contig_20261109.py)（双列 sha `b804a5d4…`）＋能力卡 U35＋账本 §47。判定 **`continuity_restored`**。
+**回执（2026-11-09，0 训练／0 优化器步／0 Adam／0 confirm／0 新容差）**：[开启态报告](../../reports/taiji_contig_20261109.json)＋`taiji_contig_20261109_outputs.jsonl`（未入库，不提供链接）＋[关闭态](../../reports/taiji_contig_20261109_closed.json)＋[人工打分](../../reports/taiji_contig_20261109_scores.json)（census 9 条）＋[manifest](../manifests/taiji_contig_20261109.json)（freeze_revision 4）＋runner [probe_taiji_contig_20261109.py](../../scripts/training/probe_taiji_contig_20261109.py)（双列 sha `b804a5d4…`）＋能力卡 U35＋账本 §47。判定 **`continuity_restored`**。
 
 ---
 
