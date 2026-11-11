@@ -1,0 +1,307 @@
+{
+  "schema": "taiji-u2-22.4.1-data-price-admission-v1",
+  "created_at": "2026-11-11",
+  "status": "frozen",
+  "run_authorized": false,
+  "authorization_note": "本文件只冻结22.4.1四次工程更新的输入分区、反馈边界、CPU价目、准入/拒绝条件与不可回滚记账。开跑需owner明确授权，由执行线在run.json写入owner_approval_ref与authorized=true；本文件不因授权而改写。",
+  "scope": "不冻结损失权重、Adam超参数（lr/betas/eps）、目标活性参数、实际变化下限与迁移触发阈值——那些按卡在读数前另行冻结到执行manifest。本文件不新增算法参数，不改动任何既有冻结判据，不分配新额度。",
+  "authority": {
+    "card": "plans/reference/PLAN-TAIJI-CLOSED_LOOP_DEVELOPMENT_20261110.md",
+    "card_section": "22.4.1记录元数据与逐群结构",
+    "resource_table": "同卡2.9「资源与曝光总表」：22.4 CPU≤1200、wall≤2400、工程attempts≤4",
+    "interface_spec": "plans/reference/SPEC-TAIJI-U2_METADATA_GROUPS_22_4_20261111.md",
+    "interface_receipt": "reports/taiji_u2_metadata_groups_22_4_20261111.json",
+    "interface_contract": "plans/manifests/taiji_u2_22_4_1_verification_contract_20261111.json",
+    "feedback_rights": "plans/reference/SPEC-TAIJI-U2_TASK_SEMANTICS_22_4_20261111.md",
+    "accepted_parent": "plans/manifests/taiji_u2_22_3_accepted_parent_20261111.json",
+    "source_pins": {
+      "taiji/u2_subject.py": "aa7a23249ad6fdaff1900000c665d575651debc498e800b8c292839ea4f736a8",
+      "taiji/u2_recovery.py": "d7a1b08de6a7608c35522bd5545736be7370ab145364cad35d8703ccda8bce2b",
+      "taiji/u2_learning_transaction.py": "c54771f0e81b8506a9b3f77c0bdc47f11818c54838f1de30f53e57e9159efaff",
+      "taiji/u2_record_metadata.py": "39e57e9dd406f3442bc85e055ebb7d3a813ea981ff1cda0cf119f90c20c35da5",
+      "taiji/u2_group_structure.py": "daabe312bff754bdd70208597f8363180dc459964b5cc7c5120610ca00d69ffa",
+      "taiji/u2_task_contract.py": "957d9d4163eb960dbef5939e721ce1a69dd13311144901aafb700022bed84"
+    }
+  },
+  "quota": {
+    "attempts_total": 4,
+    "attempts_consumed": 0,
+    "cpu_cap": 300,
+    "wall_cap": 600,
+    "allocation_source": "沿22.4卡2.9的工程帽（CPU≤1200、wall≤2400、attempts≤4）；本300 CPU只在22.4.4建议的「结构/恢复300」分项内切分，不新增分项、不挪用语义/权利、生成/分区、可辨性、全臂价格或冻结分项。",
+    "price_basis": "22.3.4.3实测6次真实更新合计70.1875 CPU（约11.7 CPU/次）。本表按每类更新的建图、保存即时读回、独立S12 worker与失败重试余量取上限，不是新的总量。",
+    "overspend_rule": "任一更新实测CPU或wall超过自身价目即pricing_over_budget停卡；不得删减保存读回或S12、不得从其它分项借额度。",
+    "order": [
+      "u1-candidate-float32",
+      "u2-strong-baseline",
+      "u3-migration-original",
+      "u4-migration-recovery"
+    ]
+  },
+  "data_partitions": {
+    "engineering_slice": {
+      "definition": "22.3.4.3式可丢弃合成影子片段：每段不超过22.4.2规定的8轮合法学习窗，加22.4.0合同夹具模板；片段由执行manifest冻结的recipe与原RNG生成，生成后写digest。",
+      "digest_required": true,
+      "digest_location": "run.json的data_recipe_sha256与slice_sha256",
+      "contains_task1_batch": false,
+      "touches_sealed_set": false,
+      "reads_development_check": false,
+      "reads_final": false,
+      "reads_project_corpus": false,
+      "reads_confirm_partition": false,
+      "note": "Task1那批属于已封存的confirm形状读数，封存集与check/final均不在本卡可读范围；四次更新都不碰。"
+    }
+  },
+  "feedback_boundary": {
+    "visible_to_model": [
+      "原始观测与请求字节",
+      "合法历史序列",
+      "当前goal与answer_request原文"
+    ],
+    "development_feedback": [
+      "train_label：仅train/fit发展期，由冻结recipe产生"
+    ],
+    "not_used": [
+      "online_correction",
+      "help_reply",
+      "score_only",
+      "环境oracle结构化事实（实体/版本/证据ID/世界参数）"
+    ],
+    "rules": [
+      "评分oracle与score_only只供评分器，不进入前向、损失或梯度。",
+      "train_label不得携带oracle字段；若同全部合法可见输入出现不同目标，该片段拒用。",
+      "反馈释放轮次与通道按22.4.0合同登记；四次更新都只用development_feedback，不发生在线纠正或求助。",
+      "同一片段不得跨分区重复使用；digest相同即视为同一次曝光。"
+    ]
+  },
+  "updates": [
+    {
+      "id": "u1-candidate-float32",
+      "role": "候选接口的第一次真实工程更新",
+      "model": "22.4.1元数据候选：record_metadata=True，从22.3接受父复制191个同名参数，float32",
+      "precision": "float32",
+      "data": "engineering_slice",
+      "feedback": [
+        "train_label"
+      ],
+      "cpu_cap": 120,
+      "wall_cap": 240,
+      "optimizer_steps": 1,
+      "requires": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C06",
+        "C07",
+        "C08"
+      ],
+      "specific_rejects": [
+        "candidate_parameter_count_not_194",
+        "candidate_revision_not_parent_plus_one",
+        "candidate_inheritance_not_bitwise"
+      ]
+    },
+    {
+      "id": "u2-strong-baseline",
+      "role": "主强基线的接口对齐更新",
+      "model": "22.4.4冻结的主强基线臂（常规GRU或Transformer之一），与U2同信息权利与可学习多模态编码/表达接口",
+      "precision": "按22.4.4冻结身份",
+      "data": "engineering_slice",
+      "feedback": [
+        "train_label"
+      ],
+      "cpu_cap": 120,
+      "wall_cap": 240,
+      "optimizer_steps": 1,
+      "requires": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C06",
+        "C07",
+        "C08",
+        "C09"
+      ],
+      "specific_rejects": [
+        "baseline_identity_not_frozen",
+        "baseline_information_rights_differ_from_u2"
+      ]
+    },
+    {
+      "id": "u3-migration-original",
+      "role": "结构迁移后的原路径更新（仅当u1/u2实际宽度超过基座时需要）",
+      "model": "迁移后的同一候选，原路径",
+      "precision": "float32",
+      "data": "engineering_slice",
+      "feedback": [
+        "train_label"
+      ],
+      "cpu_cap": 30,
+      "wall_cap": 60,
+      "optimizer_steps": 1,
+      "requires": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C06",
+        "C07",
+        "C08",
+        "C10"
+      ],
+      "specific_rejects": [
+        "migration_not_required",
+        "migration_manifest_missing",
+        "recovery_regression_not_rerun"
+      ]
+    },
+    {
+      "id": "u4-migration-recovery",
+      "role": "同一迁移步的独立进程恢复更新",
+      "model": "从u3保存的checkpoint读回后的同一候选",
+      "precision": "float32",
+      "data": "engineering_slice",
+      "feedback": [
+        "train_label"
+      ],
+      "cpu_cap": 30,
+      "wall_cap": 60,
+      "optimizer_steps": 1,
+      "requires": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C06",
+        "C07",
+        "C08",
+        "C10",
+        "C11"
+      ],
+      "specific_rejects": [
+        "migration_not_required",
+        "u3_checkpoint_missing_or_unreadable",
+        "recovery_not_in_separate_process"
+      ]
+    }
+  ],
+  "common_admission": [
+    {
+      "id": "C01",
+      "check": "accepted_parent_identity",
+      "true_when": "父的配置、seed、191参数摘要与plans/manifests/taiji_u2_22_3_accepted_parent_20261111.json逐项相等"
+    },
+    {
+      "id": "C02",
+      "check": "interface_receipt_bound",
+      "true_when": "run.json引用reports/taiji_u2_metadata_groups_22_4_20261111.json的verdict与contract_sha256，且source_pins与本文件authority.source_pins一致"
+    },
+    {
+      "id": "C03",
+      "check": "owner_authorization",
+      "true_when": "run.json存在non-empty owner_approval_ref且authorized=true"
+    },
+    {
+      "id": "C04",
+      "check": "attempt_not_consumed",
+      "true_when": "账本中该update id尚无close且无claim；attempts_consumed<4"
+    },
+    {
+      "id": "C05",
+      "check": "data_slice_digest",
+      "true_when": "slice_sha256与data_recipe_sha256已写入run.json，且片段只来自engineering_slice"
+    },
+    {
+      "id": "C06",
+      "check": "forbidden_data_untouched",
+      "true_when": "本次attempt的读取清单中project_corpus=0、task1_batch=0、sealed=0、development_check=0、final=0、confirm=0"
+    },
+    {
+      "id": "C07",
+      "check": "separate_manifest_frozen",
+      "true_when": "损失权重、Adam超参数、目标活性参数、实际变化下限已在读数前冻结到执行manifest，且weight_decay=0、无参数范数loss"
+    },
+    {
+      "id": "C08",
+      "check": "save_readback_before_step",
+      "true_when": "父模型保存后立即读回并比对5项摘要通过，失败exit 4且不进入optimizer"
+    },
+    {
+      "id": "C09",
+      "check": "baseline_identity_frozen",
+      "true_when": "22.4.4的主强基线身份manifest存在，包含架构、参数量、信息权利与seed，digest写入run.json"
+    },
+    {
+      "id": "C10",
+      "check": "migration_frozen_and_regression_passed",
+      "true_when": "迁移方案已冻结；本卡改动后22.3恢复回归（runtime/history/reencoding）全部通过"
+    },
+    {
+      "id": "C11",
+      "check": "recovery_process_isolated",
+      "true_when": "u4在独立Python进程从u3 checkpoint加载，重建state后与u3保存的摘要逐位相等"
+    }
+  ],
+  "common_rejection": [
+    "父身份/参数摘要/配置/seed任一不匹配",
+    "缺少owner授权、interface回执或source pin",
+    "该update已有claim或close，或attempts_consumed已达4",
+    "片段digest缺失，或读取清单出现project_corpus/task1_batch/sealed/check/final/confirm任一非零",
+    "损失权重/Adam超参数/活性参数/变化下限未单独冻结",
+    "保存后读回失败或摘要不一致",
+    "CPU或wall剩余额度低于本update价目",
+    "依赖迁移的更新在未冻结迁移或未重跑22.3恢复回归时启动",
+    "u4未在独立进程执行"
+  ],
+  "no_migration_rule": {
+    "trigger": "u1/u2结束后若model.c.group_units为None（实际宽度仍等于基座），判定为无需迁移",
+    "conversion": "u3/u4转为两次已具名工程恢复检查：0 optimizer step，仍按各自价目计费与记账，仍须独立进程",
+    "forbidden": "不得把这两次额度改作训练，不得因为省下step而增加其它更新或步数"
+  },
+  "ledger": {
+    "choice": "reuse_format_new_root",
+    "reused": [
+      "NDJSON哈希链：每行record_sha256与prev_line_sha256",
+      "open先fsync计费，再允许optimizer.step",
+      "create-once claim，重启worker不能重复同一attempt",
+      "run_start/open/close/reconcile四类事件与末行对账"
+    ],
+    "root": "output/taiji_u2_22_4_1_<run_id>/",
+    "why_not_reuse_22_3_root": "22.3的8次额度已在run 20261111T123154Z全部消耗并结案；混用会让两卡额度与对账互相污染。",
+    "why_not_a_new_design": "该格式已在22.3.4.3的8次真实attempt、2次故障与重启对账中验证；本轮没有新失败模式需要新账本。",
+    "rules": [
+      "每个attempt的claim写入并fsync成功后才允许进入optimizer。",
+      "close前必须保存checkpoint并立即读回；读回失败按异常attempt计费。",
+      "拒绝、异常、崩溃均计一次attempt与真实CPU；失败不退还额度。",
+      "全账SHA写入汇总与回执；任何重跑必须换新run_id。"
+    ]
+  },
+  "not_frozen_here": [
+    "损失权重与结果actor/critic权重",
+    "Adam超参数lr/betas/eps（weight_decay固定为0，已在卡内）",
+    "目标活性参数与实际变化下限",
+    "主强基线的具体架构选型（由22.4.4冻结）",
+    "迁移触发阈值（只按实际宽度是否超过基座判定）",
+    "片段recipe的具体数值（由执行manifest冻结，本文件只冻结其必须可digest）"
+  ],
+  "first_project_data_read": {
+    "in_this_card": null,
+    "statement": "四次更新都不读项目数据：输入限定为engineering_slice（合成影子片段＋合同夹具），项目语料、Task1批、封存集、check/final、confirm读取均为0。",
+    "read_bytes_now": 0,
+    "next_gate": "第一次真正读项目数据发生在22.5的持续学习父：按22.4.3的train768/development-fit192分区与22.4.4实价，只读train内一段不超过8轮的合法学习窗（两个world各一段，前缀重建与跨窗截断计入成本）。check每次整包扣1次曝光（失败也扣），final须R-SEAL-1当次授权。",
+    "rollback": "参数、optimizer与状态可回滚到保存的父；数据曝光本身不可回滚——check/final一旦读取即计曝光，失败不退还。本卡不产生该曝光。"
+  },
+  "invariants": [
+    "0正式训练：四次工程更新之外不增加步数，不因失败换额外步数。",
+    "0换模型：工程权重核验后丢弃；u2只做接口对齐，不产生能力结论。",
+    "0读confirm、0读封存集、0读check/final、0读项目语料。",
+    "判据在读数前冻结；读后不改，真需改走rebaseline并记账。",
+    "不新增本文件之外的阈值、权重或额度。"
+  ]
+}

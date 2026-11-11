@@ -2632,3 +2632,37 @@ Owner 的否决理由（原话要点）：基线可以重生成 ⇒ 红的时候
 
 删除 `taiji/u2_record_metadata.py`、`taiji/u2_group_structure.py`、`tests/taiji_native/test_u2_metadata_groups_22_4.py`、`scripts/training/verify_taiji_u2_metadata_groups_22_4.py` 与本回执，并把 `u2_subject.py`/`u2_recovery.py`/`u2_learning_transaction.py` 的引用退回，即回到 22.3 结案状态；无 optimizer 读数需要重跑。
 
+---
+
+## D-20261111-10 22.4.1数据/实价准入：四次工程更新的分区、反馈、价目与账本
+
+**编号／时间／类型**：D-20261111-10｜2026-11-11｜**执行包22.4.1数据/实价准入冻结（只冻结，0 optimizer step、0数据读取）**。
+
+### 1. 冻结物
+
+[准入manifest](../manifests/taiji_u2_22_4_1_data_price_admission_20261111.json)（`status=frozen`、`run_authorized=false`）。它只冻结输入分区、反馈边界、CPU价目、准入/拒绝条件与记账，**不冻结**损失权重、Adam超参、目标活性参数与变化下限——后者按卡在读数前另行进执行manifest。
+
+### 2. 额度与价目
+
+四次更新沿用卡内原分配：u1候选float32一次、u2主强基线一次、u3迁移后原路径、u4迁移后恢复路径，合计attempts=4，**已用0**。CPU上限120/120/30/30，合计300、wall 600，全部取自22.4.4建议的「结构/恢复300」分项，不新增分项、不挪用语义/权利、生成/分区、可辨性、全臂价格与冻结分项。定价基准是22.3.4.3实测6次更新70.1875 CPU（约11.7/次），上限含建图、保存即时读回、独立S12与失败余量。实测超帽即`pricing_over_budget`停卡，不得借额度。
+
+### 3. 数据与反馈
+
+四次都只读engineering_slice：22.3.4.3式合成影子片段（每段≤8轮合法学习窗）＋22.4.0合同夹具，片段须写recipe与slice digest。**不读**项目语料、Task1批、封存集、development-check、final、confirm。反馈只用train_label（train/fit发展期），observation与原始请求可见；online_correction、help_reply、score_only与环境oracle结构化事实不进入前向、损失或梯度；评分oracle不回流。
+
+### 4. 记账方式：沿用格式、另立本卡run根
+
+沿用22.3.4.3的NDJSON哈希链、open先fsync计费、create-once claim与重启对账（该格式已在8次真实attempt、2次故障与重启中验证），但run根另立`output/taiji_u2_22_4_1_<run_id>/`。理由：22.3的8次额度已在run 20261111T123154Z全部消耗并结案，混用会让两卡额度与对账互相污染；本轮没有新失败模式需要新账本。拒绝、异常、崩溃均计一次attempt与真实CPU。
+
+### 5. 第一次读项目数据
+
+**不在本卡。** 四次更新都是合成片段，项目数据读取为0字节。首次真实读取发生在22.5持续学习父：按22.4.3的train768/development-fit192分区与22.4.4实价，只读train内≤8轮合法学习窗；check每次整包扣1次曝光（失败也扣），final须R-SEAL-1当次授权。参数/optimizer/状态可回滚到保存父；**数据曝光本身不可回滚**。
+
+### 6. 其它边界
+
+u2的基线身份由22.4.4冻结（本表不选型），u2准入要求该身份已存在且与U2同信息权利；u3/u4仅在u1/u2实际宽度超过基座时启用，否则转为两次具名工程恢复检查（0 step、仍计费、仍须独立进程），不得改作训练。迁移前须重跑22.3恢复回归。
+
+### 7. 撤回路径
+
+删除本manifest并在台账标注superseded；`.gitignore`的`output/taiji_u2_22_4_1_*/`可一并移除。因本轮无运行产物，撤回不涉及读数重跑。
+
