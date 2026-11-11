@@ -1,0 +1,349 @@
+{
+  "schema": "taiji-u2-22.4.1-execution-manifest-v1",
+  "created_on": "2026-11-11",
+  "status": "frozen",
+  "run_authorized": false,
+  "authorization_note": "本文件只冻结22.4.1四次更新的损失权重、Adam超参数、目标活性参数、实际变化下限与预算估算。冻结不等于开跑：开跑需owner对具体update（先u1）给出明确授权，由执行线在run.json写入authorized=true与non-empty owner_approval_ref。本文件不因授权而改写。",
+  "scope": "不新增额度、不改准入条件、不改22.3.4.3已结案读数；不冻结主强基线身份（22.4.4，u2按语义角色留槽）与迁移触发阈值（按实际宽度判定）。片段recipe在本文件冻结，只取22.3.4.3式合成影子片段，不读项目数据。",
+  "authority": {
+    "card": "plans/reference/PLAN-TAIJI-CLOSED_LOOP_DEVELOPMENT_20261110.md",
+    "card_section": "22.4.1记录元数据与逐群结构",
+    "admission_manifest": "plans/manifests/taiji_u2_22_4_1_data_price_admission_20261111.json",
+    "admission_manifest_sha256": "05d8bc684cb441659d2a3c7608d8ade62f95edd211e79307b91dbbff1b0e52bc",
+    "interface_spec": "plans/reference/SPEC-TAIJI-U2_METADATA_GROUPS_22_4_20261111.md",
+    "interface_receipt": "reports/taiji_u2_metadata_groups_22_4_20261111.json",
+    "interface_receipt_sha256": "275291d812799ce509d81b903eb0f17eb2d54c392a9cf1bb0fd9f7491688b2d8",
+    "interface_contract": "plans/manifests/taiji_u2_22_4_1_verification_contract_20261111.json",
+    "interface_contract_sha256": "6fad6b661d706ef5cec380b35415735dd1b7a657529e719842d4ceac202ea56d",
+    "accepted_parent": "plans/manifests/taiji_u2_22_3_accepted_parent_20261111.json",
+    "reference_run": "output/taiji_u2_22_3_4_3_20261111T123154Z/",
+    "source_pins": {
+      "taiji/u2_subject.py": "aa7a23249ad6fdaff1900000c665d575651debc498e800b8c292839ea4f736a8",
+      "taiji/u2_recovery.py": "d7a1b08de6a7608c35522bd5545736be7370ab145364cad35d8703ccda8bce2b",
+      "taiji/u2_learning_transaction.py": "c54771f0e81b8506a9b3f77c0bdc47f11818c54838f1de30f53e57e9159efaff",
+      "taiji/u2_record_metadata.py": "39e57e9dd406f3442bc85e055ebb7d3a813ea981ff1cda0cf119f90c20c35da5",
+      "taiji/u2_group_structure.py": "daabe312bff754bdd70208597f8363180dc459964b5cc7c5120610ca00d69ffa",
+      "taiji/u2_task_contract.py": "957d9d4163eb960dbef5939e721ce1a69dd13311148944901aafb700022bed84"
+    },
+    "source_hash_semantics": "UTF8 without BOM; universal newline to LF"
+  },
+  "conditions": {
+    "threads": 1,
+    "device": "cpu",
+    "interop_threads": "record actual; strict parent/worker equality"
+  },
+  "recipe": {
+    "config": "U2Config.small, seed 20261110；u1在其上开启record_metadata",
+    "sensor_generator": "synthetic_fixture(config, dtype), seed=config.seed+17",
+    "observations_per_shadow_episode": 2,
+    "legal_operations": "act only",
+    "dt": 0.05,
+    "feedback_records": [
+      "red"
+    ],
+    "u1_shadow": {
+      "goal": "观察当前环境并记录反馈。",
+      "records": "original two synthetic sensor records",
+      "target": null
+    },
+    "u2_shadow": {
+      "goal": "逐字输出当前唯一记录的完整原文。",
+      "records": "single red sensor record",
+      "target": "红盒在左边。"
+    },
+    "parent_preparation": "one normal controlled observation then explicit window boundary; no optimizer updates",
+    "training_scope": "discardable synthetic shadow state using parent model parameters; parent factual history and RNG remain fixed",
+    "slice_digest": "run.json写入data_recipe_sha256与slice_sha256；digest在首次open前冻结，读后不得改",
+    "contains_task1_batch": false,
+    "touches_sealed_set": false,
+    "reads_project_corpus": false,
+    "reads_development_check": false,
+    "reads_final": false,
+    "reads_confirm_partition": false
+  },
+  "arms": {
+    "u1-candidate-float32": {
+      "dtype": "float32",
+      "model": "22.4.1元数据候选（record_metadata=True，自22.3接受父复制同名参数）",
+      "weight_profile": "F1-style",
+      "weights": {
+        "predictive": 1.0,
+        "actor": 0.1,
+        "critic": 0.1,
+        "verbatim": 0.0
+      },
+      "active_parameters": [
+        "record_metadata.weight",
+        "record_metadata.bias",
+        "record_provenance.weight",
+        "motion.first.weight",
+        "native_w",
+        "critic.last.weight",
+        "actor_parameters.last.weight"
+      ],
+      "conditional_active_parameters": "若该attempt配置带group_units，则group_extensions.<group>.incoming与.outgoing必须同时在场并列入活性清单；不带则本条件不适用",
+      "optimizer_steps": 1
+    },
+    "u2-strong-baseline": {
+      "dtype": "按22.4.4冻结身份",
+      "model": "22.4.4冻结的主强基线臂",
+      "weight_profile": "F2-style",
+      "weights": {
+        "predictive": 0.1,
+        "actor": 0.1,
+        "critic": 0.1,
+        "verbatim": 1.0
+      },
+      "active_parameter_roles": {
+        "predictive_head": null,
+        "recurrent_core": null,
+        "output_head": null
+      },
+      "identity_status": "unfilled_blocks_admission",
+      "identity_rule": "22.4.4冻结后回填三个角色的具体参数名与dtype；任一角色为null或空串时准入C09为假，u2不得开跑。不允许以'待定'状态通过准入。",
+      "optimizer_steps": 1
+    },
+    "u3-migration-original": {
+      "inherits": "u1-candidate-float32的weights与活性清单",
+      "optimizer_steps": 1,
+      "zero_step_rule": "若u1/u2实际宽度仍等于基座（group_units为None），按准入manifest的no_migration_rule转为0 step具名恢复检查，仍计费、仍须独立进程"
+    },
+    "u4-migration-recovery": {
+      "inherits": "u1-candidate-float32的weights与活性清单",
+      "optimizer_steps": 1,
+      "zero_step_rule": "同u3；且必须在独立Python进程从u3 checkpoint加载并重建state"
+    }
+  },
+  "loss": {
+    "terms": [
+      "predictive",
+      "actor",
+      "critic",
+      "verbatim"
+    ],
+    "denominators": {
+      "predictive": "mean of event and branch predictive_logp",
+      "actor_critic": "mean of two returned result losses",
+      "verbatim": "mean negative log-probability of every raw record byte plus EOS; noncommitted shadow utterance"
+    },
+    "required_nonzero": [
+      {
+        "term": "predictive",
+        "applies": "u1/u2/u3/u4",
+        "reason": "唯一把梯度送入记录表示与元数据投影的项；置零则metadata通路无法证明活着"
+      },
+      {
+        "term": "actor",
+        "applies": "u1/u2",
+        "condition": "仅当actor参数在活性清单中",
+        "reason": "与22.3.4.3 F1/F2一致；置零必须同时把对应参数移出活性清单，否则梯度门必挂"
+      },
+      {
+        "term": "critic",
+        "applies": "u1/u2",
+        "condition": "仅当critic参数在活性清单中",
+        "reason": "同上"
+      },
+      {
+        "term": "verbatim",
+        "applies": "u2",
+        "reason": "F2式逐字目标，u2必须非零"
+      }
+    ],
+    "allowed_zero": [
+      {
+        "term": "verbatim",
+        "applies": "u1/u3/u4",
+        "reason": "F1式无target；给u1加逐字目标等于改attempt语义"
+      }
+    ],
+    "forbidden_nonzero": [
+      "weight_decay",
+      "parameter_norm_loss",
+      "coverage_bonus",
+      "group_size_bonus",
+      "activity_regularizer"
+    ],
+    "forbidden_reason": "卡22.4.1明文禁止靠weight_decay或直接参数范数loss制造覆盖"
+  },
+  "optimizer": {
+    "type": "Adam",
+    "lr": 0.001,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "weight_decay": 0.0,
+    "amsgrad": false,
+    "foreach": false,
+    "maximize": false,
+    "capturable": false,
+    "differentiable": false,
+    "fused": false,
+    "basis": "与22.3.4.3逐字相同：同一小profile、同一批形状，u1读数才能与已测70.1875 CPU对照"
+  },
+  "warmup": {
+    "enabled": false,
+    "reason": "单步下warmup会把第1步缩到0或一半，等于自证不了更新落地；22.3.4.3也无warmup"
+  },
+  "gradient_clip": {
+    "enabled": false,
+    "reason": "不引入第二个未冻结阈值，保持与22.3.4.3同一把尺子；clip会掩盖非有限梯度",
+    "guard": "nonfinite_rejection",
+    "guard_behavior": "梯度含非有限值即拒绝该attempt并计费，不调用optimizer.step"
+  },
+  "activity_floors": {
+    "float32": {
+      "gradient_norm": 1e-10,
+      "max_parameter_change": 1e-08
+    },
+    "float64": {
+      "gradient_norm": 1e-12,
+      "max_parameter_change": 1e-12
+    }
+  },
+  "change_floor": {
+    "basis": "沿用22.3.4.3的activity_floors.max_parameter_change，不抬到1e-6：它判'通路活着'，不是'变得够多'；抬上去就与22.3.4.3不是同一把尺子",
+    "gate_A_parameter_displacement": {
+      "metric": "per_named_parameter max_abs_elementwise |theta_after - theta_before|",
+      "floor": {
+        "float32": 1e-08,
+        "float64": 1e-12
+      },
+      "semantics": "证明这一步真的动了这个参数"
+    },
+    "gate_B_gradient_norm": {
+      "metric": "L2 norm of dL/dtheta",
+      "floor": {
+        "float32": 1e-10,
+        "float64": 1e-12
+      },
+      "semantics": "证明损失与这个参数之间没有断路"
+    },
+    "descriptive_C_output_displacement": {
+      "metrics": [
+        "next_output L1 distance",
+        "policy L1 distance",
+        "same-fixture loss delta"
+      ],
+      "gate": false,
+      "reason": "1步后的输出位移取决于lr、fixture与初始化；任何阈值都是在替'学习效果'背书。本卡只证通路，收益归22.5"
+    },
+    "receipt_fields": {
+      "per_active_parameter": "name, change, floor, margin=change/floor, barely_live",
+      "barely_live_rule": "margin < 10 时 barely_live=true；门仍按实际值判，不因标记而放宽或拒绝",
+      "aggregate": "min_margin, barely_live_parameters, output_displacement_descriptive",
+      "location": "随S12回执的activity_receipt字段入库"
+    },
+    "direction_note": "阈值调大更严；调小到1e-9会让float32表示噪声通过，那才是'任何噪声都算变化'。真实Adam单步位移约1e-3，float32表示噪声约1e-8"
+  },
+  "comparison_u1_u2": {
+    "removed_requirement": "不再要求'u1与u2必须同一组损失权重'。上一草案第5节该条与两臂权重表互斥，本文件以两臂权重不同为准。",
+    "same": [
+      "engineering_slice与slice_sha256",
+      "dt=0.05",
+      "observations_per_shadow_episode=2",
+      "feedback=[train_label]",
+      "Adam全部字段",
+      "activity_floors",
+      "optimizer_steps=1",
+      "checkpoint/保存即时读回/独立worker协议"
+    ],
+    "allowed_differences": [
+      {
+        "field": "loss weights",
+        "u1": "predictive1.0/actor0.1/critic0.1/verbatim0.0",
+        "u2": "predictive0.1/actor0.1/critic0.1/verbatim1.0",
+        "reason": "两臂测的是不同目标语义（记录预测 vs 逐字输出），不是同一损失下的两个模型"
+      },
+      {
+        "field": "model class",
+        "u1": "U2元数据候选",
+        "u2": "22.4.4冻结的主强基线"
+      },
+      {
+        "field": "active parameter names",
+        "u1": "按本文件u1清单",
+        "u2": "按22.4.4冻结后回填的三个语义角色"
+      }
+    ],
+    "fairness": "不比较两臂loss数值；只比较更新是否落地、是否可从checkpoint逐位复现、是否只动了声明参数。",
+    "why_loss_incomparable": "参数化不同、输出空间与分母不同（逐字NLL vs 记录预测logp）、初始化不同；同一数值在不同图上没有共同尺度，直接比较会得到伪结论。",
+    "capability_comparison": "22.5：同信息权利、同分区、3 seed配对，才做能力对照。"
+  },
+  "budget_model": {
+    "basis_run": "22.3.4.3 run 20261111T123154Z",
+    "observed": {
+      "total_cpu_seconds": 70.1875,
+      "optimizer_steps": 6,
+      "all_in_cpu_per_step": 11.70,
+      "executor_cpu_by_attempt": {
+        "f1-step1": 0.5,
+        "f1-step2-orig": 0.5,
+        "f1-step2-recovery": 5.984375,
+        "f2-step1": 1.875,
+        "f2-step2-orig": 1.890625,
+        "f2-step2-recovery": 6.953125,
+        "fault-rejection": 0.203125,
+        "fault-before-commit": 0.234375
+      },
+      "executor_cpu_sum": 18.140625,
+      "worker_and_readback_cpu": 52.046875,
+      "worker_cpu_sample": 6.890625,
+      "average_worker_cpu": 6.51,
+      "float32_step_executor_cpu": [
+        1.875,
+        1.890625
+      ],
+      "fault_attempt_cpu": [
+        0.203125,
+        0.234375
+      ]
+    },
+    "formula": "C(n) = F + n*s",
+    "F": 8.6,
+    "F_breakdown": "父准备约2 + 保存/读回约0.05 + 独立worker约6.5",
+    "s": 1.9,
+    "s_basis": "float32单步执行器实测1.875-1.891（含2次观测shadow前反向），扣除故障attempt基线0.20-0.23后边际约1.65-1.9",
+    "u1_estimate_cpu": [
+      9,
+      11
+    ],
+    "u1_estimate_note": "1.9+0.05+6.9约8.8，加metadata投影与可能群扩展0.1-0.3，再留10-20%余量",
+    "u1_cap": 120,
+    "u1_cap_share": "7.5%-9.2%",
+    "u1_wall_estimate_seconds": 10,
+    "u1_wall_cap": 240,
+    "max_steps": {
+      "all_in_11_70_per_step": 10,
+      "marginal_only": 58,
+      "worker_each_step": 14
+    },
+    "answer": "不会一开跑撞帽；u1配额钉死为1步，CPU余量不是可兑换步数",
+    "u2_warning": "s=1.9只对U2 small profile成立。若22.4.4的强基线参数量或序列长度更大，u2必须用同一公式重测C(1)后再冻结其价目；不得照搬1.9，也不得用u1读数替代u2。"
+  },
+  "authorization": {
+    "granted_by_this_file": false,
+    "required_for_u1": {
+      "where": "output/taiji_u2_22_4_1_<run_id>/run.json",
+      "fields": {
+        "authorized": true,
+        "owner_approval_ref": "non-empty string，绑定具体update id",
+        "manifest_sha256": "本文件的实际sha256",
+        "admission_manifest_sha256": "05d8bc684cb441659d2a3c7608d8ade62f95edd211e79307b91dbbff1b0e52bc",
+        "run_id": "YYYYMMDDTHHMMSSZ"
+      },
+      "must_precede": "任何ledger open行；缺run_start或缺owner_approval_ref则exit 5",
+      "scope": "一次授权只覆盖一个run_id与一个update id；u2另需C09基线身份，u3/u4另需C10/C11"
+    },
+    "note": "status=frozen与run_authorized=false表示本文件本身不是开跑许可；口头'继续'若未绑定run_id与update id，执行线应拒绝开跑并回问。"
+  },
+  "invariants": [
+    "0正式训练：u1/u2/u3/u4各1步为工程更新，不增加步数、不以失败换步数。",
+    "weight_decay=0；无参数范数loss、无覆盖奖励。",
+    "不新增本文件之外的阈值、权重或额度。",
+    "判据在读数前冻结，读后不改；真需改走rebaseline并记账。",
+    "不改22.3.4.3已结案读数与判据。"
+  ]
+}

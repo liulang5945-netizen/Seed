@@ -34,6 +34,8 @@
 
 **逐轮一行（2026-11-11 执行包22.4.1数据/实价准入）**：四次工程更新的[准入manifest](manifests/taiji_u2_22_4_1_data_price_admission_20261111.json)冻结：输入只限合成影子片段（≤8轮合法窗），不碰项目语料/Task1批/封存集/check/final/confirm；CPU价目120/120/30/30合计300，取自22.4.4「结构/恢复300」分项，attempts仍4且已用0；账本沿用22.3.4.3格式另立run根。本表**不冻结**损失权重、Adam超参、活性参数与变化下限。四次更新都不读项目数据，首次真实读取留到22.5且须另行授权；本轮0 optimizer step、0数据读取。
 
+**逐轮一行（2026-11-11 执行包22.4.1执行参数）**：[执行manifest](manifests/taiji_u2_22_4_1_execution_20261111.json)在读数前冻结Adam、两臂损失权重、活性参数与变化门，仍`run_authorized=false`、0 step。u1为F1式（verbatim=0）、u2为F2式（verbatim=1.0），两臂不要求同权重，同切片/dt/Adam/门/1步，公平性由不比较loss数值承担；变化门1e-8/1e-12并新增`barely_live`余量字段；u1一步约9–11 CPU（帽120的7.5%–9.2%），预算式`C(n)=F+n·s`中F≈8.6、s≈1.9，强基线更大时u2须重测s。本轮0 optimizer step、0数据读取。
+
 ## 1. 状态表
 
 | 资产或目标 | 当前裁决 | 现行来源 |

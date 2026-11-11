@@ -2666,3 +2666,39 @@ u2的基线身份由22.4.4冻结（本表不选型），u2准入要求该身份�
 
 删除本manifest并在台账标注superseded；`.gitignore`的`output/taiji_u2_22_4_1_*/`可一并移除。因本轮无运行产物，撤回不涉及读数重跑。
 
+---
+
+## D-20261111-11 22.4.1执行参数：Adam、两臂权重、活性参数与变化门
+
+**编号／时间／类型**：D-20261111-11｜2026-11-11｜**执行包22.4.1执行参数冻结（读数前，0 optimizer step、0数据读取）**。
+
+### 1. 冻结物
+
+[执行manifest](../manifests/taiji_u2_22_4_1_execution_20261111.json)（`status=frozen`、`run_authorized=false`）。只冻结损失权重、Adam超参数、目标活性参数、实际变化下限与预算估算，不新增额度、不改准入、不改22.3.4.3已结案读数。
+
+### 2. Adam与训练开关
+
+lr=1e-3、betas=(0.9,0.999)、eps=1e-8、weight_decay=0、amsgrad/foreach/fused=false，与22.3.4.3逐字相同，保证u1读数能与已测70.1875 CPU对照。**无warmup**（单步下会把第1步缩到0或一半，且22.3.4.3无）。**无clip**（不引入第二个未冻结阈值，clip会掩盖非有限梯度）；守卫改为非有限梯度直接拒绝该attempt并计费，不调用step。
+
+### 3. 两臂权重与“同权重”矛盾的处理
+
+u1用F1式predictive1.0/actor0.1/critic0.1/verbatim0.0；u2用F2式0.1/0.1/0.1/1.0。上一草案第5节“u1与u2必须同一组损失权重”与两臂表互斥，本文件**删除该要求**，改以两臂权重不同为准。公平性不再靠同权重，而靠：同切片与slice digest、同dt、同Adam、同活性门、同为1步、同checkpoint/读回/独立worker协议；**不比较两臂loss数值**——参数化不同、输出空间与分母不同（逐字NLL vs 记录预测logp）、初始化不同，同一数值在不同图上没有共同尺度。能力对照归22.5（同信息权利、同分区、3 seed配对）。禁止weight_decay、参数范数loss、覆盖奖励与活性正则，权重只能为0。
+
+### 4. 活性参数与变化门
+
+u1活性：record_metadata.weight/bias、record_provenance.weight，加22.3.4.3 F1四项（motion.first.weight、native_w、critic.last.weight、actor_parameters.last.weight）；带群单元时并入group_extensions.<group>.incoming/outgoing。u2按预测头/递归核/输出头三槽留白，22.4.4冻结后回填；任一槽为null或空串时C09为假、不得开跑，“待定”不能通过准入。
+
+变化门保持22.3.4.3的1e-8（f32）/1e-12（f64），**不抬到1e-6**：它判“通路活着”，不是“变得够多”，抬上去就与22.3.4.3不是同一把尺子。定义为逐参数`max_ij |θ_after−θ_before|`；梯度门1e-10/1e-12。新增硬要求：每个活性参数的实际位移、对门余量、`barely_live`（余量<10倍）必须打印进S12回执的activity_receipt。输出位移（next_output/policy L1、同fixture损失差）**只记录不设门**，因为1步后的位移取决于lr、fixture与初始化，设阈值等于替学习效果背书。方向提醒：阈值调大更严，调小到1e-9会让f32表示噪声通过，那才是“任何噪声都算变化”。
+
+### 5. 预算估算
+
+22.3.4.3的70.1875 CPU拆开：8次执行器合计18.140625，其余52.046875是8个独立worker（均值约6.51）与父准备/读回；70.1875÷6=11.70只是“全包/步”，不是边际。f32单步执行器实测1.875与1.890625，故障attempt 0.203125/0.234375，故边际s≈1.65–1.9。写成`C(n)=F+n·s`，F≈8.6（父准备2＋保存/读回0.05＋独立worker6.5），s≈1.9。u1一步约9–11 CPU，占120帽的7.5%–9.2%，wall约10秒占240的4%，不会一开跑撞帽；按全包11.70/步可容10步，按边际可容58步，每步起worker可容14步，但u1配额钉死为1步，CPU余量不是可兑换步数。**s只对small profile成立**：若22.4.4强基线参数量或序列更长，u2必须用同一公式重测C(1)后再冻结其价目，不得照搬1.9，也不得用u1读数替代u2。
+
+### 6. 授权形式
+
+本文件冻结不等于开跑。u1开跑需owner明确授权，落到`output/taiji_u2_22_4_1_<run_id>/run.json`：`authorized=true`、`owner_approval_ref`非空且绑定具体update id、`manifest_sha256`、`admission_manifest_sha256`、`run_id`。该run.json必须早于任何ledger open行；缺run_start或缺owner_approval_ref则exit 5。一次授权只覆盖一个run_id与一个update id；u2另需C09基线身份，u3/u4另需C10/C11。口头“继续”若未绑定run_id与update id，执行线应拒绝开跑并回问。
+
+### 7. 撤回路径
+
+删除本manifest并在台账标注superseded，卡片与MASTER-PLAN对应条目改为指向准入manifest；因本轮无运行产物，撤回不涉及读数重跑。
+
