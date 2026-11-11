@@ -1,0 +1,3649 @@
+{
+  "schema": "taiji-u2-22.3.4.2-reencoding-v1",
+  "created_at": "2026-11-11T08:51:40.811409+00:00",
+  "verdict": "passed_zero_optimizer_reencoding_only",
+  "contract_sha256": "eef1d50619595fae21f2d7a683666184c5f58b5bf2971a37d677c64f7a59f282",
+  "design_sha256": "4a0e79275f613015c76ffdde4d83c8a9e4e99b86eaf46529b7a2a3b9140d13bb",
+  "source_pins": {
+    "taiji/u2_subject.py": "95607245747eac2b89163c88c11366c20a0198c20e2bc86d5be8988397de94de",
+    "taiji/u2_events.py": "a06ad2b4421ab972b86a03980ab1a736d48d395f2776b5c56cfa69a7664783f6",
+    "taiji/u2_learning_transaction.py": "212ea54cf263cec80a15d05263b7e6f8c0965b726a825576634c8c3fb61a9573",
+    "taiji/u2_recovery.py": "0ba4fc66a5dc6064137a3a216f93730fc3d7de8ec5deb4b135103833abacdbdc",
+    "taiji/u2_history.py": "9e7896dd9cb0162625afc887fc33bd585121cf60e279282bcac5c65e3395277c",
+    "taiji/u2_operators.py": "d09f5784bffaf0a3247006c0d67062f18825ba8dc8a431b7c1d0cc778a249559",
+    "taiji/utf8_state.py": "6ec7e96b2994dfa8eea430b3a08ddb5ff0fd877cf70c8cc288f57bab2efcac09",
+    "tests/taiji_native/test_u2_runtime_recovery_22_3.py": "1c1c7ff563a62043fa212dec5eac2288e5fd1eac36b6ba34d05f06618fe53552",
+    "tests/taiji_native/test_u2_history_22_3.py": "474558821db7c30630e3a7eff427c20f92ca5e3a60c4593290787d882672a4df",
+    "tests/taiji_native/test_u2_reencoding_22_3.py": "f82f1dbc16b37726094c1bf5dee792b44977de7827f35b34b1b5fd96a6dd2eeb",
+    "scripts/training/verify_taiji_u2_reencoding_22_3.py": "092015444e2a4cb27e60d0a4b31af0b6bf4462faaad0b4ca266bc1ca12a83933",
+    "scripts/training/verify_taiji_u2_runtime_22_3.py": "272e9b728b0cfcc9dfe4647b179ce2f3b2f02679252130700748a5262cd8654b",
+    "scripts/training/verify_taiji_u2_history_22_3.py": "6a51be3a7d790d20408f2e667a923a68d757d711e442571042a361cf5c33c416",
+    "scripts/training/verify_taiji_u2_cross_process_22_3.py": "0230d99cab2130a5d8c5d01712fe3b39839b037320bf03c42bde6ae113835b94"
+  },
+  "run_conditions": {
+    "threads": 1,
+    "interop_threads": 12,
+    "device": "cpu",
+    "dtype": "torch.float64",
+    "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+    "torch": "2.13.0+cpu",
+    "environment": {
+      "OMP_NUM_THREADS": null,
+      "MKL_NUM_THREADS": null,
+      "OPENBLAS_NUM_THREADS": null
+    }
+  },
+  "checks": [
+    {
+      "family": "runtime",
+      "id": "test_atomic_file_rejects_corruption_before_deserializing[truncate]",
+      "passed": true,
+      "source_line": 228,
+      "cpu_seconds": 0.03125,
+      "wall_seconds": 0.06299999996554106
+    },
+    {
+      "family": "runtime",
+      "id": "test_atomic_file_rejects_corruption_before_deserializing[payload]",
+      "passed": true,
+      "source_line": 228,
+      "cpu_seconds": 0.015625,
+      "wall_seconds": 0.015000000013969839
+    },
+    {
+      "family": "runtime",
+      "id": "test_atomic_file_rejects_corruption_before_deserializing[header]",
+      "passed": true,
+      "source_line": 228,
+      "cpu_seconds": 0.015625,
+      "wall_seconds": 0.01600000000325963
+    },
+    {
+      "family": "runtime",
+      "id": "test_bad_envelope_never_falls_back_to_a_values_only_success[schema]",
+      "passed": true,
+      "source_line": 209,
+      "cpu_seconds": 0.109375,
+      "wall_seconds": 0.18699999997625127
+    },
+    {
+      "family": "runtime",
+      "id": "test_bad_envelope_never_falls_back_to_a_values_only_success[source]",
+      "passed": true,
+      "source_line": 209,
+      "cpu_seconds": 0.03125,
+      "wall_seconds": 0.06300000002374873
+    },
+    {
+      "family": "runtime",
+      "id": "test_bad_envelope_never_falls_back_to_a_values_only_success[window]",
+      "passed": true,
+      "source_line": 209,
+      "cpu_seconds": 0.03125,
+      "wall_seconds": 0.031000000017229468
+    },
+    {
+      "family": "runtime",
+      "id": "test_bad_envelope_never_falls_back_to_a_values_only_success[operations]",
+      "passed": true,
+      "source_line": 209,
+      "cpu_seconds": 0.046875,
+      "wall_seconds": 0.0779999999795109
+    },
+    {
+      "family": "runtime",
+      "id": "test_bad_envelope_never_falls_back_to_a_values_only_success[parameters]",
+      "passed": true,
+      "source_line": 209,
+      "cpu_seconds": 0.0625,
+      "wall_seconds": 0.0779999999795109
+    },
+    {
+      "family": "runtime",
+      "id": "test_execute_before_ack_recovery_does_not_repeat_external_effect",
+      "passed": true,
+      "source_line": 262,
+      "cpu_seconds": 0.234375,
+      "wall_seconds": 0.2970000000204891
+    },
+    {
+      "family": "runtime",
+      "id": "test_failed_atomic_replace_keeps_previous_checkpoint_and_cleans_staging",
+      "passed": true,
+      "source_line": 246,
+      "cpu_seconds": 0.015625,
+      "wall_seconds": 0.01600000000325963
+    },
+    {
+      "family": "runtime",
+      "id": "test_failed_shadow_birth_keeps_parent_and_optimizer_untouched",
+      "passed": true,
+      "source_line": 409,
+      "cpu_seconds": 2.546875,
+      "wall_seconds": 3.2660000000032596
+    },
+    {
+      "family": "runtime",
+      "id": "test_full_window_rejects_execution_before_any_external_effect",
+      "passed": true,
+      "source_line": 318,
+      "cpu_seconds": 0.03125,
+      "wall_seconds": 0.031000000017229468
+    },
+    {
+      "family": "runtime",
+      "id": "test_goal_switch_unknown_outcome_and_duplicate_packet_survive_window_replay",
+      "passed": true,
+      "source_line": 151,
+      "cpu_seconds": 0.28125,
+      "wall_seconds": 0.2809999999590218
+    },
+    {
+      "family": "runtime",
+      "id": "test_internal_replay_and_wait_preserve_physical_clock_on_restore",
+      "passed": true,
+      "source_line": 193,
+      "cpu_seconds": 0.296875,
+      "wall_seconds": 0.2970000000204891
+    },
+    {
+      "family": "runtime",
+      "id": "test_invalid_value_anchor_cannot_certify_itself_by_roundtrip[H]",
+      "passed": true,
+      "source_line": 343,
+      "cpu_seconds": 0.09375,
+      "wall_seconds": 0.0779999999795109
+    },
+    {
+      "family": "runtime",
+      "id": "test_invalid_value_anchor_cannot_certify_itself_by_roundtrip[F]",
+      "passed": true,
+      "source_line": 343,
+      "cpu_seconds": 0.046875,
+      "wall_seconds": 0.0940000000409782
+    },
+    {
+      "family": "runtime",
+      "id": "test_invalid_value_anchor_cannot_certify_itself_by_roundtrip[logw]",
+      "passed": true,
+      "source_line": 343,
+      "cpu_seconds": 0.078125,
+      "wall_seconds": 0.0779999999795109
+    },
+    {
+      "family": "runtime",
+      "id": "test_invalid_value_anchor_cannot_certify_itself_by_roundtrip[records]",
+      "passed": true,
+      "source_line": 343,
+      "cpu_seconds": 0.078125,
+      "wall_seconds": 0.0779999999795109
+    },
+    {
+      "family": "runtime",
+      "id": "test_invalid_value_anchor_cannot_certify_itself_by_roundtrip[eligibility]",
+      "passed": true,
+      "source_line": 343,
+      "cpu_seconds": 0.078125,
+      "wall_seconds": 0.07800000003771856
+    },
+    {
+      "family": "runtime",
+      "id": "test_invalid_value_anchor_cannot_certify_itself_by_roundtrip[resources]",
+      "passed": true,
+      "source_line": 343,
+      "cpu_seconds": 0.078125,
+      "wall_seconds": 0.0779999999795109
+    },
+    {
+      "family": "runtime",
+      "id": "test_mid_character_and_actual_self_output_replay_without_world_fact_write",
+      "passed": true,
+      "source_line": 170,
+      "cpu_seconds": 0.796875,
+      "wall_seconds": 0.8279999999795109
+    },
+    {
+      "family": "runtime",
+      "id": "test_parameter_change_cannot_be_blessed_as_a_new_boundary[window]",
+      "passed": true,
+      "source_line": 365,
+      "cpu_seconds": 0.03125,
+      "wall_seconds": 0.03200000000651926
+    },
+    {
+      "family": "runtime",
+      "id": "test_parameter_change_cannot_be_blessed_as_a_new_boundary[birth]",
+      "passed": true,
+      "source_line": 365,
+      "cpu_seconds": 0.015625,
+      "wall_seconds": 0.031000000017229468
+    },
+    {
+      "family": "runtime",
+      "id": "test_pending_values_cannot_become_an_undeclared_truncated_anchor",
+      "passed": true,
+      "source_line": 130,
+      "cpu_seconds": 0.390625,
+      "wall_seconds": 0.4220000000204891
+    },
+    {
+      "family": "runtime",
+      "id": "test_repeated_acknowledgment_is_idempotent_at_window_limit",
+      "passed": true,
+      "source_line": 331,
+      "cpu_seconds": 0.109375,
+      "wall_seconds": 0.125
+    },
+    {
+      "family": "runtime",
+      "id": "test_restored_rng_and_next_decision_reproduce_recorded_actor",
+      "passed": true,
+      "source_line": 137,
+      "cpu_seconds": 0.078125,
+      "wall_seconds": 0.0779999999795109
+    },
+    {
+      "family": "runtime",
+      "id": "test_source_change_cannot_be_relabelled_at_save_or_boundary",
+      "passed": true,
+      "source_line": 380,
+      "cpu_seconds": 0.015625,
+      "wall_seconds": 0.01600000000325963
+    },
+    {
+      "family": "runtime",
+      "id": "test_two_shadow_births_preserve_moments_lineage_and_neutral_outputs",
+      "passed": true,
+      "source_line": 424,
+      "cpu_seconds": 0.203125,
+      "wall_seconds": 0.2029999999795109
+    },
+    {
+      "family": "runtime",
+      "id": "test_uncertain_executor_status_waits_without_reissuing",
+      "passed": true,
+      "source_line": 295,
+      "cpu_seconds": 0.015625,
+      "wall_seconds": 0.031000000017229468
+    },
+    {
+      "family": "runtime",
+      "id": "test_unregistered_runtime_nested_fields_are_rejected[runtime]",
+      "passed": true,
+      "source_line": 388,
+      "cpu_seconds": 0.078125,
+      "wall_seconds": 0.0779999999795109
+    },
+    {
+      "family": "runtime",
+      "id": "test_unregistered_runtime_nested_fields_are_rejected[anchor_runtime]",
+      "passed": true,
+      "source_line": 388,
+      "cpu_seconds": 0.078125,
+      "wall_seconds": 0.07800000003771856
+    },
+    {
+      "family": "runtime",
+      "id": "test_unregistered_runtime_nested_fields_are_rejected[anchor]",
+      "passed": true,
+      "source_line": 388,
+      "cpu_seconds": 0.078125,
+      "wall_seconds": 0.0779999999795109
+    },
+    {
+      "family": "runtime",
+      "id": "test_unregistered_runtime_nested_fields_are_rejected[operation]",
+      "passed": true,
+      "source_line": 388,
+      "cpu_seconds": 0.078125,
+      "wall_seconds": 0.0779999999795109
+    },
+    {
+      "family": "runtime",
+      "id": "test_values_only_restore_is_a_discriminating_theta_credit_negative_control",
+      "passed": true,
+      "source_line": 113,
+      "cpu_seconds": 0.484375,
+      "wall_seconds": 0.4690000000409782
+    },
+    {
+      "family": "runtime",
+      "id": "test_window_overflow_is_rejected_before_mutating_rng",
+      "passed": true,
+      "source_line": 310,
+      "cpu_seconds": 0.0,
+      "wall_seconds": 0.030999999959021807
+    },
+    {
+      "family": "runtime",
+      "id": "test_window_replay_restores_pending_motion_native_fast_and_critic_credit",
+      "passed": true,
+      "source_line": 93,
+      "cpu_seconds": 0.34375,
+      "wall_seconds": 0.375
+    },
+    {
+      "family": "history",
+      "id": "test_each_actual_byte_is_archived_and_window_emit_is_coalesced",
+      "passed": true,
+      "source_line": 55,
+      "cpu_seconds": 0.703125,
+      "wall_seconds": 0.6880000000237487
+    },
+    {
+      "family": "history",
+      "id": "test_failed_bundle_replace_preserves_previous_complete_raw_prefix",
+      "passed": true,
+      "source_line": 269,
+      "cpu_seconds": 0.078125,
+      "wall_seconds": 0.14100000000325963
+    },
+    {
+      "family": "history",
+      "id": "test_history_and_runtime_binding_are_verified[prefix]",
+      "passed": true,
+      "source_line": 114,
+      "cpu_seconds": 0.09375,
+      "wall_seconds": 0.0779999999795109
+    },
+    {
+      "family": "history",
+      "id": "test_history_and_runtime_binding_are_verified[segment]",
+      "passed": true,
+      "source_line": 114,
+      "cpu_seconds": 0.0625,
+      "wall_seconds": 0.07800000003771856
+    },
+    {
+      "family": "history",
+      "id": "test_history_and_runtime_binding_are_verified[window]",
+      "passed": true,
+      "source_line": 114,
+      "cpu_seconds": 0.09375,
+      "wall_seconds": 0.10899999999674037
+    },
+    {
+      "family": "history",
+      "id": "test_history_and_runtime_binding_are_verified[subject]",
+      "passed": true,
+      "source_line": 114,
+      "cpu_seconds": 0.296875,
+      "wall_seconds": 0.2809999999590218
+    },
+    {
+      "family": "history",
+      "id": "test_history_byte_quota_is_atomic_for_new_content",
+      "passed": true,
+      "source_line": 152,
+      "cpu_seconds": 0.03125,
+      "wall_seconds": 0.0470000000204891
+    },
+    {
+      "family": "history",
+      "id": "test_history_capacity_checked_before_external_execution",
+      "passed": true,
+      "source_line": 186,
+      "cpu_seconds": 0.03125,
+      "wall_seconds": 0.06300000002374873
+    },
+    {
+      "family": "history",
+      "id": "test_history_corruption_is_rejected[order]",
+      "passed": true,
+      "source_line": 85,
+      "cpu_seconds": 0.0625,
+      "wall_seconds": 0.0779999999795109
+    },
+    {
+      "family": "history",
+      "id": "test_history_corruption_is_rejected[missing]",
+      "passed": true,
+      "source_line": 85,
+      "cpu_seconds": 0.078125,
+      "wall_seconds": 0.09399999998277053
+    },
+    {
+      "family": "history",
+      "id": "test_history_corruption_is_rejected[duplicate]",
+      "passed": true,
+      "source_line": 85,
+      "cpu_seconds": 0.078125,
+      "wall_seconds": 0.09299999999348074
+    },
+    {
+      "family": "history",
+      "id": "test_history_corruption_is_rejected[payload]",
+      "passed": true,
+      "source_line": 85,
+      "cpu_seconds": 0.0625,
+      "wall_seconds": 0.07900000002700835
+    },
+    {
+      "family": "history",
+      "id": "test_history_corruption_is_rejected[parent]",
+      "passed": true,
+      "source_line": 85,
+      "cpu_seconds": 0.078125,
+      "wall_seconds": 0.09299999999348074
+    },
+    {
+      "family": "history",
+      "id": "test_history_corruption_is_rejected[size]",
+      "passed": true,
+      "source_line": 85,
+      "cpu_seconds": 0.078125,
+      "wall_seconds": 0.09399999998277053
+    },
+    {
+      "family": "history",
+      "id": "test_history_corruption_is_rejected[head]",
+      "passed": true,
+      "source_line": 85,
+      "cpu_seconds": 0.078125,
+      "wall_seconds": 0.06300000002374873
+    },
+    {
+      "family": "history",
+      "id": "test_history_corruption_is_rejected[extra]",
+      "passed": true,
+      "source_line": 85,
+      "cpu_seconds": 0.0625,
+      "wall_seconds": 0.06299999996554106
+    },
+    {
+      "family": "history",
+      "id": "test_history_keeps_two_births_and_original_prefix",
+      "passed": true,
+      "source_line": 227,
+      "cpu_seconds": 0.125,
+      "wall_seconds": 0.125
+    },
+    {
+      "family": "history",
+      "id": "test_history_quota_preserves_parent_at_boundary[window]",
+      "passed": true,
+      "source_line": 212,
+      "cpu_seconds": 0.046875,
+      "wall_seconds": 0.0470000000204891
+    },
+    {
+      "family": "history",
+      "id": "test_history_quota_preserves_parent_at_boundary[birth]",
+      "passed": true,
+      "source_line": 212,
+      "cpu_seconds": 0.0625,
+      "wall_seconds": 0.061999999976251274
+    },
+    {
+      "family": "history",
+      "id": "test_history_quota_rolls_back_coalesced_utf8_prefix",
+      "passed": true,
+      "source_line": 174,
+      "cpu_seconds": 0.125,
+      "wall_seconds": 0.125
+    },
+    {
+      "family": "history",
+      "id": "test_history_quota_rolls_back_receipt_and_fast_memory",
+      "passed": true,
+      "source_line": 200,
+      "cpu_seconds": 0.140625,
+      "wall_seconds": 0.14100000000325963
+    },
+    {
+      "family": "history",
+      "id": "test_history_quota_rolls_back_sampled_rng_and_decision",
+      "passed": true,
+      "source_line": 140,
+      "cpu_seconds": 0.03125,
+      "wall_seconds": 0.015000000013969839
+    },
+    {
+      "family": "history",
+      "id": "test_history_survives_truncation_save_restore_and_next_window",
+      "passed": true,
+      "source_line": 35,
+      "cpu_seconds": 0.15625,
+      "wall_seconds": 0.2029999999795109
+    },
+    {
+      "family": "history",
+      "id": "test_legacy_runtime_without_raw_prefix_is_explicitly_rejected",
+      "passed": true,
+      "source_line": 260,
+      "cpu_seconds": 0.046875,
+      "wall_seconds": 0.0470000000204891
+    },
+    {
+      "family": "history",
+      "id": "test_raw_history_parameter_revisions_cannot_regress",
+      "passed": true,
+      "source_line": 289,
+      "cpu_seconds": 0.078125,
+      "wall_seconds": 0.0779999999795109
+    },
+    {
+      "family": "history",
+      "id": "test_raw_recording_exception_rolls_back_local_operation",
+      "passed": true,
+      "source_line": 161,
+      "cpu_seconds": 0.03125,
+      "wall_seconds": 0.03200000000651926
+    },
+    {
+      "family": "history",
+      "id": "test_shadow_restore_preserves_history_without_appending_replayed_facts",
+      "passed": true,
+      "source_line": 249,
+      "cpu_seconds": 0.3125,
+      "wall_seconds": 0.34299999999348074
+    },
+    {
+      "family": "history",
+      "id": "test_values_anchor_is_explicitly_partial_for_future_migration",
+      "passed": true,
+      "source_line": 73,
+      "cpu_seconds": 0.109375,
+      "wall_seconds": 0.11000000004423782
+    },
+    {
+      "family": "reencoding",
+      "id": "test_acceptance_cannot_mutate_the_reencoded_candidate[parameters]",
+      "passed": true,
+      "source_line": 306,
+      "cpu_seconds": 0.234375,
+      "wall_seconds": 0.2649999999557622
+    },
+    {
+      "family": "reencoding",
+      "id": "test_acceptance_cannot_mutate_the_reencoded_candidate[state]",
+      "passed": true,
+      "source_line": 306,
+      "cpu_seconds": 0.1875,
+      "wall_seconds": 0.2190000000409782
+    },
+    {
+      "family": "reencoding",
+      "id": "test_acceptance_cannot_mutate_the_reencoded_candidate[configuration]",
+      "passed": true,
+      "source_line": 306,
+      "cpu_seconds": 0.1875,
+      "wall_seconds": 0.21899999998277053
+    },
+    {
+      "family": "reencoding",
+      "id": "test_assimilation_is_independent_of_stale_behavior_critic",
+      "passed": true,
+      "source_line": 152,
+      "cpu_seconds": 0.109375,
+      "wall_seconds": 0.125
+    },
+    {
+      "family": "reencoding",
+      "id": "test_budget_exhaustion_preserves_parent",
+      "passed": true,
+      "source_line": 233,
+      "cpu_seconds": 0.171875,
+      "wall_seconds": 0.2029999999795109
+    },
+    {
+      "family": "reencoding",
+      "id": "test_deferred_observation_provenance_survives_reencoding",
+      "passed": true,
+      "source_line": 164,
+      "cpu_seconds": 0.3125,
+      "wall_seconds": 0.32800000003771856
+    },
+    {
+      "family": "reencoding",
+      "id": "test_existing_optimizer_cannot_be_silently_dropped",
+      "passed": true,
+      "source_line": 377,
+      "cpu_seconds": 0.1875,
+      "wall_seconds": 0.2029999999795109
+    },
+    {
+      "family": "reencoding",
+      "id": "test_history_capacity_failure_preserves_parent",
+      "passed": true,
+      "source_line": 340,
+      "cpu_seconds": 0.171875,
+      "wall_seconds": 0.23499999998603016
+    },
+    {
+      "family": "reencoding",
+      "id": "test_injected_migration_fault_keeps_parent_intact[after_rebuild]",
+      "passed": true,
+      "source_line": 210,
+      "cpu_seconds": 0.1875,
+      "wall_seconds": 0.21799999999348074
+    },
+    {
+      "family": "reencoding",
+      "id": "test_injected_migration_fault_keeps_parent_intact[before_commit]",
+      "passed": true,
+      "source_line": 210,
+      "cpu_seconds": 0.25,
+      "wall_seconds": 0.2970000000204891
+    },
+    {
+      "family": "reencoding",
+      "id": "test_invalid_candidate_is_rejected_before_commit[version]",
+      "passed": true,
+      "source_line": 253,
+      "cpu_seconds": 0.21875,
+      "wall_seconds": 0.25
+    },
+    {
+      "family": "reencoding",
+      "id": "test_invalid_candidate_is_rejected_before_commit[structure]",
+      "passed": true,
+      "source_line": 253,
+      "cpu_seconds": 0.203125,
+      "wall_seconds": 0.21899999998277053
+    },
+    {
+      "family": "reencoding",
+      "id": "test_invalid_candidate_is_rejected_before_commit[dtype]",
+      "passed": true,
+      "source_line": 253,
+      "cpu_seconds": 0.171875,
+      "wall_seconds": 0.2190000000409782
+    },
+    {
+      "family": "reencoding",
+      "id": "test_invalid_candidate_is_rejected_before_commit[nonfinite]",
+      "passed": true,
+      "source_line": 253,
+      "cpu_seconds": 0.15625,
+      "wall_seconds": 0.17199999996228144
+    },
+    {
+      "family": "reencoding",
+      "id": "test_invalid_candidate_is_rejected_before_commit[same_instance]",
+      "passed": true,
+      "source_line": 253,
+      "cpu_seconds": 0.171875,
+      "wall_seconds": 0.18700000003445894
+    },
+    {
+      "family": "reencoding",
+      "id": "test_new_encoder_migration_changes_representation_preserves_facts_and_rng[float64]",
+      "passed": true,
+      "source_line": 103,
+      "cpu_seconds": 0.203125,
+      "wall_seconds": 0.23499999998603016
+    },
+    {
+      "family": "reencoding",
+      "id": "test_new_encoder_migration_changes_representation_preserves_facts_and_rng[float32]",
+      "passed": true,
+      "source_line": 103,
+      "cpu_seconds": 0.21875,
+      "wall_seconds": 0.25
+    },
+    {
+      "family": "reencoding",
+      "id": "test_optimizer_moments_follow_the_candidate_mapping",
+      "passed": true,
+      "source_line": 354,
+      "cpu_seconds": 0.234375,
+      "wall_seconds": 0.25
+    },
+    {
+      "family": "reencoding",
+      "id": "test_parent_change_during_acceptance_prevents_overwrite",
+      "passed": true,
+      "source_line": 292,
+      "cpu_seconds": 0.140625,
+      "wall_seconds": 0.21799999999348074
+    },
+    {
+      "family": "reencoding",
+      "id": "test_partial_history_cannot_be_reencoded_as_complete",
+      "passed": true,
+      "source_line": 244,
+      "cpu_seconds": 0.1875,
+      "wall_seconds": 0.21899999998277053
+    },
+    {
+      "family": "reencoding",
+      "id": "test_pending_action_blocks_slow_parameter_migration",
+      "passed": true,
+      "source_line": 276,
+      "cpu_seconds": 0.09375,
+      "wall_seconds": 0.1720000000204891
+    },
+    {
+      "family": "reencoding",
+      "id": "test_recorded_reconsidered_decisions_remain_fixed",
+      "passed": true,
+      "source_line": 181,
+      "cpu_seconds": 0.375,
+      "wall_seconds": 0.48399999999674037
+    },
+    {
+      "family": "reencoding",
+      "id": "test_reencoding_uses_no_policy_sampling_or_critic_credit",
+      "passed": true,
+      "source_line": 129,
+      "cpu_seconds": 0.265625,
+      "wall_seconds": 0.26600000000325963
+    },
+    {
+      "family": "reencoding",
+      "id": "test_retention_rejection_preserves_parent_and_history",
+      "passed": true,
+      "source_line": 223,
+      "cpu_seconds": 0.328125,
+      "wall_seconds": 0.34399999998277053
+    },
+    {
+      "family": "reencoding",
+      "id": "test_same_parameter_full_history_reconstructs_all_state_fields[float64]",
+      "passed": true,
+      "source_line": 90,
+      "cpu_seconds": 0.828125,
+      "wall_seconds": 0.8900000000139698
+    },
+    {
+      "family": "reencoding",
+      "id": "test_same_parameter_full_history_reconstructs_all_state_fields[float32]",
+      "passed": true,
+      "source_line": 90,
+      "cpu_seconds": 0.828125,
+      "wall_seconds": 0.8599999999860302
+    },
+    {
+      "family": "reencoding",
+      "id": "test_source_change_at_acceptance_is_rejected",
+      "passed": true,
+      "source_line": 326,
+      "cpu_seconds": 0.234375,
+      "wall_seconds": 0.23399999999674037
+    },
+    {
+      "family": "reencoding",
+      "id": "test_two_migrations_keep_complete_history_and_roundtrip_current_state",
+      "passed": true,
+      "source_line": 194,
+      "cpu_seconds": 2.140625,
+      "wall_seconds": 2.2810000000172295
+    },
+    {
+      "family": "reencoding",
+      "id": "test_unrecorded_fact_change_is_detected",
+      "passed": true,
+      "source_line": 285,
+      "cpu_seconds": 0.140625,
+      "wall_seconds": 0.14100000000325963
+    }
+  ],
+  "receive_equivalence": [
+    {
+      "precision": "float64",
+      "historical_revision": "d8993ecc8",
+      "losses_equal": true,
+      "state_values_equal_except_additive_provenance": true,
+      "parameter_gradients": [
+        {
+          "parameter": "modality",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "initial_h",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "initial_p",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "native_w",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "native_r",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "native_p",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "native_q",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "native_k",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "native_v",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "tau_logit",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "background",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "start_embedding",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "record_null_value",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "coverage_logit",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "actor_log_std",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "encoder.rgb.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "encoder.rgb.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "encoder.audio.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "encoder.audio.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "encoder.proprio.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "encoder.proprio.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "metadata.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "metadata.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "embedding.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "text_input.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "text_input.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "convolutions.0.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "convolutions.0.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "convolutions.1.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "convolutions.1.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "convolutions.2.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "convolutions.2.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "goal_score.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "goal_value.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "goal_value.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "object_projection.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "object_projection.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "h_query.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "h_query.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "h_key.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "h_value.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "h_value.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "o_query.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "o_query.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "o_key.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "o_value.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "o_value.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "action.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "action.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "f_query.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "f_query.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "f_output.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "f_output.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "relation_query.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "relation_query.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "relation_key.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "relation_value.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "relation_value.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "relation_geometry.first.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "relation_geometry.first.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "relation_geometry.last.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "motion.first.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "motion.first.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "motion.last.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "motion.last.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "native_goal.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "native_goal.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "nu_projection.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "nu_projection.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "bind_query.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "bind_query.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "bind_key.rgb.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "bind_key.rgb.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "bind_key.audio.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "bind_key.audio.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "bind_key.proprio.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "bind_key.proprio.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "bind_key.outcome.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "bind_key.outcome.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "bind_value.rgb.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "bind_value.rgb.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "bind_value.audio.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "bind_value.audio.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "bind_value.proprio.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "bind_value.proprio.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "bind_value.outcome.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "bind_value.outcome.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "null_score.rgb.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "null_score.rgb.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "null_score.audio.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "null_score.audio.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "null_score.proprio.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "null_score.proprio.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "null_score.outcome.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "null_score.outcome.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "reliability.rgb.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "reliability.rgb.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "reliability.audio.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "reliability.audio.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "reliability.proprio.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "reliability.proprio.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "reliability.outcome.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "reliability.outcome.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "corrector.first.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "corrector.first.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "corrector.last.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "corrector.last.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "f_key.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "f_key.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "outcome.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "outcome.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "f_value.first.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "f_value.first.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "f_value.last.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "f_value.last.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "f_beta.first.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "f_beta.first.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "f_beta.last.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "f_beta.last.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "f_alpha.first.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "f_alpha.first.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "f_alpha.last.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "f_alpha.last.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "f_chi.first.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "f_chi.first.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "f_chi.last.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "f_chi.last.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "post_memory.first.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "post_memory.first.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "post_memory.last.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "post_memory.last.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "decoder_query.rgb.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "decoder_query.rgb.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "decoder_query.audio.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "decoder_query.audio.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "decoder_query.proprio.value",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "decoder_key.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "decoder_value.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "decoder_value.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "decoder.rgb.first.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "decoder.rgb.first.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "decoder.rgb.last.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "decoder.rgb.last.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "decoder.audio.first.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "decoder.audio.first.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "decoder.audio.last.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "decoder.audio.last.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "decoder.proprio.first.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "decoder.proprio.first.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "decoder.proprio.last.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "decoder.proprio.last.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "joint_readout.first.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "joint_readout.first.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "joint_readout.last.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "joint_readout.last.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "byte_head.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "byte_head.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "reward.first.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "reward.first.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "reward.last.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "reward.last.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "actor.first.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "actor.first.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "actor.last.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "critic.first.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "critic.first.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "critic.last.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "critic.last.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "record_goal_query.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "record_query.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "record_query.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "record_key.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "record_position_key.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "record_position_query.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "record_position_query.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "record_null.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "record_null.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "record_value.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "record_value.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "record_output.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "record_output.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "copy_gate.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "copy_gate.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "actor_parameters.first.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "actor_parameters.first.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "actor_parameters.last.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "actor_parameters.last.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "development.first.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "development.first.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "development.last.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "development.last.bias",
+          "max_abs_delta": 0.0
+        }
+      ]
+    },
+    {
+      "precision": "float32",
+      "historical_revision": "d8993ecc8",
+      "losses_equal": true,
+      "state_values_equal_except_additive_provenance": true,
+      "parameter_gradients": [
+        {
+          "parameter": "modality",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "initial_h",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "initial_p",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "native_w",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "native_r",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "native_p",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "native_q",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "native_k",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "native_v",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "tau_logit",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "background",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "start_embedding",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "record_null_value",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "coverage_logit",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "actor_log_std",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "encoder.rgb.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "encoder.rgb.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "encoder.audio.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "encoder.audio.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "encoder.proprio.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "encoder.proprio.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "metadata.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "metadata.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "embedding.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "text_input.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "text_input.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "convolutions.0.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "convolutions.0.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "convolutions.1.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "convolutions.1.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "convolutions.2.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "convolutions.2.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "goal_score.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "goal_value.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "goal_value.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "object_projection.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "object_projection.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "h_query.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "h_query.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "h_key.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "h_value.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "h_value.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "o_query.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "o_query.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "o_key.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "o_value.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "o_value.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "action.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "action.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "f_query.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "f_query.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "f_output.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "f_output.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "relation_query.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "relation_query.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "relation_key.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "relation_value.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "relation_value.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "relation_geometry.first.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "relation_geometry.first.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "relation_geometry.last.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "motion.first.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "motion.first.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "motion.last.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "motion.last.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "native_goal.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "native_goal.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "nu_projection.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "nu_projection.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "bind_query.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "bind_query.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "bind_key.rgb.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "bind_key.rgb.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "bind_key.audio.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "bind_key.audio.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "bind_key.proprio.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "bind_key.proprio.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "bind_key.outcome.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "bind_key.outcome.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "bind_value.rgb.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "bind_value.rgb.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "bind_value.audio.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "bind_value.audio.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "bind_value.proprio.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "bind_value.proprio.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "bind_value.outcome.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "bind_value.outcome.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "null_score.rgb.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "null_score.rgb.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "null_score.audio.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "null_score.audio.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "null_score.proprio.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "null_score.proprio.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "null_score.outcome.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "null_score.outcome.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "reliability.rgb.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "reliability.rgb.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "reliability.audio.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "reliability.audio.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "reliability.proprio.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "reliability.proprio.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "reliability.outcome.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "reliability.outcome.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "corrector.first.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "corrector.first.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "corrector.last.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "corrector.last.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "f_key.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "f_key.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "outcome.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "outcome.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "f_value.first.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "f_value.first.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "f_value.last.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "f_value.last.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "f_beta.first.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "f_beta.first.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "f_beta.last.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "f_beta.last.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "f_alpha.first.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "f_alpha.first.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "f_alpha.last.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "f_alpha.last.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "f_chi.first.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "f_chi.first.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "f_chi.last.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "f_chi.last.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "post_memory.first.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "post_memory.first.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "post_memory.last.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "post_memory.last.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "decoder_query.rgb.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "decoder_query.rgb.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "decoder_query.audio.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "decoder_query.audio.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "decoder_query.proprio.value",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "decoder_key.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "decoder_value.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "decoder_value.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "decoder.rgb.first.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "decoder.rgb.first.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "decoder.rgb.last.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "decoder.rgb.last.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "decoder.audio.first.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "decoder.audio.first.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "decoder.audio.last.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "decoder.audio.last.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "decoder.proprio.first.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "decoder.proprio.first.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "decoder.proprio.last.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "decoder.proprio.last.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "joint_readout.first.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "joint_readout.first.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "joint_readout.last.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "joint_readout.last.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "byte_head.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "byte_head.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "reward.first.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "reward.first.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "reward.last.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "reward.last.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "actor.first.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "actor.first.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "actor.last.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "critic.first.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "critic.first.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "critic.last.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "critic.last.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "record_goal_query.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "record_query.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "record_query.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "record_key.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "record_position_key.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "record_position_query.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "record_position_query.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "record_null.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "record_null.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "record_value.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "record_value.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "record_output.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "record_output.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "copy_gate.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "copy_gate.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "actor_parameters.first.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "actor_parameters.first.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "actor_parameters.last.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "actor_parameters.last.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "development.first.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "development.first.bias",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "development.last.weight",
+          "max_abs_delta": 0.0
+        },
+        {
+          "parameter": "development.last.bias",
+          "max_abs_delta": 0.0
+        }
+      ]
+    }
+  ],
+  "migration_processes": [
+    {
+      "precision": "float64",
+      "first_migration": {
+        "status": "committed",
+        "revision": 3,
+        "parameter_digest": "3f43c87a5d943a8ad6b93fb952e0526daeb7be74d9bec6192a01d46aa5123fc9",
+        "rebuild": {
+          "entries": 30,
+          "observations": 2,
+          "duplicates": 1,
+          "bytes": 6,
+          "internal": 2,
+          "births": 2,
+          "updates": 0,
+          "cpu_seconds": 0.25,
+          "history_reference": {
+            "entries": 30,
+            "head": "aa0aa365f58432c356c28f8eaf13ed12cca17da2e07f03af7d477f9d4fae60bb"
+          },
+          "eligibility_reset": true
+        },
+        "cpu_seconds": 0.296875
+      },
+      "second_migration": {
+        "status": "committed",
+        "revision": 4,
+        "parameter_digest": "22205f83b9043ec0bddb181c62270dba74865b1fd3571d1b8ba4a3b6fe215082",
+        "rebuild": {
+          "entries": 31,
+          "observations": 2,
+          "duplicates": 1,
+          "bytes": 6,
+          "internal": 2,
+          "births": 2,
+          "updates": 1,
+          "cpu_seconds": 0.265625,
+          "history_reference": {
+            "entries": 31,
+            "head": "15b75b6479cd22d7cd7c18562b965ee10932c2ea381bc8b04987c32a7321ff02"
+          },
+          "eligibility_reset": true
+        },
+        "cpu_seconds": 0.328125
+      },
+      "representation_changes": {
+        "H_max_abs_change": 0.009467845922498982,
+        "F_max_abs_change": 0.0024029099893895806,
+        "keys_max_abs_change": 0.0033649870479417372
+      },
+      "prior_prefix": {
+        "entries": 30,
+        "head": "aa0aa365f58432c356c28f8eaf13ed12cca17da2e07f03af7d477f9d4fae60bb"
+      },
+      "post_migration_prefix": {
+        "entries": 32,
+        "head": "7b1dd949e4bbc253f451a9a7ee48a0fcc02c6da5c355a4f7f126e3ddd200ec36"
+      },
+      "max_abs_delta": 0.0,
+      "historical_executor_effects_preserved": 2,
+      "passed": true
+    },
+    {
+      "precision": "float32",
+      "first_migration": {
+        "status": "committed",
+        "revision": 3,
+        "parameter_digest": "93ed42c3b8ce6da10ed3fb8eec8ef38050f3e83b0b55d62aadbadee86a71f0bb",
+        "rebuild": {
+          "entries": 30,
+          "observations": 2,
+          "duplicates": 1,
+          "bytes": 6,
+          "internal": 2,
+          "births": 2,
+          "updates": 0,
+          "cpu_seconds": 0.390625,
+          "history_reference": {
+            "entries": 30,
+            "head": "4c05b17e5e94d39b419b61aa211d561a177038953cba11635679fe78cad4baf5"
+          },
+          "eligibility_reset": true
+        },
+        "cpu_seconds": 0.453125
+      },
+      "second_migration": {
+        "status": "committed",
+        "revision": 4,
+        "parameter_digest": "e30dd9eb6dd9abb02000c9a91fa470cc6195db98e49fe1b3f4a16ddc2da9b2e6",
+        "rebuild": {
+          "entries": 31,
+          "observations": 2,
+          "duplicates": 1,
+          "bytes": 6,
+          "internal": 2,
+          "births": 2,
+          "updates": 1,
+          "cpu_seconds": 0.3125,
+          "history_reference": {
+            "entries": 31,
+            "head": "d2db5fddefcd6aed9bb951a8e1eb4da67f7926fa88bc5eaa2f2f768757b12163"
+          },
+          "eligibility_reset": true
+        },
+        "cpu_seconds": 0.375
+      },
+      "representation_changes": {
+        "H_max_abs_change": 0.009467839263379574,
+        "F_max_abs_change": 0.002397734671831131,
+        "keys_max_abs_change": 0.003364989534020424
+      },
+      "prior_prefix": {
+        "entries": 30,
+        "head": "4c05b17e5e94d39b419b61aa211d561a177038953cba11635679fe78cad4baf5"
+      },
+      "post_migration_prefix": {
+        "entries": 32,
+        "head": "4703a119dc5c1475e2447f7b382d34e719051313c6a596afa2cdc81e4b272bfe"
+      },
+      "max_abs_delta": 0.0,
+      "historical_executor_effects_preserved": 2,
+      "passed": true
+    }
+  ],
+  "workers": [
+    {
+      "pid": 35176,
+      "parent_pid": 11444,
+      "cpu_seconds": 4.953125,
+      "wall_seconds": 6.547000000020489,
+      "run_conditions": {
+        "threads": 1,
+        "interop_threads": 12,
+        "device": "cpu",
+        "dtype": "torch.float64",
+        "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+        "torch": "2.13.0+cpu",
+        "environment": {
+          "OMP_NUM_THREADS": null,
+          "MKL_NUM_THREADS": null,
+          "OPENBLAS_NUM_THREADS": null
+        }
+      }
+    },
+    {
+      "pid": 36348,
+      "parent_pid": 11444,
+      "cpu_seconds": 4.96875,
+      "wall_seconds": 6.032000000006519,
+      "run_conditions": {
+        "threads": 1,
+        "interop_threads": 12,
+        "device": "cpu",
+        "dtype": "torch.float32",
+        "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+        "torch": "2.13.0+cpu",
+        "environment": {
+          "OMP_NUM_THREADS": null,
+          "MKL_NUM_THREADS": null,
+          "OPENBLAS_NUM_THREADS": null
+        }
+      }
+    }
+  ],
+  "parameter_comparisons": {
+    "modality": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "initial_h": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 0,
+      "unused_snapshots": 2,
+      "max_abs_delta": 0.0
+    },
+    "initial_p": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 0,
+      "unused_snapshots": 2,
+      "max_abs_delta": 0.0
+    },
+    "native_w": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "native_r": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "native_p": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "native_q": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "native_k": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "native_v": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "tau_logit": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "background": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "start_embedding": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "record_null_value": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 0,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "coverage_logit": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "actor_log_std": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "encoder.rgb.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "encoder.rgb.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "encoder.audio.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "encoder.audio.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "encoder.proprio.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "encoder.proprio.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "metadata.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "metadata.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "embedding.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "text_input.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "text_input.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "convolutions.0.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "convolutions.0.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "convolutions.1.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "convolutions.1.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "convolutions.2.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "convolutions.2.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "goal_score.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "goal_value.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "goal_value.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "object_projection.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "object_projection.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "h_query.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "h_query.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "h_key.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "h_value.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "h_value.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "o_query.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "o_query.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "o_key.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "o_value.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "o_value.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "action.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "action.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "f_query.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "f_query.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "f_output.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "f_output.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "relation_query.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "relation_query.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "relation_key.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "relation_value.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "relation_value.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "relation_geometry.first.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "relation_geometry.first.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "relation_geometry.last.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "motion.first.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "motion.first.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "motion.last.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "motion.last.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "native_goal.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "native_goal.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "nu_projection.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "nu_projection.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "bind_query.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "bind_query.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "bind_key.rgb.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "bind_key.rgb.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "bind_key.audio.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "bind_key.audio.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "bind_key.proprio.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "bind_key.proprio.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "bind_key.outcome.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "bind_key.outcome.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "bind_value.rgb.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "bind_value.rgb.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "bind_value.audio.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "bind_value.audio.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "bind_value.proprio.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "bind_value.proprio.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "bind_value.outcome.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "bind_value.outcome.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "null_score.rgb.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "null_score.rgb.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "null_score.audio.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "null_score.audio.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "null_score.proprio.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "null_score.proprio.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "null_score.outcome.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "null_score.outcome.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "reliability.rgb.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "reliability.rgb.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "reliability.audio.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "reliability.audio.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "reliability.proprio.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "reliability.proprio.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "reliability.outcome.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "reliability.outcome.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "corrector.first.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "corrector.first.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "corrector.last.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "corrector.last.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "f_key.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "f_key.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "outcome.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "outcome.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "f_value.first.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "f_value.first.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "f_value.last.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "f_value.last.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "f_beta.first.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "f_beta.first.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "f_beta.last.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "f_beta.last.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "f_alpha.first.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "f_alpha.first.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "f_alpha.last.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "f_alpha.last.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "f_chi.first.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "f_chi.first.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "f_chi.last.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "f_chi.last.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "post_memory.first.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "post_memory.first.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "post_memory.last.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "post_memory.last.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "decoder_query.rgb.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "decoder_query.rgb.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "decoder_query.audio.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "decoder_query.audio.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "decoder_query.proprio.value": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "decoder_key.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "decoder_value.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "decoder_value.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "decoder.rgb.first.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "decoder.rgb.first.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "decoder.rgb.last.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "decoder.rgb.last.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "decoder.audio.first.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "decoder.audio.first.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "decoder.audio.last.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "decoder.audio.last.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "decoder.proprio.first.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "decoder.proprio.first.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "decoder.proprio.last.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "decoder.proprio.last.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "joint_readout.first.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "joint_readout.first.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "joint_readout.last.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "joint_readout.last.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "byte_head.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "byte_head.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "reward.first.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "reward.first.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "reward.last.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "reward.last.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "actor.first.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 0,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "actor.first.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 0,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "actor.last.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 0,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "critic.first.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "critic.first.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "critic.last.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "critic.last.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "record_goal_query.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "record_query.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "record_query.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "record_key.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "record_position_key.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "record_position_query.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "record_position_query.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "record_null.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "record_null.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "record_value.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 0,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "record_value.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 0,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "record_output.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "record_output.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "copy_gate.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "copy_gate.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "actor_parameters.first.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "actor_parameters.first.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "actor_parameters.last.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "actor_parameters.last.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 2,
+      "unused_snapshots": 0,
+      "max_abs_delta": 0.0
+    },
+    "development.first.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 0,
+      "unused_snapshots": 2,
+      "max_abs_delta": 0.0
+    },
+    "development.first.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 0,
+      "unused_snapshots": 2,
+      "max_abs_delta": 0.0
+    },
+    "development.last.weight": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 0,
+      "unused_snapshots": 2,
+      "max_abs_delta": 0.0
+    },
+    "development.last.bias": {
+      "compared_snapshots": 2,
+      "nonzero_snapshots": 0,
+      "unused_snapshots": 2,
+      "max_abs_delta": 0.0
+    }
+  },
+  "cpu_seconds_including_workers": 41.9375,
+  "wall_seconds": 49.79700000002049,
+  "optimizer_attempts": 0,
+  "training_steps": 0,
+  "project_dataset_reads": 0,
+  "existing_checkpoints_loaded": 0,
+  "S12_actual_optimizer_verified": false,
+  "whole_22_3_passed": false,
+  "task_capability_evaluated": false
+}

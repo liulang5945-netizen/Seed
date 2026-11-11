@@ -1263,151 +1263,15 @@ class U2Subject(_WorldKernel):
         ]
         return child, receipt_id
 
+    def assimilate(self, state: Any, packet: Any) -> Any:
+        from .u2_events import assimilate
+
+        return assimilate(self, state, packet)
+
     def receive(self, state: Any, packet: Any) -> Any:
-        if packet.packet_id in state["seen_packets"]:
-            return state, {}
-        if (
-            not all(math.isfinite(t) for t in (packet.t_start, packet.t_end, packet.t_arrival))
-            or packet.t_start > packet.t_end
-        ):
-            raise ValueError("invalid event time")
-        if packet.source != "sensor" or packet.scope != "world" or not packet.valid:
-            raise ValueError("illegal event source/scope")
-        receipt = state["pending"]
-        if receipt is None or receipt["id"] != packet.receipt_id:
-            raise ValueError("receipt mismatch")
-        if receipt["subject_version"] != state["revision"]:
-            raise ValueError("parameters changed while pending")
-        old_value = self.pending_value(receipt["decision"])
-        if packet.t_end > receipt["world_end"] or packet.t_arrival > state["process_time"]:
-            raise ValueError("event not arrived")
-        if (
-            not math.isclose(packet.t_end, receipt["world_end"], rel_tol=0.0, abs_tol=1e-10)
-            or packet.t_start < receipt["world_end"] - receipt["dt"] - 1e-10
-        ):
-            raise ValueError("historical observation requires shadow replay")
-        deferred = receipt.get("deferred_packet")
-        if deferred is not None and deferred.packet_id == packet.packet_id:
-            if bool(packet.outcome[4:].all()):
-                raise ValueError("Completed result must have a fresh immutable packet identity")
-            return state, {"status": "awaiting_outcome"}
-        evidence = {
-            "packet_id": packet.packet_id,
-            "source": packet.source,
-            "scope": packet.scope,
-            "t_start": packet.t_start,
-            "t_end": packet.t_end,
-            "t_arrival": packet.t_arrival,
-            "observations": clone_tree(packet.observations, detach=True),
-            "coordinates": clone_tree(packet.coordinates, detach=True),
-            "outcome": packet.outcome.detach().clone(),
-            "old_goal": receipt["goal_raw"],
-            "action": receipt["action"].detach().clone(),
-            "subject_version": receipt["subject_version"],
-            "receipt_id": receipt["id"],
-        }
-        if not bool(packet.outcome[4:].all()):
-            child = dict(state)
-            child["pending"] = {**receipt, "deferred_packet": packet}
-            child["evidence"] = [*state["evidence"], evidence]
-            child["journal"] = [
-                *state["journal"],
-                {"id": receipt["id"], "status": "awaiting_outcome", "packet": packet.packet_id},
-            ]
-            return child, {"status": "awaiting_outcome"}
-        if not packet.observations and "deferred_packet" in receipt:
-            cached = receipt["deferred_packet"]
-            packet = replace(
-                packet,
-                observations=cached.observations,
-                coordinates=cached.coordinates,
-                feedback_record_ids=cached.feedback_record_ids,
-            )
-        old_goal = self.goal(receipt["goal_raw"])
-        goal = self.goal(state["goal_raw"])
-        prior = receipt["prior"]
-        predictive = self.likelihood(
-            prior,
-            old_goal,
-            packet.observations,
-            packet.coordinates,
-            receipt["action"],
-            packet.outcome,
-        )
-        current = dict(prior)
-        current["goal_raw"] = state["goal_raw"]
-        current["goal_version"] = state["goal_version"]
-        current["released_feedback_records"] = packet.feedback_record_ids
-        result = self.correct(
-            current,
-            goal,
-            receipt["action"],
-            packet.observations,
-            packet.coordinates,
-            packet.outcome,
-            write=packet.write_allowed,
-        )
-        result["world_time"] = receipt["world_end"]
-        result["process_time"] = state["process_time"]
-        result["pending"] = None
-        result["seen_packets"] = [*state["seen_packets"], packet.packet_id]
-        if "deferred_packet" in receipt:
-            result["seen_packets"] = list(
-                dict.fromkeys([*result["seen_packets"], receipt["deferred_packet"].packet_id])
-            )
-        result["evidence"] = [*state["evidence"], evidence]
-        result["journal"] = [
-            *state["journal"],
-            {"id": receipt["id"], "packet": packet.packet_id, "status": "settled"},
-        ]
-        result["settled"] = [*state["settled"], receipt["id"]]
-        result["resources"] = {**state["resources"], "events": state["resources"]["events"] + 1}
-        decision = receipt["decision"]
-        utility = packet.outcome.new_tensor([-1.0, 0.0, 1.0]) @ packet.outcome[:3]
-        terminal = packet.outcome[3]
-        next_context = self.branch_context(result, old_goal, receipt["action"])
-        next_features = torch.cat(
-            [next_context.detach(), old_goal.detach()[None].expand(self.c.branches, -1)], -1
-        )
-        next_value = (
-            result["logw"].exp().detach() * 2 * self.critic(next_features).tanh().squeeze(-1)
-        ).sum()
-        discount = 0.99 ** max(1.0, receipt["dt"] / 0.05)
-        delta = (
-            (1 - discount) * utility + discount * (1 - terminal) * next_value.detach() - old_value
-        )
-        actor_loss = -delta.detach() * sum(
-            (p * decision["eligibility"][name]).sum() for name, p in self.policy_named_parameters()
-        )
-        critic_loss = 0.5 * delta.square()
-        result["eligibility"] = {
-            name: (
-                (0.99 * 0.95) ** max(1.0, receipt["dt"] / 0.05) * value
-                if receipt["goal_version"] == state["goal_version"]
-                else torch.zeros_like(value)
-            )
-            for name, value in decision["eligibility"].items()
-        }
-        entropy = -(result["logw"].exp() * result["logw"]).sum() / math.log(max(2, self.c.branches))
-        measured = torch.stack(
-            [
-                entropy.detach(),
-                predictive.detach().abs().mean().sigmoid(),
-                result["F"].detach().norm() / (4 * math.sqrt(self.c.branches)),
-                result["F"].new_tensor(math.log1p(result["resources"]["events"])),
-            ]
-        )
-        nu = result["nu"].clone()
-        nu[:4] = 0.95 * nu[:4] + 0.05 * measured
-        nu[8:12] = 0
-        result["nu"] = nu
-        return result, {
-            "predictive_logp": predictive,
-            "actor": actor_loss,
-            "critic": critic_loss,
-            "prior": prior,
-            "decision": decision,
-        }
+        from .u2_events import receive
+
+        return receive(self, state, packet)
 
     def replay(self, state: Any) -> Any:
         if state["pending"] is not None:

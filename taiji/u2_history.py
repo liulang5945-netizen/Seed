@@ -20,7 +20,7 @@ from typing import Any, cast
 import torch
 
 MAGIC = b"TAIJI-U2-RECOVERY-1\x00"
-HISTORY_SCHEMA = "taiji-u2-raw-history-v1"
+HISTORY_SCHEMA = "taiji-u2-raw-history-v2"
 MAX_HISTORY_ENTRIES = 96
 MAX_HISTORY_BYTES = 16 * 1024 * 1024
 
@@ -234,6 +234,7 @@ class CausalHistory:
             "internal",
             "window",
             "birth",
+            "update",
         }
         if operation["kind"] not in kinds:
             raise ValueError("Unsupported raw operation")
@@ -242,7 +243,8 @@ class CausalHistory:
         if (
             type(segment) is not int
             or segment < 0
-            or segment != (previous + 1 if operation["kind"] in {"window", "birth"} else previous)
+            or segment
+            != (previous + 1 if operation["kind"] in {"window", "birth", "update"} else previous)
         ):
             raise ValueError("Invalid raw history segment")
         if type(payload["parameter_revision"]) is not int or payload["parameter_revision"] < 0:
@@ -278,7 +280,7 @@ class CausalHistory:
         operations: list[dict[str, Any]] = []
         for node in self._entries[count:]:
             operation = detached_tree(node["payload"]["operation"])
-            if operation["kind"] in {"window", "birth"}:
+            if operation["kind"] in {"window", "birth", "update"}:
                 raise ValueError("Learning window crosses an unregistered boundary")
             if operations and operation["kind"] == operations[-1]["kind"] == "emit":
                 operations[-1]["arguments"]["symbols"].extend(operation["arguments"]["symbols"])

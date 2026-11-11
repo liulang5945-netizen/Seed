@@ -1,0 +1,121 @@
+{
+  "schema": "taiji-u2-22.3.4.2-rebuild-design-v1",
+  "created_on": "2026-11-11",
+  "parent_revision": "d8993ecc8",
+  "status": "interfaces_frozen_before_implementation",
+  "conditions": {
+    "threads": 1,
+    "device": "cpu",
+    "precisions": [
+      "float64",
+      "float32"
+    ]
+  },
+  "interfaces": {
+    "assimilation": "validate event, merge deferred observation, predict/correct/FP1, factual settlement and measurements without policy credit",
+    "receive": "normal assimilation plus independently computed old-goal actor/critic credit and eligibility carry",
+    "rebuild_state": "current candidate graph and accepted structure reinterpret full raw genesis prefix under fixed actual actions and bytes",
+    "migrate_parameters": "forked candidate revision parent+1, same config/structure/layout, copied optimizer, callback acceptance, atomic shadow commit"
+  },
+  "field_policies": {
+    "reencode": [
+      "h",
+      "p",
+      "v",
+      "s",
+      "l",
+      "H",
+      "F",
+      "logw",
+      "prediction_goal",
+      "prediction_action",
+      "prediction_key_view",
+      "cursor",
+      "history"
+    ],
+    "preserve_facts": [
+      "subject_id",
+      "goal_raw",
+      "goal_status",
+      "goal_version",
+      "records",
+      "released_feedback_records",
+      "evidence",
+      "journal",
+      "seen_packets",
+      "settled",
+      "world_time",
+      "process_time",
+      "processing_epoch",
+      "rng",
+      "wake_condition",
+      "pending",
+      "utterance_active",
+      "previous_byte",
+      "utf8_lead",
+      "utf8_remaining",
+      "data_bytes"
+    ],
+    "recompute_named_measurements": [
+      "nu",
+      "nu_measurement_schema"
+    ],
+    "truncate_eligibility": [
+      "eligibility"
+    ],
+    "preserve_logical_resources": [
+      "resources"
+    ],
+    "bind_current_candidate": [
+      "revision",
+      "structure"
+    ]
+  },
+  "history_provenance_fields": [
+    "source_packet_id",
+    "source_observation_packet_id",
+    "source_receipt_id",
+    "source_subject_version"
+  ],
+  "factual_identity": "raw behavior probabilities, actual actions/bytes, source permissions, old outcome IDs, clocks and RNG are preserved",
+  "historical_births": "verify inherited IDs and restore cache rebase markers, use current accepted computation without repeating allocation",
+  "credit_boundary": "rebuild inference under no_grad then explicit stop-gradient value anchor; reset eligibility at accepted slow-update boundary",
+  "parameter_update_owner": "candidate generation and actual optimizer attempts belong to 22.3.4.3; this card never calls optimizer.step",
+  "transaction": "copy candidate and optimizer, reencode, validate facts/domain/version, acceptance callback, parent-token check, append update event, whole-runtime commit",
+  "failure_exits": [
+    "coverage_incomplete",
+    "migration_unaffordable",
+    "candidate_invalid",
+    "factual_mismatch",
+    "parent_changed",
+    "rejected",
+    "engineering_failure"
+  ],
+  "schemas": {
+    "raw_history": "taiji-u2-raw-history-v2",
+    "runtime": "taiji-u2-runtime-envelope-v3",
+    "subject": "taiji-u2-subject-v2 with additive history provenance"
+  },
+  "required_controls": [
+    "same-parameter reconstruction",
+    "old receive forward and gradient equivalence",
+    "new encoder alters H/F/history",
+    "no policy/critic calls during rebuild",
+    "two accepted migrations",
+    "two inherited births",
+    "rejection/fault/budget/quota/stale candidate",
+    "fresh-process post-migration continuation"
+  ],
+  "formal_budget": {
+    "cpu_seconds": 150,
+    "wall_seconds": 300,
+    "optimizer_attempts": 0,
+    "project_dataset_reads": 0,
+    "existing_checkpoints_loaded": 0
+  },
+  "remaining": [
+    "22.3.4.3 six actual updates plus two fault attempts",
+    "S12 and final-schema recovery closure",
+    "task capability after 22.4 admission"
+  ]
+}

@@ -32,7 +32,7 @@ from .u2_history import (
 from .u2_operators import _validate_cursor
 from .u2_subject import U2Packet, U2Record, U2Subject
 
-ENVELOPE_SCHEMA = "taiji-u2-runtime-envelope-v2"
+ENVELOPE_SCHEMA = "taiji-u2-runtime-envelope-v3"
 EXECUTOR_SCHEMA = "taiji-u2-reference-executor-v1"
 
 
@@ -53,7 +53,15 @@ def run_conditions(model: U2Subject) -> dict[str, Any]:
 
 def _source_pins() -> dict[str, str]:
     directory = Path(__file__).parent
-    names = ("u2_recovery.py", "u2_history.py", "u2_subject.py", "u2_operators.py", "utf8_state.py")
+    names = (
+        "u2_recovery.py",
+        "u2_history.py",
+        "u2_events.py",
+        "u2_learning_transaction.py",
+        "u2_subject.py",
+        "u2_operators.py",
+        "utf8_state.py",
+    )
     return {
         name: hashlib.sha256(
             (directory / name).read_text(encoding="utf-8-sig").encode()
@@ -711,6 +719,26 @@ class U2Runtime:
             {"operation": "birth", "status": "committed", "birth_id": result["birth_id"]}
         )
         return {"status": "committed", **result}
+
+    def migrate_parameters(
+        self,
+        candidate: U2Subject,
+        *,
+        optimizer: torch.optim.Optimizer | None = None,
+        acceptance: Callable[[U2Subject, dict[str, Any], torch.optim.Optimizer | None], bool],
+        cpu_budget_seconds: float = 30,
+        fault: str | None = None,
+    ) -> dict[str, Any]:
+        from .u2_learning_transaction import migrate_parameters
+
+        return migrate_parameters(
+            self,
+            candidate,
+            optimizer=optimizer,
+            acceptance=acceptance,
+            cpu_budget_seconds=cpu_budget_seconds,
+            fault=fault,
+        )
 
     def to_envelope(self) -> dict[str, Any]:
         self._check_window_for_save()

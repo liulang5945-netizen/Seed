@@ -179,7 +179,15 @@ normal entry points包括goal/records、采样、issue/ack、观测、输出、�
 
 ##### 22.3.4.2 固定过去行动的表征重建
 
-当前队首先交付本子卡。已有原始prefix可作为输入，感知同化/行为信用拆分、新参数下H/F/对象/history重建、过去动作固定及保持/成本回调仍待实施。
+本子卡已按[重编码回执](VALIDATION-TAIJI-U2_22_3_REENCODING_20261111.md)通过93项检查。正常receive的损失、状态数值与191项梯度在float32/64下相对d8993ecc8精确对齐，新增缓存来源元数据单列。各精度两次具名参数扰动迁移及独立进程接续通过，0optimizerattempt，实际优化器更新由22.3.4.3验收。
+
+实现前接口冻结如下。`U2Subject.assimilate`复用事件校验、似然、感知/FP1校正、事实入账和ν测量；`receive`在该结果上调用独立行为信用计算，维持正常入口的损失及资格迹语义。快写history增加packet/观测packet/receipt/原行为版本来源字段，原有数值字段继续承担读写。
+
+`rebuild_state(model, history, factual_state, cpu_budget_seconds, reset_eligibility)`从完整genesis prefix执行当前参数及当前已接受结构的历史重编码，历史R/P出生只核对谱系并恢复标记，过去动作与字节按事实强制输入。所有策略采样与actor/critic结算由原行为包供事实核验，重建过程中只执行感知/记忆递推。当前慢更新范围固定结构及参数布局，结构成长沿既有独立事务。
+
+`U2Runtime.migrate_parameters(candidate, optimizer, acceptance, cpu_budget_seconds, fault)`接收已分叉且版本恰为父+1的候选，在独立副本重建并验收。候选参数、moment、派生状态、原始链update边界和新学习窗一起提交。候选生成及真实optimizer attempt由22.3.4.3外层负责计费，本子卡只做零optimizer的具名参数扰动。拒绝、异常、父状态并发变化或费用超帽均保留当前父，更新原始链v2/runtime v3记录新边界，历史包按原源码身份恢复。
+
+验收回调读取候选模型、重建状态和optimizer。其参数、状态、配置、训练模式、moments及参数组归属变更均被检测，避免验收后出现未重编码的新写入。父token与源码在提交前再次核对，合法并发父变化保留现场状态并拒绝覆盖。
 
 以`taiji/u2_learning_transaction.py`承载影子慢参数升级事务。复用主体的预测/感知校正/FP1/自输出递推，将receive中的感知同化与行为信用结算整理成共享入口，保持现有receive调用行为。重建从合法genesis及完整原始prefix推导新表征，显式注入过去实际动作和已发字节。重建路径只计算声明的派生状态，外部执行及历史奖励结算由原事实链约束。
 
@@ -205,6 +213,10 @@ normal entry points包括goal/records、采样、issue/ack、观测、输出、�
 ##### 22.3.4.3 更新、故障与实际资源合同
 
 原始链及重建入口零步通过后，冻结源码、F1/F2输入、损失、目标参数、数据权限、两种精度及8次attempt顺序。F1用float64、F2用float32，均从同配置的新鲜主体开始，至少覆盖实际Θ更新与条件Ψ路径。工程权重完成核验后丢弃，能力训练仍待22.4/5。
+
+工程父按本轮实现、配置/seed和合成recipe重建。F1采用两次实际传入观测的预测损失及结果actor/critic损失；F2采用同主体影子话语的逐字原文重现损失，并保留预测/结果目标。F2另冻结明确的当前输出请求与原始记录目标，使用合法字节序列及EOS，不能继续沿用22.2已登记的目标错配。损失权重、Adam超参数、目标活性参数和实际变化下限在读数前写入manifest，weight_decay为0。
+
+正常前向在父当前信用窗计算梯度，候选fork的参数摘要及初始moments与该父匹配，按参数名复制该次梯度到fork再执行唯一一次optimizer.step。保持父参数可回滚，之后标记候选版本并调用已验的migrate_parameters。每次before-step均核对参数/梯度来源和预算，保存可恢复父后才开始step1。原/恢复两路step2各自重新计算相同后继损失，梯度、实际参数变化及moments逐项比较。
 
 影子流程为保存父→外层扣attempt→optimizer更新→标记新版本→固定历史重建→一致性/保持回调→整体提交。新candidate的参数、optimizer、派生状态、原始链位置与版本同笔提交。异常/拒绝恢复父模型及moment，真实attempt费用保留。两次故障预设为重建后准入拒绝、提交前注入异常，各只占一次attempt。
 
@@ -517,3 +529,9 @@ U1及11-08勘误保留其历史数学内容并加当前失效指针。U2 §6替�
 按owner要求先以780001473提交[23–28长期路线](PLAN-TAIJI-N_LONG_HORIZON_20261111.md)，随后实现[原始因果链](VALIDATION-TAIJI-U2_22_3_HISTORY_20261111.md)。正式64检查及两种精度独立进程接续通过，CPU32.46875/wall40.703，0optimizerattempt。根来源、完整/部分prefix、窗口截断、实际输出、两代出生及容量/异常回滚已接到正常入口。
 
 当前推进22.3.4.2的共享同化与新参数重建。S12及最终schema全量恢复待后续合验，六轴任务能力按原范围维持。长期阶段门值及预算为准入草案，包22现有总帽和22.8收束保持原合同身份。
+
+## 13. 22.3.4.2零optimizer重编码交付
+
+先冻结[40字段设计](../manifests/taiji_u2_22_3_rebuild_design_20261111.json)，再按[回执](VALIDATION-TAIJI-U2_22_3_REENCODING_20261111.md)交付共享同化/独立信用及完整prefix重编码。93项检查通过，正式CPU41.9375/wall49.797，0optimizerattempt。
+
+当前参数及已接受结构解释历史，过去动作、输出、概率和结果保留事实身份，资格迹在慢更新边界截断。正常receive数值/梯度与父源码一致；编码器扰动后H/F/键值真实变化，双精度两次迁移与独立后继逐参数梯度差0。当前队首先冻结22.3.4.3的实际更新配方，完成原定6次更新及2次故障，随后合拢S12与最终schema回归。
