@@ -197,32 +197,48 @@ def reject_attempt(
     """open 之后的唯一收尾路径：任何异常都必须落 close(rejected) 与 rejected S12。
 
     不区分异常种类——账本类、读回类、纯 RuntimeError 一律走这里，避免出现悬空 open。
+    顺序与成功路径一致：先写回执、再读回、最后 close，close 行携带回执 sha256；
+    只有回执本身写不出来时才降级 close（行内记 s12_error），以保证账本仍然结算。
     """
     receipt = getattr(error, "receipt", None)
     if post_path.exists():
         post_path.unlink()
     result = rejected_result(runtime, error, step_calls, receipt)
-    closed = ledger.close(
-        identity,
-        outcome="rejected",
-        error=f"{type(error).__name__}: {error}",
-        post_checkpoint=None,
-        optimizer_step_calls=step_calls,
-    )
+    destination = s12_path or (ROOT / run["paths"]["s12"])
     s12 = s12_payload(
         run,
         execution,
         result,
-        {"open_seq": 1, "close_seq": closed["seq"]},
+        {"open_seq": 1, "close_seq": None},
         identity,
         time.process_time() - started,
         time.monotonic() - wall,
     )
     s12["parent_sha256"] = normalized_file_sha(parent_path) if parent_path.exists() else None
-    destination = s12_path or (ROOT / run["paths"]["s12"])
-    if destination.exists():
-        destination.unlink()
-    write_once(destination, s12)
+    fields: dict[str, Any] = {
+        "outcome": "rejected",
+        "error": f"{type(error).__name__}: {error}",
+        "post_checkpoint": None,
+        "optimizer_step_calls": step_calls,
+    }
+    try:
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        if destination.exists():
+            destination.unlink()
+        write_once(destination, s12)
+        if load_json(destination) != json.loads(json.dumps(s12, ensure_ascii=False)):
+            raise LedgerError(
+                f"the rejected S12 receipt did not read back unchanged: {destination}"
+            )
+        fields["s12_path"] = (
+            destination.relative_to(ROOT).as_posix()
+            if destination.is_relative_to(ROOT)
+            else str(destination)
+        )
+        fields["s12_sha256"] = normalized_file_sha(destination)
+    except Exception as receipt_error:  # noqa: BLE001 - 回执写不出来也要结算，不能悬空
+        fields["s12_error"] = f"{type(receipt_error).__name__}: {receipt_error}"
+    ledger.close(identity, **fields)
     code = getattr(error, "exit_code", 3)
     failed_id = {4: "R11", 6: "R12"}.get(code, "R10")
     checks.append({"id": failed_id, "passed": False, "error": f"{type(error).__name__}: {error}"})
@@ -267,17 +283,39 @@ def accepted_tail(
         ),
         s12_sha256=receipt_sha,
     )
+    close_receipt_guard(ledger, identity, destination)
     state = ledger.read()
-    closes = [
+    if state["rows"][-1].get("seq") != closed["seq"]:
+        raise LedgerError("close is not the last ledger event")
+    return closed
+
+
+def close_receipt_guard(ledger: AttemptLedger, identity: str, s12_path: Path) -> None:
+    """accepted close 必须自证回执：行内要有 s12_sha256，回执里要有实测 cpu/wall。
+
+    缺任一项即退 3。这条守卫把"先 close 后回执"和"回执没有实测成本"都变成硬失败——
+    账本里承诺的回执必须真的存在、真的对得上、真的记录了代价。
+    """
+    state = ledger.read()
+    rows = [
         row
         for row in state["rows"]
         if row.get("event") == "close" and row.get("attempt_id") == identity
     ]
-    if len(closes) != 1 or closes[0].get("seq") != closed["seq"]:
+    if len(rows) != 1:
         raise LedgerError("the accepted close is not the only close row for this attempt")
-    if state["rows"][-1].get("seq") != closed["seq"]:
-        raise LedgerError("close is not the last ledger event")
-    return closed
+    row = rows[0]
+    if not row.get("s12_sha256"):
+        raise LedgerError("the close row is missing s12_sha256")
+    if not s12_path.exists():
+        raise LedgerError(f"the attested S12 receipt is missing: {s12_path}")
+    if row["s12_sha256"] != normalized_file_sha(s12_path):
+        raise LedgerError("the close row s12_sha256 does not match the receipt on disk")
+    receipt = load_json(s12_path)
+    for field in ("cpu_seconds", "wall_seconds"):
+        value = receipt.get(field)
+        if isinstance(value, bool) or not isinstance(value, (int, float)):
+            raise LedgerError(f"the S12 receipt has no measured {field}")
 
 
 def bind_run(run_path: Path) -> dict[str, Any]:
@@ -521,6 +559,39 @@ def self_check(directory: Path) -> dict[str, Any]:
             lambda: check_r06(run, admission, consumed=1),
         )
 
+        # 额度闸门：假 precontract 把 budget_max 压到 0（不碰冻结草稿），
+        # open 必须退 3，且账本一个字节都不能多——闸门拒绝不能留下计费行。
+        zero_contract = precontract(run)
+        zero_contract["run"]["budget_max"] = 0
+        zero_path = directory / "attempts_budget_zero.ndjson"
+        zero_ledger = AttemptLedger(
+            zero_path,
+            ledger_run(run),
+            execution["authority"]["source_pins"],
+            zero_contract,
+        )
+        zero_ledger.start()
+        zero_start_bytes = zero_path.read_bytes()
+        zero_exit: int | None = None
+        try:
+            zero_ledger.open(run["update_id"], parent_checkpoint="parent.bin")
+        except LedgerError as error:
+            zero_exit = getattr(error, "exit_code", None)
+        zero_after_bytes = zero_path.read_bytes()
+        zero_rows = len(zero_ledger.read()["rows"])
+        cases.append(
+            {
+                "case": "budget_max_zero_gate",
+                "expected": "exit=3,bytes_unchanged,rows=1,consumed=0",
+                "actual": f"exit={zero_exit},bytes_unchanged={zero_after_bytes == zero_start_bytes},"
+                f"rows={zero_rows},consumed={zero_ledger.read()['consumed']}",
+                "pass": zero_exit == 3
+                and zero_after_bytes == zero_start_bytes
+                and zero_rows == 1
+                and zero_ledger.read()["consumed"] == 0,
+            }
+        )
+
         runtime = prepare_parent(execution, directory)
         parent_path = directory / "parent.bin"
         runtime.save(parent_path)
@@ -655,6 +726,8 @@ def self_check(directory: Path) -> dict[str, Any]:
             "activity_receipt": fake_receipt,
             "post_sha256": file_sha(success_post),
             "conditions": {"threads": torch.get_num_threads()},
+            "cpu_seconds": 0.01,
+            "wall_seconds": 0.01,
         }
         accepted_tail(
             ledger=success_ledger,
@@ -720,15 +793,19 @@ def self_check(directory: Path) -> dict[str, Any]:
         cases.append(
             {
                 "case": "r11_readback_failure_closeout",
-                "expected": "exit=4,status=rejected,last=close,closes=1,s12=present,consumed=1",
+                "expected": "exit=4,status=rejected,last=close,closes=1,s12=present,s12_sha256_matches,consumed=1",
                 "actual": f"exit={r11_result['exit_code']},status={r11_result['status']},"
                 f"last={r11_state['rows'][-1].get('event')},closes={len(r11_closes)},"
-                f"s12={r11_s12.exists()},consumed={r11_state['consumed']}",
+                f"s12={r11_s12.exists()},"
+                f"s12_sha256_matches="
+                f"{bool(r11_closes) and r11_closes[0].get('s12_sha256') == file_sha(r11_s12)},"
+                f"consumed={r11_state['consumed']}",
                 "pass": r11_result["exit_code"] == 4
                 and r11_result["status"] == "rejected"
                 and r11_state["rows"][-1].get("event") == "close"
                 and len(r11_closes) == 1
                 and r11_s12.exists()
+                and r11_closes[0].get("s12_sha256") == file_sha(r11_s12)
                 and r11_state["consumed"] == 1,
             }
         )
@@ -746,6 +823,108 @@ def self_check(directory: Path) -> dict[str, Any]:
                 and len([r for r in success_ledger.read()["rows"] if r.get("event") == "close"])
                 == 1,
             }
+        )
+
+        # ---- 回执自证：rejected 也必须"回执先落、close 在后"，且 close 带回执 sha256 ----
+        order_ledger = AttemptLedger(
+            directory / "attempts_rejected_order.ndjson",
+            ledger_run(run),
+            execution["authority"]["source_pins"],
+            precontract(run),
+        )
+        order_ledger.start()
+        order_ledger.open(run["update_id"], parent_checkpoint="parent.bin")
+        order_s12 = directory / "rejected_s12_order.json"
+        order_outcome = reject_attempt(
+            run=run,
+            execution=execution,
+            runtime=runtime,
+            ledger=order_ledger,
+            identity=run["update_id"],
+            post_path=directory / "post_order.bin",
+            parent_path=parent_path,
+            step_calls=1,
+            started=time.process_time(),
+            wall=time.monotonic(),
+            error=CheckpointMismatch("R11 post-save readback mismatch"),
+            checks=[],
+            s12_path=order_s12,
+        )
+        order_state = order_ledger.read()
+        order_close = order_state["closed"][run["update_id"]]
+        order_receipt = load_json(order_s12)
+        cases.append(
+            {
+                "case": "rejected_s12_precedes_close",
+                "expected": "exit=4,last=close,s12_sha256_matches,seq_close_is_null,cost_present",
+                "actual": f"exit={order_outcome['exit_code']},"
+                f"last={order_state['rows'][-1].get('event')},"
+                f"s12_sha256_matches={order_close.get('s12_sha256') == file_sha(order_s12)},"
+                f"seq_close={order_receipt.get('ledger_seq_close')},"
+                f"cost={order_receipt.get('cpu_seconds') is not None and order_receipt.get('wall_seconds') is not None}",
+                "pass": order_outcome["exit_code"] == 4
+                and order_state["rows"][-1].get("event") == "close"
+                and order_close.get("s12_sha256") == file_sha(order_s12)
+                and order_receipt.get("ledger_seq_close") is None
+                and isinstance(order_receipt.get("cpu_seconds"), (int, float))
+                and isinstance(order_receipt.get("wall_seconds"), (int, float)),
+            }
+        )
+
+        # close 不带 s12_sha256：守卫必须退 3（"先 close 后回执"在这里变成硬失败）
+        bare_ledger = AttemptLedger(
+            directory / "attempts_close_without_sha.ndjson",
+            ledger_run(run),
+            execution["authority"]["source_pins"],
+            precontract(run),
+        )
+        bare_ledger.start()
+        bare_ledger.open(run["update_id"], parent_checkpoint="parent.bin")
+        bare_receipt = directory / "receipt_with_cost.json"
+        bare_receipt.write_text(
+            json.dumps({"cpu_seconds": 1.5, "wall_seconds": 2.5}, ensure_ascii=False) + "\n",
+            encoding="utf-8",
+            newline="\n",
+        )
+        bare_ledger.close(
+            run["update_id"],
+            outcome="accepted",
+            post_checkpoint="post.bin",
+            optimizer_step_calls=1,
+        )
+        expect(
+            "close_missing_s12_sha256",
+            3,
+            lambda: close_receipt_guard(bare_ledger, run["update_id"], bare_receipt),
+        )
+
+        # 回执存在、sha 也对，但没有实测 cpu／wall：同样退 3
+        cost_ledger = AttemptLedger(
+            directory / "attempts_receipt_without_cost.ndjson",
+            ledger_run(run),
+            execution["authority"]["source_pins"],
+            precontract(run),
+        )
+        cost_ledger.start()
+        cost_ledger.open(run["update_id"], parent_checkpoint="parent.bin")
+        cost_receipt = directory / "receipt_without_cost.json"
+        cost_receipt.write_text(
+            json.dumps({"status": "accepted"}, ensure_ascii=False) + "\n",
+            encoding="utf-8",
+            newline="\n",
+        )
+        cost_ledger.close(
+            run["update_id"],
+            outcome="accepted",
+            post_checkpoint="post.bin",
+            optimizer_step_calls=1,
+            s12_path=str(cost_receipt),
+            s12_sha256=file_sha(cost_receipt),
+        )
+        expect(
+            "s12_without_cpu_wall",
+            3,
+            lambda: close_receipt_guard(cost_ledger, run["update_id"], cost_receipt),
         )
 
         # ---- 合同类拒绝路径（低成本可复现的部分）----
