@@ -80,7 +80,7 @@
     "已清（D-20261111-18）：执行器 UPDATE_ID/ARM 不再硬编码，改为从 run.json 的 update_id 读取；R01/R02 的字面量同步改为按 run.json 取值，判据编号、检查内容与退出码未变。",
     "已清（D-20261111-20）：u2 的执行图改为身份清单冻结的 TransformerSequenceBaseline（21,977/35），三槽由该图回填，119 个 U2 参数名已全部撤下。",
     "已清（D-20261111-20）：u2 的 F2 口径已落地——shadow_terms 按臂取片段，verbatim 项按 byte_head 逐字教师强制（目标“红盒在左边。”，18 字节，train_label），不再乘在零张量上；actor/critic 在该图上不存在，已声明为结构零。",
-    "未清（实现）：u2 的一步执行路径尚未接入——perform、checkpoint 与参数迁移仍绑定 U2 主体（state/history/migrate_parameters），基线当前只有结构绑定与 F2 损失可算；开跑前须实现基线的 checkpoint/读回/活性回执。",
+    "已清（D-20261111-21）：u2 的一步执行路径已接入——perform_baseline 只用该图 35 项活性参数走 Adam 单步，产出 35 项活性回执（change/margin/barely_live），post.bin 写出后立即读回五项，并落 s12_payload；execute() 在 u2 上走该路径，R09/R11 改用同口径基线实现（判据编号、检查内容与退出码未变）。0 步自检 56 条全过（step=0）；离线段实测 35/35 参数更新、位移中位数 1.000e-3（与 u1 同 lr）、worker 基线分支 verdict=pass。真实 attempt 仍待 owner 放行。",
     "未清（owner 侧）：owner 放行时须给出 run_id 与含 u2-strong-baseline 的 owner_approval_ref，并把 authorized 改为 true。"
   ],
   "data_scope": {

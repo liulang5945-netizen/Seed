@@ -17,10 +17,14 @@ from scripts.training.u2_update_executor_22_4_1 import load_json, write_once
 from scripts.training.u2_update_support_22_3_4_3 import distributions, file_sha, readback
 from scripts.training.u2_update_support_22_4_1 import (
     activity_receipt,
+    baseline_fingerprint,
+    baseline_outputs,
+    baseline_run_conditions,
     check_adam_equations,
     gradients_for,
     normalized_sha256,
     output_displacement,
+    readback_baseline,
     shadow_terms,
 )
 from taiji.u2_history import assert_values_equal, value_digest
@@ -116,16 +120,21 @@ def verify(s12_path: Path) -> dict:
         else:
             assert close_row["seq"] == s12["ledger_seq_close"]
 
-        parent, parent_proof = readback(
-            root / "parent.bin",
-            {
-                "state_sha256": s12["pre_state_sha256"],
-                "parameter_sha256": s12["pre_parameter_sha256"],
-                "moment_sha256": s12["pre_moment_sha256"],
-                "history_reference": s12["pre_history_reference"],
-                "revision": s12["pre_revision"],
-            },
-        )
+        baseline = s12.get("execution_graph") is not None
+        arm = s12.get("arm") or s12["attempt_id"]
+        parent_expected = {
+            "state_sha256": s12["pre_state_sha256"],
+            "parameter_sha256": s12["pre_parameter_sha256"],
+            "moment_sha256": s12["pre_moment_sha256"],
+            "history_reference": s12["pre_history_reference"],
+            "revision": s12["pre_revision"],
+        }
+        if baseline:
+            parent, parent_proof = readback_baseline(
+                root / "parent.bin", parent_expected, execution, arm=arm
+            )
+        else:
+            parent, parent_proof = readback(root / "parent.bin", parent_expected)
         checkpoints = {
             "parent": parent_proof["sha256"],
             "parent_readback": True,
@@ -143,16 +152,28 @@ def verify(s12_path: Path) -> dict:
             }
 
         assert s12["optimizer_step_calls"] == 1
-        post, post_proof = readback(
-            root / "post.bin",
-            {
-                "state_sha256": s12["post_state_sha256"],
-                "parameter_sha256": s12["post_parameter_sha256"],
-                "moment_sha256": s12["post_moment_sha256"],
-                "history_reference": s12["history_reference"],
-                "revision": s12["revision"],
-            },
-        )
+        post_expected = {
+            "state_sha256": s12["post_state_sha256"],
+            "parameter_sha256": s12["post_parameter_sha256"],
+            "moment_sha256": s12["post_moment_sha256"],
+            "history_reference": s12["history_reference"],
+            "revision": s12["revision"],
+        }
+        if baseline:
+            return verify_baseline(
+                s12=s12,
+                s12_path=s12_path,
+                execution=execution,
+                arm=arm,
+                root=root,
+                parent=parent,
+                post_expected=post_expected,
+                checkpoints=checkpoints,
+                steps=steps,
+                started=started,
+                wall=wall,
+            )
+        post, post_proof = readback(root / "post.bin", post_expected)
         checkpoints["post"] = post_proof["sha256"]
         checkpoints["post_readback"] = True
         assert post.model.parameter_revision == parent.model.parameter_revision + 1
@@ -224,6 +245,101 @@ def verify(s12_path: Path) -> dict:
         return report
     finally:
         torch.optim.Adam.step = original_step
+
+
+def verify_baseline(
+    *,
+    s12: dict,
+    s12_path: Path,
+    execution: dict,
+    arm: str,
+    root: Path,
+    parent,
+    post_expected: dict,
+    checkpoints: dict,
+    steps: dict,
+    started: float,
+    wall: float,
+) -> dict:
+    """Independent recomputation for the baseline arm.
+
+    与 u1 的差别只有三处：读回走基线 checkpoint、梯度用基线指纹、没有主体 state 可重建。
+    其余（梯度摘要、逐参数行、Adam 方程、活性回执、同一夹具损失差）逐项相同。
+    """
+    post, post_proof = readback_baseline(root / "post.bin", post_expected, execution, arm=arm)
+    checkpoints["post"] = post_proof["sha256"]
+    checkpoints["post_readback"] = True
+    assert post.revision == parent.revision + 1, "baseline revision"
+
+    gradients, losses = gradients_for(
+        parent, execution, arm=arm, fingerprint_fn=baseline_fingerprint
+    )
+    assert value_digest(gradients) == s12["gradient_sha256"], "gradient digest"
+    for left, right in zip(
+        s12["parameter_rows"],
+        [
+            {
+                "parameter": name,
+                "gradient_norm": None if gradient is None else float(gradient.norm()),
+                "max_parameter_change": float(
+                    (parent.model.state_dict()[name] - post.model.state_dict()[name]).abs().max()
+                ),
+            }
+            for name, gradient in gradients.items()
+        ],
+        strict=True,
+    ):
+        assert left["parameter"] == right["parameter"]
+        for key in ("gradient_norm", "max_parameter_change"):
+            if left[key] is None or right[key] is None:
+                assert left[key] == right[key]
+            else:
+                assert close_enough(right[key], left[key]), (left["parameter"], key)
+
+    adam = check_adam_equations(parent, post, gradients, execution)
+    before = {name: value.detach().clone() for name, value in parent.model.state_dict().items()}
+    after = post.model.state_dict()
+    recomputed = activity_receipt(parent.model, before, after, gradients, execution, arm=arm)
+    with torch.enable_grad():
+        post_loss, _ = shadow_terms(post.model, execution, arm=arm)
+    post_loss = post_loss.detach()
+    parent_output = baseline_outputs(parent, execution)
+    post_output = baseline_outputs(post, execution)
+    recomputed["output_displacement_descriptive"] = {
+        **output_displacement(parent_output, post_output),
+        "same_fixture_loss_delta": float(post_loss) - float(s12["losses"]["total"]),
+        "policy_note": post_output["policy_note"],
+    }
+    assert receipt_equal(s12["activity_receipt"], recomputed), "activity receipt"
+    for key, value in recomputed["output_displacement_descriptive"].items():
+        if key == "policy_note":
+            assert value == s12["activity_receipt"]["output_displacement_descriptive"][key], key
+        else:
+            assert close_enough(
+                value, s12["activity_receipt"]["output_displacement_descriptive"][key]
+            ), key
+
+    assert baseline_run_conditions(post.model) == s12["run_conditions"]
+    assert steps["calls"] == 0, "the worker must not step"
+    return {
+        "schema": "taiji-u2-22.4.1-s12-worker-v1",
+        "verdict": "pass",
+        "s12": str(s12_path),
+        "status": "accepted_verified_baseline",
+        "execution_graph": s12["execution_graph"],
+        "checkpoints": checkpoints,
+        "gradient_sha256": value_digest(gradients),
+        "parameter_rows": len(gradients),
+        "adam_equations": len(adam),
+        "losses_recomputed": losses,
+        "activity_receipt_rederived": True,
+        "state_rebuild": "not_applicable_baseline_has_no_subject_state",
+        "policy": "structural_zero_no_policy_head",
+        "optimizer_step_calls": steps["calls"],
+        "run_conditions": baseline_run_conditions(post.model),
+        "cpu_seconds": time.process_time() - started,
+        "wall_seconds": time.monotonic() - wall,
+    }
 
 
 def main(argv: list[str]) -> int:

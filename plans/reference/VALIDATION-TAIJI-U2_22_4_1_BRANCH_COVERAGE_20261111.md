@@ -1,6 +1,6 @@
 # 分支覆盖台账：22.4.1 执行器（`scripts/training/run_taiji_u2_22_4_1.py`）
 
-**建立时间**：2026-11-11｜**对应自检**：`python -m scripts.training.run_taiji_u2_22_4_1 --self-check`（51 条，`optimizer_step_calls=0`，cpu 6.20 s／wall 7.17 s；臂参数化后由 36 条增至 43 条，u2 臂行回填后增至 46 条，u2 执行图改为基线并落 F2 逐字项后增至 51 条，见 D-20261111-18／-19／-20）。
+**建立时间**：2026-11-11｜**对应自检**：`python -m scripts.training.run_taiji_u2_22_4_1 --self-check`（**56 条**，`optimizer_step_calls=0`，cpu 7.30 s／wall 9.34 s；臂参数化后由 36 条增至 43 条，u2 臂行回填后增至 46 条，u2 执行图改为基线并落 F2 逐字项后增至 51 条，u2 一步执行路径接入后增至 56 条，见 D-20261111-18／-19／-20／-21）。
 **规则**：执行器每新增一个可退出分支，必须在本表加一行；只加代码不加账视为未完成。标"未覆盖"的不得写成"已验证"。
 
 ## 1. 退出码 5（授权、身份、合同）
@@ -74,13 +74,19 @@
 | 55 | u2 执行图构造：非默认臂不再走 U2 元数据候选，改按身份清单重建基线并核对 21,977/35＋参数清单摘要 | 已覆盖 | `u2_execution_graph_is_frozen_baseline`（`transformer_sequence` 21,977/35，`inventory=8c041a19…4569`） |
 | 56 | u2 角色槽缺位：`predictive_head`／`recurrent_core` 在该图不存在，照实标并跳过，不用 U2 参数冒充 | 已覆盖 | `u2_role_slots_backfilled_from_graph`、`u2_no_u2_parameter_names_on_arm` |
 | 57 | u2 F2 verbatim 项：按臂取片段、`byte_head` 逐字教师强制（非零），且全参数有梯度 | 已覆盖 | `u2_verbatim_term_positive`（实测 5.5150）、`u2_f2_gradients_alive`（35 项无零梯度） |
-| 58 | u2 一步执行拒绝：基线尚未接入 `perform`／checkpoint／迁移，非默认臂在 R08 后退 5 | **未覆盖** | 需真跑或先篡改授权才会走到；本轮 0 步。风险：中——误放行时会在第一步前被拦下，但"可开跑"的声明因此不成立 |
+| 58 | u2 一步执行拒绝：基线尚未接入 `perform`／checkpoint／迁移，非默认臂在 R08 后退 5 | **已删除**（D-20261111-21） | 该分支随一步执行路径接入而移除，由 #64 端到端承接；原先“未覆盖”的风险不再适用（留痕行，不重复计数） |
+| 59 | 基线 checkpoint 写盘往返：`save_baseline` 写 `parent.bin` 后立即用新实例读回五项（`state_sha256`／`parameter_sha256`／`moment_sha256`／`history_reference`／`revision`） | 已覆盖 | `u2_baseline_parent_checkpoint_round_trip`（revision=0、99,958 字节） |
+| 60 | 基线一步前必须账本 open：`StepCounter` 未 open 时抛 `LedgerError` 退 3，且不产生任何 step | 已覆盖 | `u2_baseline_step_requires_open_attempt`（step calls 仍 0） |
+| 61 | 基线首步位移符合 Adam 零动量首步公式：`max|Δ|≤lr`，且 `|g|≥1e3·eps` 处 `|Δ|≈lr` | 已覆盖 | `u2_baseline_first_step_displacement_is_lr`（max 1.000000e-3、shortfall 9.922e-7、elements 21,977、below_eps 1,392） |
+| 62 | 基线 policy 为结构空、`next_output` 为 `byte_head` 257 类 | 已覆盖 | `u2_baseline_policy_is_structural_zero` |
+| 63 | 基线 rejected 回执形状（`status=rejected`、`execution_graph.param_total=21,977`、`policy=[]`） | 已覆盖 | `u2_baseline_rejected_result_shape` |
+| 64 | u2 全链路：`check_r09_baseline`→`perform_baseline`（梯度→Adam 单步→35 项活性回执→写盘读回）→`check_r11_baseline`→`s12_payload`→worker `verify_baseline` 独立复算 | **未覆盖**（自检只覆盖分段 #59–#63） | 端到端由离线探针实测通过（worker `verdict=pass`、35 条 Adam 方程、u1 digest 仍 `9a06eb84…da29`），但探针不入自检（需真实 run_root 与账本）；create-once 拒绝、schema/arm 不符等子分支也在此行随通用异常路径兜底 |
 
 ## 4. 未覆盖项的合计风险
 
-高风险未覆盖项只剩"账本根信任"#23（手改任意一行）：只能靠独立复算兜底，注入断链会污染真账本，故不在自检内做。原 #10（R06 帽/精度/步数）与 #25（额度闸门）均已覆盖（#25 与 #10 分别见 D-20261111-14／D-20261111-15）。臂参数化（D-20261111-18）新增 #48–#53 六行、臂行回填（D-20261111-19）新增 #54、执行图改基线（D-20261111-20）新增 #55–#58 四行。当前共 **58 行**，未覆盖 **18 行**、另有 **2 行不可达**（#20 群单元扩展、#22 中 R10 自身文案分支），全部是"要真跑、要造故障或要篡改账本"才能触发的分支。
+高风险未覆盖项只剩"账本根信任"#23（手改任意一行）：只能靠独立复算兜底，注入断链会污染真账本，故不在自检内做。原 #10（R06 帽/精度/步数）与 #25（额度闸门）均已覆盖（#25 与 #10 分别见 D-20261111-14／D-20261111-15）。臂参数化（D-20261111-18）新增 #48–#53 六行、臂行回填（D-20261111-19）新增 #54、执行图改基线（D-20261111-20）新增 #55–#58 四行、一步执行路径接入（D-20261111-21）新增 #59–#64 六行并删除 #58 的分支（留痕不计数）。当前共 **64 行**（含 1 行已删除留痕），未覆盖 **18 行**、另有 **2 行不可达**（#20 群单元扩展、#22 中 R10 自身文案分支），全部是"要真跑、要造故障或要篡改账本"才能触发的分支。
 
-**u2 臂的现状（执行图与损失已对齐，一步执行未接入）**：自检把 `u2_binding_preflight` 写进 `selfcheck.json`——执行图 `transformer_sequence` **21,977 标量／35 张量**（`inventory=8c041a19…4569`，与身份清单逐项一致）；`dtype_field="float32"`、`active_parameters_count=35`、`active_set_equals_graph_inventory=true`、`missing_in_model=[]`、`roles_match_draft=true`、`dead_gradient_parameters=[]`、`executable=true`。三槽：`output_head`=`byte_head.weight/bias`（2 项），`predictive_head`／`recurrent_core` **该角色不存在**（原因已写入臂行）。F2 实测：predictive 5.3683、verbatim 5.5150、actor/critic 为结构零。**仍记着三条 `semantic_gaps`**：actor/critic 在该图上没有对应头（结构零，已声明）；一步执行路径（`perform`/checkpoint/迁移）仍绑 U2 主体，`step_path_implemented=false`；R05 仍把 u2 父身份绑在 22.3 的 U2 接受父（191 参数）上，而执行图是 21,977/35——12 条判据未改，属已知口径缺口。
+**u2 臂的现状（一步执行路径已接入，C09 待 owner 放行）**：自检把 `u2_binding_preflight` 写进 `selfcheck.json`——执行图 `transformer_sequence` **21,977 标量／35 张量**（`inventory=8c041a19…4569`，与身份清单逐项一致）；`dtype_field="float32"`、`active_parameters_count=35`、`active_set_equals_graph_inventory=true`、`missing_in_model=[]`、`roles_match_draft=true`、`dead_gradient_parameters=[]`、`executable=true`、`step_path_implemented=true`。三槽：`output_head`=`byte_head.weight/bias`（2 项），`predictive_head`／`recurrent_core` **该角色不存在**（原因已写入臂行）。F2 实测：predictive 5.3683、verbatim 5.5150、actor/critic 为结构零。**仍记着三条 `semantic_gaps`**：actor/critic 在该图上没有对应头（结构零，已声明）；R05 仍把 u2 父身份绑在 22.3 的 U2 接受父（191 参数）上，而执行图是 21,977/35（12 条判据未改，属已知口径缺口，须单独预注册）；policy/state 为结构空（`policy=[]`、`state_tensors=0`，迁移记 `not_applicable_baseline_has_no_subject_state`，不伪造迁移）。
 
 **守卫与现存证据的差距（必读）**：`close_receipt_guard` 是**向前生效**的。已落盘的那条 accepted close（`reports/taiji_u2_22_4_1_attempts_20261111T142919Z.ndjson` 第 2 行）**没有** `s12_sha256`，对应的补算 S12 也**没有** `cpu_seconds`/`wall_seconds`（两个字段为 null）——它是在守卫和顺序契约存在之前写下的。不能用新守卫反判旧证据，也不能改写旧行（改写即破坏哈希链）；差距记在 `DECISION-LEDGER` 的 D-20261111-14，等下一次真实 attempt 用新代码自然补齐。
 

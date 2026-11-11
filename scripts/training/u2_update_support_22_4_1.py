@@ -4,6 +4,9 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
+import sys
+import time
 from pathlib import Path
 from typing import Any
 
@@ -12,9 +15,11 @@ from torch.nn import functional
 
 from scripts.training.u2_update_support_22_3_4_3 import (
     CheckedRuntime,
+    ReadbackError,
+    file_sha,
     fingerprint,
 )
-from taiji.u2_history import assert_values_equal
+from taiji.u2_history import assert_values_equal, atomic_load, atomic_save, value_digest
 from taiji.u2_recovery import ReferenceExecutor
 from taiji.u2_subject import U2Config, U2Packet, U2Subject, synthetic_fixture
 
@@ -77,16 +82,117 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 
 
 class BaselineRuntime:
-    """22.4.4 冻结的 Transformer 基线，作为 u2 臂的执行图（不是 U2 元数据候选）。"""
+    """22.4.4 冻结的 Transformer 基线，作为 u2 臂的执行图（不是 U2 元数据候选）。
+
+    该图没有主体 state、没有历史对象，因此 checkpoint 的五个字段里
+    `state_sha256` 记的是执行图身份摘要，`history_reference` 是稳定的图标签；
+    参数与优化器动量仍按 u1 的同一口径做摘要与读回。
+    """
+
+    CREATE_ONCE = {"parent.bin", "post.bin"}
+    SCHEMA = "taiji-u2-22.4.1-baseline-checkpoint-v1"
 
     def __init__(self, model, optimizer, graph: dict[str, Any], arm: str) -> None:
         self.model = model
         self.optimizer = optimizer
         self.graph = dict(graph)
         self.arm = arm
+        self.revision = 0
+        self.readbacks: list[dict[str, Any]] = []
 
     def named_parameters(self):
         return self.model.named_parameters()
+
+
+def baseline_fingerprint(runtime: BaselineRuntime) -> dict[str, Any]:
+    """与 u1 同名的五个读回字段；本图无主体 state，state 字段记执行图身份。"""
+    graph = runtime.graph
+    return {
+        "state_sha256": canonical_sha256(
+            {
+                "schema": "taiji-u2-22.4.1-baseline-execution-graph-v1",
+                "arm": runtime.arm,
+                "architecture_id": graph["architecture_id"],
+                "param_total": graph["param_total"],
+                "param_tensors": graph["param_tensors"],
+                "param_inventory_sha256": graph["param_inventory_sha256"],
+                "identity_sha256": graph["identity_sha256"],
+            }
+        ),
+        "parameter_sha256": value_digest(runtime.model.state_dict()),
+        "moment_sha256": value_digest(
+            None if runtime.optimizer is None else runtime.optimizer.state_dict()
+        ),
+        "history_reference": "baseline:" + graph["identity_sha256"][:16],
+        "revision": runtime.revision,
+    }
+
+
+def readback_baseline(
+    path: Path, expected: dict[str, Any], manifest: dict[str, Any], *, arm: str
+) -> tuple[BaselineRuntime, dict[str, Any]]:
+    """Fresh rebuild from the frozen identity, load state/moments, compare five fields."""
+    started = time.process_time()
+    try:
+        payload = atomic_load(path)
+        if payload.get("schema") != BaselineRuntime.SCHEMA:
+            raise ValueError(f"unexpected baseline checkpoint schema: {payload.get('schema')}")
+        if payload.get("arm") != arm:
+            raise ValueError(f"checkpoint arm {payload.get('arm')} != {arm}")
+        model, graph = baseline_graph(manifest, arm=arm)
+        if payload.get("graph") != graph:
+            raise ValueError("checkpoint graph differs from the frozen identity")
+        model.load_state_dict(payload["model"])
+        optimizer = optimizer_for(model, manifest)
+        optimizer.load_state_dict(payload["optimizer"])
+        restored = BaselineRuntime(model, optimizer, graph, arm)
+        restored.revision = int(payload["revision"])
+        actual = baseline_fingerprint(restored)
+        assert_values_equal(expected, actual, "baseline_checkpoint.readback")
+        if expected.get("revision") != actual["revision"]:
+            raise ValueError(f"revision {actual['revision']} != {expected.get('revision')}")
+    except Exception as error:  # noqa: BLE001 - read-back must fail closed
+        raise ReadbackError(f"Baseline checkpoint read-back failed: {path}: {error}") from error
+    return restored, {
+        "path": str(path),
+        "sha256": file_sha(path),
+        "bytes": Path(path).stat().st_size,
+        "readback_ok": True,
+        "cpu_seconds": time.process_time() - started,
+        "fingerprint": actual,
+    }
+
+
+def save_baseline(runtime: BaselineRuntime, path: Path, manifest: dict[str, Any]) -> Path:
+    """Create-once write, then a fresh load must reproduce the five fields."""
+    path = Path(path)
+    if path.name in BaselineRuntime.CREATE_ONCE and path.exists():
+        raise FileExistsError(path)
+    expected = baseline_fingerprint(runtime)
+    atomic_save(
+        {
+            "schema": BaselineRuntime.SCHEMA,
+            "arm": runtime.arm,
+            "graph": runtime.graph,
+            "revision": runtime.revision,
+            "model": runtime.model.state_dict(),
+            "optimizer": runtime.optimizer.state_dict(),
+        },
+        path,
+    )
+    if os.name == "nt":
+        directory_sync = "unsupported"
+    else:
+        descriptor = os.open(path.parent, os.O_RDONLY)
+        try:
+            os.fsync(descriptor)
+        finally:
+            os.close(descriptor)
+        directory_sync = "done"
+    _, proof = readback_baseline(path, expected, manifest, arm=runtime.arm)
+    proof["dir_sync"] = directory_sync
+    runtime.readbacks.append(proof)
+    return path
 
 
 def baseline_graph(manifest: dict[str, Any], *, arm: str = DEFAULT_ARM) -> tuple[Any, dict]:
@@ -332,6 +438,48 @@ def baseline_shadow_terms(
     return sum(weights[name] * value for name, value in pieces.items()), pieces
 
 
+def baseline_run_conditions(model) -> dict[str, Any]:
+    """与 u1 的 run_conditions 同键；本图没有 native_w，取第一个参数作 device/dtype 见证。"""
+    parameter = next(iter(model.parameters()))
+    return {
+        "threads": torch.get_num_threads(),
+        "interop_threads": torch.get_num_interop_threads(),
+        "device": str(parameter.device),
+        "dtype": str(parameter.dtype),
+        "python": sys.version,
+        "torch": torch.__version__,
+        "environment": {
+            key: os.environ.get(key)
+            for key in ("OMP_NUM_THREADS", "MKL_NUM_THREADS", "OPENBLAS_NUM_THREADS")
+        },
+    }
+
+
+def baseline_outputs(runtime: BaselineRuntime, manifest: dict[str, Any]) -> dict[str, Any]:
+    """该图的可观测输出：下一字节分布（256 项）与结构空的 policy。"""
+    from scripts.training.baseline_identity_22_4_4 import fragment_inputs
+
+    model = runtime.model
+    observations, _ = fragment_inputs()
+    with torch.no_grad():
+        observations = {
+            name: value.to(model.position.dtype) for name, value in observations.items()
+        }
+        text_context = model.frontend.text_units(manifest["recipe"]["u2_shadow"]["goal"])
+        hidden = _baseline_trunk(model, observations, text_context)
+        last = hidden[:, -1]
+        batch = last.shape[0]
+        previous = model.frontend.embedding(
+            torch.full((batch,), 255, dtype=torch.long, device=last.device)
+        )
+        logits = model.byte_head(torch.cat([last, previous], -1))
+        return {
+            "next_output": logits[0].softmax(-1).tolist(),
+            "policy": [],
+            "policy_note": "该执行图没有策略头；policy 是结构空，policy_l1 恒为 0。",
+        }
+
+
 def shadow_terms(model, manifest: dict[str, Any], *, arm: str = DEFAULT_ARM):
     """u1 是冻结的 shadow 片段；u2 走基线的 F2 口径。"""
     if arm != DEFAULT_ARM:
@@ -379,9 +527,16 @@ def shadow_terms(model, manifest: dict[str, Any], *, arm: str = DEFAULT_ARM):
     return sum(weights[name] * value for name, value in pieces.items()), pieces
 
 
-def gradients_for(runtime: U1Runtime, manifest: dict[str, Any], *, arm: str = DEFAULT_ARM):
+def gradients_for(
+    runtime: U1Runtime | BaselineRuntime,
+    manifest: dict[str, Any],
+    *,
+    arm: str = DEFAULT_ARM,
+    fingerprint_fn=fingerprint,
+):
+    """Loss and gradients for one arm. The fingerprint hook stays u1-identical by default."""
     model = runtime.model
-    previous = fingerprint(runtime)
+    previous = fingerprint_fn(runtime)
     loss, pieces = shadow_terms(model, manifest, arm=arm)
     named = dict(model.named_parameters())
     measured = torch.autograd.grad(loss, list(named.values()), allow_unused=True)
@@ -430,7 +585,7 @@ def gradients_for(runtime: U1Runtime, manifest: dict[str, Any], *, arm: str = DE
             "floors": floor,
         }
         raise error
-    assert_values_equal(previous, fingerprint(runtime), "shadow_training_did_not_change_parent")
+    assert_values_equal(previous, fingerprint_fn(runtime), "shadow_training_did_not_change_parent")
     return values, {
         "total": float(loss.detach()),
         **{name: float(value.detach()) for name, value in pieces.items()},

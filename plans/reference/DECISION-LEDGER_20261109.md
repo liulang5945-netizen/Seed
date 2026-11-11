@@ -3124,3 +3124,45 @@ v2 的 u2 臂行挂着 `baseline_identity_sha256 = e5c776c4…5b29`，而该身�
 ### 6. 下一步
 
 唯一建议：实现 u2 的一步执行路径——给基线单独一条 `perform_baseline`：Adam 单步、活性回执（35 项）、checkpoint 写出与读回、`s12_payload`，并让 `execute()` 在 u2 上走它；R05 的父身份改成“本臂执行图”属 12 条冻结判据，须单独预注册。做完再跑 0 步自检；在此之前不申请 u2 放行。
+
+---
+
+## D-20261111-21　u2 一步执行路径接入（基线 checkpoint／活性回执／worker 复算）
+
+**类型**：机制实现（声明＝实现）。**授权来源**：用户 2026-11-11 裁定（本轮四条）。**范围**：0 训练／0 正式 `optimizer.step`／0 数据读取／未生成 `run.json`／未申请 u2 放行／12 条判据一行未改。
+
+### 1. 改了什么
+
+1. `scripts/training/u2_update_support_22_4_1.py`
+   - `BaselineRuntime` 增 `revision`／`readbacks`；新增 `baseline_fingerprint`（五字段：`state_sha256`/`parameter_sha256`/`moment_sha256`/`history_reference`/`revision`，其中基线无主体 state，`state_sha256` 记执行图身份摘要、`history_reference="baseline:"+identity_sha[:16]`）、`save_baseline`（create-once `parent.bin`/`post.bin`，原子写＋目录 fsync）、`readback_baseline`（新实例重建执行图→载入 model/optimizer→恢复 revision→逐值比对，异常统一转 `ReadbackError`）、`baseline_run_conditions`、`baseline_outputs`（257 类 `byte_head` softmax；`policy=[]` 并写明结构空）。
+   - `gradients_for` 增 `arm` 与 `fingerprint_fn` 钩子；u1 默认值与行为逐字不变。
+2. `scripts/training/u2_update_executor_22_4_1.py`：新增 `check_r09_baseline`／`check_r11_baseline`／`perform_baseline`／`rejected_result_baseline`。`perform_baseline`：前态快照→只用该图 35 项活性参数算梯度→`optimizer.step()` 恰 1 次（否则 `BudgetError`）→`revision+1`→35 项活性回执（`change`/`margin`/`barely_live`）→输出位移描述量→`save_baseline` 写 `post.bin` 并立即读回→返回同形结果。`migration.state_migration="not_applicable_baseline_has_no_subject_state"`（基线无主体 state/history 可迁移，不伪造迁移）。
+3. `scripts/training/run_taiji_u2_22_4_1.py`：`execute()` 删除 u2 fail-closed 退 5，改为按 `isinstance(runtime, BaselineRuntime)` 分派 R09／perform／R11（u1 分支仍调原函数）；`s12_payload` 经 `_s12_with_graph` 仅在结果含 `execution_graph` 时加字段——**u1 回执字节完全不变**；`reject_attempt` 按臂分派；summary 增 `execution_graph` 与 `known_gaps`；新增 5 条自检用例；`u2_binding_preflight.step_path_implemented=true`，`semantic_gaps` 收敛为三条。
+4. `scripts/training/verify_taiji_u2_s12_22_4_1.py`：独立 worker 增 `verify_baseline` 分支——父/子 checkpoint 按基线口径读回、`revision+1`、重算梯度摘要与 35 条 Adam 方程、重推活性回执与输出位移、比对 `baseline_run_conditions`、断言 `steps["calls"]==0`；状态重建记 `not_applicable_baseline_has_no_subject_state`。
+
+### 2. 自检与离线实测
+
+- 0 步自检：**56 条**（51→56）、`verdict=pass`、`failed=0`、`optimizer_step_calls=0`、cpu 7.30／wall 9.34。
+- 新增 5 条：`u2_baseline_parent_checkpoint_round_trip`（写盘＋读回五字段，revision=0，99,958 字节）、`u2_baseline_step_requires_open_attempt`（账本未 open 时 `LedgerError` 退 3、step 仍 0）、`u2_baseline_first_step_displacement_is_lr`（`max|Δ|≤lr`，`|g|≥1e3·eps` 处 `|Δ|≈lr`；实测 max 1.000000e-3、shortfall 9.922e-7、elements 21,977、below_eps 1,392）、`u2_baseline_policy_is_structural_zero`（`policy=[]`、`next_output=257`）、`u2_baseline_rejected_result_shape`。
+- 离线探针（临时脚本，不写账本、不收费，用后删除）：真实一步 `parameters=35, changed=35`，位移 min 9.9998e-4／median 9.99999e-4／max 1.00005e-3；`exact_zero_elements=1056`、`zero_gradient_parameters=[]`、`barely_live=0`；`losses.total 6.0518355→5.9826374`（Δ=−0.069198）；`next_output_l1=0.013577`；`post.bin` 302,371 字节、`revision=1`、`step_calls=1`；worker `verdict=pass`、`status=accepted_verified_baseline`、`adam_equations=35`。u1 `slice_digest` 复算仍 `9a06eb84…da29`，五个产物哈希未变。
+
+### 3. 两件事实（用户问）
+
+1. **actor/critic 在该图上没有参数**（不是“有参数但梯度恒零”）——执行图 35 项里不含策略头/价值头，Adam 不会也不能更新它们；35 项活性参数**全部有非零梯度**（`zero_gradient_parameters=[]`、`barely_live=0`）。唯一“恒零”发生在**元素级**：21,977 个元素中 1,056 个梯度恰为 0（如 embedding 表本轮未用到的字节行），这些元素位移为 0，但所属参数整体仍有变化，不构成“声明活性但梯度恒零”的参数。
+2. **35/35 项都会真的变化**，位移量级 min 9.9998e-4、median 9.99999e-4、max 1.00005e-3，与 u1 的 1e-3 **完全可比**（同 lr＝1e-3、零动量首步，上界贴 lr）；1,392 个元素因 `|g|<1e-5`（eps=1e-8）位移略低于 lr，符合公式 `lr·g/(|g|+eps)`。
+
+### 4. R05 未动（现状记清）
+
+`check_r05` 一行未改：它仍按 22.3 的 U2 接受父（191 参数）核对，而实际执行图是 21,977/35。该缺口记入 `u2_binding_preflight.semantic_gaps`、`execute()` summary 的 `known_gaps` 与本条，标注“属 12 条冻结判据，须单独预注册”，本轮不顺手改。
+
+### 5. 四条不一致的消解
+
+① 一步执行未接入 → **已消**（实现＋离线实测＋worker 复算）；② R05 口径 → 仍在（按用户要求不动）；③ actor/critic 结构零 → 仍在（已如实声明，非冒充）；④ 摘要线程依赖 → 仍在（只登记）。即**消 1 条、剩 3 条**。
+
+### 6. 覆盖
+
+覆盖台账 58→**64 行**（新增 #59–#64 六行；#58 的 fail-closed 分支已删除，留痕不计数），未覆盖 18→**18**（#58 移除 −1、#64 端到端计入 +1），不可达 2 不变。
+
+### 7. 下一步
+
+唯一建议：**为 u2 的 R05 父身份口径单独预注册**（“父＝本臂执行图 21,977/35”），把判据 R05 的检查对象从 22.3 的 191 参数父改为执行图身份，走 owner 批准后再动代码；在此之前不申请 u2 放行。

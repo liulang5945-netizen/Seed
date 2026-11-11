@@ -33,14 +33,18 @@ from scripts.training.u2_update_executor_22_4_1 import (
     check_r07,
     check_r08,
     check_r09,
+    check_r09_baseline,
     check_r10,
     check_r11,
+    check_r11_baseline,
     check_r12,
     execution_manifest,
     load_json,
     perform,
+    perform_baseline,
     readback_or_exit,
     rejected_result,
+    rejected_result_baseline,
     write_once,
 )
 from scripts.training.u2_update_support_22_3_4_3 import (
@@ -49,10 +53,15 @@ from scripts.training.u2_update_support_22_3_4_3 import (
 )
 from scripts.training.u2_update_support_22_4_1 import (
     DEFAULT_ARM,
+    BaselineRuntime,
     activity_receipt,
+    baseline_fingerprint,
+    baseline_outputs,
     fingerprint,
     prepare_parent,
+    readback_baseline,
     recipe_digest,
+    save_baseline,
     shadow_terms,
     slice_digest,
 )
@@ -118,67 +127,81 @@ def s12_payload(
     cpu_seconds: float,
     wall_seconds: float,
 ) -> dict[str, Any]:
-    return {
-        "schema": "taiji-u2-22.4.1-s12-v1",
-        "run_id": run["run_id"],
-        "attempt_id": identity,
-        "update_id": run["update_id"],
-        "arm": run["update_id"],
-        "precision": run["precision"],
-        "status": result["status"],
-        "weight_profile": execution["arms"][run["update_id"]]["weight_profile"],
-        "weights": execution["arms"][run["update_id"]]["weights"],
-        "ledger_seq_open": ledger_summary["open_seq"],
-        "ledger_seq_close": ledger_summary["close_seq"],
-        "parent_checkpoint": "parent.bin",
-        "parent_sha256": None,
-        "post_checkpoint": "post.bin" if result["status"] == "accepted" else None,
-        "post_sha256": result.get("post_sha256"),
-        "pre_state_sha256": result["pre"]["state_sha256"],
-        "pre_parameter_sha256": result["pre"]["parameter_sha256"],
-        "pre_moment_sha256": result["pre"]["moment_sha256"],
-        "pre_history_reference": result["pre"]["history_reference"],
-        "pre_revision": result["pre"]["revision"],
-        "post_state_sha256": result["post"]["state_sha256"],
-        "post_parameter_sha256": result["post"]["parameter_sha256"],
-        "post_moment_sha256": result["post"]["moment_sha256"],
-        "history_reference": result["post"]["history_reference"],
-        "revision": result["post"]["revision"],
-        "gradient_sha256": result["gradient_sha256"],
-        "next_output": result["next_output"],
-        "policy": result["policy"],
-        "run_conditions": result["run_conditions"],
-        "parameter_rows": result["parameter_rows"],
-        "losses": result["losses"],
-        "losses_after": result["losses_after"],
-        "optimizer_step_calls": result["optimizer_step_calls"],
-        "migration": result["migration"],
-        "activity_receipt": result["activity_receipt"],
-        "conditions": {
-            "threads": torch.get_num_threads(),
-            "interop_threads": torch.get_num_interop_threads(),
-            "device": "cpu",
-            "dtype": run["precision"],
+    return _s12_with_graph(
+        {
+            "schema": "taiji-u2-22.4.1-s12-v1",
+            "run_id": run["run_id"],
+            "attempt_id": identity,
+            "update_id": run["update_id"],
+            "arm": run["update_id"],
+            "precision": run["precision"],
+            "status": result["status"],
+            "weight_profile": execution["arms"][run["update_id"]]["weight_profile"],
+            "weights": execution["arms"][run["update_id"]]["weights"],
+            "ledger_seq_open": ledger_summary["open_seq"],
+            "ledger_seq_close": ledger_summary["close_seq"],
+            "parent_checkpoint": "parent.bin",
+            "parent_sha256": None,
+            "post_checkpoint": "post.bin" if result["status"] == "accepted" else None,
+            "post_sha256": result.get("post_sha256"),
+            "pre_state_sha256": result["pre"]["state_sha256"],
+            "pre_parameter_sha256": result["pre"]["parameter_sha256"],
+            "pre_moment_sha256": result["pre"]["moment_sha256"],
+            "pre_history_reference": result["pre"]["history_reference"],
+            "pre_revision": result["pre"]["revision"],
+            "post_state_sha256": result["post"]["state_sha256"],
+            "post_parameter_sha256": result["post"]["parameter_sha256"],
+            "post_moment_sha256": result["post"]["moment_sha256"],
+            "history_reference": result["post"]["history_reference"],
+            "revision": result["post"]["revision"],
+            "gradient_sha256": result["gradient_sha256"],
+            "next_output": result["next_output"],
+            "policy": result["policy"],
+            "run_conditions": result["run_conditions"],
+            "parameter_rows": result["parameter_rows"],
+            "losses": result["losses"],
+            "losses_after": result["losses_after"],
+            "optimizer_step_calls": result["optimizer_step_calls"],
+            "migration": result["migration"],
+            "activity_receipt": result["activity_receipt"],
+            "conditions": {
+                "threads": torch.get_num_threads(),
+                "interop_threads": torch.get_num_interop_threads(),
+                "device": "cpu",
+                "dtype": run["precision"],
+            },
+            "cpu_seconds": cpu_seconds,
+            "wall_seconds": wall_seconds,
+            "execution_manifest": run["references"]["execution_manifest"],
+            "manifest_sha256": run["references"]["manifest_sha256"],
+            "admission_manifest": run["references"]["admission_manifest"],
+            "admission_manifest_sha256": run["references"]["admission_manifest_sha256"],
+            "owner_approval_ref": run["owner_approval_ref"],
+            "run_root": run["paths"]["run_root"],
+            "parent_readback": next(
+                (
+                    proof
+                    for proof in result["readbacks"]
+                    if Path(proof["path"]).name == "parent.bin"
+                ),
+                None,
+            ),
+            "post_readback": next(
+                (proof for proof in result["readbacks"] if Path(proof["path"]).name == "post.bin"),
+                None,
+            ),
+            "failed_checkpoint": "post.bin" if result["status"] != "accepted" else None,
+            "error": result.get("error"),
         },
-        "cpu_seconds": cpu_seconds,
-        "wall_seconds": wall_seconds,
-        "execution_manifest": run["references"]["execution_manifest"],
-        "manifest_sha256": run["references"]["manifest_sha256"],
-        "admission_manifest": run["references"]["admission_manifest"],
-        "admission_manifest_sha256": run["references"]["admission_manifest_sha256"],
-        "owner_approval_ref": run["owner_approval_ref"],
-        "run_root": run["paths"]["run_root"],
-        "parent_readback": next(
-            (proof for proof in result["readbacks"] if Path(proof["path"]).name == "parent.bin"),
-            None,
-        ),
-        "post_readback": next(
-            (proof for proof in result["readbacks"] if Path(proof["path"]).name == "post.bin"),
-            None,
-        ),
-        "failed_checkpoint": "post.bin" if result["status"] != "accepted" else None,
-        "error": result.get("error"),
-    }
+        result,
+    )
+
+
+def _s12_with_graph(payload: dict[str, Any], result: dict[str, Any]) -> dict[str, Any]:
+    """只有非默认臂（基线执行图）写 execution_graph；u1 的回执字节因此完全不变。"""
+    if "execution_graph" in result:
+        payload["execution_graph"] = result["execution_graph"]
+    return payload
 
 
 def reject_attempt(
@@ -206,7 +229,11 @@ def reject_attempt(
     receipt = getattr(error, "receipt", None)
     if post_path.exists():
         post_path.unlink()
-    result = rejected_result(runtime, error, step_calls, receipt)
+    result = (
+        rejected_result_baseline(runtime, error, step_calls, receipt, execution)
+        if isinstance(runtime, BaselineRuntime)
+        else rejected_result(runtime, error, step_calls, receipt)
+    )
     destination = s12_path or (ROOT / run["paths"]["s12"])
     s12 = s12_payload(
         run,
@@ -364,11 +391,7 @@ def execute(root: Path) -> dict[str, Any]:
 
     runtime = prepare_parent(execution, root, arm=run["update_id"])
     checks.append(check_r08(execution, runtime.model, runtime.optimizer, arm=run["update_id"]))
-    if run["update_id"] != DEFAULT_ARM:
-        raise ContractError(
-            "u2 的一步执行路径尚未接入：perform、checkpoint 与参数迁移仍绑定 U2 主体，"
-            "基线当前只有 0 步结构绑定与 F2 损失，不得开跑"
-        )
+    baseline = isinstance(runtime, BaselineRuntime)
 
     recipe_sha = recipe_digest(execution)
     slice_sha = slice_digest(execution, runtime.model, arm=run["update_id"])
@@ -390,7 +413,10 @@ def execute(root: Path) -> dict[str, Any]:
     checks.append(check_r10(ledger))
 
     parent_path = root / "parent.bin"
-    proof, r09 = check_r09(parent_path, runtime)
+    if baseline:
+        proof, r09 = check_r09_baseline(parent_path, runtime, execution, arm=run["update_id"])
+    else:
+        proof, r09 = check_r09(parent_path, runtime)
     r09["checkpoint"] = proof["sha256"]
     checks.append(r09)
 
@@ -403,7 +429,12 @@ def execute(root: Path) -> dict[str, Any]:
     torch.optim.Adam.step = counter.wrapper(original_step)
     try:
         try:
-            result = perform(runtime, ledger, counter, execution, post_path, arm=identity)
+            if baseline:
+                result = perform_baseline(
+                    runtime, ledger, counter, execution, post_path, arm=identity
+                )
+            else:
+                result = perform(runtime, ledger, counter, execution, post_path, arm=identity)
         except Exception as error:  # noqa: BLE001 - open 之后任何异常都必须落账，不允许悬空
             return reject_attempt(
                 run=run,
@@ -419,7 +450,10 @@ def execute(root: Path) -> dict[str, Any]:
                 error=error,
                 checks=checks,
             )
-        checks.append(check_r11(post_path, result["post"]))
+        if baseline:
+            checks.append(check_r11_baseline(post_path, result["post"], execution, arm=identity))
+        else:
+            checks.append(check_r11(post_path, result["post"]))
         checks.append(check_r12(result["activity_receipt"]))
         result["post_sha256"] = normalized_file_sha(post_path)
         s12 = s12_payload(
@@ -483,6 +517,13 @@ def execute(root: Path) -> dict[str, Any]:
         "wall_cap": run["wall_cap"],
         "within_cap": total_cpu <= run["cpu_cap"] and total_wall <= run["wall_cap"],
     }
+    if baseline:
+        summary["execution_graph"] = dict(runtime.graph)
+        summary["known_gaps"] = [
+            "R05 仍按 22.3 的 U2 接受父（191 参数）核对接口回执，与本臂执行图 21,977/35 不同；"
+            "12 条判据未改，属需单独预注册的口径缺口。",
+            "该图没有策略头与主体 state，policy 与 state 迁移是结构空，已如实声明。",
+        ]
     write_once(root / "run_summary.json", summary)
     return summary
 
@@ -1346,6 +1387,127 @@ def self_check(directory: Path) -> dict[str, Any]:
                 "pass": not u2_dead,
             }
         )
+        # ---- u2 一步执行路径（0 步自检只能验证不落参的部分：写盘往返、账本闸门、公式量级） ----
+        roundtrip_dir = directory / "u2-roundtrip"
+        roundtrip_dir.mkdir(parents=True, exist_ok=True)
+        u2_parent_expected = baseline_fingerprint(u2_runtime)
+        save_baseline(u2_runtime, roundtrip_dir / "parent.bin", u2_execution)
+        try:
+            u2_restored, u2_proof = readback_baseline(
+                roundtrip_dir / "parent.bin",
+                u2_parent_expected,
+                u2_execution,
+                arm="u2-strong-baseline",
+            )
+        except Exception as error:  # noqa: BLE001 - 0 步往返失败必须显式记红
+            cases.append(
+                {
+                    "case": "u2_baseline_parent_checkpoint_round_trip",
+                    "expected": "five fields equal",
+                    "actual": f"{type(error).__name__}: {error}",
+                    "pass": False,
+                }
+            )
+        else:
+            five = (
+                "state_sha256",
+                "parameter_sha256",
+                "moment_sha256",
+                "history_reference",
+                "revision",
+            )
+            actual_five = baseline_fingerprint(u2_restored)
+            cases.append(
+                {
+                    "case": "u2_baseline_parent_checkpoint_round_trip",
+                    "expected": "five fields equal",
+                    "actual": sorted(five),
+                    "pass": all(actual_five[key] == u2_parent_expected[key] for key in five),
+                    "detail": (
+                        f"bytes={u2_proof['bytes']} revision={actual_five['revision']} "
+                        f"parameters={actual_five['parameter_sha256'][:16]}"
+                    ),
+                }
+            )
+        gate_dir = directory / "u2-gate"
+        gate_dir.mkdir(parents=True, exist_ok=True)
+        gate_ledger = AttemptLedger(
+            gate_dir / "attempts.ndjson",
+            ledger_run(bound),
+            u2_execution["authority"]["source_pins"],
+            precontract(bound),
+        )
+        gate_ledger.start()
+        gate_counter = StepCounter(gate_ledger, gate_dir / "claims")
+        gate_counter.current = "u2-strong-baseline"
+        torch.optim.Adam.step = gate_counter.wrapper(original_step)
+        try:
+            expect(
+                "u2_baseline_step_requires_open_attempt",
+                3,
+                lambda: u2_runtime.optimizer.step(),
+            )
+        finally:
+            torch.optim.Adam.step = tripwire
+        # 首次 Adam 步（零动量）每元素位移 = lr·g/(|g|+eps)：上界是 lr，|g|≫eps 时贴住 lr。
+        group = u2_runtime.optimizer.param_groups[0]
+        lr = float(group["lr"])
+        beta1, beta2 = (float(value) for value in group["betas"])
+        eps = float(group["eps"])
+        biggest = 0.0
+        shortfall = 0.0
+        below_eps = 0
+        elements = 0
+        for gradient in u2_gradients:
+            step = lr * gradient / (gradient.abs() + eps)
+            biggest = max(biggest, float(step.abs().max()))
+            strong = gradient.abs() >= eps * 1e3
+            elements += gradient.numel()
+            below_eps += int((~strong).sum())
+            if bool(strong.any()):
+                shortfall = max(shortfall, float((step.abs()[strong] - lr).abs().max()))
+        cases.append(
+            {
+                "case": "u2_baseline_first_step_displacement_is_lr",
+                "expected": "max|Δ|<=lr and |Δ|=lr where |g|>=1e3·eps",
+                "actual": f"max|Δ|={biggest:.6e} shortfall={shortfall:.3e}",
+                "pass": biggest <= lr * (1.0 + 1e-6) and shortfall <= lr * 1e-3,
+                "detail": (
+                    f"lr={lr} betas=({beta1},{beta2}) eps={eps}; "
+                    f"elements={elements} below_eps={below_eps}"
+                ),
+            }
+        )
+        u2_outputs = baseline_outputs(u2_runtime, u2_execution)
+        out_features = int(u2_runtime.model.byte_head.out_features)
+        cases.append(
+            {
+                "case": "u2_baseline_policy_is_structural_zero",
+                "expected": f"policy=[] and next_output={out_features}",
+                "actual": {
+                    "policy": u2_outputs["policy"],
+                    "next_output": len(u2_outputs["next_output"]),
+                },
+                "pass": u2_outputs["policy"] == []
+                and len(u2_outputs["next_output"]) == out_features,
+            }
+        )
+        u2_rejected = rejected_result_baseline(
+            u2_runtime, RuntimeError("self-check"), 0, None, u2_execution
+        )
+        cases.append(
+            {
+                "case": "u2_baseline_rejected_result_shape",
+                "expected": "rejected + execution_graph",
+                "actual": {
+                    "status": u2_rejected["status"],
+                    "param_total": (u2_rejected["execution_graph"] or {}).get("param_total"),
+                },
+                "pass": u2_rejected["status"] == "rejected"
+                and (u2_rejected["execution_graph"] or {}).get("param_total") == 21977
+                and u2_rejected["policy"] == [],
+            }
+        )
         u2_preflight = {
             "arm": "u2-strong-baseline",
             "graph_architecture_id": u2_graph.get("architecture_id"),
@@ -1378,11 +1540,27 @@ def self_check(directory: Path) -> dict[str, Any]:
             "conditional_active_parameters_present": bool(
                 u2_row.get("conditional_active_parameters")
             ),
-            "step_path_implemented": False,
+            "step_path_implemented": True,
+            "step_path": {
+                "mechanism": "in-place Adam step on the frozen baseline graph",
+                "state_migration": "not_applicable_baseline_has_no_subject_state",
+                "checkpoint": "parent.bin/post.bin, five fields, create-once + fresh read-back",
+                "self_check_coverage": [
+                    "u2_baseline_parent_checkpoint_round_trip",
+                    "u2_baseline_step_requires_open_attempt",
+                    "u2_baseline_first_step_displacement_is_lr",
+                    "u2_baseline_policy_is_structural_zero",
+                    "u2_baseline_rejected_result_shape",
+                ],
+                "real_step_note": (
+                    "真实落参的一步被自检 tripwire 禁止（0 步契约），改由离线探针验证；"
+                    "数值记在 DECISION-LEDGER D-20261111-21。"
+                ),
+            },
             "semantic_gaps": [
                 "actor/critic 在该基线上没有对应头，两项是结构零（已声明，不冒充 U2 参数）。",
-                "u2 的一步执行路径（perform/checkpoint/迁移）仍绑定 U2 主体，基线尚未接入。",
                 "R05 仍把 u2 的父身份绑在 22.3 的 U2 接受父（191 参数），而本臂执行图是 21,977/35 的基线；12 条判据未改，属已知口径缺口。",
+                "该图没有策略头与主体 state：policy 与 state 迁移是结构空，一步是原地更新，不做 U2 式参数迁移。",
             ],
             "blocking_gaps": [],
         }

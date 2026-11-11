@@ -25,14 +25,20 @@ from scripts.training.u2_update_support_22_3_4_3 import (
 from scripts.training.u2_update_support_22_4_1 import (
     ADAM_FLOAT32_TOLERANCE,
     DEFAULT_ARM,
+    BaselineRuntime,
     U1Runtime,
     active_parameters,
     activity_receipt,
+    baseline_fingerprint,
+    baseline_outputs,
+    baseline_run_conditions,
     fingerprint,
     fork_candidate,
     gradients_for,
     normalized_sha256,
     output_displacement,
+    readback_baseline,
+    save_baseline,
     shadow_terms,
 )
 from taiji.u2_history import assert_values_equal, value_digest
@@ -435,6 +441,174 @@ def check_r11(post_path: Path, expected: dict[str, Any]) -> dict[str, Any]:
     return {"id": "R11", "five_fields": True, "sha256": proof["sha256"]}
 
 
+def check_r09_baseline(
+    parent_path: Path,
+    runtime: BaselineRuntime,
+    manifest: dict[str, Any],
+    *,
+    arm: str,
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    """R09 for the baseline arm: same five fields, same exit code, same create-once rule."""
+    expected = baseline_fingerprint(runtime)
+    save_baseline(runtime, parent_path, manifest)
+    try:
+        restored, proof = readback_baseline(parent_path, expected, manifest, arm=arm)
+    except ReadbackError as error:
+        raise CheckpointMismatch(str(error)) from error
+    five = ("state_sha256", "parameter_sha256", "moment_sha256", "history_reference", "revision")
+    actual = baseline_fingerprint(restored)
+    mismatched = [key for key in five if actual[key] != expected[key]]
+    if mismatched:
+        raise CheckpointMismatch(f"R09 parent checkpoint read-back differs: {mismatched}")
+    return proof, {"id": "R09", "five_fields": sorted(five), "sha256": proof["sha256"]}
+
+
+def check_r11_baseline(
+    post_path: Path, expected: dict[str, Any], manifest: dict[str, Any], *, arm: str
+) -> dict[str, Any]:
+    try:
+        restored, proof = readback_baseline(post_path, expected, manifest, arm=arm)
+    except ReadbackError as error:
+        raise CheckpointMismatch(str(error)) from error
+    actual = baseline_fingerprint(restored)
+    mismatched = [
+        key
+        for key in (
+            "state_sha256",
+            "parameter_sha256",
+            "moment_sha256",
+            "history_reference",
+            "revision",
+        )
+        if actual[key] != expected[key]
+    ]
+    if mismatched:
+        raise CheckpointMismatch(f"R11 post checkpoint read-back differs: {mismatched}")
+    return {"id": "R11", "five_fields": True, "sha256": proof["sha256"]}
+
+
+def perform_baseline(
+    runtime: BaselineRuntime,
+    ledger,
+    counter,
+    manifest: dict[str, Any],
+    post_path: Path,
+    *,
+    arm: str,
+):
+    """One charged step on the frozen baseline: gradients, Adam, receipt, checkpoint.
+
+    该图没有主体 state，也不做参数迁移：单步就是在这张图上原地更新那 35 项活性参数。
+    R09 已先把更新前的 parent.bin 落盘，因此拒绝路径仍有一份未被改动的父状态可读。
+    """
+    started, wall = time.process_time(), time.monotonic()
+    before = baseline_fingerprint(runtime)
+    before_output = baseline_outputs(runtime, manifest)
+    before_state = {
+        name: value.detach().clone() for name, value in runtime.model.state_dict().items()
+    }
+    gradients, losses = gradients_for(
+        runtime, manifest, arm=arm, fingerprint_fn=baseline_fingerprint
+    )
+    named = dict(runtime.model.named_parameters())
+    with torch.no_grad():
+        for name, parameter in named.items():
+            parameter.grad = gradients[name].clone()
+    runtime.optimizer.step()
+    step_calls = int(counter.current in counter.called)
+    if step_calls != 1:
+        raise BudgetError("the frozen attempt must call optimizer.step exactly once")
+    runtime.revision += 1
+    with torch.no_grad():
+        for parameter in named.values():
+            parameter.grad = None
+    after_state = runtime.model.state_dict()
+    receipt = activity_receipt(
+        runtime.model, before_state, after_state, gradients, manifest, arm=arm
+    )
+    after_output = baseline_outputs(runtime, manifest)
+    with torch.enable_grad():
+        post_loss, _ = shadow_terms(runtime.model, manifest, arm=arm)
+    post_loss = post_loss.detach()
+    receipt["output_displacement_descriptive"] = {
+        **output_displacement(before_output, after_output),
+        "same_fixture_loss_delta": float(post_loss) - losses["total"],
+        "policy_note": after_output["policy_note"],
+    }
+    expected = baseline_fingerprint(runtime)
+    try:
+        save_baseline(runtime, post_path, manifest)
+    except ReadbackError as error:
+        raise CheckpointMismatch(str(error)) from error
+    return {
+        "status": "accepted",
+        "arm": arm,
+        "execution_graph": dict(runtime.graph),
+        "pre": before,
+        "post": expected,
+        "gradient_sha256": value_digest(gradients),
+        "gradients": gradients,
+        "parameter_rows": [
+            {
+                "parameter": name,
+                "gradient_norm": None if gradient is None else float(gradient.norm()),
+                "max_parameter_change": float((before_state[name] - after_state[name]).abs().max()),
+            }
+            for name, gradient in gradients.items()
+        ],
+        "losses": losses,
+        "losses_after": {"total": float(post_loss)},
+        "migration": {
+            "status": "committed",
+            "mechanism": "in-place Adam step on the frozen baseline graph",
+            "arm": arm,
+            "revision": runtime.revision,
+            "state_migration": "not_applicable_baseline_has_no_subject_state",
+        },
+        "activity_receipt": receipt,
+        "next_output": after_output["next_output"],
+        "policy": after_output["policy"],
+        "before_output": before_output,
+        "run_conditions": baseline_run_conditions(runtime.model),
+        "optimizer_step_calls": step_calls,
+        "cpu_seconds": time.process_time() - started,
+        "wall_seconds": time.monotonic() - wall,
+        "readbacks": runtime.readbacks,
+    }
+
+
+def rejected_result_baseline(
+    runtime: BaselineRuntime,
+    error: Exception,
+    step_calls: int,
+    receipt: dict[str, Any] | None,
+    manifest: dict[str, Any],
+) -> dict[str, Any]:
+    current = baseline_fingerprint(runtime)
+    output = baseline_outputs(runtime, manifest)
+    return {
+        "status": "rejected",
+        "arm": runtime.arm,
+        "execution_graph": dict(runtime.graph),
+        "pre": current,
+        "post": current,
+        "gradient_sha256": value_digest(None),
+        "gradients": None,
+        "parameter_rows": [],
+        "losses": None,
+        "losses_after": None,
+        "migration": {"status": "rejected", "error": f"{type(error).__name__}: {error}"},
+        "activity_receipt": receipt,
+        "next_output": output["next_output"],
+        "policy": output["policy"],
+        "before_output": output,
+        "run_conditions": baseline_run_conditions(runtime.model),
+        "optimizer_step_calls": step_calls,
+        "readbacks": list(runtime.readbacks),
+        "error": str(error),
+    }
+
+
 def check_r12(receipt: dict[str, Any]) -> dict[str, Any]:
     if not receipt["parameters"]:
         raise ActivityGateError("R12 the activity receipt has no parameter rows")
@@ -567,15 +741,19 @@ __all__ = [
     "check_r07",
     "check_r08",
     "check_r09",
+    "check_r09_baseline",
     "check_r10",
     "check_r11",
+    "check_r11_baseline",
     "check_r12",
     "execution_manifest",
     "admission_manifest",
     "five_field_gate",
     "load_json",
     "perform",
+    "perform_baseline",
     "readback_or_exit",
     "rejected_result",
+    "rejected_result_baseline",
     "write_once",
 ]
