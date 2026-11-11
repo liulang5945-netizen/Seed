@@ -2282,3 +2282,163 @@ Owner 的否决理由（原话要点）：基线可以重生成 ⇒ 红的时候
 
 
 
+
+---
+
+## D-20261111-04 46 条证据链按「入库」处置：31 条从声明级升为可机器复核
+
+**编号／时间／类型**：D-20261111-04｜2026-11-11｜**证据链入库（46 条）＋台账升级＋lint 记账**（0 训练、0 读数改动、0 封存件触碰、0 归档件改写）。承接 D-20261111-03 §7.2 的 (B) 分支。
+
+### 1. 为什么选入库而不是改字
+
+链接本来是对的，缺的是文件。把指针降级成裸文件名，等于剪掉「这条读数由谁产出」的线索：报告还在，但没人能从计划文档走到产生它的代码。所以文件进 git，链接一行不改。
+
+### 2. 四笔提交（**第一笔＝`4742bed24`，日后回溯用它**）
+
+| 提交 | 内容 |
+|---|---|
+| `4742bed24` | 45 个文件按**产出读数时的字节**入库：28 个 runner ＋ 17 个 oracle |
+| `17a4714c8` | `audit_taiji_record_relation_14_6_scores.py` 的原字节；blob sha256 ＝ `85c90413838b8cc999e6d9c9472b2d1ea3ad42a2ec1a666b45ed8e74f3e88660`，与 14.6 manifest 的钉子逐位相同 |
+| `880f61ded` | 同一文件仅 black 重排；与父提交 `ast.dump` 逐节点相同（本机实测 `ast_equal=True`） |
+| `dd455ba92` | B/SIM 债务 11 条（5 个文件），见 §7 |
+
+**为什么原字节与格式化必须分两笔（owner 补的理由，记账用）**：分两笔之后，被钉住的原始字节进了 git 历史，日后可以顺着历史把「产出读数的那一份」取回来重算核对，而不只是台账里留一行 sha。**取法**：`git show <提交>:<路径> | sha256sum`，与报告里的 `source_hashes` 逐位比。
+
+### 3. 46 条里没有「废弃草稿」
+
+46/46 都有已入库的报告指向（下表 31 条是报告或 manifest 里钉了哈希的，其余 15 条见 §5），因此没有一条需要降级为裸文件名。
+
+### 4. 升为「可机器复核」的 31 条：文件 → 报告 → 命中的哈希
+
+| 文件 | 钉住它的报告 | 命中的 sha256 | 钉子形态 |
+|---|---|---|---|
+| `scripts/training/diagnose_training_direction_10_7b.py` | `reports/taiji_core_training_direction_10_7b_20261101.json` | `d362c035b0c94fb399ce4ba494b0a34de4e9a471562b4bdd7eee36e5d1930f6a` | 与 HEAD 逐字节相同 |
+| `scripts/training/probe_geometry_select_10_7h.py` | `reports/taiji_core_geometry_select_10_7h_20261101.json` | `979b02bffa10804b01f62aac5cd00af82c72adb556254bea6c4d0bdd1f7530dd` | 与 HEAD 逐字节相同 |
+| `scripts/training/probe_glossary_control_10_11b.py` | `reports/taiji_core_glossary_control_10_11b_20261101.json` | `ce27bb6e604b3a0053a6988515b62e2d938b1ddf27331be36d6f9d8a81280876` | 与 HEAD 逐字节相同 |
+| `scripts/training/probe_glossary_use_10_10.py` | `reports/taiji_core_glossary_10_10_20261101.json` | `a3d1f4b60a4725ffc6743f73e34636d6ece8f791064d5ca322c3bf26d0a8598d` | 与 HEAD 逐字节相同 |
+| `scripts/training/probe_raw_subject_rank_10_7e2.py` | `reports/taiji_core_raw_rank_10_7e2_20261101.json` | `d0b6e64e7b4f3c3fc7ad4a1801d8b14b407c9fe0cd0e97dcf9b26391166a3efd` | 与 HEAD 逐字节相同 |
+| `scripts/training/probe_readout_rank_10_7e1.py` | `reports/taiji_core_readout_rank_10_7e1_20261101.json` | `14699beb0f94570121d3b423131d59b34fb309379f38d6e30a22a0e217416532` | 与 HEAD 逐字节相同 |
+| `scripts/training/verify_taiji_action_verdict_10_6.py` | `reports/taiji_core_action_verdict_10_6_20261101.json` | `0915cd19638baa8fa604b58405dde84c9e1fc4be973c396dca9637f679c4f455` | 与 HEAD 逐字节相同 |
+| `scripts/training/verify_taiji_glossary_records_10_11.py` | `reports/taiji_core_glossary_records_10_11_20261101.json` | `66a0566cfba17c56b02f854659694407b9b8a0dcf4f8440f7f8e11dd7810ba19` | 与 HEAD 逐字节相同 |
+| `scripts/training/verify_taiji_goal_attributes_10_9.py` | `reports/taiji_core_goal_attributes_10_9_20261101.json` | `f550250b42d11180fe928407cee6221b25e04c16756338353965b478d6fd3188` | 与 HEAD 逐字节相同 |
+| `scripts/training/verify_taiji_goal_binding_10_2.py` | `reports/taiji_core_goal_binding_10_2_20261101.json` | `7078bebc5143816c5762defa9e1dcb5164b7d9ca82ee4065274248ec035d0a81` | 与 HEAD 逐字节相同 |
+| `scripts/training/verify_taiji_goal_conditioned_10_5.py` | `reports/taiji_core_goal_conditioned_10_5_20261101.json` | `42482f38b314ade6060c7c94233df13db7e32bb429b41fdf2ece902788776e62` | 与 HEAD 逐字节相同 |
+| `scripts/training/verify_taiji_goal_paraphrase_10_8.py` | `reports/taiji_core_goal_paraphrase_10_8_20261101.json` | `7e0dcecc9570f9fd8298a7153871bd45a78c9a62bb3fee64362a21b4634d8e92` | 与 HEAD 逐字节相同 |
+| `scripts/training/verify_taiji_goal_planner_10_3.py` | `reports/taiji_core_goal_planner_10_3b_20261101.json` | `28283c6c5786eca076c03e07d6535c6a1267221447de493161f643d49586c0d5` | 与 HEAD 逐字节相同 |
+| `scripts/training/verify_taiji_goal_training_10_7.py` | `reports/taiji_core_goal_training_10_7_20261101.json` | `4fda77cc90ee981fdb8ab58c0d166d5f8ef39374e376fc35ddb9bbf00d0f58c8` | 与 HEAD 逐字节相同 |
+| `scripts/training/verify_taiji_goal_world_10_1.py` | `reports/taiji_core_goal_world_10_1_20261101.json` | `4c9b704334380555a3b3773c0b03cbaaf73768ea9a285606bdac91c2e342705f` | 与 HEAD 逐字节相同 |
+| `scripts/training/verify_taiji_instrument_11_7.py` | `reports/taiji_core_instrument_11_7_v2_20261101.json` | `332194a1850dca6e19454037dc4948ccca8bce5a3d90575bf6f10a80992684b1` | 与 HEAD 逐字节相同 |
+| `scripts/training/verify_taiji_readout_10_7e.py` | `reports/taiji_algorithm_review_20261101.json` | `5b55b5a93c2312af2a2f553c860bdead0c14f143e2146e38ea6acf7ac40c57f3` | 与 HEAD 逐字节相同 |
+| `scripts/training/verify_taiji_records_state_10_12.py` | `reports/taiji_core_records_state_10_12_v2_20261101.json` | `9aa0cfa3717dc2d0f993b0c83c857198dc4cfcb2bdbc29c925858e2dcb073ef8` | 与 HEAD 逐字节相同 |
+| `scripts/training/verify_taiji_selection_10_7f.py` | `reports/taiji_core_selection_10_7f_20261101.json` | `0d389a89e4e3622089acf8baa66c92ed473f1d2842b0704b51596d6c41cc6a8b` | 与 HEAD 逐字节相同 |
+| `scripts/training/verify_taiji_state_selection_10_13.py` | `reports/taiji_core_state_selection_10_13_v2_20261101.json` | `626ce6d3469d487a3cdc0bebfa7ee486563384d0f8a4f7220180f444144e108b` | 与 HEAD 逐字节相同 |
+| `scripts/training/verify_taiji_subject_selection_10_4.py` | `reports/taiji_algorithm_review_20261101.json` | `8a0a310e17bdd6428a715b100694d48dbee5faaa05e69bdb83bbeda9858ff203` | 与 HEAD 逐字节相同 |
+| `scripts/training/verify_taiji_wide_fixture_10_15.py` | `reports/taiji_core_wide_fixture_10_15_v3_20261101.json` | `45630942ca90bd06e77bec306f1f5eafda699716d5c0a42cf84160297560b91b` | 与 HEAD 逐字节相同 |
+| `scripts/training/verify_taiji_wide_object_split_10_17.py` | `reports/taiji_core_wide_object_split_10_17_20261101.json` | `0a9fbef2ff86f434c0642a3dd35440a5f375a7cd4a1f0b1d311a1b3178ed4edb` | 与 HEAD 逐字节相同 |
+| `scripts/training/verify_taiji_wide_selection_10_16.py` | `reports/taiji_core_wide_object_split_10_17_20261101.json` | `51f7e4cab6dbe83be84b78437cf5c515380f4f97aee474ec796562e475bba314` | 与 HEAD 逐字节相同 |
+| `tests/taiji_native/test_goal_binding.py` | `reports/taiji_core_goal_binding_10_2_20261101.json` | `27da93dbcd3e3648e6355c2c129736c30545f962843515aaddba839e0039f927` | 与 HEAD 逐字节相同 |
+| `tests/taiji_native/test_goal_planner.py` | `reports/taiji_core_goal_planner_10_3_20261101.json` | `26f7afe893cdb2af61d7c224687e8dda161bf93b7401a48b91e22bd60738d1ef` | 与 HEAD 逐字节相同 |
+| `tests/taiji_native/test_record_relation_14_4.py` | `plans/manifests/taiji_core_record_relation_14_4_20261102.json` | `98fa4c87f5a00021255e7a79299b8da0fc54cc363478ddd8f7087003e0ed7c0c` | 与 HEAD 逐字节相同 |
+| `scripts/training/diagnose_margin_objective_10_7d.py` | `reports/taiji_core_margin_objective_10_7d_20261101.json` | `f7df892d25ee3a681c1429d5423a044f50cedb4b9e813dd585bc6e3163d957b5` | 读数时的字节，在 `4742bed24` 里；HEAD 因 §7 的 lint 修复已变 |
+| `scripts/training/diagnose_residual_structure_10_7c.py` | `reports/taiji_core_residual_structure_10_7c_v2_20261101.json` | `babf9bc4233b1f8f463ba537444a96733a3fbd1993766e7371a7231c05f69c47` | 读数时的字节，在 `4742bed24` 里；HEAD 因 §7 的 lint 修复已变 |
+| `scripts/training/verify_taiji_training_replay_10_7a.py` | `reports/taiji_core_training_replay_10_7a_v2_20261101.json` | `6222275b8efb94dc76fc3126d4206f3e4eb2641f28d7cb2011fab16fb1cfe8ab` | 读数时的字节，在 `4742bed24` 里；HEAD 因 §7 的 lint 修复已变 |
+| `scripts/training/audit_taiji_record_relation_14_6_scores.py` | `plans/manifests/taiji_core_record_relation_14_6_20261102.json` | `85c90413838b8cc999e6d9c9472b2d1ea3ad42a2ec1a666b45ed8e74f3e88660` | 读数时的字节，在 `17a4714c8` 里；HEAD 因 §7 的 lint 修复已变 |
+
+「可机器复核」的定义：报告里那条 sha256 能在仓库里找到对应 blob，复核**不需要生产者的工作树**，`git show <提交>:<路径>` 取字节算 sha256 即可。所以「钉在读数时字节」与「钉在 HEAD」都是可复核的，区别只在取哪个提交——这一点必须写在表里，否则复核的人会拿 HEAD 去对一条本来就指向父提交的钉子。
+
+### 5. 维持「声明级」的 15 条（没有任何报告或 manifest 钉它们）
+
+- `scripts/training/verify_taiji_fixture_arrivals.py`
+- `tests/taiji_native/test_goal_action_readout.py`
+- `tests/taiji_native/test_goal_conditioned_training.py`
+- `tests/taiji_native/test_goal_paraphrase_10_8.py`
+- `tests/taiji_native/test_goal_state_readout.py`
+- `tests/taiji_native/test_goal_world.py`
+- `tests/taiji_native/test_instrument_11_7.py`
+- `tests/taiji_native/test_margin_objective_10_7d.py`
+- `tests/taiji_native/test_readout_rank_10_7e1.py`
+- `tests/taiji_native/test_records_state_10_12.py`
+- `tests/taiji_native/test_residual_structure_10_7c.py`
+- `tests/taiji_native/test_subject_action_scorer.py`
+- `tests/taiji_native/test_training_direction_10_7b.py`
+- `tests/taiji_native/test_training_replay_10_7a.py`
+- `tests/taiji_native/test_wide_fixture_10_15.py`
+
+这 15 条改不了机器复核：14 个是 oracle（测试），它们验证别人的读数、自己不被读数钉住；另 1 个 `verify_taiji_fixture_arrivals.py` 也没有任何报告把它写进 `source_hashes`。要升级得让产出报告的 runner 把它们写进 `source_hashes`——那是新读数，本轮不为了对上而改脚本。
+
+### 6. 读数之后被改过字节的 5 条（双列 sha，不许只留一行）
+
+| 文件 | 产出／钉住读数时的 sha256 | 所在提交 | 当前 HEAD 的 sha256 | 原因 |
+|---|---|---|---|---|
+| `scripts/training/audit_taiji_record_relation_14_6_scores.py` | `85c90413838b8cc999e6d9c9472b2d1ea3ad42a2ec1a666b45ed8e74f3e88660` | `17a4714c8` | `2c0c52bb1e8eb8a8c055b6bd359e397abd171311eb7bf804edcfa1b272e30522` | black 重排（AST 不变）＋ B007 改名 |
+| `scripts/training/diagnose_margin_objective_10_7d.py` | `f7df892d25ee3a681c1429d5423a044f50cedb4b9e813dd585bc6e3163d957b5` | `4742bed24` | `d5cfd4271e95b0f0b7049eb407df307a373a7b029b519d0e372fafdc9c3cc0ad` | B905 补 `strict=False` |
+| `scripts/training/diagnose_residual_structure_10_7c.py` | `babf9bc4233b1f8f463ba537444a96733a3fbd1993766e7371a7231c05f69c47` | `4742bed24` | `dc5af2f6fd008a54707f5ab9095b7631eb6abd5d02d976923e468eb948705288` | B905 补 `strict=False` |
+| `scripts/training/verify_taiji_fixture_arrivals.py` | `2870b9c689c4ea4a19d4b27dbb230babdd8e5be59db3037e1895d67bec97cb79` | `4742bed24` | `fc657b67fb0bc8897a9ce77e4bdaac463b5cb732800bf7c69bdcfe938d9e9a6b` | B905 ＋ B023（lambda 绑默认值） |
+| `scripts/training/verify_taiji_training_replay_10_7a.py` | `6222275b8efb94dc76fc3126d4206f3e4eb2641f28d7cb2011fab16fb1cfe8ab` | `4742bed24` | `eef61907ebd8072e2ed2dddbe9f44dc27319ea98070cf8c9ed2bbbdf8aededbf` | B905 补 `strict=False` |
+
+**记账口径**：这 5 个文件被引用时，报告里的钉子描述的是**上表第三列那个提交**，不是 HEAD。复核时按该提交取 blob；在当前 HEAD 上算是拿错了对象。这是「读数后改 runner」的既有口径（与 R58、R60b 同类），不是新发明。
+
+### 7. lint 处置：先原字节、后修改（owner 第 2 点的落地）
+
+- `ruff check`（默认规则）46/46 通过；`black` 只有审计脚本一条需要重排，其余 45 条原样即合规。
+- 快通道的 B/SIM 棘轮是 baseline 0，而这批文件带着 **11 条**违规：B905×6、B023×4、B007×1，落在 5 个文件上。处理方式与格式化相同：先提交原字节（`4742bed24`／`17a4714c8`），再单独一笔只做 lint 修复（`dd455ba92`）。修复保持行为不变：`strict=False` 就是原来的静默截断；`lambda` 绑默认值只是把既有的即时调用写成显式。
+- 直接后果：这 5 个文件的钉子指向父提交（§6）；换来的是「这批文件不再长期把 rail 染红」。
+- 不入库、只报：`tests/taiji_native/test_birth_direction.py` 有 1 条 B905，但它不在 46 条内（没有任何计划文档链接它），按「没有读数指向」判为工作树草稿；它在工作树里，CI 看不到。
+
+### 8. 对 owner 第 4 点里两个数字的更正（以实测为准）
+
+- **「30 条升级」→ 实测 31 条**。差别来自口径：其中 4 条的钉子指向**读数时的字节**（在 `4742bed24`／`17a4714c8` 里），在 HEAD 上比对会对不上，但顺着提交取回就能对上——按「能机器复核」的定义它们成立。若只认「与 HEAD 逐字节相同」，则是 27 条。两种口径都记在 §4 的「钉子形态」列里，不合并成一个数字。
+- **「8 个旧钉对不上」→ 实测是 8 份旧 manifest，不是 46 条里的 8 个文件**。候选面扩到「roadmap 链接到的 395 份 json ＋ `plans/manifests/*.json` 全部（合 686 份文档）」重扫，**46 条内部 0 条对不上**（既对不上 HEAD、也对不上读数时字节的一条都没有）。
+- 那 8 份是：`taiji_stop_shape_r58_20261109`、`taiji_stop_shape_r59_20261109`、`taiji_stop_boundary_20261109`、`taiji_object_length_r60_20261109`、`taiji_object_length_dense_r60b_20261110`、`taiji_object_edge_r61_20261109`、`taiji_object_edge_r61_20261109_v3`、`taiji_object_edge_intervention_r62_20261109`。**共同原因是一个可指名的提交**：`5e18c62bc`（2026-11-10，`fix(types): clear mypy core ratchet in the six byte-frozen taiji modules`）为过 mypy 棘轮改了 6 个原本按字节冻结的 `taiji/` 模块，旧钉子从此对不上；2026-11-11 用同名的 `*_rebaseline_20261111` 系列重钉（这 8 份 rebaseline 现在**逐条与当前字节相同**，已核）。旧件按原状保留，**不改字节、不改旧钉子**——这是「读数后改 runner 再重跑」的历史序列，改旧钉子等于抹掉那次改动的痕迹。
+- 另有一条**不影响 46 条**的限制：`taiji/data_premise_18_0.py` 的 pin `0d849106fbadd0d4…` 是**工作树 CRLF 形态**的 sha256，而 HEAD blob（LF）是 `8373c48a52d7489a…`，CRLF→LF 归一后逐字节相等。⇒ 在这台 Windows 上记的「字节」含 checkout 形态，干净克隆里复核会不一致；登记为限制，不改文件、不改 pin。
+
+### 9. 顺带发现（不是本轮的产物，只报不改）
+
+1. `reports/taiji_f_expressive_capacity_prereg_guard_20261108.json` 在工作树里被改过（2026-11-07 14:41，7 增 7 删：FEC-1 headline 与三份文档 lengths 163→777、sha256 全换）。属另一线程未提交的产物，**未纳入本轮任何一次提交**，也不替它决定去留。
+2. 46 个新入库文件全部 LF、零 CR；`git add` 提示 `LF will be replaced by CRLF`，即 blob 存 LF。本机下次 checkout 会变 CRLF——与上一条同一个根，登记为跨机复核的限制。
+
+### 10. 撤回路径
+
+`git revert dd455ba92 880f61ded 17a4714c8 4742bed24` 即回到「46 条只在工作树」的状态；文档侧把 `03_CURRENT_EXECUTION.md` 的 46 处链接改回裸文件名（D-20261111-03 §7.2 的 A 方案）。**无模块改动**，故不需要重跑任何读数。
+
+---
+
+## D-20261111-05 本机 black 空转的归因，与快通道「一项红不遮其余读数」的统一处置
+
+**编号／时间／类型**：D-20261111-05｜2026-11-11｜**工具链归因（本机 black）＋ CI 结构变更**（0 训练、0 读数改动、0 封存件触碰）。
+
+### 1. 现象
+
+- 机上有遗留 `black` 进程在空转：一个累计 67,451 CPU 秒，其中两个是**写模式**（跑完会改文件字节）。第一批已 `Stop-Process -Force` 收掉；收尾时又清出 **28 个孤儿 worker**（`multiprocessing.spawn` 子进程，父进程全部已死、CPU 各自不到 2 s、停在等一条已断开的管理管道）。现机内 `python.exe` 计数为 0。
+- 复现路径（三次一致）：`black --check f1 f2`（**多目标** ⇒ 走进程池）在 stdout/stderr 被重定向到管道时**永不返回**，11 分钟烧掉 862 CPU 秒（约 150% CPU，是空转不是阻塞）；同一命令控制台直连 stdout 时正常；**单目标**正常；`BLACK_NUM_WORKERS=1` 时 2 个目标 0.4 s 返回（命中缓存）。
+- 曾误判为「某个文件让 black 挂住」（`tests/taiji_native/test_record_relation_14_4.py`），单文件复测推翻——单文件正常。真变量是「多目标进程池 ＋ 管道 stdio」，不是并发占用某个文件。
+- 二次确认：`python -m black <单文件>` 也会**先把文件写完、再挂住不退出**。所以「进程还活着」不能当作「没写」，反过来「文件已改」也不能当作「进程会退出」。
+
+### 2. 18 小时窗口的字节核查（先查，再谈可信度）
+
+- **46 个入库文件**：逐个比当前字节与 HEAD blob，**46/46 逐字节相同**（`same-raw`），零改动。
+- **`frozen_files` 钉住的 7 个 `taiji/` 核心模块**（`copy_stop_boundary`、`binding_copy`、`record_relation_core`、`living_core`、`data_premise_18_0`、`selection_routing`、`selection_routing_checkpoint`）：6 个 `same-raw`，`data_premise_18_0.py` 为 `same-after-eol`（工作树 CRLF／HEAD LF，归一后相等）。**无内容改动。**
+- **按现行钉子复核**：`plans/manifests/taiji_object_edge_char_r63_20261110_rebaseline_20261111.json` 的 `frozen_files` 共 16 条（7 个 runner ＋ 7 个 `taiji/` 模块 ＋ 2 份 report），**16/16 与当前字节相同**（`matches-raw`）。旧 manifest 里的同名钉子已过期（见 D-20261111-04 §8：`5e18c62bc` 改过 6 个模块），**不作为窗口判据**，只说明「拿旧钉子对照会误报」。
+- 工作树里另外 4 个 tracked 文件（`.gitattributes` 与 3 个 `probe_taiji_*` 脚本）显示为 modified，但 `git diff --numstat` 为空、内容与 HEAD 完全一致——是 stat 脏（mtime 变了），不是内容改动。登记下来，免得下次把 `git status` 的 ` M` 当成「被 black 写过」。
+- ⇒ 结论：这次空转**没有改写任何被判据引用的字节**；两个写模式进程都没有走到落盘。
+
+### 3. 以后本机怎么判格式（常设规则）
+
+- **唯一判据**：`python scripts/training/black_check_gate.py <files>`。它进程内调用 black 的 API、不起进程池；仓库里本来就有这个闸，其 docstring 已写明「black 的进程池在这个受管环境会挂」。
+- 不再用 `black --check .` 当本机判据；确需 CLI 时加 `BLACK_NUM_WORKERS=1`，并注明用了它。
+- 分工：CI（Linux，fork 池）是发布判据；本机只判「我这次改有没有改坏格式」。
+- **口径要求**：此后写「本机 black 通过」，必须注明走的是 gate 还是 `CLI + 单 worker`。只写「本机 black 通过」而不注明的读数，一律按不可信处理。
+
+### 4. 快通道：六个证据步统一 `always()`，末置一步判红
+
+- 六个采集证据的步骤（ruff、ruff B/SIM、black、冻结标记审计、mypy 棘轮、文档链守卫）全部加 `if: always()`；三个装依赖的步骤保持默认语义——它们不是读数，装不上就没有读数可言。
+- 末置 `Verdict over every reading above` 读六个 `steps.<id>.outcome`：只有 `success` 算绿，`failure`／`skipped`／`cancelled`／`missing` 一律判红。`${VAR:-missing}` 兜住未定义变量，否则 `set -u` 会当场退出、汇总步只剩一个空 `exit 1`，等于又回到「遮住读数」。
+- 为什么不是逐个步骤补：这是同一个病（一条红遮住后面全部读数），要一次治完；逐个补会一直追着最新出现的上游红跑。
+- 本机验证（结构＋逻辑）：六个 step 均有 `id` 且 `if: always()`；Verdict 覆盖全部六个 id；用 Git Bash 跑真片段四组——全绿 exit 0；最前面一项 `failure` ⇒ 其余五行照常打印、exit 1；一项 `skipped` ⇒ exit 1；变量未定义 ⇒ 打印 `missing` 并 exit 1。
+- **挂账（不用本地模拟替代）**：本机没有 `act`，「人为让最前面一步红、后面证据步仍执行且汇总判红」的**线上**证据要在下一次快通道 run 的步骤列表里取：六步都应有 outcome、不得出现 `skipped`。
+- 提交：`805d8d2cd`。与 D-20261111-03 §7.2 的关系：那次把守卫移到末尾只解决了「守卫不遮别人」，没解决「别人遮守卫」；`always()` ＋ Verdict 把两个方向一起封死。
+
+### 5. 撤回路径
+
+去掉六个 `if: always()` 与末置 Verdict 步，即回到默认短路语义；不影响任何读数与产物。
+
