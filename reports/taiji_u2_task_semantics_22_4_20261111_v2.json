@@ -1,0 +1,113 @@
+{
+  "schema": "taiji-u2-22.4.0-semantic-contract-v1",
+  "verdict": "passed_microfixture_contract_only",
+  "accepted_parent_sha256": "250c1ab38ce044796668ec4e9276c280262bd3f5473aa0caed51b6977a39b2fa",
+  "source_pins": {
+    "taiji/u2_task_contract.py": "957d9d4163eb960dbef5939e721ce1a69dd13311148944901aafb700022bed84",
+    "scripts/training/verify_taiji_u2_task_contract_22_4.py": "432fac03c05b1ab425626f8624f05f263f3a055b8d8e2076e85dd0fb8ce7df36"
+  },
+  "checks": [
+    {
+      "check": "valid-current",
+      "passed": true
+    },
+    {
+      "check": "valid-previous",
+      "passed": true
+    },
+    {
+      "check": "valid-unknown",
+      "passed": true
+    },
+    {
+      "check": "goal-version",
+      "passed": true
+    },
+    {
+      "check": "world-version",
+      "passed": true
+    },
+    {
+      "check": "entity",
+      "passed": true
+    },
+    {
+      "check": "time",
+      "passed": true
+    },
+    {
+      "check": "source",
+      "passed": true
+    },
+    {
+      "check": "target",
+      "passed": true
+    },
+    {
+      "check": "missing-evidence",
+      "passed": true
+    },
+    {
+      "check": "indistinguishable-legal-inputs",
+      "passed": true
+    },
+    {
+      "check": "visible-history-disambiguates",
+      "passed": true
+    },
+    {
+      "check": "deny-score_only",
+      "passed": true
+    },
+    {
+      "check": "deny-train_label",
+      "passed": true
+    },
+    {
+      "check": "deny-online_correction",
+      "passed": true
+    },
+    {
+      "check": "deny-help_reply",
+      "passed": true
+    },
+    {
+      "check": "released-training-label",
+      "passed": true
+    },
+    {
+      "check": "wrong-online-channel",
+      "passed": true
+    },
+    {
+      "check": "full-denominator-18",
+      "passed": true
+    },
+    {
+      "check": "full-denominator-19",
+      "passed": true
+    },
+    {
+      "check": "full-denominator-20",
+      "passed": true
+    },
+    {
+      "check": "full-denominator-21",
+      "passed": true
+    },
+    {
+      "check": "extra-response-counted",
+      "passed": true
+    }
+  ],
+  "optimizer_steps": 0,
+  "model_runs": 0,
+  "project_dataset_reads": 0,
+  "check_reads": 0,
+  "final_reads": 0,
+  "cpu_seconds": 0.0,
+  "full_world_verified": false,
+  "model_metadata_entry_verified": false,
+  "pricing_verified": false,
+  "training_admitted": false
+}

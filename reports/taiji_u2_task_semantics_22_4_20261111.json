@@ -1,0 +1,109 @@
+{
+  "schema": "taiji-u2-22.4.0-semantic-contract-v1",
+  "verdict": "passed_microfixture_contract_only",
+  "accepted_parent_sha256": "250c1ab38ce044796668ec4e9276c280262bd3f5473aa0caed51b6977a39b2fa",
+  "source_pins": {
+    "taiji/u2_task_contract.py": "fe991512032223fab733a80f2cf691cf4c4c730f35d12866e6611bfa8c44238a",
+    "scripts/training/verify_taiji_u2_task_contract_22_4.py": "71cfd0f9d9bb06b2ebb1e9c74416ebffd442448a915e0d371225774f310e527d"
+  },
+  "checks": [
+    {
+      "check": "valid-current",
+      "passed": true
+    },
+    {
+      "check": "valid-previous",
+      "passed": true
+    },
+    {
+      "check": "valid-unknown",
+      "passed": true
+    },
+    {
+      "check": "goal-version",
+      "passed": true
+    },
+    {
+      "check": "world-version",
+      "passed": true
+    },
+    {
+      "check": "entity",
+      "passed": true
+    },
+    {
+      "check": "time",
+      "passed": true
+    },
+    {
+      "check": "source",
+      "passed": true
+    },
+    {
+      "check": "target",
+      "passed": true
+    },
+    {
+      "check": "missing-evidence",
+      "passed": true
+    },
+    {
+      "check": "indistinguishable-legal-inputs",
+      "passed": true
+    },
+    {
+      "check": "visible-history-disambiguates",
+      "passed": true
+    },
+    {
+      "check": "deny-score_only",
+      "passed": true
+    },
+    {
+      "check": "deny-train_label",
+      "passed": true
+    },
+    {
+      "check": "deny-online_correction",
+      "passed": true
+    },
+    {
+      "check": "deny-help_reply",
+      "passed": true
+    },
+    {
+      "check": "released-training-label",
+      "passed": true
+    },
+    {
+      "check": "full-denominator-17",
+      "passed": true
+    },
+    {
+      "check": "full-denominator-18",
+      "passed": true
+    },
+    {
+      "check": "full-denominator-19",
+      "passed": true
+    },
+    {
+      "check": "full-denominator-20",
+      "passed": true
+    },
+    {
+      "check": "extra-response-counted",
+      "passed": true
+    }
+  ],
+  "optimizer_steps": 0,
+  "model_runs": 0,
+  "project_dataset_reads": 0,
+  "check_reads": 0,
+  "final_reads": 0,
+  "cpu_seconds": 0.0,
+  "full_world_verified": false,
+  "model_metadata_entry_verified": false,
+  "pricing_verified": false,
+  "training_admitted": false
+}
