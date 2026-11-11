@@ -625,9 +625,11 @@ def main() -> int:
         "wrong_position": len(collect(candidates, phase="step300", condition="wrong_position")),
         "rescue": len(collect(candidates, phase="step300", condition="rescue")),
         "nll": sum(
-            len(candidate[phase]["real"]["nll"]["rows"])
-            if phase == "step300"
-            else len(candidate["step0"]["nll"]["rows"])
+            (
+                len(candidate[phase]["real"]["nll"]["rows"])
+                if phase == "step300"
+                else len(candidate["step0"]["nll"]["rows"])
+            )
             for candidate in candidates
             for phase in ("step0", "step300")
         ),
