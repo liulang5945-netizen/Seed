@@ -2696,7 +2696,7 @@ u1活性：record_metadata.weight/bias、record_provenance.weight，加22.3.4.3 
 
 ### 6. 授权形式
 
-本文件冻结不等于开跑。u1开跑需owner明确授权，落到`output/taiji_u2_22_4_1_<run_id>/run.json`：`authorized=true`、`owner_approval_ref`非空且绑定具体update id、`manifest_sha256`、`admission_manifest_sha256`、`run_id`。该run.json必须早于任何ledger open行；缺run_start或缺owner_approval_ref则exit 5。一次授权只覆盖一个run_id与一个update id；u2另需C09基线身份，u3/u4另需C10/C11。口头“继续”若未绑定run_id与update id，执行线应拒绝开跑并回问。
+本文件冻结不等于开跑。u1开跑需owner明确授权，落到`output/taiji_u2_22_4_1_<run_id>/run.json`：`authorized=true`、`owner_approval_ref`非空且绑定具体update id、`manifest_sha256`、`admission_manifest_sha256`、`run_id`。该run.json必须早于任何ledger open行；缺run_start或缺owner_approval_ref则exit 5。一次授权只覆盖一个run_id与一个update id；u2另需C09基线身份，u3/u4另需C10/C11。口头“继续”若未绑定run_id与update id，执行线应拒绝开跑并回问。待签草稿已生成于[run草稿](../manifests/taiji_u2_22_4_1_u1_run_draft_20261111.json)（run_id 20261111T140217Z、authorized=false、12条`--run`校验，失败码3/4/5/6）。
 
 ### 7. 撤回路径
 

@@ -1,0 +1,127 @@
+{
+  "schema": "taiji-u2-22.4.1-run-v1",
+  "draft": true,
+  "status": "pending_owner_signature",
+  "authorized": false,
+  "authorization_note": "这是待签草稿，不是运行输入。owner把authorized改为true并填入绑定u1的owner_approval_ref后，执行线原样复制到 output/taiji_u2_22_4_1_20261111T140217Z/run.json；本文件本身不写账本、不调用optimizer。",
+  "run_id": "20261111T140217Z",
+  "created_at": "2026-11-11T14:02:17Z",
+  "update_id": "u1-candidate-float32",
+  "attempt_id": "u1-candidate-float32",
+  "attempts_authorized": 1,
+  "optimizer_steps_authorized": 1,
+  "precision": "float32",
+  "cpu_cap": 120,
+  "wall_cap": 240,
+  "owner_approval_ref": null,
+  "signature_fields": [
+    "authorized",
+    "owner_approval_ref"
+  ],
+  "references": {
+    "execution_manifest": "plans/manifests/taiji_u2_22_4_1_execution_20261111.json",
+    "manifest_sha256": "1b52297616c5eff580b61fef9edb6cee47c5b4dde99d29c762d633d8b085e750",
+    "admission_manifest": "plans/manifests/taiji_u2_22_4_1_data_price_admission_20261111.json",
+    "admission_manifest_sha256": "05d8bc684cb441659d2a3c7608d8ade62f95edd211e79307b91dbbff1b0e52bc",
+    "hash_semantics": "UTF8 without BOM; universal newline to LF",
+    "accepted_parent": "plans/manifests/taiji_u2_22_3_accepted_parent_20261111.json",
+    "interface_receipt": "reports/taiji_u2_metadata_groups_22_4_20261111.json"
+  },
+  "data_scope": {
+    "allowed_partitions": [
+      "engineering_slice"
+    ],
+    "reads_project_corpus": false,
+    "reads_confirm_partition": false,
+    "reads_development_check": false,
+    "reads_final": false,
+    "touches_sealed_set": false,
+    "contains_task1_batch": false,
+    "data_recipe_sha256": null,
+    "slice_sha256": null,
+    "digest_note": "两个digest在--run内、首次ledger open之前计算并写入run.json；为空时不得open"
+  },
+  "paths": {
+    "run_json": "output/taiji_u2_22_4_1_20261111T140217Z/run.json",
+    "run_root": "output/taiji_u2_22_4_1_20261111T140217Z/",
+    "ledger": "reports/taiji_u2_22_4_1_attempts_20261111T140217Z.ndjson",
+    "s12": "reports/taiji_u2_22_4_1_s12_20261111T140217Z_u1-candidate-float32.json",
+    "s12_worker": "reports/taiji_u2_22_4_1_s12_20261111T140217Z_u1-candidate-float32_worker.json"
+  },
+  "exit_codes": {
+    "0": "成功",
+    "3": "账本或额度类：run_start缺失、哈希链断裂、attempt已消耗、额度将超",
+    "4": "checkpoint读回不符：父读回或保存后立即读回五项不一致",
+    "5": "授权、身份或合同类：未授权、owner_approval_ref为空、manifest哈希不符、update_id不符、数据范围越界、digest为空或与片段不符、参数未按执行manifest冻结",
+    "6": "活性门未通过：任一声明活性参数低于梯度门或变化门；attempt已计费、判rejected、不重试"
+  },
+  "run_contract": [
+    {
+      "id": "R01",
+      "check": "run.json结构合法；run_id与目录名一致；update_id==u1-candidate-float32",
+      "fail_exit": 5
+    },
+    {
+      "id": "R02",
+      "check": "authorized==true；owner_approval_ref非空且含u1-candidate-float32",
+      "fail_exit": 5
+    },
+    {
+      "id": "R03",
+      "check": "执行manifest实际sha256==manifest_sha256",
+      "fail_exit": 5
+    },
+    {
+      "id": "R04",
+      "check": "准入manifest实际sha256==admission_manifest_sha256",
+      "fail_exit": 5
+    },
+    {
+      "id": "R05",
+      "check": "接受父存在；接口回执通过；source pins与执行manifest一致（C01/C02）",
+      "fail_exit": 5
+    },
+    {
+      "id": "R06",
+      "check": "attempts已用0、本次1；steps==1；cpu_cap<=120；wall_cap<=240（C04）",
+      "fail_exit": 3
+    },
+    {
+      "id": "R07",
+      "check": "数据范围六个false；data_recipe_sha256与slice_sha256非空且与生成片段一致（C05/C06）",
+      "fail_exit": 5
+    },
+    {
+      "id": "R08",
+      "check": "lr/betas/eps/weight_decay、四项权重、活性清单与执行manifest逐字段一致（C07）",
+      "fail_exit": 5
+    },
+    {
+      "id": "R09",
+      "check": "父checkpoint读回：state/parameters/optimizer/history_reference/revision五项一致",
+      "fail_exit": 4
+    },
+    {
+      "id": "R10",
+      "check": "ledger首行run_start存在且哈希链完整；无重复attempt；open前已fsync",
+      "fail_exit": 3
+    },
+    {
+      "id": "R11",
+      "check": "保存后立即用新实例读回：五项一致（C08）",
+      "fail_exit": 4
+    },
+    {
+      "id": "R12",
+      "check": "每个声明活性参数的梯度范数与参数位移达到门限；S12含change/margin/barely_live",
+      "fail_exit": 6
+    }
+  ],
+  "not_granted": [
+    "u2-strong-baseline：另需22.4.4基线身份与C09",
+    "u3-migration-original：另需C10与22.3恢复回归",
+    "u4-migration-recovery：另需C10、C11与独立进程",
+    "任何项目语料、development-check、final、confirm读取",
+    "任何额外attempt或额外optimizer step"
+  ]
+}
