@@ -21,6 +21,7 @@ from scripts.training.u2_attempt_ledger_22_3_4_3 import AttemptLedger, LedgerErr
 from scripts.training.u2_update_executor_22_4_1 import (
     ActivityGateError,
     BudgetError,
+    CheckpointMismatch,
     admission_manifest,
     check_r01,
     check_r02,
@@ -279,6 +280,26 @@ def accepted_tail(
     return closed
 
 
+def bind_run(run_path: Path) -> dict[str, Any]:
+    """同一 run_root 只允许绑定一份 run.json；第二个 run 复用必须被拒绝。"""
+    if not run_path.exists():
+        write_once(run_path, load_json(DRAFT))
+    run = load_json(run_path)
+    draft = load_json(DRAFT)
+    if run["run_id"] != draft["run_id"]:
+        raise BudgetError(
+            f"the run root already holds run_id={run['run_id']}, "
+            f"not the contracted {draft['run_id']}"
+        )
+    return run
+
+
+def worker_gate(returncode: int, report: dict[str, Any] | None, stderr: str) -> None:
+    """独立 worker 未通过时退 3；此时 attempt 已结算，绝不允许再写一次 close。"""
+    if returncode != 0 or not report or report.get("verdict") != "pass":
+        raise BudgetError(f"the independent S12 worker did not pass: {returncode} {stderr[-400:]}")
+
+
 def execute(root: Path) -> dict[str, Any]:
     check_selfcheck_gate()
     torch.set_num_threads(1)
@@ -286,9 +307,7 @@ def execute(root: Path) -> dict[str, Any]:
     root = root.resolve()
     root.mkdir(parents=True, exist_ok=True)
     run_path = root / "run.json"
-    if not run_path.exists():
-        write_once(run_path, load_json(DRAFT))
-    run = load_json(run_path)
+    run = bind_run(run_path)
     checks: list[dict[str, Any]] = []
     checks.append(check_r01(run, root.name))
     checks.append(check_r02(run))
@@ -392,10 +411,7 @@ def execute(root: Path) -> dict[str, Any]:
     )
     worker_path = ROOT / run["paths"]["s12_worker"]
     worker_report = load_json(worker_path) if worker_path.exists() else None
-    if worker.returncode != 0 or not worker_report or worker_report.get("verdict") != "pass":
-        raise BudgetError(
-            f"the independent S12 worker did not pass: {worker.returncode} {worker.stderr[-400:]}"
-        )
+    worker_gate(worker.returncode, worker_report, worker.stderr)
 
     total_cpu = time.process_time() - started + worker_report.get("cpu_seconds", 0.0)
     total_wall = time.monotonic() - wall
@@ -673,6 +689,239 @@ def self_check(directory: Path) -> dict[str, Any]:
                 optimizer_step_calls=1,
             ),
         )
+
+        # ---- 收尾分支：R11 读回失败必须落 close(rejected) + rejected S12 ----
+        r11_ledger = AttemptLedger(
+            directory / "attempts_r11.ndjson",
+            ledger_run(run),
+            execution["authority"]["source_pins"],
+            precontract(run),
+        )
+        r11_ledger.start()
+        r11_ledger.open(run["update_id"], parent_checkpoint="parent.bin")
+        r11_s12 = directory / "r11_rejected_s12.json"
+        r11_result = reject_attempt(
+            run=run,
+            execution=execution,
+            runtime=runtime,
+            ledger=r11_ledger,
+            identity=run["update_id"],
+            post_path=directory / "post_r11.bin",
+            parent_path=parent_path,
+            step_calls=1,
+            started=started,
+            wall=wall,
+            error=CheckpointMismatch("R11 post-save readback mismatch"),
+            checks=[],
+            s12_path=r11_s12,
+        )
+        r11_state = r11_ledger.read()
+        r11_closes = [row for row in r11_state["rows"] if row.get("event") == "close"]
+        cases.append(
+            {
+                "case": "r11_readback_failure_closeout",
+                "expected": "exit=4,status=rejected,last=close,closes=1,s12=present,consumed=1",
+                "actual": f"exit={r11_result['exit_code']},status={r11_result['status']},"
+                f"last={r11_state['rows'][-1].get('event')},closes={len(r11_closes)},"
+                f"s12={r11_s12.exists()},consumed={r11_state['consumed']}",
+                "pass": r11_result["exit_code"] == 4
+                and r11_result["status"] == "rejected"
+                and r11_state["rows"][-1].get("event") == "close"
+                and len(r11_closes) == 1
+                and r11_s12.exists()
+                and r11_state["consumed"] == 1,
+            }
+        )
+
+        # ---- 收尾分支：worker 未通过退 3，且不得第二次 close ----
+        accepted_rows = len(success_ledger.read()["rows"])
+        expect("worker_failed_exit3", 3, lambda: worker_gate(1, None, "worker crashed"))
+        cases.append(
+            {
+                "case": "worker_failure_does_not_reclose",
+                "expected": "rows unchanged,closes=1",
+                "actual": f"rows={len(success_ledger.read()['rows'])},"
+                f"closes={len([r for r in success_ledger.read()['rows'] if r.get('event') == 'close'])}",
+                "pass": len(success_ledger.read()["rows"]) == accepted_rows
+                and len([r for r in success_ledger.read()["rows"] if r.get("event") == "close"])
+                == 1,
+            }
+        )
+
+        # ---- 合同类拒绝路径（低成本可复现的部分）----
+        tampered_admission = directory / "admission_manifest_tampered.json"
+        tampered_admission.write_text(
+            json.dumps({**admission, "tampered": True}, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
+            newline="\n",
+        )
+        expect("admission_hash_tampered", 5, lambda: check_r04(run, tampered_admission))
+        expect(
+            "data_scope_flag_mutated",
+            5,
+            lambda: check_r07(
+                {**run, "data_scope": {**run["data_scope"], "reads_final": True}},
+                "1" * 64,
+                "2" * 64,
+            ),
+        )
+        expect(
+            "data_digest_mismatch",
+            5,
+            lambda: check_r07(
+                {
+                    **run,
+                    "data_scope": {
+                        **run["data_scope"],
+                        "data_recipe_sha256": "0" * 64,
+                        "slice_sha256": "0" * 64,
+                    },
+                },
+                "1" * 64,
+                "2" * 64,
+            ),
+        )
+        expect(
+            "optimizer_hyperparameter_changed",
+            5,
+            lambda: check_r08(
+                {**execution, "optimizer": {**execution["optimizer"], "lr": 1e-2}},
+                runtime.model,
+                runtime.optimizer,
+            ),
+        )
+        expect(
+            "declared_active_parameter_absent",
+            5,
+            lambda: check_r08(
+                {
+                    **execution,
+                    "arms": {
+                        **execution["arms"],
+                        ARM: {
+                            **execution["arms"][ARM],
+                            "active_parameters": [
+                                *execution["arms"][ARM]["active_parameters"],
+                                "not_a_parameter",
+                            ],
+                        },
+                    },
+                },
+                runtime.model,
+                runtime.optimizer,
+            ),
+        )
+
+        # ---- 账本拒绝路径与两个修复入口 ----
+        duplicate_ledger = AttemptLedger(
+            directory / "attempts_dup_start.ndjson",
+            ledger_run(run),
+            execution["authority"]["source_pins"],
+            precontract(run),
+        )
+        duplicate_ledger.start()
+        # 注入第二条 run_start：模拟手工篡改或旧缺陷，用来验证 R10 的"唯一首行"判据。
+        duplicate_ledger._append("run_start", None, 0, 0, {})
+        expect("ledger_run_start_not_unique", 3, duplicate_ledger.read)
+
+        expect(
+            "ledger_run_identity_mismatch",
+            3,
+            lambda: AttemptLedger(
+                directory / "attempts_dup_start.ndjson",
+                {**ledger_run(run), "run_id": "20261111T000000Z"},
+                execution["authority"]["source_pins"],
+                precontract(run),
+            ).read(),
+        )
+
+        tail_ledger = AttemptLedger(
+            directory / "attempts_tail.ndjson",
+            ledger_run(run),
+            execution["authority"]["source_pins"],
+            precontract(run),
+        )
+        tail_ledger.start()
+        complete = (directory / "attempts_tail.ndjson").read_bytes()
+        (directory / "attempts_tail_truncated.ndjson").write_bytes(
+            complete + b'{"seq": 1, "event": "clo'
+        )
+        truncated = AttemptLedger(
+            directory / "attempts_tail_truncated.ndjson",
+            ledger_run(run),
+            execution["authority"]["source_pins"],
+            precontract(run),
+        )
+        expect("tail_truncated_detected", 3, truncated.read)
+        repair_proof = truncated.repair_tail(directory / "attempts_tail_repair_proof.json")
+        repaired = truncated.read()
+        cases.append(
+            {
+                "case": "repair_tail_restores_chain",
+                "expected": "removed_bytes>0,rows=1,consumed=0",
+                "actual": f"removed={repair_proof['removed_bytes']},"
+                f"rows={len(repaired['rows'])},consumed={repaired['consumed']}",
+                "pass": repair_proof["removed_bytes"] > 0
+                and len(repaired["rows"]) == 1
+                and repaired["consumed"] == 0,
+            }
+        )
+
+        reconcile_ledger = AttemptLedger(
+            directory / "attempts_reconcile.ndjson",
+            ledger_run(run),
+            execution["authority"]["source_pins"],
+            precontract(run),
+        )
+        reconcile_ledger.start()
+        reconcile_ledger.open(run["update_id"], parent_checkpoint="parent.bin")
+        reconciled_rows = reconcile_ledger.reconcile()
+        again = reconcile_ledger.reconcile()
+        reconciled_state = reconcile_ledger.read()
+        cases.append(
+            {
+                "case": "reconcile_open_without_close",
+                "expected": "rows=1,event=reconcile,consumed=1,idempotent",
+                "actual": f"rows={len(reconciled_rows)},"
+                f"event={reconciled_rows[0].get('event') if reconciled_rows else None},"
+                f"consumed={reconciled_state['consumed']},again={len(again)}",
+                "pass": len(reconciled_rows) == 1
+                and reconciled_rows[0].get("event") == "reconcile"
+                and reconciled_state["consumed"] == 1
+                and again == []
+                and run["update_id"] in reconciled_state["reconciled"],
+            }
+        )
+
+        # ---- 入口分支：同一 run_root 复用、CLI 参数冲突、缺 --run-root ----
+        reuse_root = directory / "reuse"
+        reuse_root.mkdir()
+        write_once(reuse_root / "run.json", {**run, "run_id": "20261111T000000Z"})
+        expect("run_root_reused_by_second_run", 3, lambda: bind_run(reuse_root / "run.json"))
+
+        try:
+            main(["--run", "--self-check", "--run-root", str(directory / "cli")])
+        except SystemExit as error:
+            cli_conflict = error.code
+        else:
+            cli_conflict = 0
+        cases.append(
+            {
+                "case": "cli_conflict_run_and_selfcheck",
+                "expected_exit": 2,
+                "actual_exit": cli_conflict,
+                "pass": cli_conflict == 2,
+            }
+        )
+        cli_missing_root = main(["--run"])
+        cases.append(
+            {
+                "case": "cli_run_without_root",
+                "expected_exit": 3,
+                "actual_exit": cli_missing_root,
+                "pass": cli_missing_root == 3,
+            }
+        )
     finally:
         torch.optim.Adam.step = original_step
 
@@ -702,6 +951,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--run", action="store_true")
     parser.add_argument("--self-check", action="store_true")
     args = parser.parse_args(argv)
+    if args.run and args.self_check:
+        parser.error("choose --run or --self-check, not both")
     try:
         if args.self_check:
             report = self_check(SELFCHECK.parent)

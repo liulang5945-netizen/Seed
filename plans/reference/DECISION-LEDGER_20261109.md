@@ -2759,3 +2759,42 @@ u1候选float32第2次attempt（`run_id=20261111T142919Z`）完成唯一1步并a
 
 若判定该步读数无效：不删账本、不加attempt，改`plans/manifests/taiji_u2_22_4_1_execution_20261111.json`状态并追加`annotation`说明；u1额度已用2/1（1次超支留档于`owner_approval_ref`），撤回不返还额度。
 
+## D-20261111-13 自检扩面、分支覆盖台账与额度账
+
+**编号／时间／类型**：D-20261111-13｜2026-11-11｜**自检扩面（不重跑、不加attempt、不步进）**。
+
+### 1. 自检从 12 条扩到 28 条，全过
+
+新增 16 条，均为真实触发（不写注释充数）：
+
+- **收尾**：`r11_readback_failure_closeout`（退 4，落 close(rejected)+rejected S12，close 是最后一条、只一条、计费 1）、`worker_failed_exit3`（退 3）、`worker_failure_does_not_reclose`（已结算的账本行数不变、仍只有一条 close）。
+- **合同**：`admission_hash_tampered`（R04）、`data_scope_flag_mutated`／`data_digest_mismatch`（R07 两分支）、`optimizer_hyperparameter_changed`／`declared_active_parameter_absent`（R08 两分支）。
+- **账本**：`ledger_run_start_not_unique`（注入第二条 run_start 被状态机拒绝，退 3）、`ledger_run_identity_mismatch`、`tail_truncated_detected`、`repair_tail_restores_chain`（修复后行数=1、链有效）、`reconcile_open_without_close`（只写一条、幂等、计费不变）。
+- **入口**：`run_root_reused_by_second_run`（新增 `bind_run` 守卫）、`cli_conflict_run_and_selfcheck`（退 2）、`cli_run_without_root`（退 3）。
+
+全程 `optimizer_step_calls=0`，cpu 4.78 s、wall 5.69 s。生产代码只多了两个纯守卫（`bind_run`、`worker_gate`）与一条 CLI 互斥判断，12 条契约与 R01–R12 判据未改。
+
+### 2. 分支覆盖台账
+
+新建[分支覆盖台账](VALIDATION-TAIJI-U2_22_4_1_BRANCH_COVERAGE_20261111.md)：43 行，逐分支标明覆盖者或"未覆盖＋风险＋触发条件"。约定：新增分支必须在同一提交内加行，只加代码不加账视为未完成。
+
+### 3. 仍未覆盖的高风险项（不伪造覆盖）
+
+- **额度闸门**（`budget_max` 将超，退 3）：需用 `budget_max=0` 的 precontract 触发，可在自检里做，本轮未做。
+- **资源与授权闸门**（R06 的 `cpu_cap>120`／`wall_cap>240`／精度／`steps!=1`）：改草稿即可触发，本轮未做。
+- **账本哈希链断裂**（手改任意一行）：需篡改行内容，本轮只做了"独立复算"而没有"注入断链"。
+- **R12 经 `reject_attempt` 收尾（退 6）**：活性门本身已覆盖，但"`perform` 抛 `ActivityGateError` → 统一收尾"这条路径未走。
+- **真超帽 `within_cap=false`、worker 子进程超时**：需真跑，登记为不可在自检内覆盖。
+
+### 4. 额度账（上限与已用分开记）
+
+| 项 | 允许上限 | 已用 | 剩余／说明 |
+|---|---|---|---|
+| attempt 次数 | **5**（准入manifest 4 次 + owner 常设授权超支 1 次） | **2**（u1：1 rejected 于 `20261111T140217Z`、1 accepted 于 `20261111T142919Z`） | **3**，刚好覆盖 u2/u3/u4 各 1 次；再超支需新授权 |
+| CPU | 300（u1 120 + u2 120 + u3 30 + u4 30） | **不可精确核对**：两次 attempt 都没有 durable CPU 读数（第 1 次崩溃、第 2 次未写 S12）。按 22.3.4.3 实测约 11.7 CPU/次估算约 24，仅作量级参考，不入账为读数 | 余额须在 u2 开跑前用真实读数回填；若按 u1 价目 120×2 的最坏上界算则只剩 60，与 u2 的 120 价目冲突——这是"价目上限"与"实测消耗"的差异，开 u2 前必须用实测数定夺 |
+| wall | 每次 240 | 第 1 次 <1 s、第 2 次 step 段约 0.72 s（均由账本 utc 得出，非 CPU 计时器） | 充足 |
+
+### 5. 结论与下一步
+
+u1 的"通路活着"成立且可复现；本轮只加固验证，不改任何判据、不消耗额度。开 u2 之前唯一该做的一步：**在自检里补 `budget_max=0` 的额度闸门反例与 R06 的帽/精度/步数反例**（都能真实触发、不真跑、不消耗额度），然后用实测 CPU 回填上表。
+
