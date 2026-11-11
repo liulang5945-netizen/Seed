@@ -205,3 +205,47 @@ def test_the_gate_conditions_are_recorded_by_the_gate_itself() -> None:
 def test_diagnostic_names_do_not_shadow_readings() -> None:
     for reading in ("status", "rows", "checks", "prices", "arms", "readings", "passed"):
         assert reading not in gate.DIAGNOSTIC_KEYS
+
+
+def test_readouts_clear_stale_reports_before_consumers_run(tmp_path, monkeypatch) -> None:
+    """一个失败的消费者不许被上一轮留下的报告冒充成"有报告"。
+
+    消费者都是 write-once（present report ⇒ refuse）。这里用一个同样行为的假消费者：
+    只要输出路径已存在就 exit 3。如果 ``run_readouts`` 没有先清目录，残留的
+    ``fake.json`` 会让假消费者拒写、报告保持旧内容，判定就变成拿旧读数比新读数——
+    与 ``SUPERSEDED`` 那批旧报告冒充新报告的缺陷同族。
+    """
+    consumer = tmp_path / "write_once_consumer.py"
+    consumer.write_text(
+        "import json, os, sys\n"
+        "path = sys.argv[sys.argv.index('--output') + 1]\n"
+        "if os.path.exists(path):\n"
+        "    print('refusing to overwrite ' + path, file=sys.stderr)\n"
+        "    sys.exit(3)\n"
+        "with open(path, 'w', encoding='utf-8') as handle:\n"
+        "    json.dump({'status': 'passed'}, handle)\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(
+        gate,
+        "readouts",
+        lambda: {
+            "fake": {
+                "script": str(consumer),
+                "report": "fake.json",
+                "args": ("--output", "{report}"),
+                "timeout": 60,
+            }
+        },
+    )
+    work = tmp_path / "work"
+    stale_dir = work / "readouts_a"
+    stale_dir.mkdir(parents=True)
+    stale = stale_dir / "fake.json"
+    stale.write_text('{"status": "stale"}', encoding="utf-8")
+
+    results = gate.run_readouts(tmp_path / "bundle.pt", "a", work)
+
+    assert results["fake"]["exit"] == 0, results["fake"]["stderr_tail"]
+    assert results["fake"]["report_present"] is True
+    assert stale.read_text(encoding="utf-8") == '{"status": "passed"}'

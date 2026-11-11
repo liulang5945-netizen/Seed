@@ -355,13 +355,24 @@ def readout_command(spec: dict[str, Any], out_dir: Path) -> list[str]:
     ]
 
 
-def run_readouts(bundle_path: Path, label: str, work: Path) -> dict[str, Any]:
-    """Replay every consumer against one build, in readout mode."""
-    out_dir = work / f"readouts_{label}"
-    # 消费者都是 write-once（10.21.1 见到既有报告会直接拒绝）。不先清目录的话，
-    # 一次失败的消费者会被上一次留下的报告冒充成"有报告"，判定就变成拿旧读数比新读数。
+def reset_readout_dir(out_dir: Path) -> Path:
+    """Empty ``out_dir`` and recreate it.
+
+    The consumers are write-once (10.21.1 refuses a report that already exists),
+    so a leftover report from an earlier attempt would be read as this attempt's
+    reading.  This is the same defect family as the ``SUPERSEDED`` reports: an
+    old artifact standing in for a new observation.  Clearing is therefore a
+    precondition of the run, not a cleanup detail, and it is pinned by
+    ``test_readouts_clear_stale_reports_before_consumers_run``.
+    """
     shutil.rmtree(out_dir, ignore_errors=True)
     out_dir.mkdir(parents=True, exist_ok=True)
+    return out_dir
+
+
+def run_readouts(bundle_path: Path, label: str, work: Path) -> dict[str, Any]:
+    """Replay every consumer against one build, in readout mode."""
+    out_dir = reset_readout_dir(work / f"readouts_{label}")
     environment = os.environ.copy()
     environment[READOUT_MODE_ENV] = "1"
     environment["TAIJI_BUNDLE_PATH"] = str(bundle_path)

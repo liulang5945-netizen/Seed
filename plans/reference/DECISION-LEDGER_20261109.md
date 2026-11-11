@@ -2211,7 +2211,7 @@ Owner 的否决理由（原话要点）：基线可以重生成 ⇒ 红的时候
 `tests/taiji_native/test_composition_read_probe_anchor.py`：
 
 - 重建件 sha256 == 封存值 ⇒ 走 `published_rows`：发布行逐项相等（原严格断言，未加容差）；
-- 否则 ⇒ 走 `structural_invariants`：字段集合、`target_mass∈[0,1]`、`null_mass≥0` 且全行恒定、`recalled_norm` 有限非负、`target_index` 合法、`record_masses` 4 项、`groups` 4 项、bool 类型、reversed 与 real 的 `target_mass` 逐行相等、`top1_source_id` 属于发布集合；
+- 否则 ⇒ 走 `structural_invariants`：字段集合（`COMPARE` 11 项 + `record_masses`／`groups`／`top1_ambiguous`）、`target_mass∈[0,1]`、`null_mass∈[0,1]`（实测 0.00606–0.00614 不等，不可假设恒定）、`recalled_norm` 有限非负、`target_index` 合法、`record_masses` 长度等于发布行数（5）、`groups` 4 项、bool 类型、reversed 与 real 的 `target_mass` 用 `1e-12` 相对容差、`top1_source_id` 属于发布集合；
 - 实际分支写进 `output/ci_verify/composition_probe_branch.json` 并随 artifact 上传；报告必须写明走了哪一支。
 - **不许 skip**：skip 会让这条断言在 CI 里永远不执行，比红更糟。
 
@@ -2227,8 +2227,15 @@ Owner 的否决理由（原话要点）：基线可以重生成 ⇒ 红的时候
 
 - 判据实现：`scripts/training/verify_taiji_bundle_rebuild_determinism.py`。
 - CI：两腿各加 `bundle-determinism` 步（`continue-on-error: true`，红由末置汇总按 `steps.bundle-determinism.outcome` 判；Ubuntu 加 `OUT_DET`），并上传判定 JSON、两组消费者读数与分支 JSON。
-- 契约测试：`tests/taiji_native/test_bundle_rebuild_determinism_gate_contract.py`（19 条：三出口、1 ULP 边界、诊断键/后缀/前缀排除、缺运行条件→`indeterminate`、两类就绪条件）。
-- **本地自检（实施顺序 ④，2026-11-11 12:12）**：`equivalent`（exit 0）。两枚重建件 sha 均为 `ce4c6268…`、77,609,636 B，重建各 ≈54–60 s；四组消费者读数 0 差异。首轮自检（11:44）判 `not_equivalent`，88 条问题**全部**落在计时与 autograd 节点（`*_cpu`、`*_seconds`、`*_grad_fn`、`cpu_seconds_including_prior_attempts`），没有一条是读数 ⇒ 诊断排除从"逐键列名"改为"键名后缀／前缀谓词"，谓词清单原样写进报告（`readout_diagnostic_suffixes`／`readout_diagnostic_prefixes`）；同时给读数目录加"先清空"（消费者是 write-once，旧报告会冒充新读数）。这次调整发生在任何 CI 读数之前，属实施顺序 ④ 的自检修正，不是读数后放宽。
+- 契约测试：`tests/taiji_native/test_bundle_rebuild_determinism_gate_contract.py`（20 条：三出口、1 ULP 边界、诊断键/后缀/前缀排除、缺运行条件→`indeterminate`、两类就绪条件、读数目录必须先清空）。
+- **本地自检（实施顺序 ④，2026-11-11 12:12）**：`equivalent`（exit 0）。两枚重建件 sha 均为 `ce4c6268…`、77,609,636 B，重建各 ≈54–60 s；四组消费者读数 0 差异。首轮自检（11:44）判 `not_equivalent`，88 条问题**全部**落在计时与 autograd 节点（`*_cpu`、`*_seconds`、`*_grad_fn`、`cpu_seconds_including_prior_attempts`），没有一条是读数 ⇒ 诊断排除从"逐键列名"改为"键名后缀／前缀谓词"，谓词清单原样写进报告（`readout_diagnostic_suffixes`／`readout_diagnostic_prefixes`）；同时给读数目录加"先清空"（消费者是 write-once，旧报告会冒充新读数）。
+- **这条披露成立的全部依据是：排除清单的调整发生在任何 CI 读数之前。** 截至本次写入，新门从未在任何 CI run 上产出过读数（`42959004975` 仍排队，见下），88 条排除与"先清空"都发生在首轮 CI 读数之前，属实施期自检修正，不是看到 CI 变红后的放宽。若日后有 CI 读数后再动诊断谓词，必须新开条目并保留旧读数。
+- **`SUPERSEDED` 同族问题的机器拦截**：`reset_readout_dir()` 把"先清空"从自觉变成前置条件，契约测试 `test_readouts_clear_stale_reports_before_consumers_run` 用 write-once 假消费者钉住——不清目录时假消费者 exit 3（实测），测试必红。
+- **实施后首轮读数（2026-11-11，均为观测，不改判据）**：
+  - Ubuntu 腿 `test (3.12)`（`a6750cb92`）：`pytest-full` 02:56Z 起跑，至 12:40Z 仍在跑，已超 `timeout-minutes: 180` 上限 3.6 倍且未被取消 ⇒ **无全量回归结论**。这是 Ubuntu 全量回归第一次真跑到（此前被 mypy 硬失败短路），第一次未跑完。
+  - Windows 腿（`a6750cb92`）：pytest 第 49.02 s 收集失败，`tests/test_ci_typecheck_gate_contract.py:17: ModuleNotFoundError: No module named 'yaml'`。该文件是本批新增 ⇒ **本批引入**。`a6750cb92` 的修点加在 `startup-smoke` 的 `Install test runner`（该步只收集 `tests/seed` 单个文件），Windows 腿真正装依赖的 `Install test dependencies` 仍未装 pyyaml ⇒ 两轮读数相同。本轮改到正确步骤。
+  - 新门读数：`480cc0e0f` 的 CI run `42959004975` 自 04:24Z 排队 8 h+、零 job 分配（main 串行队列 + 前序 run 卡死）⇒ 无 CI 读数，`equivalent` 目前只有本地自检这一枚。
+  - fast-lint（`480cc0e0f`）：14 条 mypy core 错误，全部在 `taiji/u2_operators.py` 与 `taiji/u2_subject.py`，来自 `13466c975`／`f83dd7cc0` 的 u2 批次，非本轮改动；按"`taiji/u2_*` 不碰"的约束本轮不处置。
 - **冻结**：三出口名、1 ULP／2^-23／2^-10、1e-12、诊断谓词清单。读数之后不许调；确需调整须新开条目并保留旧读数。
 
 ### 8. 撤回路径

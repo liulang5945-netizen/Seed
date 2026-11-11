@@ -780,9 +780,7 @@ jobs:
         run: pip install torch==2.13.0+cpu --index-url https://download.pytorch.org/whl/cpu
 
       - name: Install test runner
-        # pyyaml：tests/test_ci_typecheck_gate_contract.py 读 ci.yml 结构用；缺它会让本腿
-        # pytest 收集阶段整体中断（run 42946757225 实测），连其余用例的读数一起丢。
-        run: pip install pytest pyyaml
+        run: pip install pytest
 
       - name: Install platform dependencies without Legacy extra
         if: matrix.install-legacy == false
@@ -935,7 +933,14 @@ jobs:
         # (run 40203419431) — junit classname semantics are pytest version behaviour and
         # the deselect guard's node-id parsing depends on them. Judgement semantics
         # unchanged; floating → fixed only. See the Ubuntu leg's Install step for context.
-        run: pip install sentencepiece pytest==9.1.1 pytest-cov==7.1.0 httpx fastapi python-multipart pydantic anyio cryptography numpy "psutil>=5.9.0,<7.0.0" black==26.5.1
+        # pyyaml：tests/test_ci_typecheck_gate_contract.py 在模块级 `import yaml` 读 ci.yml
+        # 结构（D-20261111-01）。缺它时 pytest 在收集阶段整体中断（exit 2），本腿一条读数
+        # 都拿不到。实测两轮：run 42946757225 与 run 42948284643 均在 pytest 第 49–51 秒
+        # 报 `tests/test_ci_typecheck_gate_contract.py:17: ModuleNotFoundError: No module
+        # named 'yaml'`。a6750cb92 曾把 pyyaml 加到 startup-smoke 的 `Install test runner`
+        # ——那一步只收集 tests/seed 的单个用例，不是本腿 ⇒ 两轮读数没有变化。本行才是本腿
+        # 真正装依赖的地方。
+        run: pip install sentencepiece pytest==9.1.1 pytest-cov==7.1.0 httpx fastapi python-multipart pydantic anyio cryptography numpy "psutil>=5.9.0,<7.0.0" black==26.5.1 pyyaml
 
       - name: Install package (editable)
         run: pip install -e . --no-deps
