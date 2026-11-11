@@ -2028,3 +2028,27 @@ GitHub 在 job 结束前不发布日志：`gh run view --job` 直接拒绝（`lo
 
 因此**"卡死与否"只能靠步骤时间戳与总时长判断，不能靠日志内容**。此类判断必须标明所用证据类型（步骤级 `started_at`／`completed_at`、run 总时长、事后 `conclusion`），不得声称读到了日志或某个用例名。本次对 `42829898072` 的判定即属此列：证据为步骤时间戳（115.9 分钟、success），结论 `slow_but_progressing`，未取消任何 run。
 
+## D-20261111-01 CI 结构：类型检查不再短路证据采集
+
+**类别**：CI 结构（不是判据改写）。
+
+**改前（短路，证据丢失）**：`Type check core modules with mypy (ratchet, baseline 0)` 是硬失败步。它一红，同一 job 里排在它后面的步骤全部 `skipped`。实测于 run `42849129318`（`de0bf7554`）：第 11 步 mypy 判 failure，第 26 步 `Materialize the 09.8 subject bundle` 与第 27 步 `Run complete regression suite` 均 **skipped**，该腿 2 分 14 秒结束 ⇒ Linux 侧一个读数都拿不到（Windows 腿没有这一步，所以照常跑完）。
+
+**改后（红但出数）**：该步加 `continue-on-error: true` 与 `id: typecheck-core`，其 `outcome` 并入末尾汇总 `Summarize CI gate outcomes` 的判定表（与 `materialize-bundle` 完全同一套 R-S6a 机制：只认 `steps.<id>.outcome`、`skipped`/空值判红、汇总步自身不带 `continue-on-error`）。
+
+**为什么这不是放宽判据**：红的总量不变（13 条照旧打印）、基线不变（`MYPY_CORE_BASELINE` 仍为 `0`）、仍计入汇总 ⇒ 类型检查有错时整条 run 仍判 **failure**。变的只有一件事：后面的步骤还会不会被执行。不变量由新增的 `tests/test_ci_typecheck_gate_contract.py` 三个断言钉住——①该步必须带 `continue-on-error: true` 且排在 materialize／全量回归之前；②其 outcome 必须出现在汇总的 env 并被 `check` 判红；③汇总步自身不许带 `continue-on-error` 且必须 `exit 1`。任何一条被改回，测试即红。
+
+**撤回路径**：删掉该步的 `continue-on-error: true` 与汇总里的 `check "typecheck-core" "$OUT_TYPES"` 两处，即完整回到改前；撤一处会立刻让上面那份契约测试变红，提醒把另一处一并撤。
+
+**本轮未做**：没有改 baseline、没有 exclude 任何文件、没有加 `# type: ignore`、没有碰 `taiji/u2_operators.py` 与 `taiji/u2_subject.py`。
+
+## O-20261111-01 让 materialize 真跑之后，composition 探针由"缺件红"变成"1 ULP 漂移红"
+
+Windows 腿（run `42849129318`）实测：`materialize-bundle` **success**（77 秒，脚本自证 sha 相等才会 0 退出），随后的 `test_composition_read_probe_anchor` 断言**真的执行**，并报出末位差：
+
+- `recalled_norm`：published `11.170589426192151` vs now `11.17058942619215`（相邻 double，1 ULP）；
+- `record_masses` 两条：`0.25059636071949365` vs `0.2505963607194936`、`0.1790966651513409` vs `0.17909666515134093`（各 1 ULP）。
+
+**只记录，未处置**：没有改那条测试的断言、没有加容差、没有改判 `not_regenerable`。待判的是这是**运行条件**（线程预算／BLAS／平台，与 D-20261110-05、能力卡 §13.1 同一族）还是**发布行本身不可逐位复现**。两者处置不同，故不在读数前改口径。
+
+

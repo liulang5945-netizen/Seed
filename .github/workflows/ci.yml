@@ -381,7 +381,16 @@ jobs:
       #     `... if utf8_tracking else None` 三元，mypy 只能定为 `int | None`；改为
       #     前置声明 + if/else 收窄，语义不变。
       #   详见 plans/active/SEED_DEVELOPMENT_ROADMAP_2026_08.md 第 14.2 / 14.11 节。
+      # D-20261111-01（CI 结构）：类型检查不再短路证据采集。
+      # 改前：这一步是硬失败，mypy 一红，其后全量回归、materialize-bundle、覆盖率
+      #   等步骤全部 skipped ⇒ 本腿拿不到任何读数（42849129318 实测：第 11 步红，
+      #   第 26 步 materialize 与第 27 步回归均 skipped）。
+      # 改后：本步带 continue-on-error，红由末尾汇总判（与 materialize-bundle 同一套
+      #   R-S6a 机制）。判据未放宽：基线仍是 0、门禁语义不变、outcome≠success 照样
+      #   判整条 run 红。撤回路：删 continue-on-error 与汇总里的 check 行即可。
       - name: Type check core modules with mypy (ratchet, baseline 0)
+        id: typecheck-core
+        continue-on-error: true
         env:
           MYPY_CORE_BASELINE: "0"
         run: |
@@ -599,7 +608,7 @@ jobs:
         id: gate-summary
         if: always()
         # R-S6a（ADR-S6 §3.6；决策 3①「continue-on-error 与汇总判红同 commit」的收口半）：
-        # 本腿四个门禁 step（deselect-guard / pytest-full / junit-faces / coverage-gate）
+        # 本腿五个门禁 step（deselect-guard / typecheck-core / pytest-full / junit-faces / coverage-gate）
         # 均已挂 continue-on-error，job 结论由本步收口。四条机制约定（写进 commit message）：
         # ① 只认 steps.<id>.outcome，绝不认 conclusion——continue-on-error 会把
         #    conclusion 改写成 success，用 conclusion 判红 = 真红变绿（R4 头号风险）；
@@ -611,6 +620,7 @@ jobs:
         # collection-crlf 探针在 Windows 腿（决策 14），其 outcome 由该腿的同名汇总判。
         env:
           OUT_GUARD: ${{ steps.deselect-guard.outcome }}
+          OUT_TYPES: ${{ steps.typecheck-core.outcome }}
           OUT_COND: ${{ steps.report-conditions.outcome }}
           OUT_BUNDLE: ${{ steps.materialize-bundle.outcome }}
           OUT_PYTEST: ${{ steps.pytest-full.outcome }}
@@ -634,6 +644,7 @@ jobs:
             echo "| step | outcome | verdict |"
             echo "|---|---|---|"
             check "deselect-guard" "$OUT_GUARD"
+            check "typecheck-core" "$OUT_TYPES"
             check "report-conditions" "$OUT_COND"
             check "materialize-bundle" "$OUT_BUNDLE"
             check "pytest-full"    "$OUT_PYTEST"
