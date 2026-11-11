@@ -39,6 +39,9 @@ reports/taiji_n1_transition_factorial_paired_train_20261016_s*.json.gz binary
 # Pinning `eol=lf` makes checkout match the blob and keeps the pin checkable.
 plans/manifests/taiji_u2_22_4_4_baseline_identity_20261111.json text eol=lf
 plans/manifests/taiji_u2_22_4_1_execution_20261111_v2.json text eol=lf
+# The u2 run draft pins the three hashes above and is itself cited by digest in
+# PREREG §11 / PLAN 22.4.4 / MASTER-PLAN; keep its checkout bytes == blob bytes.
+plans/manifests/taiji_u2_22_4_1_u2_run_draft_20261111.json text eol=lf
 # The identity manifest pins this module by sha256; keep checkout bytes == blob bytes.
 scripts/training/baseline_identity_22_4_4.py text eol=lf
 

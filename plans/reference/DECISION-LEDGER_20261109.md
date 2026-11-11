@@ -2977,3 +2977,46 @@ v2 只改 `arms.u2-strong-baseline.baseline_identity_sha256` 并加 `baseline_id
 
 唯一建议：给 u2 执行器做臂参数化（`UPDATE_ID`/`ARM` 从 run.json 读取，不再硬编码），并跑 0-step 自检确认 u2 草稿在 R01–R05 上可过；在此之前不申请 owner 放行。
 
+## D-20261111-18 执行器臂参数化（u1 逐字不变）与 u2 剩余缺口
+
+**编号／时间／类型**：D-20261111-18｜2026-11-11｜**代码改动（等价重构）+ 0 步自检**。0 训练、0 `optimizer.step`、0 项目数据读取、未生成 `run.json`、未写账本、22.4.1 额度未动。
+
+### 1. 改了什么（等价重构，不改判据）
+
+- `scripts/training/u2_update_support_22_4_1.py`：`UPDATE_ID` 常量退役，新增 `DEFAULT_ARM = "u1-candidate-float32"` 与 `arm_for(run)`；`prepare_parent`、`slice_descriptor`、`slice_digest`、`active_parameters`、`shadow_terms`、`gradients_for`、`activity_receipt` 各加关键字参数 `arm: str = DEFAULT_ARM`，内部不再读全局臂名。
+- `scripts/training/u2_update_executor_22_4_1.py`：R01 改为「`update_id` 与 `attempt_id` 自洽，且是本 run 所引用执行 manifest 的臂」；R02 按 `run["update_id"]` 绑定凭据；R06 按 `update_id` 查准入行；`check_r08`/`perform` 接受 `arm`。
+- `scripts/training/run_taiji_u2_22_4_1.py`：`execute` 与 `s12_payload` 一律从 `run["update_id"]` 取臂。
+- **R01–R12 的编号、检查内容与退出码一字未改**；22.4.4 冻结规则与配平带未动。
+
+### 2. u1 逐字不变的证据
+
+| 证据 | 结果 |
+|---|---|
+| 两条账本、rejected S12、accepted S12+worker 共 5 个文件 sha256 | 与改动前**逐字节相同** |
+| `AttemptLedger.read()` 复算两条账本 | 无异常（链、行摘要、run/source identity、`consumed` 均通过）；行数与事件序列不变 |
+| 改动前（HEAD 版模块）vs 改动后重算 u1 | `slice_digest` 同为 `947c0958…f1cd`；活性清单同为 7 项；shadow loss 同值 |
+| u1 自检 36 条 | 全部仍通过（含 `update_id_mismatch`、`manifest_hash_tampered`、两条 `optimizer_hyperparameter_changed` 等负例） |
+
+### 3. 自检与覆盖台账
+
+自检 **36 → 43 条**（`verdict=pass`、`optimizer_step_calls=0`、cpu 6.17 s／wall 7.50 s），新增 7 条：
+
+- `u2_draft_r01_rejects_null_run_id`、`u2_draft_r02_rejects_missing_authorization`：u2 草稿原样（`run_id=null`、`authorized=false`）分别退 5。
+- `u2_bound_r01_identity_binds_arm`、`u2_bound_r02_authorization_binds_arm`、`u2_bound_r03_execution_manifest_sha`、`u2_bound_r04_admission_and_identity_sha`、`u2_bound_r05_interface_receipt`：把 `run_id`／`authorized`／`owner_approval_ref`／额度**只在内存里**补齐后，R01–R05 全过（不落盘、不生成 `run.json`）。
+
+覆盖台账由 47 行增至 **53 行**（新增 #48–#53），未覆盖 16 → **18 行**（新增 #49 自洽但非 manifest 臂、#53 非默认臂 R08 漂移），不可达仍 2 行。
+
+### 4. u2 草稿随之更新
+
+`taiji_u2_22_4_1_u2_run_draft_20261111.json`：R01/R02 的 `check` 文字改为按 `run.json` 取值（去掉 u1 字面量），`open_items_before_authorization` 改写为"①已清／②臂行占位未清／③owner 侧未清"，哈希 `9e7162a0…1115` → `a247f704…7bbc`，PLAN／PREREG／MASTER-PLAN 的引用同步更新。
+
+### 5. 剩余缺口的准确清单（回答"是否只差三项"）
+
+**不是只差三项。** owner 侧（`run_id`、含 `u2-strong-baseline` 的 `owner_approval_ref`、`authorized=true`）之外，还有一项**工程侧硬缺口**：执行 manifest v2 的 `u2-strong-baseline` 臂行是占位——`dtype` 写的是说明文字「按22.4.4冻结身份」而非 `float32`，且**没有** `active_parameters` 扁平表（只有 `active_parameter_roles`）。据此 `prepare_parent` 取不到 dtype、`active_parameters` 直接 KeyError，R06 之后的真实执行走不动。自检已把该事实写入 `selfcheck.json` 的 `u2_binding_preflight`（`executable=false`）。
+
+另有一条**早于本次改动的观察**（非本轮引入）：用改动前代码与改动后代码重算 u1 `slice_digest` 都得到 `947c0958…f1cd`，但 `output/taiji_u2_22_4_1_20261111T142919Z/run.json` 里记录的是 `9a06eb84…`。说明该记录值出自更早的工作树版本，当前代码无法复现。R07 是硬门（digest 不符即退 5），重跑旧 root 会直接停下，不会静默接纳；本轮不修，留作独立事项。
+
+### 6. 下一步
+
+唯一建议：先把 v2 的 `u2-strong-baseline` 臂行从占位补成可执行（`dtype="float32"`、写入 119 个 `active_parameters` 与 `conditional_active_parameters`），补完后跑同一套 0 步自检把 #53 覆盖掉；在此之前不申请 u2 放行。
+

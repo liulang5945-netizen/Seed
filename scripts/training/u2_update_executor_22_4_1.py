@@ -24,8 +24,7 @@ from scripts.training.u2_update_support_22_3_4_3 import (
 )
 from scripts.training.u2_update_support_22_4_1 import (
     ADAM_FLOAT32_TOLERANCE,
-    ARM,
-    UPDATE_ID,
+    DEFAULT_ARM,
     U1Runtime,
     active_parameters,
     activity_receipt,
@@ -104,7 +103,9 @@ def admission_manifest(run: dict[str, Any]) -> tuple[dict[str, Any], Path]:
     return load_json(path), path
 
 
-def check_r01(run: dict[str, Any], root_name: str) -> dict[str, Any]:
+def check_r01(
+    run: dict[str, Any], root_name: str, execution: dict[str, Any] | None = None
+) -> dict[str, Any]:
     required = (
         "schema",
         "run_id",
@@ -127,10 +128,17 @@ def check_r01(run: dict[str, Any], root_name: str) -> dict[str, Any]:
         raise ContractError(f"R01 run.json is missing fields: {missing}")
     if run["schema"] != RUN_SCHEMA:
         raise ContractError(f"R01 unexpected run schema: {run['schema']}")
+    identity = run["update_id"]
+    # 身份不再对常量：update_id 必须与 attempt_id 自洽，且是该 run 自己引用的
+    # 执行 manifest 里真实存在的臂。u1 仍只认 u1-candidate-float32（v1 只有这一个臂）。
+    if not isinstance(identity, str) or not identity or run["attempt_id"] != identity:
+        raise ContractError(f"R01 attempt_id does not bind update_id {identity!r}")
+    if execution is None:
+        execution = load_json(ROOT / run["references"]["execution_manifest"])
+    if identity not in execution.get("arms", {}):
+        raise ContractError(f"R01 update_id {identity} is not an arm of the execution manifest")
     if run["run_id"] != root_name.removeprefix("taiji_u2_22_4_1_"):
         raise ContractError("R01 run_id does not match the run directory")
-    if run["update_id"] != UPDATE_ID or run["attempt_id"] != UPDATE_ID:
-        raise ContractError(f"R01 update/attempt id is not {UPDATE_ID}")
     contract = run["run_contract"]
     expected = [f"R{index:02d}" for index in range(1, 13)]
     if [row.get("id") for row in contract] != expected:
@@ -161,8 +169,9 @@ def check_r02(run: dict[str, Any]) -> dict[str, Any]:
         raise ContractError("R02 authorized is not true")
     if not isinstance(reference, str) or not reference.strip():
         raise ContractError("R02 owner_approval_ref is empty")
-    if UPDATE_ID not in reference:
-        raise ContractError("R02 owner_approval_ref does not bind the u1 update id")
+    identity = run["update_id"]
+    if identity not in reference:
+        raise ContractError(f"R02 owner_approval_ref does not bind the update id {identity}")
     return {"id": "R02", "owner_approval_ref": reference}
 
 
@@ -250,10 +259,11 @@ def check_r05(
 
 
 def check_r06(run: dict[str, Any], admission: dict[str, Any], consumed: int) -> dict[str, Any]:
+    identity = run["update_id"]
     updates = {row["id"]: row for row in admission["updates"]}
-    if UPDATE_ID not in updates:
-        raise ContractError("R06 the admission manifest does not list u1")
-    entry = updates[UPDATE_ID]
+    if identity not in updates:
+        raise ContractError(f"R06 the admission manifest does not list {identity}")
+    entry = updates[identity]
     if admission["quota"]["attempts_consumed"] != 0:
         raise BudgetError("R06 frozen admission already records consumed attempts")
     if consumed != 0:
@@ -305,8 +315,10 @@ def check_r07(run: dict[str, Any], recipe_sha: str, slice_sha: str) -> dict[str,
     }
 
 
-def check_r08(manifest: dict[str, Any], model, optimizer) -> dict[str, Any]:
-    arm = manifest["arms"][ARM]
+def check_r08(
+    manifest: dict[str, Any], model, optimizer, *, arm: str = DEFAULT_ARM
+) -> dict[str, Any]:
+    row = manifest["arms"][arm]
     optimizer_fields = ("lr", "betas", "eps", "weight_decay", "amsgrad")
     frozen_optimizer = {key: manifest["optimizer"][key] for key in optimizer_fields}
     actual = {
@@ -322,15 +334,18 @@ def check_r08(manifest: dict[str, Any], model, optimizer) -> dict[str, Any]:
     }
     if actual != expected:
         raise ContractError(f"R08 optimizer differs from the freeze: {actual} != {expected}")
-    weights = dict(arm["weights"])
+    weights = dict(row["weights"])
     if set(weights) != {"predictive", "actor", "critic", "verbatim"}:
         raise ContractError("R08 the loss term list changed")
-    if weights != {"predictive": 1.0, "actor": 0.1, "critic": 0.1, "verbatim": 0.0}:
-        raise ContractError(f"R08 u1 weights are not the frozen F1 profile: {weights}")
+    if arm == DEFAULT_ARM:
+        if weights != {"predictive": 1.0, "actor": 0.1, "critic": 0.1, "verbatim": 0.0}:
+            raise ContractError(f"R08 u1 weights are not the frozen F1 profile: {weights}")
+    elif weights != dict(row["weights"]):
+        raise ContractError(f"R08 {arm} weights drift from the execution manifest: {weights}")
     if manifest["warmup"]["enabled"] or manifest["gradient_clip"]["enabled"]:
         raise ContractError("R08 warmup or clipping was enabled outside the freeze")
-    names = active_parameters(model, manifest)
-    if names != list(arm["active_parameters"]) and model.c.group_units is None:
+    names = active_parameters(model, manifest, arm=arm)
+    if names != list(row["active_parameters"]) and model.c.group_units is None:
         raise ContractError(f"R08 active parameter list changed: {names}")
     missing = [name for name in names if name not in dict(model.named_parameters())]
     if missing:
@@ -415,6 +430,8 @@ def perform(
     counter,
     manifest: dict[str, Any],
     post_path: Path,
+    *,
+    arm: str = DEFAULT_ARM,
 ):
     """One charged step: gradients, frozen Adam step, commit, activity gate, save."""
     from scripts.training.u2_update_executor_22_3_4_3 import admit
@@ -426,7 +443,7 @@ def perform(
         name: value.detach().clone() for name, value in runtime.model.state_dict().items()
     }
     active_model = runtime.model
-    gradients, losses = gradients_for(runtime, manifest)
+    gradients, losses = gradients_for(runtime, manifest, arm=arm)
     candidate, optimizer = fork_candidate(runtime, gradients, manifest)
     step_calls = int(counter.current in counter.called)
     if step_calls != 1:
@@ -435,13 +452,15 @@ def perform(
     if migration["status"] != "committed":
         raise BudgetError(f"the frozen attempt did not commit: {migration}")
     after_state = runtime.model.state_dict()
-    receipt = activity_receipt(active_model, before_state, after_state, gradients, manifest)
+    receipt = activity_receipt(
+        active_model, before_state, after_state, gradients, manifest, arm=arm
+    )
     after_output = distributions(runtime)
     # shadow_terms 内部的资格分由 model.choose_operation 用 torch.autograd.grad 计算，
     # 关掉梯度会让这条路径直接失败（"does not require grad and does not have a grad_fn"）。
     # 因此后置损失必须在允许梯度的上下文里算，只取数值时再 detach。
     with torch.enable_grad():
-        post_loss, _ = shadow_terms(runtime.model, manifest)
+        post_loss, _ = shadow_terms(runtime.model, manifest, arm=arm)
     post_loss = post_loss.detach()
     receipt["output_displacement_descriptive"] = {
         **output_displacement(before_output, after_output),

@@ -272,7 +272,7 @@ predictive_head | recurrent_core | output_head = {
 |---|---|---|
 | 基线身份清单 | `plans/manifests/taiji_u2_22_4_4_baseline_identity_20261111.json` | `e5c776c4f12e4633bf7366d66ee22e6095efac7fa2147e5c6973653797335b29` |
 | u2 三槽回填版执行清单 | `plans/manifests/taiji_u2_22_4_1_execution_20261111_v2.json` | `3c1c219575e826a8127b56f7305946036d4ee148fc05c21b238e804560e33e56` |
-| u2 `run.json` 草稿（未授权） | `plans/manifests/taiji_u2_22_4_1_u2_run_draft_20261111.json` | `9e7162a0e72135e9e8d2932f6ad24b1fd299142bf46cf993484a3a0c12b61115` |
+| u2 `run.json` 草稿（未授权） | `plans/manifests/taiji_u2_22_4_1_u2_run_draft_20261111.json` | `a247f70441bf31443751c64678a704d08407547d2891fbeb3bfefba5bb1a7bbc` |
 | 测量报告 | `reports/taiji_u2_22_4_4_identity_measurement_20261111.json` | `4c77d318771ea9a0b68cb43530eb31bd756f38cd1ab4276c0206b8a4f3d196d2` |
 | 测量脚本 | `scripts/training/baseline_identity_22_4_4.py` | `384b404560f827e0868a8d8f9fbfc27aff5aa885b182cd443ade79972e4145cf` |
 | U2 前端复制源 | `taiji/u2_subject.py` | `aa7a23249ad6fdaff1900000c665d575651debc498e800b8c292839ea4f736a8` |
@@ -291,4 +291,4 @@ predictive_head | recurrent_core | output_head = {
 
 **C09 状态**：身份清单已落盘、三槽已回填、digest 已钉进 `plans/manifests/taiji_u2_22_4_1_u2_run_draft_20261111.json`（引用身份清单 `e5c776c4…5b29`、v2 `3c1c2195…3e56`、基线模块 `384b4045…45cf`）。该文件是**未授权草稿**（`authorized=false`、`run_id=null`、不写账本、不开跑），不是 `run.json`，故 C09 现为"**可成立待授权**"而非已成立：owner 放行、分配 run_id 并原样复制为 `run.json` 后即满足字面条件。本卡到此只交付"身份 + 价格"，不产生任何性能差值。
 
-**放行前还须清掉的三条非 C09 阻塞**（已写入草稿 `open_items_before_authorization`，与 C09 无关，C09 不因它们变假）：①执行器 `scripts/training/u2_update_support_22_4_1.py` 把 `UPDATE_ID`/`ARM` 硬编码为 `u1-candidate-float32`，u2 开跑前必须参数化，否则 R01 直接退 5；②草稿的 `run_contract` R01/R02 文字沿用 u1 的 `update_id` 字面量（12 条判据的编号、检查内容与退出码未改），放行时只做该字面量的臂绑定替换；③owner 须同时给出 `run_id` 与含 `u2-strong-baseline` 的 `owner_approval_ref` 并把 `authorized` 改为 `true`。
+**放行前还须清掉的阻塞**（见草稿 `open_items_before_authorization`，与 C09 无关，C09 不因它们变假）：①（**已清**，D-20261111-18）执行器 `UPDATE_ID`/`ARM` 已改为从 `run.json` 读取，R01/R02 字面量同步改为按 `run.json` 取值，12 条判据的编号、检查内容与退出码未变；②（**未清**）v2 的 u2 臂行仍是占位——`dtype` 是说明文字「按22.4.4冻结身份」、缺 `active_parameters` 扁平表（只有 `active_parameter_roles`），`prepare_parent`/R08 无法构造 u2 父图（自检 `u2_binding_preflight.executable=false`）；③（**未清**，owner 侧）须给出 `run_id` 与含 `u2-strong-baseline` 的 `owner_approval_ref` 并把 `authorized` 改为 `true`。

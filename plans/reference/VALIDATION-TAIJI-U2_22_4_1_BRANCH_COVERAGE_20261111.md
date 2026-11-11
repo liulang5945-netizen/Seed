@@ -1,16 +1,16 @@
 # 分支覆盖台账：22.4.1 执行器（`scripts/training/run_taiji_u2_22_4_1.py`）
 
-**建立时间**：2026-11-11｜**对应自检**：`python -m scripts.training.run_taiji_u2_22_4_1 --self-check`（36 条，`optimizer_step_calls=0`，cpu 4.61 s／wall 5.63 s）。
+**建立时间**：2026-11-11｜**对应自检**：`python -m scripts.training.run_taiji_u2_22_4_1 --self-check`（43 条，`optimizer_step_calls=0`，cpu 6.17 s／wall 7.50 s；臂参数化后由 36 条增至 43 条，见 D-20261111-18）。
 **规则**：执行器每新增一个可退出分支，必须在本表加一行；只加代码不加账视为未完成。标"未覆盖"的不得写成"已验证"。
 
 ## 1. 退出码 5（授权、身份、合同）
 
 | # | 分支 | 覆盖 | 覆盖者／未覆盖原因与风险 |
 |---|---|---|---|
-| 1 | R01 `update_id` 不是 u1-candidate-float32 | 已覆盖 | `update_id_mismatch` |
+| 1 | R01 `update_id` 与 `attempt_id` 不自洽，或不是本 run 所引用执行 manifest 的臂（不再比对常量） | 已覆盖 | `update_id_mismatch`（拉臂绑定分支）；"自洽但 manifest 无此臂"子分支见 #49 |
 | 2 | R01 `run_id` 与目录名不一致 | **未覆盖** | 需真跑（`execute` 拿 `root.name` 比对）；触发：run_root 被改名/复制。风险：低——只是命名校验，误放过也不放行步进 |
 | 3 | R02 `authorized!=true` | 已覆盖 | `authorization_missing` |
-| 4 | R02 `owner_approval_ref` 为空或不含 update id | **未覆盖**（同函数相邻分支） | 触发：手改草稿抹掉绑定段。风险：中——授权凭据失效却仍可开跑 |
+| 4 | R02 `owner_approval_ref` 为空或不含本 run 的 `update_id`（取自 run.json） | **未覆盖**（同函数相邻分支） | 触发：手改草稿抹掉绑定段。风险：中——授权凭据失效却仍可开跑 |
 | 5 | R03 执行 manifest 哈希不符 | 已覆盖 | `manifest_hash_tampered` |
 | 6 | R04 准入 manifest 哈希不符 | 已覆盖 | `admission_hash_tampered` |
 | 7 | R05 accepted parent 状态/profile/seed/精度/参数数不符 | **未覆盖** | 需篡改 `taiji_u2_22_3_accepted_parent_20261111.json`（冻结件，本卡不动）。真实运行走过通过分支 |
@@ -23,7 +23,7 @@
 | 14 | R07 digest 为空 | **未覆盖**（同函数相邻分支） | 触发：开跑前未写 digest |
 | 15 | R07 digest 与生成片段不符 | 已覆盖 | `data_digest_mismatch` |
 | 16 | R08 Adam 超参不符 | 已覆盖 | `optimizer_hyperparameter_changed` |
-| 17 | R08 u1 权重不是 F1 | **未覆盖** | 触发：改执行 manifest。风险：中——权重改动会静默改变"学什么" |
+| 17 | R08 默认臂（u1）权重不是 F1 | **未覆盖** | 触发：改执行 manifest。风险：中——权重改动会静默改变"学什么"。非默认臂的对应分支见 #53 |
 | 18 | R08 warmup／clip 被打开 | **未覆盖** | 同上 |
 | 19 | R08 声明的活性参数不在模型里 | 已覆盖 | `declared_active_parameter_absent` |
 | 20 | R08 群单元扩展改变了活性清单 | **不可达** | 只有 `group_units != None` 才进入；本卡模型固定无群单元 |
@@ -64,10 +64,18 @@
 | 45 | 回执守卫：回执里没有实测 `cpu/wall` | 已覆盖 | `s12_without_cpu_wall`（退 3；空值、布尔、字符串都算缺） |
 | 46 | rejected 路径的回执顺序 | 已覆盖 | `rejected_s12_precedes_close`：S12 落盘→读回→close，close 带 `s12_sha256`，回执内 `ledger_seq_close=null` |
 | 47 | rejected 路径回执根本写不出来（降级 close） | **未覆盖** | 需让 `write_once` 失败（磁盘满／权限）；触发：写盘故障。风险：低——降级时 close 行记 `s12_error`，账本仍结算，不悬空 |
+| 48 | R01 `update_id` 为空／非字符串 | 已覆盖 | `update_id_mismatch` 与 u2 草稿用例共用同一判据；空串分支由 R01 的类型检查拦住 |
+| 49 | R01 `update_id` 自洽（==`attempt_id`）但不是本 run 所引用执行 manifest 的臂 | **未覆盖** | 触发：伪造自洽但 manifest 无此臂的 run.json。风险：低——R03/R04 哈希与 R06 准入行仍会拦 |
+| 50 | R01 `run_id=null`（未授权草稿形态） | 已覆盖 | `u2_draft_r01_rejects_null_run_id`（u2 草稿原样，退 5） |
+| 51 | R02 未授权草稿形态（`authorized=false`、`owner_approval_ref=null`） | 已覆盖 | `u2_draft_r02_rejects_missing_authorization`（退 5） |
+| 52 | R01–R05 对 u2 臂全通过（仅在内存绑定 run_id／授权／额度，不落盘） | 已覆盖 | `u2_bound_r01_identity_binds_arm`、`u2_bound_r02_authorization_binds_arm`、`u2_bound_r03_execution_manifest_sha`、`u2_bound_r04_admission_and_identity_sha`、`u2_bound_r05_interface_receipt` |
+| 53 | R08 非默认臂（u2）权重与 manifest 漂移 | **未覆盖**（当前不可达） | v2 的 u2 臂行 `dtype` 仍是说明文字、缺 `active_parameters`，`prepare_parent` 在 R08 之前就失败（自检 `u2_binding_preflight.executable=false`）；臂行补齐后补覆盖 |
 
 ## 4. 未覆盖项的合计风险
 
-高风险未覆盖项只剩"账本根信任"#23（手改任意一行）：只能靠独立复算兜底，注入断链会污染真账本，故不在自检内做。原 #10（R06 帽/精度/步数）与 #25（额度闸门）均已覆盖（#25 与 #10 分别见 D-20261111-14／D-20261111-15）。当前未覆盖 **16 行**、另有 **2 行不可达**（#20 群单元扩展、#22 中 R10 自身文案分支），全部是"要真跑、要造故障或要篡改账本"才能触发的分支。
+高风险未覆盖项只剩"账本根信任"#23（手改任意一行）：只能靠独立复算兜底，注入断链会污染真账本，故不在自检内做。原 #10（R06 帽/精度/步数）与 #25（额度闸门）均已覆盖（#25 与 #10 分别见 D-20261111-14／D-20261111-15）。臂参数化（D-20261111-18）新增 #48–#53 六行，其中 #49、#53 未覆盖。当前共 **53 行**，未覆盖 **18 行**、另有 **2 行不可达**（#20 群单元扩展、#22 中 R10 自身文案分支），全部是"要真跑、要造故障或要篡改账本"才能触发的分支。
+
+**u2 臂的现状（未清阻塞，必读）**：自检把 `u2_binding_preflight` 写进 `selfcheck.json`——`dtype_field="按22.4.4冻结身份"`（不是 torch dtype）、`active_parameters_present=false`、`executable=false`。因此 #53 目前不可达：u2 即便 owner 放行，`prepare_parent` 也会在构造父图时失败。补齐 v2 的 u2 臂行（`dtype` 写成 `float32`、补 `active_parameters` 扁平表）后，u2 才真正可执行。
 
 **守卫与现存证据的差距（必读）**：`close_receipt_guard` 是**向前生效**的。已落盘的那条 accepted close（`reports/taiji_u2_22_4_1_attempts_20261111T142919Z.ndjson` 第 2 行）**没有** `s12_sha256`，对应的补算 S12 也**没有** `cpu_seconds`/`wall_seconds`（两个字段为 null）——它是在守卫和顺序契约存在之前写下的。不能用新守卫反判旧证据，也不能改写旧行（改写即破坏哈希链）；差距记在 `DECISION-LEDGER` 的 D-20261111-14，等下一次真实 attempt 用新代码自然补齐。
 

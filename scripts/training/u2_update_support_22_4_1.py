@@ -17,9 +17,18 @@ from taiji.u2_history import assert_values_equal
 from taiji.u2_recovery import ReferenceExecutor
 from taiji.u2_subject import U2Config, U2Packet, U2Subject, synthetic_fixture
 
-UPDATE_ID = "u1-candidate-float32"
-ARM = "u1-candidate-float32"
+DEFAULT_ARM = "u1-candidate-float32"
+# 兼容旧调用点：u1 的臂名字面量逐字保留为默认值；任何一次实际执行都必须显式传 arm。
+ARM = DEFAULT_ARM
 ADAM_FLOAT32_TOLERANCE = {"atol": 1e-5, "rtol": 1e-4}
+
+
+def arm_for(run: dict[str, Any]) -> str:
+    """臂名不再硬编码：一律从 run.json 的 update_id 读取（u1/u2 各自绑定自己的臂）。"""
+    identity = run["update_id"]
+    if not isinstance(identity, str) or not identity:
+        raise ValueError("run.json update_id must be a non-empty string")
+    return identity
 
 
 def normalized_sha256(path: Path) -> str:
@@ -63,12 +72,14 @@ def parent_digest(dtype: torch.dtype) -> str:
     return value_digest(base.state_dict())
 
 
-def prepare_parent(manifest: dict[str, Any], directory: Path) -> U1Runtime:
+def prepare_parent(
+    manifest: dict[str, Any], directory: Path, *, arm: str = DEFAULT_ARM
+) -> U1Runtime:
     recipe = manifest["recipe"]
-    dtype = getattr(torch, manifest["arms"][ARM]["dtype"])
+    dtype = getattr(torch, manifest["arms"][arm]["dtype"])
     base = U2Subject(U2Config.small()).to(dtype=dtype)
     model = base.metadata_candidate()
-    runtime = U1Runtime(model, executor=ReferenceExecutor(), subject_id="engineering-parent-" + ARM)
+    runtime = U1Runtime(model, executor=ReferenceExecutor(), subject_id="engineering-parent-" + arm)
     fixture = synthetic_fixture(model.c, dtype)
     runtime.set_goal(recipe["u1_shadow"]["goal"])
     runtime.set_records(fixture["records"])
@@ -114,14 +125,16 @@ def recipe_digest(manifest: dict[str, Any]) -> str:
     return canonical_sha256(manifest["recipe"])
 
 
-def slice_descriptor(manifest: dict[str, Any], runtime_model) -> dict[str, Any]:
+def slice_descriptor(
+    manifest: dict[str, Any], runtime_model, *, arm: str = DEFAULT_ARM
+) -> dict[str, Any]:
     recipe = manifest["recipe"]
     fixture = synthetic_fixture(runtime_model.c, runtime_model.native_w.dtype)
     observable = fixture["events"][: recipe["observations_per_shadow_episode"]]
     return {
         "config": "U2Config.small",
         "seed": runtime_model.c.seed,
-        "dtype": manifest["arms"][ARM]["dtype"],
+        "dtype": manifest["arms"][arm]["dtype"],
         "dt": recipe["dt"],
         "goal": recipe["u1_shadow"]["goal"],
         "records": [
@@ -152,24 +165,26 @@ def slice_descriptor(manifest: dict[str, Any], runtime_model) -> dict[str, Any]:
     }
 
 
-def slice_digest(manifest: dict[str, Any], runtime_model) -> str:
-    return canonical_sha256(slice_descriptor(manifest, runtime_model))
+def slice_digest(manifest: dict[str, Any], runtime_model, *, arm: str = DEFAULT_ARM) -> str:
+    return canonical_sha256(slice_descriptor(manifest, runtime_model, arm=arm))
 
 
-def active_parameters(model: U2Subject, manifest: dict[str, Any]) -> list[str]:
-    names = list(manifest["arms"][ARM]["active_parameters"])
+def active_parameters(
+    model: U2Subject, manifest: dict[str, Any], *, arm: str = DEFAULT_ARM
+) -> list[str]:
+    names = list(manifest["arms"][arm]["active_parameters"])
     if model.c.group_units is not None:
         for key in model.group_extensions:
             names.extend([f"group_extensions.{key}.incoming", f"group_extensions.{key}.outgoing"])
     return names
 
 
-def shadow_terms(model: U2Subject, manifest: dict[str, Any]):
+def shadow_terms(model: U2Subject, manifest: dict[str, Any], *, arm: str = DEFAULT_ARM):
     """The frozen u1 shadow episode: original records, act-only, no target."""
     recipe = manifest["recipe"]
     dt = recipe["dt"]
     fixture = synthetic_fixture(model.c, model.native_w.dtype)
-    state = model.initial("engineering-shadow-" + ARM)
+    state = model.initial("engineering-shadow-" + arm)
     state = model.set_goal(state, recipe["u1_shadow"]["goal"])
     state = model.set_records(state, fixture["records"])
     receipts = []
@@ -183,7 +198,7 @@ def shadow_terms(model: U2Subject, manifest: dict[str, Any]):
         state, result = model.receive(
             state,
             U2Packet(
-                f"shadow-{ARM}-{index}",
+                f"shadow-{arm}-{index}",
                 "sensor",
                 "world",
                 index * dt,
@@ -197,7 +212,7 @@ def shadow_terms(model: U2Subject, manifest: dict[str, Any]):
             ),
         )
         receipts.append(result)
-    weights = manifest["arms"][ARM]["weights"]
+    weights = manifest["arms"][arm]["weights"]
     pieces = {
         "predictive": -torch.stack(
             [receipt["predictive_logp"].mean() for receipt in receipts]
@@ -209,10 +224,10 @@ def shadow_terms(model: U2Subject, manifest: dict[str, Any]):
     return sum(weights[name] * value for name, value in pieces.items()), pieces
 
 
-def gradients_for(runtime: U1Runtime, manifest: dict[str, Any]):
+def gradients_for(runtime: U1Runtime, manifest: dict[str, Any], *, arm: str = DEFAULT_ARM):
     model = runtime.model
     previous = fingerprint(runtime)
-    loss, pieces = shadow_terms(model, manifest)
+    loss, pieces = shadow_terms(model, manifest, arm=arm)
     named = dict(model.named_parameters())
     measured = torch.autograd.grad(loss, list(named.values()), allow_unused=True)
     values = dict(
@@ -226,8 +241,8 @@ def gradients_for(runtime: U1Runtime, manifest: dict[str, Any]):
         value is not None and not bool(torch.isfinite(value).all()) for value in values.values()
     ):
         raise ValueError("Nonfinite engineering gradient")
-    floor = manifest["activity_floors"][manifest["arms"][ARM]["dtype"]]
-    names = active_parameters(model, manifest)
+    floor = manifest["activity_floors"][manifest["arms"][arm]["dtype"]]
+    names = active_parameters(model, manifest, arm=arm)
     if any(
         values[name] is None or float(values[name].norm()) < floor["gradient_norm"]
         for name in names
@@ -335,10 +350,12 @@ def activity_receipt(
     after_state: dict[str, Any],
     gradients,
     manifest: dict[str, Any],
+    *,
+    arm: str = DEFAULT_ARM,
 ) -> dict[str, Any]:
-    floor = manifest["activity_floors"][manifest["arms"][ARM]["dtype"]]
+    floor = manifest["activity_floors"][manifest["arms"][arm]["dtype"]]
     rows = []
-    for name in active_parameters(model, manifest):
+    for name in active_parameters(model, manifest, arm=arm):
         change = float((before_state[name] - after_state[name]).abs().max())
         margin = change / floor["max_parameter_change"]
         rows.append(

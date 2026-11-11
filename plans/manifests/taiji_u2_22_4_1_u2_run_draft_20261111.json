@@ -189,9 +189,9 @@
     "reason": "草稿不是 run.json，且 authorized=false；放行后复制为 run.json 即满足 C09 的字面条件。"
   },
   "open_items_before_authorization": [
-    "执行器臂绑定：scripts/training/u2_update_support_22_4_1.py 把 UPDATE_ID/ARM 硬编码为 u1-candidate-float32，u2 开跑前必须参数化（含 R01/R02 的 update_id 字面量与 u2 两臂损失权重），否则 R01 直接退 5。",
-    "本草稿的 run_contract R01/R02 文字沿用 u1 的 update_id 字面量；12 条判据的编号、检查内容与退出码未改，放行时只做该字面量的臂绑定替换。",
-    "owner 放行时须同时给出 run_id 与 owner_approval_ref（含 u2-strong-baseline），并把 authorized 改为 true。"
+    "已清（D-20261111-18）：执行器 UPDATE_ID/ARM 不再硬编码，改为从 run.json 的 update_id 读取；R01/R02 的字面量同步改为按 run.json 取值，判据编号、检查内容与退出码未变。",
+    "未清（阻断开跑，非 C09）：v2 的 u2 臂行仍是占位——dtype 写的是说明文字「按22.4.4冻结身份」而非 torch dtype，且没有 active_parameters 扁平表（只有 active_parameter_roles）。据此 prepare_parent/check_r08 无法构造 u2 父图，自检 u2_binding_preflight.executable=false。补齐这两项后 u2 才可执行。",
+    "未清（owner 侧）：owner 放行时须给出 run_id 与含 u2-strong-baseline 的 owner_approval_ref，并把 authorized 改为 true。"
   ],
   "data_scope": {
     "allowed_partitions": [
@@ -224,12 +224,12 @@
   "run_contract": [
     {
       "id": "R01",
-      "check": "run.json结构合法；run_id与目录名一致；update_id==u1-candidate-float32",
+      "check": "run.json结构合法；run_id与目录名一致；update_id取自run.json且==attempt_id，并须是本run所引用执行manifest中的臂",
       "fail_exit": 5
     },
     {
       "id": "R02",
-      "check": "authorized==true；owner_approval_ref非空且含u1-candidate-float32",
+      "check": "authorized==true；owner_approval_ref非空且含本run的update_id",
       "fail_exit": 5
     },
     {

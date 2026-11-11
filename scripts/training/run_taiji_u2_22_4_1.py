@@ -22,6 +22,7 @@ from scripts.training.u2_update_executor_22_4_1 import (
     ActivityGateError,
     BudgetError,
     CheckpointMismatch,
+    ContractError,
     admission_manifest,
     check_r01,
     check_r02,
@@ -47,7 +48,7 @@ from scripts.training.u2_update_support_22_3_4_3 import (
     file_sha,
 )
 from scripts.training.u2_update_support_22_4_1 import (
-    ARM,
+    DEFAULT_ARM,
     activity_receipt,
     fingerprint,
     prepare_parent,
@@ -59,6 +60,7 @@ from taiji.u2_subject import U2Config, U2Subject
 
 ROOT = Path(__file__).resolve().parents[2]
 DRAFT = ROOT / "plans/manifests/taiji_u2_22_4_1_u1_run_draft_20261111.json"
+U2_DRAFT = ROOT / "plans/manifests/taiji_u2_22_4_1_u2_run_draft_20261111.json"
 SELFCHECK = ROOT / "output/taiji_u2_22_4_1_selfcheck_20261111T140217Z/selfcheck.json"
 
 
@@ -120,11 +122,11 @@ def s12_payload(
         "run_id": run["run_id"],
         "attempt_id": identity,
         "update_id": run["update_id"],
-        "arm": ARM,
+        "arm": run["update_id"],
         "precision": run["precision"],
         "status": result["status"],
-        "weight_profile": execution["arms"][ARM]["weight_profile"],
-        "weights": execution["arms"][ARM]["weights"],
+        "weight_profile": execution["arms"][run["update_id"]]["weight_profile"],
+        "weights": execution["arms"][run["update_id"]]["weights"],
         "ledger_seq_open": ledger_summary["open_seq"],
         "ledger_seq_close": ledger_summary["close_seq"],
         "parent_checkpoint": "parent.bin",
@@ -359,11 +361,11 @@ def execute(root: Path) -> dict[str, Any]:
     consumed = 1 if ledger_path.exists() else 0
     checks.append(check_r06(run, admission, consumed))
 
-    runtime = prepare_parent(execution, root)
-    checks.append(check_r08(execution, runtime.model, runtime.optimizer))
+    runtime = prepare_parent(execution, root, arm=run["update_id"])
+    checks.append(check_r08(execution, runtime.model, runtime.optimizer, arm=run["update_id"]))
 
     recipe_sha = recipe_digest(execution)
-    slice_sha = slice_digest(execution, runtime.model)
+    slice_sha = slice_digest(execution, runtime.model, arm=run["update_id"])
     scope = run["data_scope"]
     if scope.get("data_recipe_sha256") is None and scope.get("slice_sha256") is None:
         scope["data_recipe_sha256"] = recipe_sha
@@ -395,7 +397,7 @@ def execute(root: Path) -> dict[str, Any]:
     torch.optim.Adam.step = counter.wrapper(original_step)
     try:
         try:
-            result = perform(runtime, ledger, counter, execution, post_path)
+            result = perform(runtime, ledger, counter, execution, post_path, arm=identity)
         except Exception as error:  # noqa: BLE001 - open 之后任何异常都必须落账，不允许悬空
             return reject_attempt(
                 run=run,
@@ -762,7 +764,7 @@ def self_check(directory: Path) -> dict[str, Any]:
             name: value.detach().clone() for name, value in runtime.model.state_dict().items()
         }
         fake_after = dict(fake_before)
-        for name in execution["arms"][ARM]["active_parameters"]:
+        for name in execution["arms"][DEFAULT_ARM]["active_parameters"]:
             fake_after[name] = fake_before[name] + 1e-3
         stub = {name: torch.ones_like(value) for name, value in runtime.model.named_parameters()}
         fake_receipt = activity_receipt(runtime.model, fake_before, fake_after, stub, execution)
@@ -1031,10 +1033,10 @@ def self_check(directory: Path) -> dict[str, Any]:
                     **execution,
                     "arms": {
                         **execution["arms"],
-                        ARM: {
-                            **execution["arms"][ARM],
+                        DEFAULT_ARM: {
+                            **execution["arms"][DEFAULT_ARM],
                             "active_parameters": [
-                                *execution["arms"][ARM]["active_parameters"],
+                                *execution["arms"][DEFAULT_ARM]["active_parameters"],
                                 "not_a_parameter",
                             ],
                         },
@@ -1155,6 +1157,71 @@ def self_check(directory: Path) -> dict[str, Any]:
                 "pass": cli_missing_root == 3,
             }
         )
+
+        # ---- u2 草稿：臂参数化后的 0 步验证（不写 run.json、不写账本、0 step） ----
+        u2_draft = load_json(U2_DRAFT)
+        u2_root = "taiji_u2_22_4_1_20261111T000000Z"
+        expect("u2_draft_r01_rejects_null_run_id", 5, lambda: check_r01(u2_draft, u2_root))
+        expect("u2_draft_r02_rejects_missing_authorization", 5, lambda: check_r02(u2_draft))
+        # 仅内存绑定（不落盘）：把 owner 放行后才能确定的三个字段补齐，验证 R01–R05 是否只差这三项。
+        bound = {
+            **u2_draft,
+            "run_id": "20261111T000000Z",
+            "authorized": True,
+            "owner_approval_ref": "selfcheck:u2-strong-baseline",
+            "attempts_authorized": 1,
+            "optimizer_steps_authorized": 1,
+        }
+        u2_execution, _ = execution_manifest(bound)
+        u2_evidence = fork_evidence(torch.float32)
+        for name, action in (
+            ("u2_bound_r01_identity_binds_arm", lambda: check_r01(bound, u2_root)),
+            ("u2_bound_r02_authorization_binds_arm", lambda: check_r02(bound)),
+            ("u2_bound_r03_execution_manifest_sha", lambda: check_r03(bound)),
+            ("u2_bound_r04_admission_and_identity_sha", lambda: check_r04(bound)),
+            (
+                "u2_bound_r05_interface_receipt",
+                lambda: check_r05(bound, u2_execution, u2_evidence["base_digest"], u2_evidence),
+            ),
+        ):
+            try:
+                detail = action()
+            except (ContractError, BudgetError, CheckpointMismatch, ActivityGateError) as error:
+                cases.append(
+                    {
+                        "case": name,
+                        "expected": "pass",
+                        "actual": f"exit {error.code}",
+                        "pass": False,
+                    }
+                )
+            else:
+                cases.append(
+                    {
+                        "case": name,
+                        "expected": "pass",
+                        "actual": "pass",
+                        "pass": True,
+                        "detail": json.dumps(detail, ensure_ascii=False)[:160],
+                    }
+                )
+        # 臂行是否真能构造父子图：u2 的 dtype/active_parameters 若仍是占位，执行器无法开跑。
+        u2_row = u2_execution["arms"]["u2-strong-baseline"]
+        u2_preflight = {
+            "arm": "u2-strong-baseline",
+            "dtype_field": u2_row.get("dtype"),
+            "dtype_is_torch_dtype": hasattr(torch, str(u2_row.get("dtype"))),
+            "active_parameters_present": "active_parameters" in u2_row,
+            "active_parameter_roles": sorted(u2_row.get("active_parameter_roles", {})),
+            "blocking_gaps": [],
+        }
+        if not u2_preflight["dtype_is_torch_dtype"]:
+            u2_preflight["blocking_gaps"].append("dtype 字段是说明文字而非 torch dtype")
+        if not u2_preflight["active_parameters_present"]:
+            u2_preflight["blocking_gaps"].append(
+                "缺 active_parameters 扁平表（只有 active_parameter_roles）"
+            )
+        u2_preflight["executable"] = not u2_preflight["blocking_gaps"]
     finally:
         torch.optim.Adam.step = original_step
 
@@ -1171,6 +1238,7 @@ def self_check(directory: Path) -> dict[str, Any]:
         "verdict": "pass" if all(case["pass"] for case in cases) else "fail",
         "optimizer_step_calls": calls["step"],
         "cases": cases,
+        "u2_binding_preflight": u2_preflight,
         "cpu_seconds": time.process_time() - started,
         "wall_seconds": time.monotonic() - wall,
     }
