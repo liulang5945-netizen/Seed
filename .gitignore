@@ -238,6 +238,11 @@ output/p6-*/
 # taiji_m5_k_* 就是逐个列举，漏一个就漏一个。整树属运行产物；入库的结论走 reports/。
 output/taiji_r2_*/
 
+# 2026-11-11：22.3.4.3 工程更新核验的 checkpoint 家族（F1/F2 各 4 份，含真实 moment）。
+# 路径与命名按 plans/manifests/taiji_u2_22_3_4_3_precontract_20261111.json 冻结；
+# 入库的结论走 reports/（ledger 与 S12），checkpoint 本体属运行产物。
+output/taiji_u2_22_3_4_3_*/
+
 # WorkBuddy 会话状态目录（记忆、技能、会话数据）；.workbuddy/memory/ 需随仓库保留
 !.workbuddy/
 .workbuddy/*

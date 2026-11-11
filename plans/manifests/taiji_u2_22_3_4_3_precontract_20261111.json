@@ -1,0 +1,285 @@
+{
+  "schema": "taiji-u2-22.3.4.3-precontract-v1",
+  "created_at": "2026-11-11",
+  "status": "frozen",
+  "run_authorized": false,
+  "authorization_note": "本文件只冻结 22.3.4.3 的产物路径、attempt 计费、落盘时序与执行器接口。开卡需 owner 明确批准后，由执行线在 run.json 写入 non-empty owner_approval_ref 与 authorized=true；本文件本身不因授权而改写。",
+  "scope": "不冻结损失权重、Adam 超参数、目标活性参数、实际变化下限——那些按卡在读数前另行冻结到执行 manifest。本文件不复制、不替代、不改动任何既有冻结判据，也不新增算法参数。",
+  "authority": {
+    "card": "plans/reference/PLAN-TAIJI-CLOSED_LOOP_DEVELOPMENT_20261110.md",
+    "card_section": "22.3.4.3 更新、故障与实际资源合同",
+    "precheck": "reports/taiji_u2_22_3_4_3_checkpoint_precheck_20261111.json",
+    "precheck_script": "scripts/training/precheck_taiji_u2_22_3_4_3_checkpoint.py",
+    "source_pins": {
+      "taiji/u2_recovery.py": "975502035c7f33f8943e57ca22bf93b27c6ac726053b779bb67b6c4c8cd702c4",
+      "taiji/u2_history.py": "e648e53f59418e6ad0b58b7bcc3519e5e09304ef691a6387ec09490b7664d336",
+      "taiji/u2_learning_transaction.py": "212ea54cf263cec80a15d05263b7e6f8c0965b726a825576634c8c3fb61a9573",
+      "taiji/u2_subject.py": "95607245747eac2b89163c88c11366c20a0198c20e2bc86d5be8988397de94de"
+    }
+  },
+  "invariants": [
+    "0 正式训练：只执行本卡声明的 6 次工程 optimizer step；不额外 warm-up，不用失败 attempt 换额外步数，不重跑已完成的 attempt。",
+    "0 换模型：工程权重核验后丢弃；不替换任何生产权重；全部主体由 22.3.4.3 合成 recipe 新建。",
+    "0 读 confirm、0 改冻结判据：不读 confirm 分区；判据在读数前冻结，读后不得改。",
+    "拒绝、异常、崩溃的 attempt 均计入 8 次预算。",
+    "本文件不新增任何算法参数；执行器不得引入本文件之外的阈值或权重。"
+  ],
+  "run": {
+    "run_id_format": "YYYYMMDDTHHMMSSZ",
+    "run_id_storage": "output/taiji_u2_22_3_4_3_<run_id>/run.json（首次 open 前写入；崩溃重启复用同一 run_id；任何重跑必须换新 run_id）",
+    "run_json_required": [
+      "run_id",
+      "created_at",
+      "authorized=true",
+      "owner_approval_ref",
+      "manifest_sha256"
+    ],
+    "budget_max": 8,
+    "precisions": {
+      "F1": "float64",
+      "F2": "float32"
+    },
+    "attempt_order": [
+      "f1-step1",
+      "f1-step2-orig",
+      "f1-step2-recovery",
+      "f2-step1",
+      "f2-step2-orig",
+      "f2-step2-recovery",
+      "fault-rejection",
+      "fault-before-commit"
+    ],
+    "attempt_parents": {
+      "f1-step1": "F1/parent.bin",
+      "f1-step2-orig": "F1/step1.bin",
+      "f1-step2-recovery": "F1/step1.bin",
+      "f2-step1": "F2/parent.bin",
+      "f2-step2-orig": "F2/step1.bin",
+      "f2-step2-recovery": "F2/step1.bin",
+      "fault-rejection": "F1/step1.bin",
+      "fault-before-commit": "F1/step1.bin"
+    },
+    "attempt_posts": {
+      "f1-step1": "F1/step1.bin",
+      "f1-step2-orig": "F1/step2-orig.bin",
+      "f1-step2-recovery": "F1/step2-recovery.bin",
+      "f2-step1": "F2/step1.bin",
+      "f2-step2-orig": "F2/step2-orig.bin",
+      "f2-step2-recovery": "F2/step2-recovery.bin",
+      "fault-rejection": null,
+      "fault-before-commit": null
+    },
+    "expected_counts": {
+      "attempt_open": 8,
+      "attempt_close": 8,
+      "optimizer_step_calls": 6,
+      "checkpoints": 8,
+      "checkpoint_readbacks": 8,
+      "s12_files": 8,
+      "worker_files": 8
+    },
+    "faults": {
+      "fault-rejection": "候选重建后准入回调返回拒绝；父模型与 moment 保持，attempt 计费",
+      "fault-before-commit": "提交前注入异常；父模型与 moment 保持，attempt 计费",
+      "note": "两次故障均不调用 optimizer.step，故 optimizer_step_calls=6；父统一取 F1/step1.bin：float64 下摘要比较无容差歧义，且该父已通过一次读回。"
+    }
+  },
+  "artifacts": {
+    "checkpoint_root": "output/taiji_u2_22_3_4_3_<run_id>/",
+    "checkpoint_files": [
+      "F1/parent.bin",
+      "F1/step1.bin",
+      "F1/step2-orig.bin",
+      "F1/step2-recovery.bin",
+      "F2/parent.bin",
+      "F2/step1.bin",
+      "F2/step2-orig.bin",
+      "F2/step2-recovery.bin"
+    ],
+    "ledger": "reports/taiji_u2_22_3_4_3_attempts_<run_id>.ndjson",
+    "s12": "reports/taiji_u2_22_3_4_3_s12_<run_id>_<attempt_id>.json",
+    "s12_worker": "reports/taiji_u2_22_3_4_3_s12_<run_id>_<attempt_id>_worker.json",
+    "ledger_repair": "reports/taiji_u2_22_3_4_3_attempts_<run_id>_repair.json",
+    "gitignore_rule": "output/taiji_u2_22_3_4_3_*/",
+    "immutability": "checkpoint 与 S12 一经 close 不得覆盖；重跑换新 run_id；更正另起独立文件，不改原件。"
+  },
+  "items": [
+    {
+      "id": "A1",
+      "title": "不可回滚的 attempt 总账",
+      "decision": {
+        "format": "NDJSON；UTF-8 无 BOM；LF 结尾；每行一个 JSON 对象，单行不超过 4096 字节；固定字段 seq、run_id、attempt_id、event、utc、pid、host、budget_before、budget_after、prev_line_sha256、source_pins，另加事件专属字段。",
+        "events": {
+          "run_start": "文件第一行，不占预算：event=run_start、run_id、utc、owner_approval_ref、manifest_sha256、budget_max=8、source_pins。缺该行即视为未授权。",
+          "open": "attempt 开始前必写且 fsync：seq、attempt_id、event=open、utc、pid、host、budget_before（此前 open 总数）、budget_after=budget_before+1、parent_checkpoint、parent_sha256、pre_state_sha256、pre_parameter_sha256、pre_moment_sha256、prev_line_sha256、source_pins。",
+          "close": "attempt 结束后必写且 fsync：event=close、outcome 属于 {accepted, rejected, exception, readback_failed}、readback_ok、post_checkpoint、post_sha256、post_state_sha256、post_parameter_sha256、post_moment_sha256、gradient_sha256、cpu_seconds、wall_seconds、budget_after（与 open 相同，不重复 +1）。",
+          "reconcile": "重启对账写：event=reconcile、attempt_id、outcome 属于 {indeterminate_crash, crash_reconciled_after_readback}、note。"
+        },
+        "path": "reports/taiji_u2_22_3_4_3_attempts_<run_id>.ndjson",
+        "write_order": "open 行必须在 optimizer.step 之前完成写入与 fsync；预算在 open 时 +1。close 行必须在该 attempt 的 S12 写盘且 readback 完成之后。",
+        "hash_chain": "prev_line_sha256 = sha256(上一行的完整字节)；首行为 64 个 0。任何一行被修改、删除或插入都会断链。",
+        "writer": "单进程单写者；每个事件一次 os.write 整行 + os.fsync；禁止缓冲多行批量写；禁止改写历史行。",
+        "restart_reconciliation": "重启先解析全文件：(1) 校验 JSON 可解析与哈希链；(2) 对每个 open 找对应 close；(3) 缺 close 的 attempt 自动追加 reconcile 行并标记 indeterminate_crash，预算不再增加；(4) 同一 attempt_id 不得再次 open。",
+        "tail_truncation": "若文件末行无 LF（半行），解析报 tail_truncated=true，执行器以 exit 3 拒绝继续。唯一允许的修复：截断到最后一条完整行，并在 ledger_repair 中记录 removed_bytes 与 removed_sha256；修复后重跑对账。",
+        "budget_semantics": "budget_max=8；任何时刻 open 行总数不得超过 8；失败、拒绝、异常、崩溃均占额；close 不返还额度。"
+      },
+      "if_absent": "崩溃时无法证明这一步是否已经执行：重跑会重复计费或漏计费，8 次 attempt 的合同不可核；六次更新读数无法签署，22.3.5 也无法与 S12 合拢。没有该账，任何重跑都可能是第 9 次更新而不自知。",
+      "enforcement": [
+        "缺 run_start 行或 owner_approval_ref 为空 ⇒ exit 5。",
+        "open 行 fsync 失败 ⇒ 不调用 optimizer.step，直接 exit 3。",
+        "哈希链断裂 ⇒ exit 3，禁止继续。",
+        "open 总数将超过 8 ⇒ exit 3。",
+        "run.json 缺失或 authorized 不为 true ⇒ exit 5。"
+      ],
+      "verification_design": {
+        "script": "scripts/training/verify_taiji_u2_attempt_ledger_22_3_4_3.py（冻结名，后续实现；只写临时目录，0 optimizer step，用桩替身代替真实 step）",
+        "scenario_kill_after_open": "子进程调用 ledger.open(f1-step1) 并 fsync，然后立即 os.kill(SIGKILL)；父进程重启并只做解析与对账，不执行 step。",
+        "scenario_kill_during_close": "子进程写 close 行时只写入前一半字节（无 LF）后被杀；父进程重启解析。",
+        "assertions": [
+          "kill_after_open：重启后 ledger 完整行数=1",
+          "kill_after_open：chain_ok=true",
+          "kill_after_open：open 计数=1，budget_after=1",
+          "kill_after_open：再次 open 同一 attempt_id 抛 AttemptAlreadyConsumed",
+          "kill_after_open：reconcile 标记 indeterminate_crash 后预算仍=1（不重复计费）",
+          "kill_after_open：换下一个 attempt_id 可继续，open 计数=2",
+          "kill_during_close：解析报 tail_truncated=true",
+          "kill_during_close：执行器以 exit 3 拒绝继续",
+          "修复只允许截断到最后完整行，repair 记录 removed_bytes 与 removed_sha256",
+          "修复后 chain_ok=true 且预算不变",
+          "人工篡改任意一行后 chain_ok=false 且执行器 exit 3",
+          "两场景全程 optimizer.step 调用数=0"
+        ],
+        "pass_criteria": "12/12 断言为真；预算只增不减；open 行数不超过 8；两场景均 0 optimizer step。"
+      }
+    },
+    {
+      "id": "A2",
+      "title": "目录不 fsync 的持久性缺口：存完立刻读回比对，写成强制步骤",
+      "decision": {
+        "mandatory_readback": "每次 runtime.save 返回后，必须立即用新建的 executor 实例调用 U2Runtime.load(path)，比对 state_sha256、parameters_sha256、optimizer_sha256、history_reference、revision 五项；全部相等才允许写 close(readback_ok=true)。",
+        "before_each_attempt": "每个 attempt 开始前必须 load 其 parent checkpoint 并比对同一组五项；不等则 exit 4，且不得写 open 行（该 attempt 未消耗）。",
+        "after_each_fault": "两次故障 attempt 结束后必须重读同一 parent 文件并比对 pre_* 摘要，证明父未被写坏。",
+        "coverage": "8 个 checkpoint 各 1 次读回（8/8）；2 次故障父各 2 次读回（前后各一）；全部记录进 ledger close 与 S12。",
+        "dir_fsync": "POSIX 上 atomic_save 后追加 os.open(dir, O_RDONLY)+os.fsync，ledger 记 dir_sync=done；Windows 记 dir_sync=unsupported。该动作是补充，不替代读回。",
+        "failure_policy": "读回不符 ⇒ close(outcome=readback_failed, readback_ok=false) ⇒ 立即 exit 4；保留坏文件，不删除、不改名、不重试、不跳步、不继续消费 attempt；由 owner 决定后续。",
+        "direct_exit_4": "在执行器里，读回是唯一进入下一状态的门；不存在 skip_readback 开关或环境变量。"
+      },
+      "if_absent": "掉电或崩溃可能让 rename 丢失而文件内容已写入：后续恢复会读到缺失或旧父，产生看似正常但实际错位的后继读数，8 个 checkpoint 都可能不可信。把读回只当建议等于没有门。",
+      "enforcement": [
+        "readback 五项摘要必须逐项相等，不允许容差。",
+        "readback 只能在新建 executor 上做，禁止复用写入侧的进程内对象。",
+        "读回成本计入该 attempt 的 cpu/wall。"
+      ],
+      "verification": "预检已证 8/8：父存档往返、截断/翻位拒载、两次故障父不变、提交后往返。本卡把 8/8 读回与 2/2 故障父不变写成硬门；人工截断/翻位注入必须 exit 4。"
+    },
+    {
+      "id": "A3",
+      "title": "step1 存档命名与路径",
+      "decision": {
+        "root": "output/taiji_u2_22_3_4_3_<run_id>/",
+        "layout": {
+          "F1/parent.bin": "F1 的 step1 前可恢复父（含真实 moment）",
+          "F1/step1.bin": "F1 共享 step1 后的新状态与真实 moment",
+          "F1/step2-orig.bin": "F1 原路径 step2 提交后的状态",
+          "F1/step2-recovery.bin": "F1 恢复路径 step2 提交后的状态",
+          "F2/parent.bin": "F2 的 step1 前可恢复父",
+          "F2/step1.bin": "F2 共享 step1 后的新状态与真实 moment",
+          "F2/step2-orig.bin": "F2 原路径 step2 提交后的状态",
+          "F2/step2-recovery.bin": "F2 恢复路径 step2 提交后的状态"
+        },
+        "step2_start": "原路径与恢复路径的 step2 都从同一份 F1 或 F2 的 step1.bin 起跑，不得从内存残余或另一份副本起跑。",
+        "metadata": "每个 checkpoint 的 sha256、字节数、revision、dtype 记入 ledger close 与对应 S12。",
+        "immutability": "文件一经 close 不得覆盖；重跑必须换新 run_id。",
+        "gitignore": "output/taiji_u2_22_3_4_3_*/"
+      },
+      "if_absent": "恢复分支无法证明与原始分支从同一保存点起跑，原/恢复两路 step2 的比较失去意义；文件也可能被下一次运行覆盖，读数不可复现。"
+    },
+    {
+      "id": "A4",
+      "title": "S12 包路径与独立 worker 输入",
+      "decision": {
+        "path": "reports/taiji_u2_22_3_4_3_s12_<run_id>_<attempt_id>.json",
+        "schema": "taiji-u2-s12-v1",
+        "fields": [
+          "schema",
+          "run_id",
+          "attempt_id",
+          "group",
+          "dtype",
+          "status（accepted / rejected / exception）",
+          "ledger_seq_open",
+          "ledger_seq_close",
+          "parent_checkpoint",
+          "parent_sha256",
+          "post_checkpoint",
+          "post_sha256",
+          "pre_state_sha256",
+          "pre_parameter_sha256",
+          "pre_moment_sha256",
+          "post_state_sha256",
+          "post_parameter_sha256",
+          "post_moment_sha256",
+          "gradient_sha256",
+          "next_output",
+          "policy",
+          "run_conditions",
+          "cpu_seconds",
+          "wall_seconds"
+        ],
+        "counts": "8 份：6 份 accepted（6 次 step）+ 1 份 rejected（fault-rejection）+ 1 份 exception（fault-before-commit）。",
+        "immutability": "S12 写一次即冻结；更正另起 *_correction.json，不改原件。",
+        "worker": "独立 worker 入口 scripts/training/verify_taiji_u2_s12_22_3_4_3.py（冻结名）；输入为 S12 路径与 parent checkpoint；输出 reports/taiji_u2_22_3_4_3_s12_<run_id>_<attempt_id>_worker.json；verdict 属于 {pass, fail}；失败不得回写 S12。",
+        "worker_checks": "重算 parent 与 post 摘要、核对 ledger seq、核对 status 与 checkpoint 存在性、独立进程重放校验；不接受仅凭 S12 自述的结论。"
+      },
+      "if_absent": "接受、拒绝、异常产物没有固定位置，独立 worker 无输入，S12 无法与 22.3.5 的十二类总账合拢；拒绝与异常两条会退化成口头读数。"
+    },
+    {
+      "id": "A5",
+      "title": "六次更新的执行器接口",
+      "decision": {
+        "entry": "scripts/training/run_taiji_u2_22_3_4_3.py（冻结名）",
+        "modes": {
+          "--dry-run": "只建 F1/F2 父、校验 manifest 与磁盘可写、打印将写入的路径；0 optimizer step；不写 ledger、不写 S12、不消耗 attempt。",
+          "--run": "要求 manifest.status=frozen 且 run.json.authorized=true 且 owner_approval_ref 非空；按 attempt_order 顺序执行 8 次。"
+        },
+        "state_machine_per_attempt": [
+          "parent readback（A2）",
+          "ledger.open + fsync（A1，预算在 step 前 +1）",
+          "仅 6 次更新：fork 参数摘要与 moments 匹配父 → 按参数名复制梯度 → 唯一一次 optimizer.step",
+          "标记候选版本 = 父+1",
+          "固定历史重建",
+          "一致性/保持回调（故障 attempt 在此拒绝或注入异常）",
+          "整体提交或保留父",
+          "save post checkpoint（故障 attempt 跳过）",
+          "readback（A2）",
+          "写 S12（A4）",
+          "ledger.close + fsync"
+        ],
+        "refusals": [
+          "manifest 未冻结或 run_authorized 不为 true ⇒ exit 5",
+          "run.json 缺 owner_approval_ref ⇒ exit 5",
+          "budget 将超过 8 ⇒ exit 3",
+          "ledger 断链或尾行截断 ⇒ exit 3",
+          "readback 不符 ⇒ exit 4",
+          "attempt 顺序或父子映射与 attempt_parents / attempt_posts 不符 ⇒ exit 6"
+        ],
+        "cost_accounting": "每个 attempt 的 cpu/wall 记入 close；失败重跑、保存与重放均记账；总帽 1200 CPU / 2400 wall 不因重跑放宽。",
+        "no_new_params": "执行器不得新增损失权重、超参数、阈值或变化下限；只消费另行冻结的执行 manifest 中的数值。",
+        "final_step": "8 份 worker 完成后，汇总 worker verdict 与 ledger 计数；任何一份 fail 则整卡不通过，不得补跑掩盖。"
+      },
+      "if_absent": "六次更新的顺序、父子映射与失败也计步没有强制点；容易出现多发一步、跳过 readback、或把拒绝/异常不计账，导致 8 次预算与 S12 全部失真。"
+    }
+  ],
+  "halt_codes": {
+    "3": "ledger 完整性问题：断链、尾行截断、预算超限、open 写入失败",
+    "4": "checkpoint 读回不符",
+    "5": "manifest 未冻结或未授权",
+    "6": "attempt 顺序或父子映射违规"
+  },
+  "what_this_does_not_decide": [
+    "损失权重、Adam 超参数、目标活性参数、实际变化下限（按卡在读数前另行冻执行 manifest）",
+    "F1/F2 合成 recipe 的具体样本（按卡执行）",
+    "任何能力判据或 192/192 的适用范围",
+    "22.3.5 十二类总账的字段（本文件只冻结 S12 的产出位置与 8 个 attempt 的对应）"
+  ]
+}
