@@ -854,7 +854,7 @@ owner 只批"封存集独立确认"，零训练、零调参；confirm **首次�
 
 ### 16.21 19.2w 边界残差复现与修复（2026-11-05，0 训练 / 290.51 CPU）＋ **D16-27 残差须在合成侧复现修复**
 
-owner 在 19.2v 收下后授权对 4 例外溢做**冻结外复现与修复**；本包**不读 confirm、不碰封存夹具**，全部数据由冻结 18.0 生成器用自定义名字池物化。证据 [报告](../../reports/taiji_package19_2w_boundary_residual_20261105.json)＋[manifest](../../plans/manifests/taiji_package19_2w_boundary_residual_20261105.json)＋[新装配态](../../output/taiji_package19_2w_assembled_stopfix_r2.pt)；脚本 [probe](../../scripts/training/probe_taiji_package19_2w_boundary_residual.py)；进度 jsonl 逐行 fsync。
+owner 在 19.2v 收下后授权对 4 例外溢做**冻结外复现与修复**；本包**不读 confirm、不碰封存夹具**，全部数据由冻结 18.0 生成器用自定义名字池物化。证据 [报告](../../reports/taiji_package19_2w_boundary_residual_20261105.json)＋[manifest](../../plans/manifests/taiji_package19_2w_boundary_residual_20261105.json)＋`taiji_package19_2w_assembled_stopfix_r2.pt`（未入库，不提供链接）；脚本 [probe](../../scripts/training/probe_taiji_package19_2w_boundary_residual.py)；进度 jsonl 逐行 fsync。
 
 - **复现（旧解码规则，模型与装配态与 19.2v 完全一致）**：地名全以"尾"结尾的合成集 **64 例 63 对**、外溢 **1 例＝1.56%**（位 27，多 3 字节）；地名全以"畔"结尾的对照 **64/64**、外溢 **0**。confirm 同类为 4/192＝2.08% → **同量级复现成立**（合成侧触发条件可用现有生成器造出）。
 - **诊断（唯一失败例的逐步 trace，只描述结构不贴封存字节）**：位 26 由复制通路给出末字节（顶位概率 1.0）；位 27 **EOS 0.3492 vs 顶位 0xE5 0.3968**，随后 0x88/0xB0 两个续字节以 0.936/0.977 高置信补齐，位 30 才回到 EOS。**冻结记录 1,536 行中，"到"整串出现 0 次** → 外溢字节不可能来自复制通路；复制边界（`copy_limits`）在位 27 已把质量清零。**结论：不是复制越过停止边界，而是序列末端缺少停止边——EOS 被模板续写以微弱优势压过。**

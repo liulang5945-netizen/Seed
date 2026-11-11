@@ -20,7 +20,7 @@
 
 ## 固定模型与对照
 
-- 从当前可恢复的Taiji原生H3.7B byte-aligned parent开始：[parent checkpoint](../../reports/r2_h3_7b_validation/dev_byte_aligned/checkpoint.pt)，SHA-256 `88de777fe05cdafb0a164e7fe7c21dc4417edc7fd3ce325f91885fd547708287`；关联报告SHA-256 `366f06d74ded0560bccf571ebf4177d07901e75b3ee8bc64cb50c478202ada4f`。
+- 从当前可恢复的Taiji原生H3.7B byte-aligned parent开始：`checkpoint.pt`（未入库，不提供链接），SHA-256 `88de777fe05cdafb0a164e7fe7c21dc4417edc7fd3ce325f91885fd547708287`；关联报告SHA-256 `366f06d74ded0560bccf571ebf4177d07901e75b3ee8bc64cb50c478202ada4f`。
 - 该parent此前2轮/24个人工问答训练，已通过保存恢复工程检查，但其旧dev自由生成响应边界率为0；逐字匹配率也为0。这些读数只说明需要在真实对话材料上重训生成，不能替代本批新语料评价。
 - 保持同一parent、H3.7B byte-aligned响应读出、推理解码、目标回复及总更新量。只比较上下文处理方式：
   - **多轮对话候选**：输入当前用户句和最多3轮干净历史。

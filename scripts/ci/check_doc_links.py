@@ -16,9 +16,11 @@ Scope is deliberately two-tiered:
   resolve to a tracked file.  That is exactly what
   ``tests/seed/test_project_identity.py`` asserts, only earlier.
 * the rest of ``plans`` is historical prose (2,400+ dead links accumulated
-  since 2026-09) and is not retro-fixed.  Only one rule is absolute there:
+  since 2026-09) and is not retro-fixed.  Two rules are still absolute there:
   a ``.jsonl`` link can never resolve, because ``.gitignore`` excludes every
-  ``*.jsonl`` in this repository.
+  ``*.jsonl`` in this repository, and a link to any other ``.gitignore``-hit
+  path resolves only on the machine that produced the artifact.  Missing-file
+  reporting, the noisy legacy class, stays limited to ``plans/active``.
 
 Usage:
     python scripts/ci/check_doc_links.py [path ...]
@@ -108,15 +110,16 @@ def main(argv: list[str]) -> int:
         if target.lower().endswith(".jsonl"):
             violations.append(f"{where}: link to .jsonl (never shipped): {target}")
             continue
-        if not strict:
-            continue
-        if not destination.exists():
-            violations.append(f"{where}: link target does not exist: {target}")
-            continue
+        # A gitignored target is the same broken promise in a different costume:
+        # it resolves on the author's machine and nowhere else, so it is rejected
+        # everywhere, not just in the strict scope.
         if destination.is_relative_to(ROOT):
             relative = str(destination.relative_to(ROOT)).replace("\\", "/")
             if relative in ignored:
                 violations.append(f"{where}: link target is gitignored: {target}")
+                continue
+        if strict and not destination.exists():
+            violations.append(f"{where}: link target does not exist: {target}")
 
     for violation in violations:
         print(violation)
