@@ -69,15 +69,21 @@ def test_each_seed_terminal_and_cut_observation_branch():
         session = engineering.SESSIONS[0]
         question = engineering.QUESTIONS[0]
         blocks = model.relation_inputs(model.evidence(session, terminal_per_source=True), question)
-        # Row-invariance is a functional invariant, not bitwise identity: BLAS kernels
-        # may reorder accumulation per row, so allow 8 ulp of the block's own magnitude.
+        # 门保持逐位相等；失败时把实测偏差分布打出来，供跨机器取证后再决定容差。
         for block in blocks:
             value = block.detach()
-            tolerance = (
-                8.0 * transfer.torch.finfo(value.dtype).eps * max(1.0, float(value.abs().max()))
-            )
-            spread = float((value - value[:1]).abs().max())
-            assert spread <= tolerance, (spread, tolerance)
+            rows = value.reshape(value.shape[0], -1)
+            deviation = (rows - rows[:1]).abs()
+            index = int(deviation.reshape(-1).argmax())
+            coordinate = index % rows.shape[1]
+            assert transfer.torch.equal(value, value[:1].expand_as(value)), {
+                "spread": float(deviation.max()),
+                "magnitude": float(value.abs().max()),
+                "dtype": str(value.dtype),
+                "flat_index": index,
+                "coordinate": coordinate,
+                "row_values_at_max_deviation": rows[:, coordinate].tolist(),
+            }
         captured = []
 
         def retain(module, args, out, captured=captured):

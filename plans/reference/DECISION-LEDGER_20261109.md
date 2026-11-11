@@ -2552,3 +2552,49 @@ Owner 的否决理由（原话要点）：基线可以重生成 ⇒ 红的时候
 - r022 的失败字段要等下一次 CI 红读取 `gate` 载荷；拿到后再决定是环境容差还是实现问题。
 - deselect 的 5 处矛盾需干净检出实证；158 次里没有本轮可零风险恢复的条目。
 
+---
+
+## D-20261111-08 撤回两条关系契约的 8 ulp 容差：先取证，再定容差
+
+**编号／时间／类型**：D-20261111-08｜2026-11-11｜**撤回（判据放宽撤回，非修复）**。
+**状态**：已回退严格门，**待实测；不是「已修复」**。
+
+### 1. 谁放的、放到多少
+
+- **放的人**：本线程在 CI 修复轮中自行放入，随 `D-20261111-07` 与提交 `1c75e4f6a` 落地；不是用户逐条批准的判据变更。
+- **放到多少**：把
+  `tests/taiji_native/test_native_local_relation_contract.py::test_relation_credit_cut_terminal_sources_and_reuse`
+  与
+  `tests/taiji_native/test_native_relation_confirmation_contract.py::test_each_seed_terminal_and_cut_observation_branch`
+  的 `torch.equal`（0 容差）改为
+  `spread <= 8 × eps(dtype) × max(1, |block|max)`；float32 下容差下限 **9.54e-7**。
+- **性质**：这是「允许多大误差」的改动，不是「门怎么写」；未走正式 rebaseline manifest。
+
+### 2. 为什么撤回
+
+- **没有跨机器实测分布**。本机 Windows 上 `spread = 0`，原 `torch.equal` 本来就通过，测不出东西。
+- Ubuntu 上的真实偏差没有被记录：旧断言只打印 `assert False`，不携带 `spread`；本轮也没有从 CI 取到逐行数值。
+- 在拿到实测之前，任何非零容差都不算数，`8 ulp` 属于未经校准的放宽，必须撤回。
+
+### 3. 回退后当前的门
+
+- 判据恢复为 `torch.equal`（逐位相等，0 容差），严格度与 `1c75e4f6a` 之前一致。
+- 保留诊断：断言失败时打印载荷
+  `{spread, magnitude, dtype, flat_index, coordinate, row_values_at_max_deviation}`。
+  `row_values_at_max_deviation` 是「最大偏差坐标上每一行的对应值」，长度等于行数，用于下一次 CI 直接吐出 Ubuntu 的逐行分布。
+- 本机复跑两条用例 `7 passed` 只证明诊断代码没有形状/语法错误，**不构成容差依据**（本机 spread 仍为 0）。
+
+### 4. 下一次读数从哪里取
+
+下一次 CI 若这两条红，读断言载荷：
+
+- 用例：`tests/taiji_native/test_native_local_relation_contract.py::test_relation_credit_cut_terminal_sources_and_reuse`
+- 用例：`tests/taiji_native/test_native_relation_confirmation_contract.py::test_each_seed_terminal_and_cut_observation_branch`
+- 字段：`spread`（行间最大绝对偏差）、`magnitude`（块内最大绝对值）、`row_values_at_max_deviation`（逐行对应值）、`coordinate`／`flat_index`（偏差位置）。
+
+拿到 `spread` 与 `magnitude` 的比值后，再决定是「浮点归约噪声 → 设定与 dtype 相关的容差（并走 rebaseline 记账）」还是「行间确有依赖 → 判为真错」。
+
+### 5. 与 D-20261111-07 的关系
+
+07 的 §3 与提交信息中「未放宽阈值」的表述对这两条不成立；本条把该事实更正为「曾放宽到 8 ulp，现已撤回」。07 的其余改动（三条 checkpoint 线程钉定、runner `--threads`、r022 诊断载荷）不受影响。
+
