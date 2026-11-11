@@ -37,7 +37,7 @@
 - [x] E2 `FINDING-CROSS_PROCESS_EVIDENCE_20261110.md` 追加三条新实例
 - [x] E3 更新 `plans/active/roadmap/03_CURRENT_EXECUTION.md` 当前动作
 - [x] E4 清理本轮临时产物，确认无残留机制
-- [ ] E5 提交并推送（只提交本轮相关文件，不带 worktree 既有脏文件）
+- [x] E5 提交并推送（只提交本轮相关文件，不带 worktree 既有脏文件）
 
 ## 明确不做
 
