@@ -54,10 +54,21 @@ jobs:
         run: pip install -e . --no-deps
 
       # ── 以下四个运行块与 ci.yml 同名 step 逐字一致（读数可比性）──
+      #
+      # 每个"采集证据"的步骤都带 `if: always()`：默认语义下前一步失败会让后面
+      # 的步骤 skip，于是最先红的那一项把其余读数一起遮掉。实测两次：run
+      # 42985658922 与 42988182010 里 mypy 棘轮一红，文档链守卫与后续步骤直接
+      # skipped——守卫本身从未被执行，却看起来像"这一项没意见"。这里改成"每项都
+      # 跑、全部读数到手，再由末置 Verdict 步统一判红"，而不是逐个步骤追上游。
+      # 装依赖的三个步骤保持默认语义：它们不是读数，装不上就没有读数可言。
       - name: Lint with ruff
+        id: ruff
+        if: always()
         run: ruff check .
 
       - name: Lint with ruff bugbear/simplify rules (ratchet, baseline 0)
+        id: ruff_bsim
+        if: always()
         env:
           RUFF_BSIM_BASELINE: "0"
         run: |
@@ -83,12 +94,18 @@ jobs:
           fi
 
       - name: Format check with black
+        id: black
+        if: always()
         run: black --check .
 
       - name: Audit frozen markers against the formatter
+        id: frozen
+        if: always()
         run: python scripts/training/audit_frozen_marker_formatter_conflict.py --no-write
 
       - name: Type check core modules with mypy (ratchet, baseline 0)
+        id: mypy
+        if: always()
         env:
           MYPY_CORE_BASELINE: "0"
         run: |
@@ -118,7 +135,44 @@ jobs:
       # 抓到。本步在 ~1s 内给出 `file:line`，把"事后抓到"变成"落地即报"。
       # 只依赖 git + stdlib，不装任何工具 ⇒ 不受 R7 钉版本约束，也不会拖慢 6m 预算。
       # 与 .pre-commit-config.yaml 的 `doc-evidence-links` 同源同一个脚本。
-      # 放在最后：它第一次真跑（run 42985658922）在 black 之后失败，把后面的
-      # 冻结标记审计与 mypy 棘轮一起 skip 掉了——一条文档红不该遮住两份类型读数。
       - name: Check plan evidence links
+        id: doc_links
+        if: always()
         run: python scripts/ci/check_doc_links.py
+
+      # 唯一判红处。上面每一项都独立跑完（`if: always()`），这里只做汇总：
+      # 六项里任何一项不是 success（failure / skipped / cancelled 一并算红）即失败。
+      # 为什么不靠"最后一步失败"：默认语义会把 skip 当作没事发生，而 skipped 恰恰
+      # 是本轮要根治的形态——读数没采到，比读数红了更糟。
+      # outcome 由 GitHub 写入，步骤没跑到就是 skipped ⇒ 汇总必然红，不会静默放行。
+      - name: Verdict over every reading above
+        if: always()
+        env:
+          RUFF_OUTCOME: ${{ steps.ruff.outcome }}
+          RUFF_BSIM_OUTCOME: ${{ steps.ruff_bsim.outcome }}
+          BLACK_OUTCOME: ${{ steps.black.outcome }}
+          FROZEN_OUTCOME: ${{ steps.frozen.outcome }}
+          MYPY_OUTCOME: ${{ steps.mypy.outcome }}
+          DOC_LINKS_OUTCOME: ${{ steps.doc_links.outcome }}
+        run: |
+          set -u
+          status=0
+          # `${VAR:-missing}` 兜住"变量根本没定义"：`set -u` 下裸引用会当场退出，
+          # 汇总步就只留下一个空 exit 1、看不到逐项表，等于又回到"遮住读数"。
+          for pair in \
+            "ruff:${RUFF_OUTCOME:-missing}" \
+            "ruff-bsim:${RUFF_BSIM_OUTCOME:-missing}" \
+            "black:${BLACK_OUTCOME:-missing}" \
+            "frozen-markers:${FROZEN_OUTCOME:-missing}" \
+            "mypy-core:${MYPY_OUTCOME:-missing}" \
+            "plan-evidence-links:${DOC_LINKS_OUTCOME:-missing}"; do
+            name=${pair%%:*}
+            outcome=${pair#*:}
+            echo "$name = $outcome"
+            if [ "$outcome" != "success" ]; then status=1; fi
+          done
+          if [ "$status" -ne 0 ]; then
+            echo "::error::至少一项读数为红或未采集（见上面逐项 outcome），本次快通道不通过"
+            exit 1
+          fi
+          echo "::notice::六项读数全绿"
