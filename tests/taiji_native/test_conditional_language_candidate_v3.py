@@ -176,8 +176,13 @@ def test_v3_step_update_and_fresh_process_checkpoint_restore(tmp_path):
     ]
     env = dict(os.environ)
     env["PYTHONPATH"] = str(ROOT) + os.pathsep + env.get("PYTHONPATH", "")
+    # probe_digest rounds logits to 7 decimals; torch intra-op thread budget changes
+    # floating-point reduction order, which can move the last bytes across that
+    # rounding boundary. The child interpreter starts from the machine default, so
+    # pin it to the parent's budget or this compares two execution configs.
+    threads = torch.get_num_threads()
     code = (
-        "import torch,sys; "
+        f"import torch,sys; torch.set_num_threads({threads}); "
         "from taiji.conditional_language_v3 import ConditionalLanguageTrainerV3; "
         "p=torch.load(sys.argv[1],map_location='cpu',weights_only=False); "
         "t,s,c=ConditionalLanguageTrainerV3.from_checkpoint(p); "

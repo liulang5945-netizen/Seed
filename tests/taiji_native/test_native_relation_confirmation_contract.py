@@ -69,7 +69,15 @@ def test_each_seed_terminal_and_cut_observation_branch():
         session = engineering.SESSIONS[0]
         question = engineering.QUESTIONS[0]
         blocks = model.relation_inputs(model.evidence(session, terminal_per_source=True), question)
-        assert all(transfer.torch.equal(block, block[:1].expand_as(block)) for block in blocks)
+        # Row-invariance is a functional invariant, not bitwise identity: BLAS kernels
+        # may reorder accumulation per row, so allow 8 ulp of the block's own magnitude.
+        for block in blocks:
+            value = block.detach()
+            tolerance = (
+                8.0 * transfer.torch.finfo(value.dtype).eps * max(1.0, float(value.abs().max()))
+            )
+            spread = float((value - value[:1]).abs().max())
+            assert spread <= tolerance, (spread, tolerance)
         captured = []
 
         def retain(module, args, out, captured=captured):

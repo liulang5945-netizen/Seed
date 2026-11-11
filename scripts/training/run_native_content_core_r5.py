@@ -155,8 +155,18 @@ def _restore_probe(path: Path) -> int:
 def _fresh_probe(path: Path) -> dict[str, Any]:
     env = dict(os.environ)
     env["PYTHONPATH"] = str(ROOT) + os.pathsep + env.get("PYTHONPATH", "")
+    # probe_digest rounds logits to 7 decimals; the fresh interpreter must inherit the
+    # parent's thread budget, or a thread-order shift reads as a failed restore.
+    threads = torch.get_num_threads()
     completed = subprocess.run(
-        [sys.executable, str(Path(__file__).resolve()), "--restore-probe", str(path)],
+        [
+            sys.executable,
+            str(Path(__file__).resolve()),
+            "--restore-probe",
+            str(path),
+            "--threads",
+            str(threads),
+        ],
         cwd=str(ROOT),
         env=env,
         check=True,
@@ -476,12 +486,20 @@ def main() -> int:
         help="checkpoint directory suffix; the report itself stays write-once",
     )
     parser.add_argument(
+        "--threads",
+        type=int,
+        default=None,
+        help="child mode: torch intra-op thread budget inherited from the parent probe",
+    )
+    parser.add_argument(
         "--approve-r5",
         action="store_true",
         help="required: the user approved R5 execution",
     )
     args = parser.parse_args()
     if args.restore_probe is not None:
+        if args.threads is not None:
+            torch.set_num_threads(args.threads)
         return _restore_probe(args.restore_probe)
     return _price(args.run_id, approve=args.approve_r5)
 

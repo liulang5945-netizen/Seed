@@ -69,7 +69,13 @@ def test_relation_credit_cut_terminal_sources_and_reuse():
     assert model.question.weight_ih.grad.abs().sum() > 0
     blocks = model.relation_inputs(model.evidence("relation60", terminal_per_source=True), q)
     assert len(blocks) == 2
-    assert all(torch.equal(b, b[:1].expand_as(b)) for b in blocks)
+    # Row-invariance is a functional invariant, not bitwise identity: BLAS kernels
+    # may reorder accumulation per row, so allow 8 ulp of the block's own magnitude.
+    for block in blocks:
+        value = block.detach()
+        tolerance = 8.0 * torch.finfo(value.dtype).eps * max(1.0, float(value.abs().max()))
+        spread = float((value - value[:1]).abs().max())
+        assert spread <= tolerance, (spread, tolerance)
     calls = []
     hook = model.relation_sequence.register_forward_pre_hook(
         lambda module, args: calls.append(len(args))

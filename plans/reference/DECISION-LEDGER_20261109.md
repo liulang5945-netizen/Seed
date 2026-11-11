@@ -2482,3 +2482,73 @@ Owner 的否决理由（原话要点）：基线可以重生成 ⇒ 红的时候
 
 05 里写的是「只报不改」；本条把边界更新为**「对方工作树干净时代改、并单独记一笔」**——因为长期让一条 mypy 红压着快通道，会让整条通道的读数习惯性被忽视，代价高于 3 行代改。
 
+---
+
+## D-20261111-07 CI 单测 8 条红：5 条定性（判据修正／实现缺陷／环境待定位）＋2 条容差修正
+
+**编号／时间／类型**：D-20261111-07｜2026-11-11｜**判据修正（跨进程摘要钉线程预算；关系契约逐位相等→8 ulp 自缩放）＋实现修复（R5 runner）**。
+
+### 1. 范围与前提
+
+最新完成 run `42979760915`：Ubuntu 8 红／5079 绿／138 skip／79 deselect，Windows 1 红（文档链，HEAD 已修）。本轮只处理单测 8 红里除文档链外的 7 条；620 份报告豁免、278 条 mypy advisory 不作硬目标。
+
+同一提交、固定线程数下本机重跑（Windows，HEAD `4bb053886`，r022 先跑把会话钉到 1 线程）读数：`1 failed, 36 passed`，唯一红是 `test_native_content_r5_runner.py:62: assert 0 == 1`。
+
+### 2. 逐条判定（原始读数）
+
+| 测试 | CI 原始失败行 | 判定 |
+|---|---|---|
+| `test_conditional_language_candidate_v3.py` | L200 `'70f81d0f18a0…' == '999d315d509a…'` | 判据本身写错 |
+| `test_native_content_core.py` | L360 `'206dda585edd…' == '82e642bd338f…'` | 判据本身写错 |
+| `test_ordinary_baseline.py` | L122 `'5f32a4733352…' == '13fc9cce068c…'` | 判据本身写错 |
+| `test_living_core_credit_r022.py` | L859 `assert False is True` | 环境决定（失败字段待定位） |
+| `test_native_content_r5_runner.py` | L62 `assert 0 == 1` | 真错（出厂 runner 缺陷） |
+| `test_native_local_relation_contract.py` | L72 `torch.equal(...)` | 判据本身写错（跨 BLAS 逐位相等不成立） |
+| `test_native_relation_confirmation_contract.py` | L72 `torch.equal(...)` | 同上 |
+
+三条 checkpoint 的失败只落在「子进程重算摘要」一行；同进程 `load` 后相等的断言在 CI 也通过。本机因 1 线程父／12 线程子在这三组配置上 7 位小数恰好一致而变绿——是运气，不是判据成立。
+
+### 3. 改了什么
+
+- 三条 checkpoint 测试：父进程取 `torch.get_num_threads()`，子进程脚本首行 `torch.set_num_threads(该值)`。断言、期望值、容差未改。
+- `scripts/training/run_native_content_core_r5.py`：`_fresh_probe` 增 `--threads <父进程线程数>`；`main()` 的 `--restore-probe` 先 `torch.set_num_threads`。报告 `environment.torch_threads` 不变。
+- 两条关系契约：`torch.equal` 改为 `spread <= 8 ulp × max(1, |block|max)`，失败时打印 `(spread, tolerance)`；先 `detach()` 避免 autograd 标量告警。
+- `test_living_core_credit_r022.py:859`：`assert gate["passed"] is True, gate`——只加诊断载荷，**不改任何阈值、不做 rebaseline**，等下一次 CI 红直接给出失败字段。
+
+### 4. 本机读数
+
+- 7 个改动文件 + `tests/seed/test_project_identity.py` 敌意顺序合跑：**48 passed**（含 r022 先跑钉 1 线程）。
+- 两条关系契约单独以 `-W error::UserWarning` 复跑：**7 passed**。
+- 文档链测试：**4 passed**（HEAD 已无指向未入库 `.jsonl` 的活动计划链接）。
+
+### 5. 158 次 deselect 清单（本轮只出清单）
+
+`.github/workflows/ci.yml` 共 158 处 `--deselect`（79 条 × 两腿），51 个文件、79 个唯一 node id。按既有注释分族：
+
+| 族 | 条数 | 不可跑原因 |
+|---|---|---|
+| N1 消费链 | 30 | `data/checkpoints/`、`output/`、`reports/` 在飞读数未入库 |
+| native_* 面 | 17 | 未入库产物 |
+| n3_09 | 7 | `output/n3_08_smoke/pressure.jsonl` 未入库 |
+| R2 在飞产物 | 6 | warmstart checkpoint／预算修正案／extension 产物未入库 |
+| n5 面 | 5 | 未入库 checkpoint／读数 |
+| a30 产物审计 | 3 | 产物审计依赖未入库读数 |
+| c2_calibration | 3 | `output/a31_chunked_self/` 未入库 |
+| run89 | 2 | powershell 平台 |
+| n4_05 | 2 | 平台／路径 |
+| n6 CR 行为契约 | 2 | Windows CR 行为 |
+| g35／runtime_attachment | 2 | 未入库 checkpoint／attachment 状态 |
+
+**结论**：79 条全部有书面不可跑原因，没有「无理由顺手排除」的条目。注释与清单存在 5 处待复核矛盾（`plan134` ×1、`n3_09` 拒绝分支 ×3、`start_charge` ×1 注释称已摘除但仍在册）；本轮未在干净检出上实证，**不擅自恢复**，留作下一轮「干净检出逐条实证后摘除」。
+
+### 6. 撤回路径
+
+- 三条 checkpoint 与两条关系契约：`git revert` 对应提交即可回到原判据。
+- R5 runner：撤回 `--threads` 参数与两处调用，恢复自检会在多线程宿主上重新误判——不建议单独撤回。
+- r022：撤回只丢失诊断载荷，不影响判定。
+
+### 7. 未完成／下一步
+
+- r022 的失败字段要等下一次 CI 红读取 `gate` 载荷；拿到后再决定是环境容差还是实现问题。
+- deselect 的 5 处矛盾需干净检出实证；158 次里没有本轮可零风险恢复的条目。
+

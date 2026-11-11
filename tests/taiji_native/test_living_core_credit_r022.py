@@ -856,7 +856,7 @@ def test_r022_declared_credit_gate():
     assert gate["fd_disagreements"] == []
     assert gate["directional_disagreements"] == []
     assert gate["second_disagreements"] == []
-    assert gate["passed"] is True
+    assert gate["passed"] is True, gate
     assert len(payload["tensors"]) == 101
     assert gate["credited_count"] == 101
     assert gate["inert_updates_negligible"] is True

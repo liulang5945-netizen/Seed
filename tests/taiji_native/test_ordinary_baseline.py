@@ -105,8 +105,11 @@ def test_zero_step_bundle_restores_in_process_and_fresh_process(tmp_path):
     assert restored.probe_digest(query=QUERY) == expected
     env = dict(os.environ)
     env["PYTHONPATH"] = str(ROOT) + os.pathsep + env.get("PYTHONPATH", "")
+    # probe_digest rounds logits to 7 decimals; the fresh child interpreter must
+    # share the parent's thread budget, or the digest differs by execution config.
+    threads = torch.get_num_threads()
     code = (
-        "import sys; "
+        f"import sys, torch; torch.set_num_threads({threads}); "
         "from taiji.ordinary_baseline import OrdinaryBundleV1; "
         "b=OrdinaryBundleV1.load(sys.argv[1]); "
         "print(b.probe_digest(query=sys.argv[2].encode()))"

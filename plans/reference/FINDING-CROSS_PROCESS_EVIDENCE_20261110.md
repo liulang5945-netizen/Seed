@@ -91,6 +91,36 @@ AssertionError: assert '624f786958aa...145de645a5395' == 'da8bbaac3c4b...a038aea
 
 **为什么与类型改动无关**：该用例的摘要路径是 `SequenceContentTrainer` 前向＋`content_digest`，本轮没有改动其中任何表达式；把 `torch.set_num_threads` 改成同一值即可在不碰那 6 个文件的情况下让摘要重合。
 
+## 3c：第 5–7 条——三条 checkpoint 往返（v3／native_content_core／ordinary_baseline）
+
+**失败原文（CI run 42979760915，`gh run view --log-failed`）**：
+
+```
+test_conditional_language_candidate_v3.py:200: assert '70f81d0f18a0…' == '999d315d509a…'
+test_native_content_core.py:360:              assert '206dda585edd…' == '82e642bd338f…'
+test_ordinary_baseline.py:122:                assert '5f32a4733352…' == '13fc9cce068c…'
+```
+
+**涉及摘要**：三者都是 `probe_digest`（logits 四舍五入到 7 位小数后 SHA-256）。父进程先算一次并 `save`，再起全新解释器 `load` 后重算，比较两次摘要。
+
+**两次输入是否真的相同**：**是**。同一 checkpoint、同一代码路径。差异只有线程预算：父进程在 pytest 会话里被更早的用例留在 1 线程，子进程从 runner 默认核数起步。三条测试内「同进程 load 后摘要相等」的断言在 CI 也通过，只有跨进程那行红。
+
+**判定**：第一类——**测试写错了**。同 3b，断言没写运行条件。
+
+**本机读数**：把 r022 放在最前面（其 fixture 钉 1 线程）再跑这三条，本机 `12 passed`——1 线程父／12 线程子在这三组配置上 7 位小数恰好一致。所以本机绿不是判据成立，而是没过舍入边界。
+
+**改了什么**：三条测试父进程取 `torch.get_num_threads()`，子进程脚本首行插入 `torch.set_num_threads(该值)`。断言、期望值、容差一律未改。
+
+## 3d：第 8 条——R5 runner 的恢复自检（出厂代码，非测试）
+
+**失败原文**：`test_native_content_r5_runner.py:62: assert 0 == 1`。
+
+**根因**：`scripts/training/run_native_content_core_r5.py` 的 `_fresh_probe()` 起子进程做 `--restore-probe` 时没有传线程预算。父进程在 pytest 会话里是 1 线程，子进程是 12 线程 → `zero_restore.fresh_process_equal=False` → `train_run` 提前返回，`steps_executed` 停在 0。
+
+**判定**：**实现缺陷**（不是测试写法）。这是出厂 runner：任何宿主上线程预算改变末位，都会把恢复误判为失败并中止整轮。与 2.1 的测试问题不同，必须改 runner。
+
+**改了什么**：`_fresh_probe` 新增 `--threads <父进程线程数>`；`main()` 的 `--restore-probe` 分支先 `torch.set_num_threads(args.threads)`。报告字段 `environment.torch_threads` 不变。
+
 ## 4：为什么这些失败都与类型改动无关
 
 1. **路径不重叠**：三条摘要用例走 `native_content_core*`／`corrected_old_baseline`／`sequence_content_workspace` 的前向与序列化，摘要函数里没有任何一个表达式被本轮改过；r029 的断言对象是计时器字段，不是被改的类型面。

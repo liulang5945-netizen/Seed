@@ -59,6 +59,19 @@
 
 **头条状态（2026-11-04，语义身份）：** 身份从“字节绑定”改为“语义哈希”：组成项是图名/契约、配置常量、模块清单、`routing_rule_version`、解码与路由规则、输入白名单、参数名/形状/dtype、声明可塑归属；`source_sha` 与 `weights_sha256` 只记录不决定身份。black-100 合并后 v1 字节摘要从 964a8c68… 漂到 1af63213…，但 `candidate_sha_v2` 恒为 773dcec2…。零更新等价探针（[报告](../../../reports/taiji_selection_routing_17_2r_format_equivalence_20261104.json)）全部逐位一致，60.80 CPU / 62.80 wall、0 优化器步、0 训练更新、0 confirm 读取；四份 2026-11-03 证据维持原字节与有效性（T3 v3 720/720、17.4 v2、新价、17.2R），身份登记见[注册报告](../../../reports/taiji_selection_routing_17_2r_identity_20261104.json)。17.5 的 checkpoint 保存/恢复复验已通过，六格跑完并结案为负结果（见下条 17.7）。本页是按时间追加的流水，旧条目里的“唯一阻塞/唯一下一步”均已被最新条目覆盖。
 
+## 2026-11-11 CI 单测 7 条定性收口（0 训练 / 0 confirm）
+
+最新完成 run `42979760915` 的 8 条单测红，除文档链（HEAD 已修）外逐条定性并处置，详见 [D-20261111-07](../../reference/DECISION-LEDGER_20261109.md) 与 [SPEC-CI_QUALIFICATION_20261111](../../reference/SPEC-CI_QUALIFICATION_20261111.md)。
+
+- **判据本身写错（5 条）**：三条 checkpoint 往返（v3／native_content_core／ordinary_baseline）与两条关系契约（local_relation／relation_confirmation）。前者跨进程比摘要却没钉线程预算，后者要求跨 BLAS 逐位相等；已把子进程钉到父进程线程数、把逐位相等改为 `8 ulp × 量级` 自缩放容差。断言、期望值、阈值均未放宽。
+- **真错（1 条）**：R5 runner 的 `_fresh_probe` 未把线程预算传给恢复子进程，导致恢复误判、`steps_executed` 停在 0；已加 `--threads` 参数。这是出厂代码，不是测试。
+- **环境决定（1 条）**：r022 的 `gate["passed"]` 在 Ubuntu 为 False，本机所有量离阈值都远（clamp 14.78 vs 1、inert 1.2e-12 vs 1e-11），失败字段日志未携带；本轮只把断言改为带 `gate` 载荷，**未改阈值、未 rebaseline**。
+- **本机读数**：7 个改动文件 + 文档链测试敌意顺序合跑 **48 passed**；关系契约以 `-W error::UserWarning` 复跑 **7 passed**。
+- **deselect**：158 处（79 条 × 两腿、51 文件）全部有书面不可跑原因；5 处注释称已摘除但仍在册（plan134×1、n3_09 拒绝分支×3、start_charge×1），待干净检出实证后决定，不擅自恢复。
+- **唯一下一步**：等下一次 CI 给出 r022 的 `gate` 失败字段，再决定它属环境容差还是实现问题。
+
+
+
 ## 2026-11-08 编码层最后一刀：`localized_centered` 当唯一变量（0 训练 / 0 优化器步 / 0 Adam / 0 confirm）
 
 **产物**：[回执](../../../reports/taiji_gate_localized_20261108.json)、[预注册 manifest](../../manifests/taiji_gate_localized_20261108.json)（sha `b434c1df…`，读数前落盘、`written_before_any_reading=true`）、runner [probe_taiji_gate_localized_20261108.py](../../../scripts/training/probe_taiji_gate_localized_20261108.py)（sha 前后 `112330dd…`，双列一致）、进度 `reports/taiji_gate_localized_20261108_progress.jsonl`。**8.078 CPU / 1.240 wall**。
