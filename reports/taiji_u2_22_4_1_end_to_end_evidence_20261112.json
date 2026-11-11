@@ -1,0 +1,1060 @@
+{
+  "schema": "taiji-u2-22.4.1-end-to-end-evidence-v1",
+  "evidence_only": true,
+  "created_at": "2026-11-11T17:57:46.530580+00:00",
+  "purpose": "证明 u2 的代码路径在本机可端到端跑通：账本 run_start→open→close 齐全、一步落参、checkpoint 写读五项、S12 与独立 worker 复算一致。",
+  "run_id": "20261112TEVID01Z",
+  "update_id": "u2-strong-baseline",
+  "arm": "u2-strong-baseline",
+  "command": "python -m scripts.training.evidence_taiji_u2_end_to_end_22_4_1",
+  "owner_approval_ref": "evidence-only:2026-11-12#u2-strong-baseline",
+  "run_root": "reports/taiji_u2_22_4_1_20261112TEVID01Z/",
+  "run_json_sha256": "b6310b4a53075a1a3be66dd83124039c264b689a140d4bc093796f8dc0f6d3b9",
+  "ledger": {
+    "path": "reports/taiji_u2_22_4_1_EVIDENCE_ONLY_20261112_attempts.ndjson",
+    "sha256": "b2ddf4560d3533ebb539e2b8bd828953791394691bbf1fc361448abb20ff5170",
+    "rows": 4,
+    "events": [
+      "run_start",
+      "open",
+      "close",
+      "annotation"
+    ],
+    "consumed": 1,
+    "head": "52c23527a467fd536f59bb393f031d689a4feaf681240315dbdbf8789c4b6453",
+    "durability": "every row appended with os.fsync before the next event"
+  },
+  "s12": {
+    "path": "reports/taiji_u2_22_4_1_EVIDENCE_ONLY_20261112_s12_u2-strong-baseline.json",
+    "sha256": "82b4b526d9d6fa4c717e8e25f763dec3fc8fb9e76ed45c0a95199c281d3ba236",
+    "parent_sha256": "97c409ac2cecc999f3b557f31d85a6fabec9e3cbb19418db192cf2c15f37ff8c",
+    "post_sha256": "8571d2b27a7f957bd52abbfd34070ea896d62c6a323641b331758eb8e3fa70ce",
+    "status": "accepted"
+  },
+  "worker": {
+    "path": "reports/taiji_u2_22_4_1_EVIDENCE_ONLY_20261112_s12_u2-strong-baseline_worker.json",
+    "sha256": "7f3a4eca69b6bf94cc7c320ecd6b9fbdd0dbc41b6841341ddc2b81995aba8cfe",
+    "verdict": "pass",
+    "status": "accepted_verified_baseline",
+    "adam_equations": 35,
+    "parameter_rows": 35,
+    "checkpoints": {
+      "parent": "97c409ac2cecc999f3b557f31d85a6fabec9e3cbb19418db192cf2c15f37ff8c",
+      "parent_readback": true,
+      "post": "8571d2b27a7f957bd52abbfd34070ea896d62c6a323641b331758eb8e3fa70ce",
+      "post_readback": true
+    },
+    "optimizer_step_calls": 0
+  },
+  "checkpoints": {
+    "parent": {
+      "path": "parent.bin",
+      "sha256": "97c409ac2cecc999f3b557f31d85a6fabec9e3cbb19418db192cf2c15f37ff8c",
+      "five_fields": {
+        "state_sha256": "3cf35a781c5d5e134697d3a64ac21b19935e854f8d47f04a46d911be194a7f9d",
+        "parameter_sha256": "bc2cf8516d7246ca65f218fad1218f63dc01a7cc241ca45f977c3c952228df81",
+        "moment_sha256": "ea18cd57c6f80351640e1c3792a765d48d75f26b0404561a542ee1a39860bba7",
+        "history_reference": "baseline:e5c776c4f12e4633",
+        "revision": 0
+      }
+    },
+    "post": {
+      "path": "post.bin",
+      "sha256": "8571d2b27a7f957bd52abbfd34070ea896d62c6a323641b331758eb8e3fa70ce",
+      "five_fields": {
+        "state_sha256": "3cf35a781c5d5e134697d3a64ac21b19935e854f8d47f04a46d911be194a7f9d",
+        "parameter_sha256": "cd79b48d07f68c7e83392bac551978bc474c0f4dddf16dd12327c78a2b3ebf9e",
+        "moment_sha256": "d50c3b57bdff3048f11ca393b31d6a1c1753f63a99bc4b324d1f5ddf9f67400e",
+        "history_reference": "baseline:e5c776c4f12e4633",
+        "revision": 1
+      }
+    },
+    "readback": "fresh rebuild from the frozen identity, then load state/moments"
+  },
+  "activity": {
+    "count": 35,
+    "floors": {
+      "gradient_norm": 1e-10,
+      "max_parameter_change": 1e-08
+    },
+    "min_margin": 99997.96748161316,
+    "barely_live_parameters": [],
+    "parameters": [
+      {
+        "parameter": "attention.in_proj_bias",
+        "gradient_norm": 0.03358237445354462,
+        "change": 0.0009999989997595549,
+        "change_floor": 1e-08,
+        "margin": 99999.89997595549,
+        "barely_live": false,
+        "gradient_ok": true,
+        "change_ok": true
+      },
+      {
+        "parameter": "attention.in_proj_weight",
+        "gradient_norm": 0.09331899136304855,
+        "change": 0.0010000020265579224,
+        "change_floor": 1e-08,
+        "margin": 100000.20265579224,
+        "barely_live": false,
+        "gradient_ok": true,
+        "change_ok": true
+      },
+      {
+        "parameter": "attention.out_proj.bias",
+        "gradient_norm": 0.08532660454511642,
+        "change": 0.0009999992325901985,
+        "change_floor": 1e-08,
+        "margin": 99999.92325901985,
+        "barely_live": false,
+        "gradient_ok": true,
+        "change_ok": true
+      },
+      {
+        "parameter": "attention.out_proj.weight",
+        "gradient_norm": 0.11622648686170578,
+        "change": 0.0010000020265579224,
+        "change_floor": 1e-08,
+        "margin": 100000.20265579224,
+        "barely_live": false,
+        "gradient_ok": true,
+        "change_ok": true
+      },
+      {
+        "parameter": "byte_head.bias",
+        "gradient_norm": 0.3091574013233185,
+        "change": 0.0010000001639127731,
+        "change_floor": 1e-08,
+        "margin": 100000.01639127731,
+        "barely_live": false,
+        "gradient_ok": true,
+        "change_ok": true
+      },
+      {
+        "parameter": "byte_head.weight",
+        "gradient_norm": 1.7388030290603638,
+        "change": 0.0010000020265579224,
+        "change_floor": 1e-08,
+        "margin": 100000.20265579224,
+        "barely_live": false,
+        "gradient_ok": true,
+        "change_ok": true
+      },
+      {
+        "parameter": "feedforward.0.bias",
+        "gradient_norm": 0.013252289965748787,
+        "change": 0.0009999973699450493,
+        "change_floor": 1e-08,
+        "margin": 99999.73699450493,
+        "barely_live": false,
+        "gradient_ok": true,
+        "change_ok": true
+      },
+      {
+        "parameter": "feedforward.0.weight",
+        "gradient_norm": 0.07011934369802475,
+        "change": 0.0010000020265579224,
+        "change_floor": 1e-08,
+        "margin": 100000.20265579224,
+        "barely_live": false,
+        "gradient_ok": true,
+        "change_ok": true
+      },
+      {
+        "parameter": "feedforward.2.bias",
+        "gradient_norm": 0.0836300179362297,
+        "change": 0.0009999992325901985,
+        "change_floor": 1e-08,
+        "margin": 99999.92325901985,
+        "barely_live": false,
+        "gradient_ok": true,
+        "change_ok": true
+      },
+      {
+        "parameter": "feedforward.2.weight",
+        "gradient_norm": 0.13482697308063507,
+        "change": 0.0010000020265579224,
+        "change_floor": 1e-08,
+        "margin": 100000.20265579224,
+        "barely_live": false,
+        "gradient_ok": true,
+        "change_ok": true
+      },
+      {
+        "parameter": "frontend.convolutions.0.bias",
+        "gradient_norm": 0.011025859043002129,
+        "change": 0.000999998301267624,
+        "change_floor": 1e-08,
+        "margin": 99999.83012676239,
+        "barely_live": false,
+        "gradient_ok": true,
+        "change_ok": true
+      },
+      {
+        "parameter": "frontend.convolutions.0.weight",
+        "gradient_norm": 0.0017156994435936213,
+        "change": 0.0009999796748161316,
+        "change_floor": 1e-08,
+        "margin": 99997.96748161316,
+        "barely_live": false,
+        "gradient_ok": true,
+        "change_ok": true
+      },
+      {
+        "parameter": "frontend.convolutions.1.bias",
+        "gradient_norm": 0.010961226187646389,
+        "change": 0.000999998301267624,
+        "change_floor": 1e-08,
+        "margin": 99999.83012676239,
+        "barely_live": false,
+        "gradient_ok": true,
+        "change_ok": true
+      },
+      {
+        "parameter": "frontend.convolutions.1.weight",
+        "gradient_norm": 0.0021179886534810066,
+        "change": 0.0009999852627515793,
+        "change_floor": 1e-08,
+        "margin": 99998.52627515793,
+        "barely_live": false,
+        "gradient_ok": true,
+        "change_ok": true
+      },
+      {
+        "parameter": "frontend.convolutions.2.bias",
+        "gradient_norm": 0.01154922042042017,
+        "change": 0.000999998301267624,
+        "change_floor": 1e-08,
+        "margin": 99999.83012676239,
+        "barely_live": false,
+        "gradient_ok": true,
+        "change_ok": true
+      },
+      {
+        "parameter": "frontend.convolutions.2.weight",
+        "gradient_norm": 0.0020339691545814276,
+        "change": 0.0009999871253967285,
+        "change_floor": 1e-08,
+        "margin": 99998.71253967285,
+        "barely_live": false,
+        "gradient_ok": true,
+        "change_ok": true
+      },
+      {
+        "parameter": "frontend.embedding.weight",
+        "gradient_norm": 0.03478298708796501,
+        "change": 0.001000046730041504,
+        "change_floor": 1e-08,
+        "margin": 100004.67300415039,
+        "barely_live": false,
+        "gradient_ok": true,
+        "change_ok": true
+      },
+      {
+        "parameter": "frontend.encoder.audio.bias",
+        "gradient_norm": 0.014640547335147858,
+        "change": 0.0009999992325901985,
+        "change_floor": 1e-08,
+        "margin": 99999.92325901985,
+        "barely_live": false,
+        "gradient_ok": true,
+        "change_ok": true
+      },
+      {
+        "parameter": "frontend.encoder.audio.weight",
+        "gradient_norm": 0.04310440644621849,
+        "change": 0.0010000020265579224,
+        "change_floor": 1e-08,
+        "margin": 100000.20265579224,
+        "barely_live": false,
+        "gradient_ok": true,
+        "change_ok": true
+      },
+      {
+        "parameter": "frontend.encoder.proprio.bias",
+        "gradient_norm": 0.010639342479407787,
+        "change": 0.000999998301267624,
+        "change_floor": 1e-08,
+        "margin": 99999.83012676239,
+        "barely_live": false,
+        "gradient_ok": true,
+        "change_ok": true
+      },
+      {
+        "parameter": "frontend.encoder.proprio.weight",
+        "gradient_norm": 0.03612080216407776,
+        "change": 0.0010000020265579224,
+        "change_floor": 1e-08,
+        "margin": 100000.20265579224,
+        "barely_live": false,
+        "gradient_ok": true,
+        "change_ok": true
+      },
+      {
+        "parameter": "frontend.encoder.rgb.bias",
+        "gradient_norm": 0.010785774327814579,
+        "change": 0.000999998301267624,
+        "change_floor": 1e-08,
+        "margin": 99999.83012676239,
+        "barely_live": false,
+        "gradient_ok": true,
+        "change_ok": true
+      },
+      {
+        "parameter": "frontend.encoder.rgb.weight",
+        "gradient_norm": 0.038900356739759445,
+        "change": 0.0010000020265579224,
+        "change_floor": 1e-08,
+        "margin": 100000.20265579224,
+        "barely_live": false,
+        "gradient_ok": true,
+        "change_ok": true
+      },
+      {
+        "parameter": "frontend.metadata.bias",
+        "gradient_norm": 0.037081506103277206,
+        "change": 0.0009999992325901985,
+        "change_floor": 1e-08,
+        "margin": 99999.92325901985,
+        "barely_live": false,
+        "gradient_ok": true,
+        "change_ok": true
+      },
+      {
+        "parameter": "frontend.metadata.weight",
+        "gradient_norm": 0.04543904587626457,
+        "change": 0.0010000020265579224,
+        "change_floor": 1e-08,
+        "margin": 100000.20265579224,
+        "barely_live": false,
+        "gradient_ok": true,
+        "change_ok": true
+      },
+      {
+        "parameter": "frontend.modality",
+        "gradient_norm": 0.024044979363679886,
+        "change": 0.0010000020265579224,
+        "change_floor": 1e-08,
+        "margin": 100000.20265579224,
+        "barely_live": false,
+        "gradient_ok": true,
+        "change_ok": true
+      },
+      {
+        "parameter": "frontend.text_input.bias",
+        "gradient_norm": 0.012012217193841934,
+        "change": 0.000999998301267624,
+        "change_floor": 1e-08,
+        "margin": 99999.83012676239,
+        "barely_live": false,
+        "gradient_ok": true,
+        "change_ok": true
+      },
+      {
+        "parameter": "frontend.text_input.weight",
+        "gradient_norm": 0.0035091761965304613,
+        "change": 0.0009999945759773254,
+        "change_floor": 1e-08,
+        "margin": 99999.45759773254,
+        "barely_live": false,
+        "gradient_ok": true,
+        "change_ok": true
+      },
+      {
+        "parameter": "norm_attention.bias",
+        "gradient_norm": 0.08409567922353745,
+        "change": 0.000999999581836164,
+        "change_floor": 1e-08,
+        "margin": 99999.9581836164,
+        "barely_live": false,
+        "gradient_ok": true,
+        "change_ok": true
+      },
+      {
+        "parameter": "norm_attention.weight",
+        "gradient_norm": 0.06989838182926178,
+        "change": 0.001000046730041504,
+        "change_floor": 1e-08,
+        "margin": 100004.67300415039,
+        "barely_live": false,
+        "gradient_ok": true,
+        "change_ok": true
+      },
+      {
+        "parameter": "norm_feedforward.bias",
+        "gradient_norm": 0.08421308547258377,
+        "change": 0.000999999581836164,
+        "change_floor": 1e-08,
+        "margin": 99999.9581836164,
+        "barely_live": false,
+        "gradient_ok": true,
+        "change_ok": true
+      },
+      {
+        "parameter": "norm_feedforward.weight",
+        "gradient_norm": 0.07086943835020065,
+        "change": 0.001000046730041504,
+        "change_floor": 1e-08,
+        "margin": 100004.67300415039,
+        "barely_live": false,
+        "gradient_ok": true,
+        "change_ok": true
+      },
+      {
+        "parameter": "position",
+        "gradient_norm": 0.08569604158401489,
+        "change": 0.001000046730041504,
+        "change_floor": 1e-08,
+        "margin": 100004.67300415039,
+        "barely_live": false,
+        "gradient_ok": true,
+        "change_ok": true
+      },
+      {
+        "parameter": "record_in.bias",
+        "gradient_norm": 0.08965908735990524,
+        "change": 0.0010000001639127731,
+        "change_floor": 1e-08,
+        "margin": 100000.01639127731,
+        "barely_live": false,
+        "gradient_ok": true,
+        "change_ok": true
+      },
+      {
+        "parameter": "record_in.weight",
+        "gradient_norm": 0.14801834523677826,
+        "change": 0.0010000020265579224,
+        "change_floor": 1e-08,
+        "margin": 100000.20265579224,
+        "barely_live": false,
+        "gradient_ok": true,
+        "change_ok": true
+      }
+    ]
+  },
+  "losses": {
+    "total": 6.051835536956787,
+    "predictive": 5.368276596069336,
+    "actor": 0.0,
+    "critic": 0.0,
+    "verbatim": 5.515007972717285
+  },
+  "losses_after": {
+    "total": 5.982637405395508
+  },
+  "gradient_sha256": "5fd3f16f87b37eb46b1836d290a4ff653531e49f2dae1714cc10cd1be7d29bd9",
+  "execution_graph": {
+    "architecture_id": "transformer_sequence",
+    "param_total": 21977,
+    "param_tensors": 35,
+    "param_inventory_sha256": "8c041a19f83f1866d25fd4ddf64e1e6be21a48baeacde607b94631e680284569",
+    "identity_sha256": "e5c776c4f12e4633bf7366d66ee22e6095efac7fa2147e5c6973653797335b29",
+    "identity_ref": "plans/manifests/taiji_u2_22_4_4_baseline_identity_20261111.json"
+  },
+  "run_conditions": {
+    "threads": 1,
+    "interop_threads": 1,
+    "device": "cpu",
+    "dtype": "torch.float32",
+    "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+    "torch": "2.13.0+cpu",
+    "environment": {
+      "OMP_NUM_THREADS": null,
+      "MKL_NUM_THREADS": null,
+      "OPENBLAS_NUM_THREADS": null
+    }
+  },
+  "checks": [
+    {
+      "id": "R01",
+      "run_id": "20261112TEVID01Z",
+      "checks": 12
+    },
+    {
+      "id": "R02",
+      "owner_approval_ref": "evidence-only:2026-11-12#u2-strong-baseline"
+    },
+    {
+      "id": "R03",
+      "path": "plans/manifests/taiji_u2_22_4_1_execution_20261111_v2.json",
+      "sha256": "4fc2d0429c9f26687465d76642459c3682eb4a047446b04a0f2e059c46f14965"
+    },
+    {
+      "id": "R04",
+      "path": "plans/manifests/taiji_u2_22_4_1_data_price_admission_20261111.json",
+      "sha256": "05d8bc684cb441659d2a3c7608d8ade62f95edd211e79307b91dbbff1b0e52bc"
+    },
+    {
+      "id": "R05",
+      "arm": "u2-strong-baseline",
+      "accepted_parent_object": "frozen_execution_graph_identity",
+      "baseline_identity": "plans/manifests/taiji_u2_22_4_4_baseline_identity_20261111.json",
+      "baseline_identity_sha256": "e5c776c4f12e4633bf7366d66ee22e6095efac7fa2147e5c6973653797335b29",
+      "baseline_identity_note": "u2 的父是冻结初始化，不是 22.3 的训练接受父；R05 的检查项与退出码不变。",
+      "graph": {
+        "architecture_id": "transformer_sequence",
+        "param_total": 21977,
+        "param_tensors": 35,
+        "param_inventory_sha256": "8c041a19f83f1866d25fd4ddf64e1e6be21a48baeacde607b94631e680284569",
+        "module_sha256": "384b404560f827e0868a8d8f9fbfc27aff5aa885b182cd443ade79972e4145cf",
+        "init_state_dict_sha256": "8f2f4031b220a5501a9494042e7612c6cc69ad0afa326ffa0d435d30f9694970",
+        "training_runs": 0,
+        "optimizer_steps": 0,
+        "revision": 0
+      },
+      "measurement_report": "reports/taiji_u2_22_4_4_identity_measurement_20261111.json",
+      "measurement_report_sha256": "4c77d318771ea9a0b68cb43530eb31bd756f38cd1ab4276c0206b8a4f3d196d2",
+      "measurement_historical_hashes": {
+        "identity_sha256": {
+          "recorded": "820646c734ae43fcac4d211f288386fa4fa76fd390a37682261875b5a5646f75",
+          "current": "e5c776c4f12e4633bf7366d66ee22e6095efac7fa2147e5c6973653797335b29",
+          "status": "historical"
+        },
+        "execution_v2_sha256": {
+          "recorded": "56017e2f36178d2b9b2fa81aa4e5be384760409ebb3b955fda066ada7df50054",
+          "current": "4fc2d0429c9f26687465d76642459c3682eb4a047446b04a0f2e059c46f14965",
+          "status": "historical"
+        }
+      },
+      "measurement_policy": "不重签；历史哈希只登记、不复核（等值由 R03/第 2 项承担）",
+      "threads_policy": "threads 只记录、不判假",
+      "conditions": {
+        "dtype": "float32",
+        "device": "cpu",
+        "threads": 1,
+        "interop_threads": 1,
+        "torch_version": "2.13.0+cpu",
+        "training_runs": 0,
+        "optimizer_steps": 0
+      },
+      "source_pins": {
+        "taiji/u2_subject.py": "aa7a23249ad6fdaff1900000c665d575651debc498e800b8c292839ea4f736a8",
+        "taiji/u2_recovery.py": "d7a1b08de6a7608c35522bd5545736be7370ab145364cad35d8703ccda8bce2b",
+        "taiji/u2_learning_transaction.py": "c54771f0e81b8506a9b3f77c0bdc47f11818c54838f1de30f53e57e9159efaff",
+        "taiji/u2_record_metadata.py": "39e57e9dd406f3442bc85e055ebb7d3a813ea981ff1cda0cf119f90c20c35da5",
+        "taiji/u2_group_structure.py": "daabe312bff754bdd70208597f8363180dc459964b5cc7c5120610ca00d69ffa",
+        "taiji/u2_task_contract.py": "957d9d4163eb960dbef5939e721ce1a69dd13311148944901aafb700022bed84"
+      }
+    },
+    {
+      "id": "R06",
+      "applied": false,
+      "reason": "evidence-only ledger: this run is outside the 22.4.1 attempt quota, so the price/quota gate does not apply; caps are still measured and reported below",
+      "frozen_admission": {
+        "cpu_cap": 120,
+        "wall_cap": 240,
+        "optimizer_steps": 1,
+        "precision": "按22.4.4冻结身份",
+        "quota_attempts_consumed": 0
+      }
+    },
+    {
+      "id": "R08",
+      "optimizer": {
+        "lr": 0.001,
+        "betas": [
+          0.9,
+          0.999
+        ],
+        "eps": 1e-08,
+        "weight_decay": 0.0,
+        "amsgrad": false
+      },
+      "weights": {
+        "predictive": 0.1,
+        "actor": 0.1,
+        "critic": 0.1,
+        "verbatim": 1.0
+      },
+      "active_parameters": [
+        "attention.in_proj_bias",
+        "attention.in_proj_weight",
+        "attention.out_proj.bias",
+        "attention.out_proj.weight",
+        "byte_head.bias",
+        "byte_head.weight",
+        "feedforward.0.bias",
+        "feedforward.0.weight",
+        "feedforward.2.bias",
+        "feedforward.2.weight",
+        "frontend.convolutions.0.bias",
+        "frontend.convolutions.0.weight",
+        "frontend.convolutions.1.bias",
+        "frontend.convolutions.1.weight",
+        "frontend.convolutions.2.bias",
+        "frontend.convolutions.2.weight",
+        "frontend.embedding.weight",
+        "frontend.encoder.audio.bias",
+        "frontend.encoder.audio.weight",
+        "frontend.encoder.proprio.bias",
+        "frontend.encoder.proprio.weight",
+        "frontend.encoder.rgb.bias",
+        "frontend.encoder.rgb.weight",
+        "frontend.metadata.bias",
+        "frontend.metadata.weight",
+        "frontend.modality",
+        "frontend.text_input.bias",
+        "frontend.text_input.weight",
+        "norm_attention.bias",
+        "norm_attention.weight",
+        "norm_feedforward.bias",
+        "norm_feedforward.weight",
+        "position",
+        "record_in.bias",
+        "record_in.weight"
+      ],
+      "group_extensions": false
+    },
+    {
+      "id": "R07",
+      "data_recipe_sha256": "abbb1ac0f0bc734b1555758d71ea55db8abf7a652270712dc2e0399d4d42d9f6",
+      "slice_sha256": "cdcd62cb3d48330cd87e22d465b204d7c20ed2aa9184eab1a2a5939e68d6a969",
+      "partitions": [
+        "engineering_slice"
+      ]
+    },
+    {
+      "id": "R10",
+      "rows": 1,
+      "head": "652085ee0357edd8bc9f50eb104a170588fd0332ed974ce038afdfabd119864a",
+      "chain": "valid",
+      "fsync": "run_start appended with os.fsync before any optimization"
+    },
+    {
+      "id": "R09",
+      "five_fields": [
+        "history_reference",
+        "moment_sha256",
+        "parameter_sha256",
+        "revision",
+        "state_sha256"
+      ],
+      "sha256": "97c409ac2cecc999f3b557f31d85a6fabec9e3cbb19418db192cf2c15f37ff8c",
+      "checkpoint": "97c409ac2cecc999f3b557f31d85a6fabec9e3cbb19418db192cf2c15f37ff8c"
+    },
+    {
+      "id": "R11",
+      "five_fields": true,
+      "sha256": "8571d2b27a7f957bd52abbfd34070ea896d62c6a323641b331758eb8e3fa70ce"
+    },
+    {
+      "id": "R12",
+      "parameters": [
+        {
+          "parameter": "attention.in_proj_bias",
+          "gradient_norm": 0.03358237445354462,
+          "change": 0.0009999989997595549,
+          "change_floor": 1e-08,
+          "margin": 99999.89997595549,
+          "barely_live": false,
+          "gradient_ok": true,
+          "change_ok": true
+        },
+        {
+          "parameter": "attention.in_proj_weight",
+          "gradient_norm": 0.09331899136304855,
+          "change": 0.0010000020265579224,
+          "change_floor": 1e-08,
+          "margin": 100000.20265579224,
+          "barely_live": false,
+          "gradient_ok": true,
+          "change_ok": true
+        },
+        {
+          "parameter": "attention.out_proj.bias",
+          "gradient_norm": 0.08532660454511642,
+          "change": 0.0009999992325901985,
+          "change_floor": 1e-08,
+          "margin": 99999.92325901985,
+          "barely_live": false,
+          "gradient_ok": true,
+          "change_ok": true
+        },
+        {
+          "parameter": "attention.out_proj.weight",
+          "gradient_norm": 0.11622648686170578,
+          "change": 0.0010000020265579224,
+          "change_floor": 1e-08,
+          "margin": 100000.20265579224,
+          "barely_live": false,
+          "gradient_ok": true,
+          "change_ok": true
+        },
+        {
+          "parameter": "byte_head.bias",
+          "gradient_norm": 0.3091574013233185,
+          "change": 0.0010000001639127731,
+          "change_floor": 1e-08,
+          "margin": 100000.01639127731,
+          "barely_live": false,
+          "gradient_ok": true,
+          "change_ok": true
+        },
+        {
+          "parameter": "byte_head.weight",
+          "gradient_norm": 1.7388030290603638,
+          "change": 0.0010000020265579224,
+          "change_floor": 1e-08,
+          "margin": 100000.20265579224,
+          "barely_live": false,
+          "gradient_ok": true,
+          "change_ok": true
+        },
+        {
+          "parameter": "feedforward.0.bias",
+          "gradient_norm": 0.013252289965748787,
+          "change": 0.0009999973699450493,
+          "change_floor": 1e-08,
+          "margin": 99999.73699450493,
+          "barely_live": false,
+          "gradient_ok": true,
+          "change_ok": true
+        },
+        {
+          "parameter": "feedforward.0.weight",
+          "gradient_norm": 0.07011934369802475,
+          "change": 0.0010000020265579224,
+          "change_floor": 1e-08,
+          "margin": 100000.20265579224,
+          "barely_live": false,
+          "gradient_ok": true,
+          "change_ok": true
+        },
+        {
+          "parameter": "feedforward.2.bias",
+          "gradient_norm": 0.0836300179362297,
+          "change": 0.0009999992325901985,
+          "change_floor": 1e-08,
+          "margin": 99999.92325901985,
+          "barely_live": false,
+          "gradient_ok": true,
+          "change_ok": true
+        },
+        {
+          "parameter": "feedforward.2.weight",
+          "gradient_norm": 0.13482697308063507,
+          "change": 0.0010000020265579224,
+          "change_floor": 1e-08,
+          "margin": 100000.20265579224,
+          "barely_live": false,
+          "gradient_ok": true,
+          "change_ok": true
+        },
+        {
+          "parameter": "frontend.convolutions.0.bias",
+          "gradient_norm": 0.011025859043002129,
+          "change": 0.000999998301267624,
+          "change_floor": 1e-08,
+          "margin": 99999.83012676239,
+          "barely_live": false,
+          "gradient_ok": true,
+          "change_ok": true
+        },
+        {
+          "parameter": "frontend.convolutions.0.weight",
+          "gradient_norm": 0.0017156994435936213,
+          "change": 0.0009999796748161316,
+          "change_floor": 1e-08,
+          "margin": 99997.96748161316,
+          "barely_live": false,
+          "gradient_ok": true,
+          "change_ok": true
+        },
+        {
+          "parameter": "frontend.convolutions.1.bias",
+          "gradient_norm": 0.010961226187646389,
+          "change": 0.000999998301267624,
+          "change_floor": 1e-08,
+          "margin": 99999.83012676239,
+          "barely_live": false,
+          "gradient_ok": true,
+          "change_ok": true
+        },
+        {
+          "parameter": "frontend.convolutions.1.weight",
+          "gradient_norm": 0.0021179886534810066,
+          "change": 0.0009999852627515793,
+          "change_floor": 1e-08,
+          "margin": 99998.52627515793,
+          "barely_live": false,
+          "gradient_ok": true,
+          "change_ok": true
+        },
+        {
+          "parameter": "frontend.convolutions.2.bias",
+          "gradient_norm": 0.01154922042042017,
+          "change": 0.000999998301267624,
+          "change_floor": 1e-08,
+          "margin": 99999.83012676239,
+          "barely_live": false,
+          "gradient_ok": true,
+          "change_ok": true
+        },
+        {
+          "parameter": "frontend.convolutions.2.weight",
+          "gradient_norm": 0.0020339691545814276,
+          "change": 0.0009999871253967285,
+          "change_floor": 1e-08,
+          "margin": 99998.71253967285,
+          "barely_live": false,
+          "gradient_ok": true,
+          "change_ok": true
+        },
+        {
+          "parameter": "frontend.embedding.weight",
+          "gradient_norm": 0.03478298708796501,
+          "change": 0.001000046730041504,
+          "change_floor": 1e-08,
+          "margin": 100004.67300415039,
+          "barely_live": false,
+          "gradient_ok": true,
+          "change_ok": true
+        },
+        {
+          "parameter": "frontend.encoder.audio.bias",
+          "gradient_norm": 0.014640547335147858,
+          "change": 0.0009999992325901985,
+          "change_floor": 1e-08,
+          "margin": 99999.92325901985,
+          "barely_live": false,
+          "gradient_ok": true,
+          "change_ok": true
+        },
+        {
+          "parameter": "frontend.encoder.audio.weight",
+          "gradient_norm": 0.04310440644621849,
+          "change": 0.0010000020265579224,
+          "change_floor": 1e-08,
+          "margin": 100000.20265579224,
+          "barely_live": false,
+          "gradient_ok": true,
+          "change_ok": true
+        },
+        {
+          "parameter": "frontend.encoder.proprio.bias",
+          "gradient_norm": 0.010639342479407787,
+          "change": 0.000999998301267624,
+          "change_floor": 1e-08,
+          "margin": 99999.83012676239,
+          "barely_live": false,
+          "gradient_ok": true,
+          "change_ok": true
+        },
+        {
+          "parameter": "frontend.encoder.proprio.weight",
+          "gradient_norm": 0.03612080216407776,
+          "change": 0.0010000020265579224,
+          "change_floor": 1e-08,
+          "margin": 100000.20265579224,
+          "barely_live": false,
+          "gradient_ok": true,
+          "change_ok": true
+        },
+        {
+          "parameter": "frontend.encoder.rgb.bias",
+          "gradient_norm": 0.010785774327814579,
+          "change": 0.000999998301267624,
+          "change_floor": 1e-08,
+          "margin": 99999.83012676239,
+          "barely_live": false,
+          "gradient_ok": true,
+          "change_ok": true
+        },
+        {
+          "parameter": "frontend.encoder.rgb.weight",
+          "gradient_norm": 0.038900356739759445,
+          "change": 0.0010000020265579224,
+          "change_floor": 1e-08,
+          "margin": 100000.20265579224,
+          "barely_live": false,
+          "gradient_ok": true,
+          "change_ok": true
+        },
+        {
+          "parameter": "frontend.metadata.bias",
+          "gradient_norm": 0.037081506103277206,
+          "change": 0.0009999992325901985,
+          "change_floor": 1e-08,
+          "margin": 99999.92325901985,
+          "barely_live": false,
+          "gradient_ok": true,
+          "change_ok": true
+        },
+        {
+          "parameter": "frontend.metadata.weight",
+          "gradient_norm": 0.04543904587626457,
+          "change": 0.0010000020265579224,
+          "change_floor": 1e-08,
+          "margin": 100000.20265579224,
+          "barely_live": false,
+          "gradient_ok": true,
+          "change_ok": true
+        },
+        {
+          "parameter": "frontend.modality",
+          "gradient_norm": 0.024044979363679886,
+          "change": 0.0010000020265579224,
+          "change_floor": 1e-08,
+          "margin": 100000.20265579224,
+          "barely_live": false,
+          "gradient_ok": true,
+          "change_ok": true
+        },
+        {
+          "parameter": "frontend.text_input.bias",
+          "gradient_norm": 0.012012217193841934,
+          "change": 0.000999998301267624,
+          "change_floor": 1e-08,
+          "margin": 99999.83012676239,
+          "barely_live": false,
+          "gradient_ok": true,
+          "change_ok": true
+        },
+        {
+          "parameter": "frontend.text_input.weight",
+          "gradient_norm": 0.0035091761965304613,
+          "change": 0.0009999945759773254,
+          "change_floor": 1e-08,
+          "margin": 99999.45759773254,
+          "barely_live": false,
+          "gradient_ok": true,
+          "change_ok": true
+        },
+        {
+          "parameter": "norm_attention.bias",
+          "gradient_norm": 0.08409567922353745,
+          "change": 0.000999999581836164,
+          "change_floor": 1e-08,
+          "margin": 99999.9581836164,
+          "barely_live": false,
+          "gradient_ok": true,
+          "change_ok": true
+        },
+        {
+          "parameter": "norm_attention.weight",
+          "gradient_norm": 0.06989838182926178,
+          "change": 0.001000046730041504,
+          "change_floor": 1e-08,
+          "margin": 100004.67300415039,
+          "barely_live": false,
+          "gradient_ok": true,
+          "change_ok": true
+        },
+        {
+          "parameter": "norm_feedforward.bias",
+          "gradient_norm": 0.08421308547258377,
+          "change": 0.000999999581836164,
+          "change_floor": 1e-08,
+          "margin": 99999.9581836164,
+          "barely_live": false,
+          "gradient_ok": true,
+          "change_ok": true
+        },
+        {
+          "parameter": "norm_feedforward.weight",
+          "gradient_norm": 0.07086943835020065,
+          "change": 0.001000046730041504,
+          "change_floor": 1e-08,
+          "margin": 100004.67300415039,
+          "barely_live": false,
+          "gradient_ok": true,
+          "change_ok": true
+        },
+        {
+          "parameter": "position",
+          "gradient_norm": 0.08569604158401489,
+          "change": 0.001000046730041504,
+          "change_floor": 1e-08,
+          "margin": 100004.67300415039,
+          "barely_live": false,
+          "gradient_ok": true,
+          "change_ok": true
+        },
+        {
+          "parameter": "record_in.bias",
+          "gradient_norm": 0.08965908735990524,
+          "change": 0.0010000001639127731,
+          "change_floor": 1e-08,
+          "margin": 100000.01639127731,
+          "barely_live": false,
+          "gradient_ok": true,
+          "change_ok": true
+        },
+        {
+          "parameter": "record_in.weight",
+          "gradient_norm": 0.14801834523677826,
+          "change": 0.0010000020265579224,
+          "change_floor": 1e-08,
+          "margin": 100000.20265579224,
+          "barely_live": false,
+          "gradient_ok": true,
+          "change_ok": true
+        }
+      ],
+      "min_margin": 99997.96748161316,
+      "barely_live_parameters": [],
+      "floors": {
+        "gradient_norm": 1e-10,
+        "max_parameter_change": 1e-08
+      },
+      "output_displacement_descriptive": {
+        "next_output_l1": 0.013577042147517204,
+        "policy_l1": 0.0,
+        "same_fixture_loss_delta": -0.0691981315612793,
+        "policy_note": "该执行图没有策略头；policy 是结构空，policy_l1 恒为 0。"
+      }
+    }
+  ],
+  "cpu_seconds": 14.65625,
+  "wall_seconds": 59.42199999996228,
+  "limits": {
+    "cpu_cap": 120,
+    "wall_cap": 240,
+    "within_cap": true,
+    "attempts_authorized": 1,
+    "optimizer_steps_authorized": 1,
+    "admission_attempts_consumed": 0
+  },
+  "limitations": [
+    "本读数只签“代码路径可跑通”：账本三步齐全、一步能落地、checkpoint 能写能读回、S12 可被独立 worker 复算。",
+    "不得当作 u2 的机制证据：本 run 的父是冻结初始化（training_runs=0、optimizer_steps=0），手机制不能用它证明“从已训练状态继续”或“学到了什么”。",
+    "不得当作性能证据：单步 CPU/墙钟只说明它没超预算，不是吞吐或收敛速度。",
+    "不得当作 u2 放行依据：授权是证据专用（evidence_only），真实运行需要 owner 另给 run_id 与 owner_approval_ref。"
+  ],
+  "findings": [
+    {
+      "id": "F-20261112-E2E-01",
+      "topic": "R06 对 u2 的 precision 断言目前无法成立",
+      "evidence": {
+        "run_precision": "float32",
+        "admission_precision": "按22.4.4冻结身份",
+        "rule": "check_r06: run.precision == admission entry precision（逐字相等）"
+      },
+      "impact": "真实 u2 run.json 写 float32 会在 R06 退 3；照抄文案又会让 dtype 相关断言不成立。本轮证据因不计费而不套用 R06，但真实运行必须先把这条修好。",
+      "status": "open_owner_decision",
+      "options": [
+        "A 把 admission 的 u2 行 precision 改成实测 float32（改冻结文件与其 pin，需 owner 签字）",
+        "B 为 u2 另立 R06 口径的预注册（换被检查对象，退码与编号不动）",
+        "C 在契约里写明 u2 不适用 R06（不推荐：价目闸门会对 u2 失效）"
+      ],
+      "recommended": "A：该行是身份落定前的占位文案，身份已冻结为 float32，改回实测值不改任何判据也不弱化闸门。"
+    }
+  ],
+  "audit_distinction": {
+    "evidence_ledger": "reports/taiji_u2_22_4_1_EVIDENCE_ONLY_20261112_attempts.ndjson",
+    "real_run_ledger_pattern": "reports/taiji_u2_22_4_1_attempts_<run_id>.ndjson",
+    "markers": [
+      "run_id=20261112TEVID01Z 含 TEVID；真实 run_id 为 2026MMDDTHHMMSSZ",
+      "run.json 带 evidence_only=true 与 status=evidence_only_sandbox",
+      "账本 run_start 的 run_id 同上，open 行带 evidence_only=true 与 evidence_ledger",
+      "close 之后有一行 annotation（真实 run 不会出现该事件），记 CPU 与账本路径",
+      "账本与 S12 文件名含 EVIDENCE_ONLY；真实运行不带该词",
+      "准入 manifest 的 attempts_consumed 仍为 0，output/ 下没有新增真实 run 根"
+    ],
+    "not_usable_as": [
+      "u2 的机制证据（父是冻结初始化，无训练祖先）",
+      "u2 的性能证据（只测了单步可跑通）",
+      "u2 的放行依据（授权仅限证据）"
+    ]
+  }
+}

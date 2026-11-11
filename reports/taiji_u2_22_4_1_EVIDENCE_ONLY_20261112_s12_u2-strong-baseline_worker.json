@@ -1,0 +1,49 @@
+{
+  "schema": "taiji-u2-22.4.1-s12-worker-v1",
+  "verdict": "pass",
+  "s12": "E:\\Seed\\reports\\taiji_u2_22_4_1_EVIDENCE_ONLY_20261112_s12_u2-strong-baseline.json",
+  "status": "accepted_verified_baseline",
+  "execution_graph": {
+    "architecture_id": "transformer_sequence",
+    "param_total": 21977,
+    "param_tensors": 35,
+    "param_inventory_sha256": "8c041a19f83f1866d25fd4ddf64e1e6be21a48baeacde607b94631e680284569",
+    "identity_sha256": "e5c776c4f12e4633bf7366d66ee22e6095efac7fa2147e5c6973653797335b29",
+    "identity_ref": "plans/manifests/taiji_u2_22_4_4_baseline_identity_20261111.json"
+  },
+  "checkpoints": {
+    "parent": "97c409ac2cecc999f3b557f31d85a6fabec9e3cbb19418db192cf2c15f37ff8c",
+    "parent_readback": true,
+    "post": "8571d2b27a7f957bd52abbfd34070ea896d62c6a323641b331758eb8e3fa70ce",
+    "post_readback": true
+  },
+  "gradient_sha256": "5fd3f16f87b37eb46b1836d290a4ff653531e49f2dae1714cc10cd1be7d29bd9",
+  "parameter_rows": 35,
+  "adam_equations": 35,
+  "losses_recomputed": {
+    "total": 6.051835536956787,
+    "predictive": 5.368276596069336,
+    "actor": 0.0,
+    "critic": 0.0,
+    "verbatim": 5.515007972717285
+  },
+  "activity_receipt_rederived": true,
+  "state_rebuild": "not_applicable_baseline_has_no_subject_state",
+  "policy": "structural_zero_no_policy_head",
+  "optimizer_step_calls": 0,
+  "run_conditions": {
+    "threads": 1,
+    "interop_threads": 1,
+    "device": "cpu",
+    "dtype": "torch.float32",
+    "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+    "torch": "2.13.0+cpu",
+    "environment": {
+      "OMP_NUM_THREADS": null,
+      "MKL_NUM_THREADS": null,
+      "OPENBLAS_NUM_THREADS": null
+    }
+  },
+  "cpu_seconds": 7.140625,
+  "wall_seconds": 16.89100000000326
+}

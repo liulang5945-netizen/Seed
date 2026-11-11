@@ -3216,3 +3216,49 @@ v2 的 u2 臂行挂着 `baseline_identity_sha256 = e5c776c4…5b29`，而该身�
 ### 6. 下一步
 
 唯一建议：**对 u2 的真实一步做一次放行前的离线端到端复算清单校核**（覆盖台账 #64 是唯一"分段全绿但端到端未入自检"的缺口），把离线探针的读数固化成可复核证据后再申请 u2 放行；在此之前不申请放行。
+
+---
+
+## D-20261112-24　u2 端到端一次性证据（evidence-only 账本）与 R06 发现
+
+**类型**：证据产出＋新发现（不做放行、不改 12 条判据）。**授权来源**：用户 2026-11-12 的三条约束。**范围**：0 数据读取／未生成真实 `run.json`／未动 22.4.1 额度／未申请放行。
+
+### 1. 三条约束的落实
+
+1. **完整账本**：`AttemptLedger` 的 `run_start → open → close` 一步不少，每行 `_append` 内 `os.write` 后立即 `os.fsync`。证据账本 4 行：`run_start`(seq 0)、`open`(seq 1，`budget 0→1`)、`close`(seq 2，`accepted`，`optimizer_step_calls=1`)、`annotation`(seq 3，非结算行)。
+2. **单独一本账、`evidence_only=true`、不进 22.4.1 额度**：账本 `reports/taiji_u2_22_4_1_EVIDENCE_ONLY_20261112_attempts.ndjson`（`b2ddf456…5170`）；`open` 行带 `evidence_only=true`／`evidence_kind`／`evidence_ledger`；`close` 后的 `annotation` 行记 `evidence_run_id`／`cpu_seconds=14.65625`／`wall_seconds=59.422`／`ledger_path`。冻结准入 manifest 的 `attempts_consumed` 仍 **0**；证据账本自身 `consumed=1`（只在这本账里）。`run_start` 沿用冻结模式、不加非契约字段，故 `evidence_only` 标记落在 `open` 与 `annotation` 两行，另加 `run_id=20261112TEVID01Z` 与文件名 `EVIDENCE_ONLY` 双重标识。
+3. **引用限制**：写入证据报告的 `limitations`（4 条）与本预注册索引——只签"代码路径可跑通"，不得当机制证据、性能证据或放行依据。
+
+### 2. 产物（全部落盘入库，未删除）
+
+| 产物 | 路径 | sha256 |
+|---|---|---|
+| 证据报告 | `reports/taiji_u2_22_4_1_end_to_end_evidence_20261112.json` | `fd07833d…4044` |
+| 证据账本 | `reports/taiji_u2_22_4_1_EVIDENCE_ONLY_20261112_attempts.ndjson` | `b2ddf456…5170` |
+| S12 | `reports/taiji_u2_22_4_1_EVIDENCE_ONLY_20261112_s12_u2-strong-baseline.json` | `82b4b526…2236` |
+| worker 复算 | `reports/taiji_u2_22_4_1_EVIDENCE_ONLY_20261112_s12_u2-strong-baseline_worker.json` | `7f3a4eca…8cfe` |
+| run.json / parent.bin / post.bin | `reports/taiji_u2_22_4_1_20261112TEVID01Z/` | `b6310b4a…d3b9`／`97c409ac…ff8c`／`8571d2b2…70ce` |
+
+生成器：[evidence_taiji_u2_end_to_end_22_4_1.py](../../scripts/training/evidence_taiji_u2_end_to_end_22_4_1.py)（一次性、create-once，重跑须手工删旧产物）。
+
+### 3. 读数
+
+- 执行图 `transformer_sequence` **21,977 标量／35 张量**；一步 Adam（lr=`1e-3`）后 **35/35** 参数有变化，`change` 0.00099998–0.00100005（floor `1e-8`），`margin` 99,997.97–100,004.67，`barely_live=[]`，`gradient_ok=35/35`、`change_ok=35/35`。
+- checkpoint：`parent.bin` 写出＋立即五项读回通过；`post.bin` 五项读回通过（`revision 0→1`）。
+- worker：`verdict=pass`、`status=accepted_verified_baseline`、`adam_equations=35`、`parameter_rows=35`。
+- 成本：CPU **14.66 s**／wall **59.42 s**（帽 120／240，`within_cap=true`）。
+- 自检：证据落盘后重跑仍 **61 条全过、`optimizer_step_calls=0`**、cpu 9.41／wall 20.81。
+
+### 4. 新发现（阻断真实 u2，需 owner 裁定）
+
+**F-20261112-E2E-01：R06 对 u2 的 precision 断言无法成立。** 冻结准入 manifest 的 u2 行 `precision="按22.4.4冻结身份"`（占位文案），而 `check_r06` 要求 `run.precision` 与它**逐字相等**；真实 `run.json` 写 `float32` 会在 R06 退 3，照抄文案又会让 dtype 相关断言不成立。首跑正是因此失败（未开账本、未耗额度），随后把证据 run 的 R06 明确标为"不适用（不计费）"才继续；这不是放宽，而是暴露了一个**此前从未被真实运行触发的契约缺口**——架构层面"准入表在身份落定前写占位值、判据按字面比较"的矛盾。
+
+方案：**A** 把 admission 的 u2 行改成实测 `float32` 并重签其 pin（推荐，最小且不弱化闸门）；**B** 为 u2 的 R06 另立预注册（换被检查对象，不改退码）；**C** 契约写明 u2 不适用 R06（不推荐，价目闸门失效）。
+
+### 5. 审计区分（避免误当成 u2 结果）
+
+证据账本 vs 真实运行：文件名带 `EVIDENCE_ONLY`（真实为 `..._attempts_<run_id>.ndjson`）；`run_id=20261112TEVID01Z` 含 `TEVID`（真实为 `2026MMDDTHHMMSSZ`）；`run.json` 带 `evidence_only=true` 与 `status=evidence_only_sandbox`；`open` 行带 `evidence_only`；`close` 后多出 `annotation` 行（真实 run 不产生该事件）；准入 `attempts_consumed` 仍 0；`output/` 下无新增真实 run 根。
+
+### 6. 下一步
+
+唯一建议：**先裁定 F-20261112-E2E-01 并选 A**（把 admission 的 u2 行 precision 改为 `float32`、同步重签 pin），再重跑 61 条自检；在此之前不申请 u2 放行。本轮证据只证明代码路径可跑通，不构成放行依据。

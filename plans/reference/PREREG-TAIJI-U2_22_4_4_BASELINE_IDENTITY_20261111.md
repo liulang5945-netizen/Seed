@@ -276,6 +276,9 @@ predictive_head | recurrent_core | output_head = {
 | 测量报告 | `reports/taiji_u2_22_4_4_identity_measurement_20261111.json` | `4c77d318771ea9a0b68cb43530eb31bd756f38cd1ab4276c0206b8a4f3d196d2` |
 | 测量脚本 | `scripts/training/baseline_identity_22_4_4.py` | `384b404560f827e0868a8d8f9fbfc27aff5aa885b182cd443ade79972e4145cf` |
 | U2 前端复制源 | `taiji/u2_subject.py` | `aa7a23249ad6fdaff1900000c665d575651debc498e800b8c292839ea4f736a8` |
+| u2 端到端一次性证据（**evidence-only**） | `reports/taiji_u2_22_4_1_end_to_end_evidence_20261112.json` | `fd07833d00983d89177b492c7d1c8bcae54cf21014b60f3ec97ea9ad99484044` |
+
+**证据索引限制（2026-11-12，D-20261112-24）**：上表最后一行是**证据专用**产物，不在本预注册的判定链内。它只签"代码路径可跑通"（账本三步齐全、一步落参、checkpoint 读写五项、S12 与 worker 复算一致），**不得**当作 u2 的机制证据或性能证据，**不得**引用为放行依据；其账本名为 `..._EVIDENCE_ONLY_...`、`run_id` 含 `TEVID`、`run.json` 带 `evidence_only=true`，与真实运行可区分。同一轮还暴露 `check_r06` 与准入 u2 行 `precision` 文案的矛盾（F-20261112-E2E-01），待 owner 裁定后另行重签。
 
 **追加局限字段（2026-11-11，纯增量，不改 §1–§10 判据）**：身份清单新增 `limitations` 四条的机读条目——L1 等算力缺口、L2 计时粒度与重复均值口径、L3 参照图为基座而非候选、L4 单片段最近点。追加后身份清单哈希由 `820646c7…6f75` 变为 `e5c776c4…5b29`，v2 随之重钉（`56017e2f…0054` → `3c1c2195…3e56`）；三槽参数名与 dtype、12 条判据、v1 均未改。
 

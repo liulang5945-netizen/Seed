@@ -1,0 +1,199 @@
+{
+  "schema": "taiji-u2-22.4.1-run-v1",
+  "draft": false,
+  "status": "evidence_only_sandbox",
+  "authorized": true,
+  "authorization_note": "证据专用沙箱授权：仅用于证明 u2 的代码路径可跑通，不构成 u2 训练放行，不得被复制为真实 run.json。",
+  "run_id": "20261112TEVID01Z",
+  "run_id_rule": "owner 放行时分配，格式 20261111THHMMSSZ，须与 run_root 目录名 taiji_u2_22_4_1_<run_id> 一致（R01）。",
+  "created_at": "2026-11-11T00:00:00Z",
+  "update_id": "u2-strong-baseline",
+  "attempt_id": "u2-strong-baseline",
+  "attempts_authorized": 1,
+  "optimizer_steps_authorized": 1,
+  "precision": "float32",
+  "cpu_cap": 120,
+  "wall_cap": 240,
+  "owner_approval_ref": "evidence-only:2026-11-12#u2-strong-baseline",
+  "signature_fields": [
+    "authorized",
+    "owner_approval_ref"
+  ],
+  "references": {
+    "execution_manifest": "plans/manifests/taiji_u2_22_4_1_execution_20261111_v2.json",
+    "manifest_sha256": "4fc2d0429c9f26687465d76642459c3682eb4a047446b04a0f2e059c46f14965",
+    "admission_manifest": "plans/manifests/taiji_u2_22_4_1_data_price_admission_20261111.json",
+    "admission_manifest_sha256": "05d8bc684cb441659d2a3c7608d8ade62f95edd211e79307b91dbbff1b0e52bc",
+    "baseline_identity": "plans/manifests/taiji_u2_22_4_4_baseline_identity_20261111.json",
+    "baseline_identity_sha256": "e5c776c4f12e4633bf7366d66ee22e6095efac7fa2147e5c6973653797335b29",
+    "baseline_identity_module_sha256": "384b404560f827e0868a8d8f9fbfc27aff5aa885b182cd443ade79972e4145cf",
+    "measurement_report": "reports/taiji_u2_22_4_4_identity_measurement_20261111.json",
+    "measurement_report_sha256": "4c77d318771ea9a0b68cb43530eb31bd756f38cd1ab4276c0206b8a4f3d196d2",
+    "r05_prereg": "plans/reference/PREREG-TAIJI-U2_22_4_1_R05_PARENT_IDENTITY_DRAFT_20261112.md",
+    "r05_prereg_sha256": "fbad62d42c31de94f1d5de65c1a7ff3a6c15c676d9296c56e265ae23e5809dfd",
+    "hash_semantics": "UTF8 without BOM; universal newline to LF",
+    "accepted_parent": "plans/manifests/taiji_u2_22_3_accepted_parent_20261111.json",
+    "interface_receipt": "reports/taiji_u2_metadata_groups_22_4_20261111.json",
+    "baseline_identity_semantics": "本臂执行图"
+  },
+  "r05_parent_identity": {
+    "object": "本臂执行图身份（冻结初始化，不是 22.3 的训练接受父）",
+    "identity": "plans/manifests/taiji_u2_22_4_4_baseline_identity_20261111.json",
+    "prereg": "plans/reference/PREREG-TAIJI-U2_22_4_1_R05_PARENT_IDENTITY_DRAFT_20261112.md",
+    "check_items": 10,
+    "fail_exit": 5,
+    "u1_unchanged": "check_r05 与 u1 调用顺序逐字不变",
+    "measurement_report_policy": "不重签；历史哈希只登记、不复核（等值由第 2 项与 R03 承担）",
+    "threads_policy": "threads 只记录、不判假"
+  },
+  "identity_slots": {
+    "predictive_head": {
+      "exists": false,
+      "dtype": null,
+      "count": 0,
+      "slot_sha256": null,
+      "param_names": [],
+      "note": "该基线没有独立预测头：预测由 byte_head 直接给出，已计入 output_head；u2 因此不检“独立预测头”这一项，不用 U2 参数冒充。"
+    },
+    "recurrent_core": {
+      "exists": false,
+      "dtype": null,
+      "count": 0,
+      "slot_sha256": null,
+      "param_names": [],
+      "note": "该图 state_tensors=0，没有递归参数；序列主干（position/record_in/attention/norm_*/feedforward，共 15 项）是无状态前馈主干，不冒充递归核，u2 因此不检该项。"
+    },
+    "output_head": {
+      "exists": true,
+      "dtype": "float32",
+      "count": 2,
+      "slot_sha256": "2220497ad32007b359fea9536718c247edb246d7ff54e4f24b7c4d4f72ec7db1",
+      "param_names": [
+        "byte_head.weight",
+        "byte_head.bias"
+      ],
+      "note": "byte_head 是该图唯一的输出头，参数名与 dtype 取自身份清单 param_inventory。"
+    }
+  },
+  "c09": {
+    "requires": "基线身份 manifest 至少含架构、参数量、信息权利与 seed；digest 写入 run.json",
+    "manifest_fields_present": {
+      "architecture": true,
+      "param_total": true,
+      "information_rights": true,
+      "seeds": true
+    },
+    "digest_pinned_in_this_draft": true,
+    "written_into_run_json": false,
+    "status": "satisfiable_pending_authorization",
+    "reason": "草稿不是 run.json，且 authorized=false；放行后复制为 run.json 即满足 C09 的字面条件。"
+  },
+  "open_items_before_authorization": [
+    "已清（D-20261111-18）：执行器 UPDATE_ID/ARM 不再硬编码，改为从 run.json 的 update_id 读取；R01/R02 的字面量同步改为按 run.json 取值，判据编号、检查内容与退出码未变。",
+    "已清（D-20261111-20）：u2 的执行图改为身份清单冻结的 TransformerSequenceBaseline（21,977/35），三槽由该图回填，119 个 U2 参数名已全部撤下。",
+    "已清（D-20261111-20）：u2 的 F2 口径已落地——shadow_terms 按臂取片段，verbatim 项按 byte_head 逐字教师强制（目标“红盒在左边。”，18 字节，train_label），不再乘在零张量上；actor/critic 在该图上不存在，已声明为结构零。",
+    "已清（D-20261111-21）：u2 的一步执行路径已接入——perform_baseline 只用该图 35 项活性参数走 Adam 单步，产出 35 项活性回执（change/margin/barely_live），post.bin 写出后立即读回五项，并落 s12_payload；execute() 在 u2 上走该路径，R09/R11 改用同口径基线实现（判据编号、检查内容与退出码未变）。0 步自检 step=0。",
+    "已清（D-20261112-23）：R05 的 u2 口径已按冻结预注册（fbad62d4…9dfd）落地——新增 check_r05_baseline 并接入按臂分派，检查对象换成本臂冻结执行图身份（21,977/35，training_runs=0、optimizer_steps=0），检查项 10 项、任一失败退 5；u1 的 check_r05 与调用顺序逐字不变，u1 五个产物哈希未变。0 步自检 61 条全过（step=0）。身份测量报告不重签，历史哈希只登记。",
+    "未清（owner 侧）：owner 放行时须给出 run_id 与含 u2-strong-baseline 的 owner_approval_ref，并把 authorized 改为 true。"
+  ],
+  "data_scope": {
+    "allowed_partitions": [
+      "engineering_slice"
+    ],
+    "reads_project_corpus": false,
+    "reads_confirm_partition": false,
+    "reads_development_check": false,
+    "reads_final": false,
+    "touches_sealed_set": false,
+    "contains_task1_batch": false,
+    "data_recipe_sha256": "abbb1ac0f0bc734b1555758d71ea55db8abf7a652270712dc2e0399d4d42d9f6",
+    "slice_sha256": "cdcd62cb3d48330cd87e22d465b204d7c20ed2aa9184eab1a2a5939e68d6a969",
+    "digest_note": "两个digest在--run内、首次ledger open之前计算并写入run.json；为空时不得open"
+  },
+  "paths": {
+    "run_json": "reports/taiji_u2_22_4_1_20261112TEVID01Z/run.json",
+    "run_root": "reports/taiji_u2_22_4_1_20261112TEVID01Z/",
+    "ledger": "reports/taiji_u2_22_4_1_EVIDENCE_ONLY_20261112_attempts.ndjson",
+    "s12": "reports/taiji_u2_22_4_1_EVIDENCE_ONLY_20261112_s12_u2-strong-baseline.json",
+    "s12_worker": "reports/taiji_u2_22_4_1_EVIDENCE_ONLY_20261112_s12_u2-strong-baseline_worker.json"
+  },
+  "exit_codes": {
+    "0": "成功",
+    "3": "账本或额度类：run_start缺失、哈希链断裂、attempt已消耗、额度将超",
+    "4": "checkpoint读回不符：父读回或保存后立即读回五项不一致",
+    "5": "授权、身份或合同类：未授权、owner_approval_ref为空、manifest哈希不符、update_id不符、数据范围越界、digest为空或与片段不符、参数未按执行manifest冻结",
+    "6": "活性门未通过：任一声明活性参数低于梯度门或变化门；attempt已计费、判rejected、不重试"
+  },
+  "run_contract": [
+    {
+      "id": "R01",
+      "check": "run.json结构合法；run_id与目录名一致；update_id取自run.json且==attempt_id，并须是本run所引用执行manifest中的臂",
+      "fail_exit": 5
+    },
+    {
+      "id": "R02",
+      "check": "authorized==true；owner_approval_ref非空且含本run的update_id",
+      "fail_exit": 5
+    },
+    {
+      "id": "R03",
+      "check": "执行manifest实际sha256==manifest_sha256",
+      "fail_exit": 5
+    },
+    {
+      "id": "R04",
+      "check": "准入manifest实际sha256==admission_manifest_sha256",
+      "fail_exit": 5
+    },
+    {
+      "id": "R05",
+      "check": "接受父存在；接口回执通过；source pins与执行manifest一致（C01/C02）",
+      "fail_exit": 5
+    },
+    {
+      "id": "R06",
+      "check": "attempts已用0、本次1；steps==1；cpu_cap<=120；wall_cap<=240（C04）",
+      "fail_exit": 3
+    },
+    {
+      "id": "R07",
+      "check": "数据范围六个false；data_recipe_sha256与slice_sha256非空且与生成片段一致（C05/C06）",
+      "fail_exit": 5
+    },
+    {
+      "id": "R08",
+      "check": "lr/betas/eps/weight_decay、活性清单与执行manifest逐字段一致；四项权重按臂声明的weight_profile对冻结表（F1-style/F2-style）核对（C07）",
+      "fail_exit": 5
+    },
+    {
+      "id": "R09",
+      "check": "父checkpoint读回：state/parameters/optimizer/history_reference/revision五项一致",
+      "fail_exit": 4
+    },
+    {
+      "id": "R10",
+      "check": "ledger首行run_start存在且哈希链完整；无重复attempt；open前已fsync",
+      "fail_exit": 3
+    },
+    {
+      "id": "R11",
+      "check": "保存后立即用新实例读回：五项一致（C08）",
+      "fail_exit": 4
+    },
+    {
+      "id": "R12",
+      "check": "每个声明活性参数的梯度范数与参数位移达到门限；S12含change/margin/barely_live",
+      "fail_exit": 6
+    }
+  ],
+  "not_granted": [
+    "本文件自身：未授权、不写账本、不建 run 目录、不开跑",
+    "任何正式训练或 optimizer step",
+    "任何项目语料、development-check、final、confirm 读取",
+    "u3-migration-original：另需 C10 与 22.3 恢复回归",
+    "u4-migration-recovery：另需 C10、C11 与独立进程"
+  ],
+  "evidence_only": true,
+  "evidence_kind": "end_to_end_sandbox_20261112",
+  "evidence_scope": "code_path_only; not mechanism evidence; not performance evidence"
+}
