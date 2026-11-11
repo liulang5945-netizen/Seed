@@ -271,8 +271,8 @@ predictive_head | recurrent_core | output_head = {
 | 产物 | 路径 | sha256 |
 |---|---|---|
 | 基线身份清单 | `plans/manifests/taiji_u2_22_4_4_baseline_identity_20261111.json` | `e5c776c4f12e4633bf7366d66ee22e6095efac7fa2147e5c6973653797335b29` |
-| u2 三槽回填版执行清单 | `plans/manifests/taiji_u2_22_4_1_execution_20261111_v2.json` | `595bd0c8f8e3b9415c211412d7ca96a6de593de2c70a5ea7aa653a91bff1b42b` |
-| u2 `run.json` 草稿（未授权） | `plans/manifests/taiji_u2_22_4_1_u2_run_draft_20261111.json` | `23e9b3fc157e00eaa32f9d8aece49edc52a42a6fcfeee9af33c3742f3eba0e04` |
+| u2 执行图版执行清单 | `plans/manifests/taiji_u2_22_4_1_execution_20261111_v2.json` | `4fc2d0429c9f26687465d76642459c3682eb4a047446b04a0f2e059c46f14965` |
+| u2 `run.json` 草稿（未授权） | `plans/manifests/taiji_u2_22_4_1_u2_run_draft_20261111.json` | `217ada4934669ed86e86e80b94a9d64040654134d56b08bc8716393bc607d465` |
 | 测量报告 | `reports/taiji_u2_22_4_4_identity_measurement_20261111.json` | `4c77d318771ea9a0b68cb43530eb31bd756f38cd1ab4276c0206b8a4f3d196d2` |
 | 测量脚本 | `scripts/training/baseline_identity_22_4_4.py` | `384b404560f827e0868a8d8f9fbfc27aff5aa885b182cd443ade79972e4145cf` |
 | U2 前端复制源 | `taiji/u2_subject.py` | `aa7a23249ad6fdaff1900000c665d575651debc498e800b8c292839ea4f736a8` |
@@ -289,7 +289,7 @@ predictive_head | recurrent_core | output_head = {
 6. 身份清单内 `budget.cpu_total_measured=22.9375` 是写该文件时的累计值；最终累计 22.95 s 以测量报告与本表为准。
 7. 脚本在提交前补了三处等价 lint 修复与一次 black 重排（删一个未使用的局部读取、`timezone.utc`→`UTC`、`SIM108` 三元式），语义未变；每轮都**整段重跑**，使提交的脚本字节与实测字节一致，`architecture.module_sha256=384b4045…45cf` 可直接复算。三次构建的 CPU 合计 71.07，未超 250 帽。
 
-**C09 状态**：身份清单已落盘、三槽已回填、digest 已钉进 `plans/manifests/taiji_u2_22_4_1_u2_run_draft_20261111.json`（引用身份清单 `e5c776c4…5b29`、v2 `595bd0c8…1b42b`、基线模块 `384b4045…45cf`）。该文件是**未授权草稿**（`authorized=false`、`run_id=null`、不写账本、不开跑），不是 `run.json`，故 C09 现为"**可成立待授权**"而非已成立：owner 放行、分配 run_id 并原样复制为 `run.json` 后即满足字面条件。本卡到此只交付"身份 + 价格"，不产生任何性能差值。
+**C09 状态**：身份清单已落盘、执行图已按清单重建并可核对、digest 已钉进 `plans/manifests/taiji_u2_22_4_1_u2_run_draft_20261111.json`（引用身份清单 `e5c776c4…5b29`、v2 `4fc2d042…4965`、基线模块 `384b4045…45cf`）。该文件是**未授权草稿**（`authorized=false`、`run_id=null`、不写账本、不开跑），不是 `run.json`，故 C09 现为"**可成立待授权**"而非已成立：owner 放行、分配 run_id 并原样复制为 `run.json` 后即满足字面条件。本卡到此只交付"身份 + 价格"，不产生任何性能差值。
 
-**放行前还须清掉的阻塞**（见草稿 `open_items_before_authorization`，与 C09 无关，C09 不因它们变假）：①（**已清**，D-20261111-18）执行器 `UPDATE_ID`/`ARM` 已改为从 `run.json` 读取，R01/R02 字面量同步改为按 `run.json` 取值，12 条判据的编号、检查内容与退出码未变；②（**已清**，D-20261111-19）v2 的 u2 臂行已回填——`dtype=float32`、`active_parameters` 119 项与草稿三槽并集逐一相等、含 `conditional_active_parameters`；自检 `u2_binding_preflight.executable=true`，R08 的 u2 正例/权重漂移/未知 profile 三条全部通过；③（**未清**，语义）u2 的 F2 口径尚未落地——`shadow_terms` 仍固定用 `recipe.u1_shadow`、verbatim 项恒为 0，F2 的 `verbatim=1.0` 目前乘在零张量上；④（**未清**，owner 侧）须给出 `run_id` 与含 `u2-strong-baseline` 的 `owner_approval_ref` 并把 `authorized` 改为 `true`。
+**放行前还须清掉的阻塞**（见草稿 `open_items_before_authorization`，与 C09 无关，C09 不因它们变假）：①（**已清**，D-20261111-18）执行器 `UPDATE_ID`/`ARM` 已改为从 `run.json` 读取，R01/R02 字面量同步改为按 `run.json` 取值，12 条判据的编号、检查内容与退出码未变；②（**已清**，D-20261111-20）u2 的执行图已改为身份清单冻结的 `TransformerSequenceBaseline`（21,977/35），三槽由该图回填——`output_head`=`byte_head`（2 项），`predictive_head`/`recurrent_core` 照实标"该角色不存在"；119 个 U2 参数名已全部撤下，`active_parameters` 改为该图 35 项；③（**已清**，D-20261111-20）u2 的 F2 口径已落地——`shadow_terms` 按臂取片段，verbatim 项按 `byte_head` 逐字教师强制（目标"红盒在左边。"，18 字节，train_label），实测 5.5150，不再乘在零张量上；actor/critic 在该图上不存在，已声明为结构零；④（**未清**，实现）u2 的一步执行路径尚未接入——`perform`、checkpoint 与参数迁移仍绑定 U2 主体，基线当前只有结构绑定与 F2 损失可算；⑤（**未清**，owner 侧）须给出 `run_id` 与含 `u2-strong-baseline` 的 `owner_approval_ref` 并把 `authorized` 改为 `true`。
 

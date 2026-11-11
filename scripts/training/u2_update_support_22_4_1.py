@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any
 
 import torch
+from torch.nn import functional
 
 from scripts.training.u2_update_support_22_3_4_3 import (
     CheckedRuntime,
@@ -72,11 +73,71 @@ def parent_digest(dtype: torch.dtype) -> str:
     return value_digest(base.state_dict())
 
 
+REPO_ROOT = Path(__file__).resolve().parents[2]
+
+
+class BaselineRuntime:
+    """22.4.4 冻结的 Transformer 基线，作为 u2 臂的执行图（不是 U2 元数据候选）。"""
+
+    def __init__(self, model, optimizer, graph: dict[str, Any], arm: str) -> None:
+        self.model = model
+        self.optimizer = optimizer
+        self.graph = dict(graph)
+        self.arm = arm
+
+    def named_parameters(self):
+        return self.model.named_parameters()
+
+
+def baseline_graph(manifest: dict[str, Any], *, arm: str = DEFAULT_ARM) -> tuple[Any, dict]:
+    """按身份清单重建 u2 的执行图，并核对参数量/张量数/清单摘要逐项一致。"""
+    row = manifest["arms"][arm]
+    reference = row.get("baseline_identity_ref")
+    if not reference:
+        raise ValueError(f"{arm} 没有 baseline_identity_ref")
+    identity_path = REPO_ROOT / reference
+    identity_sha = normalized_sha256(identity_path)
+    if identity_sha != row.get("baseline_identity_sha256"):
+        raise ValueError(f"{arm} 的身份清单哈希与臂行 pin 不一致")
+    identity = json.loads(Path(identity_path).read_text(encoding="utf-8"))
+    architecture = identity["architecture"]
+    module_path = REPO_ROOT / architecture["module_path"]
+    if normalized_sha256(module_path) != architecture["module_sha256"]:
+        raise ValueError("身份清单冻结的基线模块源码已变动")
+    from scripts.training.baseline_identity_22_4_4 import build_arm, param_counts
+
+    model = build_arm(architecture["architecture_id"], architecture["free_quantity"]["value"])
+    total, tensors = param_counts(model)
+    inventory = canonical_sha256(
+        [
+            [name, list(parameter.shape), str(parameter.dtype).removeprefix("torch.")]
+            for name, parameter in sorted(model.named_parameters())
+        ]
+    )
+    if (total, tensors) != (identity["param_total"], identity["param_tensors"]):
+        raise ValueError(f"重建图 {total}/{tensors} 与身份清单不一致")
+    if inventory != identity["param_inventory_sha256"]:
+        raise ValueError("重建图的参数清单摘要与身份清单不一致")
+    return model, {
+        "architecture_id": architecture["architecture_id"],
+        "param_total": total,
+        "param_tensors": tensors,
+        "param_inventory_sha256": inventory,
+        "identity_sha256": identity_sha,
+        "identity_ref": str(reference),
+    }
+
+
 def prepare_parent(
     manifest: dict[str, Any], directory: Path, *, arm: str = DEFAULT_ARM
-) -> U1Runtime:
+) -> U1Runtime | BaselineRuntime:
     recipe = manifest["recipe"]
     dtype = getattr(torch, manifest["arms"][arm]["dtype"])
+    if arm != DEFAULT_ARM:
+        model, graph = baseline_graph(manifest, arm=arm)
+        if model.position.dtype != dtype:
+            raise ValueError(f"{arm} 的执行图 dtype {model.position.dtype} 与臂行 {dtype} 不一致")
+        return BaselineRuntime(model, optimizer_for(model, manifest), graph, arm)
     base = U2Subject(U2Config.small()).to(dtype=dtype)
     model = base.metadata_candidate()
     runtime = U1Runtime(model, executor=ReferenceExecutor(), subject_id="engineering-parent-" + arm)
@@ -125,9 +186,54 @@ def recipe_digest(manifest: dict[str, Any]) -> str:
     return canonical_sha256(manifest["recipe"])
 
 
+def _record_fields(record) -> dict[str, Any]:
+    return {
+        "record_id": record.record_id,
+        "raw_hex": record.raw.hex(),
+        "version": record.version,
+        "source": record.source,
+        "scope": record.scope,
+        "observed_at": record.observed_at,
+        "writable": record.writable,
+    }
+
+
+def _baseline_slice_descriptor(
+    manifest: dict[str, Any], model, *, arm: str = DEFAULT_ARM
+) -> dict[str, Any]:
+    from scripts.training.baseline_identity_22_4_4 import fragment_inputs
+
+    recipe = manifest["recipe"]
+    shadow = recipe["u2_shadow"]
+    config = U2Config.small()
+    fixture = synthetic_fixture(config, model.position.dtype)
+    observations, _ = fragment_inputs()
+    return {
+        "graph": {
+            "architecture_id": model.architecture_id,
+            "param_total": int(sum(parameter.numel() for parameter in model.parameters())),
+            "param_tensors": len(list(model.named_parameters())),
+        },
+        "seed": config.seed,
+        "dtype": manifest["arms"][arm]["dtype"],
+        "dt": recipe["dt"],
+        "goal": shadow["goal"],
+        "records": [
+            _record_fields(record)
+            for record in fixture["records"]
+            if record.record_id in set(recipe["feedback_records"])
+        ],
+        "target_hex": shadow["target"].encode("utf-8").hex(),
+        "observations": {name: _tensor_digests(value) for name, value in observations.items()},
+        "feedback_records": list(recipe["feedback_records"]),
+    }
+
+
 def slice_descriptor(
     manifest: dict[str, Any], runtime_model, *, arm: str = DEFAULT_ARM
 ) -> dict[str, Any]:
+    if arm != DEFAULT_ARM:
+        return _baseline_slice_descriptor(manifest, runtime_model, arm=arm)
     recipe = manifest["recipe"]
     fixture = synthetic_fixture(runtime_model.c, runtime_model.native_w.dtype)
     observable = fixture["events"][: recipe["observations_per_shadow_episode"]]
@@ -137,18 +243,7 @@ def slice_descriptor(
         "dtype": manifest["arms"][arm]["dtype"],
         "dt": recipe["dt"],
         "goal": recipe["u1_shadow"]["goal"],
-        "records": [
-            {
-                "record_id": record.record_id,
-                "raw_hex": record.raw.hex(),
-                "version": record.version,
-                "source": record.source,
-                "scope": record.scope,
-                "observed_at": record.observed_at,
-                "writable": record.writable,
-            }
-            for record in fixture["records"]
-        ],
+        "records": [_record_fields(record) for record in fixture["records"]],
         "observations": [
             {
                 "observations": {
@@ -169,18 +264,78 @@ def slice_digest(manifest: dict[str, Any], runtime_model, *, arm: str = DEFAULT_
     return canonical_sha256(slice_descriptor(manifest, runtime_model, arm=arm))
 
 
-def active_parameters(
-    model: U2Subject, manifest: dict[str, Any], *, arm: str = DEFAULT_ARM
-) -> list[str]:
+def active_parameters(model, manifest: dict[str, Any], *, arm: str = DEFAULT_ARM) -> list[str]:
     names = list(manifest["arms"][arm]["active_parameters"])
-    if model.c.group_units is not None:
+    group_units = getattr(getattr(model, "c", None), "group_units", None)
+    if group_units is not None:
         for key in model.group_extensions:
             names.extend([f"group_extensions.{key}.incoming", f"group_extensions.{key}.outgoing"])
     return names
 
 
-def shadow_terms(model: U2Subject, manifest: dict[str, Any], *, arm: str = DEFAULT_ARM):
-    """The frozen u1 shadow episode: original records, act-only, no target."""
+def _baseline_trunk(model, observations: dict, text_context: torch.Tensor) -> torch.Tensor:
+    """与冻结 forward 前半段逐行相同，只是把 STEPS 从张量形状取出来。"""
+    sequence = model.frontend.step_tokens(observations, text_context)
+    hidden = model.record_in(sequence) + model.position[None]
+    steps = hidden.shape[1]
+    mask = torch.triu(torch.ones(steps, steps, dtype=torch.bool, device=hidden.device), diagonal=1)
+    attended, _ = model.attention(hidden, hidden, hidden, attn_mask=mask, need_weights=False)
+    hidden = model.norm_attention(hidden + attended)
+    return model.norm_feedforward(hidden + model.feedforward(hidden))
+
+
+def baseline_shadow_terms(
+    model, manifest: dict[str, Any], *, arm: str = DEFAULT_ARM
+) -> tuple[torch.Tensor, dict[str, torch.Tensor]]:
+    """F2 口径：verbatim 项按基线的 byte_head 逐字教师强制，不再是零张量。
+
+    目标来源：`recipe.u2_shadow.target`（已冻结的 train_label），不引入新反馈通道。
+    actor/critic 在该图上没有对应物，按不存在处理为 0。
+    """
+    from scripts.training.baseline_identity_22_4_4 import fragment_inputs
+
+    recipe = manifest["recipe"]
+    shadow = recipe["u2_shadow"]
+    target_bytes = shadow["target"].encode("utf-8")
+    observations, _ = fragment_inputs()
+    observations = {name: value.to(model.position.dtype) for name, value in observations.items()}
+    text_context = model.frontend.text_units(shadow["goal"])
+    hidden = _baseline_trunk(model, observations, text_context)
+    last = hidden[:, -1]
+    batch = last.shape[0]
+
+    def byte_logits(previous_byte: int) -> torch.Tensor:
+        previous = model.frontend.embedding(
+            torch.full((batch,), previous_byte, dtype=torch.long, device=last.device)
+        )
+        return model.byte_head(torch.cat([last, previous], -1))
+
+    def cross_entropy(logits: torch.Tensor, byte: int) -> torch.Tensor:
+        return functional.cross_entropy(
+            logits, torch.full((batch,), byte, dtype=torch.long, device=last.device)
+        )
+
+    predictive = cross_entropy(byte_logits(255), target_bytes[0])
+    losses = []
+    previous_byte = 255
+    for byte in target_bytes:
+        losses.append(cross_entropy(byte_logits(previous_byte), byte))
+        previous_byte = byte
+    verbatim = torch.stack(losses).mean()
+    weights = manifest["arms"][arm]["weights"]
+    pieces = {
+        "predictive": predictive,
+        "actor": last.new_zeros(()),
+        "critic": last.new_zeros(()),
+        "verbatim": verbatim,
+    }
+    return sum(weights[name] * value for name, value in pieces.items()), pieces
+
+
+def shadow_terms(model, manifest: dict[str, Any], *, arm: str = DEFAULT_ARM):
+    """u1 是冻结的 shadow 片段；u2 走基线的 F2 口径。"""
+    if arm != DEFAULT_ARM:
+        return baseline_shadow_terms(model, manifest, arm=arm)
     recipe = manifest["recipe"]
     dt = recipe["dt"]
     fixture = synthetic_fixture(model.c, model.native_w.dtype)

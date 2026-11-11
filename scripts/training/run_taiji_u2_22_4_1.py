@@ -53,6 +53,7 @@ from scripts.training.u2_update_support_22_4_1 import (
     fingerprint,
     prepare_parent,
     recipe_digest,
+    shadow_terms,
     slice_digest,
 )
 from taiji.u2_history import value_digest
@@ -363,6 +364,11 @@ def execute(root: Path) -> dict[str, Any]:
 
     runtime = prepare_parent(execution, root, arm=run["update_id"])
     checks.append(check_r08(execution, runtime.model, runtime.optimizer, arm=run["update_id"]))
+    if run["update_id"] != DEFAULT_ARM:
+        raise ContractError(
+            "u2 的一步执行路径尚未接入：perform、checkpoint 与参数迁移仍绑定 U2 主体，"
+            "基线当前只有 0 步结构绑定与 F2 损失，不得开跑"
+        )
 
     recipe_sha = recipe_digest(execution)
     slice_sha = slice_digest(execution, runtime.model, arm=run["update_id"])
@@ -1253,41 +1259,155 @@ def self_check(directory: Path) -> dict[str, Any]:
                 unknown_profile, u2_runtime.model, u2_runtime.optimizer, arm="u2-strong-baseline"
             ),
         )
-        # 臂行是否真能构造父子图：dtype、活性清单与草稿三槽必须互相对得上。
+        # u2 的执行图必须就是身份清单冻结的基线本身：参数量、参数清单、三槽与 F2 损失都要对上。
         u2_row = u2_execution["arms"]["u2-strong-baseline"]
-        u2_slot_names = [
-            name
-            for role in ("predictive_head", "recurrent_core", "output_head")
-            for name in u2_draft["identity_slots"][role]["param_names"]
-        ]
+        u2_graph = getattr(u2_runtime, "graph", {}) or {}
+        u2_model_names = sorted(dict(u2_runtime.model.named_parameters()))
+        u2_roles = u2_row.get("active_parameter_roles") or {}
+        role_order = ("predictive_head", "recurrent_core", "output_head")
+        u2_role_names = {
+            role: list(u2_roles.get(role, {}).get("param_names") or []) for role in role_order
+        }
+        u2_role_union = sorted({name for names in u2_role_names.values() for name in names})
         u2_declared = list(u2_row.get("active_parameters") or [])
-        u2_model_names = set(dict(u2_runtime.model.named_parameters()))
+        u2_draft_slots = {
+            role: list(u2_draft["identity_slots"][role]["param_names"]) for role in role_order
+        }
+        u2_loss, u2_pieces = shadow_terms(u2_runtime.model, u2_execution, arm="u2-strong-baseline")
+        u2_gradients = torch.autograd.grad(
+            u2_loss, list(u2_runtime.model.parameters()), allow_unused=True
+        )
+        u2_dead = [
+            name
+            for name, gradient in zip(u2_model_names, u2_gradients, strict=True)
+            if gradient is None or float(gradient.norm()) == 0.0
+        ]
+        u2_graph_ok = (
+            u2_graph.get("architecture_id"),
+            u2_graph.get("param_total"),
+            u2_graph.get("param_tensors"),
+        ) == ("transformer_sequence", 21977, 35)
+        cases.append(
+            {
+                "case": "u2_execution_graph_is_frozen_baseline",
+                "expected": "transformer_sequence 21977/35",
+                "actual": (
+                    f"{u2_graph.get('architecture_id')} "
+                    f"{u2_graph.get('param_total')}/{u2_graph.get('param_tensors')}"
+                ),
+                "pass": u2_graph_ok,
+                "detail": f"inventory={u2_graph.get('param_inventory_sha256')}",
+            }
+        )
+        sentinel_u2_names = [
+            "native_w",
+            "initial_h",
+            "decoder_query.rgb.weight",
+            "record_metadata.weight",
+            "f_key.weight",
+        ]
+        lingering = sorted(set(sentinel_u2_names) & set(u2_declared))
+        cases.append(
+            {
+                "case": "u2_no_u2_parameter_names_on_arm",
+                "expected": [],
+                "actual": lingering,
+                "pass": not lingering,
+            }
+        )
+        cases.append(
+            {
+                "case": "u2_role_slots_backfilled_from_graph",
+                "expected": "output_head=byte_head, 另两槽不存在",
+                "actual": {role: len(u2_role_names[role]) for role in role_order},
+                "pass": (
+                    u2_role_names["output_head"] == ["byte_head.weight", "byte_head.bias"]
+                    and not u2_role_names["predictive_head"]
+                    and not u2_role_names["recurrent_core"]
+                    and set(u2_role_union) <= set(u2_declared)
+                ),
+            }
+        )
+        pieces = {name: float(value) for name, value in u2_pieces.items()}
+        cases.append(
+            {
+                "case": "u2_verbatim_term_positive",
+                "expected": "> 0",
+                "actual": round(pieces["verbatim"], 6),
+                "pass": pieces["verbatim"] > 0.0,
+                "detail": json.dumps(pieces, ensure_ascii=False),
+            }
+        )
+        cases.append(
+            {
+                "case": "u2_f2_gradients_alive",
+                "expected": [],
+                "actual": u2_dead,
+                "pass": not u2_dead,
+            }
+        )
         u2_preflight = {
             "arm": "u2-strong-baseline",
+            "graph_architecture_id": u2_graph.get("architecture_id"),
+            "graph_param_total": u2_graph.get("param_total"),
+            "graph_param_tensors": u2_graph.get("param_tensors"),
+            "graph_param_inventory_sha256": u2_graph.get("param_inventory_sha256"),
+            "graph_identity_sha256": u2_graph.get("identity_sha256"),
             "dtype_field": u2_row.get("dtype"),
             "dtype_is_torch_dtype": hasattr(torch, str(u2_row.get("dtype"))),
             "active_parameters_present": bool(u2_declared),
             "active_parameters_count": len(u2_declared),
-            "identity_slots_count": len(u2_slot_names),
-            "matches_identity_slots": u2_declared == u2_slot_names,
-            "missing_in_model": sorted(set(u2_declared) - u2_model_names),
+            "active_set_equals_graph_inventory": u2_declared == u2_model_names,
+            "role_slots": {
+                role: {
+                    "exists": bool(u2_roles.get(role, {}).get("exists")),
+                    "count": len(u2_role_names[role]),
+                    "param_names": u2_role_names[role],
+                }
+                for role in role_order
+            },
+            "role_union_subset_of_active": set(u2_role_union) <= set(u2_declared),
+            "roles_match_draft": u2_role_names == u2_draft_slots,
+            "missing_in_model": sorted(set(u2_declared) - set(u2_model_names)),
+            "verbatim": {
+                "target": u2_execution["recipe"]["u2_shadow"]["target"],
+                "target_bytes": len(u2_execution["recipe"]["u2_shadow"]["target"].encode("utf-8")),
+                **{name: round(value, 6) for name, value in pieces.items()},
+            },
+            "dead_gradient_parameters": u2_dead,
             "conditional_active_parameters_present": bool(
                 u2_row.get("conditional_active_parameters")
             ),
+            "step_path_implemented": False,
             "semantic_gaps": [
-                "shadow_terms 仍固定用 recipe.u1_shadow 且 verbatim 项恒为 0，"
-                "u2 的 F2 口径（verbatim=1.0）尚未落地"
+                "actor/critic 在该基线上没有对应头，两项是结构零（已声明，不冒充 U2 参数）。",
+                "u2 的一步执行路径（perform/checkpoint/迁移）仍绑定 U2 主体，基线尚未接入。",
+                "R05 仍把 u2 的父身份绑在 22.3 的 U2 接受父（191 参数），而本臂执行图是 21,977/35 的基线；12 条判据未改，属已知口径缺口。",
             ],
             "blocking_gaps": [],
         }
+        if not u2_graph_ok:
+            u2_preflight["blocking_gaps"].append(
+                "u2 执行图不是冻结的 transformer_sequence 21977/35"
+            )
         if not u2_preflight["dtype_is_torch_dtype"]:
             u2_preflight["blocking_gaps"].append("dtype 字段是说明文字而非 torch dtype")
         if not u2_preflight["active_parameters_present"]:
             u2_preflight["blocking_gaps"].append("缺 active_parameters 扁平表")
-        if not u2_preflight["matches_identity_slots"]:
-            u2_preflight["blocking_gaps"].append("臂行活性清单与草稿 identity_slots 不一致")
+        if not u2_preflight["active_set_equals_graph_inventory"]:
+            u2_preflight["blocking_gaps"].append("臂行活性清单不等于执行图的参数清单")
         if u2_preflight["missing_in_model"]:
-            u2_preflight["blocking_gaps"].append("臂行声明的活性参数不在 u2 模型里")
+            u2_preflight["blocking_gaps"].append("臂行声明的活性参数不在执行图里")
+        if lingering:
+            u2_preflight["blocking_gaps"].append("臂行仍挂着 U2 参数名")
+        if not u2_preflight["role_union_subset_of_active"]:
+            u2_preflight["blocking_gaps"].append("角色槽参数不在活性清单里")
+        if not u2_preflight["roles_match_draft"]:
+            u2_preflight["blocking_gaps"].append("臂行角色槽与草稿 identity_slots 不一致")
+        if u2_dead:
+            u2_preflight["blocking_gaps"].append("F2 损失下有参数拿不到梯度")
+        if pieces["verbatim"] <= 0.0:
+            u2_preflight["blocking_gaps"].append("verbatim 项不是正数")
         if not u2_preflight["conditional_active_parameters_present"]:
             u2_preflight["blocking_gaps"].append("缺 conditional_active_parameters 文本")
         u2_preflight["executable"] = not u2_preflight["blocking_gaps"]

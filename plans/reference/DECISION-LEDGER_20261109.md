@@ -3077,3 +3077,50 @@ v2 的 u2 臂行挂着 `baseline_identity_sha256 = e5c776c4…5b29`，而该身�
 唯一建议：先把 u2 的口径定死——在"改 `shadow_terms` 按臂取 shadow 片段并实现 verbatim 项"与"把 u2 权重表降为不声明 verbatim"之间选一个（前者上限更高，能让 22.4.1 真正测到 F2 的逐字能力；后者只是让声明与实现对齐），并同步把臂行 `baseline_identity_sha256` 的口径改成"本臂执行图"或注明它只用于 22.5 对照。做完再跑同一套 0 步自检；在此之前不申请 u2 放行。
 
 
+
+---
+
+## D-20261111-20　u2 执行图改为冻结基线 + F2 逐字项落地
+
+**类型**：架构口径修正（声明＝实现）＋机制实现（verbatim 项）。**授权来源**：用户 2026-11-11 裁定（四条）。**范围**：0 训练／0 `optimizer.step`／0 数据读取／未生成 `run.json`／未申请 u2 放行。
+
+### 1. 改了什么
+
+1. `scripts/training/u2_update_support_22_4_1.py`
+   - 新增 `BaselineRuntime` 与 `baseline_graph()`：非默认臂按 `baseline_identity_ref` 重建 22.4.4 冻结的 `TransformerSequenceBaseline`，核对 `param_total/param_tensors`（21,977/35）、`param_inventory_sha256` 与冻结模块 sha，任一漂移即拒绝。
+   - `prepare_parent` 分支：u2 返回 `BaselineRuntime`，不再构造 `U2Subject(U2Config.small()).metadata_candidate()`。
+   - `active_parameters` 与 `check_r08` 不再假设 `model.c`（基线没有 `U2Config`）。
+   - `slice_descriptor` 按臂取片段：u2 用 `recipe.u2_shadow`（goal、单条 red 记录）与 22.4.4 测量用的 `fragment_inputs()`（seed 20261110、B=2、T=8）描述输入；u1 分支逐字未变（重算仍 `9a06eb84…da29`）。
+   - `shadow_terms` 分支：u2 走 `baseline_shadow_terms`——`predictive`＝`byte_head` 对目标首字节的交叉熵；`verbatim`＝对 `recipe.u2_shadow.target`（“红盒在左边。”，18 个 UTF-8 字节）逐字教师强制，逐步把前一字节嵌入喂给同一个 `byte_head`；`actor`/`critic` 在该图无对应头，为结构零。
+2. `scripts/training/u2_update_executor_22_4_1.py`：`check_r08` 的 `model.c.group_units` 改为 `getattr`（基线无 `c`），行为对 u1 不变。
+3. `scripts/training/run_taiji_u2_22_4_1.py`：u2 预检改为按执行图核对（图身份、35 项活性、角色槽、草稿一致、F2 数值、梯度活性），新增 5 条自检用例；`execute()` 对非默认臂在 R08 后 fail-closed（一步执行路径未接入）。
+4. v2 臂行：`dtype=float32`；`active_parameters`＝该图 35 项；`active_parameter_roles`＝`output_head` 2 项、另两槽标“该角色不存在”并写明原因；`unassigned_parameters` 33 项；`baseline_identity_semantics=本臂执行图`；新增 `absent_loss_terms`、`loss_term_sources`。哈希 `595bd0c8…1b42b` → **`4fc2d042…4965`**。
+5. 草稿：`identity_slots` 改为新三槽；`references.manifest_sha256` 重钉；`open_items` 五条。哈希 `23e9b3fc…0e04` → **`217ada49…d465`**。
+
+### 2. 自检与覆盖
+
+- 51 条、`verdict=pass`、`optimizer_step_calls=0`、cpu 6.20／wall 7.17。
+- `u2_binding_preflight`：`transformer_sequence` 21,977/35、inventory `8c041a19…4569`、`active_parameters_count=35`、`active_set_equals_graph_inventory=true`、`roles_match_draft=true`、`dead_gradient_parameters=[]`、`executable=true`、`step_path_implemented=false`。
+- F2 数值：predictive 5.3683、verbatim 5.5150、actor/critic 0.0。
+- 覆盖台账 54→**58 行**，未覆盖 17→**18**，不可达 2。
+
+### 3. 为什么这样映射三槽（不把主干当递归核）
+
+- `output_head`：`byte_head` 是该图唯一输出头，参数名与 dtype 直接取自 `param_inventory`。
+- `predictive_head`：该图没有独立预测头，预测由 `byte_head` 直接给出，已计入输出头；若另立一项就会与输出头重复计数。
+- `recurrent_core`：该图 `state_tensors=0`，没有递归参数；15 项序列主干是无状态前馈主干，塞进“递归核”会造成声明虚假。主干与前端 18 项一并列入 `unassigned_parameters`，仍然训练、仍然进活性清单，只是不冒充角色。
+
+### 4. verbatim 的目标来源
+
+`recipe.u2_shadow.target`＝“红盒在左边。”，来自准入清单声明的 **train_label** 反馈；它不是新增通道，也不是 oracle／score。片段输入用 22.4.4 已冻结的 `fragment_inputs()`（合成随机片段，不是项目语料）。所以落在“只用 train_label”的边界内：模型只从可见输入与声明的标签学，不读 check/confirm/final。
+
+### 5. 仍存的声明-实现不一致（本轮不修，须报）
+
+1. **一步执行未接入**：`perform`／checkpoint／`migrate_parameters` 仍绑 U2 主体（state/history/revision）；基线现在能构造、能算 F2 损失、能验梯度，但**不能走一步更新**。`step_path_implemented=false`，`execute()` 对 u2 直接退 5。
+2. **R05 父身份口径**：R05 仍把 u2 的父身份绑在 22.3 的 U2 接受父（191 参数）上，而执行图是 21,977/35 的基线。12 条判据未改，故只登记不改。
+3. **actor/critic**：F2 权重表声明 0.1，但该图没有策略头/价值头，两项是结构零。已写进臂行 `absent_loss_terms`。
+4. **摘要线程依赖**：只登记在能力卡 §13，未改任何已收摘要。
+
+### 6. 下一步
+
+唯一建议：实现 u2 的一步执行路径——给基线单独一条 `perform_baseline`：Adam 单步、活性回执（35 项）、checkpoint 写出与读回、`s12_payload`，并让 `execute()` 在 u2 上走它；R05 的父身份改成“本臂执行图”属 12 条冻结判据，须单独预注册。做完再跑 0 步自检；在此之前不申请 u2 放行。

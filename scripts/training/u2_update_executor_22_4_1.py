@@ -359,7 +359,10 @@ def check_r08(
     if manifest["warmup"]["enabled"] or manifest["gradient_clip"]["enabled"]:
         raise ContractError("R08 warmup or clipping was enabled outside the freeze")
     names = active_parameters(model, manifest, arm=arm)
-    if names != list(row["active_parameters"]) and model.c.group_units is None:
+    if (
+        names != list(row["active_parameters"])
+        and getattr(getattr(model, "c", None), "group_units", None) is None
+    ):
         raise ContractError(f"R08 active parameter list changed: {names}")
     missing = [name for name in names if name not in dict(model.named_parameters())]
     if missing:
@@ -369,7 +372,7 @@ def check_r08(
         "optimizer": {key: value for key, value in actual.items()},
         "weights": weights,
         "active_parameters": names,
-        "group_extensions": model.c.group_units is not None,
+        "group_extensions": getattr(getattr(model, "c", None), "group_units", None) is not None,
     }
 
 

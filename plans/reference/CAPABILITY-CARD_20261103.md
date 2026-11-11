@@ -590,6 +590,8 @@ manifest 的 `frozen_files` 是**文件完整性**哈希，与线程无关，不
 
 **机器门（2026-11-10 上线）**：本判据不再是文档纪律——`scripts/training/check_report_run_conditions.py` 按字段拦截，CI 步骤 `report-conditions` 判红。新报告写盘必须走 `write_report()`，缺运行条件即抛 `MissingRunConditions`、**不落盘**；旧文件一律不回写，逐条列进 [基线清单](../../plans/manifests/report_run_conditions_baseline_20261110.json)，状态为 `report_level_claim_not_machine_verifiable`。按字段级口径重扫：tracked JSON 3931 份，命中 **620** 份（reports 571／manifests 49，其中带相等类字段 228 份）。上表 212／267 是窄口径普查（只数四类摘要名与"逐字节"字样），两者差异是口径差，不是读数变化。
 
+**切片摘要的线程依赖（2026-11-11 登记，不改读数）**：切片摘要（`slice_digest`）是对浮点变换后**原始字节**的哈希，只在 `threads=1` 下可复现；同一算法、同一数据在 `threads≥2` 下会得到不同值（实测 1 线程 `9a06eb84…da29`，≥2 线程 `947c0958…f1cd`）。因此外部独立复算必须固定线程数（`torch.set_num_threads(1)` 或 `OMP_NUM_THREADS=1`），否则"摘要相同"不成立。这是需要**单独预注册**才能修的架构项（让描述符自带线程数、并在固定线程数下生成片段），本轮只登记，不得顺手改已收摘要或已落盘的 `run.json`。
+
 ### 13.1 平台轴预登记：判定树先写、结果后填（2026-11-10）
 
 **为什么先写**：线程数已被证明会改末位字节（本节首段）。平台／指令集／浮点收缩是**同一类变量**，只是还没被测过。09.8 的 `subject_bundle.pt` 是第一个跨平台受检面：它被判 `regenerable_exact`（台账 D-20261110-08），而该判定**只在维护机（Windows）上验过**；CI 的 Ubuntu 腿会用同一构造路径重建它（D-20261110-10）。**在结果出来之前**先把三种结局的处置写死，避免出了结果再临时找口径。
