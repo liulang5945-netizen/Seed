@@ -559,6 +559,60 @@ def self_check(directory: Path) -> dict[str, Any]:
             lambda: check_r06(run, admission, consumed=1),
         )
 
+        # R06 四条资源/精度/步数闸门：只改内存副本，不碰冻结草稿。
+        # 每条都必须退 3，且见证账本一个字节都不能多（拒绝发生在 open 之前）。
+        r06_path = directory / "attempts_r06.ndjson"
+        r06_ledger = AttemptLedger(
+            r06_path,
+            ledger_run(run),
+            execution["authority"]["source_pins"],
+            precontract(run),
+        )
+        r06_ledger.start()
+
+        def expect_no_ledger_write(name: str, action) -> None:
+            before = r06_path.read_bytes()
+            try:
+                action()
+            except LedgerError as error:
+                actual, detail = (
+                    getattr(error, "exit_code", None),
+                    f"{type(error).__name__}: {error}",
+                )
+            else:
+                actual, detail = 0, "no exception"
+            after = r06_path.read_bytes()
+            cases.append(
+                {
+                    "case": name,
+                    "expected": f"exit=3,ledger_unchanged（{detail}）",
+                    "actual": f"exit={actual},ledger_unchanged={after == before},"
+                    f"rows={len(r06_ledger.read()['rows'])},"
+                    f"consumed={r06_ledger.read()['consumed']}",
+                    "pass": actual == 3
+                    and after == before
+                    and len(r06_ledger.read()["rows"]) == 1
+                    and r06_ledger.read()["consumed"] == 0,
+                }
+            )
+
+        expect_no_ledger_write(
+            "r06_cpu_cap_over_price",
+            lambda: check_r06({**run, "cpu_cap": 121}, admission, consumed=0),
+        )
+        expect_no_ledger_write(
+            "r06_wall_cap_over_price",
+            lambda: check_r06({**run, "wall_cap": 241}, admission, consumed=0),
+        )
+        expect_no_ledger_write(
+            "r06_precision_mismatch",
+            lambda: check_r06({**run, "precision": "float64"}, admission, consumed=0),
+        )
+        expect_no_ledger_write(
+            "r06_optimizer_steps_not_one",
+            lambda: check_r06({**run, "optimizer_steps_authorized": 2}, admission, consumed=0),
+        )
+
         # 额度闸门：假 precontract 把 budget_max 压到 0（不碰冻结草稿），
         # open 必须退 3，且账本一个字节都不能多——闸门拒绝不能留下计费行。
         zero_contract = precontract(run)

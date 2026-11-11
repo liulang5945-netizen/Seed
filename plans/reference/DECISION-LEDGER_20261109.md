@@ -2855,5 +2855,24 @@ u1 的"通路活着"成立且可复现；本轮只加固验证，不改任何判
 
 ### 6. 下一步（唯一建议）
 
-在自检里补 **R06 的帽／精度／步数反例**（`cpu_cap`／`wall_cap` 超限、`precision` 不符、`optimizer_steps_authorized!=1`）。做法与本轮闸门反例相同：`check_r06` 只读传入的 `run` 字典，用**内存副本**触发即可，不碰冻结草稿、不消耗额度。补完后再决定是否开 u2。
+~~在自检里补 **R06 的帽／精度／步数反例**……~~ 已于 D-20261111-15 完成。
+
+## D-20261111-15 R06 四条资源/精度/步数闸门反例
+
+**编号／时间／类型**：D-20261111-15｜2026-11-11｜**自检扩面**。不重跑、不加 attempt、不步进；判据一字未改；CPU 账按 D-20261111-14 的推定口径，不回退到"单线程×0.72 s"。
+
+**做法**：`check_r06` 是纯函数，只读传入的 `run` 字典与 admission manifest。故四条全部用**内存副本** `{**run, <字段>: <越界值>}` 触发，冻结草稿与准入物一个字节未动。每次调用前后对见证账本（仅一行 `run_start`）取字节快照。
+
+**四条结果（均退 3，账本字节不变、`consumed=0`）**：
+
+| 用例 | 越界输入 | 实测拒绝信息 |
+|---|---|---|
+| `r06_cpu_cap_over_price` | `cpu_cap=121` | R06 cpu cap exceeds the frozen price |
+| `r06_wall_cap_over_price` | `wall_cap=241` | R06 wall cap exceeds the frozen price |
+| `r06_precision_mismatch` | `precision=float64` | R06 precision differs from the admission entry |
+| `r06_optimizer_steps_not_one` | `optimizer_steps_authorized=2` | R06 this run is not a single optimizer step |
+
+**读数**：自检 **36 条全过**，`optimizer_step_calls=0`，cpu 4.61 s／wall 5.63 s。分支台账仍 47 行：#10 由"未覆盖"转"已覆盖"，未覆盖降为 **16 行**，另有 2 行不可达（#20 群单元扩展、#22 的 R10 文案分支）。
+
+**仍未覆盖的 16 行性质**：全部需要"真跑、造故障或篡改账本"——#23 哈希链断裂注入、#32 经 `reject_attempt` 的 exit 6、#37 真超帽 `within_cap=false`、#47 回执写不出来等，均已在台账标注风险与触发条件。
 
