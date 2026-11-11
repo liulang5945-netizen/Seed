@@ -1,0 +1,1301 @@
+{
+  "schema": "taiji-u2-22.4.4-identity-measurement-v1",
+  "created_at": "2026-11-11T15:45:04.195337+00:00",
+  "verdict": "selected",
+  "conditions": {
+    "dtype": "float32",
+    "device": "cpu",
+    "threads": 1,
+    "interop_threads": 1,
+    "torch_version": "2.13.0+cpu",
+    "python": "3.12.10",
+    "fragment": {
+      "batch": 2,
+      "steps": 8,
+      "seed": 20261110,
+      "rgb_shape": [
+        2,
+        8,
+        3,
+        4,
+        4
+      ],
+      "audio_shape": [
+        2,
+        8,
+        33
+      ],
+      "proprio_shape": [
+        2,
+        8,
+        8
+      ],
+      "backward_calls": 1
+    },
+    "rss_method": "RSS sampled at each step and after backward; delta = peak - rss after construction",
+    "cpu_method": "primary = time.process_time delta over one fragment; calibrated = mean over repeats of the identical fragment in the same process",
+    "processes_per_arm": 3,
+    "aggregate": "median"
+  },
+  "anchor": {
+    "candidate_param_total": 22742,
+    "candidate_param_tensors": 194,
+    "base_param_total": 22638,
+    "base_param_tensors": 191,
+    "anchor_declared": 22742,
+    "tolerance": 0.1,
+    "band": [
+      20467.8,
+      25016.2
+    ]
+  },
+  "grid": {
+    "gru_sequence": {
+      "selected": {
+        "width": 40,
+        "param_total": 23021,
+        "param_tensors": 24,
+        "abs_delta": 279,
+        "delta_pct": 1.2268050303403395,
+        "qualified": true,
+        "state_tensors": 1
+      },
+      "all_points": [
+        {
+          "width": 8,
+          "param_total": 6925,
+          "param_tensors": 24,
+          "abs_delta": 15817,
+          "delta_pct": 69.54973177381058
+        },
+        {
+          "width": 9,
+          "param_total": 7335,
+          "param_tensors": 24,
+          "abs_delta": 15407,
+          "delta_pct": 67.7469000087943
+        },
+        {
+          "width": 10,
+          "param_total": 7751,
+          "param_tensors": 24,
+          "abs_delta": 14991,
+          "delta_pct": 65.91768533989975
+        },
+        {
+          "width": 11,
+          "param_total": 8173,
+          "param_tensors": 24,
+          "abs_delta": 14569,
+          "delta_pct": 64.0620877671269
+        },
+        {
+          "width": 12,
+          "param_total": 8601,
+          "param_tensors": 24,
+          "abs_delta": 14141,
+          "delta_pct": 62.180107290475775
+        },
+        {
+          "width": 13,
+          "param_total": 9035,
+          "param_tensors": 24,
+          "abs_delta": 13707,
+          "delta_pct": 60.27174390994635
+        },
+        {
+          "width": 14,
+          "param_total": 9475,
+          "param_tensors": 24,
+          "abs_delta": 13267,
+          "delta_pct": 58.33699762553865
+        },
+        {
+          "width": 15,
+          "param_total": 9921,
+          "param_tensors": 24,
+          "abs_delta": 12821,
+          "delta_pct": 56.37586843725266
+        },
+        {
+          "width": 16,
+          "param_total": 10373,
+          "param_tensors": 24,
+          "abs_delta": 12369,
+          "delta_pct": 54.38835634508838
+        },
+        {
+          "width": 17,
+          "param_total": 10831,
+          "param_tensors": 24,
+          "abs_delta": 11911,
+          "delta_pct": 52.374461349045816
+        },
+        {
+          "width": 18,
+          "param_total": 11295,
+          "param_tensors": 24,
+          "abs_delta": 11447,
+          "delta_pct": 50.334183449124964
+        },
+        {
+          "width": 19,
+          "param_total": 11765,
+          "param_tensors": 24,
+          "abs_delta": 10977,
+          "delta_pct": 48.267522645325826
+        },
+        {
+          "width": 20,
+          "param_total": 12241,
+          "param_tensors": 24,
+          "abs_delta": 10501,
+          "delta_pct": 46.1744789376484
+        },
+        {
+          "width": 21,
+          "param_total": 12723,
+          "param_tensors": 24,
+          "abs_delta": 10019,
+          "delta_pct": 44.05505232609269
+        },
+        {
+          "width": 22,
+          "param_total": 13211,
+          "param_tensors": 24,
+          "abs_delta": 9531,
+          "delta_pct": 41.9092428106587
+        },
+        {
+          "width": 23,
+          "param_total": 13705,
+          "param_tensors": 24,
+          "abs_delta": 9037,
+          "delta_pct": 39.73705039134641
+        },
+        {
+          "width": 24,
+          "param_total": 14205,
+          "param_tensors": 24,
+          "abs_delta": 8537,
+          "delta_pct": 37.53847506815583
+        },
+        {
+          "width": 25,
+          "param_total": 14711,
+          "param_tensors": 24,
+          "abs_delta": 8031,
+          "delta_pct": 35.31351684108697
+        },
+        {
+          "width": 26,
+          "param_total": 15223,
+          "param_tensors": 24,
+          "abs_delta": 7519,
+          "delta_pct": 33.062175710139826
+        },
+        {
+          "width": 27,
+          "param_total": 15741,
+          "param_tensors": 24,
+          "abs_delta": 7001,
+          "delta_pct": 30.784451675314397
+        },
+        {
+          "width": 28,
+          "param_total": 16265,
+          "param_tensors": 24,
+          "abs_delta": 6477,
+          "delta_pct": 28.480344736610675
+        },
+        {
+          "width": 29,
+          "param_total": 16795,
+          "param_tensors": 24,
+          "abs_delta": 5947,
+          "delta_pct": 26.14985489402867
+        },
+        {
+          "width": 30,
+          "param_total": 17331,
+          "param_tensors": 24,
+          "abs_delta": 5411,
+          "delta_pct": 23.792982147568377
+        },
+        {
+          "width": 31,
+          "param_total": 17873,
+          "param_tensors": 24,
+          "abs_delta": 4869,
+          "delta_pct": 21.409726497229794
+        },
+        {
+          "width": 32,
+          "param_total": 18421,
+          "param_tensors": 24,
+          "abs_delta": 4321,
+          "delta_pct": 19.00008794301293
+        },
+        {
+          "width": 33,
+          "param_total": 18975,
+          "param_tensors": 24,
+          "abs_delta": 3767,
+          "delta_pct": 16.564066484917774
+        },
+        {
+          "width": 34,
+          "param_total": 19535,
+          "param_tensors": 24,
+          "abs_delta": 3207,
+          "delta_pct": 14.101662122944331
+        },
+        {
+          "width": 35,
+          "param_total": 20101,
+          "param_tensors": 24,
+          "abs_delta": 2641,
+          "delta_pct": 11.612874857092605
+        },
+        {
+          "width": 36,
+          "param_total": 20673,
+          "param_tensors": 24,
+          "abs_delta": 2069,
+          "delta_pct": 9.097704687362588
+        },
+        {
+          "width": 37,
+          "param_total": 21251,
+          "param_tensors": 24,
+          "abs_delta": 1491,
+          "delta_pct": 6.556151613754287
+        },
+        {
+          "width": 38,
+          "param_total": 21835,
+          "param_tensors": 24,
+          "abs_delta": 907,
+          "delta_pct": 3.9882156362676984
+        },
+        {
+          "width": 39,
+          "param_total": 22425,
+          "param_tensors": 24,
+          "abs_delta": 317,
+          "delta_pct": 1.393896754902823
+        },
+        {
+          "width": 40,
+          "param_total": 23021,
+          "param_tensors": 24,
+          "abs_delta": 279,
+          "delta_pct": 1.2268050303403395
+        },
+        {
+          "width": 41,
+          "param_total": 23623,
+          "param_tensors": 24,
+          "abs_delta": 881,
+          "delta_pct": 3.873889719461789
+        },
+        {
+          "width": 42,
+          "param_total": 24231,
+          "param_tensors": 24,
+          "abs_delta": 1489,
+          "delta_pct": 6.547357312461525
+        },
+        {
+          "width": 43,
+          "param_total": 24845,
+          "param_tensors": 24,
+          "abs_delta": 2103,
+          "delta_pct": 9.247207809339548
+        },
+        {
+          "width": 44,
+          "param_total": 25465,
+          "param_tensors": 24,
+          "abs_delta": 2723,
+          "delta_pct": 11.973441210095858
+        },
+        {
+          "width": 45,
+          "param_total": 26091,
+          "param_tensors": 24,
+          "abs_delta": 3349,
+          "delta_pct": 14.726057514730455
+        },
+        {
+          "width": 46,
+          "param_total": 26723,
+          "param_tensors": 24,
+          "abs_delta": 3981,
+          "delta_pct": 17.50505672324334
+        },
+        {
+          "width": 47,
+          "param_total": 27361,
+          "param_tensors": 24,
+          "abs_delta": 4619,
+          "delta_pct": 20.31043883563451
+        },
+        {
+          "width": 48,
+          "param_total": 28005,
+          "param_tensors": 24,
+          "abs_delta": 5263,
+          "delta_pct": 23.142203851903965
+        },
+        {
+          "width": 49,
+          "param_total": 28655,
+          "param_tensors": 24,
+          "abs_delta": 5913,
+          "delta_pct": 26.00035177205171
+        },
+        {
+          "width": 50,
+          "param_total": 29311,
+          "param_tensors": 24,
+          "abs_delta": 6569,
+          "delta_pct": 28.88488259607774
+        },
+        {
+          "width": 51,
+          "param_total": 29973,
+          "param_tensors": 24,
+          "abs_delta": 7231,
+          "delta_pct": 31.79579632398206
+        },
+        {
+          "width": 52,
+          "param_total": 30641,
+          "param_tensors": 24,
+          "abs_delta": 7899,
+          "delta_pct": 34.73309295576466
+        },
+        {
+          "width": 53,
+          "param_total": 31315,
+          "param_tensors": 24,
+          "abs_delta": 8573,
+          "delta_pct": 37.696772491425556
+        },
+        {
+          "width": 54,
+          "param_total": 31995,
+          "param_tensors": 24,
+          "abs_delta": 9253,
+          "delta_pct": 40.686834930964736
+        },
+        {
+          "width": 55,
+          "param_total": 32681,
+          "param_tensors": 24,
+          "abs_delta": 9939,
+          "delta_pct": 43.7032802743822
+        },
+        {
+          "width": 56,
+          "param_total": 33373,
+          "param_tensors": 24,
+          "abs_delta": 10631,
+          "delta_pct": 46.746108521677954
+        },
+        {
+          "width": 57,
+          "param_total": 34071,
+          "param_tensors": 24,
+          "abs_delta": 11329,
+          "delta_pct": 49.81531967285199
+        },
+        {
+          "width": 58,
+          "param_total": 34775,
+          "param_tensors": 24,
+          "abs_delta": 12033,
+          "delta_pct": 52.910913727904315
+        },
+        {
+          "width": 59,
+          "param_total": 35485,
+          "param_tensors": 24,
+          "abs_delta": 12743,
+          "delta_pct": 56.03289068683493
+        },
+        {
+          "width": 60,
+          "param_total": 36201,
+          "param_tensors": 24,
+          "abs_delta": 13459,
+          "delta_pct": 59.18125054964383
+        },
+        {
+          "width": 61,
+          "param_total": 36923,
+          "param_tensors": 24,
+          "abs_delta": 14181,
+          "delta_pct": 62.355993316331016
+        },
+        {
+          "width": 62,
+          "param_total": 37651,
+          "param_tensors": 24,
+          "abs_delta": 14909,
+          "delta_pct": 65.5571189868965
+        },
+        {
+          "width": 63,
+          "param_total": 38385,
+          "param_tensors": 24,
+          "abs_delta": 15643,
+          "delta_pct": 68.78462756134026
+        },
+        {
+          "width": 64,
+          "param_total": 39125,
+          "param_tensors": 24,
+          "abs_delta": 16383,
+          "delta_pct": 72.0385190396623
+        },
+        {
+          "width": 65,
+          "param_total": 39871,
+          "param_tensors": 24,
+          "abs_delta": 17129,
+          "delta_pct": 75.31879342186264
+        },
+        {
+          "width": 66,
+          "param_total": 40623,
+          "param_tensors": 24,
+          "abs_delta": 17881,
+          "delta_pct": 78.62545070794125
+        },
+        {
+          "width": 67,
+          "param_total": 41381,
+          "param_tensors": 24,
+          "abs_delta": 18639,
+          "delta_pct": 81.95849089789816
+        },
+        {
+          "width": 68,
+          "param_total": 42145,
+          "param_tensors": 24,
+          "abs_delta": 19403,
+          "delta_pct": 85.31791399173336
+        },
+        {
+          "width": 69,
+          "param_total": 42915,
+          "param_tensors": 24,
+          "abs_delta": 20173,
+          "delta_pct": 88.70371998944684
+        },
+        {
+          "width": 70,
+          "param_total": 43691,
+          "param_tensors": 24,
+          "abs_delta": 20949,
+          "delta_pct": 92.1159088910386
+        },
+        {
+          "width": 71,
+          "param_total": 44473,
+          "param_tensors": 24,
+          "abs_delta": 21731,
+          "delta_pct": 95.55448069650866
+        },
+        {
+          "width": 72,
+          "param_total": 45261,
+          "param_tensors": 24,
+          "abs_delta": 22519,
+          "delta_pct": 99.01943540585701
+        },
+        {
+          "width": 73,
+          "param_total": 46055,
+          "param_tensors": 24,
+          "abs_delta": 23313,
+          "delta_pct": 102.51077301908363
+        },
+        {
+          "width": 74,
+          "param_total": 46855,
+          "param_tensors": 24,
+          "abs_delta": 24113,
+          "delta_pct": 106.02849353618855
+        },
+        {
+          "width": 75,
+          "param_total": 47661,
+          "param_tensors": 24,
+          "abs_delta": 24919,
+          "delta_pct": 109.57259695717175
+        },
+        {
+          "width": 76,
+          "param_total": 48473,
+          "param_tensors": 24,
+          "abs_delta": 25731,
+          "delta_pct": 113.14308328203325
+        },
+        {
+          "width": 77,
+          "param_total": 49291,
+          "param_tensors": 24,
+          "abs_delta": 26549,
+          "delta_pct": 116.73995251077302
+        },
+        {
+          "width": 78,
+          "param_total": 50115,
+          "param_tensors": 24,
+          "abs_delta": 27373,
+          "delta_pct": 120.36320464339109
+        },
+        {
+          "width": 79,
+          "param_total": 50945,
+          "param_tensors": 24,
+          "abs_delta": 28203,
+          "delta_pct": 124.01283967988743
+        },
+        {
+          "width": 80,
+          "param_total": 51781,
+          "param_tensors": 24,
+          "abs_delta": 29039,
+          "delta_pct": 127.68885762026207
+        },
+        {
+          "width": 81,
+          "param_total": 52623,
+          "param_tensors": 24,
+          "abs_delta": 29881,
+          "delta_pct": 131.391258464515
+        },
+        {
+          "width": 82,
+          "param_total": 53471,
+          "param_tensors": 24,
+          "abs_delta": 30729,
+          "delta_pct": 135.1200422126462
+        },
+        {
+          "width": 83,
+          "param_total": 54325,
+          "param_tensors": 24,
+          "abs_delta": 31583,
+          "delta_pct": 138.8752088646557
+        },
+        {
+          "width": 84,
+          "param_total": 55185,
+          "param_tensors": 24,
+          "abs_delta": 32443,
+          "delta_pct": 142.6567584205435
+        },
+        {
+          "width": 85,
+          "param_total": 56051,
+          "param_tensors": 24,
+          "abs_delta": 33309,
+          "delta_pct": 146.46469088030955
+        },
+        {
+          "width": 86,
+          "param_total": 56923,
+          "param_tensors": 24,
+          "abs_delta": 34181,
+          "delta_pct": 150.29900624395393
+        },
+        {
+          "width": 87,
+          "param_total": 57801,
+          "param_tensors": 24,
+          "abs_delta": 35059,
+          "delta_pct": 154.15970451147658
+        },
+        {
+          "width": 88,
+          "param_total": 58685,
+          "param_tensors": 24,
+          "abs_delta": 35943,
+          "delta_pct": 158.0467856828775
+        },
+        {
+          "width": 89,
+          "param_total": 59575,
+          "param_tensors": 24,
+          "abs_delta": 36833,
+          "delta_pct": 161.96024975815672
+        },
+        {
+          "width": 90,
+          "param_total": 60471,
+          "param_tensors": 24,
+          "abs_delta": 37729,
+          "delta_pct": 165.90009673731421
+        },
+        {
+          "width": 91,
+          "param_total": 61373,
+          "param_tensors": 24,
+          "abs_delta": 38631,
+          "delta_pct": 169.86632662035
+        },
+        {
+          "width": 92,
+          "param_total": 62281,
+          "param_tensors": 24,
+          "abs_delta": 39539,
+          "delta_pct": 173.8589394072641
+        },
+        {
+          "width": 93,
+          "param_total": 63195,
+          "param_tensors": 24,
+          "abs_delta": 40453,
+          "delta_pct": 177.87793509805647
+        },
+        {
+          "width": 94,
+          "param_total": 64115,
+          "param_tensors": 24,
+          "abs_delta": 41373,
+          "delta_pct": 181.9233136927271
+        },
+        {
+          "width": 95,
+          "param_total": 65041,
+          "param_tensors": 24,
+          "abs_delta": 42299,
+          "delta_pct": 185.99507519127604
+        },
+        {
+          "width": 96,
+          "param_total": 65973,
+          "param_tensors": 24,
+          "abs_delta": 43231,
+          "delta_pct": 190.09321959370328
+        },
+        {
+          "width": 97,
+          "param_total": 66911,
+          "param_tensors": 24,
+          "abs_delta": 44169,
+          "delta_pct": 194.2177469000088
+        },
+        {
+          "width": 98,
+          "param_total": 67855,
+          "param_tensors": 24,
+          "abs_delta": 45113,
+          "delta_pct": 198.3686571101926
+        },
+        {
+          "width": 99,
+          "param_total": 68805,
+          "param_tensors": 24,
+          "abs_delta": 46063,
+          "delta_pct": 202.54595022425468
+        },
+        {
+          "width": 100,
+          "param_total": 69761,
+          "param_tensors": 24,
+          "abs_delta": 47019,
+          "delta_pct": 206.74962624219506
+        },
+        {
+          "width": 101,
+          "param_total": 70723,
+          "param_tensors": 24,
+          "abs_delta": 47981,
+          "delta_pct": 210.97968516401372
+        },
+        {
+          "width": 102,
+          "param_total": 71691,
+          "param_tensors": 24,
+          "abs_delta": 48949,
+          "delta_pct": 215.23612698971067
+        },
+        {
+          "width": 103,
+          "param_total": 72665,
+          "param_tensors": 24,
+          "abs_delta": 49923,
+          "delta_pct": 219.5189517192859
+        },
+        {
+          "width": 104,
+          "param_total": 73645,
+          "param_tensors": 24,
+          "abs_delta": 50903,
+          "delta_pct": 223.82815935273942
+        },
+        {
+          "width": 105,
+          "param_total": 74631,
+          "param_tensors": 24,
+          "abs_delta": 51889,
+          "delta_pct": 228.16374989007124
+        },
+        {
+          "width": 106,
+          "param_total": 75623,
+          "param_tensors": 24,
+          "abs_delta": 52881,
+          "delta_pct": 232.52572333128134
+        },
+        {
+          "width": 107,
+          "param_total": 76621,
+          "param_tensors": 24,
+          "abs_delta": 53879,
+          "delta_pct": 236.9140796763697
+        },
+        {
+          "width": 108,
+          "param_total": 77625,
+          "param_tensors": 24,
+          "abs_delta": 54883,
+          "delta_pct": 241.32881892533638
+        },
+        {
+          "width": 109,
+          "param_total": 78635,
+          "param_tensors": 24,
+          "abs_delta": 55893,
+          "delta_pct": 245.76994107818135
+        },
+        {
+          "width": 110,
+          "param_total": 79651,
+          "param_tensors": 24,
+          "abs_delta": 56909,
+          "delta_pct": 250.2374461349046
+        },
+        {
+          "width": 111,
+          "param_total": 80673,
+          "param_tensors": 24,
+          "abs_delta": 57931,
+          "delta_pct": 254.7313340955061
+        },
+        {
+          "width": 112,
+          "param_total": 81701,
+          "param_tensors": 24,
+          "abs_delta": 58959,
+          "delta_pct": 259.2516049599859
+        },
+        {
+          "width": 113,
+          "param_total": 82735,
+          "param_tensors": 24,
+          "abs_delta": 59993,
+          "delta_pct": 263.798258728344
+        },
+        {
+          "width": 114,
+          "param_total": 83775,
+          "param_tensors": 24,
+          "abs_delta": 61033,
+          "delta_pct": 268.37129540058044
+        },
+        {
+          "width": 115,
+          "param_total": 84821,
+          "param_tensors": 24,
+          "abs_delta": 62079,
+          "delta_pct": 272.9707149766951
+        },
+        {
+          "width": 116,
+          "param_total": 85873,
+          "param_tensors": 24,
+          "abs_delta": 63131,
+          "delta_pct": 277.59651745668805
+        },
+        {
+          "width": 117,
+          "param_total": 86931,
+          "param_tensors": 24,
+          "abs_delta": 64189,
+          "delta_pct": 282.2487028405593
+        },
+        {
+          "width": 118,
+          "param_total": 87995,
+          "param_tensors": 24,
+          "abs_delta": 65253,
+          "delta_pct": 286.92727112830886
+        },
+        {
+          "width": 119,
+          "param_total": 89065,
+          "param_tensors": 24,
+          "abs_delta": 66323,
+          "delta_pct": 291.63222231993666
+        },
+        {
+          "width": 120,
+          "param_total": 90141,
+          "param_tensors": 24,
+          "abs_delta": 67399,
+          "delta_pct": 296.3635564154428
+        },
+        {
+          "width": 121,
+          "param_total": 91223,
+          "param_tensors": 24,
+          "abs_delta": 68481,
+          "delta_pct": 301.1212734148272
+        },
+        {
+          "width": 122,
+          "param_total": 92311,
+          "param_tensors": 24,
+          "abs_delta": 69569,
+          "delta_pct": 305.90537331808986
+        },
+        {
+          "width": 123,
+          "param_total": 93405,
+          "param_tensors": 24,
+          "abs_delta": 70663,
+          "delta_pct": 310.71585612523086
+        },
+        {
+          "width": 124,
+          "param_total": 94505,
+          "param_tensors": 24,
+          "abs_delta": 71763,
+          "delta_pct": 315.5527218362501
+        },
+        {
+          "width": 125,
+          "param_total": 95611,
+          "param_tensors": 24,
+          "abs_delta": 72869,
+          "delta_pct": 320.41597045114764
+        },
+        {
+          "width": 126,
+          "param_total": 96723,
+          "param_tensors": 24,
+          "abs_delta": 73981,
+          "delta_pct": 325.3056019699235
+        },
+        {
+          "width": 127,
+          "param_total": 97841,
+          "param_tensors": 24,
+          "abs_delta": 75099,
+          "delta_pct": 330.22161639257763
+        },
+        {
+          "width": 128,
+          "param_total": 98965,
+          "param_tensors": 24,
+          "abs_delta": 76223,
+          "delta_pct": 335.16401371911
+        }
+      ]
+    },
+    "transformer_sequence": {
+      "selected": {
+        "width": 28,
+        "param_total": 21977,
+        "param_tensors": 35,
+        "abs_delta": 765,
+        "delta_pct": 3.363820244481576,
+        "qualified": true,
+        "state_tensors": 0
+      },
+      "all_points": [
+        {
+          "width": 8,
+          "param_total": 7117,
+          "param_tensors": 35,
+          "abs_delta": 15625,
+          "delta_pct": 68.70547884970539
+        },
+        {
+          "width": 12,
+          "param_total": 9321,
+          "param_tensors": 35,
+          "abs_delta": 13421,
+          "delta_pct": 59.014158825081346
+        },
+        {
+          "width": 16,
+          "param_total": 11909,
+          "param_tensors": 35,
+          "abs_delta": 10833,
+          "delta_pct": 47.63433295224694
+        },
+        {
+          "width": 20,
+          "param_total": 14881,
+          "param_tensors": 35,
+          "abs_delta": 7861,
+          "delta_pct": 34.56600123120218
+        },
+        {
+          "width": 24,
+          "param_total": 18237,
+          "param_tensors": 35,
+          "abs_delta": 4505,
+          "delta_pct": 19.809163661947057
+        },
+        {
+          "width": 28,
+          "param_total": 21977,
+          "param_tensors": 35,
+          "abs_delta": 765,
+          "delta_pct": 3.363820244481576
+        },
+        {
+          "width": 32,
+          "param_total": 26101,
+          "param_tensors": 35,
+          "abs_delta": 3359,
+          "delta_pct": 14.770029021194267
+        },
+        {
+          "width": 36,
+          "param_total": 30609,
+          "param_tensors": 35,
+          "abs_delta": 7867,
+          "delta_pct": 34.592384135080465
+        },
+        {
+          "width": 40,
+          "param_total": 35501,
+          "param_tensors": 35,
+          "abs_delta": 12759,
+          "delta_pct": 56.10324509717703
+        },
+        {
+          "width": 44,
+          "param_total": 40777,
+          "param_tensors": 35,
+          "abs_delta": 18035,
+          "delta_pct": 79.30261190748395
+        },
+        {
+          "width": 48,
+          "param_total": 46437,
+          "param_tensors": 35,
+          "abs_delta": 23695,
+          "delta_pct": 104.19048456600123
+        },
+        {
+          "width": 52,
+          "param_total": 52481,
+          "param_tensors": 35,
+          "abs_delta": 29739,
+          "delta_pct": 130.76686307272888
+        },
+        {
+          "width": 56,
+          "param_total": 58909,
+          "param_tensors": 35,
+          "abs_delta": 36167,
+          "delta_pct": 159.03174742766686
+        },
+        {
+          "width": 60,
+          "param_total": 65721,
+          "param_tensors": 35,
+          "abs_delta": 42979,
+          "delta_pct": 188.98513763081525
+        },
+        {
+          "width": 64,
+          "param_total": 72917,
+          "param_tensors": 35,
+          "abs_delta": 50175,
+          "delta_pct": 220.62703368217396
+        }
+      ]
+    }
+  },
+  "measurements": {
+    "u2_reference": {
+      "arm": "u2_reference",
+      "width": null,
+      "runs": [
+        {
+          "arm": "u2_reference",
+          "width": null,
+          "torso": "U2Subject(U2Config.small())",
+          "param_total": 22638,
+          "param_tensors": 191,
+          "construct_cpu": 0.015625,
+          "fragment_cpu": 0.546875,
+          "fragment_cpu_calibrated": 0.533203125,
+          "calibration_repeats": 8,
+          "fragment_wall": 0.5521615000325255,
+          "rss_baseline_bytes": 224075776,
+          "rss_peak_bytes": 278941696,
+          "delta_rss_bytes": 54865920,
+          "loss": 1467.7493896484375,
+          "self_cpu_total": 5.984375
+        },
+        {
+          "arm": "u2_reference",
+          "width": null,
+          "torso": "U2Subject(U2Config.small())",
+          "param_total": 22638,
+          "param_tensors": 191,
+          "construct_cpu": 0.03125,
+          "fragment_cpu": 0.53125,
+          "fragment_cpu_calibrated": 0.529296875,
+          "calibration_repeats": 8,
+          "fragment_wall": 0.5428375999908894,
+          "rss_baseline_bytes": 223694848,
+          "rss_peak_bytes": 278884352,
+          "delta_rss_bytes": 55189504,
+          "loss": 1467.7493896484375,
+          "self_cpu_total": 5.78125
+        },
+        {
+          "arm": "u2_reference",
+          "width": null,
+          "torso": "U2Subject(U2Config.small())",
+          "param_total": 22638,
+          "param_tensors": 191,
+          "construct_cpu": 0.015625,
+          "fragment_cpu": 0.546875,
+          "fragment_cpu_calibrated": 0.53125,
+          "calibration_repeats": 8,
+          "fragment_wall": 0.5388183000031859,
+          "rss_baseline_bytes": 223379456,
+          "rss_peak_bytes": 278568960,
+          "delta_rss_bytes": 55189504,
+          "loss": 1467.7493896484375,
+          "self_cpu_total": 5.859375
+        }
+      ],
+      "medians": {
+        "fragment_cpu": 0.546875,
+        "fragment_cpu_calibrated": 0.53125,
+        "fragment_wall": 0.5428375999908894,
+        "delta_rss_bytes": 55189504,
+        "construct_cpu": 0.015625
+      }
+    },
+    "gru_sequence": {
+      "arm": "gru_sequence",
+      "width": 40,
+      "runs": [
+        {
+          "arm": "gru_sequence",
+          "width": 40,
+          "torso": "scripts/training/baseline_identity_22_4_4.py",
+          "param_total": 23021,
+          "param_tensors": 24,
+          "construct_cpu": 0.4375,
+          "fragment_cpu": 0.0,
+          "fragment_cpu_calibrated": 0.00390625,
+          "calibration_repeats": 32,
+          "fragment_wall": 0.005680800008121878,
+          "rss_baseline_bytes": 224423936,
+          "rss_peak_bytes": 226361344,
+          "delta_rss_bytes": 1937408,
+          "loss": 5.430665016174316,
+          "self_cpu_total": 0.671875
+        },
+        {
+          "arm": "gru_sequence",
+          "width": 40,
+          "torso": "scripts/training/baseline_identity_22_4_4.py",
+          "param_total": 23021,
+          "param_tensors": 24,
+          "construct_cpu": 0.4375,
+          "fragment_cpu": 0.0,
+          "fragment_cpu_calibrated": 0.00341796875,
+          "calibration_repeats": 32,
+          "fragment_wall": 0.005811500013805926,
+          "rss_baseline_bytes": 225333248,
+          "rss_peak_bytes": 227291136,
+          "delta_rss_bytes": 1957888,
+          "loss": 5.430665016174316,
+          "self_cpu_total": 0.671875
+        },
+        {
+          "arm": "gru_sequence",
+          "width": 40,
+          "torso": "scripts/training/baseline_identity_22_4_4.py",
+          "param_total": 23021,
+          "param_tensors": 24,
+          "construct_cpu": 0.40625,
+          "fragment_cpu": 0.0,
+          "fragment_cpu_calibrated": 0.00341796875,
+          "calibration_repeats": 32,
+          "fragment_wall": 0.005783699976745993,
+          "rss_baseline_bytes": 225456128,
+          "rss_peak_bytes": 227590144,
+          "delta_rss_bytes": 2134016,
+          "loss": 5.430665016174316,
+          "self_cpu_total": 0.640625
+        }
+      ],
+      "medians": {
+        "fragment_cpu": 0.0,
+        "fragment_cpu_calibrated": 0.00341796875,
+        "fragment_wall": 0.005783699976745993,
+        "delta_rss_bytes": 1957888,
+        "construct_cpu": 0.4375
+      }
+    },
+    "transformer_sequence": {
+      "arm": "transformer_sequence",
+      "width": 28,
+      "runs": [
+        {
+          "arm": "transformer_sequence",
+          "width": 28,
+          "torso": "scripts/training/baseline_identity_22_4_4.py",
+          "param_total": 21977,
+          "param_tensors": 35,
+          "construct_cpu": 0.4375,
+          "fragment_cpu": 0.0,
+          "fragment_cpu_calibrated": 0.00341796875,
+          "calibration_repeats": 32,
+          "fragment_wall": 0.006690400012303144,
+          "rss_baseline_bytes": 224284672,
+          "rss_peak_bytes": 227586048,
+          "delta_rss_bytes": 3301376,
+          "loss": 5.737762451171875,
+          "self_cpu_total": 0.6875
+        },
+        {
+          "arm": "transformer_sequence",
+          "width": 28,
+          "torso": "scripts/training/baseline_identity_22_4_4.py",
+          "param_total": 21977,
+          "param_tensors": 35,
+          "construct_cpu": 0.40625,
+          "fragment_cpu": 0.0,
+          "fragment_cpu_calibrated": 0.00390625,
+          "calibration_repeats": 32,
+          "fragment_wall": 0.006627900002058595,
+          "rss_baseline_bytes": 224395264,
+          "rss_peak_bytes": 227627008,
+          "delta_rss_bytes": 3231744,
+          "loss": 5.737762451171875,
+          "self_cpu_total": 0.640625
+        },
+        {
+          "arm": "transformer_sequence",
+          "width": 28,
+          "torso": "scripts/training/baseline_identity_22_4_4.py",
+          "param_total": 21977,
+          "param_tensors": 35,
+          "construct_cpu": 0.4375,
+          "fragment_cpu": 0.0,
+          "fragment_cpu_calibrated": 0.00341796875,
+          "calibration_repeats": 32,
+          "fragment_wall": 0.006180699972901493,
+          "rss_baseline_bytes": 224821248,
+          "rss_peak_bytes": 228102144,
+          "delta_rss_bytes": 3280896,
+          "loss": 5.737762451171875,
+          "self_cpu_total": 0.65625
+        }
+      ],
+      "medians": {
+        "fragment_cpu": 0.0,
+        "fragment_cpu_calibrated": 0.00341796875,
+        "fragment_wall": 0.006627900002058595,
+        "delta_rss_bytes": 3280896,
+        "construct_cpu": 0.4375
+      }
+    }
+  },
+  "parity": {
+    "gru_sequence": {
+      "param_delta_pct": 1.226805,
+      "rss_delta_pct": -96.452427,
+      "cpu_ratio": 0.006434,
+      "wall_ratio": 0.010655,
+      "qualified": true,
+      "rss_gate": "measured",
+      "fragment_cpu_primary_median": 0.0,
+      "fragment_cpu_calibrated_median": 0.003418,
+      "cpu_ratio_basis": "calibrated repeat-mean per fragment (8 reps for U2, 32 for baselines)"
+    },
+    "transformer_sequence": {
+      "param_delta_pct": 3.36382,
+      "rss_delta_pct": -94.055217,
+      "cpu_ratio": 0.006434,
+      "wall_ratio": 0.01221,
+      "qualified": true,
+      "rss_gate": "measured",
+      "fragment_cpu_primary_median": 0.0,
+      "fragment_cpu_calibrated_median": 0.003418,
+      "cpu_ratio_basis": "calibrated repeat-mean per fragment (8 reps for U2, 32 for baselines)"
+    }
+  },
+  "selection": {
+    "qualified_set": [
+      "gru_sequence",
+      "transformer_sequence"
+    ],
+    "selected": "transformer_sequence",
+    "selection_path": "tie_break",
+    "tie_break_level": "L1",
+    "trace": [
+      {
+        "level": "L1",
+        "values": {
+          "gru_sequence": 23021,
+          "transformer_sequence": 21977
+        },
+        "winners": [
+          "transformer_sequence"
+        ]
+      }
+    ]
+  },
+  "u2_slots": {
+    "status": "written",
+    "slot_sizes": {
+      "predictive_head": 24,
+      "recurrent_core": 93,
+      "output_head": 2
+    }
+  },
+  "outputs": {
+    "identity_manifest": "plans/manifests/taiji_u2_22_4_4_baseline_identity_20261111.json",
+    "identity_sha256": "820646c734ae43fcac4d211f288386fa4fa76fd390a37682261875b5a5646f75",
+    "execution_v1_sha256": "1b52297616c5eff580b61fef9edb6cee47c5b4dde99d29c762d633d8b085e750",
+    "execution_v2_sha256": "56017e2f36178d2b9b2fa81aa4e5be384760409ebb3b955fda066ada7df50054"
+  },
+  "budget": {
+    "cpu_total_measured": 22.953125,
+    "wall_total_measured": 79.038,
+    "cap": 250,
+    "training_runs": 0,
+    "optimizer_steps": 0,
+    "project_data_reads": 0
+  },
+  "conflicts": [
+    "U2 has no `subject.step(state, observation)` method; the measured path is the real protocol choose_operation -> issue -> receive (as in scripts/training/u2_update_support_22_4_1.py shadow_terms).",
+    "U2 is single-subject with branches=2; the fragment batch=2 is matched by the 2 branches, not by a batch dimension.",
+    "U2 reference is measured on the object named in the task, U2Subject(U2Config.small()) (22638 scalars / 191 tensors); the 22742 anchor lives on metadata_candidate() (194 tensors). The 104-scalar metadata fork is not on the measured graph.",
+    "The fragment's multiview/goal plumbing for the two baselines is a declared measurement harness (text context added to the metadata token; coordinate rows are zero except a time ramp), not a frozen training recipe.",
+    "time.process_time is quantised at ~15.6 ms on Windows; a single baseline fragment is shorter than one tick and reads 0.0. parity cpu_ratio therefore uses a repeat-mean calibration of the identical fragment; the primary single-fragment reading is kept beside it in the report.",
+    "The two baselines are ~100x cheaper per fragment than the U2 reference, so the parity CPU/RSS/wall gates are not the binding constraint; L1 (parameter count) decides the selection."
+  ]
+}

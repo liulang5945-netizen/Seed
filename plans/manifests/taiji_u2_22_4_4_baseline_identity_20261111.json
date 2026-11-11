@@ -1,0 +1,497 @@
+{
+  "schema": "taiji-u2-22.4.4-baseline-identity-v1",
+  "architecture_id": "transformer_sequence",
+  "status": "frozen",
+  "measured_at": "2026-11-11T15:45:04.174711+00:00",
+  "conditions": {
+    "dtype": "float32",
+    "device": "cpu",
+    "threads": 1,
+    "interop_threads": 1,
+    "torch_version": "2.13.0+cpu",
+    "training_runs": 0,
+    "optimizer_steps": 0
+  },
+  "param_total": 21977,
+  "param_tensors": 35,
+  "param_inventory": [
+    [
+      "position",
+      [
+        8,
+        28
+      ],
+      "float32"
+    ],
+    [
+      "frontend.modality",
+      [
+        5,
+        8
+      ],
+      "float32"
+    ],
+    [
+      "frontend.encoder.rgb.weight",
+      [
+        8,
+        48
+      ],
+      "float32"
+    ],
+    [
+      "frontend.encoder.rgb.bias",
+      [
+        8
+      ],
+      "float32"
+    ],
+    [
+      "frontend.encoder.audio.weight",
+      [
+        8,
+        33
+      ],
+      "float32"
+    ],
+    [
+      "frontend.encoder.audio.bias",
+      [
+        8
+      ],
+      "float32"
+    ],
+    [
+      "frontend.encoder.proprio.weight",
+      [
+        8,
+        16
+      ],
+      "float32"
+    ],
+    [
+      "frontend.encoder.proprio.bias",
+      [
+        8
+      ],
+      "float32"
+    ],
+    [
+      "frontend.metadata.weight",
+      [
+        8,
+        8
+      ],
+      "float32"
+    ],
+    [
+      "frontend.metadata.bias",
+      [
+        8
+      ],
+      "float32"
+    ],
+    [
+      "frontend.embedding.weight",
+      [
+        256,
+        4
+      ],
+      "float32"
+    ],
+    [
+      "frontend.text_input.weight",
+      [
+        8,
+        4
+      ],
+      "float32"
+    ],
+    [
+      "frontend.text_input.bias",
+      [
+        8
+      ],
+      "float32"
+    ],
+    [
+      "frontend.convolutions.0.weight",
+      [
+        8,
+        8,
+        3
+      ],
+      "float32"
+    ],
+    [
+      "frontend.convolutions.0.bias",
+      [
+        8
+      ],
+      "float32"
+    ],
+    [
+      "frontend.convolutions.1.weight",
+      [
+        8,
+        8,
+        3
+      ],
+      "float32"
+    ],
+    [
+      "frontend.convolutions.1.bias",
+      [
+        8
+      ],
+      "float32"
+    ],
+    [
+      "frontend.convolutions.2.weight",
+      [
+        8,
+        8,
+        3
+      ],
+      "float32"
+    ],
+    [
+      "frontend.convolutions.2.bias",
+      [
+        8
+      ],
+      "float32"
+    ],
+    [
+      "record_in.weight",
+      [
+        28,
+        32
+      ],
+      "float32"
+    ],
+    [
+      "record_in.bias",
+      [
+        28
+      ],
+      "float32"
+    ],
+    [
+      "attention.in_proj_weight",
+      [
+        84,
+        28
+      ],
+      "float32"
+    ],
+    [
+      "attention.in_proj_bias",
+      [
+        84
+      ],
+      "float32"
+    ],
+    [
+      "attention.out_proj.weight",
+      [
+        28,
+        28
+      ],
+      "float32"
+    ],
+    [
+      "attention.out_proj.bias",
+      [
+        28
+      ],
+      "float32"
+    ],
+    [
+      "norm_attention.weight",
+      [
+        28
+      ],
+      "float32"
+    ],
+    [
+      "norm_attention.bias",
+      [
+        28
+      ],
+      "float32"
+    ],
+    [
+      "norm_feedforward.weight",
+      [
+        28
+      ],
+      "float32"
+    ],
+    [
+      "norm_feedforward.bias",
+      [
+        28
+      ],
+      "float32"
+    ],
+    [
+      "feedforward.0.weight",
+      [
+        112,
+        28
+      ],
+      "float32"
+    ],
+    [
+      "feedforward.0.bias",
+      [
+        112
+      ],
+      "float32"
+    ],
+    [
+      "feedforward.2.weight",
+      [
+        28,
+        112
+      ],
+      "float32"
+    ],
+    [
+      "feedforward.2.bias",
+      [
+        28
+      ],
+      "float32"
+    ],
+    [
+      "byte_head.weight",
+      [
+        257,
+        32
+      ],
+      "float32"
+    ],
+    [
+      "byte_head.bias",
+      [
+        257
+      ],
+      "float32"
+    ]
+  ],
+  "param_inventory_sha256": "8c041a19f83f1866d25fd4ddf64e1e6be21a48baeacde607b94631e680284569",
+  "param_inventory_rule": "sha256 of canonical JSON (sorted by name) of [name, shape, dtype]",
+  "init": {
+    "rule": "for every nn.Linear/nn.Conv1d: normal_(std = 0.3 / sqrt(fan_in_per_row)), bias = 0.01; frontend modality = randn(5, 8) * 0.05; nn.GRU / nn.Embedding / nn.LayerNorm / position parameter keep torch defaults",
+    "source": "taiji/u2_subject.py lines 279-283 (same rule as _WorldKernel)",
+    "seed": 20261110,
+    "post_init_state_dict_sha256": "8f2f4031b220a5501a9494042e7612c6cc69ad0afa326ffa0d435d30f9694970",
+    "second_construction_sha256": "8f2f4031b220a5501a9494042e7612c6cc69ad0afa326ffa0d435d30f9694970",
+    "same_seed_digest_equal": true
+  },
+  "architecture": {
+    "module_path": "scripts/training/baseline_identity_22_4_4.py",
+    "module_sha256": "384b404560f827e0868a8d8f9fbfc27aff5aa885b182cd443ade79972e4145cf",
+    "class_name": "TransformerSequenceBaseline",
+    "architecture_id": "transformer_sequence",
+    "layers": 1,
+    "width": 28,
+    "free_quantity": {
+      "name": "w",
+      "value": 28
+    },
+    "normalization": {
+      "type": "LayerNorm",
+      "count": 2,
+      "eps": 1e-05,
+      "normalized_shape": 28
+    },
+    "residual": {
+      "present": true,
+      "positions": [
+        "attention_output",
+        "feedforward_output"
+      ],
+      "form": "post_norm"
+    },
+    "activation": {
+      "feedforward": "gelu",
+      "frontend_text_conv": "tanh",
+      "frontend_bounded": "tanh"
+    },
+    "attention_heads": 4,
+    "mask_type": "causal_upper_triangular_bool",
+    "dropout": 0.0,
+    "bidirectional": false,
+    "input_projection": "shared U2 frontend; 32 = 3 x 8 modality encoders + metadata(8)",
+    "output_head": "Linear(width + 4, 257) over the shared 256 x 4 byte embedding",
+    "state_tensors": 0,
+    "state_tensors_definition": "online tensors that must persist across updates and cannot be rebuilt from parameters and the current input",
+    "reused_u2_components": [
+      "encoder",
+      "metadata",
+      "modality",
+      "embedding",
+      "text_input",
+      "convolutions"
+    ],
+    "new_components": [
+      "record_in",
+      "position",
+      "attention (MultiheadAttention)",
+      "norm_attention",
+      "norm_feedforward",
+      "feedforward",
+      "byte_head"
+    ],
+    "frontend": {
+      "source_path": "taiji/u2_subject.py",
+      "source_sha256": "aa7a23249ad6fdaff1900000c665d575651debc498e800b8c292839ea4f736a8",
+      "source_lines": {
+        "encoder": "207-212",
+        "metadata": "213",
+        "modality": "214",
+        "embedding": "215",
+        "text_input": "216",
+        "convolutions": "217",
+        "init_loop": "279-283"
+      },
+      "components": [
+        "encoder (ModuleDict rgb/audio/proprio)",
+        "metadata (Linear 8->8)",
+        "modality (Parameter 5x8)",
+        "embedding (Embedding 256x4)",
+        "text_input (Linear 4->8)",
+        "convolutions (Conv1d 8->8 k=3 dilations 1/2/4)"
+      ],
+      "copy_note": "copied line for line; the private class is neither imported nor instantiated",
+      "proprio_input": "8 values + 8 validity flags = 16"
+    }
+  },
+  "recipe": {
+    "declared_only": true,
+    "optimizer": {
+      "type": "Adam",
+      "lr": 0.001,
+      "betas": [
+        0.9,
+        0.999
+      ],
+      "eps": 1e-08,
+      "weight_decay": 0.0,
+      "amsgrad": false
+    },
+    "batch": 2,
+    "sequence_length": 8,
+    "gradient_clip": null,
+    "warmup": null,
+    "steps": 1,
+    "recipe_delta": [],
+    "same_as_u2_arm": true
+  },
+  "information_rights": {
+    "visible_input": "synthetic observation rgb[48] + audio[33] + proprio[8] per step, plus goal text",
+    "feedback_channels": [
+      "observation",
+      "train_label",
+      "online_correction",
+      "help_reply",
+      "oracle_score"
+    ],
+    "forbidden_writes": [
+      "goal text",
+      "environment ground truth",
+      "oracle score",
+      "other subject state or parameters",
+      "project corpus / check / final / confirm / sealed partitions"
+    ],
+    "visible_history_length": 8,
+    "interface": "taiji frontend (shared U2 encoders)",
+    "oracle_not_fedback": true,
+    "equal_to_u2_arm": true
+  },
+  "seeds": {
+    "init_seed": 20261110,
+    "data_order_seed": 20261110,
+    "fixed_seeds": [
+      20261110,
+      20261111,
+      20261112
+    ],
+    "mapping": {
+      "20261110": {
+        "init_seed": 20261110,
+        "data_order_seed": 20261110
+      },
+      "20261111": {
+        "init_seed": 20261111,
+        "data_order_seed": 20261111
+      },
+      "20261112": {
+        "init_seed": 20261112,
+        "data_order_seed": 20261112
+      }
+    },
+    "note": "declared only; this card performs no training"
+  },
+  "parity": {
+    "param_delta_pct": 3.36382,
+    "rss_delta_pct": -94.055217,
+    "cpu_ratio": 0.006434,
+    "wall_ratio": 0.01221,
+    "qualified": true,
+    "rss_gate": "measured",
+    "fragment_cpu_primary_median": 0.0,
+    "fragment_cpu_calibrated_median": 0.003418,
+    "cpu_ratio_basis": "calibrated repeat-mean per fragment (8 reps for U2, 32 for baselines)"
+  },
+  "selection": {
+    "qualified_set": [
+      "gru_sequence",
+      "transformer_sequence"
+    ],
+    "selected": "transformer_sequence",
+    "selection_path": "tie_break",
+    "tie_break_level": "L1",
+    "tie_break_trace": [
+      {
+        "level": "L1",
+        "values": {
+          "gru_sequence": 23021,
+          "transformer_sequence": 21977
+        },
+        "winners": [
+          "transformer_sequence"
+        ]
+      }
+    ],
+    "excluded": [
+      {
+        "architecture_id": "gru_sequence",
+        "status": "qualified_lost_tiebreak",
+        "param_delta_pct": 1.226805,
+        "rss_delta_pct": -96.452427,
+        "cpu_ratio": 0.006434,
+        "wall_ratio": 0.010655,
+        "qualified": true,
+        "rss_gate": "measured",
+        "fragment_cpu_primary_median": 0.0,
+        "fragment_cpu_calibrated_median": 0.003418,
+        "cpu_ratio_basis": "calibrated repeat-mean per fragment (8 reps for U2, 32 for baselines)"
+      }
+    ]
+  },
+  "budget": {
+    "cpu_total_measured": 22.9375,
+    "cap": 250,
+    "training_runs": 0,
+    "optimizer_steps": 0,
+    "project_data_reads": 0
+  },
+  "approval": {
+    "owner_approval_ref": "chat:2026-11-11#standing-budget-delegation",
+    "note": "依据 owner 常设授权（预算内不必逐项请示、须留档），非 owner 逐字原话"
+  }
+}

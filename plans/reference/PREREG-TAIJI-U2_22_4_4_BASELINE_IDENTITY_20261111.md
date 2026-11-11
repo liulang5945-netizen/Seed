@@ -221,7 +221,9 @@ predictive_head | recurrent_core | output_head = {
 
 **已冻结（2026-11-11，只到规则）**：§3 四允差、§4 资格闸门（E1–E4）与选择链（L1–L5）、§5 六要件、§6 额度边界、§7 回填规则、§8 分界句。
 
-**冻结后仍未做（需另一次明确放行）**：构造两候选 → 网格扫描选点 → 执行 E1–E4 → 测 ΔRSS/CPU/wall（≤250 CPU）→ 写 `baseline_identity_manifest` → 回填 u2 三槽（`execution_20261111_v2.json`）→ 把 identity digest 写进 u2 的 run.json。**在这些完成之前 C09 仍为假、u2 仍不可开跑。**
+**冻结后执行情况（2026-11-11，按 `owner_approval_ref=chat:2026-11-11#standing-budget-delegation` 放行）**：构造两候选 → 网格扫描选点 → 执行 E1–E4 → 测 ΔRSS/CPU/wall → 写 `baseline_identity_manifest` → 回填 u2 三槽（`execution_20261111_v2.json`）均已完成，读数与局限见 §11。
+
+**仍未做（需 22.4.1 侧放行）**：把 identity digest 写进 u2 的 `run.json`（须先有 u2 run draft）、开 u2、跑训练。**C09 仍为假、u2 仍不可开跑。**
 
 **不做**：不跑训练、不开 u2、不改 12 条校验与判据、不重跑 u1、不动 22.4.1 的 4 个 attempt、不读项目语料/check/final/confirm/封存集、不写任何"性能对比"结论。
 
@@ -233,3 +235,55 @@ predictive_head | recurrent_core | output_head = {
 | 2 | `recipe_delta` 的允许范围 | **采用默认口径，owner 未逐项裁定** | 只要求"声明 + 给理由"，**不禁止** delta；未列入 `recipe_delta` 的差异视为违约 |
 | 3 | 定价片段 | **采用默认口径，owner 未逐项裁定** | 沿用 22.3.4.3 式合成影子片段（≤8 轮合法窗）；若日后要加长以暴露注意力常数，须重定 250 CPU 分配 |
 | 4 | 120/240 单次帽是否约束基线 | **采用默认口径，owner 未逐项裁定** | 沿用 22.4.1 的单次帽作为"整段 update"上限（120 CPU / 240 wall）；整卡帽 1,200/2,400 不变 |
+
+## 11. 测量结果（2026-11-11，已执行）
+
+**授权与额度**：`owner_approval_ref=chat:2026-11-11#standing-budget-delegation`——**依据 owner 常设授权（预算内不必逐项请示、须留档），非 owner 逐字原话**。范围 ≤250 CPU、0 次正式训练、0 次 `optimizer.step`、0 项目数据读取，只用定价合成片段（batch=2、8 步、一次 backward、threads=1、float32、cpu）。
+
+实测 **CPU 22.95 s / wall 79.04 s**（帽 250，未触发 `pricing_over_budget`）；训练次数、`optimizer.step`、项目数据读取均为 **0**。额度未从其它分项挪借。
+
+本卡共执行**三次完整构建**（第一次 CPU 24.39／wall 85.40；第二次 23.73／85.46；第三次 22.95／79.04。合计 CPU 71.07／wall 249.9，仍在 250 帽内）。前两次分别由未过 lint 与未过 black 的脚本产出，每次都补等价修复（删一个未使用的局部读取、`timezone.utc`→`UTC`、`SIM108` 三元式、black 重排）后**整段重跑**，目的是让提交的脚本字节与实测字节一致。下表读数一律取自**第三次**；前两次产物已被就地覆盖（三次的参数量与选择结论完全一致），按实留档。
+
+**两候选**（参数量带 [20,467, 25,016]，锚点 22,742）：
+
+| 候选 | 构造 | 标量/张量 | 对锚点偏离 | 带内 |
+|---|---|---|---|---|
+| `gru_sequence` | 共享 U2 前端 + 单层 `nn.GRU`(h=40, 单向) + byte_head | 23,021 / 24 | +279（**+1.2268%**） | 是 |
+| `transformer_sequence` | 共享 U2 前端 + d_model=28、1 块因果多头（heads=4、ffn=4d、LayerNorm×2、post-norm 残差）+ byte_head | 21,977 / 35 | −765（**−3.3638%**） | 是 |
+
+网格按 §4.2 逐点 0-step 构造：GRU 扫 h=8…128 的全部整数，`|ΔN|` 最小点即 h=40（23,021）；Transformer 因 heads=4 要求 d_model 为 4 的倍数，扫 [8,64] 内 4 的倍数，`|ΔN|` 最小点即 d_model=28（21,977）。选点不是"挑小"，是 §4.2 第 2 条的最近点规则唯一确定。注：身份清单里 `param_delta_pct` 记的是**偏离幅度**（3.36382），符号见本表。
+
+**四配平量（对 U2 参考臂 `U2Subject(U2Config.small())`，22,638 标量/191 张量）**：
+
+| 候选 | `param_delta_pct` | `rss_delta_pct` | `cpu_ratio` | `wall_ratio` | 资源门 |
+|---|---|---|---|---|---|
+| `transformer_sequence` | +3.3638% | −94.06% | 0.006434 | 0.01221 | 通过 |
+| `gru_sequence` | +1.2268% | −96.45% | 0.006434 | 0.01066 | 通过 |
+
+`rss_delta_pct` = 基线ΔRSS/U2ΔRSS − 1（负号表示基线更省）；`cpu_ratio`/`wall_ratio` = 基线/U2。
+
+**资格与选择**：`|Q| = 2`（E4 分支）→ 走 **`tie_break`，停在 L1（参数量）**：21,977 < 23,021 → 当选 **`transformer_sequence`**；`gru_sequence` 记 `qualified_lost_tiebreak`，四项偏离量齐全。E1/E2/E3 均未触发，且未为通过资格门调网格或改构造规则。
+
+**u2 三槽回填**：`predictive_head` 24 名、`recurrent_core` 93 名、`output_head` 2 名（共 119，两两不相交）。在 u2 实际使用的 `metadata_candidate()` 图（194 张量/22,742 标量）上逐名核验：119 名全部存在、dtype 均 `float32`、三槽 `slot_sha256` 与按 §7 规则重算一致；其余 75 个参数不被三槽覆盖（保持非活性）。写入 `execution_20261111_v2.json`；v1 原样保留（`1b5229…e750`），u1 仍 pin v1；剥掉三槽与 identity 字段后 v2 与 v1 深度相等，12 条判据未动。
+
+**产物与哈希**（一律按 **LF 内容**计）：
+
+| 产物 | 路径 | sha256 |
+|---|---|---|
+| 基线身份清单 | `plans/manifests/taiji_u2_22_4_4_baseline_identity_20261111.json` | `820646c734ae43fcac4d211f288386fa4fa76fd390a37682261875b5a5646f75` |
+| u2 三槽回填版执行清单 | `plans/manifests/taiji_u2_22_4_1_execution_20261111_v2.json` | `56017e2f36178d2b9b2fa81aa4e5be384760409ebb3b955fda066ada7df50054` |
+| 测量报告 | `reports/taiji_u2_22_4_4_identity_measurement_20261111.json` | `4c77d318771ea9a0b68cb43530eb31bd756f38cd1ab4276c0206b8a4f3d196d2` |
+| 测量脚本 | `scripts/training/baseline_identity_22_4_4.py` | `384b404560f827e0868a8d8f9fbfc27aff5aa885b182cd443ade79972e4145cf` |
+| U2 前端复制源 | `taiji/u2_subject.py` | `aa7a23249ad6fdaff1900000c665d575651debc498e800b8c292839ea4f736a8` |
+
+**测量局限（必须与读数一起引用，不得省略）**：
+
+1. U2 没有 `subject.step`，参考臂走真实协议 `choose_operation → issue → receive`（与 22.4.1 shadow 同路径）；单主体 `branches=2`，用两条分支对齐 batch=2。
+2. 参考臂测的是 `U2Subject(U2Config.small())`（22,638/191）；锚点 22,742/194 属 `metadata_candidate()`，那 104 个标量的岔口**不在被测图上**。故 `param_delta_pct` 是相对 22,742 的带判定，而 ΔRSS/CPU/wall 是相对 22,638 图测得的。
+3. Windows `time.process_time` 粒度约 15.6 ms，单片段基线读数恒为 0.0；`cpu_ratio` 改用同片段重复均值（U2 8 次、基线 32 次），原始单次读数并列留档。这与 §3 "三次取中位"的字面口径不同，属执行偏差，已披露。
+4. 两基线比 U2 便宜约两个数量级（ΔRSS −94%/−96%、CPU 0.0064×、wall 0.011–0.012×），资源门在此片段上判别力极低；真正起决定作用的是参数量带（L1）。**不得把"资源门通过"读成"两臂已等价配平"**。
+5. 写盘用的是 Windows 文本模式，两份 JSON 落盘为 CRLF，原始字节哈希与 LF 规范化哈希不同；每次测量后都把这两个文件规范为 LF 再计哈希，并在 `.gitattributes` 把身份清单、v2 与测量脚本钉为 `text eol=lf`，使任何平台 checkout 与 blob 同字节。早期构建的 CRLF 原始字节曾为 `2e6169…ca65`（对应 LF `90883956…`），该对数字只作历史留档，已不是现行哈希。
+6. 身份清单内 `budget.cpu_total_measured=22.9375` 是写该文件时的累计值；最终累计 22.95 s 以测量报告与本表为准。
+7. 脚本在提交前补了三处等价 lint 修复与一次 black 重排（删一个未使用的局部读取、`timezone.utc`→`UTC`、`SIM108` 三元式），语义未变；每轮都**整段重跑**，使提交的脚本字节与实测字节一致，`architecture.module_sha256=384b4045…45cf` 可直接复算。三次构建的 CPU 合计 71.07，未超 250 帽。
+
+**C09 状态**：身份清单已落盘、三槽已回填，但 C09 原文要求 digest 写入 `run.json`——u2 尚无 run draft，故 **C09 仍为假**，u2 仍不可开跑。本卡到此只交付"身份 + 价格"，不产生任何性能差值。
