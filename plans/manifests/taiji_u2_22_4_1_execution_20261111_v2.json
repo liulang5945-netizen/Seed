@@ -234,8 +234,9 @@
         }
       },
       "identity_status": "filled",
-      "baseline_identity_sha256": "820646c734ae43fcac4d211f288386fa4fa76fd390a37682261875b5a5646f75",
+      "baseline_identity_sha256": "e5c776c4f12e4633bf7366d66ee22e6095efac7fa2147e5c6973653797335b29",
       "baseline_identity_ref": "plans/manifests/taiji_u2_22_4_4_baseline_identity_20261111.json",
+      "baseline_identity_note": "2026-11-11 追加：身份清单新增 limitations 字段（等算力缺口、计时粒度、参照图为基座而非候选、单片段最近点），据此重钉基线身份哈希；三个角色槽的参数名与 dtype 未变，本文件的 scope/authority/12条判据均未变。",
       "identity_rule": "22.4.4冻结后回填三个角色的具体参数名与dtype；任一角色为null或空串时准入C09为假，u2不得开跑。不允许以'待定'状态通过准入。",
       "optimizer_steps": 1
     },

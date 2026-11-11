@@ -1,0 +1,293 @@
+{
+  "schema": "taiji-u2-22.4.1-run-v1",
+  "draft": true,
+  "status": "draft_unauthorized",
+  "authorized": false,
+  "authorization_note": "本文件只是 u2 的 run.json 草稿：不写账本、不建 run 目录、不调用 optimizer、不读数据，也不代表 owner 已放行 u2。放行时由 owner 指定 run_id 与 owner_approval_ref，把 authorized 改为 true，并原样复制为 run.json；12 条判据与额度不得改动。",
+  "run_id": null,
+  "run_id_rule": "owner 放行时分配，格式 20261111THHMMSSZ，须与 run_root 目录名 taiji_u2_22_4_1_<run_id> 一致（R01）。",
+  "created_at": "2026-11-11T00:00:00Z",
+  "update_id": "u2-strong-baseline",
+  "attempt_id": "u2-strong-baseline",
+  "attempts_authorized": 0,
+  "optimizer_steps_authorized": 0,
+  "precision": "float32",
+  "cpu_cap": 120,
+  "wall_cap": 240,
+  "owner_approval_ref": null,
+  "signature_fields": [
+    "authorized",
+    "owner_approval_ref"
+  ],
+  "references": {
+    "execution_manifest": "plans/manifests/taiji_u2_22_4_1_execution_20261111_v2.json",
+    "manifest_sha256": "3c1c219575e826a8127b56f7305946036d4ee148fc05c21b238e804560e33e56",
+    "admission_manifest": "plans/manifests/taiji_u2_22_4_1_data_price_admission_20261111.json",
+    "admission_manifest_sha256": "05d8bc684cb441659d2a3c7608d8ade62f95edd211e79307b91dbbff1b0e52bc",
+    "baseline_identity": "plans/manifests/taiji_u2_22_4_4_baseline_identity_20261111.json",
+    "baseline_identity_sha256": "e5c776c4f12e4633bf7366d66ee22e6095efac7fa2147e5c6973653797335b29",
+    "baseline_identity_module_sha256": "384b404560f827e0868a8d8f9fbfc27aff5aa885b182cd443ade79972e4145cf",
+    "measurement_report": "reports/taiji_u2_22_4_4_identity_measurement_20261111.json",
+    "measurement_report_sha256": "4c77d318771ea9a0b68cb43530eb31bd756f38cd1ab4276c0206b8a4f3d196d2",
+    "hash_semantics": "UTF8 without BOM; universal newline to LF",
+    "accepted_parent": "plans/manifests/taiji_u2_22_3_accepted_parent_20261111.json",
+    "interface_receipt": "reports/taiji_u2_metadata_groups_22_4_20261111.json"
+  },
+  "identity_slots": {
+    "predictive_head": {
+      "dtype": "float32",
+      "count": 24,
+      "slot_sha256": "34864e1d0811b3dabc9ff8eedb3d14da76d673ee6cea879a60590b3442a3d4cb",
+      "param_names": [
+        "decoder_query.rgb.weight",
+        "decoder_query.rgb.bias",
+        "decoder_query.audio.weight",
+        "decoder_query.audio.bias",
+        "decoder_query.proprio.value",
+        "decoder_key.weight",
+        "decoder_value.weight",
+        "decoder_value.bias",
+        "decoder.rgb.first.weight",
+        "decoder.rgb.first.bias",
+        "decoder.rgb.last.weight",
+        "decoder.rgb.last.bias",
+        "decoder.audio.first.weight",
+        "decoder.audio.first.bias",
+        "decoder.audio.last.weight",
+        "decoder.audio.last.bias",
+        "decoder.proprio.first.weight",
+        "decoder.proprio.first.bias",
+        "decoder.proprio.last.weight",
+        "decoder.proprio.last.bias",
+        "joint_readout.first.weight",
+        "joint_readout.first.bias",
+        "joint_readout.last.weight",
+        "joint_readout.last.bias"
+      ]
+    },
+    "recurrent_core": {
+      "dtype": "float32",
+      "count": 93,
+      "slot_sha256": "2b16bb772089189b2fbf1192d3fd422ff6c9cf599199414f6d7e869f57536487",
+      "param_names": [
+        "initial_h",
+        "initial_p",
+        "native_w",
+        "native_r",
+        "native_p",
+        "native_q",
+        "native_k",
+        "native_v",
+        "tau_logit",
+        "background",
+        "record_null_value",
+        "h_query.weight",
+        "h_query.bias",
+        "h_key.weight",
+        "h_value.weight",
+        "h_value.bias",
+        "o_query.weight",
+        "o_query.bias",
+        "o_key.weight",
+        "o_value.weight",
+        "o_value.bias",
+        "f_query.weight",
+        "f_query.bias",
+        "f_output.weight",
+        "f_output.bias",
+        "motion.first.weight",
+        "motion.first.bias",
+        "motion.last.weight",
+        "motion.last.bias",
+        "native_goal.weight",
+        "native_goal.bias",
+        "nu_projection.weight",
+        "nu_projection.bias",
+        "bind_query.weight",
+        "bind_query.bias",
+        "bind_key.rgb.weight",
+        "bind_key.rgb.bias",
+        "bind_key.audio.weight",
+        "bind_key.audio.bias",
+        "bind_key.proprio.weight",
+        "bind_key.proprio.bias",
+        "bind_key.outcome.weight",
+        "bind_key.outcome.bias",
+        "bind_value.rgb.weight",
+        "bind_value.rgb.bias",
+        "bind_value.audio.weight",
+        "bind_value.audio.bias",
+        "bind_value.proprio.weight",
+        "bind_value.proprio.bias",
+        "bind_value.outcome.weight",
+        "bind_value.outcome.bias",
+        "corrector.first.weight",
+        "corrector.first.bias",
+        "corrector.last.weight",
+        "corrector.last.bias",
+        "f_key.weight",
+        "f_key.bias",
+        "f_value.first.weight",
+        "f_value.first.bias",
+        "f_value.last.weight",
+        "f_value.last.bias",
+        "f_beta.first.weight",
+        "f_beta.first.bias",
+        "f_beta.last.weight",
+        "f_beta.last.bias",
+        "f_alpha.first.weight",
+        "f_alpha.first.bias",
+        "f_alpha.last.weight",
+        "f_alpha.last.bias",
+        "f_chi.first.weight",
+        "f_chi.first.bias",
+        "f_chi.last.weight",
+        "f_chi.last.bias",
+        "post_memory.first.weight",
+        "post_memory.first.bias",
+        "post_memory.last.weight",
+        "post_memory.last.bias",
+        "record_goal_query.weight",
+        "record_query.weight",
+        "record_query.bias",
+        "record_key.weight",
+        "record_position_key.weight",
+        "record_position_query.weight",
+        "record_position_query.bias",
+        "record_null.weight",
+        "record_null.bias",
+        "record_value.weight",
+        "record_value.bias",
+        "record_output.weight",
+        "record_output.bias",
+        "record_metadata.weight",
+        "record_metadata.bias",
+        "record_provenance.weight"
+      ]
+    },
+    "output_head": {
+      "dtype": "float32",
+      "count": 2,
+      "slot_sha256": "4a9ffa1e814d9b224fc3559909223bef8882961c4e66751190af2766d8fb603d",
+      "param_names": [
+        "byte_head.weight",
+        "byte_head.bias"
+      ]
+    }
+  },
+  "c09": {
+    "requires": "基线身份 manifest 至少含架构、参数量、信息权利与 seed；digest 写入 run.json",
+    "manifest_fields_present": {
+      "architecture": true,
+      "param_total": true,
+      "information_rights": true,
+      "seeds": true
+    },
+    "digest_pinned_in_this_draft": true,
+    "written_into_run_json": false,
+    "status": "satisfiable_pending_authorization",
+    "reason": "草稿不是 run.json，且 authorized=false；放行后复制为 run.json 即满足 C09 的字面条件。"
+  },
+  "open_items_before_authorization": [
+    "执行器臂绑定：scripts/training/u2_update_support_22_4_1.py 把 UPDATE_ID/ARM 硬编码为 u1-candidate-float32，u2 开跑前必须参数化（含 R01/R02 的 update_id 字面量与 u2 两臂损失权重），否则 R01 直接退 5。",
+    "本草稿的 run_contract R01/R02 文字沿用 u1 的 update_id 字面量；12 条判据的编号、检查内容与退出码未改，放行时只做该字面量的臂绑定替换。",
+    "owner 放行时须同时给出 run_id 与 owner_approval_ref（含 u2-strong-baseline），并把 authorized 改为 true。"
+  ],
+  "data_scope": {
+    "allowed_partitions": [
+      "engineering_slice"
+    ],
+    "reads_project_corpus": false,
+    "reads_confirm_partition": false,
+    "reads_development_check": false,
+    "reads_final": false,
+    "touches_sealed_set": false,
+    "contains_task1_batch": false,
+    "data_recipe_sha256": null,
+    "slice_sha256": null,
+    "digest_note": "两个digest在--run内、首次ledger open之前计算并写入run.json；为空时不得open"
+  },
+  "paths": {
+    "run_json": "output/taiji_u2_22_4_1_{run_id}/run.json",
+    "run_root": "output/taiji_u2_22_4_1_{run_id}/",
+    "ledger": "reports/taiji_u2_22_4_1_attempts_{run_id}.ndjson",
+    "s12": "reports/taiji_u2_22_4_1_s12_{run_id}_u2-strong-baseline.json",
+    "s12_worker": "reports/taiji_u2_22_4_1_s12_{run_id}_u2-strong-baseline_worker.json"
+  },
+  "exit_codes": {
+    "0": "成功",
+    "3": "账本或额度类：run_start缺失、哈希链断裂、attempt已消耗、额度将超",
+    "4": "checkpoint读回不符：父读回或保存后立即读回五项不一致",
+    "5": "授权、身份或合同类：未授权、owner_approval_ref为空、manifest哈希不符、update_id不符、数据范围越界、digest为空或与片段不符、参数未按执行manifest冻结",
+    "6": "活性门未通过：任一声明活性参数低于梯度门或变化门；attempt已计费、判rejected、不重试"
+  },
+  "run_contract": [
+    {
+      "id": "R01",
+      "check": "run.json结构合法；run_id与目录名一致；update_id==u1-candidate-float32",
+      "fail_exit": 5
+    },
+    {
+      "id": "R02",
+      "check": "authorized==true；owner_approval_ref非空且含u1-candidate-float32",
+      "fail_exit": 5
+    },
+    {
+      "id": "R03",
+      "check": "执行manifest实际sha256==manifest_sha256",
+      "fail_exit": 5
+    },
+    {
+      "id": "R04",
+      "check": "准入manifest实际sha256==admission_manifest_sha256",
+      "fail_exit": 5
+    },
+    {
+      "id": "R05",
+      "check": "接受父存在；接口回执通过；source pins与执行manifest一致（C01/C02）",
+      "fail_exit": 5
+    },
+    {
+      "id": "R06",
+      "check": "attempts已用0、本次1；steps==1；cpu_cap<=120；wall_cap<=240（C04）",
+      "fail_exit": 3
+    },
+    {
+      "id": "R07",
+      "check": "数据范围六个false；data_recipe_sha256与slice_sha256非空且与生成片段一致（C05/C06）",
+      "fail_exit": 5
+    },
+    {
+      "id": "R08",
+      "check": "lr/betas/eps/weight_decay、四项权重、活性清单与执行manifest逐字段一致（C07）",
+      "fail_exit": 5
+    },
+    {
+      "id": "R09",
+      "check": "父checkpoint读回：state/parameters/optimizer/history_reference/revision五项一致",
+      "fail_exit": 4
+    },
+    {
+      "id": "R10",
+      "check": "ledger首行run_start存在且哈希链完整；无重复attempt；open前已fsync",
+      "fail_exit": 3
+    },
+    {
+      "id": "R11",
+      "check": "保存后立即用新实例读回：五项一致（C08）",
+      "fail_exit": 4
+    },
+    {
+      "id": "R12",
+      "check": "每个声明活性参数的梯度范数与参数位移达到门限；S12含change/margin/barely_live",
+      "fail_exit": 6
+    }
+  ],
+  "not_granted": [
+    "本文件自身：未授权、不写账本、不建 run 目录、不开跑",
+    "任何正式训练或 optimizer step",
+    "任何项目语料、development-check、final、confirm 读取",
+    "u3-migration-original：另需 C10 与 22.3 恢复回归",
+    "u4-migration-recovery：另需 C10、C11 与独立进程"
+  ]
+}

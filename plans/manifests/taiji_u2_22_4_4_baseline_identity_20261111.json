@@ -490,6 +490,28 @@
     "optimizer_steps": 0,
     "project_data_reads": 0
   },
+  "limitations": [
+    {
+      "id": "L1_compute_parity_absent",
+      "statement": "两候选在同一片段上的 CPU 只有 U2 的 0.006434×，ΔRSS 为 −94.06%/−96.45%；本卡只设上界（≤2.0×、≤1.20×）不设下界，等于放行便宜约两个数量级的对手。",
+      "consequence": "不得把本卡的资源门通过读成等算力配平。22.5 的架构对照必须事前预注册等算力配平（同 FLOPs 或同时间预算），不能只按参数量配平。"
+    },
+    {
+      "id": "L2_timer_quantisation",
+      "statement": "Windows time.process_time 粒度约 15.6 ms，单片段基线原始读数恒为 0.0（见 fragment_cpu_primary_median）；parity 的 cpu_ratio 改用同片段重复均值（U2 8 次、基线 32 次，见 fragment_cpu_calibrated_median 与 cpu_ratio_basis）。",
+      "consequence": "cpu_ratio 的分辨率不高于一个 15.6 ms 刻度除以重复次数；22.5 若用 CPU 作约束，须在同一进程内用更长片段或显式重复均值重测。"
+    },
+    {
+      "id": "L3_reference_graph_is_base_not_candidate",
+      "statement": "ΔRSS/CPU/wall 与 param_delta_pct 的参照臂是 U2Subject(U2Config.small())，22,638 标量/191 张量；锚点 22,742/194 属 metadata_candidate()，其 104 个标量岔口不在被测图上。",
+      "consequence": "param_delta_pct 的分母是 22,742，其余三项的分母是 22,638 图；引用时不得把两者混成同一张图。"
+    },
+    {
+      "id": "L4_single_fragment_nearest_point",
+      "statement": "候选宽度按预注册最近点规则在单一定价片段上选定（GRU 在带内有 h=36…43 多个可行点；Transformer 因 heads=4 只取 4 的倍数），不是一般化的成本模型。",
+      "consequence": "22.5 不得把本卡的配平关系外推到其它片段或批大小；需要时另行测量。"
+    }
+  ],
   "approval": {
     "owner_approval_ref": "chat:2026-11-11#standing-budget-delegation",
     "note": "依据 owner 常设授权（预算内不必逐项请示、须留档），非 owner 逐字原话"

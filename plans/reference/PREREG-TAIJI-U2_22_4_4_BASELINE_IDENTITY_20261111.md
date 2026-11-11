@@ -270,20 +270,25 @@ predictive_head | recurrent_core | output_head = {
 
 | 产物 | 路径 | sha256 |
 |---|---|---|
-| 基线身份清单 | `plans/manifests/taiji_u2_22_4_4_baseline_identity_20261111.json` | `820646c734ae43fcac4d211f288386fa4fa76fd390a37682261875b5a5646f75` |
-| u2 三槽回填版执行清单 | `plans/manifests/taiji_u2_22_4_1_execution_20261111_v2.json` | `56017e2f36178d2b9b2fa81aa4e5be384760409ebb3b955fda066ada7df50054` |
+| 基线身份清单 | `plans/manifests/taiji_u2_22_4_4_baseline_identity_20261111.json` | `e5c776c4f12e4633bf7366d66ee22e6095efac7fa2147e5c6973653797335b29` |
+| u2 三槽回填版执行清单 | `plans/manifests/taiji_u2_22_4_1_execution_20261111_v2.json` | `3c1c219575e826a8127b56f7305946036d4ee148fc05c21b238e804560e33e56` |
+| u2 `run.json` 草稿（未授权） | `plans/manifests/taiji_u2_22_4_1_u2_run_draft_20261111.json` | `9e7162a0e72135e9e8d2932f6ad24b1fd299142bf46cf993484a3a0c12b61115` |
 | 测量报告 | `reports/taiji_u2_22_4_4_identity_measurement_20261111.json` | `4c77d318771ea9a0b68cb43530eb31bd756f38cd1ab4276c0206b8a4f3d196d2` |
 | 测量脚本 | `scripts/training/baseline_identity_22_4_4.py` | `384b404560f827e0868a8d8f9fbfc27aff5aa885b182cd443ade79972e4145cf` |
 | U2 前端复制源 | `taiji/u2_subject.py` | `aa7a23249ad6fdaff1900000c665d575651debc498e800b8c292839ea4f736a8` |
+
+**追加局限字段（2026-11-11，纯增量，不改 §1–§10 判据）**：身份清单新增 `limitations` 四条的机读条目——L1 等算力缺口、L2 计时粒度与重复均值口径、L3 参照图为基座而非候选、L4 单片段最近点。追加后身份清单哈希由 `820646c7…6f75` 变为 `e5c776c4…5b29`，v2 随之重钉（`56017e2f…0054` → `3c1c2195…3e56`）；三槽参数名与 dtype、12 条判据、v1 均未改。
 
 **测量局限（必须与读数一起引用，不得省略）**：
 
 1. U2 没有 `subject.step`，参考臂走真实协议 `choose_operation → issue → receive`（与 22.4.1 shadow 同路径）；单主体 `branches=2`，用两条分支对齐 batch=2。
 2. 参考臂测的是 `U2Subject(U2Config.small())`（22,638/191）；锚点 22,742/194 属 `metadata_candidate()`，那 104 个标量的岔口**不在被测图上**。故 `param_delta_pct` 是相对 22,742 的带判定，而 ΔRSS/CPU/wall 是相对 22,638 图测得的。
 3. Windows `time.process_time` 粒度约 15.6 ms，单片段基线读数恒为 0.0；`cpu_ratio` 改用同片段重复均值（U2 8 次、基线 32 次），原始单次读数并列留档。这与 §3 "三次取中位"的字面口径不同，属执行偏差，已披露。
-4. 两基线比 U2 便宜约两个数量级（ΔRSS −94%/−96%、CPU 0.0064×、wall 0.011–0.012×），资源门在此片段上判别力极低；真正起决定作用的是参数量带（L1）。**不得把"资源门通过"读成"两臂已等价配平"**。
+4. 两基线比 U2 便宜约两个数量级（ΔRSS −94%/−96%、CPU 0.0064×、wall 0.011–0.012×），资源门在此片段上判别力极低；真正起决定作用的是参数量带（L1）。**不得把"资源门通过"读成"两臂已等价配平"**。本卡只设上界不设下界，等于放行便宜两个数量级的对手；因此 22.5 的架构对照必须事前预注册**等算力配平（同 FLOPs 或同时间预算）**，不能只按参数量配平——该条已写入 22.5 前置，机读版见身份清单 `limitations.L1_compute_parity_absent`。
 5. 写盘用的是 Windows 文本模式，两份 JSON 落盘为 CRLF，原始字节哈希与 LF 规范化哈希不同；每次测量后都把这两个文件规范为 LF 再计哈希，并在 `.gitattributes` 把身份清单、v2 与测量脚本钉为 `text eol=lf`，使任何平台 checkout 与 blob 同字节。早期构建的 CRLF 原始字节曾为 `2e6169…ca65`（对应 LF `90883956…`），该对数字只作历史留档，已不是现行哈希。
 6. 身份清单内 `budget.cpu_total_measured=22.9375` 是写该文件时的累计值；最终累计 22.95 s 以测量报告与本表为准。
 7. 脚本在提交前补了三处等价 lint 修复与一次 black 重排（删一个未使用的局部读取、`timezone.utc`→`UTC`、`SIM108` 三元式），语义未变；每轮都**整段重跑**，使提交的脚本字节与实测字节一致，`architecture.module_sha256=384b4045…45cf` 可直接复算。三次构建的 CPU 合计 71.07，未超 250 帽。
 
-**C09 状态**：身份清单已落盘、三槽已回填，但 C09 原文要求 digest 写入 `run.json`——u2 尚无 run draft，故 **C09 仍为假**，u2 仍不可开跑。本卡到此只交付"身份 + 价格"，不产生任何性能差值。
+**C09 状态**：身份清单已落盘、三槽已回填、digest 已钉进 `plans/manifests/taiji_u2_22_4_1_u2_run_draft_20261111.json`（引用身份清单 `e5c776c4…5b29`、v2 `3c1c2195…3e56`、基线模块 `384b4045…45cf`）。该文件是**未授权草稿**（`authorized=false`、`run_id=null`、不写账本、不开跑），不是 `run.json`，故 C09 现为"**可成立待授权**"而非已成立：owner 放行、分配 run_id 并原样复制为 `run.json` 后即满足字面条件。本卡到此只交付"身份 + 价格"，不产生任何性能差值。
+
+**放行前还须清掉的三条非 C09 阻塞**（已写入草稿 `open_items_before_authorization`，与 C09 无关，C09 不因它们变假）：①执行器 `scripts/training/u2_update_support_22_4_1.py` 把 `UPDATE_ID`/`ARM` 硬编码为 `u1-candidate-float32`，u2 开跑前必须参数化，否则 R01 直接退 5；②草稿的 `run_contract` R01/R02 文字沿用 u1 的 `update_id` 字面量（12 条判据的编号、检查内容与退出码未改），放行时只做该字面量的臂绑定替换；③owner 须同时给出 `run_id` 与含 `u2-strong-baseline` 的 `owner_approval_ref` 并把 `authorized` 改为 `true`。

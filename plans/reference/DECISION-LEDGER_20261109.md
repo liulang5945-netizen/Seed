@@ -2915,3 +2915,65 @@ u1 的 `migration` 读数只说明本步不触发迁移，**不等于** u3/u4 �
 
 只读 22.4.4 并回报四问，不选型、不写任何 manifest、不开 u2。
 
+## D-20261111-17 u2 run draft（未授权）与 22.5 等算力配平前置
+
+**编号／时间／类型**：D-20261111-17｜2026-11-11｜**草稿产物 + 预注册前置**。0 训练、0 `optimizer.step`、0 项目数据读取、不写账本、不开 u2、不消耗 22.4.1 额度；22.4.4 已冻结规则与四配平带一字未动。
+
+### 1. 产物：u2 `run.json` 草稿（`authorized=false`）
+
+`plans/manifests/taiji_u2_22_4_1_u2_run_draft_20261111.json`，sha256 `9e7162a0e72135e9e8d2932f6ad24b1fd299142bf46cf993484a3a0c12b61115`（LF，crlf=0）。**由 v2 与 u1 草稿程序化生成**，避免手抄 119 个参数名。
+
+| 字段 | 值 |
+|---|---|
+| `draft` / `status` | `true` / `draft_unauthorized` |
+| `authorized` / `owner_approval_ref` | `false` / `null` |
+| `run_id` | `null`（附 `run_id_rule`：放行时分配，须与目录名 `taiji_u2_22_4_1_<run_id>` 一致，R01） |
+| `attempts_authorized` / `optimizer_steps_authorized` | `0` / `0` |
+| `cpu_cap` / `wall_cap` | 120 / 240 |
+| `identity_slots` | `predictive_head` 24、`recurrent_core` 93、`output_head` 2（共 119，均 `float32`，各带 `slot_sha256`） |
+| `c09.status` | `satisfiable_pending_authorization` |
+
+**引用的三个哈希**（另有准入 `05d8bc68…`、测量报告 `4c77d318…`）：
+
+| 被引物 | sha256 |
+|---|---|
+| `execution_20261111_v2.json` | `3c1c219575e826a8127b56f7305946036d4ee148fc05c21b238e804560e33e56` |
+| 基线身份清单 | `e5c776c4f12e4633bf7366d66ee22e6095efac7fa2147e5c6973653797335b29` |
+| 基座模块（`baseline_identity_module_sha256`） | `384b404560f827e0868a8d8f9fbfc27aff5aa885b182cd443ade79972e4145cf` |
+
+`exit_codes` 与 `run_contract` 12 条从 u1 草稿原样照抄，编号、检查内容与退出码均未改。
+
+### 2. 哈希重钉链（追加 `limitations` 所致，纯增量）
+
+身份清单追加机读 `limitations` L1–L4（`git diff` 为 22 行插入、0 删除），引起两处重钉，均须按新值引用：
+
+| 文件 | 旧 | 新 |
+|---|---|---|
+| 基线身份清单 | `820646c7…6f75` | `e5c776c4…5b29` |
+| `execution_20261111_v2.json` | `56017e2f…0054` | `3c1c2195…3e56` |
+
+v2 只改 `arms.u2-strong-baseline.baseline_identity_sha256` 并加 `baseline_identity_note`；三槽参数名、dtype、`slot_sha256` 与 12 条判据均未动。v1 只读保留（`1b5229…e750`），u1 仍 pin v1。
+
+### 3. 四条局限的语义（供 22.5 引用时不得误读）
+
+| 编号 | 含义 | 连带后果 |
+|---|---|---|
+| `L1_compute_parity_absent` | 两基线在同片段 CPU 仅 `0.006434×`、ΔRSS `−94.06%`／`−96.45%`；本卡只设上界不设下界 | 等于放行便宜约两个数量级的对手；22.5 须预注册**等算力配平** |
+| `L2_timer_quantisation` | Windows `time.process_time` 粒度约 15.6 ms，单片段基线读数恒 0.0 | CPU 比改用重复均值（U2 8 次／基线 32 次），原始单次读数并列留档；与 §3"三次取中位"字面不同，属已披露的执行偏差 |
+| `L3_reference_graph_is_base_not_candidate` | ΔRSS/CPU/wall 的分母是 22,638/191 的 `U2Config.small()`；`param_delta_pct` 的分母是 22,742/194 的 `metadata_candidate()` | 两组数不得混成同一张图；104 个标量岔口不在被测图上 |
+| `L4_single_fragment_nearest_point` | 只测了一个片段上的最近整数点（GRU 带内 h=36…43 多点、Transformer 只取 4 的倍数） | 不得外推为"该架构整体代价"或"全网格最优" |
+
+### 4. 22.5 前置：等算力配平（预注册要求）
+
+写入 [PLAN 22.5.1 后](PLAN-TAIJI-CLOSED_LOOP_DEVELOPMENT_20261110.md)：架构优越性对照必须**等算力配平**——取同一 FLOPs 预算或同一时间预算，二者择一并在读数前冻结；**只按参数量配平不合格**。执行口径三条：①同进程、同片段、同线程数测得，并显式处理 15.6 ms 粒度（重复均值或更长片段），不得拿单次读数 0.0 当依据；②FLOPs 按前向+反向解析计数冻结，时间预算按 ≥8 次重复均值中位数冻结；③做不到即具名 `compute_parity_unavailable` 停卡，不得以"参数量已配平"替代。
+
+### 5. C09 状态判定
+
+**"可成立待授权"，不是"仍缺项"，也不是"已成立"**：四要件（架构/参数量/信息权利/seed）齐、digest 已钉进草稿；但草稿 `authorized=false`、`run_id=null`，**不是** `run.json`，按 C09 字面"digest 写入 run.json"尚未满足。owner 放行、分配 run_id 并原样复制后才成立。
+
+三条与 C09 无关但同样挡住开跑的项已写入草稿 `open_items_before_authorization`：①执行器 `scripts/training/u2_update_support_22_4_1.py` 的 `UPDATE_ID`/`ARM` 硬编码为 `u1-candidate-float32`，须先参数化，否则 R01 直接退 5；②草稿 R01/R02 文字沿用 u1 的 `update_id` 字面量，放行时做臂绑定替换（不动 12 条判据本身）；③owner 须给出 `run_id` 与含 `u2-strong-baseline` 的 `owner_approval_ref`。
+
+### 6. 下一步
+
+唯一建议：给 u2 执行器做臂参数化（`UPDATE_ID`/`ARM` 从 run.json 读取，不再硬编码），并跑 0-step 自检确认 u2 草稿在 R01–R05 上可过；在此之前不申请 owner 放行。
+
