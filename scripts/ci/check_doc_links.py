@@ -13,7 +13,7 @@ regression.
 Scope is deliberately two-tiered:
 
 * ``plans/active`` is the live contract -- every relative link there must
-  resolve to a tracked file.  That is exactly what
+  point at a file git actually ships.  That is exactly what
   ``tests/seed/test_project_identity.py`` asserts, only earlier.
 * the rest of ``plans`` is historical prose (2,400+ dead links accumulated
   since 2026-09) and is not retro-fixed.  Two rules are still absolute there:
@@ -21,6 +21,12 @@ Scope is deliberately two-tiered:
   ``*.jsonl`` in this repository, and a link to any other ``.gitignore``-hit
   path resolves only on the machine that produced the artifact.  Missing-file
   reporting, the noisy legacy class, stays limited to ``plans/active``.
+
+The strict predicate is "tracked by git", **not** "exists on disk".  A working
+tree carries untracked files, so an existence check passes here and fails in a
+clean clone -- the same trap as byte equality across machines: the reading is
+true only under undocumented local conditions.  The first CI run of this guard
+found 46 such links that a local existence check had called fine.
 
 Usage:
     python scripts/ci/check_doc_links.py [path ...]
@@ -51,6 +57,17 @@ def tracked_markdown(paths: list[str]) -> list[Path]:
     return [ROOT / name for name in listed.split("\0") if name.endswith(".md")]
 
 
+def tracked_files() -> set[str]:
+    """Every repository-relative path git ships in this commit."""
+    listed = subprocess.run(
+        ["git", "ls-files", "-z"],
+        cwd=ROOT,
+        capture_output=True,
+        check=True,
+    ).stdout.decode("utf-8")
+    return {name for name in listed.split("\0") if name}
+
+
 def ignored_paths(candidates: set[str]) -> set[str]:
     """Ask git which of these repository-relative paths .gitignore excludes."""
     if not candidates:
@@ -78,6 +95,10 @@ def links_in(path: Path) -> list[tuple[int, str]]:
             continue
         if in_fence:
             continue
+        # Inline code is prose about a link, not a link: documents quote broken
+        # link syntax on purpose (this file's own ledger entry does).  Drop the
+        # code spans before matching so quoting a violation is not one.
+        line = re.sub(r"`[^`]*`", "", line)
         for match in LINK.finditer(line):
             target = match.group(1).split("#", 1)[0].strip()
             if target and not target.startswith(SKIP_PREFIXES):
@@ -102,6 +123,7 @@ def main(argv: list[str]) -> int:
         if destination.is_relative_to(ROOT)
     }
     ignored = ignored_paths(inside)
+    tracked = tracked_files()
 
     violations: list[str] = []
     for path, number, target, destination in resolved:
@@ -118,8 +140,16 @@ def main(argv: list[str]) -> int:
             if relative in ignored:
                 violations.append(f"{where}: link target is gitignored: {target}")
                 continue
-        if strict and not destination.exists():
-            violations.append(f"{where}: link target does not exist: {target}")
+        if strict and not destination.is_relative_to(ROOT):
+            continue
+        if strict and not destination.is_dir():
+            if not destination.exists():
+                violations.append(f"{where}: link target does not exist: {target}")
+            elif relative not in tracked:
+                violations.append(
+                    f"{where}: link target is untracked (exists only in this "
+                    f"working tree): {target}"
+                )
 
     for violation in violations:
         print(violation)
