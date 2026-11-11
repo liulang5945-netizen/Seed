@@ -2086,4 +2086,30 @@ Windows 腿（run `42849129318`）实测：`materialize-bundle` **success**（77
 - **同轮 Ubuntu 腿**（`test (3.12)`，02:40:28→02:41:29，61 秒）同样 exit 1：`sha256 8dacaf04cf006592a85c4503dea92bd0c2dcd9a9c905cfce11aa2671ab079406 != ce4c6268…21cf`。⇒ **两腿本轮都不等**。
 - 这对能力卡 §13.1 的三结局意味着什么（只陈述事实，不改判）：第一格 `regenerable_exact`（两腿都等）不成立；第三格 `platform_dependent` 的处置写着"降级为仅 Windows 上 exact"，而本轮 Windows 自己也不等 ⇒ **该处置所依赖的前提今天被反例打掉**；第二格 `platform_equivalent` 要求把两份不等 sha 的构件喂进 4 个 `verify_*` 脚本比判定与核心计数，但 materialize 写在 runner 的 `output/` 且**不上传**，本轮那两份件已随 runner 销毁 ⇒ 该判定事后无法补做。**不改预登记、不临场选格**，等 owner 裁定。
 
+### 补充三（同日）：把"代码变了"与"宿主变了"拆开——两提交同机重建
+
+**做法**（只读、不改代码）：用 `git worktree` 在 `output/_scratch_old/` 检出两个提交，各自在**同一台维护机、同一解释器、同一套依赖**下跑同一条 `materialize_taiji_core_09_bundle.py --bundle-dir <scratch>`，比 sha256 与封存值。旧的"环境即原因"结论证据不足，故按 owner 要求重做对照。
+
+| 提交 | 说明 | 耗时 | 重建 sha256 | 与封存值 |
+|---|---|---|---|---|
+| `de0bf7554` | 上一轮 CI 通过时的提交 | 52.2 秒 | `ce4c6268…21cf` | 相等（77,609,636 B） |
+| `a6750cb92` | 当前 HEAD（含另一线 `f83dd7cc0` 的 +70 行） | 40.1 秒 | `ce4c6268…21cf` | 相等（77,609,636 B） |
+
+**三分类判定：`environment_is_cause`**（本机口径）。依据：两次都逐字节等于封存值 ⇒ 那 +70 行**不是**不等的原因；本机无法把任何提交的构建结果推向不等，可变项只剩宿主。
+
+**运行条件对照**（§13：不记运行条件的相等结论不算证据）：
+
+| 项 | 本机 | CI Windows（`42946757225`） | CI Ubuntu（`42946757225`） |
+|---|---|---|---|
+| torch | 2.13.0+cpu | 2.13.0+cpu，`win_amd64` 轮子 | 2.13.0+cpu，`manylinux_2_28_x86_64` 轮子 |
+| BLAS | MKL 2026.1（`torch.__config__`） | 日志未打印（win 轮子内置 MKL） | 日志未打印（linux 轮子） |
+| 编译期能力 | `CPU capability usage: AVX512`，OpenMP 2019 | 未打印 | 未打印 |
+| numpy | 2.5.1 | 未装（只装 pytest／torch） | 未打印 |
+| CPU 型号 | AMD Ryzen 9 9900X（Zen 5） | **未打印** | **未打印** |
+| OS | Windows 11 10.0.26300 | `windows-latest`（镜像版本未打印） | `ubuntu-latest`（未打印） |
+| 线程 | `threads=1`（构建路径钉死） | 同（脚本内钉死） | 同（脚本内钉死） |
+
+**证据缺口（本轮必须记下）**：`ci.yml` 里没有任何一步打印 CPU 型号、指令集或 BLAS 版本（已 grep 确认），两腿日志只有安装阶段的轮子文件名。因此"CI 侧到底是哪一项环境变量在动"**仍然无证据**——本机对照只能排除代码，不能指认环境里的具体那一项。这也正是 owner 第 2 条要求加 artifact 上传的动因：把重建件与判定摘要带出来，才可能事后归因。
+
+
 
