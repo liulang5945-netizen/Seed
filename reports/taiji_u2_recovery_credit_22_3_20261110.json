@@ -1,0 +1,127 @@
+{
+  "schema": "taiji-u2-22.3.1-pending-credit-v1",
+  "created_at": "2026-11-10T15:30:00.544527+00:00",
+  "verdict": "passed_pending_conditional_credit_only",
+  "run_conditions": {
+    "threads": 1,
+    "interop_threads": 12,
+    "device": "cpu",
+    "dtype": "torch.float64",
+    "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+    "torch": "2.13.0+cpu",
+    "environment": {
+      "OMP_NUM_THREADS": null,
+      "MKL_NUM_THREADS": null,
+      "OPENBLAS_NUM_THREADS": null
+    }
+  },
+  "contract_sha256": "3737472e77e6c022601071cb01a6e8c25a8e8cf4c03fdbc7be96896f4edf1840",
+  "checks": [
+    {
+      "id": "test_actor_eligibility_credit_matches_after_value_serialization",
+      "passed": true,
+      "source_line": 109
+    },
+    {
+      "id": "test_branchwise_value_cannot_be_replaced_by_value_of_flat_features",
+      "passed": true,
+      "source_line": 124
+    },
+    {
+      "id": "test_cached_value_only_mutant_has_no_critic_credit",
+      "passed": true,
+      "source_line": 98
+    },
+    {
+      "id": "test_goal_switch_and_unknown_result_preserve_old_credit_after_restore",
+      "passed": true,
+      "source_line": 177
+    },
+    {
+      "id": "test_legacy_v1_pending_is_not_silently_upgraded",
+      "passed": true,
+      "source_line": 228
+    },
+    {
+      "id": "test_legacy_v1_values_without_pending_can_migrate",
+      "passed": true,
+      "source_line": 218
+    },
+    {
+      "id": "test_pending_bundle_keeps_branchwise_critic_inputs_and_declares_body_boundary",
+      "passed": true,
+      "source_line": 69
+    },
+    {
+      "id": "test_pending_critic_context_rejects_missing_or_mismatched_input[missing_features]",
+      "passed": true,
+      "source_line": 146
+    },
+    {
+      "id": "test_pending_critic_context_rejects_missing_or_mismatched_input[wrong_features]",
+      "passed": true,
+      "source_line": 146
+    },
+    {
+      "id": "test_pending_critic_context_rejects_missing_or_mismatched_input[wrong_weights]",
+      "passed": true,
+      "source_line": 146
+    },
+    {
+      "id": "test_pending_critic_context_rejects_missing_or_mismatched_input[negative_weights]",
+      "passed": true,
+      "source_line": 146
+    },
+    {
+      "id": "test_pending_critic_context_rejects_missing_or_mismatched_input[unnormalized_weights]",
+      "passed": true,
+      "source_line": 146
+    },
+    {
+      "id": "test_pending_critic_context_rejects_missing_or_mismatched_input[wrong_version]",
+      "passed": true,
+      "source_line": 146
+    },
+    {
+      "id": "test_pending_critic_credit_matches_after_value_only_serialization",
+      "passed": true,
+      "source_line": 82
+    },
+    {
+      "id": "test_terminal_result_has_no_bootstrap_in_reconstructed_critic",
+      "passed": true,
+      "source_line": 199
+    },
+    {
+      "id": "test_value_only_body_restore_does_not_claim_motion_credit_recovery",
+      "passed": true,
+      "source_line": 239
+    }
+  ],
+  "metrics": {
+    "schema": "taiji-u2-subject-v2",
+    "state_fields": 40,
+    "parameter_tensors": 191,
+    "max_abs_delta": 0.0,
+    "critic_gradient_norm_before": 0.028651310753027667,
+    "critic_gradient_norm_after": 0.028651310753027667,
+    "cached_value_requires_grad_after_load": false,
+    "full_window_negative_control": {
+      "live_motion_credit_norm": 0.020637059690908323,
+      "value_restored_motion_credit_missing": true,
+      "status": "requires_22.3.2_causal_window_replay"
+    },
+    "credit_contract": {
+      "critic": "behavior_features_under_frozen_Psi",
+      "body_graph": "values_only_requires_window_replay"
+    }
+  },
+  "cpu_seconds": 4.96875,
+  "wall_seconds": 6.60899999999674,
+  "optimizer_attempts": 0,
+  "training_steps": 0,
+  "project_dataset_reads": 0,
+  "existing_checkpoints_loaded": 0,
+  "whole_22.3_passed": false,
+  "independent_process_restore_verified": false
+}

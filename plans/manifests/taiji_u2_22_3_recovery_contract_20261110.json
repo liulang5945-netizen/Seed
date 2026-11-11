@@ -1,0 +1,156 @@
+{
+  "schema": "taiji-u2-22.3-recovery-contract-v1",
+  "parent_plan_revision": "13ede2810",
+  "parent_implementation_revision": "13466c975",
+  "parent_pins_verified_in_history": {
+    "taiji/u2_subject.py": "237241598250a540f1cbb4f15315a63d88b55d521ac8ae4164f1db03b64b003e",
+    "taiji/u2_operators.py": "38d12213410d1b7b4adc67952214f6f9d432a508b816872005b5513b4f94841d",
+    "taiji/utf8_state.py": "6ec7e96b2994dfa8eea430b3a08ddb5ff0fd877cf70c8cc288f57bab2efcac09",
+    "scripts/training/verify_taiji_u2_subject_22_2.py": "40a8f886da0bf07e63d472f3adc81da60644234ac0de68f0f473093d98a8b4c5",
+    "tests/taiji_native/test_u2_subject_22_2.py": "262c20d7746f7bea62c61e16a6e5bacda9461b094944a0b5dc0e5c235488aa91",
+    "scripts/training/verify_taiji_u2_math_22_1.py": "f88d60723d66cc82043372f83e265e35712db2e0549224f09e2ecc940d728686",
+    "scripts/training/verify_taiji_mgw1_math.py": "dba1f43e40a17a4fd347c45dbe2be3d9774129e64329317de4fd416ddbd4b8b5",
+    "plans/reference/SPEC-TAIJI-CLOSED_LOOP_U2_20261110.md": "5d3d10cf969d715c5514cd8e713463b0e43be66e4b9e28d328146c8c1414487e"
+  },
+  "source_hash_semantics": "UTF8 without BOM; universal newline to LF",
+  "source_pins": {
+    "taiji/u2_subject.py": "4b3d33b53e2d9b7b1bb2579e83a5d586fc825035b3218de82bb1b0ad446f3888",
+    "taiji/u2_operators.py": "38d12213410d1b7b4adc67952214f6f9d432a508b816872005b5513b4f94841d",
+    "tests/taiji_native/test_u2_recovery_credit_22_3.py": "c1addf136c368ea62c7916d9d3d08d3655c363e42908c1c76d285dfdecd6c1e4",
+    "scripts/training/verify_taiji_u2_recovery_credit_22_3.py": "4d51b6a983e4c79f7a258e2126f4d645480a759bffd240e101c1f83c7ad6e69f"
+  },
+  "subcards": {
+    "22.3.0": "parent identity and layered credit registry frozen",
+    "22.3.1": "pending conditional actor/critic schema and zero-update tests",
+    "22.3.2": "finite window replay, executor idempotence, atomic runtime envelope, pending",
+    "22.3.3": "12 checkpoint independentprocess comparison, pending",
+    "22.3.4": "2 groups shared-prefix6 updates+2 faultattempts, pending",
+    "22.3.5": "whole card acceptance, pending"
+  },
+  "main_recovery_contract": "finite_learning_window_causal_shadow_replay",
+  "body_bundle_schema": "taiji-u2-subject-v2",
+  "body_credit_scope": "values_only_requires_window_replay",
+  "pending_inputs": {
+    "critic_features": "[branches,2*d], behavior-time detached inputs",
+    "critic_weights": "[branches], nonnegative normalized",
+    "psi_version": "frozen behavior parameter revision",
+    "value": "cached forward value for consistency check, not sole learning graph"
+  },
+  "parameter_tensors": 191,
+  "state_fields": [
+    "F",
+    "H",
+    "cursor",
+    "data_bytes",
+    "eligibility",
+    "evidence",
+    "goal_raw",
+    "goal_status",
+    "goal_version",
+    "h",
+    "history",
+    "journal",
+    "l",
+    "logw",
+    "nu",
+    "nu_measurement_schema",
+    "p",
+    "pending",
+    "prediction_action",
+    "prediction_goal",
+    "prediction_key_view",
+    "previous_byte",
+    "process_time",
+    "processing_epoch",
+    "records",
+    "released_feedback_records",
+    "resources",
+    "revision",
+    "rng",
+    "s",
+    "seen_packets",
+    "settled",
+    "structure",
+    "subject_id",
+    "utf8_lead",
+    "utf8_remaining",
+    "utterance_active",
+    "v",
+    "wake_condition",
+    "world_time"
+  ],
+  "subcard_budget": {
+    "cpu_seconds": 120,
+    "wall_seconds": 240,
+    "optimizer_attempts": 0,
+    "project_dataset_reads": 0,
+    "existing_checkpoints_loaded": 0
+  },
+  "whole_card_budget": {
+    "cpu_seconds": 1200,
+    "wall_seconds": 2400,
+    "optimizer_attempts": 8
+  },
+  "planned_update_allocation": {
+    "shared_prefix_per_group": 1,
+    "continuations_per_group": 2,
+    "groups": 2,
+    "main_attempts": 6,
+    "fault_attempt_reserve": 2,
+    "attempt_total": 8
+  },
+  "mutations": [
+    "missing_features",
+    "wrong_features",
+    "wrong_weights",
+    "negative_weights",
+    "unnormalized_weights",
+    "wrong_version"
+  ],
+  "expected_checks": [
+    "test_actor_eligibility_credit_matches_after_value_serialization",
+    "test_branchwise_value_cannot_be_replaced_by_value_of_flat_features",
+    "test_cached_value_only_mutant_has_no_critic_credit",
+    "test_goal_switch_and_unknown_result_preserve_old_credit_after_restore",
+    "test_legacy_v1_pending_is_not_silently_upgraded",
+    "test_legacy_v1_values_without_pending_can_migrate",
+    "test_pending_bundle_keeps_branchwise_critic_inputs_and_declares_body_boundary",
+    "test_pending_critic_context_rejects_missing_or_mismatched_input[missing_features]",
+    "test_pending_critic_context_rejects_missing_or_mismatched_input[negative_weights]",
+    "test_pending_critic_context_rejects_missing_or_mismatched_input[unnormalized_weights]",
+    "test_pending_critic_context_rejects_missing_or_mismatched_input[wrong_features]",
+    "test_pending_critic_context_rejects_missing_or_mismatched_input[wrong_version]",
+    "test_pending_critic_context_rejects_missing_or_mismatched_input[wrong_weights]",
+    "test_pending_critic_credit_matches_after_value_only_serialization",
+    "test_terminal_result_has_no_bootstrap_in_reconstructed_critic",
+    "test_value_only_body_restore_does_not_claim_motion_credit_recovery"
+  ],
+  "acceptance": {
+    "conditional_critic_gradient_equal": {
+      "atol": 1e-12,
+      "rtol": 1e-10
+    },
+    "actor_gradient_equal": {
+      "atol": 1e-12,
+      "rtol": 1e-10
+    },
+    "cached_value_only_mutant_must_fail_credit": true,
+    "nonlinear_branch_mix_mutant_must_differ": true,
+    "body_motion_negative_control_expected": "live credit nonzero, value-restored prior credit missing",
+    "whole_22.3_passed": false
+  },
+  "future_runtime_fields": [
+    "window_anchor",
+    "raw_operation_log",
+    "actual_action_and_sampling_latent",
+    "actual_self_output_blocks",
+    "executor_intent_sent_ack_ledger",
+    "environment_and_data_cursor",
+    "host_clock_origin",
+    "recovery_audit"
+  ],
+  "legacy_v1_policy": {
+    "no_pending": "explicit values migration; new learning window",
+    "pending_missing_inputs": "reject conditional/full credit import"
+  }
+}

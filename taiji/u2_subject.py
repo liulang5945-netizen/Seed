@@ -1096,9 +1096,46 @@ class U2Subject(_WorldKernel):
             "log_policy": log_policy,
             "value": value,
             "features": flat,
+            "critic_features": features.detach().clone(),
+            "critic_weights": weights.detach().clone(),
+            "psi_version": self.parameter_revision,
             "development": (weights[:, None, None] * development).sum(0),
             "proposals": proposals,
         }
+
+    def pending_value(self, decision: Any) -> torch.Tensor:
+        """Rebuild the conditional old V from behavior-time inputs and current frozen Psi."""
+        required = {"critic_features", "critic_weights", "psi_version", "value"}
+        if not required.issubset(decision):
+            raise ValueError("pending critic credit inputs are missing")
+        features, weights = decision["critic_features"], decision["critic_weights"]
+        cached = decision["value"]
+        if decision["psi_version"] != self.parameter_revision:
+            raise ValueError("pending critic Psi version differs from subject")
+        if (
+            not isinstance(features, torch.Tensor)
+            or not isinstance(weights, torch.Tensor)
+            or not isinstance(cached, torch.Tensor)
+            or features.shape != (self.c.branches, 2 * self.c.d)
+            or weights.shape != (self.c.branches,)
+            or cached.ndim != 0
+        ):
+            raise ValueError("pending critic input shape differs from profile")
+        for value in (features, weights, cached):
+            if value.dtype != self.native_w.dtype or value.device != self.native_w.device:
+                raise ValueError("pending critic input layout differs from subject")
+            if not bool(torch.isfinite(value).all()):
+                raise ValueError("pending critic inputs must be finite")
+        tolerance = 1e-10 if features.dtype == torch.float64 else 1e-5
+        if bool((weights < 0).any()) or not torch.allclose(
+            weights.sum(), weights.new_tensor(1.0), atol=tolerance, rtol=0
+        ):
+            raise ValueError("pending critic weights must be normalized")
+        # Behavior inputs stay fixed. Critic parameters retain their learning graph.
+        rebuilt = (weights.detach() * 2 * self.critic(features.detach()).tanh().squeeze(-1)).sum()
+        if not torch.allclose(rebuilt.detach(), cached.detach(), atol=tolerance, rtol=tolerance):
+            raise ValueError("pending critic cached value is inconsistent")
+        return rebuilt
 
     def choose_operation(self, state: Any, legal_mask: Any = None) -> Any:
         policy = self.policy(state, legal_mask)
@@ -1234,6 +1271,7 @@ class U2Subject(_WorldKernel):
             raise ValueError("receipt mismatch")
         if receipt["subject_version"] != state["revision"]:
             raise ValueError("parameters changed while pending")
+        old_value = self.pending_value(receipt["decision"])
         if packet.t_end > receipt["world_end"] or packet.t_arrival > state["process_time"]:
             raise ValueError("event not arrived")
         if (
@@ -1329,9 +1367,7 @@ class U2Subject(_WorldKernel):
         ).sum()
         discount = 0.99 ** max(1.0, receipt["dt"] / 0.05)
         delta = (
-            (1 - discount) * utility
-            + discount * (1 - terminal) * next_value.detach()
-            - decision["value"]
+            (1 - discount) * utility + discount * (1 - terminal) * next_value.detach() - old_value
         )
         actor_loss = -delta.detach() * sum(
             (p * decision["eligibility"][name]).sum() for name, p in self.policy_named_parameters()
@@ -1630,8 +1666,16 @@ class U2Subject(_WorldKernel):
             raise ValueError("state must be rebuilt under the current parameter version")
         if any(row["parameter_revision"] != self.parameter_revision for row in state["history"]):
             raise ValueError("encoded history version differs from subject parameters")
+        if state["pending"] is not None:
+            if state["pending"]["subject_version"] != self.parameter_revision:
+                raise ValueError("pending version differs from subject parameters")
+            self.pending_value(state["pending"]["decision"])
         return {
-            "schema": "taiji-u2-subject-v1",
+            "schema": "taiji-u2-subject-v2",
+            "credit_contract": {
+                "critic": "behavior_features_under_frozen_Psi",
+                "body_graph": "values_only_requires_window_replay",
+            },
             "config": asdict(self.c),
             "structure": self.structure(),
             "parameter_revision": self.parameter_revision,
@@ -1642,8 +1686,15 @@ class U2Subject(_WorldKernel):
 
     @classmethod
     def from_bundle(cls, bundle: Any) -> Any:
-        if bundle["schema"] != "taiji-u2-subject-v1":
+        if bundle["schema"] not in {"taiji-u2-subject-v1", "taiji-u2-subject-v2"}:
             raise ValueError("unsupported bundle schema")
+        if bundle["schema"] == "taiji-u2-subject-v1" and bundle["state"].get("pending") is not None:
+            raise ValueError("pending v1 bundle lacks recoverable critic/window credit inputs")
+        if bundle["schema"] == "taiji-u2-subject-v2" and bundle.get("credit_contract") != {
+            "critic": "behavior_features_under_frozen_Psi",
+            "body_graph": "values_only_requires_window_replay",
+        }:
+            raise ValueError("bundle credit contract differs from supported recovery scope")
         model = cls(U2Config(**bundle["config"]))
         first = next(iter(bundle["parameters"].values()))
         model = model.to(dtype=first.dtype, device=first.device)
@@ -1656,6 +1707,15 @@ class U2Subject(_WorldKernel):
         state = clone_tree(bundle["state"], detach=True)
         if set(state) != set(model.state_registry()) or state["structure"] != model.structure():
             raise ValueError("bundle state registry mismatch")
+        if state["revision"] != model.parameter_revision or any(
+            row["parameter_revision"] != model.parameter_revision for row in state["history"]
+        ):
+            raise ValueError("bundle state/history parameter version mismatch")
+        if state["pending"] is not None:
+            pending = state["pending"]
+            if pending["subject_version"] != model.parameter_revision:
+                raise ValueError("pending bundle parameter version mismatch")
+            model.pending_value(pending["decision"])
         return model, state
 
 
