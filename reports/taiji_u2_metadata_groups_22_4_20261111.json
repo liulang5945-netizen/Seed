@@ -1,0 +1,192 @@
+{
+  "schema": "taiji-u2-22.4.1-metadata-groups-verification-v1",
+  "verdict": "passed_zero_update_metadata_groups_interface",
+  "contract": "plans/manifests/taiji_u2_22_4_1_verification_contract_20261111.json",
+  "contract_sha256": "6fad6b661d706ef5cec380b35415735dd1b7a657529e719842d4ceac202ea56d",
+  "parent": "plans/manifests/taiji_u2_22_3_accepted_parent_20261111.json",
+  "checks": [
+    {
+      "id": "envelope_schema_pin",
+      "passed": true,
+      "detail": {
+        "envelope": "taiji-u2-runtime-envelope-v3",
+        "baseline_subject": "taiji-u2-subject-v2",
+        "metadata_subject": "taiji-u2-subject-v3"
+      }
+    },
+    {
+      "id": "metadata_fork_inherits_parent",
+      "passed": true,
+      "detail": {
+        "precisions": {
+          "float64": "parent=191,candidate=194,revision=0->1,inherited=True",
+          "float32": "parent=191,candidate=194,revision=0->1,inherited=True"
+        }
+      }
+    },
+    {
+      "id": "metadata_pairs",
+      "passed": true,
+      "detail": {
+        "precisions": {
+          "float64": {
+            "H_equal": true,
+            "F_equal": true,
+            "content_equal": true,
+            "route_differs": true,
+            "time_units_differ": true,
+            "raw_equal": true
+          },
+          "float32": {
+            "H_equal": true,
+            "F_equal": true,
+            "content_equal": true,
+            "route_differs": true,
+            "time_units_differ": true,
+            "raw_equal": true
+          }
+        }
+      }
+    },
+    {
+      "id": "metadata_task_gradient",
+      "passed": true,
+      "detail": {
+        "tensors": {
+          "float64": 3,
+          "float32": 3
+        }
+      }
+    },
+    {
+      "id": "group_two_generations",
+      "passed": true,
+      "detail": {
+        "widths": [
+          14,
+          13
+        ],
+        "unit_parameters": 72,
+        "lineage": [
+          14,
+          13
+        ],
+        "base_unchanged": true
+      }
+    },
+    {
+      "id": "group_neutral_output",
+      "passed": true,
+      "detail": {
+        "tolerance": {
+          "atol": 1e-10,
+          "rtol": 1e-08
+        },
+        "max_abs_delta": 0.0
+      }
+    },
+    {
+      "id": "optimizer_owner_moments",
+      "passed": true,
+      "detail": {
+        "groups": [
+          3,
+          3,
+          192
+        ],
+        "owners": true,
+        "moments": true
+      }
+    },
+    {
+      "id": "envelope_roundtrip_rebuild",
+      "passed": true,
+      "detail": {
+        "model": true,
+        "state": true,
+        "structure": true,
+        "optimizer": true,
+        "rebuild": true
+      }
+    },
+    {
+      "id": "independent_process_successor",
+      "passed": true,
+      "detail": {
+        "in_process": {
+          "model": "9686548a1b464fba84d33deb11d0211ce87110eaead1812a1b76cb28782674c2",
+          "state": "b8e93682711472913f679681d055edbcf9e5689069a05753ed685112440b6c07",
+          "structure": "c6f57aeac295ac23c26769cf1a3773e9c8074013234b16bc33ac9af2ebf53985",
+          "optimizer": "ba981ef73ca340352283bb7f587d902000a7d38e0b4b32d06648a67c46113e29",
+          "native": "e4606e906bc2d2ec05a999cb1193811d6862ebdf9487c8266fa39c0e3d55c984",
+          "widths": [
+            14,
+            14
+          ]
+        },
+        "child": {
+          "model": "9686548a1b464fba84d33deb11d0211ce87110eaead1812a1b76cb28782674c2",
+          "state": "b8e93682711472913f679681d055edbcf9e5689069a05753ed685112440b6c07",
+          "structure": "c6f57aeac295ac23c26769cf1a3773e9c8074013234b16bc33ac9af2ebf53985",
+          "optimizer": "ba981ef73ca340352283bb7f587d902000a7d38e0b4b32d06648a67c46113e29",
+          "native": "e4606e906bc2d2ec05a999cb1193811d6862ebdf9487c8266fa39c0e3d55c984",
+          "widths": [
+            14,
+            14
+          ]
+        },
+        "child_optimizer_steps": 0,
+        "child_cpu_seconds": 3.5625
+      }
+    },
+    {
+      "id": "legacy_bundle_compat",
+      "passed": true,
+      "detail": {
+        "schema": "taiji-u2-subject-v2",
+        "parameters": 191
+      }
+    },
+    {
+      "id": "zero_optimizer_steps",
+      "passed": true,
+      "detail": {
+        "calls": 0
+      }
+    }
+  ],
+  "failure": null,
+  "optimizer_steps": 0,
+  "formal_training": false,
+  "project_dataset_reads": 0,
+  "check_reads": 0,
+  "final_reads": 0,
+  "precisions": [
+    "float64",
+    "float32"
+  ],
+  "conditions": {
+    "threads": 1,
+    "interop_threads": 12,
+    "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+    "torch": "2.13.0+cpu"
+  },
+  "artifacts": {
+    "checkpoint_sha256": "44b215f440725ea47c009640bb398376190ee20e6c1cce9864715ca45537334a",
+    "checkpoint_bytes": 335161,
+    "group_units": [
+      14,
+      13
+    ],
+    "asset_head": "613de3e73374310700bf6d5e90fd1a542aecfe0c58ae7e92f34f55979ead16ed"
+  },
+  "cpu_seconds": 5.171875,
+  "source_pins": {
+    "taiji/u2_record_metadata.py": "39e57e9dd406f3442bc85e055ebb7d3a813ea981ff1cda0cf119f90c20c35da5",
+    "taiji/u2_group_structure.py": "daabe312bff754bdd70208597f8363180dc459964b5cc7c5120610ca00d69ffa",
+    "taiji/u2_subject.py": "aa7a23249ad6fdaff1900000c665d575651debc498e800b8c292839ea4f736a8",
+    "taiji/u2_recovery.py": "d7a1b08de6a7608c35522bd5545736be7370ab145364cad35d8703ccda8bce2b",
+    "taiji/u2_learning_transaction.py": "c54771f0e81b8506a9b3f77c0bdc47f11818c54838f1de30f53e57e9159efaff",
+    "scripts/training/verify_taiji_u2_metadata_groups_22_4.py": "f842524ae5f1340df70ac545cb8fbe425d3eb88b15ae142e8deca1492ac95b93"
+  }
+}

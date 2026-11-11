@@ -2598,3 +2598,37 @@ Owner 的否决理由（原话要点）：基线可以重生成 ⇒ 红的时候
 
 07 的 §3 与提交信息中「未放宽阈值」的表述对这两条不成立；本条把该事实更正为「曾放宽到 8 ulp，现已撤回」。07 的其余改动（三条 checkpoint 线程钉定、runner `--threads`、r022 诊断载荷）不受影响。
 
+---
+
+## D-20261111-09 22.4.1第一步：元数据入口与逐群结构的零更新、跨进程后继核验
+
+**编号／时间／类型**：D-20261111-09｜2026-11-11｜**执行包22.4.1第一步（0 正式训练、0 optimizer step、0 项目数据/check/final 读取）**。
+
+### 1. 判据先行
+
+先冻结[验证合同](../manifests/taiji_u2_22_4_1_verification_contract_20261111.json)（11 条判据、容差与 pass_rule，`run_authorized=false`），再运行[核验脚本](../../scripts/training/verify_taiji_u2_metadata_groups_22_4.py)。[回执](../../reports/taiji_u2_metadata_groups_22_4_20261111.json)内嵌合同 sha256，判据先于读数成立。接口正文按[元数据与逐群结构合同](SPEC-TAIJI-U2_METADATA_GROUPS_22_4_20261111.md)执行。
+
+### 2. 读数（11/11 通过，裁决 `passed_zero_update_metadata_groups_interface`）
+
+- **元数据入口**：float64/float32 两档，候选从父复制 191 个同名参数逐项相等，新增 3 个张量（共 194），`parameter_revision` 0→1；同 H/F、同记录与顺序、只改 version 时 H/F 与内容路径逐位相等而记录路由不同；只改 `observed_at` 时记录表示改变、raw 不变；答案损失对 3 个新张量给出有限非零梯度。
+- **逐群生长**：先 (1,)、再 (0,)、再 (0,) 三次出生得到实际宽度 `(14,13)`，每次恰增 9d=72 个参数，基座参数逐位不变；新生 incoming=0 使原生输出变化 0.0（float64 容差 1e-10）。
+- **optimizer 归属**：首次扩展继承基座 R/P 各自分组（参数数 3/3/192），重复出生复制旧 moment、新坐标置 0、step 保持 3，owner/moment 映射经 envelope 往返后仍逐位相等。
+- **独立进程后继**：保存→另起 Python 进程 `U2Runtime.load`→`rebuild_state`→再一次出生，模型/状态/结构/optimizer/原生输出五项摘要与同进程复演**逐位相同**，子进程 0 optimizer step。
+- **兼容**：22.4 之前的 subject v2 bundle 仍按默认字段构造 191 参数原图。
+
+### 3. 机制收敛（本轮唯一实现改动）
+
+`ENVELOPE_SCHEMA` 从工作树中的 `…-v4` 退回 `taiji-u2-runtime-envelope-v3`。理由：envelope 顶层字段未变，新图已经由 **subject bundle v3** 标记；而 22.3 冻结回执、接受父 manifest 与 closeout 脚本都按 v3 记录，抬版本会让已冻结读数无法复现、旧 checkpoint 也读不回来。旧图与新图分别导出 subject v2/v3，读取端两者都校验 `validate_structure`。
+
+### 4. 回归与成本
+
+`test_u2_metadata_groups_22_4.py`＋22.3 三份恢复/历史/重编码用例共 **116 passed**。核验本体 CPU 5.17 s，子进程另 3.56 s（intra-op 1、interop 12，torch 2.13.0+cpu，Python 3.12.10）。ruff 与 `black_check_gate.py` 通过。
+
+### 5. 边界与剩余
+
+本步只签「接口可运行、可恢复、跨进程一致」，**不签**任务学习收益、旧能力保持、数据分区与价格；22.4.1 的 4 个工程更新额度（候选 float32 一次、主强基线一次、结构迁移后原/恢复路径各一次）与 22.4.2/22.4.4 的世界与定价均未动用。
+
+### 6. 撤回路径
+
+删除 `taiji/u2_record_metadata.py`、`taiji/u2_group_structure.py`、`tests/taiji_native/test_u2_metadata_groups_22_4.py`、`scripts/training/verify_taiji_u2_metadata_groups_22_4.py` 与本回执，并把 `u2_subject.py`/`u2_recovery.py`/`u2_learning_transaction.py` 的引用退回，即回到 22.3 结案状态；无 optimizer 读数需要重跑。
+

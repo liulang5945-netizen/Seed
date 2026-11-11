@@ -62,6 +62,9 @@ class U2Config:
     max_record_bytes: int = 512
     max_output_bytes: int = 64
     seed: int = 20261110
+    record_metadata: bool = False
+    base_units: int | None = None
+    group_units: tuple[int, ...] | None = None
 
     def __post_init__(self) -> None:
         if (
@@ -86,6 +89,22 @@ class U2Config:
             raise ValueError("positive U2 dimensions required")
         if self.groups > 4 or self.side % self.patch or self.audio_samples < self.fft:
             raise ValueError("invalid modality or group profile")
+        if type(self.record_metadata) is not bool:
+            raise ValueError("Invalid metadata graph flag")
+        if self.group_units is None:
+            if self.base_units is not None:
+                raise ValueError("A base width requires actual group widths")
+        else:
+            widths = tuple(self.group_units)
+            if (
+                type(self.base_units) is not int
+                or self.base_units < 1
+                or len(widths) != self.groups
+                or any(type(value) is not int or value < self.base_units for value in widths)
+                or max(widths) != self.units
+            ):
+                raise ValueError("Invalid actual group widths")
+            object.__setattr__(self, "group_units", widths)
 
     @property
     def dimensions(self) -> dict[str, int]:
@@ -216,8 +235,9 @@ class _WorldKernel(nn.Module):
         self.relation_geometry = MLP(4, 1, d)
         self.motion = MLP(5 * d + 5, d + 6, d)
         self.native_w = nn.Parameter(torch.randn(c.groups, d, 8 * d) * 0.1 / math.sqrt(8 * d))
-        self.native_r = nn.Parameter(torch.randn(c.groups, c.units, 8 * d) * 0.1 / math.sqrt(8 * d))
-        self.native_p = nn.Parameter(torch.randn(c.groups, d, c.units) * 0.1 / math.sqrt(c.units))
+        base = c.base_units or c.units
+        self.native_r = nn.Parameter(torch.randn(c.groups, base, 8 * d) * 0.1 / math.sqrt(8 * d))
+        self.native_p = nn.Parameter(torch.randn(c.groups, d, base) * 0.1 / math.sqrt(base))
         self.native_q = nn.Parameter(torch.randn(c.groups, d, d) * 0.2 / math.sqrt(d))
         self.native_k = nn.Parameter(torch.randn(c.groups, d, d) * 0.2 / math.sqrt(d))
         self.native_v = nn.Parameter(torch.randn(c.groups, d, d) * 0.2 / math.sqrt(d))
@@ -528,24 +548,53 @@ class U2Subject(_WorldKernel):
             for module in (self.record_output,):
                 nn.init.zeros_(module.weight)
                 nn.init.zeros_(module.bias)
+            if config.record_metadata:
+                from .u2_record_metadata import install_metadata
+
+                install_metadata(self)
+            from .u2_group_structure import install_extensions
+
+            install_extensions(self)
         self.generation = 0
         self.parameter_revision = 0
-        self.unit_ids = [
-            [f"g{g}:base:{u}" for u in range(config.units)] for g in range(config.groups)
-        ]
-        self.unit_branches = [[-1] * config.units for _ in range(config.groups)]
+        widths = config.group_units or (config.units,) * config.groups
+        self.unit_ids = [[f"g{g}:base:{u}" for u in range(widths[g])] for g in range(config.groups)]
+        self.unit_branches = [[-1] * width for width in widths]
 
     @property
     def config(self) -> U2Config:
         return self.c
 
     def structure(self) -> Any:
-        return {
+        result: dict[str, Any] = {
             "generation": self.generation,
             "unit_ids": copy.deepcopy(self.unit_ids),
             "unit_branches": copy.deepcopy(self.unit_branches),
             "units": self.c.units,
         }
+        if self.c.group_units is not None:
+            result.update(base_units=self.c.base_units, group_units=self.c.group_units)
+        return result
+
+    def metadata_candidate(self) -> U2Subject:
+        """Fork the parameter graph; the caller declares its new genesis state."""
+        if self.c.record_metadata:
+            raise ValueError("Record metadata is already enabled")
+        model = U2Subject(replace(self.c, record_metadata=True)).to(
+            dtype=self.native_w.dtype, device=self.native_w.device
+        )
+        values = model.state_dict()
+        values.update(clone_tree(self.state_dict(), detach=True))
+        model.load_state_dict(values)
+        model.unit_ids = copy.deepcopy(self.unit_ids)
+        model.unit_branches = copy.deepcopy(self.unit_branches)
+        model.generation = self.generation
+        model.parameter_revision = self.parameter_revision + 1
+        parameters = dict(model.named_parameters())
+        for name, parameter in self.named_parameters():
+            parameters[name].requires_grad_(parameter.requires_grad)
+        model.train(self.training)
+        return model
 
     def text_units(self, raw: Any) -> Any:
         raw = raw.encode() if isinstance(raw, str) else raw
@@ -641,6 +690,10 @@ class U2Subject(_WorldKernel):
         records = tuple(records)
         if any(len(r.raw) > self.c.max_record_bytes or not r.raw for r in records):
             raise ValueError("record outside profile")
+        if self.c.record_metadata and any(
+            type(record.version) is not int or record.version < 0 for record in records
+        ):
+            raise ValueError("Record version must be a nonnegative integer")
         if any(
             not math.isfinite(r.observed_at)
             or r.observed_at > state["world_time"]
@@ -672,7 +725,12 @@ class U2Subject(_WorldKernel):
         valid = torch.zeros_like(ids, dtype=torch.bool)
         for index, record in enumerate(records):
             size = len(record.raw)
-            tokens[index, :size] = self.text_units(record.raw)
+            encoded = self.text_units(record.raw)
+            if self.c.record_metadata:
+                from .u2_record_metadata import metadata_vector
+
+                encoded = encoded + metadata_vector(self, record, state["world_time"])
+            tokens[index, :size] = encoded
             ids[index, :size] = torch.tensor(list(record.raw), device=ids.device)
             valid[index, :size] = True
         return tokens, ids, valid
@@ -789,7 +847,7 @@ class U2Subject(_WorldKernel):
                             if branch < 0
                             else content_gates[:, group, branch]
                         )
-                        for branch in self.unit_branches[group]
+                        for branch in self.unit_branches[group][: self.native_r.shape[1]]
                     ],
                     -1,
                 )
@@ -798,6 +856,10 @@ class U2Subject(_WorldKernel):
         pre = torch.einsum("bni,noi->bno", x, self.native_w) + torch.einsum(
             "nom,bnm->bno", self.native_p, hidden * gates
         )
+        if self.group_extensions:
+            from .u2_group_structure import add_group_residuals
+
+            pre = add_group_residuals(self, pre, x, content_gates)
         if getattr(self, "_capture_credit", False):
             self._credit_tape.append(
                 {"preactivation": pre, "input": x, "content_gates": content_gates}
@@ -1388,6 +1450,7 @@ class U2Subject(_WorldKernel):
         state: Any = None,
         optimizer: Any = None,
         birth_id: Any = None,
+        groups: tuple[int, ...] | None = None,
     ) -> Any:
         if type(count) is not int or count < 1 or type(branch) is not int or branch not in (0, 1):
             raise ValueError("Invalid birth count or conditional branch")
@@ -1400,6 +1463,19 @@ class U2Subject(_WorldKernel):
             raise ValueError("Birth credit must be finite and share the parent layout")
         if birth_id is not None and (not isinstance(birth_id, str) or not birth_id):
             raise ValueError("Birth identity must be a nonempty string")
+        if groups is not None or self.c.group_units is not None:
+            from .u2_group_structure import birth_groups
+
+            return birth_groups(
+                self,
+                credits,
+                groups=tuple(range(self.c.groups)) if groups is None else groups,
+                count=count,
+                branch=branch,
+                state=state,
+                optimizer=optimizer,
+                birth_id=birth_id,
+            )
         next_birth_id = birth_id or f"birth-{self.generation + 1}"
         if any(
             f"{next_birth_id}:g{group}:u{unit}" in self.unit_ids[group]
@@ -1529,6 +1605,9 @@ class U2Subject(_WorldKernel):
         return self.parameter_revision
 
     def export_bundle(self, state: Any, optimizer_state: Any = None) -> Any:
+        from .u2_group_structure import validate_structure
+
+        validate_structure(self)
         if set(state) != set(self.state_registry()):
             raise ValueError("unregistered subject state")
         if state["structure"] != self.structure():
@@ -1542,7 +1621,11 @@ class U2Subject(_WorldKernel):
                 raise ValueError("pending version differs from subject parameters")
             self.pending_value(state["pending"]["decision"])
         return {
-            "schema": "taiji-u2-subject-v2",
+            "schema": (
+                "taiji-u2-subject-v3"
+                if self.c.record_metadata or self.c.group_units is not None
+                else "taiji-u2-subject-v2"
+            ),
             "credit_contract": {
                 "critic": "behavior_features_under_frozen_Psi",
                 "body_graph": "values_only_requires_window_replay",
@@ -1557,11 +1640,17 @@ class U2Subject(_WorldKernel):
 
     @classmethod
     def from_bundle(cls, bundle: Any) -> Any:
-        if bundle["schema"] not in {"taiji-u2-subject-v1", "taiji-u2-subject-v2"}:
+        if bundle["schema"] not in {
+            "taiji-u2-subject-v1",
+            "taiji-u2-subject-v2",
+            "taiji-u2-subject-v3",
+        }:
             raise ValueError("unsupported bundle schema")
         if bundle["schema"] == "taiji-u2-subject-v1" and bundle["state"].get("pending") is not None:
             raise ValueError("pending v1 bundle lacks recoverable critic/window credit inputs")
-        if bundle["schema"] == "taiji-u2-subject-v2" and bundle.get("credit_contract") != {
+        if bundle["schema"] in {"taiji-u2-subject-v2", "taiji-u2-subject-v3"} and bundle.get(
+            "credit_contract"
+        ) != {
             "critic": "behavior_features_under_frozen_Psi",
             "body_graph": "values_only_requires_window_replay",
         }:
@@ -1575,6 +1664,9 @@ class U2Subject(_WorldKernel):
         model.generation = structure["generation"]
         model.unit_ids = copy.deepcopy(structure["unit_ids"])
         model.unit_branches = copy.deepcopy(structure["unit_branches"])
+        from .u2_group_structure import validate_structure
+
+        validate_structure(model)
         state = clone_tree(bundle["state"], detach=True)
         if set(state) != set(model.state_registry()) or state["structure"] != model.structure():
             raise ValueError("bundle state registry mismatch")

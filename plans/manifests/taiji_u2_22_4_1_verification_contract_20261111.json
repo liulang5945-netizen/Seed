@@ -1,0 +1,87 @@
+{
+  "schema": "taiji-u2-22.4.1-verification-contract-v1",
+  "status": "frozen",
+  "frozen_date": "2026-11-11",
+  "authorization": "user instruction 2026-11-11: advance to execution card 22.4.1 and complete its first step",
+  "design_spec": "plans/reference/SPEC-TAIJI-U2_METADATA_GROUPS_22_4_20261111.md",
+  "parent": "plans/manifests/taiji_u2_22_3_accepted_parent_20261111.json",
+  "scope": "zero-optimizer normal entry, two-generation group birth, parameter/state round-trip and independent-process successor",
+  "precisions": [
+    "float64",
+    "float32"
+  ],
+  "run_authorized": false,
+  "criteria": [
+    {
+      "id": "envelope_schema_pin",
+      "requirement": "Baseline and new-graph envelopes keep runtime schema taiji-u2-runtime-envelope-v3; only the subject bundle advances from v2 to v3",
+      "tolerance": "exact strings"
+    },
+    {
+      "id": "metadata_fork_inherits_parent",
+      "requirement": "record_metadata candidate copies all 191 parent parameters and adds exactly 3 tensors; parameter_revision increases by one",
+      "tolerance": "bitwise equal parent tensors"
+    },
+    {
+      "id": "metadata_pairs",
+      "requirement": "Pairwise inputs that keep identical H/F, record content and order but change version or observation time change the record representation while H/F and raw bytes stay equal",
+      "tolerance": "H/F and raw bitwise equal; record route differs"
+    },
+    {
+      "id": "group_two_generations",
+      "requirement": "Two real generations on groups (1,) then (0,) twice yield actual widths (14,13), exactly 9d new parameters per birth and untouched old tensors",
+      "tolerance": "old tensors bitwise equal; parameter count exact"
+    },
+    {
+      "id": "group_neutral_output",
+      "requirement": "A birth leaves the native output unchanged because incoming starts at zero",
+      "tolerance": "float64 atol 1e-10 rtol 1e-8; float32 atol 1e-5 rtol 1e-4"
+    },
+    {
+      "id": "optimizer_owner_moments",
+      "requirement": "The first extension inherits the base R/P optimizer groups, a repeated birth copies old moments and zeroes new coordinates while keeping step, and the mapping survives an envelope round-trip",
+      "tolerance": "bitwise equal copied moments; new blocks zero"
+    },
+    {
+      "id": "envelope_roundtrip_rebuild",
+      "requirement": "Save then load reproduces parameters, state, structure, optimizer state and the rebuilt history state",
+      "tolerance": "value_digest equal; state bitwise equal"
+    },
+    {
+      "id": "independent_process_successor",
+      "requirement": "A separate Python process loads the saved envelope, rebuilds state and performs the successor birth with the same digests as an in-process replay",
+      "tolerance": "digests equal; native output digest equal"
+    },
+    {
+      "id": "legacy_bundle_compat",
+      "requirement": "A pre-22.4 subject v2 bundle without the optional graph fields still loads the original 191-parameter graph",
+      "tolerance": "exact parameter count and digest"
+    },
+    {
+      "id": "metadata_task_gradient",
+      "requirement": "The answer loss produces finite nonzero gradients on all three new metadata tensors, so task credit reaches the new interface without any optimizer step",
+      "tolerance": "finite and nonzero gradient norm"
+    },
+    {
+      "id": "zero_optimizer_steps",
+      "requirement": "No optimizer step runs anywhere in this verification; Adam and SGD step are hard-blocked",
+      "tolerance": "zero calls"
+    }
+  ],
+  "pass_rule": {
+    "all_criteria_passed": true,
+    "optimizer_steps": 0,
+    "formal_training": false,
+    "project_dataset_reads": 0,
+    "check_reads": 0,
+    "final_reads": 0,
+    "verdict": "passed_zero_update_metadata_groups_interface"
+  },
+  "non_claims": [
+    "task learning gain",
+    "old capability retention",
+    "pricing and data partition",
+    "warm migration between existing trained states",
+    "the four remaining engineering update quotas"
+  ]
+}

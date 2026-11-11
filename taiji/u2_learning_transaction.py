@@ -211,14 +211,9 @@ def rebuild_state(
         raise ValueError("Raw history belongs to another subject")
     if model.structure() != factual_state["structure"]:
         raise ValueError("Reencoding requires the accepted structure")
-    root_config, current_config = verified.root["config"], asdict(model.c)
-    if (
-        set(root_config) != set(current_config)
-        or any(
-            value != current_config[name] for name, value in root_config.items() if name != "units"
-        )
-        or not 1 <= root_config["units"] <= model.c.units
-    ):
+    from .u2_group_structure import ancestry_compatible
+
+    if not ancestry_compatible(verified.root["config"], model.c):
         raise ValueError("Reencoding configuration mismatch")
     with torch.no_grad():
         replay = _HistoryReplay(model, factual_state["subject_id"], deadline)

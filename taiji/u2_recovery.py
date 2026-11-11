@@ -58,6 +58,8 @@ def _source_pins() -> dict[str, str]:
         "u2_history.py",
         "u2_events.py",
         "u2_learning_transaction.py",
+        "u2_record_metadata.py",
+        "u2_group_structure.py",
         "u2_subject.py",
         "u2_operators.py",
         "utf8_state.py",
@@ -667,6 +669,7 @@ class U2Runtime:
         count: int = 1,
         branch: int = 0,
         birth_id: str | None = None,
+        groups: tuple[int, ...] | None = None,
         validate: (
             Callable[[U2Subject, dict[str, Any], torch.optim.Optimizer | None], bool] | None
         ) = None,
@@ -685,7 +688,13 @@ class U2Runtime:
         model, state = U2Subject.from_bundle(self.model.export_bundle(self.state, optimizer_state))
         optimizer = _restore_optimizer(model, layout, optimizer_state)
         result = model.birth_units(
-            credits, count=count, branch=branch, birth_id=birth_id, state=state, optimizer=optimizer
+            credits,
+            count=count,
+            branch=branch,
+            birth_id=birth_id,
+            state=state,
+            optimizer=optimizer,
+            groups=groups,
         )
         if fault in {"after_birth", "after_optimizer"}:
             raise RuntimeError(f"injected {fault}")
@@ -705,7 +714,13 @@ class U2Runtime:
         self._history_segment += 1
         self._append_history(
             "birth",
-            {"credits": credits, "count": count, "branch": branch, "birth_id": result["birth_id"]},
+            {
+                "credits": credits,
+                "count": count,
+                "branch": branch,
+                "birth_id": result["birth_id"],
+                "groups": groups,
+            },
             {"result": result, "structure": model.structure(), "parameter_digest": next_digest},
         )
         self._history_anchor = self.history.reference()
@@ -848,16 +863,9 @@ class U2Runtime:
         root = history.root
         if root["subject_id"] != saved_state["subject_id"] or root["source_pins"] != _source_pins():
             raise ValueError("Raw history belongs to another subject or source")
-        expected_config = asdict(model.c)
-        if (
-            set(root["config"]) != set(expected_config)
-            or any(
-                value != expected_config[name]
-                for name, value in root["config"].items()
-                if name != "units"
-            )
-            or not 1 <= root["config"]["units"] <= model.c.units
-        ):
+        from .u2_group_structure import ancestry_compatible
+
+        if not ancestry_compatible(root["config"], model.c):
             raise ValueError("Raw history root configuration mismatch")
         entries = envelope["history"]["entries"]
         segment = entries[-1]["payload"]["segment"] if entries else 0
