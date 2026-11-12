@@ -55,7 +55,7 @@ answer_loss→原字节表达→c'→Q/K/V及当前编码器形成任务信用�
 3. 新合同比较旧读取、直接读取、参数配平控制及匹配Transformer。保留相同自由输出与任务分母，以同训练CPU主比较，另报同更新诊断及完整成本。来源/时间打乱、request置换、证据切断和关闭新读取为必要干预。
 4. 训练数据、fit新分区、验收门、种子、成本与停止在实价后冻结。若直接读取无输入依赖收益，保留负结果并全局重审感知/表达优化。不得再追加同目标的无边界探针。
 
-P3.3已按[主体集成回执](VALIDATION-TAIJI_U2_EVIDENCE_SUBJECT_20261112.md)交付。当前唯一后继为[P3.4.1参数配平控制与新父checkpoint](PLAN-TAIJI_U2_EVIDENCE_LEARNING_20261112.md)。
+P3.3已按[主体集成回执](VALIDATION-TAIJI_U2_EVIDENCE_SUBJECT_20261112.md)交付。P3.4.1参数配平控制与研究父也已[交付](VALIDATION-TAIJI_U2_EVIDENCE_PARENTS_20261112.md)，当前唯一后继为[P3.4.2实价与分区冻结](PLAN-TAIJI_U2_EVIDENCE_LEARNING_20261112.md)。
 
 ## 6. 集成语义补充
 

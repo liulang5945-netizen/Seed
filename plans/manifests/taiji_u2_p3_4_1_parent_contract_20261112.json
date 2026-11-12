@@ -1,0 +1,31 @@
+{
+  "schema": "taiji-u2-p3-4-1-parent-contract-v1",
+  "cpu_cap": 180,
+  "wall_cap": 360,
+  "optimizer_steps": 0,
+  "query_seed": 2026111201,
+  "capacity_seed": 2026111202,
+  "capacity_architecture": "16->23->8 plus learned logit scalar; 0.2*sigmoid(logit), logit=0",
+  "scope": "Three Native research parents plus Transformer parent, typed checkpoint and independent-process loss/gradient preflight. Public price fixtures only.",
+  "price_fixture_examples": 8,
+  "fit_reads": 0,
+  "check_reads": 0,
+  "final_reads": 0,
+  "prior_engineering_source_overlays": [
+    {
+      "source": "taiji/u2_recovery.py",
+      "archive": "scripts/archive/u2_recovery_20261112_pre_p3_4_1.py.txt",
+      "sha256": "5c5fd27580ac49077619ba24aed5d17d87cfa89fe5e6131897415ce26fe87743"
+    },
+    {
+      "source": "taiji/u2_evidence_runtime.py",
+      "archive": "scripts/archive/u2_evidence_runtime_20261112_pre_p3_4_1.py.txt",
+      "sha256": "f1a93a8cce3ebd92e04af1714ac97e3778e4272c01758793b96384f58c7eb41f"
+    }
+  ],
+  "native_parent_arm": "native-conditional",
+  "transformer_parent_arm": "transformer-token",
+  "optimizer_reset": "fresh Adam lr .001 betas .9/.999 eps 1e-8 weight_decay 0 for every arm",
+  "capacity_scope": "current request and H read residual, scalar multiplier .1 at initialization; direct evidence values are excluded from this residual",
+  "budget_accounting": "180 CPU reserved from remaining16950, leaving16770. Part of proposed P3.4 envelope, no training dose."
+}

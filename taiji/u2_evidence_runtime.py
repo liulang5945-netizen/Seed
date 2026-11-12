@@ -42,7 +42,7 @@ class EvidenceRuntime(U2Runtime):
             super()._replay_operation(operation)
 
 
-def load_legacy_learner(path):
+def verify_legacy_sources(payload):
     """Verify every frozen source pin against current or explicitly archived bytes.
 
     The cognitive source must still match. Archived runtime files explain the
@@ -55,12 +55,6 @@ def load_legacy_learner(path):
         )
     )
     archives = {row["source"]: row for row in catalog["archives"]}
-    payload = atomic_load(path)
-    if (
-        payload["schema"] != "taiji-first-A-learner-v1"
-        or payload["description"]["architecture"] != "native"
-    ):
-        raise ValueError("unsupported_evidence_migration_parent")
     checked = {}
     for name, pin in payload["source_pins"].items():
         relative = name if "/" in name else f"taiji/{name}"
@@ -78,6 +72,17 @@ def load_legacy_learner(path):
         checked[relative] = pin
     if "taiji/u2_subject.py" not in checked:
         raise ValueError("legacy_cognitive_source_pin_missing")
+    return checked
+
+
+def load_legacy_learner(path):
+    payload = atomic_load(path)
+    if (
+        payload["schema"] != "taiji-first-A-learner-v1"
+        or payload["description"]["architecture"] != "native"
+    ):
+        raise ValueError("unsupported_evidence_migration_parent")
+    checked = verify_legacy_sources(payload)
     model = U2Subject(U2Config(**payload["description"]["config"]))
     first = next(iter(payload["parameters"].values()))
     model = model.to(dtype=first.dtype, device=first.device)

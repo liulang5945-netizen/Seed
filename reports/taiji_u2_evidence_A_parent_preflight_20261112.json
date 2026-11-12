@@ -1,0 +1,110 @@
+{
+  "schema": "taiji-u2-evidence-A-parent-preflight-v1",
+  "verdict": "passed_parent_preflight_only",
+  "parents": {
+    "native-old": {
+      "checkpoint": "E:\\Seed\\data\\experiments\\taiji_u2\\evidence_A_parents\\1794483889167501400\\native-old\\initial.bin",
+      "checkpoint_sha256": "71b1b9c40ff2e94e50b71ba77fb328e4aaec0383ae8ffaee7309bcd5a3b3891d",
+      "payload_digest": "bb14b00255cf0c33e40698edbb44002592dff0c066990a927d5f925701eac861",
+      "parameter_digest": "2b9dc796d75c853de01522fd059d758ce0bc04110b29fef84bb8638d342ad1dd",
+      "parameters": 22742,
+      "parameter_tensors": 194,
+      "revision": 38,
+      "new_owner_gradient_norms": {},
+      "lineage": {
+        "arm": "native-conditional",
+        "checkpoint_sha256": "bdba4bdcbe3e86515c29b577a39cd5cfe80556686703a286f291084fb11f07b2",
+        "base_parameter_digest": "2b9dc796d75c853de01522fd059d758ce0bc04110b29fef84bb8638d342ad1dd",
+        "prior_P2_updates": 11,
+        "capability_qualifications": []
+      },
+      "optimizer_state_entries": 0
+    },
+    "native-query": {
+      "checkpoint": "E:\\Seed\\data\\experiments\\taiji_u2\\evidence_A_parents\\1794483889167501400\\native-query\\initial.bin",
+      "checkpoint_sha256": "e2c1f235e21b7e2dca46af11dde885d4e5b117768fe32385ea25c05f3eae915a",
+      "payload_digest": "06e5a5333fb06015eac1bf2da594ef3620d3fad5cdc4709aaef8629477da011d",
+      "parameter_digest": "574df5ba8117d784f69ae766b6e40a46bb3a770e338254230cc3502cc234e3cb",
+      "parameters": 23326,
+      "parameter_tensors": 201,
+      "revision": 38,
+      "new_owner_gradient_norms": {
+        "evidence_reader.input_query.weight": 3.568721513147466e-05,
+        "evidence_reader.input_query.bias": 5.740438791690394e-05,
+        "evidence_reader.key.weight": 4.707482730736956e-05,
+        "evidence_reader.value.weight": 0.00989689864218235,
+        "evidence_reader.query.weight": 4.2521751311142e-05,
+        "evidence_reader.message.weight": 0.008273908868432045,
+        "evidence_reader.output.weight": 0.006249227095395327
+      },
+      "lineage": {
+        "arm": "native-conditional",
+        "checkpoint_sha256": "bdba4bdcbe3e86515c29b577a39cd5cfe80556686703a286f291084fb11f07b2",
+        "base_parameter_digest": "2b9dc796d75c853de01522fd059d758ce0bc04110b29fef84bb8638d342ad1dd",
+        "prior_P2_updates": 11,
+        "capability_qualifications": []
+      },
+      "optimizer_state_entries": 0
+    },
+    "native-capacity": {
+      "checkpoint": "E:\\Seed\\data\\experiments\\taiji_u2\\evidence_A_parents\\1794483889167501400\\native-capacity\\initial.bin",
+      "checkpoint_sha256": "4e305bc06a86b8b3e07deb155574eb33eb7c68268ca4a3065b7c6c4a586afddd",
+      "payload_digest": "7cdb8c5f5a3c50736e01262386ff9efc1bd607790c1b3af5695d44869d446ad9",
+      "parameter_digest": "cee30dc2c78216099fe5772895970a0505746017b36cb5a4ebd4097e05fb9083",
+      "parameters": 23326,
+      "parameter_tensors": 199,
+      "revision": 38,
+      "new_owner_gradient_norms": {
+        "evidence_reader.scale_logit": 0.00121253018733114,
+        "evidence_reader.input.weight": 0.004134663846343756,
+        "evidence_reader.input.bias": 0.006718992721289396,
+        "evidence_reader.output.weight": 0.011093100532889366,
+        "evidence_reader.output.bias": 0.015235778875648975
+      },
+      "lineage": {
+        "arm": "native-conditional",
+        "checkpoint_sha256": "bdba4bdcbe3e86515c29b577a39cd5cfe80556686703a286f291084fb11f07b2",
+        "base_parameter_digest": "2b9dc796d75c853de01522fd059d758ce0bc04110b29fef84bb8638d342ad1dd",
+        "prior_P2_updates": 11,
+        "capability_qualifications": []
+      },
+      "optimizer_state_entries": 0
+    },
+    "transformer": {
+      "checkpoint": "E:\\Seed\\data\\experiments\\taiji_u2\\evidence_A_parents\\1794483889167501400\\transformer\\initial.bin",
+      "checkpoint_sha256": "7a4b713a43b142ff567cbe9c53ad27bb6789c49ce83e57cd6055a3cea06185de",
+      "payload_digest": "dcdbd5bcc3eae6d72dcfd918794e0fcf8554705207a2d26782fe0b1e7b40ddb7",
+      "parameter_digest": "5baab079835db698f2211b1b01ccf95bb8184b65d03bd1ae17a2a7d5c6c17f44",
+      "parameters": 22373,
+      "parameter_tensors": 45,
+      "revision": 351,
+      "new_owner_gradient_norms": {},
+      "lineage": {
+        "arm": "transformer-token",
+        "checkpoint_sha256": "8c175fbdb9a093f6604cfbb2d655b3550be0e684af61131bfadf846c5ba80068",
+        "base_parameter_digest": "5baab079835db698f2211b1b01ccf95bb8184b65d03bd1ae17a2a7d5c6c17f44",
+        "prior_P2_updates": 163,
+        "capability_qualifications": []
+      },
+      "optimizer_state_entries": 0
+    }
+  },
+  "independent_process_cases": 4,
+  "parameter_gradient_comparisons": 639,
+  "max_gradient_difference": 0.0,
+  "optimizer_steps": 0,
+  "fit_reads": 0,
+  "check_reads": 0,
+  "final_reads": 0,
+  "capability_qualifications": [],
+  "cpu_seconds": 19.625,
+  "wall_seconds": 22.26500000001397,
+  "run_conditions": {
+    "device": "cpu",
+    "dtype": "float32",
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "verifier_sha256": "2b4a3be40a6b6f6114a4fa048aafd90fedff4b1a8d9b0cfbfc3c19a100890965",
+  "contract_sha256": "f784c77483a8802254519269ab404165bfd72463c6435ae84abf0b9f75cc84c6"
+}
