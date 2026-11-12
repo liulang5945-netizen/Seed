@@ -119,3 +119,29 @@ def test_learner_checkpoint_and_next_batch_gradient(tmp_path, examples, architec
     atomic_save(broken, tmp_path / "bad.bin")
     with pytest.raises(ValueError, match="source_identity"):
         load_learner(tmp_path / "bad.bin")
+
+
+def test_nonempty_optimizer_state_serialization_without_step(tmp_path, examples):
+    model = CapacitySubject.from_parent(parent(torch.float32))
+    optimizer = fresh_optimizer(model)
+    for parameter in model.parameters():
+        optimizer.state[parameter] = {
+            "step": torch.tensor(3.0),
+            "exp_avg": torch.full_like(parameter, 0.125),
+            "exp_avg_sq": torch.full_like(parameter, 0.25),
+        }
+    path = tmp_path / "synthetic-moments.bin"
+    save_learner(
+        path,
+        model,
+        optimizer,
+        "native-capacity",
+        {"scope": "synthetic optimizer-state serialization fixture"},
+        update=3,
+        cursor=6,
+        order=list(range(8)),
+        data_digest=value_digest(examples),
+    )
+    _, restored, payload = load_learner(path)
+    assert_values_equal(optimizer.state_dict(), restored.state_dict())
+    assert payload["cursor"] == 6 and payload["update"] == 3
