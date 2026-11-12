@@ -10,6 +10,7 @@ import sys
 import time
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Any
 
 STARTED = time.monotonic()
 ROOT = Path(__file__).resolve().parents[2]
@@ -31,7 +32,7 @@ from seed_platform.paths import get_external_path
 from taiji.u2_history import atomic_load, atomic_save, value_digest
 from taiji.u2_task_executor import writer_lease
 
-MANIFEST = ROOT / "plans/manifests/taiji_u2_conditional_A_execution_20261112.json"
+MANIFEST = ROOT / "plans/manifests/taiji_u2_conditional_A_execution_20261112_v2.json"
 REPORT = ROOT / "reports/taiji_u2_conditional_A_20261112.json"
 
 
@@ -174,7 +175,7 @@ def run():
         raise FileExistsError("conditional_A_already_started")
     data = atomic_load(root / "data.bin")
     assert value_digest(data) == c["data_digest"]
-    results = {}
+    results: dict[str, Any] = {}
     calls = 0
 
     def guard():
