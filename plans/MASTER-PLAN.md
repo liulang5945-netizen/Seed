@@ -1,18 +1,18 @@
 # MASTER-PLAN（唯一权威主线）
 
-> 文档状态：[主线] — 2026-11-11。统一目标与长期路线已修订，22.3完整恢复工程已结案，当前22.4有效任务与定价。
+> 文档状态：[主线] — 2026-11-12。22.4.1接口与恢复工程已结案，当前22.4.2连续世界，随后完成分区与实价。
 
 ## 0. 一句话与队首
 
 **唯一主线**沿N发展同一可学习、可恢复、按需生长的持续主体，使自驱、递归改进、经验学习与多模态物理认知形成可验证闭环。
 
-**队首（唯一）**：执行包22.4.1，设计模型可学习的记录元数据入口与逐群结构接口，0正式训练。
+**队首（唯一）**：执行包22.4.2.1，冻结连续物理世界、传感观测与执行回执合同。0正式训练。
 
 22.3已按[工程结案](reference/VALIDATION-TAIJI-U2_22_3_CLOSEOUT_20261111.md)通过，交付[接受父](manifests/taiji_u2_22_3_accepted_parent_20261111.json)。8次attempt消耗完毕，其中6次真实Adam.step，8份S12/worker和8规范存档全部核验。最终runtime v3/原始链v2覆盖12类状态、34组float32/64独立接续，191参数逐项梯度最大差0，闭包0新增step。当前接受small profile未训练初始化，能力资格为空，22.4冻结有效任务及实价后再准入22.5。
 
 当前设计为[U2完整主体闭环候选](reference/SPEC-TAIJI-CLOSED_LOOP_U2_20261110.md)。U2正式参考图已按[22.2回执](reference/VALIDATION-TAIJI-U2_22_2_20261110.md)完成工程核验，191参数/40状态字段已登记，真实语义任务与持续能力仍待后继验收。唯一后继按[执行包22](reference/PLAN-TAIJI-CLOSED_LOOP_DEVELOPMENT_20261110.md)逐卡准入。22.1已按[v2回执](reference/VALIDATION-TAIJI-U2_22_1_20261110.md)结案为`passed_local_math_only`，13组局部核验与52个差分坐标通过。22.2仅签参考图工程，原等值读数的运行条件缺口已另附零步补证，跨进程更新一致性归22.3。合成夹具目标/标签不一致已记入22.4训练前硬门。
 
-22.4.0已交付[任务语义与信息权利合同](reference/SPEC-TAIJI-U2_TASK_SEMANTICS_22_4_20261111.md)，微型23项检查通过。当前22.4.1处理可学习元数据与逐群接口：接口第一步已按[零更新核验](../reports/taiji_u2_metadata_groups_22_4_20261111.json)通过（11项、0 optimizer step、独立进程后继一致），数据/实价准入已由[准入manifest](manifests/taiji_u2_22_4_1_data_price_admission_20261111.json)冻结，u1候选步已计费完成（读数见下方逐轮一行与[D-20261111-12](reference/DECISION-LEDGER_20261109.md)），u2/u3/u4额度未动。
+22.4.0的[任务语义与信息权利合同](reference/SPEC-TAIJI-U2_TASK_SEMANTICS_22_4_20261111.md)已有23项微型检查。22.4.1已按[工程结案](reference/VALIDATION-TAIJI-U2_22_4_1_CLOSEOUT_20261112.md)完成元数据入口、逐群接口、u2正式单步及u3/u4恢复。5/5名额结清，记录3次工程optimizer调用，其中2次获接受post；本轮新增1次，u3/u4按既定无迁移规则各0步。独立进程194参数×4类损失共776项梯度比较最大差0，相关124项回归通过。能力资格为空，下一步22.4.2.1冻结连续世界合同。
 
 ## 0a. 算法层诊断（2026-11-08 全局收束，不改任何代码行为）
 
@@ -71,7 +71,7 @@
 | 自驱/递归 | 有策略、学习和影子改造资产，同主体净选择收益未证 | U2 §8/9及执行22.6 |
 | 神经生长 | 出生实现存在，成熟保持联合收益未证；存储扩展另账 | U2 §10及执行22.7 |
 | 多模态物理认知 | MGW1参考与U1代数设计交付，生产任务未验 | [MGW1核验](reference/VALIDATION-MGW1_REFERENCE_20261106.md) |
-| 连续恢复 | small profile最终schema的12类/34组接续、6次实际更新及回滚已验，nominal/长期任务范围另签 | [22.3工程结案](reference/VALIDATION-TAIJI-U2_22_3_CLOSEOUT_20261111.md) |
+| 连续恢复 | 22.3最终schema与22.4.1元数据候选耐久父接续均已验；本轮194参数四类梯度跨进程差0，nominal/长期任务范围另签 | [22.4.1工程结案](reference/VALIDATION-TAIJI-U2_22_4_1_CLOSEOUT_20261112.md) |
 | U2/执行22.0 | 设计与计划交付，0训练、0权重替换、0封存读取 | [规格](reference/SPEC-TAIJI-CLOSED_LOOP_U2_20261110.md)及[工作卡](reference/PLAN-TAIJI-CLOSED_LOOP_DEVELOPMENT_20261110.md) |
 
 ## 2. 依赖顺序

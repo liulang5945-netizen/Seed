@@ -1,0 +1,4969 @@
+{
+  "id": "u4-migration-recovery",
+  "status": "accepted",
+  "worker": "reports/taiji_u2_22_4_1_u4_no_migration_worker_20261112.json",
+  "worker_sha256": "b5dca074b963574c7f3924a03173e8e423adb3a4202f88c99edae8b9909a5a53",
+  "gradient_rows": [
+    {
+      "loss": "task",
+      "parameter": "modality",
+      "status": "nonzero",
+      "gradient_norm": 0.041716933250427246,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "initial_h",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "initial_p",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "native_w",
+      "status": "nonzero",
+      "gradient_norm": 0.0008434996707364917,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "native_r",
+      "status": "nonzero",
+      "gradient_norm": 7.406164513668045e-05,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "native_p",
+      "status": "nonzero",
+      "gradient_norm": 3.3344120311085135e-05,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "native_q",
+      "status": "nonzero",
+      "gradient_norm": 8.121412884646434e-14,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "native_k",
+      "status": "nonzero",
+      "gradient_norm": 1.020206055052375e-12,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "native_v",
+      "status": "nonzero",
+      "gradient_norm": 4.087467857516458e-07,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "tau_logit",
+      "status": "nonzero",
+      "gradient_norm": 5.16476438860991e-06,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "background",
+      "status": "nonzero",
+      "gradient_norm": 0.0007995566120371222,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "start_embedding",
+      "status": "nonzero",
+      "gradient_norm": 0.0041801719926297665,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "record_null_value",
+      "status": "nonzero",
+      "gradient_norm": 1.5587755797241698e-07,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "coverage_logit",
+      "status": "nonzero",
+      "gradient_norm": 0.0008206767961382866,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "actor_log_std",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "encoder.rgb.weight",
+      "status": "nonzero",
+      "gradient_norm": 1.8208136680186726e-05,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "encoder.rgb.bias",
+      "status": "nonzero",
+      "gradient_norm": 5.3603316700900905e-06,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "encoder.audio.weight",
+      "status": "nonzero",
+      "gradient_norm": 2.6229612558381632e-05,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "encoder.audio.bias",
+      "status": "nonzero",
+      "gradient_norm": 1.0925784408755135e-05,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "encoder.proprio.weight",
+      "status": "nonzero",
+      "gradient_norm": 1.724493813526351e-05,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "encoder.proprio.bias",
+      "status": "nonzero",
+      "gradient_norm": 5.868783318874193e-06,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "metadata.weight",
+      "status": "nonzero",
+      "gradient_norm": 0.04174448549747467,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "metadata.bias",
+      "status": "nonzero",
+      "gradient_norm": 0.04171547293663025,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "embedding.weight",
+      "status": "nonzero",
+      "gradient_norm": 0.03991253301501274,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "text_input.weight",
+      "status": "nonzero",
+      "gradient_norm": 0.014552440494298935,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "text_input.bias",
+      "status": "nonzero",
+      "gradient_norm": 0.043845679610967636,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "convolutions.0.weight",
+      "status": "nonzero",
+      "gradient_norm": 0.01303360890597105,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "convolutions.0.bias",
+      "status": "nonzero",
+      "gradient_norm": 0.04031069576740265,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "convolutions.1.weight",
+      "status": "nonzero",
+      "gradient_norm": 0.012186807580292225,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "convolutions.1.bias",
+      "status": "nonzero",
+      "gradient_norm": 0.03546930104494095,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "convolutions.2.weight",
+      "status": "nonzero",
+      "gradient_norm": 0.014560151845216751,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "convolutions.2.bias",
+      "status": "nonzero",
+      "gradient_norm": 0.04136495292186737,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "goal_score.weight",
+      "status": "nonzero",
+      "gradient_norm": 0.004700140096247196,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "goal_value.weight",
+      "status": "nonzero",
+      "gradient_norm": 0.042013540863990784,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "goal_value.bias",
+      "status": "nonzero",
+      "gradient_norm": 0.189507856965065,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "object_projection.weight",
+      "status": "nonzero",
+      "gradient_norm": 0.0015480532310903072,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "object_projection.bias",
+      "status": "nonzero",
+      "gradient_norm": 0.0011126381577923894,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "h_query.weight",
+      "status": "nonzero",
+      "gradient_norm": 9.008193080362048e-10,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "h_query.bias",
+      "status": "nonzero",
+      "gradient_norm": 1.0416560947135167e-08,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "h_key.weight",
+      "status": "nonzero",
+      "gradient_norm": 1.3632579509703646e-09,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "h_value.weight",
+      "status": "nonzero",
+      "gradient_norm": 7.810055103618652e-05,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "h_value.bias",
+      "status": "nonzero",
+      "gradient_norm": 0.008990305475890636,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "o_query.weight",
+      "status": "nonzero",
+      "gradient_norm": 1.0455499932504608e-07,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "o_query.bias",
+      "status": "nonzero",
+      "gradient_norm": 3.7283978144841967e-06,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "o_key.weight",
+      "status": "nonzero",
+      "gradient_norm": 4.3393021087467787e-07,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "o_value.weight",
+      "status": "nonzero",
+      "gradient_norm": 0.001384657807648182,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "o_value.bias",
+      "status": "nonzero",
+      "gradient_norm": 0.007559014949947596,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "action.weight",
+      "status": "nonzero",
+      "gradient_norm": 1.3831532896801946e-06,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "action.bias",
+      "status": "nonzero",
+      "gradient_norm": 1.0184094207943417e-06,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "f_query.weight",
+      "status": "nonzero",
+      "gradient_norm": 6.376425858434231e-07,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "f_query.bias",
+      "status": "nonzero",
+      "gradient_norm": 2.6099899059772724e-06,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "f_output.weight",
+      "status": "nonzero",
+      "gradient_norm": 8.186113973351894e-07,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "f_output.bias",
+      "status": "nonzero",
+      "gradient_norm": 0.005111502483487129,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "relation_query.weight",
+      "status": "nonzero",
+      "gradient_norm": 7.727164394455421e-12,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "relation_query.bias",
+      "status": "nonzero",
+      "gradient_norm": 3.2011285983069016e-11,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "relation_key.weight",
+      "status": "nonzero",
+      "gradient_norm": 7.695321810330391e-12,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "relation_value.weight",
+      "status": "nonzero",
+      "gradient_norm": 1.253310699667054e-08,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "relation_value.bias",
+      "status": "nonzero",
+      "gradient_norm": 4.6829882194288075e-07,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "relation_geometry.first.weight",
+      "status": "nonzero",
+      "gradient_norm": 3.278246285542963e-10,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "relation_geometry.first.bias",
+      "status": "nonzero",
+      "gradient_norm": 4.407723751959081e-12,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "relation_geometry.last.weight",
+      "status": "nonzero",
+      "gradient_norm": 6.5231375856456e-10,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "motion.first.weight",
+      "status": "nonzero",
+      "gradient_norm": 1.1599674962781137e-06,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "motion.first.bias",
+      "status": "nonzero",
+      "gradient_norm": 3.499869535517064e-06,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "motion.last.weight",
+      "status": "nonzero",
+      "gradient_norm": 8.038613259486738e-07,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "motion.last.bias",
+      "status": "nonzero",
+      "gradient_norm": 9.104888704314362e-06,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "native_goal.weight",
+      "status": "nonzero",
+      "gradient_norm": 7.683304405030345e-13,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "native_goal.bias",
+      "status": "nonzero",
+      "gradient_norm": 8.884535468434152e-12,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "nu_projection.weight",
+      "status": "nonzero",
+      "gradient_norm": 0.00020092706836294383,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "nu_projection.bias",
+      "status": "nonzero",
+      "gradient_norm": 0.00010018131433753297,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "bind_query.weight",
+      "status": "nonzero",
+      "gradient_norm": 1.3711503932256619e-08,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "bind_query.bias",
+      "status": "nonzero",
+      "gradient_norm": 5.061958319174664e-08,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "bind_key.rgb.weight",
+      "status": "nonzero",
+      "gradient_norm": 1.3766570994278027e-08,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "bind_key.rgb.bias",
+      "status": "nonzero",
+      "gradient_norm": 3.471165044288682e-08,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "bind_key.audio.weight",
+      "status": "nonzero",
+      "gradient_norm": 3.399201808917951e-09,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "bind_key.audio.bias",
+      "status": "nonzero",
+      "gradient_norm": 7.799086709781022e-09,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "bind_key.proprio.weight",
+      "status": "nonzero",
+      "gradient_norm": 6.416265851960645e-10,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "bind_key.proprio.bias",
+      "status": "nonzero",
+      "gradient_norm": 9.074643259054938e-10,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "bind_key.outcome.weight",
+      "status": "nonzero",
+      "gradient_norm": 5.057243512851528e-09,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "bind_key.outcome.bias",
+      "status": "nonzero",
+      "gradient_norm": 1.1229964513859159e-08,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "bind_value.rgb.weight",
+      "status": "nonzero",
+      "gradient_norm": 9.455397048441228e-06,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "bind_value.rgb.bias",
+      "status": "nonzero",
+      "gradient_norm": 2.401667552476283e-05,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "bind_value.audio.weight",
+      "status": "nonzero",
+      "gradient_norm": 8.568215889681596e-06,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "bind_value.audio.bias",
+      "status": "nonzero",
+      "gradient_norm": 3.220847429474816e-05,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "bind_value.proprio.weight",
+      "status": "nonzero",
+      "gradient_norm": 2.3835676984163e-05,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "bind_value.proprio.bias",
+      "status": "nonzero",
+      "gradient_norm": 3.371123966644518e-05,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "bind_value.outcome.weight",
+      "status": "nonzero",
+      "gradient_norm": 1.445391262677731e-05,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "bind_value.outcome.bias",
+      "status": "nonzero",
+      "gradient_norm": 3.209592978237197e-05,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "null_score.rgb.weight",
+      "status": "nonzero",
+      "gradient_norm": 4.851229959967895e-07,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "null_score.rgb.bias",
+      "status": "nonzero",
+      "gradient_norm": 1.2256348327355227e-06,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "null_score.audio.weight",
+      "status": "nonzero",
+      "gradient_norm": 1.0783436721339967e-07,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "null_score.audio.bias",
+      "status": "nonzero",
+      "gradient_norm": 2.45340856963594e-07,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "null_score.proprio.weight",
+      "status": "nonzero",
+      "gradient_norm": 1.8943376645097487e-08,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "null_score.proprio.bias",
+      "status": "nonzero",
+      "gradient_norm": 2.6791967755457335e-08,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "null_score.outcome.weight",
+      "status": "nonzero",
+      "gradient_norm": 1.579020647568541e-07,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "null_score.outcome.bias",
+      "status": "nonzero",
+      "gradient_norm": 3.506326322622044e-07,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "reliability.rgb.weight",
+      "status": "nonzero",
+      "gradient_norm": 5.444684916255937e-07,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "reliability.rgb.bias",
+      "status": "nonzero",
+      "gradient_norm": 1.393068600918923e-06,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "reliability.audio.weight",
+      "status": "nonzero",
+      "gradient_norm": 8.52886614666204e-08,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "reliability.audio.bias",
+      "status": "nonzero",
+      "gradient_norm": 3.203720382316533e-07,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "reliability.proprio.weight",
+      "status": "nonzero",
+      "gradient_norm": 6.995411467869417e-07,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "reliability.proprio.bias",
+      "status": "nonzero",
+      "gradient_norm": 9.893739161270787e-07,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "reliability.outcome.weight",
+      "status": "nonzero",
+      "gradient_norm": 3.752311172888767e-08,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "reliability.outcome.bias",
+      "status": "nonzero",
+      "gradient_norm": 8.332270340360992e-08,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "corrector.first.weight",
+      "status": "nonzero",
+      "gradient_norm": 0.000888601818587631,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "corrector.first.bias",
+      "status": "nonzero",
+      "gradient_norm": 0.0006999547476880252,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "corrector.last.weight",
+      "status": "nonzero",
+      "gradient_norm": 0.0007117087952792645,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "corrector.last.bias",
+      "status": "nonzero",
+      "gradient_norm": 0.0022693530190736055,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "f_key.weight",
+      "status": "nonzero",
+      "gradient_norm": 4.274888851796277e-07,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "f_key.bias",
+      "status": "nonzero",
+      "gradient_norm": 1.6740564205974806e-06,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "outcome.weight",
+      "status": "nonzero",
+      "gradient_norm": 1.2717385288851801e-05,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "outcome.bias",
+      "status": "nonzero",
+      "gradient_norm": 7.342385288211517e-06,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "f_value.first.weight",
+      "status": "nonzero",
+      "gradient_norm": 5.3960307013767306e-06,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "f_value.first.bias",
+      "status": "nonzero",
+      "gradient_norm": 1.2199547199998051e-05,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "f_value.last.weight",
+      "status": "nonzero",
+      "gradient_norm": 3.85380781153799e-06,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "f_value.last.bias",
+      "status": "nonzero",
+      "gradient_norm": 3.3445256121922284e-05,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "f_beta.first.weight",
+      "status": "nonzero",
+      "gradient_norm": 2.9052205086088634e-09,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "f_beta.first.bias",
+      "status": "nonzero",
+      "gradient_norm": 8.591819700143333e-09,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "f_beta.last.weight",
+      "status": "nonzero",
+      "gradient_norm": 3.394134084899747e-09,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "f_beta.last.bias",
+      "status": "nonzero",
+      "gradient_norm": 2.886775796184793e-08,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "f_alpha.first.weight",
+      "status": "nonzero",
+      "gradient_norm": 1.3246380554943205e-11,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "f_alpha.first.bias",
+      "status": "nonzero",
+      "gradient_norm": 1.2631397316997806e-10,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "f_alpha.last.weight",
+      "status": "nonzero",
+      "gradient_norm": 1.8631927597989595e-11,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "f_alpha.last.bias",
+      "status": "nonzero",
+      "gradient_norm": 3.701416118051526e-10,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "f_chi.first.weight",
+      "status": "nonzero",
+      "gradient_norm": 8.638712523101333e-10,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "f_chi.first.bias",
+      "status": "nonzero",
+      "gradient_norm": 8.238251858472267e-09,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "f_chi.last.weight",
+      "status": "nonzero",
+      "gradient_norm": 1.3357589478957266e-09,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "f_chi.last.bias",
+      "status": "nonzero",
+      "gradient_norm": 2.8755071213026895e-08,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "post_memory.first.weight",
+      "status": "nonzero",
+      "gradient_norm": 5.036915354139637e-06,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "post_memory.first.bias",
+      "status": "nonzero",
+      "gradient_norm": 3.9537717384519055e-05,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "post_memory.last.weight",
+      "status": "nonzero",
+      "gradient_norm": 7.747349627607036e-06,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "post_memory.last.bias",
+      "status": "nonzero",
+      "gradient_norm": 0.0001733797980705276,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "decoder_query.rgb.weight",
+      "status": "nonzero",
+      "gradient_norm": 3.445186193620775e-12,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "decoder_query.rgb.bias",
+      "status": "nonzero",
+      "gradient_norm": 3.182099115456305e-12,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "decoder_query.audio.weight",
+      "status": "nonzero",
+      "gradient_norm": 1.5973136008318178e-11,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "decoder_query.audio.bias",
+      "status": "nonzero",
+      "gradient_norm": 1.1291229236320977e-11,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "decoder_query.proprio.value",
+      "status": "nonzero",
+      "gradient_norm": 8.78757380447584e-14,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "decoder_key.weight",
+      "status": "nonzero",
+      "gradient_norm": 1.1042180191045414e-11,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "decoder_value.weight",
+      "status": "nonzero",
+      "gradient_norm": 5.938729508159213e-09,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "decoder_value.bias",
+      "status": "nonzero",
+      "gradient_norm": 2.568613377551543e-10,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "decoder.rgb.first.weight",
+      "status": "nonzero",
+      "gradient_norm": 1.8689441105834703e-09,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "decoder.rgb.first.bias",
+      "status": "nonzero",
+      "gradient_norm": 4.458153568531742e-10,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "decoder.rgb.last.weight",
+      "status": "nonzero",
+      "gradient_norm": 1.3284738864527412e-09,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "decoder.rgb.last.bias",
+      "status": "nonzero",
+      "gradient_norm": 8.999283540589431e-10,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "decoder.audio.first.weight",
+      "status": "nonzero",
+      "gradient_norm": 1.2658021297795585e-08,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "decoder.audio.first.bias",
+      "status": "nonzero",
+      "gradient_norm": 5.196925112471718e-10,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "decoder.audio.last.weight",
+      "status": "nonzero",
+      "gradient_norm": 1.1736991822886012e-08,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "decoder.audio.last.bias",
+      "status": "nonzero",
+      "gradient_norm": 1.0686912466084664e-09,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "decoder.proprio.first.weight",
+      "status": "nonzero",
+      "gradient_norm": 2.1563981156269563e-10,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "decoder.proprio.first.bias",
+      "status": "nonzero",
+      "gradient_norm": 1.7111010525150405e-11,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "decoder.proprio.last.weight",
+      "status": "nonzero",
+      "gradient_norm": 2.0602183847806543e-10,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "decoder.proprio.last.bias",
+      "status": "nonzero",
+      "gradient_norm": 4.358682859084695e-11,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "joint_readout.first.weight",
+      "status": "nonzero",
+      "gradient_norm": 0.003482523374259472,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "joint_readout.first.bias",
+      "status": "nonzero",
+      "gradient_norm": 0.04157707095146179,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "joint_readout.last.weight",
+      "status": "nonzero",
+      "gradient_norm": 0.007267250679433346,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "joint_readout.last.bias",
+      "status": "nonzero",
+      "gradient_norm": 0.18052446842193604,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "byte_head.weight",
+      "status": "nonzero",
+      "gradient_norm": 0.06756591796875,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "byte_head.bias",
+      "status": "nonzero",
+      "gradient_norm": 0.05506231635808945,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "reward.first.weight",
+      "status": "nonzero",
+      "gradient_norm": 4.2734668885199834e-14,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "reward.first.bias",
+      "status": "nonzero",
+      "gradient_norm": 5.089346112205036e-16,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "reward.last.weight",
+      "status": "nonzero",
+      "gradient_norm": 3.0555880091778787e-14,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "reward.last.bias",
+      "status": "nonzero",
+      "gradient_norm": 1.6316879530530706e-15,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "actor.first.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "actor.first.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "actor.last.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "critic.first.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "critic.first.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "critic.last.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "critic.last.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "record_goal_query.weight",
+      "status": "nonzero",
+      "gradient_norm": 5.491701244864089e-07,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "record_query.weight",
+      "status": "nonzero",
+      "gradient_norm": 0.011662772856652737,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "record_query.bias",
+      "status": "nonzero",
+      "gradient_norm": 0.0038505173288285732,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "record_key.weight",
+      "status": "nonzero",
+      "gradient_norm": 0.0011270028771832585,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "record_position_key.weight",
+      "status": "nonzero",
+      "gradient_norm": 0.008441458456218243,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "record_position_query.weight",
+      "status": "nonzero",
+      "gradient_norm": 0.004018859006464481,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "record_position_query.bias",
+      "status": "nonzero",
+      "gradient_norm": 0.006967737805098295,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "record_null.weight",
+      "status": "nonzero",
+      "gradient_norm": 0.006746416911482811,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "record_null.bias",
+      "status": "nonzero",
+      "gradient_norm": 0.001249660737812519,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "record_value.weight",
+      "status": "nonzero",
+      "gradient_norm": 1.0874857991893805e-07,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "record_value.bias",
+      "status": "nonzero",
+      "gradient_norm": 3.5864800906892924e-07,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "record_output.weight",
+      "status": "nonzero",
+      "gradient_norm": 2.8038277378072962e-05,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "record_output.bias",
+      "status": "nonzero",
+      "gradient_norm": 8.83127431734465e-05,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "copy_gate.weight",
+      "status": "nonzero",
+      "gradient_norm": 0.3543349504470825,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "copy_gate.bias",
+      "status": "nonzero",
+      "gradient_norm": 0.5022480487823486,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "actor_parameters.first.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "actor_parameters.first.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "actor_parameters.last.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "actor_parameters.last.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "development.first.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "development.first.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "development.last.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "development.last.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "record_metadata.weight",
+      "status": "nonzero",
+      "gradient_norm": 0.0017878408543765545,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "record_metadata.bias",
+      "status": "nonzero",
+      "gradient_norm": 0.0017797756008803844,
+      "delta": 0.0
+    },
+    {
+      "loss": "task",
+      "parameter": "record_provenance.weight",
+      "status": "nonzero",
+      "gradient_norm": 0.0005304038641043007,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "modality",
+      "status": "nonzero",
+      "gradient_norm": 0.001997987274080515,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "initial_h",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "initial_p",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "native_w",
+      "status": "nonzero",
+      "gradient_norm": 0.016505546867847443,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "native_r",
+      "status": "nonzero",
+      "gradient_norm": 0.0010680480627343059,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "native_p",
+      "status": "nonzero",
+      "gradient_norm": 0.0005577048868872225,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "native_q",
+      "status": "nonzero",
+      "gradient_norm": 1.968022446396933e-11,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "native_k",
+      "status": "nonzero",
+      "gradient_norm": 1.6331813679215657e-10,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "native_v",
+      "status": "nonzero",
+      "gradient_norm": 2.0225519619998522e-05,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "tau_logit",
+      "status": "nonzero",
+      "gradient_norm": 7.252016803249717e-05,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "background",
+      "status": "nonzero",
+      "gradient_norm": 6.215577602386475,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "start_embedding",
+      "status": "nonzero",
+      "gradient_norm": 2.0016990731619444e-07,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "record_null_value",
+      "status": "nonzero",
+      "gradient_norm": 4.247972810844658e-06,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "coverage_logit",
+      "status": "zero",
+      "gradient_norm": 0.0,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "actor_log_std",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "encoder.rgb.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "encoder.rgb.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "encoder.audio.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "encoder.audio.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "encoder.proprio.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "encoder.proprio.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "metadata.weight",
+      "status": "nonzero",
+      "gradient_norm": 0.001998124411329627,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "metadata.bias",
+      "status": "nonzero",
+      "gradient_norm": 0.001997987274080515,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "embedding.weight",
+      "status": "nonzero",
+      "gradient_norm": 0.00013456075976137072,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "text_input.weight",
+      "status": "nonzero",
+      "gradient_norm": 0.0004960577352903783,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "text_input.bias",
+      "status": "nonzero",
+      "gradient_norm": 0.0018084554467350245,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "convolutions.0.weight",
+      "status": "nonzero",
+      "gradient_norm": 0.000570033909752965,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "convolutions.0.bias",
+      "status": "nonzero",
+      "gradient_norm": 0.001873253146186471,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "convolutions.1.weight",
+      "status": "nonzero",
+      "gradient_norm": 0.0006330627948045731,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "convolutions.1.bias",
+      "status": "nonzero",
+      "gradient_norm": 0.0019261237466707826,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "convolutions.2.weight",
+      "status": "nonzero",
+      "gradient_norm": 0.0006767825107090175,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "convolutions.2.bias",
+      "status": "nonzero",
+      "gradient_norm": 0.001988094998523593,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "goal_score.weight",
+      "status": "nonzero",
+      "gradient_norm": 0.0002010009193327278,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "goal_value.weight",
+      "status": "nonzero",
+      "gradient_norm": 0.0021599684841930866,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "goal_value.bias",
+      "status": "nonzero",
+      "gradient_norm": 0.009742836467921734,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "object_projection.weight",
+      "status": "nonzero",
+      "gradient_norm": 9.37218952178955,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "object_projection.bias",
+      "status": "nonzero",
+      "gradient_norm": 9.610867500305176,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "h_query.weight",
+      "status": "nonzero",
+      "gradient_norm": 2.7169814842409323e-08,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "h_query.bias",
+      "status": "nonzero",
+      "gradient_norm": 3.141762761060818e-07,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "h_key.weight",
+      "status": "nonzero",
+      "gradient_norm": 3.457238761939152e-08,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "h_value.weight",
+      "status": "nonzero",
+      "gradient_norm": 0.0030171633698046207,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "h_value.bias",
+      "status": "nonzero",
+      "gradient_norm": 0.797523558139801,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "o_query.weight",
+      "status": "nonzero",
+      "gradient_norm": 6.547739572759781e-10,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "o_query.bias",
+      "status": "nonzero",
+      "gradient_norm": 2.4461211722837106e-08,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "o_key.weight",
+      "status": "nonzero",
+      "gradient_norm": 2.7169893002110257e-09,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "o_value.weight",
+      "status": "nonzero",
+      "gradient_norm": 0.0001900561765069142,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "o_value.bias",
+      "status": "nonzero",
+      "gradient_norm": 0.0013719445560127497,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "action.weight",
+      "status": "nonzero",
+      "gradient_norm": 0.025798507034778595,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "action.bias",
+      "status": "nonzero",
+      "gradient_norm": 0.018773594871163368,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "f_query.weight",
+      "status": "nonzero",
+      "gradient_norm": 1.012961638480192e-05,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "f_query.bias",
+      "status": "nonzero",
+      "gradient_norm": 2.8016414944431745e-05,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "f_output.weight",
+      "status": "nonzero",
+      "gradient_norm": 1.6877596635822556e-06,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "f_output.bias",
+      "status": "nonzero",
+      "gradient_norm": 0.011752760037779808,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "relation_query.weight",
+      "status": "nonzero",
+      "gradient_norm": 1.1557958856656114e-07,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "relation_query.bias",
+      "status": "nonzero",
+      "gradient_norm": 4.80548521863966e-07,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "relation_key.weight",
+      "status": "nonzero",
+      "gradient_norm": 1.1510827846450411e-07,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "relation_value.weight",
+      "status": "nonzero",
+      "gradient_norm": 0.00032721791649237275,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "relation_value.bias",
+      "status": "nonzero",
+      "gradient_norm": 0.01227032020688057,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "relation_geometry.first.weight",
+      "status": "nonzero",
+      "gradient_norm": 4.968549092154717e-06,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "relation_geometry.first.bias",
+      "status": "nonzero",
+      "gradient_norm": 6.009135233853158e-08,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "relation_geometry.last.weight",
+      "status": "nonzero",
+      "gradient_norm": 9.870244866760913e-06,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "motion.first.weight",
+      "status": "nonzero",
+      "gradient_norm": 0.03877626731991768,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "motion.first.bias",
+      "status": "nonzero",
+      "gradient_norm": 0.11615671962499619,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "motion.last.weight",
+      "status": "nonzero",
+      "gradient_norm": 0.030538445338606834,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "motion.last.bias",
+      "status": "nonzero",
+      "gradient_norm": 0.34497717022895813,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "native_goal.weight",
+      "status": "nonzero",
+      "gradient_norm": 8.832578418660475e-11,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "native_goal.bias",
+      "status": "nonzero",
+      "gradient_norm": 1.0213491163924004e-09,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "nu_projection.weight",
+      "status": "nonzero",
+      "gradient_norm": 0.004500978160649538,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "nu_projection.bias",
+      "status": "nonzero",
+      "gradient_norm": 0.0022487491369247437,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "bind_query.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "bind_query.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "bind_key.rgb.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "bind_key.rgb.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "bind_key.audio.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "bind_key.audio.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "bind_key.proprio.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "bind_key.proprio.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "bind_key.outcome.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "bind_key.outcome.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "bind_value.rgb.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "bind_value.rgb.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "bind_value.audio.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "bind_value.audio.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "bind_value.proprio.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "bind_value.proprio.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "bind_value.outcome.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "bind_value.outcome.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "null_score.rgb.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "null_score.rgb.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "null_score.audio.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "null_score.audio.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "null_score.proprio.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "null_score.proprio.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "null_score.outcome.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "null_score.outcome.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "reliability.rgb.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "reliability.rgb.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "reliability.audio.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "reliability.audio.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "reliability.proprio.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "reliability.proprio.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "reliability.outcome.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "reliability.outcome.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "corrector.first.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "corrector.first.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "corrector.last.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "corrector.last.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "f_key.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "f_key.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "outcome.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "outcome.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "f_value.first.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "f_value.first.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "f_value.last.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "f_value.last.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "f_beta.first.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "f_beta.first.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "f_beta.last.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "f_beta.last.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "f_alpha.first.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "f_alpha.first.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "f_alpha.last.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "f_alpha.last.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "f_chi.first.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "f_chi.first.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "f_chi.last.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "f_chi.last.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "post_memory.first.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "post_memory.first.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "post_memory.last.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "post_memory.last.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "decoder_query.rgb.weight",
+      "status": "nonzero",
+      "gradient_norm": 0.0015913894167169929,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "decoder_query.rgb.bias",
+      "status": "nonzero",
+      "gradient_norm": 0.0013024822110310197,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "decoder_query.audio.weight",
+      "status": "nonzero",
+      "gradient_norm": 0.0008990619098767638,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "decoder_query.audio.bias",
+      "status": "nonzero",
+      "gradient_norm": 0.0005952615174464881,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "decoder_query.proprio.value",
+      "status": "nonzero",
+      "gradient_norm": 0.00017094577196985483,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "decoder_key.weight",
+      "status": "nonzero",
+      "gradient_norm": 0.0016205330612137914,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "decoder_value.weight",
+      "status": "nonzero",
+      "gradient_norm": 7.25980281829834,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "decoder_value.bias",
+      "status": "nonzero",
+      "gradient_norm": 52.55671691894531,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "decoder.rgb.first.weight",
+      "status": "nonzero",
+      "gradient_norm": 44.818748474121094,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "decoder.rgb.first.bias",
+      "status": "nonzero",
+      "gradient_norm": 37.29103088378906,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "decoder.rgb.last.weight",
+      "status": "nonzero",
+      "gradient_norm": 36.97276306152344,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "decoder.rgb.last.bias",
+      "status": "nonzero",
+      "gradient_norm": 107.52426147460938,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "decoder.audio.first.weight",
+      "status": "nonzero",
+      "gradient_norm": 369.0462646484375,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "decoder.audio.first.bias",
+      "status": "nonzero",
+      "gradient_norm": 260.6901550292969,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "decoder.audio.last.weight",
+      "status": "nonzero",
+      "gradient_norm": 435.8172607421875,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "decoder.audio.last.bias",
+      "status": "nonzero",
+      "gradient_norm": 1002.9752807617188,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "decoder.proprio.first.weight",
+      "status": "nonzero",
+      "gradient_norm": 0.30950623750686646,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "decoder.proprio.first.bias",
+      "status": "nonzero",
+      "gradient_norm": 4.433453559875488,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "decoder.proprio.last.weight",
+      "status": "nonzero",
+      "gradient_norm": 0.7648316621780396,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "decoder.proprio.last.bias",
+      "status": "nonzero",
+      "gradient_norm": 16.348459243774414,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "joint_readout.first.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "joint_readout.first.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "joint_readout.last.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "joint_readout.last.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "byte_head.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "byte_head.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "reward.first.weight",
+      "status": "nonzero",
+      "gradient_norm": 0.8808492422103882,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "reward.first.bias",
+      "status": "nonzero",
+      "gradient_norm": 0.6408736109733582,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "reward.last.weight",
+      "status": "nonzero",
+      "gradient_norm": 0.6635820269584656,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "reward.last.bias",
+      "status": "nonzero",
+      "gradient_norm": 1.912691354751587,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "actor.first.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "actor.first.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "actor.last.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "critic.first.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "critic.first.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "critic.last.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "critic.last.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "record_goal_query.weight",
+      "status": "nonzero",
+      "gradient_norm": 9.680589663219052e-11,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "record_query.weight",
+      "status": "nonzero",
+      "gradient_norm": 1.6148129589055316e-07,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "record_query.bias",
+      "status": "nonzero",
+      "gradient_norm": 7.641117463208502e-07,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "record_key.weight",
+      "status": "nonzero",
+      "gradient_norm": 4.718303259210188e-08,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "record_position_key.weight",
+      "status": "nonzero",
+      "gradient_norm": 6.066494506740128e-08,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "record_position_query.weight",
+      "status": "nonzero",
+      "gradient_norm": 2.627573358893187e-08,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "record_position_query.bias",
+      "status": "nonzero",
+      "gradient_norm": 5.3540862410272894e-08,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "record_null.weight",
+      "status": "nonzero",
+      "gradient_norm": 4.2430994540154643e-07,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "record_null.bias",
+      "status": "nonzero",
+      "gradient_norm": 1.1357988114468753e-06,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "record_value.weight",
+      "status": "nonzero",
+      "gradient_norm": 2.9222378543636296e-06,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "record_value.bias",
+      "status": "nonzero",
+      "gradient_norm": 9.542870429868344e-06,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "record_output.weight",
+      "status": "nonzero",
+      "gradient_norm": 0.0006370467017404735,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "record_output.bias",
+      "status": "nonzero",
+      "gradient_norm": 0.0020199075806885958,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "copy_gate.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "copy_gate.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "actor_parameters.first.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "actor_parameters.first.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "actor_parameters.last.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "actor_parameters.last.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "development.first.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "development.first.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "development.last.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "development.last.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "record_metadata.weight",
+      "status": "nonzero",
+      "gradient_norm": 5.473788405652158e-06,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "record_metadata.bias",
+      "status": "nonzero",
+      "gradient_norm": 5.46728460903978e-06,
+      "delta": 0.0
+    },
+    {
+      "loss": "predictive",
+      "parameter": "record_provenance.weight",
+      "status": "nonzero",
+      "gradient_norm": 1.6293452063109726e-06,
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "modality",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "initial_h",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "initial_p",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "native_w",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "native_r",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "native_p",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "native_q",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "native_k",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "native_v",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "tau_logit",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "background",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "start_embedding",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "record_null_value",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "coverage_logit",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "actor_log_std",
+      "status": "nonzero",
+      "gradient_norm": 0.018394984304904938,
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "encoder.rgb.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "encoder.rgb.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "encoder.audio.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "encoder.audio.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "encoder.proprio.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "encoder.proprio.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "metadata.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "metadata.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "embedding.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "text_input.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "text_input.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "convolutions.0.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "convolutions.0.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "convolutions.1.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "convolutions.1.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "convolutions.2.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "convolutions.2.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "goal_score.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "goal_value.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "goal_value.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "object_projection.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "object_projection.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "h_query.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "h_query.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "h_key.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "h_value.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "h_value.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "o_query.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "o_query.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "o_key.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "o_value.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "o_value.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "action.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "action.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "f_query.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "f_query.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "f_output.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "f_output.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "relation_query.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "relation_query.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "relation_key.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "relation_value.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "relation_value.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "relation_geometry.first.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "relation_geometry.first.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "relation_geometry.last.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "motion.first.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "motion.first.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "motion.last.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "motion.last.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "native_goal.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "native_goal.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "nu_projection.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "nu_projection.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "bind_query.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "bind_query.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "bind_key.rgb.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "bind_key.rgb.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "bind_key.audio.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "bind_key.audio.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "bind_key.proprio.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "bind_key.proprio.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "bind_key.outcome.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "bind_key.outcome.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "bind_value.rgb.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "bind_value.rgb.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "bind_value.audio.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "bind_value.audio.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "bind_value.proprio.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "bind_value.proprio.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "bind_value.outcome.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "bind_value.outcome.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "null_score.rgb.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "null_score.rgb.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "null_score.audio.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "null_score.audio.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "null_score.proprio.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "null_score.proprio.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "null_score.outcome.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "null_score.outcome.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "reliability.rgb.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "reliability.rgb.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "reliability.audio.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "reliability.audio.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "reliability.proprio.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "reliability.proprio.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "reliability.outcome.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "reliability.outcome.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "corrector.first.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "corrector.first.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "corrector.last.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "corrector.last.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "f_key.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "f_key.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "outcome.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "outcome.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "f_value.first.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "f_value.first.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "f_value.last.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "f_value.last.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "f_beta.first.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "f_beta.first.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "f_beta.last.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "f_beta.last.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "f_alpha.first.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "f_alpha.first.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "f_alpha.last.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "f_alpha.last.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "f_chi.first.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "f_chi.first.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "f_chi.last.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "f_chi.last.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "post_memory.first.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "post_memory.first.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "post_memory.last.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "post_memory.last.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "decoder_query.rgb.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "decoder_query.rgb.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "decoder_query.audio.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "decoder_query.audio.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "decoder_query.proprio.value",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "decoder_key.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "decoder_value.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "decoder_value.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "decoder.rgb.first.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "decoder.rgb.first.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "decoder.rgb.last.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "decoder.rgb.last.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "decoder.audio.first.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "decoder.audio.first.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "decoder.audio.last.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "decoder.audio.last.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "decoder.proprio.first.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "decoder.proprio.first.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "decoder.proprio.last.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "decoder.proprio.last.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "joint_readout.first.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "joint_readout.first.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "joint_readout.last.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "joint_readout.last.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "byte_head.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "byte_head.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "reward.first.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "reward.first.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "reward.last.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "reward.last.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "actor.first.weight",
+      "status": "zero",
+      "gradient_norm": 0.0,
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "actor.first.bias",
+      "status": "zero",
+      "gradient_norm": 0.0,
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "actor.last.weight",
+      "status": "zero",
+      "gradient_norm": 0.0,
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "critic.first.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "critic.first.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "critic.last.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "critic.last.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "record_goal_query.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "record_query.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "record_query.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "record_key.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "record_position_key.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "record_position_query.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "record_position_query.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "record_null.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "record_null.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "record_value.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "record_value.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "record_output.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "record_output.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "copy_gate.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "copy_gate.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "actor_parameters.first.weight",
+      "status": "nonzero",
+      "gradient_norm": 0.0016694886144250631,
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "actor_parameters.first.bias",
+      "status": "nonzero",
+      "gradient_norm": 0.01819309964776039,
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "actor_parameters.last.weight",
+      "status": "nonzero",
+      "gradient_norm": 0.026729751378297806,
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "actor_parameters.last.bias",
+      "status": "nonzero",
+      "gradient_norm": 0.050180282443761826,
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "development.first.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "development.first.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "development.last.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "development.last.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "record_metadata.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "record_metadata.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "actor",
+      "parameter": "record_provenance.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "modality",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "initial_h",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "initial_p",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "native_w",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "native_r",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "native_p",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "native_q",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "native_k",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "native_v",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "tau_logit",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "background",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "start_embedding",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "record_null_value",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "coverage_logit",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "actor_log_std",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "encoder.rgb.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "encoder.rgb.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "encoder.audio.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "encoder.audio.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "encoder.proprio.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "encoder.proprio.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "metadata.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "metadata.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "embedding.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "text_input.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "text_input.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "convolutions.0.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "convolutions.0.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "convolutions.1.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "convolutions.1.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "convolutions.2.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "convolutions.2.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "goal_score.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "goal_value.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "goal_value.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "object_projection.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "object_projection.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "h_query.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "h_query.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "h_key.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "h_value.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "h_value.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "o_query.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "o_query.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "o_key.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "o_value.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "o_value.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "action.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "action.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "f_query.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "f_query.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "f_output.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "f_output.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "relation_query.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "relation_query.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "relation_key.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "relation_value.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "relation_value.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "relation_geometry.first.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "relation_geometry.first.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "relation_geometry.last.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "motion.first.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "motion.first.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "motion.last.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "motion.last.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "native_goal.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "native_goal.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "nu_projection.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "nu_projection.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "bind_query.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "bind_query.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "bind_key.rgb.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "bind_key.rgb.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "bind_key.audio.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "bind_key.audio.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "bind_key.proprio.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "bind_key.proprio.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "bind_key.outcome.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "bind_key.outcome.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "bind_value.rgb.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "bind_value.rgb.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "bind_value.audio.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "bind_value.audio.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "bind_value.proprio.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "bind_value.proprio.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "bind_value.outcome.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "bind_value.outcome.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "null_score.rgb.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "null_score.rgb.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "null_score.audio.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "null_score.audio.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "null_score.proprio.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "null_score.proprio.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "null_score.outcome.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "null_score.outcome.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "reliability.rgb.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "reliability.rgb.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "reliability.audio.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "reliability.audio.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "reliability.proprio.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "reliability.proprio.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "reliability.outcome.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "reliability.outcome.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "corrector.first.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "corrector.first.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "corrector.last.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "corrector.last.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "f_key.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "f_key.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "outcome.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "outcome.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "f_value.first.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "f_value.first.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "f_value.last.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "f_value.last.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "f_beta.first.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "f_beta.first.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "f_beta.last.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "f_beta.last.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "f_alpha.first.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "f_alpha.first.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "f_alpha.last.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "f_alpha.last.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "f_chi.first.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "f_chi.first.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "f_chi.last.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "f_chi.last.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "post_memory.first.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "post_memory.first.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "post_memory.last.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "post_memory.last.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "decoder_query.rgb.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "decoder_query.rgb.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "decoder_query.audio.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "decoder_query.audio.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "decoder_query.proprio.value",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "decoder_key.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "decoder_value.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "decoder_value.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "decoder.rgb.first.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "decoder.rgb.first.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "decoder.rgb.last.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "decoder.rgb.last.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "decoder.audio.first.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "decoder.audio.first.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "decoder.audio.last.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "decoder.audio.last.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "decoder.proprio.first.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "decoder.proprio.first.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "decoder.proprio.last.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "decoder.proprio.last.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "joint_readout.first.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "joint_readout.first.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "joint_readout.last.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "joint_readout.last.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "byte_head.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "byte_head.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "reward.first.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "reward.first.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "reward.last.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "reward.last.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "actor.first.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "actor.first.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "actor.last.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "critic.first.weight",
+      "status": "nonzero",
+      "gradient_norm": 0.0005195557605475187,
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "critic.first.bias",
+      "status": "nonzero",
+      "gradient_norm": 0.005661811213940382,
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "critic.last.weight",
+      "status": "nonzero",
+      "gradient_norm": 0.000823420996312052,
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "critic.last.bias",
+      "status": "nonzero",
+      "gradient_norm": 0.01962590590119362,
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "record_goal_query.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "record_query.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "record_query.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "record_key.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "record_position_key.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "record_position_query.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "record_position_query.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "record_null.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "record_null.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "record_value.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "record_value.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "record_output.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "record_output.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "copy_gate.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "copy_gate.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "actor_parameters.first.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "actor_parameters.first.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "actor_parameters.last.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "actor_parameters.last.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "development.first.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "development.first.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "development.last.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "development.last.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "record_metadata.weight",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "record_metadata.bias",
+      "status": "unused",
+      "delta": 0.0
+    },
+    {
+      "loss": "critic",
+      "parameter": "record_provenance.weight",
+      "status": "unused",
+      "delta": 0.0
+    }
+  ],
+  "max_abs_gradient_delta": 0.0,
+  "optimizer_step_calls": 0,
+  "cpu_seconds": 7.4375,
+  "wall_seconds": 8.65600000001723,
+  "run_conditions": {
+    "threads": 1,
+    "interop_threads": 12,
+    "device": "cpu",
+    "dtype": "torch.float32",
+    "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+    "torch": "2.13.0+cpu",
+    "environment": {
+      "OMP_NUM_THREADS": null,
+      "MKL_NUM_THREADS": null,
+      "OPENBLAS_NUM_THREADS": null
+    }
+  }
+}

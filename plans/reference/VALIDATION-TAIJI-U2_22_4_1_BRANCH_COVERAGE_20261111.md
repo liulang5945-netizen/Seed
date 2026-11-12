@@ -88,6 +88,23 @@
 | 69 | R05-u2 线程数：只记录、不判假（`threads≠1` 不得拒绝） | 已覆盖 | `u2_r05_threads_recorded_not_judged`（实测 `threads=4` 仍通过，读数原样记录） |
 | 70 | R06 正向：准入 u2 行 `precision` 与 run 逐字一致时**放行**（F-20261112-E2E-01 改实的见证） | 已覆盖 | `u2_bound_r06_real_precision_accepted`（读真实准入文件与 u2 绑定副本，`consumed=0`，pass；判据代码未动） |
 
+### 3a. 2026-11-12启动与零步恢复补充
+
+| # | 分支 | 覆盖 | 覆盖者／未覆盖原因与风险 |
+|---|---|---|---|
+| 71 | 显式合同创建并再次绑定同一run | 已覆盖 | `test_selected_contract_binds_new_run` |
+| 72 | 显式合同遇到其他run_id拒绝复用根 | 已覆盖 | `test_selected_contract_rejects_reused_root`，原run字节保留 |
+| 73 | 默认绑定保持u1草稿行为 | 已覆盖 | `test_default_binding_preserves_u1` |
+| 74 | CLI将`--run-contract`传递到执行器 | 已覆盖 | `test_cli_passes_selected_contract`及正式u2运行 |
+| 75 | 无迁移条件核对元数据图与实际宽度 | 已覆盖 | `test_dense_metadata_graph_accepts_no_migration`、`test_original_graph_cannot_substitute_metadata_graph`及u3/u4实际恢复 |
+| 76 | 梯度比较包含unused与零参数 | 已覆盖 | `test_comparison_includes_unused_and_zero_parameters`及776项实际比较 |
+| 77 | 单参数微小梯度漂移被拒绝 | 已覆盖 | `test_comparison_rejects_small_parameter_credit_change` |
+| 78 | source pin路径缺失于open前退出 | 已覆盖 | `no_migration_preopen_failure_20261112`保留v1失败，v2全部16项source pin通过 |
+| 79 | u3/u4两名额按顺序关闭、独立进程接续一致 | 已覆盖 | `no_migration_summary_20261112`，5行账本、0 optimizer step、194×4逐参数比较 |
+| 80 | CLI仅给`--run-contract`而缺`--run` | 未覆盖 | 新增argparse退出分支，风险低；启动参数错误时在模型与账本之前退出 |
+
+本轮相关回归124项通过，原未覆盖18行与新增#80仍明确登记，合计19行。源码路径失败发生在计费前。u2与u3/u4真实结果及历史u1限制归[22.4.1结案](VALIDATION-TAIJI-U2_22_4_1_CLOSEOUT_20261112.md)。
+
 ## 4. 未覆盖项的合计风险
 
 高风险未覆盖项只剩"账本根信任"#23（手改任意一行）：只能靠独立复算兜底，注入断链会污染真账本，故不在自检内做。原 #10（R06 帽/精度/步数）与 #25（额度闸门）均已覆盖（#25 与 #10 分别见 D-20261111-14／D-20261111-15）。臂参数化（D-20261111-18）新增 #48–#53 六行、臂行回填（D-20261111-19）新增 #54、执行图改基线（D-20261111-20）新增 #55–#58 四行、一步执行路径接入（D-20261111-21）新增 #59–#64 六行并删除 #58 的分支（留痕不计数）、R05-u2 父身份口径接入（D-20261112-23）新增 #65–#69 五行。当前共 **69 行**（含 1 行已删除留痕），未覆盖 **18 行**、另有 **2 行不可达**（#20 群单元扩展、#22 中 R10 自身文案分支），全部是"要真跑、要造故障或要篡改账本"才能触发的分支。

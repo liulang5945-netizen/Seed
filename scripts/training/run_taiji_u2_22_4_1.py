@@ -1,4 +1,4 @@
-"""Run or self-check the single owner-authorized u1 22.4.1 engineering attempt."""
+"""Run or self-check one frozen 22.4.1 engineering attempt."""
 
 from __future__ import annotations
 
@@ -350,12 +350,12 @@ def close_receipt_guard(ledger: AttemptLedger, identity: str, s12_path: Path) ->
             raise LedgerError(f"the S12 receipt has no measured {field}")
 
 
-def bind_run(run_path: Path) -> dict[str, Any]:
+def bind_run(run_path: Path, *, contract_path: Path | None = None) -> dict[str, Any]:
     """同一 run_root 只允许绑定一份 run.json；第二个 run 复用必须被拒绝。"""
+    draft = load_json(contract_path or DRAFT)
     if not run_path.exists():
-        write_once(run_path, load_json(DRAFT))
+        write_once(run_path, draft)
     run = load_json(run_path)
-    draft = load_json(DRAFT)
     if run["run_id"] != draft["run_id"]:
         raise BudgetError(
             f"the run root already holds run_id={run['run_id']}, "
@@ -370,14 +370,14 @@ def worker_gate(returncode: int, report: dict[str, Any] | None, stderr: str) -> 
         raise BudgetError(f"the independent S12 worker did not pass: {returncode} {stderr[-400:]}")
 
 
-def execute(root: Path) -> dict[str, Any]:
+def execute(root: Path, *, contract_path: Path | None = None) -> dict[str, Any]:
     check_selfcheck_gate()
     torch.set_num_threads(1)
     started, wall = time.process_time(), time.monotonic()
     root = root.resolve()
     root.mkdir(parents=True, exist_ok=True)
     run_path = root / "run.json"
-    run = bind_run(run_path)
+    run = bind_run(run_path, contract_path=contract_path)
     checks: list[dict[str, Any]] = []
     checks.append(check_r01(run, root.name))
     checks.append(check_r02(run))
@@ -1732,11 +1732,14 @@ def self_check(directory: Path) -> dict[str, Any]:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--run-root")
+    parser.add_argument("--run-contract", type=Path)
     parser.add_argument("--run", action="store_true")
     parser.add_argument("--self-check", action="store_true")
     args = parser.parse_args(argv)
     if args.run and args.self_check:
         parser.error("choose --run or --self-check, not both")
+    if args.run_contract and not args.run:
+        parser.error("--run-contract requires --run")
     try:
         if args.self_check:
             report = self_check(SELFCHECK.parent)
@@ -1745,7 +1748,10 @@ def main(argv: list[str] | None = None) -> int:
         if args.run:
             if not args.run_root:
                 raise BudgetError("--run requires --run-root")
-            summary = execute(Path(args.run_root))
+            if args.run_contract:
+                summary = execute(Path(args.run_root), contract_path=args.run_contract)
+            else:
+                summary = execute(Path(args.run_root))
             print(json.dumps(summary, ensure_ascii=False, indent=2))
             return 0
     except LedgerError as error:

@@ -1,0 +1,271 @@
+{
+  "schema": "taiji-u2-22.4.1-closeout-v1",
+  "verdict": "passed_engineering_with_recorded_limits",
+  "created_at": "2026-11-12T01:28:37.302152+00:00",
+  "card": "22.4.1",
+  "accepted_scope": [
+    "metadata entry and per-group structural interface, as frozen in the prior zero-update receipt",
+    "u2 frozen Transformer initialization: one accepted Adam update, checkpoint roundtrip and 35 independent Adam equation checks",
+    "u1 accepted durable post: 194-parameter full state/history/moment restore and bitwise-equal legal continuation across processes"
+  ],
+  "quota": {
+    "original_slot_cap": 4,
+    "standing_delegation_extra_slot": 1,
+    "effective_slot_cap": 5,
+    "slots_consumed": 5,
+    "slots_remaining": 0,
+    "recorded_optimizer_step_calls": 3,
+    "accepted_optimizer_updates": 2,
+    "rejected_attempt_recorded_calls": 1,
+    "zero_step_recovery_slots": 2,
+    "this_turn_optimizer_calls": 1,
+    "formal_training_updates": 0,
+    "evidence_only_additional_calls": 1,
+    "evidence_only_reference": "reports/taiji_u2_22_4_1_end_to_end_evidence_20261112.json",
+    "counting_note": "The historical rejected u1 attempt records one step call and has no accepted post. Evidence-only sandbox has its own extra physical step and is listed separately."
+  },
+  "ledgers": [
+    {
+      "path": "reports/taiji_u2_22_4_1_attempts_20261111T140217Z.ndjson",
+      "sha256": "bf0c9a0ad4b2604a08f79d828d7c4836c7b7a65b2e89a0cb6807974174d2497f",
+      "rows": 3,
+      "slots_consumed": 1,
+      "hash_chain_valid": true,
+      "closed": [
+        {
+          "attempt_id": "u1-candidate-float32",
+          "outcome": "rejected",
+          "optimizer_step_calls": 1,
+          "s12_sha256": null,
+          "receipt_sha256": null
+        }
+      ]
+    },
+    {
+      "path": "reports/taiji_u2_22_4_1_attempts_20261111T142919Z.ndjson",
+      "sha256": "c6e5d57cd9581b5f0ab1ee1ead2338caec157112a276ada252a3c55e93fbf1c4",
+      "rows": 4,
+      "slots_consumed": 1,
+      "hash_chain_valid": true,
+      "closed": [
+        {
+          "attempt_id": "u1-candidate-float32",
+          "outcome": "accepted",
+          "optimizer_step_calls": 1,
+          "s12_sha256": null,
+          "receipt_sha256": null
+        }
+      ]
+    },
+    {
+      "path": "reports/taiji_u2_22_4_1_attempts_20261112T011320Z.ndjson",
+      "sha256": "31b8eb3b3b57e67e4ea6bb5b173e3ed2f4e2f3af0d791903c700d78a284dddba",
+      "rows": 3,
+      "slots_consumed": 1,
+      "hash_chain_valid": true,
+      "closed": [
+        {
+          "attempt_id": "u2-strong-baseline",
+          "outcome": "accepted",
+          "optimizer_step_calls": 1,
+          "s12_sha256": "a4979ba08e3bd8fa2b0d99a0fb9cad2dee3d457e83ed38b56d0ef53981d84a4a",
+          "receipt_sha256": null
+        }
+      ]
+    },
+    {
+      "path": "reports/taiji_u2_22_4_1_attempts_20261112T012109Z_recovery.ndjson",
+      "sha256": "61a16fbfc3b8220d70dfbe1b58a4d586a493b4718378d4e9b1f22e9948c5cfb9",
+      "rows": 5,
+      "slots_consumed": 2,
+      "hash_chain_valid": true,
+      "closed": [
+        {
+          "attempt_id": "u3-migration-original",
+          "outcome": "accepted",
+          "optimizer_step_calls": 0,
+          "s12_sha256": null,
+          "receipt_sha256": "626397a6acc1d63093166dca655d789da4d8cadce767ecd5785e621d8b65fb23"
+        },
+        {
+          "attempt_id": "u4-migration-recovery",
+          "outcome": "accepted",
+          "optimizer_step_calls": 0,
+          "s12_sha256": null,
+          "receipt_sha256": "15f30e763a1deb0420b3b275830b77c4478bd118adacf6d6acfa60a6f02ed08e"
+        }
+      ]
+    }
+  ],
+  "u2": {
+    "parameter_tensors": 35,
+    "adam_equations_verified": 35,
+    "min_activity_margin": 99997.96748161316,
+    "barely_live_parameters": [],
+    "cpu_seconds": 4.953125,
+    "wall_seconds": 9.437999999965541,
+    "within_cap": true
+  },
+  "recovery": {
+    "conversion": "no_migration_rule",
+    "actual_group_widths": [
+      12,
+      12
+    ],
+    "parent_revision": 2,
+    "parameter_tensors": 194,
+    "per_loss_credit": [
+      {
+        "loss": "task",
+        "parameters": 194,
+        "nonzero": 176,
+        "zero": 0,
+        "unused": 18,
+        "max_abs_delta": 0.0
+      },
+      {
+        "loss": "predictive",
+        "parameters": 194,
+        "nonzero": 99,
+        "zero": 1,
+        "unused": 94,
+        "max_abs_delta": 0.0
+      },
+      {
+        "loss": "actor",
+        "parameters": 194,
+        "nonzero": 5,
+        "zero": 3,
+        "unused": 186,
+        "max_abs_delta": 0.0
+      },
+      {
+        "loss": "critic",
+        "parameters": 194,
+        "nonzero": 4,
+        "zero": 0,
+        "unused": 190,
+        "max_abs_delta": 0.0
+      }
+    ],
+    "compared_gradient_rows": 776,
+    "max_abs_gradient_delta": 0.0,
+    "u3_cpu_seconds": 6.78125,
+    "u4_cpu_seconds": 7.4375,
+    "optimizer_step_calls": 0,
+    "parent_side": "Durable u1 post restored in the parent process",
+    "child_side": "Independent Python process restored from u3 checkpoint"
+  },
+  "regression": {
+    "passed": 124,
+    "wall_seconds": 21.26,
+    "optimizer_step_calls": 0,
+    "driver_selfcheck_cases": 62,
+    "driver_selfcheck_optimizer_calls": 0
+  },
+  "resource_account": {
+    "unit": "CPU seconds",
+    "prior_u1_two_attempts": {
+      "value": 24,
+      "measured": false,
+      "basis": "D-20261111-14 derived upper bound 12 seconds per attempt"
+    },
+    "current_u2": 4.953125,
+    "current_recovery_total": 14.234375,
+    "attempt_account_total": 43.1875,
+    "attempt_cpu_cap": 300,
+    "launch_precheck_cpu_seconds": 2.125,
+    "selfcheck_cpu_seconds": 3.078125,
+    "cost_scope": "Attempt accounting combines the accepted historical derived bound with current measurements. Preflight, tests and evidence-only runs have separate provenance. Full phase pricing is handled by 22.4.4."
+  },
+  "preopen_failure": {
+    "count": 1,
+    "slots_consumed": 0,
+    "report": "reports/taiji_u2_22_4_1_no_migration_preopen_failure_20261112.json",
+    "repair": "Source paths normalized in v2 before any recovery ledger open"
+  },
+  "limitations": [
+    "Capability qualifications remain empty; task learning, retention, autonomous choice and mature growth await their own comparisons.",
+    "Accepted recovery scope is small float32. Other profiles and live old-process continuity require their own evidence.",
+    "The historical u1 accepted S12 was reconstructed after the fact and its measured CPU/wall fields remain unavailable.",
+    "Group-local birth has zero-update interface evidence. This card used the frozen no-migration conversion."
+  ],
+  "data_reads": {
+    "project_corpus": 0,
+    "check": 0,
+    "final": 0,
+    "confirm": 0,
+    "sealed": 0
+  },
+  "model_equations_changed": false,
+  "capability_qualifications": [],
+  "next_card": "22.4.2",
+  "next_action": "Freeze the continuous physical-world and sensor/executor contract, then implement legal observations and deterministic recovery microfixtures.",
+  "run_conditions": {
+    "threads": 1,
+    "interop_threads": 12,
+    "device": "cpu",
+    "dtype": "torch.float32",
+    "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+    "torch": "2.13.0+cpu",
+    "environment": {
+      "OMP_NUM_THREADS": null,
+      "MKL_NUM_THREADS": null,
+      "OPENBLAS_NUM_THREADS": null
+    }
+  },
+  "references": [
+    {
+      "path": "plans/manifests/taiji_u2_22_4_1_u2_run_20261112.json",
+      "sha256": "3c833507c7d9682de08cbd5b0dbe3d2a857fffd92af9a5833e59bc2d4329f2f2"
+    },
+    {
+      "path": "plans/manifests/taiji_u2_22_4_1_no_migration_20261112.json",
+      "sha256": "7eb30554023310b7ae1c031c08ee07360e6911488e876d93875cd7307e937278"
+    },
+    {
+      "path": "plans/manifests/taiji_u2_22_4_1_no_migration_20261112_v2.json",
+      "sha256": "623668f8db4cd4cf913237ae159f6c967f0ee212c437f7889d464c75058ba31f"
+    },
+    {
+      "path": "reports/taiji_u2_metadata_groups_22_4_20261111.json",
+      "sha256": "275291d812799ce509d81b903eb0f17eb2d54c392a9cf1bb0fd9f7491688b2d8"
+    },
+    {
+      "path": "reports/taiji_u2_22_4_1_u2_launch_precheck_20261112.json",
+      "sha256": "b11008c71ec644a6746339131b59de40f5e576c5c352a7dd3a51643216370286"
+    },
+    {
+      "path": "reports/taiji_u2_22_4_1_no_migration_preopen_failure_20261112.json",
+      "sha256": "996e4054722b5ec65a5f1910dfc3e77b29d19c0ecbd356a068f72c01a2d28f6f"
+    },
+    {
+      "path": "reports/taiji_u2_22_4_1_s12_20261112T011320Z_u2-strong-baseline.json",
+      "sha256": "a4979ba08e3bd8fa2b0d99a0fb9cad2dee3d457e83ed38b56d0ef53981d84a4a"
+    },
+    {
+      "path": "reports/taiji_u2_22_4_1_s12_20261112T011320Z_u2-strong-baseline_worker.json",
+      "sha256": "0adabdae244336f49a6fbc4642aba2dbcfe44c177e03462e57e249d00f6c21a9"
+    },
+    {
+      "path": "reports/taiji_u2_22_4_1_u2_execution_20261112.json",
+      "sha256": "c1fb725ad2986d053335c0bda7d5a4df4b33fd137beb8df053935fc49b585157"
+    },
+    {
+      "path": "reports/taiji_u2_22_4_1_u3_no_migration_20261112.json",
+      "sha256": "626397a6acc1d63093166dca655d789da4d8cadce767ecd5785e621d8b65fb23"
+    },
+    {
+      "path": "reports/taiji_u2_22_4_1_u4_no_migration_20261112.json",
+      "sha256": "15f30e763a1deb0420b3b275830b77c4478bd118adacf6d6acfa60a6f02ed08e"
+    },
+    {
+      "path": "reports/taiji_u2_22_4_1_u4_no_migration_worker_20261112.json",
+      "sha256": "b5dca074b963574c7f3924a03173e8e423adb3a4202f88c99edae8b9909a5a53"
+    },
+    {
+      "path": "reports/taiji_u2_22_4_1_no_migration_summary_20261112.json",
+      "sha256": "d51db502c615948c3d5e8f62bdc9916dc6a0aed4be540808740b0f9424fec92d"
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "schema": "taiji-u2-22.4.1-no-migration-summary-v1",
+  "verdict": "passed_no_migration_zero_step_recovery",
+  "contract": "plans\\manifests\\taiji_u2_22_4_1_no_migration_20261112_v2.json",
+  "contract_sha256": "623668f8db4cd4cf913237ae159f6c967f0ee212c437f7889d464c75058ba31f",
+  "parent": {
+    "checkpoint": "output/taiji_u2_22_4_1_20261111T142919Z/post.bin",
+    "checkpoint_sha256": "14f1a6444c2f878432506b1b15d783138041fcc9edecd171ecf2cf288a8156ac",
+    "fingerprint": {
+      "state_sha256": "ab97032435e8474a8e3f6fd75faa0cfeaff3f6c3617aa621c4eaae580c38ac60",
+      "parameter_sha256": "226f13c214caf170a82866b62e5ff9fb42615fd303edfc95059a3c0c3167e283",
+      "moment_sha256": "720225803d23ea51a0cf4fc4aa3ac1136f7025856b9a0f8cae33f828a7a477ef",
+      "history_reference": {
+        "entries": 9,
+        "head": "3468d5129d4a2bbf107282d1b9cef2be823ca61bb7fc3d254ddbb07fff575384"
+      },
+      "revision": 2
+    },
+    "actual_group_units": null,
+    "actual_group_widths": [
+      12,
+      12
+    ],
+    "parameter_tensors": 194
+  },
+  "actual_group_widths": [
+    12,
+    12
+  ],
+  "slots_consumed": 2,
+  "ledger_rows": 5,
+  "ledger": "reports/taiji_u2_22_4_1_attempts_20261112T012109Z_recovery.ndjson",
+  "ledger_head": "390db0b74249a1bc9518a2030aa4d864b9d90e909004367c96d56535f1a3df8e",
+  "optimizer_step_calls": 0,
+  "compared_parameters": 194,
+  "compared_losses": [
+    "task",
+    "predictive",
+    "actor",
+    "critic"
+  ],
+  "max_abs_gradient_delta": 0.0,
+  "cpu_seconds": 14.234375,
+  "wall_seconds": 16.31199999997625,
+  "run_conditions": {
+    "threads": 1,
+    "interop_threads": 12,
+    "device": "cpu",
+    "dtype": "torch.float32",
+    "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+    "torch": "2.13.0+cpu",
+    "environment": {
+      "OMP_NUM_THREADS": null,
+      "MKL_NUM_THREADS": null,
+      "OPENBLAS_NUM_THREADS": null
+    }
+  },
+  "capability_qualifications": [],
+  "scope": "Parent side is a restored durable u1 checkpoint. No live old process, new growth, optimizer update or task learning is certified."
+}

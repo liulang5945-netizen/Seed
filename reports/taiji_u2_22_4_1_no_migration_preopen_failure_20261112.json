@@ -1,0 +1,19 @@
+{
+  "schema": "taiji-u2-22.4.1-preopen-source-failure-v1",
+  "verdict": "engineering_failure_before_open",
+  "contract": "plans/manifests/taiji_u2_22_4_1_no_migration_20261112.json",
+  "contract_sha256": "7eb30554023310b7ae1c031c08ee07360e6911488e876d93875cd7307e937278",
+  "error": "Runtime basename source pins were resolved against repository root, missing taiji/ prefix.",
+  "first_missing_path": "u2_recovery.py",
+  "run_root_created": false,
+  "ledger_created": false,
+  "slots_consumed": 0,
+  "optimizer_step_calls": 0,
+  "model_forward_calls": 0,
+  "run_conditions": {
+    "device": "cpu",
+    "precision": "float32",
+    "threads": 1
+  },
+  "recovery": "Version v2 expands runtime source keys to repository-relative paths; original v1 preserved."
+}

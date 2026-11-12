@@ -3320,3 +3320,29 @@ v2 的 u2 臂行挂着 `baseline_identity_sha256 = e5c776c4…5b29`，而该身�
 ### 5. 下一步
 
 唯一建议：F-01 已闭合、u2 的占位类阻塞清零，下一步只差授权输入——由 owner 给出本次 u2 的 `run_id`、`owner_approval_ref`（含 attempt 序号），执行线据此把草稿落地为正式 `run.json`；在此之前不申请放行、不写账本。
+
+## D-20261112-26 — 22.4.1正式启动接续与合同选择
+
+当前继续指令结合owner常设AGENTS授权，覆盖冻结额度内的可逆工程更新。run_id由执行线分配为`20261112T011320Z`，授权引用注明常设委托及attempt 3，原始u2草稿保留。正式合同为`plans/manifests/taiji_u2_22_4_1_u2_run_20261112.json`，R01–R12、Adam、损失、活性门、120 CPU/240 wall及一步上限沿用冻结值。
+
+准备阶段从正常CLI发现`bind_run`仍固定比较u1草稿run_id，已用零步夹具复现。修正在入口加入`--run-contract`并贯穿至绑定，u1默认保持。四项回归先3失败/1通过，修正后4通过。62条执行器自检通过，0 step。正式启动预检完成本臂checkpoint写入及新实例五项读回，R01–R09相关检查全部通过，0 step。
+
+本合同仅允许u2一次工程更新。u3/u4按准入中的`no_migration_rule`读取u1实际群宽决定接续，未扩宽则做两次零步恢复检查。后续任务能力及正式学习仍归22.4余卡与22.5。
+
+### D-20261112-26 执行结果
+
+u2按正式合同运行accepted，run_id=`20261112T011320Z`。35项活性参数通过、父子checkpoint五项读回通过、独立worker重算35条Adam方程通过。账本run_start/open/close三行，close绑定先落盘的S12；1次工程step、CPU4.953125/wall9.438，均在120/240帽内。累计已用3/5名额，余2。能力资格仍为空。
+
+## D-20261112-27 — u3/u4按实际宽度转换零步恢复
+
+u1耐久post的元数据入口有效、194参数、revision2，实际群宽(12,12)，group_units/base_units均None，无扩展群参数。按已冻结no_migration_rule，u3/u4转为零步恢复检查，各占一个原名额，各30 CPU/60 wall，全部optimizer.step由StepGuard阻断。方案在plans/manifests/taiji_u2_22_4_1_no_migration_20261112.json冻结12项判据及16个源码pin，124项相关回归通过。
+
+父侧从u1已执行的durable post恢复并重编码历史，保存u3；子侧独立Python进程加载u3，核对参数/状态/moment/历史/revision并保存u4。两侧按同一自然复述请求与合法观测接续，分别对task、predictive、actor、critic逐参数比较，包括unused和零梯度。原u1进程已结束，本卡登记耐久父恢复的实际范围。
+
+### D-20261112-27 预检修订及执行结果
+
+v1的运行时源码键缺少仓库相对taiji/前缀，source校验在mkdir/open前失败，记录保留于reports/taiji_u2_22_4_1_no_migration_preopen_failure_20261112.json，0计费名额、0 step。v2修正路径并绑定验证器默认入口，16个source pin与3个引用pin全部通过，判据和额度沿原值。
+
+u3/u4按v2运行accepted。194参数在task/predictive/actor/critic四类损失下共776项比较，最大绝对差0，task非零176/unused18；state/输出/policy/optimizer与历史后继一致。u3 CPU6.78125/wall7.609，u4 CPU7.4375/wall8.656，均在各30/60帽内。累计5/5名额结清，原始账本共记录3次optimizer调用（含历史rejected u1的1次），2次有accepted post。此前evidence-only额外1次调用单独登记。
+
+22.4.1按passed_engineering_with_recorded_limits结案。历史u1时间缺失与S12事后补算继续登记。算法主方程沿现有版本，能力资格为空。队首统一切到22.4.2.1连续物理世界/传感/执行合同，其后六张落地卡已展开在闭环计划22.4.2，包含duration行程可达性、16×16观测别名、真实事件音频、合法全历史oracle及原分项预算。当前工程权重保持原产物身份，学习父由22.5取得。

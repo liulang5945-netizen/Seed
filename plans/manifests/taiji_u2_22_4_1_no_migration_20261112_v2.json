@@ -1,0 +1,174 @@
+{
+  "schema": "taiji-u2-22.4.1-no-migration-contract-v1",
+  "authorized": true,
+  "run_id": "20261112T012109Z",
+  "created_at": "2026-11-12T01:22:36.573101+00:00",
+  "owner_approval_ref": "chat:2026-11-12#continue-standing-AGENTS-u3-migration-original-u4-migration-recovery-attempts-4-5",
+  "authorization_basis": "依据owner常设可逆工程授权及当前继续指令，按已冻结no_migration_rule转换两个恢复名额。",
+  "optimizer_steps_authorized": 0,
+  "scope": "父侧由durable u1 checkpoint在当前进程恢复；子侧由独立进程恢复u3，再核验相同合法后继。",
+  "quota": {
+    "prior_slots_consumed": 3,
+    "slots_authorized": 2,
+    "global_slot_cap": 5,
+    "cpu_cap_per_slot": 30,
+    "wall_cap_per_slot": 60,
+    "conversion": "no_migration_rule",
+    "extra_optimizer_steps": 0
+  },
+  "parent": {
+    "checkpoint": "output/taiji_u2_22_4_1_20261111T142919Z/post.bin",
+    "checkpoint_sha256": "14f1a6444c2f878432506b1b15d783138041fcc9edecd171ecf2cf288a8156ac",
+    "fingerprint": {
+      "state_sha256": "ab97032435e8474a8e3f6fd75faa0cfeaff3f6c3617aa621c4eaae580c38ac60",
+      "parameter_sha256": "226f13c214caf170a82866b62e5ff9fb42615fd303edfc95059a3c0c3167e283",
+      "moment_sha256": "720225803d23ea51a0cf4fc4aa3ac1136f7025856b9a0f8cae33f828a7a477ef",
+      "history_reference": {
+        "entries": 9,
+        "head": "3468d5129d4a2bbf107282d1b9cef2be823ca61bb7fc3d254ddbb07fff575384"
+      },
+      "revision": 2
+    },
+    "actual_group_units": null,
+    "actual_group_widths": [
+      12,
+      12
+    ],
+    "parameter_tensors": 194
+  },
+  "references": {
+    "ref0": {
+      "path": "plans/manifests/taiji_u2_22_4_1_data_price_admission_20261111.json",
+      "sha256": "34792bfbd2205ce9f30112aa8d6397feb8b6d2130a6eb06080fead080dee4329"
+    },
+    "ref1": {
+      "path": "reports/taiji_u2_22_4_1_s12_20261111T142919Z_u1-candidate-float32.json",
+      "sha256": "d7a9ac83f6ac2a271964280bb80370c778f8cd4f1bd53edff38ba10fa846c047"
+    },
+    "ref2": {
+      "path": "reports/taiji_u2_22_4_1_u2_execution_20261112.json",
+      "sha256": "c1fb725ad2986d053335c0bda7d5a4df4b33fd137beb8df053935fc49b585157"
+    }
+  },
+  "source_pins": {
+    "taiji/u2_recovery.py": "d7a1b08de6a7608c35522bd5545736be7370ab145364cad35d8703ccda8bce2b",
+    "taiji/u2_history.py": "e648e53f59418e6ad0b58b7bcc3519e5e09304ef691a6387ec09490b7664d336",
+    "taiji/u2_events.py": "a06ad2b4421ab972b86a03980ab1a736d48d395f2776b5c56cfa69a7664783f6",
+    "taiji/u2_learning_transaction.py": "c54771f0e81b8506a9b3f77c0bdc47f11818c54838f1de30f53e57e9159efaff",
+    "taiji/u2_record_metadata.py": "39e57e9dd406f3442bc85e055ebb7d3a813ea981ff1cda0cf119f90c20c35da5",
+    "taiji/u2_group_structure.py": "daabe312bff754bdd70208597f8363180dc459964b5cc7c5120610ca00d69ffa",
+    "taiji/u2_subject.py": "aa7a23249ad6fdaff1900000c665d575651debc498e800b8c292839ea4f736a8",
+    "taiji/u2_operators.py": "d09f5784bffaf0a3247006c0d67062f18825ba8dc8a431b7c1d0cc778a249559",
+    "taiji/utf8_state.py": "6ec7e96b2994dfa8eea430b3a08ddb5ff0fd877cf70c8cc288f57bab2efcac09",
+    "scripts/training/verify_taiji_u2_no_migration_22_4.py": "56980ca627599a83a70c974c43a13b78eb75380dacfb35afd0572bed01a96c85",
+    "scripts/training/u2_attempt_ledger_22_3_4_3.py": "23671287137fae191e4cdb98f2940380543432dcbc74c63bf2afab6ab9c3db13",
+    "scripts/training/u2_update_executor_22_4_1.py": "b4f76de29183236474ffc06f30c39f0cb16e1aff926ddf080e10752bd3ac9970",
+    "scripts/training/u2_update_support_22_3_4_3.py": "9430c23ceb40a5af74a168602d63322696ecefd648c1c3599954f9218e905999",
+    "scripts/training/u2_update_support_22_4_1.py": "4d419efb59c56f8fe9b7e027ad8d17749da2aa3c8f4146d2e02583d068b3b996",
+    "scripts/training/verify_taiji_u2_cross_process_22_3.py": "0230d99cab2130a5d8c5d01712fe3b39839b037320bf03c42bde6ae113835b94",
+    "scripts/training/verify_taiji_u2_metadata_groups_22_4.py": "f842524ae5f1340df70ac545cb8fbe425d3eb88b15ae142e8deca1492ac95b93"
+  },
+  "regression": {
+    "command": "python -m pytest tests/taiji_native/test_u2_runtime_recovery_22_3.py tests/taiji_native/test_u2_history_22_3.py tests/taiji_native/test_u2_reencoding_22_3.py tests/taiji_native/test_u2_metadata_groups_22_4.py tests/taiji_native/test_u2_run_binding_22_4.py tests/taiji_native/test_u2_no_migration_22_4.py -q --basetemp=.seed_test_tmp/u2_full_recovery_22_4_20261112",
+    "passed": 124,
+    "wall_seconds": 21.26,
+    "optimizer_step_calls": 0
+  },
+  "criteria": [
+    {
+      "id": "no_migration_actual_width",
+      "source_function": "validate_unchanged_width",
+      "required": true
+    },
+    {
+      "id": "parent_identity_and_moments",
+      "source_function": "readback",
+      "required": true
+    },
+    {
+      "id": "history_reencoding",
+      "source_function": "rebuild_state",
+      "required": true
+    },
+    {
+      "id": "saved_checkpoint_five_fields",
+      "source_function": "readback",
+      "required": true
+    },
+    {
+      "id": "independent_process",
+      "source_function": "verify/worker",
+      "required": true
+    },
+    {
+      "id": "legal_successor_state_output_policy",
+      "source_function": "measure_continuation/compare_measurements",
+      "required": true
+    },
+    {
+      "id": "four_losses_full_parameter_credit",
+      "source_function": "compare_measurements",
+      "required": true
+    },
+    {
+      "id": "parameters_optimizer_preserved",
+      "source_function": "measure_continuation",
+      "required": true
+    },
+    {
+      "id": "exactly_once_action_outcome",
+      "source_function": "measure_continuation",
+      "required": true
+    },
+    {
+      "id": "zero_optimizer_calls",
+      "source_function": "StepGuard",
+      "required": true
+    },
+    {
+      "id": "durable_ordered_budgeted_ledger",
+      "source_function": "AttemptLedger",
+      "required": true
+    },
+    {
+      "id": "actual_cpu_wall_caps",
+      "source_function": "verify",
+      "required": true
+    }
+  ],
+  "run_root": "output/taiji_u2_22_4_1_20261112T012109Z_recovery/",
+  "ledger": "reports/taiji_u2_22_4_1_attempts_20261112T012109Z_recovery.ndjson",
+  "receipts": {
+    "u3-migration-original": "reports/taiji_u2_22_4_1_u3_no_migration_20261112.json",
+    "u4-migration-recovery": "reports/taiji_u2_22_4_1_u4_no_migration_20261112.json"
+  },
+  "worker_report": "reports/taiji_u2_22_4_1_u4_no_migration_worker_20261112.json",
+  "summary": "reports/taiji_u2_22_4_1_no_migration_summary_20261112.json",
+  "data_reads": {
+    "project_corpus": 0,
+    "check": 0,
+    "final": 0,
+    "confirm": 0,
+    "sealed": 0
+  },
+  "exits": {
+    "passed": "passed_no_migration_zero_step_recovery",
+    "real_mismatch": "recovery_mismatch",
+    "exception": "engineering_failure",
+    "over_cap": "budget_stop"
+  },
+  "capability_qualifications": [],
+  "revision": 2,
+  "amendment": {
+    "parent_contract": "plans/manifests/taiji_u2_22_4_1_no_migration_20261112.json",
+    "parent_sha256": "7eb30554023310b7ae1c031c08ee07360e6911488e876d93875cd7307e937278",
+    "reason": "Normalize runtime leaf keys to repository-relative taiji/ paths before ledger start; select v2 as normal entry default.",
+    "changed": [
+      "source key paths",
+      "driver default contract path and its source pin"
+    ],
+    "criteria_changed": false,
+    "quota_changed": false,
+    "prior_slots_consumed_by_failed_precheck": 0
+  }
+}

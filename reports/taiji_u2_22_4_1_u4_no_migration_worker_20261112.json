@@ -1,0 +1,57 @@
+{
+  "schema": "taiji-u2-22.4.1-no-migration-worker-v1",
+  "verdict": "pass",
+  "pid": 24680,
+  "parent_pid": 14812,
+  "parent_readback": {
+    "path": "E:\\Seed\\output\\taiji_u2_22_4_1_20261112T012109Z_recovery\\u3.bin",
+    "sha256": "93d22cd3bbd1c2570cf629d46aaf8c0e546291ffbba7dac79bca5206fcd476c4",
+    "bytes": 522983,
+    "readback_ok": true,
+    "cpu_seconds": 2.1875,
+    "fingerprint": {
+      "state_sha256": "ab97032435e8474a8e3f6fd75faa0cfeaff3f6c3617aa621c4eaae580c38ac60",
+      "parameter_sha256": "226f13c214caf170a82866b62e5ff9fb42615fd303edfc95059a3c0c3167e283",
+      "moment_sha256": "720225803d23ea51a0cf4fc4aa3ac1136f7025856b9a0f8cae33f828a7a477ef",
+      "history_reference": {
+        "entries": 9,
+        "head": "3468d5129d4a2bbf107282d1b9cef2be823ca61bb7fc3d254ddbb07fff575384"
+      },
+      "revision": 2
+    }
+  },
+  "post_readback": {
+    "path": "E:\\Seed\\output\\taiji_u2_22_4_1_20261112T012109Z_recovery\\u4.bin",
+    "sha256": "f9c6b3ce956cd55a6d0fb67fc85a23eeb3261be9df59bea0a264a8a2a5eeb8d5",
+    "bytes": 523175,
+    "readback_ok": true,
+    "cpu_seconds": 0.0625,
+    "fingerprint": {
+      "state_sha256": "ab97032435e8474a8e3f6fd75faa0cfeaff3f6c3617aa621c4eaae580c38ac60",
+      "parameter_sha256": "226f13c214caf170a82866b62e5ff9fb42615fd303edfc95059a3c0c3167e283",
+      "moment_sha256": "720225803d23ea51a0cf4fc4aa3ac1136f7025856b9a0f8cae33f828a7a477ef",
+      "history_reference": {
+        "entries": 9,
+        "head": "3468d5129d4a2bbf107282d1b9cef2be823ca61bb7fc3d254ddbb07fff575384"
+      },
+      "revision": 2
+    }
+  },
+  "state_rebuild_equal": true,
+  "optimizer_step_calls": 0,
+  "run_conditions": {
+    "threads": 1,
+    "interop_threads": 12,
+    "device": "cpu",
+    "dtype": "torch.float32",
+    "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+    "torch": "2.13.0+cpu",
+    "environment": {
+      "OMP_NUM_THREADS": null,
+      "MKL_NUM_THREADS": null,
+      "OPENBLAS_NUM_THREADS": null
+    }
+  },
+  "cpu_seconds": 7.40625,
+  "wall_seconds": 8.047000000020489
+}

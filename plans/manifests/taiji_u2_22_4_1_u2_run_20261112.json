@@ -1,0 +1,204 @@
+{
+  "schema": "taiji-u2-22.4.1-run-v1",
+  "draft": false,
+  "status": "authorized_single_engineering_attempt",
+  "authorized": true,
+  "authorization_note": "依据owner常设授权及当前继续指令，分配本run_id并准入一次u2工程Adam更新。R01–R12、配方及预算沿冻结版本执行。",
+  "run_id": "20261112T011320Z",
+  "run_id_rule": "UTC timestamp YYYYMMDDTHHMMSSZ, allocated under owner standing delegation",
+  "created_at": "2026-11-12T01:14:28.443646+00:00",
+  "update_id": "u2-strong-baseline",
+  "attempt_id": "u2-strong-baseline",
+  "attempts_authorized": 1,
+  "optimizer_steps_authorized": 1,
+  "precision": "float32",
+  "cpu_cap": 120,
+  "wall_cap": 240,
+  "owner_approval_ref": "chat:2026-11-12#continue-standing-AGENTS-u2-strong-baseline-attempt-3",
+  "signature_fields": [
+    "authorized",
+    "owner_approval_ref"
+  ],
+  "references": {
+    "execution_manifest": "plans/manifests/taiji_u2_22_4_1_execution_20261111_v2.json",
+    "manifest_sha256": "b80f8b5662abefbb0dd7fea89aca542bad780e1503042f2addaad18d9ae07f87",
+    "admission_manifest": "plans/manifests/taiji_u2_22_4_1_data_price_admission_20261111.json",
+    "admission_manifest_sha256": "34792bfbd2205ce9f30112aa8d6397feb8b6d2130a6eb06080fead080dee4329",
+    "baseline_identity": "plans/manifests/taiji_u2_22_4_4_baseline_identity_20261111.json",
+    "baseline_identity_sha256": "e5c776c4f12e4633bf7366d66ee22e6095efac7fa2147e5c6973653797335b29",
+    "baseline_identity_module_sha256": "384b404560f827e0868a8d8f9fbfc27aff5aa885b182cd443ade79972e4145cf",
+    "measurement_report": "reports/taiji_u2_22_4_4_identity_measurement_20261111.json",
+    "measurement_report_sha256": "4c77d318771ea9a0b68cb43530eb31bd756f38cd1ab4276c0206b8a4f3d196d2",
+    "r05_prereg": "plans/reference/PREREG-TAIJI-U2_22_4_1_R05_PARENT_IDENTITY_DRAFT_20261112.md",
+    "r05_prereg_sha256": "fbad62d42c31de94f1d5de65c1a7ff3a6c15c676d9296c56e265ae23e5809dfd",
+    "hash_semantics": "UTF8 without BOM; universal newline to LF",
+    "accepted_parent": "plans/manifests/taiji_u2_22_3_accepted_parent_20261111.json",
+    "interface_receipt": "reports/taiji_u2_metadata_groups_22_4_20261111.json",
+    "baseline_identity_semantics": "本臂执行图"
+  },
+  "r05_parent_identity": {
+    "object": "本臂执行图身份（冻结初始化，不是 22.3 的训练接受父）",
+    "identity": "plans/manifests/taiji_u2_22_4_4_baseline_identity_20261111.json",
+    "prereg": "plans/reference/PREREG-TAIJI-U2_22_4_1_R05_PARENT_IDENTITY_DRAFT_20261112.md",
+    "check_items": 10,
+    "fail_exit": 5,
+    "u1_unchanged": "check_r05 与 u1 调用顺序逐字不变",
+    "measurement_report_policy": "不重签；历史哈希只登记、不复核（等值由第 2 项与 R03 承担）",
+    "threads_policy": "threads 只记录、不判假"
+  },
+  "identity_slots": {
+    "predictive_head": {
+      "exists": false,
+      "dtype": null,
+      "count": 0,
+      "slot_sha256": null,
+      "param_names": [],
+      "note": "该基线没有独立预测头：预测由 byte_head 直接给出，已计入 output_head；u2 因此不检“独立预测头”这一项，不用 U2 参数冒充。"
+    },
+    "recurrent_core": {
+      "exists": false,
+      "dtype": null,
+      "count": 0,
+      "slot_sha256": null,
+      "param_names": [],
+      "note": "该图 state_tensors=0，没有递归参数；序列主干（position/record_in/attention/norm_*/feedforward，共 15 项）是无状态前馈主干，不冒充递归核，u2 因此不检该项。"
+    },
+    "output_head": {
+      "exists": true,
+      "dtype": "float32",
+      "count": 2,
+      "slot_sha256": "2220497ad32007b359fea9536718c247edb246d7ff54e4f24b7c4d4f72ec7db1",
+      "param_names": [
+        "byte_head.weight",
+        "byte_head.bias"
+      ],
+      "note": "byte_head 是该图唯一的输出头，参数名与 dtype 取自身份清单 param_inventory。"
+    }
+  },
+  "c09": {
+    "manifest_fields_present": {
+      "architecture": true,
+      "param_total": true,
+      "information_rights": true,
+      "seeds": true
+    },
+    "identity_digest_pinned": true,
+    "enforced_when": "本合同复制为run.json后，由R05核对本臂冻结身份与digest"
+  },
+  "open_items_before_authorization": [],
+  "data_scope": {
+    "allowed_partitions": [
+      "engineering_slice"
+    ],
+    "reads_project_corpus": false,
+    "reads_confirm_partition": false,
+    "reads_development_check": false,
+    "reads_final": false,
+    "touches_sealed_set": false,
+    "contains_task1_batch": false,
+    "data_recipe_sha256": "abbb1ac0f0bc734b1555758d71ea55db8abf7a652270712dc2e0399d4d42d9f6",
+    "slice_sha256": "cdcd62cb3d48330cd87e22d465b204d7c20ed2aa9184eab1a2a5939e68d6a969",
+    "digest_note": "两个digest由零步启动预检生成并在首次open前冻结；执行器仍须按生成片段核对。"
+  },
+  "paths": {
+    "run_json": "output/taiji_u2_22_4_1_20261112T011320Z/run.json",
+    "run_root": "output/taiji_u2_22_4_1_20261112T011320Z/",
+    "ledger": "reports/taiji_u2_22_4_1_attempts_20261112T011320Z.ndjson",
+    "s12": "reports/taiji_u2_22_4_1_s12_20261112T011320Z_u2-strong-baseline.json",
+    "s12_worker": "reports/taiji_u2_22_4_1_s12_20261112T011320Z_u2-strong-baseline_worker.json"
+  },
+  "exit_codes": {
+    "0": "成功",
+    "3": "账本或额度类：run_start缺失、哈希链断裂、attempt已消耗、额度将超",
+    "4": "checkpoint读回不符：父读回或保存后立即读回五项不一致",
+    "5": "授权、身份或合同类：未授权、owner_approval_ref为空、manifest哈希不符、update_id不符、数据范围越界、digest为空或与片段不符、参数未按执行manifest冻结",
+    "6": "活性门未通过：任一声明活性参数低于梯度门或变化门；attempt已计费、判rejected、不重试"
+  },
+  "run_contract": [
+    {
+      "id": "R01",
+      "check": "run.json结构合法；run_id与目录名一致；update_id取自run.json且==attempt_id，并须是本run所引用执行manifest中的臂",
+      "fail_exit": 5
+    },
+    {
+      "id": "R02",
+      "check": "authorized==true；owner_approval_ref非空且含本run的update_id",
+      "fail_exit": 5
+    },
+    {
+      "id": "R03",
+      "check": "执行manifest实际sha256==manifest_sha256",
+      "fail_exit": 5
+    },
+    {
+      "id": "R04",
+      "check": "准入manifest实际sha256==admission_manifest_sha256",
+      "fail_exit": 5
+    },
+    {
+      "id": "R05",
+      "check": "接受父存在；接口回执通过；source pins与执行manifest一致（C01/C02）",
+      "fail_exit": 5
+    },
+    {
+      "id": "R06",
+      "check": "attempts已用0、本次1；steps==1；cpu_cap<=120；wall_cap<=240（C04）",
+      "fail_exit": 3
+    },
+    {
+      "id": "R07",
+      "check": "数据范围六个false；data_recipe_sha256与slice_sha256非空且与生成片段一致（C05/C06）",
+      "fail_exit": 5
+    },
+    {
+      "id": "R08",
+      "check": "lr/betas/eps/weight_decay、活性清单与执行manifest逐字段一致；四项权重按臂声明的weight_profile对冻结表（F1-style/F2-style）核对（C07）",
+      "fail_exit": 5
+    },
+    {
+      "id": "R09",
+      "check": "父checkpoint读回：state/parameters/optimizer/history_reference/revision五项一致",
+      "fail_exit": 4
+    },
+    {
+      "id": "R10",
+      "check": "ledger首行run_start存在且哈希链完整；无重复attempt；open前已fsync",
+      "fail_exit": 3
+    },
+    {
+      "id": "R11",
+      "check": "保存后立即用新实例读回：五项一致（C08）",
+      "fail_exit": 4
+    },
+    {
+      "id": "R12",
+      "check": "每个声明活性参数的梯度范数与参数位移达到门限；S12含change/margin/barely_live",
+      "fail_exit": 6
+    }
+  ],
+  "not_granted": [
+    "正式训练或本合同一步之外的optimizer更新",
+    "项目语料、Task1批、development-check、final、confirm或封存集读取",
+    "能力提升、旧能力保持、生产模型替换或能力资格晋升",
+    "u3/u4更新，本合同只覆盖u2"
+  ],
+  "authorization_basis": {
+    "instruction": "常设AGENTS授权自主推进可逆操作及当前“继续”",
+    "scope": "u2-strong-baseline, one engineering Adam step, synthetic engineering_slice only",
+    "owner_literal_run_id": false,
+    "formal_training_steps": 0,
+    "global_attempt_index": 3,
+    "prior_attempts_consumed": 2,
+    "global_attempt_cap": 5
+  },
+  "launch_source_pins": {
+    "scripts/training/run_taiji_u2_22_4_1.py": "e4fd1d4928c9c4d7c551e07b5d61df6d52bb05c0370c5353ed5bbccb691a3937",
+    "scripts/training/u2_update_executor_22_4_1.py": "b4f76de29183236474ffc06f30c39f0cb16e1aff926ddf080e10752bd3ac9970",
+    "scripts/training/u2_update_support_22_4_1.py": "4d419efb59c56f8fe9b7e027ad8d17749da2aa3c8f4146d2e02583d068b3b996",
+    "scripts/training/verify_taiji_u2_s12_22_4_1.py": "002ecb4eafc4905f05bc8565ddb62299d2278895270d7529720377a8db66df1a"
+  },
+  "derived_from": {
+    "path": "plans/manifests/taiji_u2_22_4_1_u2_run_draft_20261111.json",
+    "sha256": "70ae1f258dd457fd747435ea60da54a22e55f04d3cfbf19ab463127f86b04bc2"
+  }
+}
