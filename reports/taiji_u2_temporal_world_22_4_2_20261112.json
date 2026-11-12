@@ -1,0 +1,60 @@
+{
+  "schema": "taiji-u2-temporal-fixture-verification-v1",
+  "verdict": "passed_public_oracle_temporal_microfixtures",
+  "contract_sha256": "3d1e30805a735d0a876e6658910c941e9b09b8f2c9343ba8865d04882f020eb1",
+  "groups": {
+    "A_initial_current": {
+      "correct": 32,
+      "denominator": 32,
+      "extra_responses": 0,
+      "label_counts": {
+        "左边": 16,
+        "右边": 16
+      },
+      "constant_answer_ceiling": 0.5
+    },
+    "B_previous": {
+      "correct": 32,
+      "denominator": 32,
+      "extra_responses": 0,
+      "label_counts": {
+        "左边": 16,
+        "右边": 16
+      },
+      "constant_answer_ceiling": 0.5
+    },
+    "U_unknown": {
+      "correct": 32,
+      "denominator": 32,
+      "extra_responses": 0,
+      "label_counts": {
+        "未知": 32
+      },
+      "constant_answer_ceiling": 1.0
+    }
+  },
+  "blank_previous_information_ceiling": 0.5,
+  "wrong_time_accuracy": 0.5,
+  "worlds": 32,
+  "scored_requests": 96,
+  "model_forwards": 0,
+  "optimizer_steps": 0,
+  "project_data_reads": 0,
+  "check_reads": 0,
+  "final_reads": 0,
+  "cpu_seconds": 6.5625,
+  "wall_seconds": 8.311999999976251,
+  "run_conditions": {
+    "device": "cpu",
+    "torch": "2.13.0+cpu",
+    "threads": 1
+  },
+  "capability_qualifications": [],
+  "pending": [
+    "external curriculum action intake in the subject",
+    "C acquisition utility",
+    "D capacity pressure",
+    "J same-subject joint sessions",
+    "full world course and split admission"
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "schema": "taiji-u2-22.4-resource-rebaseline-v1",
+  "authority": "owner standing reversible-work delegation, within original package CPU cap",
+  "cpu_total_cap": 1200,
+  "wall_total_cap": 2400,
+  "allocation": {
+    "semantics_rights": 80,
+    "structure_recovery": 360,
+    "generation_partition": 100,
+    "identifiability": 310,
+    "baseline_pricing": 250,
+    "freeze": 100
+  },
+  "prior_overrun": {
+    "report": "reports/taiji_u2_joint_cold_development_20261112.json",
+    "cpu_seconds": 159.21875,
+    "prior_identifiability_allocation": 150,
+    "verdict": "pricing_over_budget_against_prior_allocation",
+    "refund": false
+  },
+  "identifiability_known_charges": [
+    {
+      "report": "reports/taiji_u2_joint_cold_development_20261112.json",
+      "cpu_seconds": 159.21875
+    },
+    {
+      "report": "reports/taiji_u2_temporal_world_22_4_2_20261112.json",
+      "cpu_seconds": 6.5625
+    }
+  ],
+  "next_joint_cpu_cap": 120,
+  "next_joint_wall_cap": 240,
+  "next_joint_change": "reuse the existing output tensor when accepting each chosen byte",
+  "unchanged_acceptance": [
+    "18 planned requests",
+    "64-byte native output bound",
+    "same case seed124 and source scene",
+    "all missing answers remain in denominator",
+    "no optimizer step",
+    "no check/final exposure"
+  ],
+  "historical_development_cost_note": "Existing detailed reports and measured/derived costs remain attached to their original scopes; aggregate accounting has historical timing gaps."
+}

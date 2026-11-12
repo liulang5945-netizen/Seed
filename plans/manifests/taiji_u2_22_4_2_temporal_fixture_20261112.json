@@ -1,0 +1,66 @@
+{
+  "schema": "taiji-u2-temporal-fixture-contract-v1",
+  "card": "22.4.2.4a",
+  "source_pins": {
+    "taiji/u2_task_episode.py": "7b370fc4ab7913737b144ebeae353d89f57d13939188a38dc47de81620677a10",
+    "taiji/u2_task_contract.py": "957d9d4163eb960dbef5939e721ce1a69dd13311148944901aafb700022bed84",
+    "taiji/u2_task_world.py": "cde18d7fa1040be5d752f5de4d08b363d7a2fb54b4497800e7ecde9382d57892",
+    "taiji/u2_task_physics.py": "c542e4445dcbc140a65dee32c7828bb89ce7737d776230c1e5084a451dfc0b37",
+    "taiji/u2_task_sensors.py": "7a434173bcf9d28b0e45c7575326c37048ad53d9d06de987f3c5a573d2026e10",
+    "scripts/training/verify_taiji_u2_temporal_world_22_4_2.py": "10511e80f51c804eefe872bf89125908bd58449de93d77750d23101ad7f6821b"
+  },
+  "seeds": [
+    108,
+    109,
+    110,
+    111,
+    112,
+    113,
+    114,
+    115,
+    116,
+    117,
+    118,
+    119,
+    120,
+    121,
+    122,
+    123
+  ],
+  "development_probe_seed": 100,
+  "initial_x_axis": [
+    -0.55,
+    0.55
+  ],
+  "course": "fixed 16-action sweep, same commands for both initial positions",
+  "sensor_schedule": "only first and final RGB released; intermediate media withheld by a public schedule",
+  "cases": [
+    "initial-current balanced visual position",
+    "previous with two fact versions",
+    "unknown temporal intent"
+  ],
+  "oracle_inputs": [
+    "raw request UTF8",
+    "released raw RGB frames",
+    "declared color-name calibration"
+  ],
+  "oracle_min": 0.95,
+  "blank_previous_max": 0.6,
+  "constant_current_max": 0.6,
+  "wrong_time_max": 0.6,
+  "full_denominator": true,
+  "cpu_cap": 80,
+  "wall_cap": 160,
+  "budget_source": "22.4 identifiability 150 CPU",
+  "model_forwards": 0,
+  "optimizer_steps": 0,
+  "project_data_reads": 0,
+  "capability_qualifications": [],
+  "uncovered": [
+    "C",
+    "D",
+    "J",
+    "full course",
+    "live curriculum interface"
+  ]
+}

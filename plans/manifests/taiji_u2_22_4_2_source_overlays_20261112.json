@@ -1,0 +1,17 @@
+{
+  "schema": "taiji-u2-source-overlays-v1",
+  "overlays": [
+    {
+      "contract": "plans/manifests/taiji_u2_22_4_2_temporal_fixture_20261112.json",
+      "source_path": "taiji/u2_task_episode.py",
+      "archive": "scripts/archive/taiji_u2_task_episode_20261112_v1.py",
+      "sha256": "7b370fc4ab7913737b144ebeae353d89f57d13939188a38dc47de81620677a10"
+    },
+    {
+      "contract": "plans/manifests/taiji_u2_22_4_2_joint_price_20261112.json",
+      "source_path": "scripts/training/verify_taiji_u2_joint_session_22_4_2.py",
+      "archive": "scripts/archive/verify_taiji_u2_joint_session_20261112_v1.py",
+      "sha256": "bcd047d5b8e619a958898a03a16d56b9ce88c4057d4af3c204ba92bd368b773f"
+    }
+  ]
+}

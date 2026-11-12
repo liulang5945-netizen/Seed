@@ -147,3 +147,26 @@ def test_wrong_physical_dt_rejected_before_effect(tmp_path):
     with pytest.raises(ValueError, match="clock_mismatch"):
         runtime.execute_pending(tmp_path / "intent.bin")
     assert runtime.executor.effect_count == 0
+
+
+@pytest.mark.parametrize("dtype", [torch.float32, torch.float64])
+def test_external_course_predicts_actual_action_without_actor_credit(tmp_path, dtype):
+    runtime = runtime_at(tmp_path, dtype)
+    observe(runtime, tmp_path, "initial", 0)
+    rng = runtime.state["rng"].clone()
+    action = runtime.model.native_w.new_zeros(15)
+    action[0], action[11], action[13], action[14] = 1, 0.5, 0.8, 0.03
+    runtime.begin_observation("course", action=action)
+    runtime.save(tmp_path / "course.bin")
+    runtime = U2Runtime.load(tmp_path / "course.bin")
+    runtime.execute_pending(tmp_path / "intent.bin")
+    packet = runtime.executor.packet(runtime, modalities=("rgb",))
+    assert set(packet.observations) == {"rgb"}
+    receipt = runtime.receive(packet)
+    assert receipt["behavior_credit_valid"] is False and "actor" not in receipt
+    assert torch.equal(rng, runtime.state["rng"])
+    assert torch.equal(receipt["prior"]["prediction_action"], action)
+    rebuilt, _ = rebuild_state(
+        runtime.model, runtime.history, runtime.state, reset_eligibility=False
+    )
+    assert_values_equal(runtime.state, rebuilt)

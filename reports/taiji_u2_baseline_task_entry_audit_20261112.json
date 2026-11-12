@@ -1,0 +1,31 @@
+{
+  "schema": "taiji-u2-baseline-task-entry-audit-v1",
+  "verdict": "full_task_adapter_required",
+  "source": "scripts/training/baseline_identity_22_4_4.py",
+  "source_sha256": "384b404560f827e0868a8d8f9fbfc27aff5aa885b182cd443ade79972e4145cf",
+  "frozen_scope": "22.4.4 eight-step construct/pricing fixture and one engineering update",
+  "steps": 8,
+  "batch": 2,
+  "goal_prefix_bytes": 8,
+  "example_requests": [
+    "红色圆片现在在哪里？",
+    "红色圆片上一次在哪里？"
+  ],
+  "encoded_prefix_equal": true,
+  "observations": "SharedFrontend.step_tokens uses fixed range(STEPS) and fixture coordinates; the real-world continuous adapter remains to be supplied.",
+  "required_before_learning": [
+    "full UTF8 goal/request intake",
+    "actual spatial/time coordinates and missing masks",
+    "actual observed actions and outcomes",
+    "continuous GRU/Transformer state and recovery",
+    "same public records and metadata",
+    "new source identity and actual compute pricing"
+  ],
+  "model_forwards": 0,
+  "optimizer_steps": 0,
+  "project_data_reads": 0,
+  "run_conditions": {
+    "device": "cpu",
+    "arithmetic": "static AST and UTF8 bytes"
+  }
+}

@@ -1,0 +1,232 @@
+{
+  "sessions": [
+    {
+      "session": 1,
+      "subject_id": "joint-cold-124",
+      "history_entries": 469,
+      "history_pages": 5,
+      "world_time": 0.8,
+      "recovery_equal": true
+    },
+    {
+      "session": 2,
+      "subject_id": "joint-cold-124",
+      "history_entries": 938,
+      "history_pages": 10,
+      "world_time": 1.6,
+      "recovery_equal": true
+    },
+    {
+      "session": 3,
+      "subject_id": "joint-cold-124",
+      "history_entries": 1407,
+      "history_pages": 15,
+      "world_time": 2.4000000000000004,
+      "recovery_equal": true
+    }
+  ],
+  "answers": [
+    {
+      "request_id": "q-15-绿色圆片-current",
+      "round": 16,
+      "raw_request": "绿色圆片现在在哪里？",
+      "target": "右边",
+      "output_hex": "d2b0581f111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": false
+    },
+    {
+      "request_id": "q-15-绿色圆片-previous",
+      "round": 16,
+      "raw_request": "绿色圆片上一次在哪里？",
+      "target": "左边",
+      "output_hex": "d2b0581f111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": false
+    },
+    {
+      "request_id": "q-15-紫色圆片-current",
+      "round": 16,
+      "raw_request": "紫色圆片现在在哪里？",
+      "target": "中间",
+      "output_hex": "d2b0581f111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": false
+    },
+    {
+      "request_id": "q-15-紫色圆片-previous",
+      "round": 16,
+      "raw_request": "紫色圆片上一次在哪里？",
+      "target": "中间",
+      "output_hex": "d2b0581f111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": false
+    },
+    {
+      "request_id": "q-15-红色圆片-current",
+      "round": 16,
+      "raw_request": "红色圆片现在在哪里？",
+      "target": "右边",
+      "output_hex": "d2b0581f111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": false
+    },
+    {
+      "request_id": "q-15-红色圆片-previous",
+      "round": 16,
+      "raw_request": "红色圆片上一次在哪里？",
+      "target": "右边",
+      "output_hex": "d2b0581f111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": false
+    },
+    {
+      "request_id": "q-31-绿色圆片-current",
+      "round": 32,
+      "raw_request": "绿色圆片现在在哪里？",
+      "target": "中间",
+      "output_hex": "d2b0581f111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": false
+    },
+    {
+      "request_id": "q-31-绿色圆片-previous",
+      "round": 32,
+      "raw_request": "绿色圆片上一次在哪里？",
+      "target": "右边",
+      "output_hex": "d2b0581f111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": false
+    },
+    {
+      "request_id": "q-31-紫色圆片-current",
+      "round": 32,
+      "raw_request": "紫色圆片现在在哪里？",
+      "target": "中间",
+      "output_hex": "d2b0581f111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": false
+    },
+    {
+      "request_id": "q-31-紫色圆片-previous",
+      "round": 32,
+      "raw_request": "紫色圆片上一次在哪里？",
+      "target": "中间",
+      "output_hex": "d2b0581f111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": false
+    },
+    {
+      "request_id": "q-31-红色圆片-current",
+      "round": 32,
+      "raw_request": "红色圆片现在在哪里？",
+      "target": "右边",
+      "output_hex": "d2b0581f111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": false
+    },
+    {
+      "request_id": "q-31-红色圆片-previous",
+      "round": 32,
+      "raw_request": "红色圆片上一次在哪里？",
+      "target": "右边",
+      "output_hex": "d2b0581f111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": false
+    },
+    {
+      "request_id": "q-47-绿色圆片-current",
+      "round": 48,
+      "raw_request": "绿色圆片现在在哪里？",
+      "target": "中间",
+      "output_hex": "d2b0581f111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": false
+    },
+    {
+      "request_id": "q-47-绿色圆片-previous",
+      "round": 48,
+      "raw_request": "绿色圆片上一次在哪里？",
+      "target": "右边",
+      "output_hex": "d2b0581f111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": false
+    },
+    {
+      "request_id": "q-47-紫色圆片-current",
+      "round": 48,
+      "raw_request": "紫色圆片现在在哪里？",
+      "target": "中间",
+      "output_hex": "d2b0581f111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": false
+    },
+    {
+      "request_id": "q-47-紫色圆片-previous",
+      "round": 48,
+      "raw_request": "紫色圆片上一次在哪里？",
+      "target": "中间",
+      "output_hex": "d2b0581f111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": false
+    },
+    {
+      "request_id": "q-47-红色圆片-current",
+      "round": 48,
+      "raw_request": "红色圆片现在在哪里？",
+      "target": "右边",
+      "output_hex": "d2b0581f111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": false
+    },
+    {
+      "request_id": "q-47-红色圆片-previous",
+      "round": 48,
+      "raw_request": "红色圆片上一次在哪里？",
+      "target": "右边",
+      "output_hex": "d2b0581f111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": false
+    }
+  ],
+  "correct": 0,
+  "denominator": 18,
+  "optimizer_steps": 0,
+  "source": "model argmax bytes and native EOS mask",
+  "coursework_owner": "environment; no autonomous actor credit",
+  "feedback_labels_visible_to_model": false,
+  "qualification": "cold initialization behavior and continuity; no task learning claimed",
+  "verdict": "passed_joint_price_and_semantic_equivalence",
+  "outputs_equal_to_previous": true,
+  "schema": "taiji-u2-joint-session-price-v1",
+  "contract_sha256": "842e2206cd0bacb1c515f8e5daab5de3a9c0410b6a7a27e76cae7a0ba17ae42d",
+  "cpu_seconds": 135.484375,
+  "wall_seconds": 138.15600000001723,
+  "cpu_cap": 120,
+  "run_conditions": {
+    "torch": "2.13.0+cpu",
+    "threads": 1,
+    "device": "cpu",
+    "dtype": "float32"
+  },
+  "project_data_reads": 0,
+  "capability_qualifications": []
+}

@@ -1,0 +1,21 @@
+{
+  "schema": "taiji-u2-joint-price-correction-v1",
+  "report": "reports/taiji_u2_joint_session_22_4_2_20261112.json",
+  "report_sha256": "0e101261519847f850a7f5c422f9bd7e35e8afa4c3845cb5c4163af215eb382c",
+  "original_verdict": "passed_joint_price_and_semantic_equivalence",
+  "effective_verdict": "budget_stop",
+  "cpu_seconds": 135.484375,
+  "cpu_cap": 120,
+  "outputs_equal_to_previous": true,
+  "correct": 0,
+  "denominator": 18,
+  "reason": "The in-loop guard did not cover final checkpoint recovery; final acceptance must check CPU as well as wall. Raw report retained.",
+  "cpu_reduction_fraction": 0.1490677134445535,
+  "optimizer_steps": 0,
+  "run_conditions": {
+    "torch": "2.13.0+cpu",
+    "threads": 1,
+    "device": "cpu",
+    "dtype": "float32"
+  }
+}

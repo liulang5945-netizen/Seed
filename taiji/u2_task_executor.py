@@ -199,7 +199,7 @@ class PhysicalExecutor(ReferenceExecutor):
     def execute_observation(self, event_id, dt, *, action):
         return self._execute(event_id, action=action, dt=dt)
 
-    def packet(self, runtime):
+    def packet(self, runtime, *, modalities=None):
         pending = runtime.state["pending"]
         if pending is None or self.query(pending["id"])["status"] != "applied":
             raise ValueError("physical_packet_requires_committed_effect")
@@ -209,6 +209,11 @@ class PhysicalExecutor(ReferenceExecutor):
         dtype = runtime.model.native_w.dtype
         observations = {key: value.to(dtype=dtype) for key, value in result["observations"].items()}
         coordinates = {key: value.to(dtype=dtype) for key, value in result["coordinates"].items()}
+        if modalities is not None:
+            if set(modalities) - {"rgb", "audio", "proprio"}:
+                raise ValueError("unregistered_public_sensor_plan")
+            observations = {key: value for key, value in observations.items() if key in modalities}
+            coordinates = {key: value for key, value in coordinates.items() if key in modalities}
         return U2Packet(
             f"{state['world_id']}:{result['world_after']}:sensor",
             "sensor",

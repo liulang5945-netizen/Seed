@@ -1,0 +1,14 @@
+{
+  "schema": "taiji-u2-joint-price-precheck-v1",
+  "verdict": "budget_stop_before_run",
+  "prior_measured_cpu": 135.484375,
+  "cpu_cap": 120,
+  "model_forwards": 0,
+  "optimizer_steps": 0,
+  "project_data_reads": 0,
+  "run_conditions": {
+    "device": "cpu",
+    "threads": 1
+  },
+  "reason": "Measured current cold profile exceeds the frozen cap. Reprice a new source/candidate before another full run."
+}

@@ -39,7 +39,7 @@ def validate_event(state: Any, packet: Any) -> Any:
 
 
 def eligibility_carry(receipt: Any, goal_version: int) -> Any:
-    if receipt.get("origin") == "external_observation":
+    if receipt.get("origin") in {"external_observation", "external_action"}:
         factor = (0.99 * 0.95) ** (receipt["dt"] / 0.05)
         return {
             name: factor * value if receipt["goal_version"] == goal_version else value * 0
@@ -191,7 +191,7 @@ def receive(model: Any, state: Any, packet: Any) -> Any:
     if packet.packet_id in state["seen_packets"]:
         return state, {}
     receipt = validate_event(state, packet)
-    if receipt.get("origin") == "external_observation":
+    if receipt.get("origin") in {"external_observation", "external_action"}:
         result, observation = assimilate(model, state, packet, receipt=receipt)
         if result["pending"] is None:
             result["eligibility"] = eligibility_carry(receipt, state["goal_version"])
@@ -205,7 +205,7 @@ def receive(model: Any, state: Any, packet: Any) -> Any:
     return result, {**observation, "actor": actor_loss, "critic": critic_loss}
 
 
-def observation_intent(model, state, identity, dt):
+def observation_intent(model, state, identity, dt, action=None):
     if (
         state["pending"] is not None
         or state["utterance_active"]
@@ -217,7 +217,18 @@ def observation_intent(model, state, identity, dt):
         raise ValueError("external_observation_requires_current_parameters")
     import torch
 
-    action = model.native_w.new_zeros(15)
+    external_action = action is not None
+    action = (
+        torch.as_tensor(action, dtype=model.native_w.dtype, device=model.native_w.device)
+        .detach()
+        .clone()
+        if external_action
+        else model.native_w.new_zeros(15)
+    )
+    if external_action and (
+        dt != 0.05 or action.shape != (15,) or int(action[:9].argmax()) not in (0, 2)
+    ):
+        raise ValueError("invalid_external_course_action")
     goal = model.goal(state["goal_raw"])
     prior = model.predict(state, goal, action, dt)
     receipt = {
@@ -226,7 +237,7 @@ def observation_intent(model, state, identity, dt):
         "goal_version": state["goal_version"],
         "goal_raw": state["goal_raw"],
         "operation": "observe",
-        "origin": "external_observation",
+        "origin": "external_action" if external_action else "external_observation",
         "action": action,
         "dt": dt,
         "prior": prior,
@@ -238,6 +249,7 @@ def observation_intent(model, state, identity, dt):
     }
     if not bool(torch.isfinite(action).all()):
         raise ValueError("invalid_external_prediction")
+    model.validate_pending_receipt(receipt)
     return {
         **state,
         "pending": receipt,

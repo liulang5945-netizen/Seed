@@ -1207,7 +1207,7 @@ class U2Subject(_WorldKernel):
         return cast(torch.Tensor, rebuilt)
 
     def validate_pending_receipt(self, pending):
-        if pending.get("origin") != "external_observation":
+        if pending.get("origin") not in {"external_observation", "external_action"}:
             self.pending_value(pending["decision"])
             return
         action = pending["action"]
@@ -1218,9 +1218,21 @@ class U2Subject(_WorldKernel):
             or action.shape != (15,)
             or action.dtype != self.native_w.dtype
             or action.device != self.native_w.device
-            or bool(action.any())
+            or not bool(torch.isfinite(action).all())
         ):
             raise ValueError("invalid_external_observation_bundle")
+        if pending["origin"] == "external_observation" and bool(action.any()):
+            raise ValueError("external_observation_has_unregistered_action")
+        if pending["origin"] == "external_action":
+            index = int(action[:9].argmax())
+            expected_action = action.new_zeros(9)
+            expected_action[index] = 1
+            if (
+                index not in (0, 2)
+                or pending["dt"] != 0.05
+                or not torch.allclose(action[:9], expected_action, atol=1e-6, rtol=0)
+            ):
+                raise ValueError("invalid_external_course_operation")
         expected = dict(self.policy_named_parameters())
         trace = pending["eligibility_before"]
         if set(trace) != set(expected) or any(

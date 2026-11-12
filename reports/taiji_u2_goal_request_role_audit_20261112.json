@@ -1,0 +1,26 @@
+{
+  "schema": "taiji-u2-goal-request-role-audit-v1",
+  "verdict": "native_request_state_required",
+  "facts": [
+    "Native state has goal_raw/goal_version and no separate answer_request",
+    "Current joint driver calls set_goal(raw) for each question",
+    "That run covers sequential goal switching and recovery; persistent goal/request coexistence remains unverified"
+  ],
+  "source_pins": {
+    "taiji/u2_subject.py": "cf99503e2614e1b4bada401b2e4e4ce08d6cb779ebb6b84ef713e6b646fb2c2e",
+    "taiji/u2_task_session.py": "de2e9cb6960396350f7cb5af6a683a4fd726039656d28e237fe7d25de9d18838"
+  },
+  "model_forwards": 0,
+  "optimizer_steps": 0,
+  "run_conditions": {
+    "device": "cpu",
+    "arithmetic": "static AST/source audit"
+  },
+  "required": [
+    "separate persistent goal and request identity/version/lifecycle",
+    "request control event through learnable native state",
+    "language query reads current request while physical prediction retains persistent goal",
+    "request-aware raw history and recovery",
+    "same declared role inputs for ordinary baselines"
+  ]
+}

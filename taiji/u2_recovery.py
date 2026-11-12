@@ -510,15 +510,15 @@ class U2Runtime:
         return {"status": "unknown", "action_id": identity} if found is None else found
 
     @_history_atomic
-    def begin_observation(self, identity: str, dt: float = 0.05) -> str:
+    def begin_observation(self, identity: str, dt: float = 0.05, action=None) -> str:
         from .u2_events import observation_intent
 
         self._check_window()
         if self.last_decision is not None or identity in self.execution:
             raise ValueError("observation_intent_conflicts_with_existing_decision")
-        self.state = observation_intent(self.model, self.state, identity, dt)
+        self.state = observation_intent(self.model, self.state, identity, dt, action=action)
         self.execution[identity] = {"status": "intent"}
-        self._record("observe_intent", {"identity": identity, "dt": dt}, identity)
+        self._record("observe_intent", {"identity": identity, "dt": dt, "action": action}, identity)
         return identity
 
     def execute_pending(
