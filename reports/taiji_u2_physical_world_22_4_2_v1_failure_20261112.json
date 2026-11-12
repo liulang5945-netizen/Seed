@@ -1,0 +1,18 @@
+{
+  "schema": "taiji-u2-world-implementation-failure-v1",
+  "verdict": "cross_process_cache_size_mismatch",
+  "contract_sha256": "da41cfde2661ba0ee413d93bf2c2c5697503b1eadebd53fa9dfe8837c9ba260c",
+  "case": "float32-1",
+  "differing_field": "byte_count",
+  "parent_value": 51710,
+  "recovered_value": 52158,
+  "physical_state_and_results_equal": true,
+  "model_forwards": 0,
+  "optimizer_steps": 0,
+  "run_conditions": {
+    "device": "cpu",
+    "codec": "float32",
+    "world": "float64"
+  },
+  "repair": "deterministic typed UTF-8 JSON with contiguous tensor bytes encoded as hex; serialized artifact overhead priced separately"
+}

@@ -1,0 +1,89 @@
+{
+  "schema": "taiji-u2-physical-world-implementation-v1",
+  "verdict": "passed_pure_world_implementation",
+  "contract_sha256": "c750b060598d84f93fd93e9888be18d95029301cf830a2b5e13966d2de76a528",
+  "cross_process_cases": 6,
+  "matching_continuations": {
+    "float32-1": {
+      "results": [
+        "d7ce6125c5e19427bb1db6880047adbc4b401672c0e6a6dc2a40bb302c685e7a",
+        "663e38407545228a5527f8a3456b64795a027b4a99b1782785c9494a0f8bef35",
+        "fbba634d49468162f6cfd262e8de801c5feaa030a0d6228598c33984dbcf1b22"
+      ],
+      "snapshot": "cdced425fa6d92a4a8fc8038a9857610355ff4007e54fd958318889898b392e1"
+    },
+    "float32-2": {
+      "results": [
+        "1e6502dc3539a9cc46bcf8fc0fc741a164bc21a3bc3c14eef03e85199d0b71e1",
+        "f9aad6d76cc28ae05e94bc1938604c4b192249d08b70cc0d012f93190307adc6",
+        "ed2aadb0d2344eef790b91e2fe699dbc0d8b1e974d6022e5e1ff15b5c444f69d"
+      ],
+      "snapshot": "cbcb556669fa8ac5e453d25c51b6916b4de589b1afd8d4bfe041e3186bfc12e2"
+    },
+    "float32-3": {
+      "results": [
+        "ca5e6b06f14382cf4aa1e52d0d8c22f687d1db5d340b06bf782dc60f791a6028",
+        "ec6042a214158bd472c28fa8598817f72b19d0f751ae91ba0619376a68336595",
+        "49a246f74d245e0f283ba5eec15c611073d7c05df1f2a479a53c3a30eaa72060"
+      ],
+      "snapshot": "5f5c2a3c4c2f63f8543f33caf07093584abeb78d01a504000f0d3e15912cae1f"
+    },
+    "float64-1": {
+      "results": [
+        "e7145680ab13489ac1c226cf6af3e2c0f866f62bef8951b2c4629e1f0119561e",
+        "866e0bdcc7aa3e5259b6d13c2c0de7abe5ec8fcf389eb1f187daaadab3e621a9",
+        "2698070459acf3659db89403afde4ff657c463204adabe1468517a03cba8356a"
+      ],
+      "snapshot": "50dbc4f8691d5111b3fe1ee5742f62e484e23c69cbfaa4e80fb9b38f9f86da2c"
+    },
+    "float64-2": {
+      "results": [
+        "e0a68e4e1cb93133d8225128c982a73812e90d395a6b056f1cc5a3812f406a59",
+        "633c1ced3243b5dfac5d56ead959d1307ca1583e7899d980ba189e2ce979a750",
+        "919ac5aff39af43b13f68245c5f3718d8574809ca6e2d361e4857dec7506826f"
+      ],
+      "snapshot": "840257c51df79adc0aa4e62d8da9aa03fabd1e7e8d0d447417721459be898f30"
+    },
+    "float64-3": {
+      "results": [
+        "3da351bfe0f0b986eeb5c15e973cc0d81e1c2bd1b772e0f8c9eced77fc88b71f",
+        "f5bad7c30a4ff52a039b06f02815ff7a14c3e92576bafd57f1e124d2d8ff93a6",
+        "5971874b82a588fce71e63a42c33b8545d37edf2b648b617480c6c97436a8f80"
+      ],
+      "snapshot": "a796490766ef8bb1f5502814d71c884525254af8386dde64a776507ee4e3c4cc"
+    }
+  },
+  "tests": {
+    "passed": 24,
+    "stdout": "........................                                                 [100%]\n24 passed in 9.06s\n",
+    "wall_seconds": 10.875
+  },
+  "reachability": {
+    "fixtures": 9,
+    "rounds_each": 16,
+    "controller": "privileged physical-state PD witness",
+    "qualification": "mechanical reachability; legal-history oracle awaits 22.4.2.4"
+  },
+  "model_forwards": 0,
+  "optimizer_steps": 0,
+  "project_data_reads": 0,
+  "cpu_seconds_parent_and_recovery": 7.875,
+  "wall_seconds": 22.59399999998277,
+  "run_conditions": {
+    "torch": "2.13.0+cpu",
+    "device": "cpu",
+    "threads": 1,
+    "codec_precisions": [
+      "float32",
+      "float64"
+    ],
+    "world_precision": "float64"
+  },
+  "pending": [
+    "durable physical executor and full subject integration",
+    "exogenous observation intents",
+    "segmented subject history",
+    "legal-history task oracle",
+    "learning and behavior"
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "schema": "taiji-u2-world-implementation-contract-v1",
+  "card": "22.4.2.2",
+  "scope": "pure physical world and sensors, no neural model",
+  "source_pins": {
+    "taiji/u2_task_world.py": "cde18d7fa1040be5d752f5de4d08b363d7a2fb54b4497800e7ecde9382d57892",
+    "taiji/u2_task_physics.py": "c542e4445dcbc140a65dee32c7828bb89ce7737d776230c1e5084a451dfc0b37",
+    "taiji/u2_task_sensors.py": "7a434173bcf9d28b0e45c7575326c37048ad53d9d06de987f3c5a573d2026e10",
+    "scripts/training/verify_taiji_u2_physical_world_22_4_2.py": "461a14e19df939a2580c5fded34ea6c1aa57347f194c1aec8b82e0b4f38aa524",
+    "tests/taiji_native/test_u2_task_world_22_4_2.py": "dd77374618b7596f16973ede960844cc7771af056acb61c179e94c04264c70db"
+  },
+  "tests": 24,
+  "cross_process_cases": 6,
+  "codec_precisions": [
+    "float32",
+    "float64"
+  ],
+  "world_precision": "float64",
+  "controller": "fixed privileged PD reachability witness, 9 mass/drag fixtures, 16 rounds",
+  "model_forwards": 0,
+  "optimizer_steps": 0,
+  "project_data_reads": 0,
+  "budget": {
+    "cpu_cap": 100,
+    "wall_cap": 200,
+    "allocation": "22.4 generation/partition 200 CPU, shared with remaining generator work"
+  },
+  "planned_sources": [
+    "taiji/u2_task_physics.py",
+    "taiji/u2_task_executor.py",
+    "taiji/u2_history_store.py"
+  ],
+  "next_card": "22.4.2.3",
+  "revision": 2,
+  "cache_accounting": "canonical UTF-8 JSON, sorted keys, compact separators, typed contiguous tensor bytes as hex",
+  "amendment": {
+    "parent_contract_sha256": "da41cfde2661ba0ee413d93bf2c2c5697503b1eadebd53fa9dfe8837c9ba260c",
+    "reason": "cross-process serializer layout changed cache byte counts; use deterministic wire bytes and validate at restore",
+    "physics_changed": false,
+    "sensor_values_changed": false,
+    "budget_changed": false
+  }
+}
