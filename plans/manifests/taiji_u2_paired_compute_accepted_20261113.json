@@ -1,0 +1,46 @@
+{
+  "schema": "taiji-u2-paired-compute-accepted-v1",
+  "parents": {
+    "native-query": {
+      "checkpoint": "E:\\Seed\\data\\experiments\\taiji_u2\\paired_compute\\1794503641271476500\\native-query.bin",
+      "sha256": "8dce20cab42a4b09a330decd4a423f69faae06a3e152e97402bfe7aed9bd069a",
+      "parameter_digest": "0fc5bdcf02092b91f632b07e09b8bd8c871d8357219032ec17bb79301c705551",
+      "optimizer_digest": "6d08d127d23cb4b35ed1a875a8303ba8145bfa03b9b8966fc5e156eff30090db",
+      "inherited_old_task_update": 490,
+      "revision": 529,
+      "source_parent": {
+        "checkpoint": "E:\\Seed\\data\\experiments\\taiji_u2\\evidence_A_run\\1794490179909972700\\native-query\\update-000490.bin",
+        "sha256": "608fb7e103ba740506f03639c9f9842be50d04d982750708fb28cdec82ba1ef6",
+        "parameter_digest": "0fc5bdcf02092b91f632b07e09b8bd8c871d8357219032ec17bb79301c705551",
+        "optimizer_policy": "inherit accepted real moments and step counters",
+        "capability_qualifications": []
+      }
+    },
+    "transformer": {
+      "checkpoint": "E:\\Seed\\data\\experiments\\taiji_u2\\paired_compute\\1794503641271476500\\transformer.bin",
+      "sha256": "1af521299329b285cf4718c19ead6a75b38d0b5b17f5839352ed650f43b84e0e",
+      "parameter_digest": "2434f2a9955622dde4446e793572940de4185b3a6c65702c7eaa56467b2266a4",
+      "optimizer_digest": "3928a555d92012c139226192c32faa37b0103720dde874372a78d0ae9fae7970",
+      "inherited_old_task_update": 3891,
+      "revision": 4243,
+      "source_parent": {
+        "checkpoint": "E:\\Seed\\data\\experiments\\taiji_u2\\evidence_A_run\\1794490179909972700\\transformer\\update-003891.bin",
+        "sha256": "b1d0aa36ebf41be7b53e34f30c974121a1f88df3e490514681c545377efefa85",
+        "parameter_digest": "2434f2a9955622dde4446e793572940de4185b3a6c65702c7eaa56467b2266a4",
+        "optimizer_policy": "inherit accepted real moments and step counters",
+        "capability_qualifications": []
+      }
+    }
+  },
+  "data_manifest": "plans/manifests/taiji_u2_paired_task_20261112.json",
+  "data_digest": "65041f02e3a3410b307bc6e013d897ef747e7f890b3668db6b5852fdc9fdba1c",
+  "operator_sha256": "4b45e504e8ce90fd8bf5f794c107ef1f07128ac759a3f86c99914fe7dafae8c2",
+  "reference_operator": {
+    "source": "taiji/u2_operators.py",
+    "archive": "scripts/archive/u2_operators_20261113_pre_p3_5_3.py.txt",
+    "sha256": "d09f5784bffaf0a3247006c0d67062f18825ba8dc8a431b7c1d0cc778a249559"
+  },
+  "optimizer_policy": "moments and previous counters inherited unchanged",
+  "implementation_revision_increment": 1,
+  "learning_admitted": false
+}

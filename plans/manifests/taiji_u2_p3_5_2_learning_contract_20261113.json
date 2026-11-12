@@ -1,0 +1,49 @@
+{
+  "schema": "taiji-u2-p3-5-2-learning-contract-v1",
+  "status": "learning_design_frozen_pending_compute_and_price",
+  "parents": {
+    "native-query": {
+      "checkpoint": "E:\\Seed\\data\\experiments\\taiji_u2\\evidence_A_run\\1794490179909972700\\native-query\\update-000490.bin",
+      "sha256": "608fb7e103ba740506f03639c9f9842be50d04d982750708fb28cdec82ba1ef6",
+      "parameter_digest": "0fc5bdcf02092b91f632b07e09b8bd8c871d8357219032ec17bb79301c705551",
+      "optimizer_policy": "inherit accepted real moments and step counters",
+      "capability_qualifications": []
+    },
+    "transformer": {
+      "checkpoint": "E:\\Seed\\data\\experiments\\taiji_u2\\evidence_A_run\\1794490179909972700\\transformer\\update-003891.bin",
+      "sha256": "b1d0aa36ebf41be7b53e34f30c974121a1f88df3e490514681c545377efefa85",
+      "parameter_digest": "2434f2a9955622dde4446e793572940de4185b3a6c65702c7eaa56467b2266a4",
+      "optimizer_policy": "inherit accepted real moments and step counters",
+      "capability_qualifications": []
+    }
+  },
+  "data_manifest": "plans/manifests/taiji_u2_paired_task_20261112.json",
+  "arms": [
+    "native-query-learn",
+    "native-query-frozen",
+    "transformer-reference"
+  ],
+  "responsibility": "answer loss through original byte expression, request encoder, H/F and query evidence reader; both requests share one observation and continuous episode state",
+  "loss": "mean NLL over14 supervised symbols, teacher prefix on train only",
+  "evaluation": "free actual-output continuity, full360 rounds, model parameters frozen",
+  "main_gates": {
+    "train_accuracy": 0.9,
+    "dev_accuracy": 0.8,
+    "dev_gain_over_frozen_parent": 0.15,
+    "dev_rgb_cut_accuracy_drop": 0.15,
+    "dev_no_question_accuracy_drop": 0.15
+  },
+  "diagnostic_candidates": [
+    "full word likelihood under teacher prefix",
+    "full word likelihood after actual first answer",
+    "rgb removed",
+    "request neutralized",
+    "new reader residual disabled"
+  ],
+  "diagnostic_boundary": "No oracle labels or semantic indices in model forward. Candidate scoring and scripted recovery do not establish free task ability.",
+  "old_scope_retention": "report P3.4 original dev32 before/after, preserve historical task identity; old task never qualified as reliable ability",
+  "optimizer": "Adam inherited state, lr0.001 betas0.9/0.999 eps1e-8 weight_decay0",
+  "learning_resource": "pending actual episode price and CPU endpoint admission; no training dose",
+  "check_reads": 0,
+  "final_reads": 0
+}

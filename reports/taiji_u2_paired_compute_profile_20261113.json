@@ -1,0 +1,298 @@
+{
+  "schema": "taiji-u2-paired-compute-profile-v1",
+  "scope": "Live graph forward/backward; module/cProfile counters are intrusive and used for diagnosis. Real Adam steps act on disjoint shadow tensors only. No live learner update or task accuracy evaluation.",
+  "profiles": {
+    "native-query": {
+      "forward_backward_cpu_samples": [
+        1.15625,
+        1.0625,
+        1.1875,
+        1.09375
+      ],
+      "median_forward_backward_cpu": 1.125,
+      "module_calls_per_episode": {
+        "convolutions.0": 65,
+        "encoder.rgb": 16,
+        "joint_readout": 14,
+        "evidence_reader.key": 14,
+        "evidence_reader.value": 14,
+        "byte_head": 14
+      },
+      "profile_cumulative_wall_top": [
+        {
+          "function": "episode_loss",
+          "file": "E:\\Seed\\scripts\\training\\paired_episode_22_5.py",
+          "line": 25,
+          "calls": 1,
+          "cumulative_wall": 0.6890685000000001,
+          "self_wall": 0.0005452
+        },
+        {
+          "function": "output",
+          "file": "E:\\Seed\\taiji\\u2_subject.py",
+          "line": 1120,
+          "calls": 14,
+          "cumulative_wall": 0.5843397,
+          "self_wall": 0.0030603
+        },
+        {
+          "function": "emission",
+          "file": "E:\\Seed\\taiji\\u2_operators.py",
+          "line": 297,
+          "calls": 14,
+          "cumulative_wall": 0.5261766,
+          "self_wall": 0.06879350000000001
+        },
+        {
+          "function": "_safe_logsumexp",
+          "file": "E:\\Seed\\taiji\\u2_operators.py",
+          "line": 52,
+          "calls": 7445,
+          "cumulative_wall": 0.3559293,
+          "self_wall": 0.0487471
+        },
+        {
+          "function": "_safe_logaddexp",
+          "file": "E:\\Seed\\taiji\\u2_operators.py",
+          "line": 60,
+          "calls": 3654,
+          "cumulative_wall": 0.2636141,
+          "self_wall": 0.0059706
+        },
+        {
+          "function": "accept_byte",
+          "file": "E:\\Seed\\taiji\\u2_subject.py",
+          "line": 1144,
+          "calls": 14,
+          "cumulative_wall": 0.057764600000000006,
+          "self_wall": 0.0005073
+        },
+        {
+          "function": "native",
+          "file": "E:\\Seed\\taiji\\u2_subject.py",
+          "line": 841,
+          "calls": 18,
+          "cumulative_wall": 0.055682300000000004,
+          "self_wall": 0.0062984
+        },
+        {
+          "function": "record_read",
+          "file": "E:\\Seed\\taiji\\u2_subject.py",
+          "line": 788,
+          "calls": 32,
+          "cumulative_wall": 0.047482100000000006,
+          "self_wall": 0.0074812
+        },
+        {
+          "function": "start_episode",
+          "file": "E:\\Seed\\scripts\\training\\paired_episode_22_5.py",
+          "line": 12,
+          "calls": 1,
+          "cumulative_wall": 0.034576800000000005,
+          "self_wall": 0.0003324
+        },
+        {
+          "function": "branch_context",
+          "file": "E:\\Seed\\taiji\\u2_evidence_subject.py",
+          "line": 135,
+          "calls": 14,
+          "cumulative_wall": 0.030321400000000002,
+          "self_wall": 0.0002123
+        },
+        {
+          "function": "text_units",
+          "file": "E:\\Seed\\taiji\\u2_subject.py",
+          "line": 610,
+          "calls": 65,
+          "cumulative_wall": 0.0280152,
+          "self_wall": 0.0052247000000000005
+        },
+        {
+          "function": "assimilate",
+          "file": "E:\\Seed\\taiji\\u2_evidence_subject.py",
+          "line": 63,
+          "calls": 1,
+          "cumulative_wall": 0.021897800000000002,
+          "self_wall": 5.8e-06
+        },
+        {
+          "function": "assimilate",
+          "file": "E:\\Seed\\taiji\\u2_subject.py",
+          "line": 1418,
+          "calls": 1,
+          "cumulative_wall": 0.020958,
+          "self_wall": 1.1400000000000001e-05
+        },
+        {
+          "function": "assimilate",
+          "file": "E:\\Seed\\taiji\\u2_events.py",
+          "line": 74,
+          "calls": 1,
+          "cumulative_wall": 0.020943200000000002,
+          "self_wall": 6.93e-05
+        },
+        {
+          "function": "correct",
+          "file": "E:\\Seed\\taiji\\u2_subject.py",
+          "line": 923,
+          "calls": 1,
+          "cumulative_wall": 0.0176894,
+          "self_wall": 0.0005453000000000001
+        }
+      ],
+      "adam": {
+        "fresh_step_cpu": 0.015625,
+        "inherited_moment_step_cpu_samples": [
+          0.0078125,
+          0.00390625,
+          0.00390625,
+          0.00390625,
+          0.0078125,
+          0.00390625,
+          0.00390625,
+          0.00390625
+        ],
+        "median_inherited_step_cpu": 0.00390625,
+        "shadow_optimizer_steps": 35,
+        "live_parameters_disjoint": true,
+        "live_moments_disjoint": true
+      },
+      "learner_parameters_and_optimizer_unchanged": true
+    },
+    "transformer": {
+      "forward_backward_cpu_samples": [
+        0.140625,
+        0.109375,
+        0.109375,
+        0.09375
+      ],
+      "median_forward_backward_cpu": 0.109375,
+      "module_calls_per_episode": {
+        "frontend.convolutions.0": 35,
+        "frontend.encoder.rgb": 1,
+        "byte_head": 14
+      },
+      "profile_cumulative_wall_top": [
+        {
+          "function": "episode_loss",
+          "file": "E:\\Seed\\scripts\\training\\paired_episode_22_5.py",
+          "line": 25,
+          "calls": 1,
+          "cumulative_wall": 0.076694,
+          "self_wall": 0.00019050000000000002
+        },
+        {
+          "function": "start_episode",
+          "file": "E:\\Seed\\scripts\\training\\paired_episode_22_5.py",
+          "line": 12,
+          "calls": 1,
+          "cumulative_wall": 0.0406829,
+          "self_wall": 2.5600000000000002e-05
+        },
+        {
+          "function": "text_units",
+          "file": "E:\\Seed\\taiji\\u2_subject.py",
+          "line": 610,
+          "calls": 35,
+          "cumulative_wall": 0.0126519,
+          "self_wall": 0.0024729
+        },
+        {
+          "function": "next_request",
+          "file": "E:\\Seed\\scripts\\training\\paired_episode_22_5.py",
+          "line": 17,
+          "calls": 1,
+          "cumulative_wall": 0.0100096,
+          "self_wall": 2.8000000000000003e-06
+        },
+        {
+          "function": "utf8_mask",
+          "file": "E:\\Seed\\taiji\\u2_operators.py",
+          "line": 439,
+          "calls": 28,
+          "cumulative_wall": 0.0098882,
+          "self_wall": 0.009366300000000001
+        },
+        {
+          "function": "goal",
+          "file": "E:\\Seed\\taiji\\u2_subject.py",
+          "line": 623,
+          "calls": 20,
+          "cumulative_wall": 0.0083853,
+          "self_wall": 0.0003636
+        },
+        {
+          "function": "bounded",
+          "file": "E:\\Seed\\taiji\\u2_subject.py",
+          "line": 30,
+          "calls": 39,
+          "cumulative_wall": 0.0014774,
+          "self_wall": 0.0006692
+        },
+        {
+          "function": "encode",
+          "file": "E:\\Seed\\taiji\\u2_subject.py",
+          "line": 405,
+          "calls": 1,
+          "cumulative_wall": 0.00043260000000000005,
+          "self_wall": 0.0001095
+        },
+        {
+          "function": "detached_tree",
+          "file": "E:\\Seed\\taiji\\u2_history.py",
+          "line": 28,
+          "calls": 84,
+          "cumulative_wall": 0.0004023,
+          "self_wall": 0.0001642
+        },
+        {
+          "function": "record",
+          "file": "E:\\Seed\\scripts\\training\\profile_paired_compute_22_5.py",
+          "line": 107,
+          "calls": 50,
+          "cumulative_wall": 6.890000000000001e-05,
+          "self_wall": 6.85e-05
+        },
+        {
+          "function": "public_example",
+          "file": "E:\\Seed\\scripts\\training\\paired_world_22_5.py",
+          "line": 110,
+          "calls": 1,
+          "cumulative_wall": 8.1e-06,
+          "self_wall": 8.1e-06
+        }
+      ],
+      "adam": {
+        "fresh_step_cpu": 0.0,
+        "inherited_moment_step_cpu_samples": [
+          0.0,
+          0.00390625,
+          0.0,
+          0.0,
+          0.00390625,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "median_inherited_step_cpu": 0.0,
+        "shadow_optimizer_steps": 35,
+        "live_parameters_disjoint": true,
+        "live_moments_disjoint": true
+      },
+      "learner_parameters_and_optimizer_unchanged": true
+    }
+  },
+  "optimizer_steps": 70,
+  "shadow_optimizer_steps": 70,
+  "learner_optimizer_steps": 0,
+  "check_reads": 0,
+  "final_reads": 0,
+  "cpu_seconds": 12.78125,
+  "wall_seconds": 15.391000000061467,
+  "run_conditions": {
+    "device": "cpu",
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "source_sha256": "c852ac0cc3515d78297203ab7d754f54901fc8f553b31b742a0b114cf6a18117"
+}

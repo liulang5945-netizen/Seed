@@ -1,0 +1,169 @@
+{
+  "schema": "taiji-u2-paired-compute-equivalence-v1",
+  "verdict": "passed_full_episode_compute_equivalence",
+  "cases": [
+    {
+      "dtype": "torch.float32",
+      "episode_index": 0,
+      "vectorized": {
+        "gradient_max_abs": 4.547473508864641e-13,
+        "hvp_max_abs": 4.656612873077393e-10,
+        "per_symbol_logp_and_H_exact": true
+      },
+      "request_reused": {
+        "gradient_max_abs": 3.725290298461914e-09,
+        "hvp_max_abs": 4.656612873077393e-10,
+        "per_symbol_logp_and_H_exact": true
+      },
+      "parameter_tensors": 201
+    },
+    {
+      "dtype": "torch.float32",
+      "episode_index": 1,
+      "vectorized": {
+        "gradient_max_abs": 4.102970157078095e-16,
+        "hvp_max_abs": 4.656612873077393e-10,
+        "per_symbol_logp_and_H_exact": true
+      },
+      "request_reused": {
+        "gradient_max_abs": 1.862645149230957e-09,
+        "hvp_max_abs": 4.656612873077393e-10,
+        "per_symbol_logp_and_H_exact": true
+      },
+      "parameter_tensors": 201
+    },
+    {
+      "dtype": "torch.float32",
+      "episode_index": 60,
+      "vectorized": {
+        "gradient_max_abs": 1.4901161193847656e-08,
+        "hvp_max_abs": 4.656612873077393e-10,
+        "per_symbol_logp_and_H_exact": true
+      },
+      "request_reused": {
+        "gradient_max_abs": 1.4901161193847656e-08,
+        "hvp_max_abs": 4.656612873077393e-10,
+        "per_symbol_logp_and_H_exact": true
+      },
+      "parameter_tensors": 201
+    },
+    {
+      "dtype": "torch.float32",
+      "episode_index": 120,
+      "vectorized": {
+        "gradient_max_abs": 2.041366343541809e-16,
+        "hvp_max_abs": 2.3283064365386963e-10,
+        "per_symbol_logp_and_H_exact": true
+      },
+      "request_reused": {
+        "gradient_max_abs": 3.725290298461914e-09,
+        "hvp_max_abs": 2.3283064365386963e-10,
+        "per_symbol_logp_and_H_exact": true
+      },
+      "parameter_tensors": 201
+    },
+    {
+      "dtype": "torch.float64",
+      "episode_index": 0,
+      "vectorized": {
+        "gradient_max_abs": 7.900026181490873e-29,
+        "hvp_max_abs": 8.673617379884035e-19,
+        "per_symbol_logp_and_H_exact": true
+      },
+      "request_reused": {
+        "gradient_max_abs": 6.938893903907228e-18,
+        "hvp_max_abs": 8.673617379884035e-19,
+        "per_symbol_logp_and_H_exact": true
+      },
+      "parameter_tensors": 201
+    },
+    {
+      "dtype": "torch.float64",
+      "episode_index": 1,
+      "vectorized": {
+        "gradient_max_abs": 5.551115123125783e-17,
+        "hvp_max_abs": 8.673617379884035e-19,
+        "per_symbol_logp_and_H_exact": true
+      },
+      "request_reused": {
+        "gradient_max_abs": 5.551115123125783e-17,
+        "hvp_max_abs": 8.673617379884035e-19,
+        "per_symbol_logp_and_H_exact": true
+      },
+      "parameter_tensors": 201
+    },
+    {
+      "dtype": "torch.float64",
+      "episode_index": 60,
+      "vectorized": {
+        "gradient_max_abs": 2.4880921826965255e-28,
+        "hvp_max_abs": 4.336808689942018e-19,
+        "per_symbol_logp_and_H_exact": true
+      },
+      "request_reused": {
+        "gradient_max_abs": 6.938893903907228e-18,
+        "hvp_max_abs": 4.336808689942018e-19,
+        "per_symbol_logp_and_H_exact": true
+      },
+      "parameter_tensors": 201
+    },
+    {
+      "dtype": "torch.float64",
+      "episode_index": 120,
+      "vectorized": {
+        "gradient_max_abs": 7.457809311932591e-28,
+        "hvp_max_abs": 8.673617379884035e-19,
+        "per_symbol_logp_and_H_exact": true
+      },
+      "request_reused": {
+        "gradient_max_abs": 3.469446951953614e-18,
+        "hvp_max_abs": 8.673617379884035e-19,
+        "per_symbol_logp_and_H_exact": true
+      },
+      "parameter_tensors": 201
+    }
+  ],
+  "timings": {
+    "reference": {
+      "cpu_samples": [
+        1.015625,
+        1.140625,
+        1.046875,
+        1.078125
+      ],
+      "median_cpu": 1.078125
+    },
+    "vectorized": {
+      "cpu_samples": [
+        0.265625,
+        0.296875,
+        0.28125,
+        0.28125
+      ],
+      "median_cpu": 0.28125
+    },
+    "vectorized_request_reuse": {
+      "cpu_samples": [
+        0.265625,
+        0.28125,
+        0.296875,
+        0.28125
+      ],
+      "median_cpu": 0.28125
+    }
+  },
+  "reference_to_vectorized_speedup": 3.8333333333333335,
+  "learner_optimizer_steps": 0,
+  "shadow_optimizer_steps_from_profile": 70,
+  "check_reads": 0,
+  "final_reads": 0,
+  "cpu_seconds": 48.640625,
+  "combined_compute_cpu_seconds": 61.421875,
+  "wall_seconds": 51.04700000002049,
+  "run_conditions": {
+    "device": "cpu",
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "verifier_sha256": "a365a36725fde69ca10c778136d97bf4368e5fe6dbe1c02d228eb5b05592ca05"
+}

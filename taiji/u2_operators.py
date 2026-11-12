@@ -364,12 +364,18 @@ def emission(
     log_generate_mass = _safe_logaddexp(_safe_log_probability(gamma), log_one_minus_gamma + log_q)
     log_gen = log_generate_mass[:, None] + log_generator
     log_copy = log_one_minus_gamma[:, None, None] + log_w
-    columns = []
-    for symbol in range(alphabet):
-        chosen = valid & (byte_ids == symbol)
-        copied = _safe_logsumexp(log_copy.masked_fill(~chosen[None], -torch.inf).flatten(1), -1)
-        columns.append(_safe_logaddexp(log_gen[:, symbol], copied))
-    log_branch = torch.stack(columns, -1)
+    if valid.numel() == 0:
+        # Keep the empty-copy graph edge and its zero derivatives while sharing
+        # the identical all-impossible reduction across the whole alphabet.
+        copied = _safe_logsumexp(log_copy.flatten(1), -1)
+        log_branch = _safe_logaddexp(log_gen, copied[:, None])
+    else:
+        columns = []
+        for symbol in range(alphabet):
+            chosen = valid & (byte_ids == symbol)
+            copied = _safe_logsumexp(log_copy.masked_fill(~chosen[None], -torch.inf).flatten(1), -1)
+            columns.append(_safe_logaddexp(log_gen[:, symbol], copied))
+        log_branch = torch.stack(columns, -1)
     log_total = _safe_logsumexp(state["log_eta"][:, None] + log_branch, 0)
     log_normalizer = _safe_logsumexp(log_total.masked_fill(~mask, -torch.inf), 0)
     if not bool(torch.isfinite(log_normalizer)):

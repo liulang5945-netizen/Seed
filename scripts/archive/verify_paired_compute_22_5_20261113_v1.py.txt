@@ -1,0 +1,254 @@
+"""Full-graph emission/reuse equivalence and inherited-parent rebaseline admission."""
+
+# ruff: noqa: E402 -- include imports in the shared compute-verification budget
+from __future__ import annotations
+
+import hashlib
+import importlib.machinery
+import importlib.util
+import json
+import math
+import sys
+import time
+from pathlib import Path
+from typing import Any
+from unittest.mock import patch
+
+STARTED = time.monotonic()
+ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT))
+
+import torch
+
+from scripts.training.check_report_run_conditions import write_report
+from scripts.training.paired_compute_22_5 import episode_loss_reusing_request
+from scripts.training.paired_episode_22_5 import episode_loss
+from scripts.training.paired_parent_migration_22_5 import rebase_parent
+from scripts.training.verify_taiji_u2_metadata_groups_22_4 import StepGuard
+from seed_platform.paths import get_external_path
+from taiji import u2_operators
+from taiji.u2_history import atomic_load, value_digest
+
+
+def load_reference(reference):
+    path = ROOT / reference["archive"]
+    assert (
+        hashlib.sha256(path.read_text(encoding="utf-8-sig").encode()).hexdigest()
+        == reference["sha256"]
+    )
+    loader = importlib.machinery.SourceFileLoader("taiji._paired_reference_operators", str(path))
+    spec = importlib.util.spec_from_loader(loader.name, loader)
+    assert spec is not None
+    module = importlib.util.module_from_spec(spec)
+    loader.exec_module(module)
+    return module
+
+
+def derivatives(model, partition, episode, operator, reuse):
+    traces = []
+    original = model.output
+
+    def observe(state, *args, **kwargs):
+        result = original(state, *args, **kwargs)
+        traces.append((result[0].detach().clone(), state["H"].detach().clone()))
+        return result
+
+    parameters = list(model.parameters())
+    with patch("taiji.u2_subject.emission", operator), patch.object(model, "output", observe):
+        loss = (episode_loss_reusing_request if reuse else episode_loss)(model, partition, episode)
+        gradients = torch.autograd.grad(loss, parameters, create_graph=True, allow_unused=True)
+        normalizer = math.sqrt(sum(p.numel() for p in parameters))
+        product = torch.stack(
+            [g.sum() / normalizer for g in gradients if g is not None and g.requires_grad]
+        ).sum()
+        hessian_vector = torch.autograd.grad(product, parameters, allow_unused=True)
+    return (
+        loss.detach(),
+        traces,
+        [None if g is None else g.detach() for g in gradients],
+        [None if h is None else h.detach() for h in hessian_vector],
+    )
+
+
+def compare(reference, actual, tolerance):
+    torch.testing.assert_close(reference[0], actual[0], **tolerance)
+    assert len(reference[1]) == len(actual[1]) == 14
+    for left, right in zip(reference[1], actual[1], strict=True):
+        for a, b in zip(left, right, strict=True):
+            torch.testing.assert_close(a, b, atol=0, rtol=0)
+    maximum = []
+    for left, right in zip(reference[2:], actual[2:], strict=True):
+        errors = []
+        for a, b in zip(left, right, strict=True):
+            assert (a is None) == (b is None)
+            if a is not None:
+                torch.testing.assert_close(a, b, **tolerance)
+                errors.append(float((a - b).abs().max()))
+        maximum.append(max(errors))
+    return {
+        "gradient_max_abs": maximum[0],
+        "hvp_max_abs": maximum[1],
+        "per_symbol_logp_and_H_exact": True,
+    }
+
+
+def verify():
+    torch.set_num_threads(1)
+    output = ROOT / "reports/taiji_u2_paired_compute_equivalence_20261113.json"
+    accepted = ROOT / "plans/manifests/taiji_u2_paired_compute_accepted_20261113.json"
+    if output.exists() or accepted.exists():
+        raise FileExistsError("paired_compute_already_checked")
+    contract = json.loads(
+        (ROOT / "plans/manifests/taiji_u2_p3_5_3_compute_contract_20261113.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    design = json.loads(
+        (ROOT / "plans/manifests/taiji_u2_p3_5_2_learning_contract_20261113.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    data_manifest = json.loads((ROOT / design["data_manifest"]).read_text(encoding="utf-8"))
+    data = atomic_load(data_manifest["data_path"])
+    assert value_digest(data) == data_manifest["data_digest"]
+    reference = load_reference(contract["reference_operator"])
+    root = Path(get_external_path(f"data/experiments/taiji_u2/paired_compute/{time.time_ns()}"))
+    parents, cases = {}, []
+    with StepGuard() as guard:
+        models = {}
+        for name, parent in design["parents"].items():
+            assert (
+                hashlib.sha256(Path(parent["checkpoint"]).read_bytes()).hexdigest()
+                == parent["sha256"]
+            )
+            destination = root / f"{name}.bin"
+            model, optimizer, payload = rebase_parent(
+                parent["checkpoint"], destination, contract["reference_operator"]
+            )
+            models[name] = model
+            parents[name] = {
+                "checkpoint": str(destination),
+                "sha256": hashlib.sha256(destination.read_bytes()).hexdigest(),
+                "parameter_digest": value_digest(model.state_dict()),
+                "optimizer_digest": value_digest(optimizer.state_dict()),
+                "inherited_old_task_update": payload["update"],
+                "revision": model.parameter_revision,
+                "source_parent": parent,
+            }
+        model = models["native-query"]
+        for dtype in (torch.float32, torch.float64):
+            model = model.to(dtype=dtype)
+            # The observations are immutable numeric facts; encode them in the declared precision.
+            partition = {
+                "worlds": {
+                    identity: {
+                        **world,
+                        "public": {
+                            **world["public"],
+                            "observations": {
+                                k: v.to(dtype=dtype)
+                                for k, v in world["public"]["observations"].items()
+                            },
+                            "coordinates": {
+                                k: v.to(dtype=dtype)
+                                for k, v in world["public"]["coordinates"].items()
+                            },
+                            "outcome": world["public"]["outcome"].to(dtype=dtype),
+                        },
+                    }
+                    for identity, world in data["train"]["worlds"].items()
+                },
+                "episodes": data["train"]["episodes"],
+            }
+            for index in contract["profile_episode_indices"]:
+                episode = partition["episodes"][index]
+                expected = derivatives(model, partition, episode, reference.emission, False)
+                assert any(
+                    value is not None and bool(value.abs().max() > 1e-12) for value in expected[3]
+                )
+                vectorized = derivatives(model, partition, episode, u2_operators.emission, False)
+                reused = derivatives(model, partition, episode, u2_operators.emission, True)
+                tolerance = contract["equivalence"][str(dtype).split(".")[-1]]
+                cases.append(
+                    {
+                        "dtype": str(dtype),
+                        "episode_index": index,
+                        "vectorized": compare(expected, vectorized, tolerance),
+                        "request_reused": compare(expected, reused, tolerance),
+                        "parameter_tensors": len(list(model.parameters())),
+                    }
+                )
+        timings: dict[str, Any] = {}
+        model = model.to(dtype=torch.float32)
+        for name, operator, reuse in (
+            ("reference", reference.emission, False),
+            ("vectorized", u2_operators.emission, False),
+            ("vectorized_request_reuse", u2_operators.emission, True),
+        ):
+            samples = []
+            for index in contract["profile_episode_indices"]:
+                with patch("taiji.u2_subject.emission", operator):
+                    model.zero_grad(set_to_none=True)
+                    start = time.process_time()
+                    (episode_loss_reusing_request if reuse else episode_loss)(
+                        model, data["train"], data["train"]["episodes"][index]
+                    ).backward()
+                    samples.append(time.process_time() - start)
+            timings[name] = {
+                "cpu_samples": samples,
+                "median_cpu": sorted(samples)[len(samples) // 2],
+            }
+    previous_profile = json.loads(
+        (ROOT / "reports/taiji_u2_paired_compute_profile_20261113.json").read_text(encoding="utf-8")
+    )
+    combined = time.process_time() + previous_profile["cpu_seconds"]
+    assert combined <= contract["cpu_cap"] and time.monotonic() - STARTED <= contract["wall_cap"]
+    manifest = {
+        "schema": "taiji-u2-paired-compute-accepted-v1",
+        "parents": parents,
+        "data_manifest": design["data_manifest"],
+        "data_digest": data_manifest["data_digest"],
+        "operator_sha256": hashlib.sha256(
+            (ROOT / "taiji/u2_operators.py").read_text(encoding="utf-8-sig").encode()
+        ).hexdigest(),
+        "reference_operator": contract["reference_operator"],
+        "optimizer_policy": "moments and previous counters inherited unchanged",
+        "implementation_revision_increment": 1,
+        "learning_admitted": False,
+    }
+    accepted.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+    report = {
+        "schema": "taiji-u2-paired-compute-equivalence-v1",
+        "verdict": "passed_full_episode_compute_equivalence",
+        "cases": cases,
+        "timings": timings,
+        "reference_to_vectorized_speedup": timings["reference"]["median_cpu"]
+        / timings["vectorized"]["median_cpu"],
+        "learner_optimizer_steps": guard.calls,
+        "shadow_optimizer_steps_from_profile": previous_profile["shadow_optimizer_steps"],
+        "check_reads": 0,
+        "final_reads": 0,
+        "cpu_seconds": time.process_time(),
+        "combined_compute_cpu_seconds": combined,
+        "wall_seconds": time.monotonic() - STARTED,
+        "run_conditions": {"device": "cpu", "threads": 1, "torch": torch.__version__},
+        "verifier_sha256": hashlib.sha256(
+            Path(__file__).read_text(encoding="utf-8-sig").encode()
+        ).hexdigest(),
+    }
+    write_report(output, report)
+    print(
+        json.dumps(
+            {
+                "verdict": report["verdict"],
+                "combined_cpu": combined,
+                "timings": timings,
+                "speedup": report["reference_to_vectorized_speedup"],
+            }
+        ),
+        flush=True,
+    )
+
+
+if __name__ == "__main__":
+    verify()

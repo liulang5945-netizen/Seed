@@ -1,0 +1,34 @@
+{
+  "schema": "taiji-u2-p3-5-3-compute-contract-v1",
+  "cpu_cap": 180,
+  "wall_cap": 360,
+  "profile_episode_indices": [
+    0,
+    1,
+    60,
+    120
+  ],
+  "profile_scope": "CPU callable/module counts and live forward/backward cost. Shadow Adam operates solely on detached cloned parameters, gradients and moment state.",
+  "shadow_updates_per_profile": 35,
+  "learner_optimizer_steps": 0,
+  "candidate_amortization": "Empty copy-set emission: one safe vector logaddexp, retaining empty-copy dependency and all validation. Request-encoding reuse is a separately measured low-cost prototype.",
+  "equivalence": {
+    "float32": {
+      "atol": 1e-06,
+      "rtol": 1e-05
+    },
+    "float64": {
+      "atol": 1e-10,
+      "rtol": 1e-08
+    }
+  },
+  "higher_order": "All-parameter Hessian-vector product for a fixed unit-norm direction, unused-gradient pattern preserved",
+  "invalidations": "Request recomputed for each utterance; no cache persists outside episode call. Parameters remain fixed throughout forward/backward.",
+  "budget_accounting": "180 reserved from12990, remaining12810 CPU. No learning dose.",
+  "reference_operator": {
+    "source": "taiji/u2_operators.py",
+    "archive": "scripts/archive/u2_operators_20261113_pre_p3_5_3.py.txt",
+    "sha256": "d09f5784bffaf0a3247006c0d67062f18825ba8dc8a431b7c1d0cc778a249559"
+  },
+  "decision_basis": "Measured scalar emission accumulated0.526/episode forward0.689 profiler wall seconds; 7445 safe_logsumexp calls; prioritize measured emission hotspot."
+}
