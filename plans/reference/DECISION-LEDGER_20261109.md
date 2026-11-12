@@ -3403,3 +3403,10 @@ owner选择先冻结A/B必要对照与预算，进行首次有界学习，C/D/J�
 ## D-20261112-34 — 基线模块迁出native包（架构契约修正）
 
 首次提交`efebacdfe`后跑架构契约套件发现2条红：`taiji/u2_task_baselines.py`在native包内使用`nn.MultiheadAttention`，违反native自足契约（`test_architecture_contract`与`verify_taiji_native_v7`共享禁符集）。22.4.4先例本就要求对照臂置于`taiji/`之外。处置：`git mv`至`scripts/training/task_baselines_22_4_a.py`，相对导入改绝对taiji导入，测试导入同步；**行为、参数量与初始化不变**（GRU 23,509/34、Transformer 22,373/45），基线身份仍未冻。契约13项＋u2 218项合跑**231全过**，ruff/black绿。[工程报告](../../reports/taiji_u2_22_4_A_1_native_request_baseline_20261112.json)按amendment口径登记before/after与重算pin（模块路径与测试pin），原值留档；[回执](VALIDATION-TAIJI-U2_22_4_A_1_20261112.md)§3/§4同步。教训：**u2子集回归（-k u2）不含架构契约套件**，涉及native包新增模块的提交前必须合跑契约套件。0训练/0 step/0数据读取。
+
+
+## D-20261112-33 — 首轮A实价与剂量冻结
+
+已完成42字段请求profile和完整输入GRU/TF，三种模型初始checkpoint及下一批逐参数梯度读回一致。prepare中0 optimizer更新。首价1.373/0.141/0.182 CPU每更新，8块×4次前反向/局部Adam表达式；原人为最低32步使同CPU计划Native只能24步，原报告按compute_parity_unavailable保留。该最低线无独立有效剂量证据，读fit模型结果前撤销，保留最多256步、共同CPU预算和行为门0.50/增益0.15，正式A父0.80/3seed/check另验。
+
+v3冻结24/243/188步、train64/fit32/price8及初始checkpoint，支持模块仅import次序/评价预算guard补编，参数和下一批梯度复核通过，旧源码逐字归档。1200 CPU/2400 wall从22.5的19200预留，包含150准备记账余量。当前执行首次真实学习，不再追加完整冷J运行；全部check/final读取0。

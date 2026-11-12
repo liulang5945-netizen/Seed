@@ -1,0 +1,25 @@
+{
+  "schema": "taiji-first-A-preflight-v2",
+  "verdict": "passed_rebaselined_compute_matched_pilot",
+  "updates": {
+    "native": 24,
+    "gru": 243,
+    "transformer": 188
+  },
+  "planned_training_cpu": {
+    "native": 32.953125,
+    "gru": 34.171875,
+    "transformer": 34.1484375
+  },
+  "parameter_identity_and_next_gradient_equal": true,
+  "optimizer_steps": 0,
+  "fit_model_results_read": false,
+  "cpu_seconds": 11.328125,
+  "wall_seconds": 8.21799999999348,
+  "run_conditions": {
+    "device": "cpu",
+    "threads": 1,
+    "dtype": "float32",
+    "torch": "2.13.0+cpu"
+  }
+}

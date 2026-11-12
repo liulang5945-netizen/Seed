@@ -1,0 +1,18 @@
+{
+  "schema": "taiji-first-A-preflight-v3",
+  "verdict": "passed_checkpoint_and_exact_next_gradient",
+  "optimizer_steps": 0,
+  "updates": {
+    "native": 24,
+    "gru": 243,
+    "transformer": 188
+  },
+  "cpu_seconds": 11.625,
+  "wall_seconds": 7.797000000020489,
+  "run_conditions": {
+    "device": "cpu",
+    "threads": 1,
+    "dtype": "float32",
+    "torch": "2.13.0+cpu"
+  }
+}

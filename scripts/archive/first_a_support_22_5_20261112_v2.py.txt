@@ -1,0 +1,276 @@
+"""Frozen public-scene input, byte loss and resumable first-A learner bundles."""
+
+from __future__ import annotations
+
+import hashlib
+from dataclasses import replace
+from pathlib import Path
+
+import torch
+
+from scripts.training.task_baselines_22_4_a import TaskSequenceBaseline
+from taiji.u2_events import observation_intent
+from taiji.u2_history import (
+    assert_values_equal,
+    atomic_load,
+    atomic_save,
+    detached_tree,
+    value_digest,
+)
+from taiji.u2_recovery import _source_pins
+from taiji.u2_subject import U2Config, U2Packet, U2Subject
+from taiji.u2_task_episode import NAMES, locate_public, position_word
+from taiji.u2_task_world import PhysicalWorld
+
+GOAL = "依据当前可核验观测，用自然中文回答请求。".encode()
+LABELS = ("左边", "中间", "右边", "未知")
+RGB_COLORS = (
+    (220, 45, 45),
+    (45, 90, 220),
+    (45, 190, 80),
+    (230, 190, 40),
+    (170, 60, 200),
+    (40, 190, 195),
+)
+
+
+def seed_for(partition, index, attempt):
+    raw = f"taiji-first-A-v1|{partition}|{index}|{attempt}".encode()
+    return int.from_bytes(hashlib.sha256(raw).digest()[:8], "little") % (2**63)
+
+
+def generate_examples(partition, count):
+    if partition not in {"train", "fit", "price"} or count % 4:
+        raise ValueError("unsupported_first_A_partition")
+    examples = []
+    for index in range(count):
+        label = LABELS[index % 4]
+        for attempt in range(256):
+            seed = seed_for(partition, index, attempt)
+            objects = 3 if partition == "fit" else 1 + ((index // 4) % 2)
+            world = PhysicalWorld.reset(seed, {"body_count": objects})
+            result = world.elapse("public-scene")
+            bodies = world.snapshot()["bodies"]
+            names = [NAMES[RGB_COLORS.index(tuple(body["color"]))] for body in bodies]
+            if label == "未知":
+                absent = [name for name in NAMES if name not in names]
+                entity = absent[seed % len(absent)]
+            else:
+                eligible = [
+                    i
+                    for i, body in enumerate(bodies)
+                    if position_word(body["position"][0]) == label
+                    and min(abs(body["position"][0] + 1 / 3), abs(body["position"][0] - 1 / 3))
+                    >= 0.1
+                ]
+                if not eligible:
+                    continue
+                entity = names[eligible[seed % len(eligible)]]
+            estimated = locate_public(result["raw_media"]["rgb"], entity)
+            oracle = "未知" if estimated is None else position_word(estimated)
+            if oracle != label:
+                continue
+            public = {
+                "goal": GOAL,
+                "request": f"{entity}现在在哪里？".encode(),
+                "observations": result["observations"],
+                "coordinates": result["coordinates"],
+                "outcome": result["execution_outcome"],
+                "action": torch.zeros(15),
+                "t_start": result["t_start"],
+                "t_end": result["t_end"],
+            }
+            examples.append(
+                {
+                    "id": f"{partition}-{index}",
+                    "public": public,
+                    "target": label.encode(),
+                    "audit": {
+                        "seed": seed,
+                        "attempt": attempt,
+                        "objects": objects,
+                        "world_digest": value_digest(world.snapshot()),
+                        "oracle": oracle,
+                    },
+                }
+            )
+            break
+        else:
+            raise ValueError("first_A_fixture_generation_exhausted")
+    return examples
+
+
+def make_model(architecture, seed=20261110):
+    if architecture == "native":
+        return (
+            U2Subject(replace(U2Config.small(), seed=seed)).metadata_candidate().request_candidate()
+        )
+    return TaskSequenceBaseline(architecture, seed=seed)
+
+
+def prepare(model, public, identity):
+    if isinstance(model, U2Subject):
+        state = model.set_goal(model.initial(identity), public["goal"])
+        state = observation_intent(model, state, "recorded-observation", 0.05)
+        packet = U2Packet(
+            "recorded-public-frame",
+            "sensor",
+            "world",
+            public["t_start"],
+            public["t_end"],
+            0.0,
+            public["observations"],
+            public["coordinates"],
+            public["outcome"],
+            "recorded-observation",
+        )
+        state, _ = model.assimilate(state, packet)
+        state = model.set_request(state, "current-request", public["request"])
+        return model.begin_utterance(state)
+    state = model.set_goal(model.initial(), public["goal"])
+    state = model.action(state, public["action"])
+    state = model.observe(state, public["observations"], public["coordinates"], public["outcome"])
+    return model.set_request(state, public["request"])
+
+
+def output(model, state):
+    if isinstance(model, U2Subject):
+        return model.output(state, model.language_goal(state), state["prediction_action"])
+    return model.output(state), None, None
+
+
+def accept(model, state, symbol, details):
+    if isinstance(model, U2Subject):
+        return model.accept_byte(state, symbol, details)
+    return model.accept_byte(state, symbol)
+
+
+def task_loss(model, examples):
+    losses = []
+    for example in examples:
+        state = prepare(model, example["public"], example["id"])
+        terms = []
+        for symbol in [*example["target"], 256]:
+            probability, _, details = output(model, state)
+            terms.append(-probability[symbol])
+            state = accept(model, state, symbol, details)
+        losses.append(torch.stack(terms).mean())
+    return torch.stack(losses).mean()
+
+
+def predict(model, public, identity):
+    state = prepare(model, public, identity)
+    data = bytearray()
+    for _ in range(65):
+        probability, _, details = output(model, state)
+        symbol = int(probability.detach().argmax())
+        state = accept(model, state, symbol, details)
+        if symbol == 256:
+            return bytes(data), True
+        data.append(symbol)
+    return bytes(data), False
+
+
+def evaluate(model, examples):
+    rows = []
+    with torch.no_grad():
+        for example in examples:
+            content, eos = predict(model, example["public"], example["id"])
+            try:
+                content.decode("utf-8", errors="strict")
+                valid = True
+            except UnicodeDecodeError:
+                valid = False
+            rows.append(
+                {
+                    "id": example["id"],
+                    "target": example["target"].decode(),
+                    "output_hex": content.hex(),
+                    "eos": eos,
+                    "valid_utf8": valid,
+                    "correct": bool(eos and valid and content == example["target"]),
+                }
+            )
+    return {
+        "correct": sum(row["correct"] for row in rows),
+        "denominator": len(examples),
+        "accuracy": sum(row["correct"] for row in rows) / len(examples),
+        "rows": rows,
+    }
+
+
+def model_description(model):
+    if isinstance(model, U2Subject):
+        return {"architecture": "native", "config": model.c.__dict__.copy()}
+    return {"architecture": model.architecture, "seed": model.seed, "max_tokens": model.max_tokens}
+
+
+def learner_bundle(model, optimizer, architecture, update, cursor, order, data_digest):
+    sources = {"taiji/" + name: value for name, value in _source_pins().items()}
+    root = Path(__file__).resolve().parents[2]
+    for name in (
+        "scripts/training/first_a_support_22_5.py",
+        "scripts/training/task_baselines_22_4_a.py",
+    ):
+        sources[name] = hashlib.sha256(
+            (root / name).read_text(encoding="utf-8-sig").encode()
+        ).hexdigest()
+    return {
+        "schema": "taiji-first-A-learner-v1",
+        "description": model_description(model),
+        "parameters": detached_tree(model.state_dict()),
+        "revision": model.parameter_revision,
+        "optimizer": detached_tree(optimizer.state_dict()),
+        "architecture": architecture,
+        "update": update,
+        "cursor": cursor,
+        "order": list(order),
+        "data_digest": data_digest,
+        "torch_rng": torch.get_rng_state(),
+        "dtype": str(next(model.parameters()).dtype),
+        "source_pins": sources,
+        "state_scope": "episodic supervised boundary; public input replay reconstructs each sample",
+    }
+
+
+def load_learner(path):
+    payload = atomic_load(path)
+    if payload["schema"] != "taiji-first-A-learner-v1":
+        raise ValueError("unsupported_first_A_checkpoint")
+    root = Path(__file__).resolve().parents[2]
+    for name, pin in payload["source_pins"].items():
+        if (
+            hashlib.sha256((root / name).read_text(encoding="utf-8-sig").encode()).hexdigest()
+            != pin
+        ):
+            raise ValueError("learner_source_identity_mismatch")
+    description = payload["description"]
+    model: U2Subject | TaskSequenceBaseline
+    if description["architecture"] == "native":
+        model = U2Subject(U2Config(**description["config"]))
+    else:
+        model = TaskSequenceBaseline(**description)
+    first = next(iter(payload["parameters"].values()))
+    model = model.to(dtype=first.dtype, device=first.device)
+    model.load_state_dict(payload["parameters"])
+    model.parameter_revision = payload["revision"]
+    optimizer = torch.optim.Adam(
+        model.parameters(), lr=0.001, betas=(0.9, 0.999), eps=1e-8, weight_decay=0
+    )
+    optimizer.load_state_dict(payload["optimizer"])
+    torch.set_rng_state(payload["torch_rng"])
+    return model, optimizer, payload
+
+
+def save_learner(path, model, optimizer, architecture, update, cursor, order, data_digest):
+    path = Path(path)
+    if path.exists():
+        raise FileExistsError(path)
+    payload = learner_bundle(model, optimizer, architecture, update, cursor, order, data_digest)
+    atomic_save(payload, path)
+    restored, other, loaded = load_learner(path)
+    assert_values_equal(model.state_dict(), restored.state_dict(), "learner.parameters")
+    assert_values_equal(optimizer.state_dict(), other.state_dict(), "learner.optimizer")
+    for key in ("revision", "update", "cursor", "order", "data_digest", "torch_rng"):
+        assert_values_equal(payload[key], loaded[key], f"learner.{key}")
+    return value_digest(payload)

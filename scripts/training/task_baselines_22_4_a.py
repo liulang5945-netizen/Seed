@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import hashlib
 import math
+from dataclasses import replace
 from pathlib import Path
 from typing import Any, cast
 
@@ -38,9 +39,9 @@ class PublicFrontend(nn.Module):
     record_metadata: nn.Linear
     record_provenance: nn.Linear
 
-    def __init__(self):
+    def __init__(self, seed=20261110):
         super().__init__()
-        source = U2Subject(U2Config.small()).metadata_candidate()
+        source = U2Subject(replace(U2Config.small(), seed=seed)).metadata_candidate()
         self.c = source.c
         for name in (
             "encoder",
@@ -91,7 +92,7 @@ class TaskSequenceBaseline(nn.Module):
         self.parameter_revision = 0
         with torch.random.fork_rng(devices=[]):
             torch.manual_seed(seed)
-            self.frontend = PublicFrontend()
+            self.frontend = PublicFrontend(seed=seed)
             if architecture == "gru":
                 self.gru = nn.GRU(33, self.width, batch_first=True)
             else:

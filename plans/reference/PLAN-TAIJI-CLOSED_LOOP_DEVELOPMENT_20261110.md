@@ -633,3 +633,6 @@ owner明确选择先冻结A/B必要对照与预算，进行首次有界学习，
 ### 22.4.A.1交付（2026-11-12）
 
 原生请求接口与全字节公共流基线已按[工程回执](VALIDATION-TAIJI-U2_22_4_A_1_20261112.md)交付：`separate_requests`profile（v4 schema，194张量逐字继承，状态42项）、`TaskSequenceBaseline`（GRU 23,509/34、Transformer 22,373/45，复用native前端，审计五项适配完成）。19项新测试与218项u2回归全过，mypy棘轮恢复0错。0训练/0 step/0数据读取，能力资格为空。**未竟项**：新源基线身份与实价未冻（22.4.4旧8步身份不得复用），归22.4.A.2；A.2还须冻结A/B范围、train/fit与未见轴、同资源配平、数值门与学习步数/停止。源覆盖清单已闭合本轮失效pin，v1失败回执3条不可恢复pin登记为已知限制。
+
+
+首轮学习已按[限定pilot](PLAN-TAIJI-U2_FIRST_A_LEARNING_20261112.md)冻结范围和[执行v3](../manifests/taiji_u2_first_A_execution_20261112_v3.json)。参数/optimizer/RNG/游标及下一批损失/梯度一致；全部初始checkpoint通过。实价Native1.373/GRU0.141/TF0.182 CPU每更新，原最低32步为未证人为门，撤销后按同CPU正剂量24/243/188更新，未改行为成功门或正式A父0.80/3seed/check。首pilot1200 CPU从22.5预算19200预留，prepare按150 CPU保守记账。训练只用train64，前后fit32评估，check/final/confirm均0。

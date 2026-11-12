@@ -1,0 +1,106 @@
+{
+  "schema": "taiji-first-A-preflight-v1",
+  "verdict": "compute_parity_unavailable",
+  "manifest_sha256": "05d548732eeac0fbb644856bfbb9ff96763c3790919633eb2a655bd423e3eb16",
+  "data_digest": "40813b4cc8ffec0c3ae5639941b373c139422b4ccbaa34790de34a9e1149d214",
+  "partition_counts": {
+    "price": 8,
+    "train": 64,
+    "fit": 32
+  },
+  "models": {
+    "native": {
+      "checkpoint": "E:\\Seed\\data\\experiments\\taiji_u2\\first_a\\20261112T074836Z\\native\\initial.bin",
+      "parameter_sha256": "c58aca6ca0ddf52b2c0ba796c559ff28fc66142013dfef0e0abb9e6ffa4a18e3",
+      "parameters": 22742,
+      "tensors": 194,
+      "next_loss": 4.528439521789551,
+      "gradient_tensors": 194,
+      "next_batch_equal": true
+    },
+    "gru": {
+      "checkpoint": "E:\\Seed\\data\\experiments\\taiji_u2\\first_a\\20261112T074836Z\\gru\\initial.bin",
+      "parameter_sha256": "9f6b8341705445cad2817cf635129cb8a5b7343067fbba15b7b0c674f2d48582",
+      "parameters": 23509,
+      "tensors": 34,
+      "next_loss": 4.488803863525391,
+      "gradient_tensors": 34,
+      "next_batch_equal": true
+    },
+    "transformer": {
+      "checkpoint": "E:\\Seed\\data\\experiments\\taiji_u2\\first_a\\20261112T074836Z\\transformer\\initial.bin",
+      "parameter_sha256": "e4b1ad0fb24b6b219917c98efe94995eac7b0d4cea1a59faa4f2310e9e33b6b4",
+      "parameters": 22373,
+      "tensors": 45,
+      "next_loss": 4.756810665130615,
+      "gradient_tensors": 45,
+      "next_batch_equal": true
+    }
+  },
+  "prices": {
+    "native": {
+      "median_step_cpu": 1.373046875,
+      "block_mean_cpu": [
+        1.48828125,
+        1.375,
+        1.3359375,
+        1.3828125,
+        1.42578125,
+        1.37109375,
+        1.3515625,
+        1.34765625
+      ],
+      "repeat_blocks": 8,
+      "inner_repeats": 4,
+      "scope": "forward, backward, local first-Adam algebra; no parameter update"
+    },
+    "gru": {
+      "median_step_cpu": 0.140625,
+      "block_mean_cpu": [
+        0.13671875,
+        0.12890625,
+        0.15234375,
+        0.1328125,
+        0.140625,
+        0.14453125,
+        0.140625,
+        0.1484375
+      ],
+      "repeat_blocks": 8,
+      "inner_repeats": 4,
+      "scope": "forward, backward, local first-Adam algebra; no parameter update"
+    },
+    "transformer": {
+      "median_step_cpu": 0.181640625,
+      "block_mean_cpu": [
+        0.19140625,
+        0.171875,
+        0.1796875,
+        0.18359375,
+        0.19140625,
+        0.1796875,
+        0.1796875,
+        0.19140625
+      ],
+      "repeat_blocks": 8,
+      "inner_repeats": 4,
+      "scope": "forward, backward, local first-Adam algebra; no parameter update"
+    }
+  },
+  "updates": {
+    "native": 24,
+    "gru": 243,
+    "transformer": 188
+  },
+  "optimizer_steps": 0,
+  "check_reads": 0,
+  "final_reads": 0,
+  "cpu_seconds": 69.609375,
+  "wall_seconds": 73.40700000000652,
+  "run_conditions": {
+    "device": "cpu",
+    "dtype": "float32",
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  }
+}

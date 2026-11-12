@@ -1,0 +1,69 @@
+{
+  "schema": "taiji-first-A-pilot-design-v1",
+  "card": "22.5.P1",
+  "authorization": "owner 2026-11-12 selected freeze necessary A/B controls and budget then execute first bounded learning",
+  "scope": "episodic current-position visual QA; full A parent gate remains 0.80/3seed/check",
+  "partitions": {
+    "train": 64,
+    "fit": 32,
+    "price": 8
+  },
+  "train_objects": [
+    1,
+    2
+  ],
+  "fit_objects": [
+    3
+  ],
+  "labels": [
+    "左边",
+    "中间",
+    "右边",
+    "未知"
+  ],
+  "label_balance": "equal quota, oracle-checked before model use",
+  "position_margin": 0.1,
+  "namespace": "taiji-first-A-v1",
+  "seed": 20261110,
+  "models": [
+    "native",
+    "gru",
+    "transformer"
+  ],
+  "native_profile": "small/metadata/separate_requests, 194 tensors",
+  "output": "257 bytes, UTF8/EOS mask, 64 byte maximum, free argmax evaluation",
+  "cpu_cap": 1200,
+  "wall_cap": 2400,
+  "source_budget": "22.5 A/B 19200 CPU; this pilot reserves 1200",
+  "optimizer": {
+    "lr": 0.001,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "weight_decay": 0
+  },
+  "loss": "mean teacher-forced byte NLL including EOS",
+  "batch": 2,
+  "max_updates_per_model": 256,
+  "min_updates_per_model": 32,
+  "training_compute": "8-repeat median forward/backward and local Adam algebra pricing; counts frozen before fit reading; actual CPU mismatch>10% precludes architecture advantage",
+  "pilot_signal": {
+    "fit_accuracy_min": 0.5,
+    "gain_over_initial_min": 0.15
+  },
+  "formal_A_parent_changed": false,
+  "check_reads": 0,
+  "final_reads": 0,
+  "optimizer_steps_now": 0,
+  "next_required": [
+    "checkpoint exact readback and next batch gradients",
+    "price-derived update manifest frozen before fitting"
+  ],
+  "source_pins": {
+    "taiji/u2_request_state.py": "80422d30fd3413b446a9306f9c7ca335b281f9216f46a285c17572ea2f43a8dc",
+    "scripts/training/task_baselines_22_4_a.py": "8fd2b8e26299d3c2039583080d5c5cb97b4b9562be5f0ace53eaabc6ab96369a",
+    "scripts/training/first_a_support_22_5.py": "8cd56bfdd5da9593dfa98356c3f722be10ff74e089fadb4fd28960483beaf36f"
+  }
+}
