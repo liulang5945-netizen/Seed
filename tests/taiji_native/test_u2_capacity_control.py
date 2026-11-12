@@ -145,3 +145,19 @@ def test_nonempty_optimizer_state_serialization_without_step(tmp_path, examples)
     _, restored, payload = load_learner(path)
     assert_values_equal(optimizer.state_dict(), restored.state_dict())
     assert payload["cursor"] == 6 and payload["update"] == 3
+
+
+def test_diagnostics_accepts_missing_optional_cut_attribute(monkeypatch, examples):
+    from scripts.training import run_evidence_a_22_5 as runner
+
+    model = EvidenceSubject.from_parent(parent(torch.float32))
+    assert not hasattr(model, "_verification_cuts")
+
+    def fake_evaluate(model, _examples, budget_guard):
+        budget_guard()
+        return {"accuracy": 0.0, "cuts": getattr(model, "_verification_cuts", frozenset())}
+
+    monkeypatch.setattr(runner, "evaluate", fake_evaluate)
+    rows = runner.diagnostics(model, "native-query", examples[:1], lambda: None)
+    assert rows["new_residual_off"]["cuts"] == frozenset({"query_evidence"})
+    assert model._verification_cuts == frozenset()

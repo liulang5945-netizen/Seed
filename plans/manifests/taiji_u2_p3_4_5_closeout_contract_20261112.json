@@ -1,0 +1,11 @@
+{
+  "schema": "taiji-u2-p3-4-5-closeout-contract-v1",
+  "cpu_cap": 120,
+  "wall_cap": 240,
+  "scope": "Read-only ledger, every accepted file digest, terminal optimizer and metadata audit after the frozen run exits. No further training or fit prediction.",
+  "optimizer_steps": 0,
+  "check_reads": 0,
+  "final_reads": 0,
+  "budget_accounting": "120 additional reserved from13350, leaving13230. Separate from runner3240 and stage3600.",
+  "scientific_boundary": "Interpret original preregistered gate and interventions. No new numerical gate. Engineering, resource mismatch and incomplete runs preserve their exits; no implicit extension."
+}

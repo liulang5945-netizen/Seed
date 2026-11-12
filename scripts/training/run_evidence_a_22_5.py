@@ -170,7 +170,7 @@ def diagnostics(model, architecture, examples, guard):
                 example["id"] = "audit-id-" + example["id"]
         rows[name] = evaluate(model, changed, budget_guard=guard)
     if architecture in {"native-query", "native-capacity"}:
-        previous = model._verification_cuts
+        previous: frozenset[str] = getattr(model, "_verification_cuts", frozenset())
         try:
             model._verification_cuts = frozenset({"query_evidence"})
             rows["new_residual_off"] = evaluate(model, examples, budget_guard=guard)
@@ -200,30 +200,45 @@ def bootstrap(query, other, settings):
     }
 
 
-def run():
+def run(recovery=False):
     torch.set_num_threads(1)
-    contract = json.loads(MANIFEST.read_text(encoding="utf-8"))
+    manifest_path = MANIFEST.with_name(MANIFEST.stem + "_v2.json") if recovery else MANIFEST
+    report_path = REPORT.with_name(REPORT.stem + "_v2.json") if recovery else REPORT
+    contract = json.loads(manifest_path.read_text(encoding="utf-8"))
     assert contract["status"] == "runner_admitted" and contract["source_pins"] == sources()
     root = Path(contract["run_root"])
-    if REPORT.exists() or (root / "started.bin").exists():
+    marker = root / ("resumed-v2.bin" if recovery else "started.bin")
+    if report_path.exists() or marker.exists():
         raise FileExistsError("evidence_A_already_started")
     data = atomic_load(Path(contract["data"]["run_root"]) / "data.bin")
     assert value_digest(data) == contract["data"]["digest"]
     results: dict[str, Any] = {}
     calls, accepted = 0, 0
+    if recovery:
+        assert digest(root / "ledger.jsonl") == contract["resume_ledger_sha256"]
+        previous = json.loads(REPORT.read_text(encoding="utf-8"))
+        assert digest(REPORT) == contract["previous_report_sha256"]
+        results = {name: row for name, row in previous["arms"].items() if name != "error"}
+        calls, accepted = previous["optimizer_steps"], previous["accepted_checkpoints"]
+
+    def elapsed_wall():
+        if recovery:
+            return time.time() - contract["original_wall_origin_unix"]
+        return time.monotonic() - STARTED + contract["preparation_wall_seconds"]
 
     def guard():
         if (
             time.process_time() + contract["preparation_cpu_seconds"] > contract["cpu_cap"]
-            or time.monotonic() - STARTED + contract["preparation_wall_seconds"]
-            > contract["wall_cap"]
+            or elapsed_wall() > contract["wall_cap"]
         ):
             raise RuntimeError("evidence_A_budget_stop")
 
     with writer_lease(root / "train.lock"):
-        atomic_save({"manifest_sha256": digest(MANIFEST)}, root / "started.bin")
+        atomic_save({"manifest_sha256": digest(manifest_path)}, marker)
         try:
             for arm in contract["arm_order"]:
+                if arm in results:
+                    continue
                 recipe = contract["arms"][arm]
                 assert (
                     digest(recipe["initial"]) == recipe["initial_sha256"]
@@ -233,9 +248,19 @@ def run():
                 initial = evaluate(model, data["fit"], budget_guard=guard)
                 training_cpu, cursor = 0.0, 0
                 directory = root / arm
-                directory.mkdir()
+                directory.mkdir(exist_ok=recovery)
                 first_credit: dict[str, Any] = {}
-                for update in range(1, recipe["proposed_updates"] + 1):
+                resumed = contract.get("resume_arms", {}).get(arm, {})
+                resume_update = resumed.get("updates", 0)
+                if resume_update:
+                    checkpoint = directory / f"update-{resume_update:06}.bin"
+                    assert digest(checkpoint) == resumed["checkpoint_sha256"]
+                    model, optimizer, restored = load_learner(checkpoint)
+                    assert restored["update"] == resume_update
+                    cursor = restored["cursor"]
+                    training_cpu = resumed["training_cpu"]
+                    first_credit = resumed["first_update_credit"]
+                for update in range(resume_update + 1, recipe["proposed_updates"] + 1):
                     guard()
                     assert sources() == contract["source_pins"]
                     batch = [
@@ -392,7 +417,7 @@ def run():
         "accepted_checkpoints": accepted,
         "cpu_seconds": time.process_time(),
         "accounted_cpu_seconds": time.process_time() + contract["preparation_cpu_seconds"],
-        "wall_seconds": time.monotonic() - STARTED + contract["preparation_wall_seconds"],
+        "wall_seconds": elapsed_wall(),
         "check_reads": 0,
         "final_reads": 0,
         "capability_qualifications": [],
@@ -402,14 +427,15 @@ def run():
             "threads": 1,
             "torch": torch.__version__,
         },
-        "manifest_sha256": digest(MANIFEST),
+        "manifest_sha256": digest(manifest_path),
+        "resumed_after_optimizer_steps": contract.get("previous_optimizer_steps", 0),
     }
     if (
         report["accounted_cpu_seconds"] > contract["cpu_cap"]
         or report["wall_seconds"] > contract["wall_cap"]
     ):
         report["verdict"] = "budget_stop"
-    write_report(REPORT, report)
+    write_report(report_path, report)
     print(
         json.dumps(
             {
@@ -426,5 +452,6 @@ def run():
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--prepare", action="store_true")
+    parser.add_argument("--resume", action="store_true")
     args = parser.parse_args()
-    prepare() if args.prepare else run()
+    prepare() if args.prepare else run(recovery=args.resume)

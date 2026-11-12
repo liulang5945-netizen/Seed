@@ -1,0 +1,11 @@
+{
+  "schema": "taiji-u2-evidence-A-posthoc-readout-v1",
+  "scope": "Post-hoc diagnosis on terminal parameters after frozen training. Existing train first8 and already-evaluated fit first8, balanced by original indices. Full free output on train8; four complete answer likelihood scores on train8/fit8. No new model or training.",
+  "cpu_cap": 120,
+  "wall_cap": 240,
+  "optimizer_steps": 0,
+  "check_reads": 0,
+  "final_reads": 0,
+  "scientific_boundary": "Candidate rescoring is a diagnostic; original free-generation gates and raw task results stay authoritative. Separate training-fit failure, unseen-composition failure and free-expression failure where measurements permit.",
+  "budget_accounting": "120 additional after closeout120 reservation, remaining13110 CPU. Separate from frozen runner cap."
+}
