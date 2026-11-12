@@ -55,4 +55,4 @@ P3.3通过后唯一转P3.4预注册。主比较沿当前有界自然中文A任�
 
 [正常主体回执](VALIDATION-TAIJI_U2_EVIDENCE_SUBJECT_20261112.md)已交付上述a–e。显式EvidenceSubject/EvidenceRuntime身份、新源/旧learner迁移、44字段、实际公开感知包目录、两次编码迁移与双精度6例独立接续通过。全部1,206个逐参数梯度条目及None模式一致，最大差0；必要回归108项通过。工程只签本夹具范围，0训练，任务能力未晋级。
 
-元数据有效位与时间语义在正常感知入口对齐，24token含完整RGB。目录撤销控制后续直接读取权限，历史H/F影响另由知识纠正任务验证。后续P3.4.1已[交付控制与四份研究父](VALIDATION-TAIJI_U2_EVIDENCE_PARENTS_20261112.md)，P3.4.2已[交付实价与新fit分区](VALIDATION-TAIJI_U2_EVIDENCE_PRICE_20261112.md)。工程/价格各预留180后，当前未分配16590 CPU。P3.4已[完整结案](CLOSEOUT-TAIJI_U2_EVIDENCE_LEARNING_20261112.md)，下一步唯一为[P3.5.1训练内可学习性重审](PLAN-TAIJI_U2_LEARNABILITY_REVIEW_20261112.md)。
+元数据有效位与时间语义在正常感知入口对齐，24token含完整RGB。目录撤销控制后续直接读取权限，历史H/F影响另由知识纠正任务验证。后续P3.4.1已[交付控制与四份研究父](VALIDATION-TAIJI_U2_EVIDENCE_PARENTS_20261112.md)，P3.4.2已[交付实价与新fit分区](VALIDATION-TAIJI_U2_EVIDENCE_PRICE_20261112.md)。工程/价格各预留180后，当前未分配16590 CPU。P3.4已[完整结案](CLOSEOUT-TAIJI_U2_EVIDENCE_LEARNING_20261112.md)，下一步唯一为[P3.5.2学习链分解合同](PLAN-TAIJI_U2_LEARNABILITY_REVIEW_20261112.md)。

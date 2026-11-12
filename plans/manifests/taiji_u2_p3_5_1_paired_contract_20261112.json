@@ -1,0 +1,23 @@
+{
+  "schema": "taiji-u2-p3-5-1-paired-contract-v1",
+  "status": "fixture_and_protocol_only",
+  "cpu_cap": 120,
+  "wall_cap": 240,
+  "partitions": ["train", "dev"],
+  "families_per_partition": 3,
+  "worlds_per_partition": 18,
+  "episodes_per_partition": 180,
+  "rounds_per_partition": 360,
+  "absent_rule": "Each visible entity pairs with all five other entities, in both request orders",
+  "counterfactual_family": "For each partition/position share genesis geometry, material and sensor RNG across all six visible colors. Only appearance and audit identities vary.",
+  "source_version": "paired-world-v1",
+  "retired_cyclic_design": {"rounds": 72, "without_rgb_full_history_ceiling": 0.6666666666666666, "reason": "Fixed absent-entity offsets reveal presence from question history and position"},
+  "ceilings": {"question": 0.5, "question_and_turn": 0.5, "question_history": 0.5, "public_without_rgb_and_question_history": 0.5, "public_without_questions_and_turn": 0.5},
+  "oracle_required_accuracy": 1.0,
+  "training_threshold_proposals": {"train_accuracy": 0.9, "same_scope_dev_accuracy": 0.8, "gain_over_partial_input_controls": 0.15},
+  "formal_A_gate_unchanged": {"accuracy": 0.8, "seeds": 3, "independent_check": true, "scope": "original multi-entity A contract"},
+  "budget_accounting": "Fixture/protocol120 reserved from13110, remaining12990 CPU. No learning dose.",
+  "optimizer_steps": 0,
+  "check_reads": 0,
+  "final_reads": 0
+}
