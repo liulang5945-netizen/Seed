@@ -1,0 +1,81 @@
+{
+  "schema": "taiji-u2-evidence-A-consolidation-v1",
+  "scope": "Data-only support audit and frozen endpoint composition; original full32 denominators retained; subset results diagnostic only",
+  "original_verdict": "resource_parity_unavailable",
+  "native_incremental_gain_supported": false,
+  "native_training_cpu_spread": 0.04383906598752361,
+  "cohort_training_cpu_spread": 0.12629432067775337,
+  "train_question_answer_pairs": 21,
+  "full_question_answer_pairs": 24,
+  "fit_unseen_pair_count": 5,
+  "arms": {
+    "native-old": {
+      "seen_pair_fit_correct": 0,
+      "seen_pair_fit_denominator": 27,
+      "unseen_pair_fit_correct": 0,
+      "unseen_pair_fit_denominator": 5,
+      "changed_output_counts": {
+        "rgb_zero": 0,
+        "spatial_coordinates_zero": 0,
+        "different_entity_request": 0,
+        "time_coordinates_zero": 0,
+        "episode_identity_changed": 0
+      }
+    },
+    "native-query": {
+      "seen_pair_fit_correct": 8,
+      "seen_pair_fit_denominator": 27,
+      "unseen_pair_fit_correct": 0,
+      "unseen_pair_fit_denominator": 5,
+      "changed_output_counts": {
+        "rgb_zero": 0,
+        "spatial_coordinates_zero": 0,
+        "different_entity_request": 0,
+        "time_coordinates_zero": 0,
+        "episode_identity_changed": 0,
+        "new_residual_off": 0
+      }
+    },
+    "native-capacity": {
+      "seen_pair_fit_correct": 8,
+      "seen_pair_fit_denominator": 27,
+      "unseen_pair_fit_correct": 0,
+      "unseen_pair_fit_denominator": 5,
+      "changed_output_counts": {
+        "rgb_zero": 0,
+        "spatial_coordinates_zero": 0,
+        "different_entity_request": 0,
+        "time_coordinates_zero": 0,
+        "episode_identity_changed": 0,
+        "new_residual_off": 0
+      }
+    },
+    "transformer": {
+      "seen_pair_fit_correct": 8,
+      "seen_pair_fit_denominator": 27,
+      "unseen_pair_fit_correct": 1,
+      "unseen_pair_fit_denominator": 5,
+      "changed_output_counts": {
+        "rgb_zero": 27,
+        "spatial_coordinates_zero": 14,
+        "different_entity_request": 14,
+        "time_coordinates_zero": 0,
+        "episode_identity_changed": 0
+      }
+    }
+  },
+  "optimizer_steps": 0,
+  "new_model_forwards": 0,
+  "check_reads": 0,
+  "final_reads": 0,
+  "run_conditions": {
+    "device": "cpu",
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "evidence_sha256": {
+    "reports/taiji_u2_evidence_A_learning_20261112_v2.json": "21ed929dabe4b9b3888ca8690a0aa2926c71774e5fd05231d52aa167bbb0af61",
+    "reports/taiji_u2_evidence_A_readout_diagnosis_20261112.json": "0e8e165389359917421f09421df16ac58a182f379a42054867c6593ebe769d2a",
+    "plans/manifests/taiji_u2_evidence_A_price_20261112.json": "564fd2696ac2f8f04d1b91553a0843de54900d145dc41c1cc84c2d6fe7f50556"
+  }
+}

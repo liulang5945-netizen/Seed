@@ -4,8 +4,10 @@
 from __future__ import annotations
 
 import json
+import math
 import sys
 import time
+from collections import Counter, defaultdict
 from pathlib import Path
 
 STARTED = time.monotonic()
@@ -44,6 +46,34 @@ def diagnose():
     data = atomic_load(Path(manifest["data"]["run_root"]) / "data.bin")
     assert value_digest(data) == manifest["data"]["digest"]
     records = {}
+    counts: defaultdict[str, Counter[str]] = defaultdict(Counter)
+    for example in data["train"]:
+        counts[example["public"]["request"].decode()][example["target"].decode()] += 1
+    conditional_entropy = sum(
+        -count * math.log(count / sum(row.values()))
+        for row in counts.values()
+        for count in row.values()
+    ) / len(data["train"])
+    prior = {
+        question: max(LABELS, key=lambda label: row[label]) for question, row in counts.items()
+    }
+    question_only = {
+        "scope": "Post-hoc empirical train question-class prior; excluded from model runtime and original baseline gates",
+        "train_counts": dict(counts),
+        "empirical_train_conditional_entropy_nats": conditional_entropy,
+        "empirical_train_byte_nll_optimum_for_question_only": conditional_entropy / 7,
+        "train_majority_accuracy": sum(
+            example["target"].decode() == prior[example["public"]["request"].decode()]
+            for example in data["train"]
+        )
+        / len(data["train"]),
+        "fit_majority_accuracy": sum(
+            example["target"].decode() == prior[example["public"]["request"].decode()]
+            for example in data["fit"]
+        )
+        / len(data["fit"]),
+        "normalization": "All four supervised words are six UTF-8 bytes plus EOS; divide sequence entropy by7",
+    }
 
     def guard():
         if (
@@ -93,6 +123,7 @@ def diagnose():
         "scope": contract["scope"],
         "scientific_boundary": contract["scientific_boundary"],
         "arms": records,
+        "question_only_prior": question_only,
         "optimizer_steps": blocked.calls,
         "check_reads": 0,
         "final_reads": 0,

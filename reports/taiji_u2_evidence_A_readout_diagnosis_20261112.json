@@ -1,0 +1,1169 @@
+{
+  "schema": "taiji-u2-evidence-A-readout-diagnosis-v1",
+  "scope": "Post-hoc diagnosis on terminal parameters after frozen training. Existing train first8 and already-evaluated fit first8, balanced by original indices. Full free output on train8; four complete answer likelihood scores on train8/fit8. No new model or training.",
+  "scientific_boundary": "Candidate rescoring is a diagnostic; original free-generation gates and raw task results stay authoritative. Separate training-fit failure, unseen-composition failure and free-expression failure where measurements permit.",
+  "arms": {
+    "native-old": {
+      "train8_free": {
+        "correct": 0,
+        "denominator": 8,
+        "accuracy": 0.0,
+        "rows": [
+          {
+            "id": "train-0",
+            "target": "左边",
+            "output_hex": "e58fb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "train-1",
+            "target": "中间",
+            "output_hex": "e58fb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "train-2",
+            "target": "右边",
+            "output_hex": "e58fb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "train-3",
+            "target": "未知",
+            "output_hex": "e58fb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "train-4",
+            "target": "左边",
+            "output_hex": "e58fb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "train-5",
+            "target": "中间",
+            "output_hex": "e58fb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "train-6",
+            "target": "右边",
+            "output_hex": "e58fb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "train-7",
+            "target": "未知",
+            "output_hex": "e58fb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          }
+        ]
+      },
+      "train8_rescoring": {
+        "accuracy": 0.25,
+        "teacher_mean_nll": 1.2176623865962029,
+        "rows": [
+          {
+            "id": "train-0",
+            "target": "左边",
+            "ranked_answer": "左边",
+            "correct": true,
+            "candidate_nll": {
+              "左边": 0.9270164370536804,
+              "中间": 1.4853894710540771,
+              "右边": 1.0650948286056519,
+              "未知": 1.3931485414505005
+            }
+          },
+          {
+            "id": "train-1",
+            "target": "中间",
+            "ranked_answer": "左边",
+            "correct": false,
+            "candidate_nll": {
+              "左边": 0.9270166158676147,
+              "中间": 1.4853894710540771,
+              "右边": 1.0650948286056519,
+              "未知": 1.39314866065979
+            }
+          },
+          {
+            "id": "train-2",
+            "target": "右边",
+            "ranked_answer": "左边",
+            "correct": false,
+            "candidate_nll": {
+              "左边": 0.9270164370536804,
+              "中间": 1.4853894710540771,
+              "右边": 1.0650947093963623,
+              "未知": 1.39314866065979
+            }
+          },
+          {
+            "id": "train-3",
+            "target": "未知",
+            "ranked_answer": "左边",
+            "correct": false,
+            "candidate_nll": {
+              "左边": 0.9270164370536804,
+              "中间": 1.4853895902633667,
+              "右边": 1.0650947093963623,
+              "未知": 1.39314866065979
+            }
+          },
+          {
+            "id": "train-4",
+            "target": "左边",
+            "ranked_answer": "左边",
+            "correct": true,
+            "candidate_nll": {
+              "左边": 0.9270168542861938,
+              "中间": 1.4853891134262085,
+              "右边": 1.0650959014892578,
+              "未知": 1.3931480646133423
+            }
+          },
+          {
+            "id": "train-5",
+            "target": "中间",
+            "ranked_answer": "左边",
+            "correct": false,
+            "candidate_nll": {
+              "左边": 0.9270164370536804,
+              "中间": 1.4853894710540771,
+              "右边": 1.0650947093963623,
+              "未知": 1.39314866065979
+            }
+          },
+          {
+            "id": "train-6",
+            "target": "右边",
+            "ranked_answer": "左边",
+            "correct": false,
+            "candidate_nll": {
+              "左边": 0.9270164370536804,
+              "中间": 1.4853895902633667,
+              "右边": 1.0650948286056519,
+              "未知": 1.39314866065979
+            }
+          },
+          {
+            "id": "train-7",
+            "target": "未知",
+            "ranked_answer": "左边",
+            "correct": false,
+            "candidate_nll": {
+              "左边": 0.92701655626297,
+              "中间": 1.4853894710540771,
+              "右边": 1.0650947093963623,
+              "未知": 1.39314866065979
+            }
+          }
+        ]
+      },
+      "fit8_rescoring": {
+        "accuracy": 0.25,
+        "teacher_mean_nll": 1.2176626026630402,
+        "rows": [
+          {
+            "id": "fit-192",
+            "target": "左边",
+            "ranked_answer": "左边",
+            "correct": true,
+            "candidate_nll": {
+              "左边": 0.9270172119140625,
+              "中间": 1.4853885173797607,
+              "右边": 1.0650970935821533,
+              "未知": 1.3931474685668945
+            }
+          },
+          {
+            "id": "fit-193",
+            "target": "中间",
+            "ranked_answer": "左边",
+            "correct": false,
+            "candidate_nll": {
+              "左边": 0.9270166158676147,
+              "中间": 1.4853895902633667,
+              "右边": 1.0650947093963623,
+              "未知": 1.3931487798690796
+            }
+          },
+          {
+            "id": "fit-194",
+            "target": "右边",
+            "ranked_answer": "左边",
+            "correct": false,
+            "candidate_nll": {
+              "左边": 0.9270172119140625,
+              "中间": 1.4853885173797607,
+              "右边": 1.0650970935821533,
+              "未知": 1.393147587776184
+            }
+          },
+          {
+            "id": "fit-195",
+            "target": "未知",
+            "ranked_answer": "左边",
+            "correct": false,
+            "candidate_nll": {
+              "左边": 0.9270172119140625,
+              "中间": 1.4853885173797607,
+              "右边": 1.0650969743728638,
+              "未知": 1.393147349357605
+            }
+          },
+          {
+            "id": "fit-196",
+            "target": "左边",
+            "ranked_answer": "左边",
+            "correct": true,
+            "candidate_nll": {
+              "左边": 0.9270172119140625,
+              "中间": 1.4853885173797607,
+              "右边": 1.0650969743728638,
+              "未知": 1.393147349357605
+            }
+          },
+          {
+            "id": "fit-197",
+            "target": "中间",
+            "ranked_answer": "左边",
+            "correct": false,
+            "candidate_nll": {
+              "左边": 0.9270169138908386,
+              "中间": 1.485388994216919,
+              "右边": 1.0650957822799683,
+              "未知": 1.3931480646133423
+            }
+          },
+          {
+            "id": "fit-198",
+            "target": "右边",
+            "ranked_answer": "左边",
+            "correct": false,
+            "candidate_nll": {
+              "左边": 0.9270164370536804,
+              "中间": 1.4853895902633667,
+              "右边": 1.0650947093963623,
+              "未知": 1.39314866065979
+            }
+          },
+          {
+            "id": "fit-199",
+            "target": "未知",
+            "ranked_answer": "左边",
+            "correct": false,
+            "candidate_nll": {
+              "左边": 0.9270166158676147,
+              "中间": 1.4853895902633667,
+              "右边": 1.0650948286056519,
+              "未知": 1.39314866065979
+            }
+          }
+        ]
+      }
+    },
+    "native-query": {
+      "train8_free": {
+        "correct": 2,
+        "denominator": 8,
+        "accuracy": 0.25,
+        "rows": [
+          {
+            "id": "train-0",
+            "target": "左边",
+            "output_hex": "e5b7a6e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": true
+          },
+          {
+            "id": "train-1",
+            "target": "中间",
+            "output_hex": "e5b7a6e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "train-2",
+            "target": "右边",
+            "output_hex": "e5b7a6e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "train-3",
+            "target": "未知",
+            "output_hex": "e5b7a6e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "train-4",
+            "target": "左边",
+            "output_hex": "e5b7a6e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": true
+          },
+          {
+            "id": "train-5",
+            "target": "中间",
+            "output_hex": "e5b7a6e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "train-6",
+            "target": "右边",
+            "output_hex": "e5b7a6e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "train-7",
+            "target": "未知",
+            "output_hex": "e5b7a6e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          }
+        ]
+      },
+      "train8_rescoring": {
+        "accuracy": 0.25,
+        "teacher_mean_nll": 1.2524951845407486,
+        "rows": [
+          {
+            "id": "train-0",
+            "target": "左边",
+            "ranked_answer": "左边",
+            "correct": true,
+            "candidate_nll": {
+              "左边": 0.9704918265342712,
+              "中间": 1.4605692625045776,
+              "右边": 1.1304668188095093,
+              "未知": 1.4484612941741943
+            }
+          },
+          {
+            "id": "train-1",
+            "target": "中间",
+            "ranked_answer": "左边",
+            "correct": false,
+            "candidate_nll": {
+              "左边": 0.9704932570457458,
+              "中间": 1.4605683088302612,
+              "右边": 1.1304644346237183,
+              "未知": 1.4484632015228271
+            }
+          },
+          {
+            "id": "train-2",
+            "target": "右边",
+            "ranked_answer": "左边",
+            "correct": false,
+            "candidate_nll": {
+              "左边": 0.9704941511154175,
+              "中间": 1.4605661630630493,
+              "右边": 1.1304599046707153,
+              "未知": 1.4484673738479614
+            }
+          },
+          {
+            "id": "train-3",
+            "target": "未知",
+            "ranked_answer": "左边",
+            "correct": false,
+            "candidate_nll": {
+              "左边": 0.9704915285110474,
+              "中间": 1.460571050643921,
+              "右边": 1.1304662227630615,
+              "未知": 1.4484602212905884
+            }
+          },
+          {
+            "id": "train-4",
+            "target": "左边",
+            "ranked_answer": "左边",
+            "correct": true,
+            "candidate_nll": {
+              "左边": 0.9704930186271667,
+              "中间": 1.4605683088302612,
+              "右边": 1.130466341972351,
+              "未知": 1.4484617710113525
+            }
+          },
+          {
+            "id": "train-5",
+            "target": "中间",
+            "ranked_answer": "左边",
+            "correct": false,
+            "candidate_nll": {
+              "左边": 0.9704927802085876,
+              "中间": 1.4605681896209717,
+              "右边": 1.1304653882980347,
+              "未知": 1.4484628438949585
+            }
+          },
+          {
+            "id": "train-6",
+            "target": "右边",
+            "ranked_answer": "左边",
+            "correct": false,
+            "candidate_nll": {
+              "左边": 0.9704948663711548,
+              "中间": 1.4605649709701538,
+              "右边": 1.1304597854614258,
+              "未知": 1.4484678506851196
+            }
+          },
+          {
+            "id": "train-7",
+            "target": "未知",
+            "ranked_answer": "左边",
+            "correct": false,
+            "candidate_nll": {
+              "左边": 0.970491886138916,
+              "中间": 1.4605697393417358,
+              "右边": 1.1304665803909302,
+              "未知": 1.4484602212905884
+            }
+          }
+        ]
+      },
+      "fit8_rescoring": {
+        "accuracy": 0.25,
+        "teacher_mean_nll": 1.2524990141391754,
+        "rows": [
+          {
+            "id": "fit-192",
+            "target": "左边",
+            "ranked_answer": "左边",
+            "correct": true,
+            "candidate_nll": {
+              "左边": 0.970492959022522,
+              "中间": 1.460569977760315,
+              "右边": 1.130468487739563,
+              "未知": 1.4484585523605347
+            }
+          },
+          {
+            "id": "fit-193",
+            "target": "中间",
+            "ranked_answer": "左边",
+            "correct": false,
+            "candidate_nll": {
+              "左边": 0.9704921841621399,
+              "中间": 1.460567831993103,
+              "右边": 1.1304656267166138,
+              "未知": 1.4484632015228271
+            }
+          },
+          {
+            "id": "fit-194",
+            "target": "右边",
+            "ranked_answer": "左边",
+            "correct": false,
+            "candidate_nll": {
+              "左边": 0.970495343208313,
+              "中间": 1.460569977760315,
+              "右边": 1.130468487739563,
+              "未知": 1.448456883430481
+            }
+          },
+          {
+            "id": "fit-195",
+            "target": "未知",
+            "ranked_answer": "左边",
+            "correct": false,
+            "candidate_nll": {
+              "左边": 0.9704903364181519,
+              "中间": 1.4605721235275269,
+              "右边": 1.130469799041748,
+              "未知": 1.4484573602676392
+            }
+          },
+          {
+            "id": "fit-196",
+            "target": "左边",
+            "ranked_answer": "左边",
+            "correct": true,
+            "candidate_nll": {
+              "左边": 0.9704962968826294,
+              "中间": 1.4605704545974731,
+              "右边": 1.1304633617401123,
+              "未知": 1.4484574794769287
+            }
+          },
+          {
+            "id": "fit-197",
+            "target": "中间",
+            "ranked_answer": "左边",
+            "correct": false,
+            "candidate_nll": {
+              "左边": 0.970488965511322,
+              "中间": 1.4605711698532104,
+              "右边": 1.1304700374603271,
+              "未知": 1.4484587907791138
+            }
+          },
+          {
+            "id": "fit-198",
+            "target": "右边",
+            "ranked_answer": "左边",
+            "correct": false,
+            "candidate_nll": {
+              "左边": 0.970488429069519,
+              "中间": 1.4605733156204224,
+              "右边": 1.1304701566696167,
+              "未知": 1.448456883430481
+            }
+          },
+          {
+            "id": "fit-199",
+            "target": "未知",
+            "ranked_answer": "左边",
+            "correct": false,
+            "candidate_nll": {
+              "左边": 0.970495343208313,
+              "中间": 1.460565209388733,
+              "右边": 1.1304587125778198,
+              "未知": 1.4484678506851196
+            }
+          }
+        ]
+      }
+    },
+    "native-capacity": {
+      "train8_free": {
+        "correct": 2,
+        "denominator": 8,
+        "accuracy": 0.25,
+        "rows": [
+          {
+            "id": "train-0",
+            "target": "左边",
+            "output_hex": "e5b7a6e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": true
+          },
+          {
+            "id": "train-1",
+            "target": "中间",
+            "output_hex": "e5b7a6e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "train-2",
+            "target": "右边",
+            "output_hex": "e5b7a6e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "train-3",
+            "target": "未知",
+            "output_hex": "e5b7a6e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "train-4",
+            "target": "左边",
+            "output_hex": "e5b7a6e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": true
+          },
+          {
+            "id": "train-5",
+            "target": "中间",
+            "output_hex": "e5b7a6e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "train-6",
+            "target": "右边",
+            "output_hex": "e5b7a6e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "train-7",
+            "target": "未知",
+            "output_hex": "e5b7a6e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          }
+        ]
+      },
+      "train8_rescoring": {
+        "accuracy": 0.25,
+        "teacher_mean_nll": 1.2519790083169937,
+        "rows": [
+          {
+            "id": "train-0",
+            "target": "左边",
+            "ranked_answer": "左边",
+            "correct": true,
+            "candidate_nll": {
+              "左边": 0.9709122776985168,
+              "中间": 1.4575231075286865,
+              "右边": 1.131708025932312,
+              "未知": 1.4477722644805908
+            }
+          },
+          {
+            "id": "train-1",
+            "target": "中间",
+            "ranked_answer": "左边",
+            "correct": false,
+            "candidate_nll": {
+              "左边": 0.9709121584892273,
+              "中间": 1.4575231075286865,
+              "右边": 1.1317081451416016,
+              "未知": 1.4477723836898804
+            }
+          },
+          {
+            "id": "train-2",
+            "target": "右边",
+            "ranked_answer": "左边",
+            "correct": false,
+            "candidate_nll": {
+              "左边": 0.9709123373031616,
+              "中间": 1.4575227499008179,
+              "右边": 1.131707787513733,
+              "未知": 1.4477722644805908
+            }
+          },
+          {
+            "id": "train-3",
+            "target": "未知",
+            "ranked_answer": "左边",
+            "correct": false,
+            "candidate_nll": {
+              "左边": 0.9709122776985168,
+              "中间": 1.457522988319397,
+              "右边": 1.1317079067230225,
+              "未知": 1.4477723836898804
+            }
+          },
+          {
+            "id": "train-4",
+            "target": "左边",
+            "ranked_answer": "左边",
+            "correct": true,
+            "candidate_nll": {
+              "左边": 0.9709134697914124,
+              "中间": 1.457524061203003,
+              "右边": 1.1317144632339478,
+              "未知": 1.4477683305740356
+            }
+          },
+          {
+            "id": "train-5",
+            "target": "中间",
+            "ranked_answer": "左边",
+            "correct": false,
+            "candidate_nll": {
+              "左边": 0.9709122776985168,
+              "中间": 1.457522988319397,
+              "右边": 1.1317079067230225,
+              "未知": 1.4477723836898804
+            }
+          },
+          {
+            "id": "train-6",
+            "target": "右边",
+            "ranked_answer": "左边",
+            "correct": false,
+            "candidate_nll": {
+              "左边": 0.9709121584892273,
+              "中间": 1.457522988319397,
+              "右边": 1.131707787513733,
+              "未知": 1.4477723836898804
+            }
+          },
+          {
+            "id": "train-7",
+            "target": "未知",
+            "ranked_answer": "左边",
+            "correct": false,
+            "candidate_nll": {
+              "左边": 0.9709121584892273,
+              "中间": 1.4575227499008179,
+              "右边": 1.131707787513733,
+              "未知": 1.4477722644805908
+            }
+          }
+        ]
+      },
+      "fit8_rescoring": {
+        "accuracy": 0.25,
+        "teacher_mean_nll": 1.2519800812005997,
+        "rows": [
+          {
+            "id": "fit-192",
+            "target": "左边",
+            "ranked_answer": "左边",
+            "correct": true,
+            "candidate_nll": {
+              "左边": 0.9709143042564392,
+              "中间": 1.4575250148773193,
+              "右边": 1.1317194700241089,
+              "未知": 1.4477652311325073
+            }
+          },
+          {
+            "id": "fit-193",
+            "target": "中间",
+            "ranked_answer": "左边",
+            "correct": false,
+            "candidate_nll": {
+              "左边": 0.9709120988845825,
+              "中间": 1.457522988319397,
+              "右边": 1.131707787513733,
+              "未知": 1.4477723836898804
+            }
+          },
+          {
+            "id": "fit-194",
+            "target": "右边",
+            "ranked_answer": "左边",
+            "correct": false,
+            "candidate_nll": {
+              "左边": 0.9709143042564392,
+              "中间": 1.4575250148773193,
+              "右边": 1.1317195892333984,
+              "未知": 1.4477651119232178
+            }
+          },
+          {
+            "id": "fit-195",
+            "target": "未知",
+            "ranked_answer": "左边",
+            "correct": false,
+            "candidate_nll": {
+              "左边": 0.9709143042564392,
+              "中间": 1.4575250148773193,
+              "右边": 1.1317195892333984,
+              "未知": 1.4477651119232178
+            }
+          },
+          {
+            "id": "fit-196",
+            "target": "左边",
+            "ranked_answer": "左边",
+            "correct": true,
+            "candidate_nll": {
+              "左边": 0.9709143042564392,
+              "中间": 1.4575250148773193,
+              "右边": 1.131719708442688,
+              "未知": 1.4477651119232178
+            }
+          },
+          {
+            "id": "fit-197",
+            "target": "中间",
+            "ranked_answer": "左边",
+            "correct": false,
+            "candidate_nll": {
+              "左边": 0.9709135293960571,
+              "中间": 1.4575241804122925,
+              "右边": 1.1317142248153687,
+              "未知": 1.4477684497833252
+            }
+          },
+          {
+            "id": "fit-198",
+            "target": "右边",
+            "ranked_answer": "左边",
+            "correct": false,
+            "candidate_nll": {
+              "左边": 0.9709122776985168,
+              "中间": 1.457522988319397,
+              "右边": 1.131707787513733,
+              "未知": 1.4477726221084595
+            }
+          },
+          {
+            "id": "fit-199",
+            "target": "未知",
+            "ranked_answer": "左边",
+            "correct": false,
+            "candidate_nll": {
+              "左边": 0.9709122776985168,
+              "中间": 1.457522988319397,
+              "右边": 1.131708025932312,
+              "未知": 1.4477723836898804
+            }
+          }
+        ]
+      }
+    },
+    "transformer": {
+      "train8_free": {
+        "correct": 7,
+        "denominator": 8,
+        "accuracy": 0.875,
+        "rows": [
+          {
+            "id": "train-0",
+            "target": "左边",
+            "output_hex": "e5b7a6e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": true
+          },
+          {
+            "id": "train-1",
+            "target": "中间",
+            "output_hex": "e4b8ade997b4",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": true
+          },
+          {
+            "id": "train-2",
+            "target": "右边",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": true
+          },
+          {
+            "id": "train-3",
+            "target": "未知",
+            "output_hex": "e69caae79fa5",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": true
+          },
+          {
+            "id": "train-4",
+            "target": "左边",
+            "output_hex": "e4b8ade997b4",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "train-5",
+            "target": "中间",
+            "output_hex": "e4b8ade997b4",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": true
+          },
+          {
+            "id": "train-6",
+            "target": "右边",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": true
+          },
+          {
+            "id": "train-7",
+            "target": "未知",
+            "output_hex": "e69caae79fa5",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": true
+          }
+        ]
+      },
+      "train8_rescoring": {
+        "accuracy": 0.875,
+        "teacher_mean_nll": 0.046737468597711995,
+        "rows": [
+          {
+            "id": "train-0",
+            "target": "左边",
+            "ranked_answer": "左边",
+            "correct": true,
+            "candidate_nll": {
+              "左边": 0.01673680916428566,
+              "中间": 0.9190334677696228,
+              "右边": 1.1469157934188843,
+              "未知": 0.3178264796733856
+            }
+          },
+          {
+            "id": "train-1",
+            "target": "中间",
+            "ranked_answer": "中间",
+            "correct": true,
+            "candidate_nll": {
+              "左边": 0.7463951110839844,
+              "中间": 0.0021310686133801937,
+              "右边": 1.7767606973648071,
+              "未知": 0.6839696168899536
+            }
+          },
+          {
+            "id": "train-2",
+            "target": "右边",
+            "ranked_answer": "右边",
+            "correct": true,
+            "candidate_nll": {
+              "左边": 0.9704787135124207,
+              "中间": 0.899389922618866,
+              "右边": 0.014270725660026073,
+              "未知": 0.35031840205192566
+            }
+          },
+          {
+            "id": "train-3",
+            "target": "未知",
+            "ranked_answer": "未知",
+            "correct": true,
+            "candidate_nll": {
+              "左边": 0.3298506438732147,
+              "中间": 0.43646666407585144,
+              "右边": 1.288517713546753,
+              "未知": 0.02300819382071495
+            }
+          },
+          {
+            "id": "train-4",
+            "target": "左边",
+            "ranked_answer": "中间",
+            "correct": false,
+            "candidate_nll": {
+              "左边": 0.2784852087497711,
+              "中间": 0.026539940387010574,
+              "右边": 1.3780008554458618,
+              "未知": 1.0457969903945923
+            }
+          },
+          {
+            "id": "train-5",
+            "target": "中间",
+            "ranked_answer": "中间",
+            "correct": true,
+            "candidate_nll": {
+              "左边": 0.3958284854888916,
+              "中间": 0.011400071904063225,
+              "右边": 1.5835589170455933,
+              "未知": 0.9403566718101501
+            }
+          },
+          {
+            "id": "train-6",
+            "target": "右边",
+            "ranked_answer": "右边",
+            "correct": true,
+            "candidate_nll": {
+              "左边": 0.9814079999923706,
+              "中间": 0.9631423950195312,
+              "右边": 0.0027560347225517035,
+              "未知": 0.6010770201683044
+            }
+          },
+          {
+            "id": "train-7",
+            "target": "未知",
+            "ranked_answer": "未知",
+            "correct": true,
+            "candidate_nll": {
+              "左边": 0.7421029210090637,
+              "中间": 0.26701539754867554,
+              "右边": 1.7093688249588013,
+              "未知": 0.025111636146903038
+            }
+          }
+        ]
+      },
+      "fit8_rescoring": {
+        "accuracy": 0.375,
+        "teacher_mean_nll": 0.16460692419786938,
+        "rows": [
+          {
+            "id": "fit-192",
+            "target": "左边",
+            "ranked_answer": "中间",
+            "correct": false,
+            "candidate_nll": {
+              "左边": 0.2348370999097824,
+              "中间": 0.03391818329691887,
+              "右边": 1.1040782928466797,
+              "未知": 0.9024805426597595
+            }
+          },
+          {
+            "id": "fit-193",
+            "target": "中间",
+            "ranked_answer": "中间",
+            "correct": true,
+            "candidate_nll": {
+              "左边": 0.5706894993782043,
+              "中间": 0.00518686231225729,
+              "右边": 1.5380042791366577,
+              "未知": 0.5819055438041687
+            }
+          },
+          {
+            "id": "fit-194",
+            "target": "右边",
+            "ranked_answer": "左边",
+            "correct": false,
+            "candidate_nll": {
+              "左边": 0.09744972735643387,
+              "中间": 0.9337666630744934,
+              "右边": 0.20370984077453613,
+              "未知": 0.1997857242822647
+            }
+          },
+          {
+            "id": "fit-195",
+            "target": "未知",
+            "ranked_answer": "左边",
+            "correct": false,
+            "candidate_nll": {
+              "左边": 0.025532783940434456,
+              "中间": 0.9380544424057007,
+              "右边": 0.9231416583061218,
+              "未知": 0.2614096999168396
+            }
+          },
+          {
+            "id": "fit-196",
+            "target": "左边",
+            "ranked_answer": "未知",
+            "correct": false,
+            "candidate_nll": {
+              "左边": 0.12219434976577759,
+              "中间": 0.857117235660553,
+              "右边": 0.36271074414253235,
+              "未知": 0.10106668621301651
+            }
+          },
+          {
+            "id": "fit-197",
+            "target": "中间",
+            "ranked_answer": "中间",
+            "correct": true,
+            "candidate_nll": {
+              "左边": 0.3421313464641571,
+              "中间": 0.015536027029156685,
+              "右边": 1.3122425079345703,
+              "未知": 0.8772754669189453
+            }
+          },
+          {
+            "id": "fit-198",
+            "target": "右边",
+            "ranked_answer": "未知",
+            "correct": false,
+            "candidate_nll": {
+              "左边": 0.49498090147972107,
+              "中间": 0.7177008986473083,
+              "右边": 0.47109541296958923,
+              "未知": 0.011262394487857819
+            }
+          },
+          {
+            "id": "fit-199",
+            "target": "未知",
+            "ranked_answer": "未知",
+            "correct": true,
+            "candidate_nll": {
+              "左边": 0.919221818447113,
+              "中间": 0.5881134271621704,
+              "右边": 1.333656668663025,
+              "未知": 0.0028861009050160646
+            }
+          }
+        ]
+      }
+    }
+  },
+  "question_only_prior": {
+    "scope": "Post-hoc empirical train question-class prior; excluded from model runtime and original baseline gates",
+    "train_counts": {
+      "紫色圆片现在在哪里？": {
+        "左边": 3,
+        "中间": 5,
+        "未知": 3
+      },
+      "蓝色圆片现在在哪里？": {
+        "右边": 4,
+        "中间": 1,
+        "未知": 3,
+        "左边": 2
+      },
+      "红色圆片现在在哪里？": {
+        "未知": 4,
+        "中间": 4,
+        "右边": 2,
+        "左边": 2
+      },
+      "黄色圆片现在在哪里？": {
+        "左边": 2,
+        "右边": 5,
+        "未知": 2,
+        "中间": 5
+      },
+      "青色圆片现在在哪里？": {
+        "中间": 1,
+        "左边": 4,
+        "右边": 5,
+        "未知": 1
+      },
+      "绿色圆片现在在哪里？": {
+        "未知": 3,
+        "左边": 3
+      }
+    },
+    "empirical_train_conditional_entropy_nats": 1.1799322186987689,
+    "empirical_train_byte_nll_optimum_for_question_only": 0.16856174552839556,
+    "train_majority_accuracy": 0.40625,
+    "fit_majority_accuracy": 0.3125,
+    "normalization": "All four supervised words are six UTF-8 bytes plus EOS; divide sequence entropy by7"
+  },
+  "optimizer_steps": 0,
+  "check_reads": 0,
+  "final_reads": 0,
+  "capability_qualifications": [],
+  "cpu_seconds": 61.109375,
+  "wall_seconds": 63.01500000001397,
+  "run_conditions": {
+    "device": "cpu",
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  }
+}
