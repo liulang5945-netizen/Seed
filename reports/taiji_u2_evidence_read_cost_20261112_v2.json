@@ -1,0 +1,106 @@
+{
+  "schema": "taiji-u2-evidence-read-cost-v2",
+  "supersedes": "taiji_u2_evidence_read_cost_20261112.json",
+  "correction": "Read parameter_migration audit entries; deduplicate repeated versions. v1 preserved its empty audit extraction.",
+  "scope": "One admitted event,24 tokens, float32 normal reader. Each timed call includes standalone evidence reconstruction and branch_context with its own reconstruction. Whole-process peak RSS includes Python and PyTorch. This is not training pricing.",
+  "token_count": 24,
+  "metadata_shape": [
+    24,
+    8
+  ],
+  "samples_cpu_seconds": [
+    0.0029296875,
+    0.0029296875,
+    0.001953125,
+    0.00390625,
+    0.001953125,
+    0.0029296875,
+    0.0029296875,
+    0.0029296875
+  ],
+  "median_cpu_seconds": 0.0029296875,
+  "peak_process_rss_bytes": 239419392,
+  "migration_audit_entries": [
+    {
+      "dtype": "torch.float32",
+      "revision": 39,
+      "entries": 11,
+      "observations": 1,
+      "duplicates": 0,
+      "bytes": 3,
+      "internal": 0,
+      "births": 0,
+      "updates": 0,
+      "cpu_seconds": 0.171875,
+      "history_reference": {
+        "entries": 11,
+        "head": "0da2c8a1c6bcc1dadfbab859b957e03f2ba10c3245ddbb5660dfec6af631dbe4"
+      },
+      "eligibility_reset": true
+    },
+    {
+      "dtype": "torch.float32",
+      "revision": 40,
+      "entries": 18,
+      "observations": 1,
+      "duplicates": 0,
+      "bytes": 6,
+      "internal": 0,
+      "births": 0,
+      "updates": 1,
+      "cpu_seconds": 0.3125,
+      "history_reference": {
+        "entries": 18,
+        "head": "75d3d6804efd78c619a29835371d467a3a57228f101e566c04cadc3effe038f4"
+      },
+      "eligibility_reset": true
+    },
+    {
+      "dtype": "torch.float64",
+      "revision": 39,
+      "entries": 11,
+      "observations": 1,
+      "duplicates": 0,
+      "bytes": 3,
+      "internal": 0,
+      "births": 0,
+      "updates": 0,
+      "cpu_seconds": 0.171875,
+      "history_reference": {
+        "entries": 11,
+        "head": "8d15ffd75d941e703ad4873bbe53b25459599721b43e399503df18ba2d9bcbee"
+      },
+      "eligibility_reset": true
+    },
+    {
+      "dtype": "torch.float64",
+      "revision": 40,
+      "entries": 18,
+      "observations": 1,
+      "duplicates": 0,
+      "bytes": 6,
+      "internal": 0,
+      "births": 0,
+      "updates": 1,
+      "cpu_seconds": 0.296875,
+      "history_reference": {
+        "entries": 18,
+        "head": "ff84cfeb73061918919588983952424b34cb77173d06f9ef7c2bcbee78114185"
+      },
+      "eligibility_reset": true
+    }
+  ],
+  "optimizer_steps": 0,
+  "check_reads": 0,
+  "final_reads": 0,
+  "capability_qualifications": [],
+  "cpu_seconds": 4.328125,
+  "wall_seconds": 5.547000000020489,
+  "run_conditions": {
+    "device": "cpu",
+    "threads": 1,
+    "dtype": "float32",
+    "torch": "2.13.0+cpu"
+  },
+  "source_sha256": "5c4b62b2b1ad65b89a30131d424bca74d46730462380cf51ac378b2876c3df44"
+}

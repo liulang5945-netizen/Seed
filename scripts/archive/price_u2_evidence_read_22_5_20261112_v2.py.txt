@@ -1,0 +1,138 @@
+"""Zero-update input reconstruction and reader cost receipt for the integrated profile."""
+
+# ruff: noqa: E402 -- record startup and native allocator costs
+from __future__ import annotations
+
+import ctypes
+import hashlib
+import json
+import os
+import statistics
+import sys
+import time
+from pathlib import Path
+
+STARTED = time.monotonic()
+ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT))
+
+import torch
+
+from scripts.training.check_report_run_conditions import write_report
+from scripts.training.verify_taiji_u2_metadata_groups_22_4 import StepGuard
+from taiji.u2_evidence_runtime import EvidenceRuntime
+from taiji.u2_history import atomic_load, value_digest
+
+
+def peak_rss():
+    if os.name == "nt":
+        from ctypes import wintypes
+
+        class Counters(ctypes.Structure):
+            _fields_ = [("cb", wintypes.DWORD), ("PageFaultCount", wintypes.DWORD)] + [
+                (name, ctypes.c_size_t)
+                for name in (
+                    "PeakWorkingSetSize",
+                    "WorkingSetSize",
+                    "QuotaPeakPagedPoolUsage",
+                    "QuotaPagedPoolUsage",
+                    "QuotaPeakNonPagedPoolUsage",
+                    "QuotaNonPagedPoolUsage",
+                    "PagefileUsage",
+                    "PeakPagefileUsage",
+                )
+            ]
+
+        counter = Counters()
+        counter.cb = ctypes.sizeof(counter)
+        kernel = ctypes.WinDLL("kernel32")
+        kernel.GetCurrentProcess.restype = wintypes.HANDLE
+        psapi = ctypes.WinDLL("psapi")
+        psapi.GetProcessMemoryInfo.argtypes = [
+            wintypes.HANDLE,
+            ctypes.POINTER(Counters),
+            wintypes.DWORD,
+        ]
+        if not psapi.GetProcessMemoryInfo(
+            kernel.GetCurrentProcess(), ctypes.byref(counter), counter.cb
+        ):
+            raise ctypes.WinError()
+        return counter.PeakWorkingSetSize
+    import resource
+
+    value = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+    return value if sys.platform == "darwin" else value * 1024
+
+
+def price():
+    torch.set_num_threads(1)
+    report_path = ROOT / "reports/taiji_u2_evidence_read_cost_20261112_v2.json"
+    if report_path.exists():
+        raise FileExistsError(report_path)
+    admission = json.loads(
+        (ROOT / "reports/taiji_u2_evidence_subject_20261112.json").read_text(encoding="utf-8")
+    )
+    jobs = atomic_load(Path(admission["run_root"]) / "jobs.bin")
+    runtime = EvidenceRuntime.load(jobs[0]["checkpoint"])
+    model, state = runtime.model, runtime.state
+    digest = value_digest(model.state_dict())
+    samples, migration_costs = [], {}
+    with StepGuard() as guard:
+        for _ in range(8):
+            start = time.process_time()
+            for _ in range(16):
+                encoded, metadata = model.evidence_tokens(state)
+                query = model.language_goal(state)
+                model.branch_context(state, query, state["prediction_action"])
+            samples.append((time.process_time() - start) / 16)
+        for job in jobs:
+            envelope = atomic_load(job["checkpoint"])
+            for row in envelope["runtime"]["audit"]:
+                if row.get("operation") == "parameter_migration" and "rebuild" in row:
+                    key = (envelope["conditions"]["dtype"], row["revision"])
+                    migration_costs[key] = {"dtype": key[0], "revision": key[1], **row["rebuild"]}
+    assert len(migration_costs) == 4
+    assert value_digest(model.state_dict()) == digest
+    cpu = time.process_time()
+    assert cpu <= 60 and time.monotonic() - STARTED <= 120
+    report = {
+        "schema": "taiji-u2-evidence-read-cost-v2",
+        "supersedes": "taiji_u2_evidence_read_cost_20261112.json",
+        "correction": "Read parameter_migration audit entries; deduplicate repeated versions. v1 preserved its empty audit extraction.",
+        "scope": "One admitted event,24 tokens, float32 normal reader. Each timed call includes standalone evidence reconstruction and branch_context with its own reconstruction. Whole-process peak RSS includes Python and PyTorch. This is not training pricing.",
+        "token_count": encoded.shape[0],
+        "metadata_shape": list(metadata.shape),
+        "samples_cpu_seconds": samples,
+        "median_cpu_seconds": statistics.median(samples),
+        "peak_process_rss_bytes": peak_rss(),
+        "migration_audit_entries": list(migration_costs.values()),
+        "optimizer_steps": guard.calls,
+        "check_reads": 0,
+        "final_reads": 0,
+        "capability_qualifications": [],
+        "cpu_seconds": cpu,
+        "wall_seconds": time.monotonic() - STARTED,
+        "run_conditions": {
+            "device": "cpu",
+            "threads": 1,
+            "dtype": "float32",
+            "torch": torch.__version__,
+        },
+        "source_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+    }
+    write_report(report_path, report)
+    print(
+        json.dumps(
+            {
+                "median_read_cpu": report["median_cpu_seconds"],
+                "peak_process_rss_bytes": report["peak_process_rss_bytes"],
+                "cpu_seconds": cpu,
+                "migration_entries": len(migration_costs),
+            }
+        ),
+        flush=True,
+    )
+
+
+if __name__ == "__main__":
+    price()

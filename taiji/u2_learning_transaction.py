@@ -53,7 +53,7 @@ def _deadline(seconds: float) -> float:
 
 def _fact_view(state: dict[str, Any]) -> dict[str, Any]:
     view = {name: state[name] for name in FACT_FIELDS}
-    for name in ("answer_request", "utterance_request"):
+    for name in ("answer_request", "utterance_request", "evidence_directory", "revoked_evidence"):
         if name in state:
             view[name] = state[name]
     # The original parameter version remains in the factual evidence. Its shadow
@@ -166,6 +166,12 @@ class _HistoryReplay:
             self.state = self.model.set_request(self.state, **arguments)
         elif kind == "cancel_request":
             self.state = self.model.cancel_request(self.state, **arguments)
+        elif kind == "revoke_evidence":
+            from .u2_evidence_subject import EvidenceSubject
+
+            if not isinstance(self.model, EvidenceSubject):
+                raise ValueError("evidence_revocation_requires_evidence_subject")
+            self.state = self.model.revoke_evidence(self.state, **arguments)
         elif kind == "choose":
             self.decision = detached_tree(operation["expected"])
         elif kind == "issue":
@@ -329,7 +335,7 @@ def migrate_parameters(
     token = _parent_token(runtime)
     values = None if optimizer is None else optimizer.state_dict()
     bundle = candidate.export_bundle(candidate.initial("migration-shadow"), values)
-    model, _ = U2Subject.from_bundle(bundle)
+    model, _ = type(candidate).from_bundle(bundle)
     model.train(candidate.training)
     restored_optimizer = _restore_optimizer(model, _optimizer_layout(candidate, optimizer), values)
     _check_budget(deadline)

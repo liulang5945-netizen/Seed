@@ -1,0 +1,49 @@
+{
+  "schema": "taiji-u2-p3-source-migration-v1",
+  "scope": "Explicit legacy learner verification and opt-in evidence candidate migration",
+  "archives": [
+    {
+      "source": "taiji/u2_recovery.py",
+      "archive": "scripts/archive/u2_recovery_20261112_pre_p3.py.txt",
+      "sha256": "2c9f525e48de65cbcd4b709ac1f39215f041cca8b3d28106f4ab228436467673"
+    },
+    {
+      "source": "taiji/u2_history.py",
+      "archive": "scripts/archive/u2_history_20261112_pre_p3.py.txt",
+      "sha256": "2e1a5cca3dcbd0138ae37e3c35da1170b24614d6647ee89e74ec2867d744ecf9"
+    },
+    {
+      "source": "taiji/u2_learning_transaction.py",
+      "archive": "scripts/archive/u2_learning_transaction_20261112_pre_p3.py.txt",
+      "sha256": "fe6c3bfd1d7c695b93898c8de1a9bb0a9e5dd2ac728db37dc52043ff361f8337"
+    }
+  ],
+  "engineering_cpu_cap": 240,
+  "engineering_wall_cap": 480,
+  "preparation_cpu_reserve": 30,
+  "optimizer_steps": 0,
+  "check_reads": 0,
+  "final_reads": 0,
+  "diagnostic_source_overlays": [
+    {
+      "report": "reports/taiji_u2_evidence_read_cost_20261112.json",
+      "source": "scripts/training/price_u2_evidence_read_22_5.py",
+      "archive": "scripts/archive/price_u2_evidence_read_22_5_20261112_v1.py.txt",
+      "sha256": "7ba0e816a45c7de8da7cc5f09658d704d9489d3517d2489bed4d6e30c740ee61"
+    },
+    {
+      "report": "reports/taiji_u2_evidence_read_cost_20261112_v2.json",
+      "source": "scripts/training/price_u2_evidence_read_22_5.py",
+      "archive": "scripts/archive/price_u2_evidence_read_22_5_20261112_v2.py.txt",
+      "sha256": "5c4b62b2b1ad65b89a30131d424bca74d46730462380cf51ac378b2876c3df44"
+    }
+  ],
+  "engineering_scope": "Formal main/worker verification plus 30 CPU preparation reserve. Diagnostic cost probes reserve 60 additional CPU. Development tools and regression suite costs are outside these measured verifier receipts.",
+  "accepted_research_parent": {
+    "closeout_report": "reports/taiji_u2_conditional_A_closeout_20261112.json",
+    "arm": "native-conditional",
+    "checkpoint_sha256": "bdba4bdcbe3e86515c29b577a39cd5cfe80556686703a286f291084fb11f07b2",
+    "parameter_digest": "2b9dc796d75c853de01522fd059d758ce0bc04110b29fef84bb8638d342ad1dd",
+    "capability_qualifications": []
+  }
+}

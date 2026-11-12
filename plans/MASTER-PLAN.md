@@ -6,9 +6,9 @@
 
 **唯一主线**沿N发展同一可学习、可恢复、按需生长的持续主体，使自驱、递归改进、经验学习与多模态物理认知形成可验证闭环。
 
-**队首（唯一）**：22.5.P3.3，将请求条件证据读取接入正常主体并完成来源/迁移/恢复核验；P1/P2及P3归因已收束，局部读取模块已通过，当前无A父，B/C/D/J维持后继资格门。
+**队首（唯一）**：22.5.P3.4.1，交付参数配平控制与新父checkpoint，再冻结四臂实价和学习剂量；P3.3主体集成与独立恢复已通过，当前无A父，B/C/D/J维持后继资格门。
 
-本轮[全局结案](reference/CLOSEOUT-TAIJI_FIRST_A_CONDITIONAL_20261112.md)记录P1/P2累计737次学习更新，P2四臂均无条件化行为增益。只读链路核查后选定[直接证据读取候选](reference/SPEC-TAIJI_U2_QUERY_EVIDENCE_20261112.md)，新增584参数，局部双精度核验通过；正常主体集成、合法证据管理及独立恢复尚待完成。后继按[P3详细卡](reference/PLAN-TAIJI_FIRST_A_READING_REVIEW_20261112.md)实施，当前没有新的训练剂量。
+本轮[全局结案](reference/CLOSEOUT-TAIJI_FIRST_A_CONDITIONAL_20261112.md)记录P1/P2累计737次学习更新，P2四臂均无条件化行为增益。直接证据读取已按[P3.3回执](reference/VALIDATION-TAIJI_U2_EVIDENCE_SUBJECT_20261112.md)完成正常主体集成，23,326参数/201张量/44状态字段，6例独立进程接续、1,206条梯度比较最大差0，必要回归108项通过。新训练按[P3.4计划](reference/PLAN-TAIJI_U2_EVIDENCE_LEARNING_20261112.md)先准备控制与实价，当前没有新的训练剂量。
 
 22.3已按[工程结案](reference/VALIDATION-TAIJI-U2_22_3_CLOSEOUT_20261111.md)通过，交付[接受父](manifests/taiji_u2_22_3_accepted_parent_20261111.json)。8次attempt消耗完毕，其中6次真实Adam.step，8份S12/worker和8规范存档全部核验。最终runtime v3/原始链v2覆盖12类状态、34组float32/64独立接续，191参数逐项梯度最大差0，闭包0新增step。当前接受small profile未训练初始化，能力资格为空，22.4冻结有效任务及实价后再准入22.5。
 

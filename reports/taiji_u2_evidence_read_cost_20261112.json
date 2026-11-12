@@ -1,0 +1,35 @@
+{
+  "schema": "taiji-u2-evidence-read-cost-v1",
+  "scope": "One admitted event,24 tokens, float32 normal reader. Each timed call includes standalone evidence reconstruction and branch_context with its own reconstruction. Whole-process peak RSS includes Python and PyTorch. This is not training pricing.",
+  "token_count": 24,
+  "metadata_shape": [
+    24,
+    8
+  ],
+  "samples_cpu_seconds": [
+    0.0029296875,
+    0.0029296875,
+    0.0029296875,
+    0.0029296875,
+    0.0029296875,
+    0.0029296875,
+    0.0029296875,
+    0.0029296875
+  ],
+  "median_cpu_seconds": 0.0029296875,
+  "peak_process_rss_bytes": 240492544,
+  "migration_audit_entries": [],
+  "optimizer_steps": 0,
+  "check_reads": 0,
+  "final_reads": 0,
+  "capability_qualifications": [],
+  "cpu_seconds": 4.71875,
+  "wall_seconds": 5.469000000040978,
+  "run_conditions": {
+    "device": "cpu",
+    "threads": 1,
+    "dtype": "float32",
+    "torch": "2.13.0+cpu"
+  },
+  "source_sha256": "7ba0e816a45c7de8da7cc5f09658d704d9489d3517d2489bed4d6e30c740ee61"
+}

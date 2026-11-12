@@ -17,7 +17,7 @@ from collections.abc import Callable, Mapping, Sequence
 from dataclasses import asdict
 from functools import wraps
 from pathlib import Path
-from typing import Any, cast
+from typing import Any, ClassVar, cast
 
 import torch
 
@@ -55,6 +55,9 @@ def _source_pins() -> dict[str, str]:
     directory = Path(__file__).parent
     names = (
         "u2_recovery.py",
+        "u2_evidence_subject.py",
+        "u2_evidence_read.py",
+        "u2_evidence_runtime.py",
         "u2_history.py",
         "u2_history_store.py",
         "u2_request_state.py",
@@ -371,6 +374,8 @@ def _history_atomic(method: Callable[..., Any]) -> Callable[..., Any]:
 
 class U2Runtime:
     """Single-writer subject operations with an explicit finite learning window."""
+
+    subject_class: ClassVar[type[U2Subject]] = U2Subject
 
     def __init__(
         self,
@@ -730,7 +735,9 @@ class U2Runtime:
         validate_subject_state(self.model, self.state)
         optimizer_state = None if self.optimizer is None else self.optimizer.state_dict()
         layout = _optimizer_layout(self.model, self.optimizer)
-        model, state = U2Subject.from_bundle(self.model.export_bundle(self.state, optimizer_state))
+        model, state = type(self.model).from_bundle(
+            self.model.export_bundle(self.state, optimizer_state)
+        )
         optimizer = _restore_optimizer(model, layout, optimizer_state)
         result = model.birth_units(
             credits,
@@ -885,7 +892,7 @@ class U2Runtime:
             raise ValueError("Runtime recovery source version mismatch")
         if envelope["credit_scope"] != "complete_declared_finite_window":
             raise ValueError("Unsupported runtime credit scope")
-        model, saved_state = U2Subject.from_bundle(envelope["subject_bundle"])
+        model, saved_state = cls.subject_class.from_bundle(envelope["subject_bundle"])
         validate_subject_state(model, saved_state)
         if strict_conditions and envelope["conditions"] != run_conditions(model):
             raise ValueError("Runtime recovery conditions mismatch")

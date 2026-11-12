@@ -55,4 +55,12 @@ answer_loss→原字节表达→c'→Q/K/V及当前编码器形成任务信用�
 3. 新合同比较旧读取、直接读取、参数配平控制及匹配Transformer。保留相同自由输出与任务分母，以同训练CPU主比较，另报同更新诊断及完整成本。来源/时间打乱、request置换、证据切断和关闭新读取为必要干预。
 4. 训练数据、fit新分区、验收门、种子、成本与停止在实价后冻结。若直接读取无输入依赖收益，保留负结果并全局重审感知/表达优化。不得再追加同目标的无边界探针。
 
-下一步唯一为P3.3的正常主体集成与恢复迁移，局部算子无需提前占用新训练剂量。
+P3.3已按[主体集成回执](VALIDATION-TAIJI_U2_EVIDENCE_SUBJECT_20261112.md)交付。当前唯一后继为[P3.4.1参数配平控制与新父checkpoint](PLAN-TAIJI_U2_EVIDENCE_LEARNING_20261112.md)。
+
+## 6. 集成语义补充
+
+实际候选使用原evidence保留公开包，新增evidence_directory保存id/规范内容摘要，revoked_evidence保存直接读取权限撤销。目录摘要排除编码器subject_version，原包其余字段参与摘要，以支持在保持原始事实的同时迁移编码器。模型bundle采用taiji-u2-query-evidence-subject-v1，typed runtime工厂、参数迁移及raw replay共同恢复该候选。
+
+坐标第6位是坐标类型标识，RGB合法token由已接收的模态集合确定；proprio缺失按原有效位处理。当前读取元数据将原相对时间a_3/a_4转换为asinh(sinh(a)+t_end−world_time)，保持原时间窗宽度及相对年龄。排序依据t_end与稳定packet id，id不作为语义向量输入。实际包含16 RGB、7 audio、1 proprio，共24token。
+
+目录及被撤销包均保留规范来源核验，缺包/摘要不一致拒绝恢复。撤销合同覆盖后续直接证据读取权限，H/F的历史影响与知识纠正效果按后继B合同验证。原始历史和当前编码器共同构建正常任务图，派生K/V每次重新计算。原U2及该候选分别保有显式身份。

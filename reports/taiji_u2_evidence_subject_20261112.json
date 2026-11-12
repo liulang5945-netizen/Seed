@@ -1,0 +1,82 @@
+{
+  "schema": "taiji-u2-evidence-subject-verification-v1",
+  "verdict": "passed_engineering_only",
+  "scope": "Normal physical observation, request and partial native byte expression; six exact independent-process continuations, including two encoder migrations per precision. Literal supervised bytes are a credit fixture, not world-QA capability.",
+  "legacy_parent": {
+    "source_pins_verified": {
+      "taiji/u2_recovery.py": "2c9f525e48de65cbcd4b709ac1f39215f041cca8b3d28106f4ab228436467673",
+      "taiji/u2_history.py": "2e1a5cca3dcbd0138ae37e3c35da1170b24614d6647ee89e74ec2867d744ecf9",
+      "taiji/u2_history_store.py": "2133a22032e967af257cc8527891e6a029df32ddb18c0a95da2834c22592de3f",
+      "taiji/u2_request_state.py": "80422d30fd3413b446a9306f9c7ca335b281f9216f46a285c17572ea2f43a8dc",
+      "taiji/u2_task_executor.py": "207612939e8f32ba7b1ac32fcde378f39060789c570b40cc850cf70017d178a3",
+      "taiji/u2_events.py": "b89d5424a76263efab7a5c944dbc820b34fdef4ed12b10afc0b651193a34c944",
+      "taiji/u2_learning_transaction.py": "fe6c3bfd1d7c695b93898c8de1a9bb0a9e5dd2ac728db37dc52043ff361f8337",
+      "taiji/u2_record_metadata.py": "39e57e9dd406f3442bc85e055ebb7d3a813ea981ff1cda0cf119f90c20c35da5",
+      "taiji/u2_group_structure.py": "8131bffd6b904f27987c2b3a3846781ba4d1008ec634c7b86241626991e85176",
+      "taiji/u2_subject.py": "01d54b472e6cc99728ca45b94aeb556148498081ce1128cf28f8bed2d8784025",
+      "taiji/u2_operators.py": "d09f5784bffaf0a3247006c0d67062f18825ba8dc8a431b7c1d0cc778a249559",
+      "taiji/utf8_state.py": "6ec7e96b2994dfa8eea430b3a08ddb5ff0fd877cf70c8cc288f57bab2efcac09",
+      "scripts/training/first_a_support_22_5.py": "33d9301f98859934c1413e25765c55e6bc7b64dfa410d65b03f0e5a198041b4c",
+      "scripts/training/task_baselines_22_4_a.py": "8fd2b8e26299d3c2039583080d5c5cb97b4b9562be5f0ace53eaabc6ab96369a"
+    },
+    "parameter_digest": "2b9dc796d75c853de01522fd059d758ce0bc04110b29fef84bb8638d342ad1dd",
+    "update": 11
+  },
+  "source_pins": {
+    "u2_recovery.py": "5c5fd27580ac49077619ba24aed5d17d87cfa89fe5e6131897415ce26fe87743",
+    "u2_evidence_subject.py": "718a5c8ee4ad2e817734a51f404417b8e8f11988da8fd27f8eced30cab348b68",
+    "u2_evidence_read.py": "0823d2adab2e03f0b1ad5e90759232c278caf1bd43f0aba739a3a12e8fa30bd2",
+    "u2_evidence_runtime.py": "f1a93a8cce3ebd92e04af1714ac97e3778e4272c01758793b96384f58c7eb41f",
+    "u2_history.py": "067b9c07290d42bc08188b421267e7d9dca0f73343bc8e18c6e2a0a7e71e79bf",
+    "u2_history_store.py": "2133a22032e967af257cc8527891e6a029df32ddb18c0a95da2834c22592de3f",
+    "u2_request_state.py": "80422d30fd3413b446a9306f9c7ca335b281f9216f46a285c17572ea2f43a8dc",
+    "u2_task_executor.py": "207612939e8f32ba7b1ac32fcde378f39060789c570b40cc850cf70017d178a3",
+    "u2_events.py": "b89d5424a76263efab7a5c944dbc820b34fdef4ed12b10afc0b651193a34c944",
+    "u2_learning_transaction.py": "ea6203edd38083f58b09e2800bcf464e37c74b95d2be982cdecea3002c0b1ef4",
+    "u2_record_metadata.py": "39e57e9dd406f3442bc85e055ebb7d3a813ea981ff1cda0cf119f90c20c35da5",
+    "u2_group_structure.py": "8131bffd6b904f27987c2b3a3846781ba4d1008ec634c7b86241626991e85176",
+    "u2_subject.py": "01d54b472e6cc99728ca45b94aeb556148498081ce1128cf28f8bed2d8784025",
+    "u2_operators.py": "d09f5784bffaf0a3247006c0d67062f18825ba8dc8a431b7c1d0cc778a249559",
+    "utf8_state.py": "6ec7e96b2994dfa8eea430b3a08ddb5ff0fd877cf70c8cc288f57bab2efcac09"
+  },
+  "verifier_sha256": "9a787325a7281ae02c5b8918d1c582262401a13ef88836bb2aaffe6a1f52b5b4",
+  "profiles": [
+    {
+      "dtype": "torch.float32",
+      "parameters": 23326,
+      "parameter_tensors": 201,
+      "state_fields": 44,
+      "events": 1,
+      "raw_history_bytes": 48886
+    },
+    {
+      "dtype": "torch.float64",
+      "parameters": 23326,
+      "parameter_tensors": 201,
+      "state_fields": 44,
+      "events": 1,
+      "raw_history_bytes": 53622
+    }
+  ],
+  "independent_process_cases": 6,
+  "parameter_gradient_comparisons": 1206,
+  "max_gradient_difference": 0.0,
+  "optimizer_steps": 0,
+  "check_reads": 0,
+  "final_reads": 0,
+  "capability_qualifications": [],
+  "cpu_seconds": 18.8125,
+  "preparation_cpu_reserve": 30,
+  "accounted_cpu_seconds": 48.8125,
+  "preparation_failures": [
+    "Verifier mkdir duplicated get_external_path directory creation",
+    "Verifier expected accepted but migration API returns committed"
+  ],
+  "wall_seconds": 22.48499999998603,
+  "run_conditions": {
+    "device": "cpu",
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "run_root": "E:\\Seed\\data\\experiments\\taiji_u2\\evidence_subject\\1794479447722426400"
+}

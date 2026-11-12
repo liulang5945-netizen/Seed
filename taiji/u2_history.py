@@ -225,6 +225,7 @@ class CausalHistory:
             "goal",
             "request",
             "cancel_request",
+            "revoke_evidence",
             "records",
             "choose",
             "issue",
