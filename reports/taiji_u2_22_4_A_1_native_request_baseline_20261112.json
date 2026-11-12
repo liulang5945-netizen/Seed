@@ -29,7 +29,7 @@
     "recovery": "partial utterance survives save/load and full history rebuild; request identity bound to utterance"
   },
   "full_stream_baselines": {
-    "module": "taiji/u2_task_baselines.py",
+    "module": "scripts/training/task_baselines_22_4_a.py",
     "frontend": "native trainable encoders reused verbatim (encoder/metadata/modality/embedding/text_input/convolutions/goal/outcome/action/record metadata/provenance)",
     "intake": "full UTF-8 goal and request text, role tags, real coordinates, missing modalities, action/outcome/record events",
     "state": "continuous GRU hidden or causal Transformer keys/values with parameter_revision reencoding and source-pinned save/load",
@@ -62,11 +62,13 @@
   "checks": {
     "new_tests": 19,
     "new_tests_passed": 19,
-    "u2_suite_passed": 218,
+    "u2_suite_passed": 231,
     "u2_suite_failed": 0,
     "mypy_core": "mypy --follow-imports=silent seed taiji: 0 errors in 248 files (HEAD had 5, WIP added 8; all fixed annotation-only)",
     "ruff": "clean incl. B/SIM ratchet",
-    "black": "clean"
+    "black": "clean",
+    "architecture_contract": "13 passed after moving baselines outside taiji/; verify_taiji_native_v7 gate green",
+    "u2_suite_note": "218 u2 + 13 architecture contract, post-move rerun"
   },
   "cost": {
     "new_tests_cpu_seconds": 4.71875,
@@ -112,12 +114,24 @@
     "taiji/u2_history_store.py": "2133a22032e967af257cc8527891e6a029df32ddb18c0a95da2834c22592de3f",
     "taiji/u2_learning_transaction.py": "fe6c3bfd1d7c695b93898c8de1a9bb0a9e5dd2ac728db37dc52043ff361f8337",
     "taiji/u2_group_structure.py": "8131bffd6b904f27987c2b3a3846781ba4d1008ec634c7b86241626991e85176",
-    "taiji/u2_task_baselines.py": "28a8ffde3b918f9f0f15c50a88f8fc90fc5a098a7c184222ba57e06c532ab203",
     "taiji/u2_task_world.py": "ae696d423e09be09c936dcbc8e3473e28c2c2c927f843bace21150c52d5d2e45",
     "taiji/u2_task_episode.py": "fc5dbed68c9a428c4ec8725ba2d454564f153b8e60ed1d16fa7cfc13d16ab470",
     "taiji/u2_task_session.py": "ecbbe69493f20024351cbd2c75502b2508016d756a0c9839016a7a55b4203b12",
     "tests/taiji_native/test_u2_request_state.py": "1a4eb96c8d1bc4679f27ff439a3b525aca172b4e9ebfd770eec266adf8854f9e",
-    "tests/taiji_native/test_u2_task_baselines.py": "1bda30d24f4e8867ac5208b9cb865bfc3a54bfc525734a47bfd7cb847f4d6db4"
+    "tests/taiji_native/test_u2_task_baselines.py": "8b0809a6484410e360cd8e4ecd5782651f41084663d228c60ca4d0116001b8c7",
+    "scripts/training/task_baselines_22_4_a.py": "141a83a278b706fb3036e391640a02ee6c803e3e62c9770da9ee9a249c9cd828"
   },
-  "next_card": "22.4.A.2"
+  "next_card": "22.4.A.2",
+  "amendment": {
+    "reason": "taiji/u2_task_baselines.py used nn.MultiheadAttention inside taiji/, violating the native self-sufficiency contract (test_architecture_contract, verify_taiji_native_v7); 2 contract tests were red at first commit",
+    "action": "git mv to scripts/training/task_baselines_22_4_a.py (22.4.4 precedent: comparison arms live outside taiji/); relative imports became absolute taiji imports; test import updated; no behavior change",
+    "before": {
+      "module": "taiji/u2_task_baselines.py",
+      "module_source_pin": "28a8ffde3b918f9f0f15c50a88f8fc90fc5a098a7c184222ba57e06c532ab203"
+    },
+    "after": {
+      "module": "scripts/training/task_baselines_22_4_a.py"
+    },
+    "identity_effect": "parameter counts and initialization unchanged; baseline identity still unfrozen (22.4.A.2)"
+  }
 }

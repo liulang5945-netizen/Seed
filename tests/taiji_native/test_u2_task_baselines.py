@@ -3,9 +3,9 @@
 import pytest
 import torch
 
+from scripts.training.task_baselines_22_4_a import TaskSequenceBaseline
 from taiji.u2_history import assert_values_equal
 from taiji.u2_subject import U2Config, synthetic_fixture
-from taiji.u2_task_baselines import TaskSequenceBaseline
 
 
 @pytest.mark.parametrize("architecture", ["gru", "transformer"])

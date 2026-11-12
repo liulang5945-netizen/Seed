@@ -1,4 +1,9 @@
-"""Full public-stream GRU and one-layer causal Transformer answer baselines."""
+"""Full public-stream GRU and one-layer causal Transformer answer baselines.
+
+Lives outside ``taiji/`` by the native self-sufficiency contract: comparison
+arms may reuse the native frontend, but Transformer block symbols must not
+enter the native package (test_architecture_contract / verify_taiji_native_v7).
+"""
 
 from __future__ import annotations
 
@@ -11,10 +16,10 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 
-from .u2_history import assert_values_equal, atomic_load, atomic_save, detached_tree
-from .u2_operators import utf8_mask
-from .u2_subject import U2Config, U2Subject
-from .utf8_state import advance_utf8
+from taiji.u2_history import assert_values_equal, atomic_load, atomic_save, detached_tree
+from taiji.u2_operators import utf8_mask
+from taiji.u2_subject import U2Config, U2Subject
+from taiji.utf8_state import advance_utf8
 
 
 class PublicFrontend(nn.Module):

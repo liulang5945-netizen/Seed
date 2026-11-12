@@ -19,7 +19,7 @@
 
 ## 3. 全字节公共流基线
 
-`TaskSequenceBaseline`（GRU h=40／单层因果Transformer d_model=28）**逐字复用native可训练前端**（encoder/metadata/modality/embedding/text_input/convolutions/goal/outcome/action/记录元数据与来源），交付[静态审计](../../reports/taiji_u2_baseline_task_entry_audit_20261112.json)要求的五项适配：
+`TaskSequenceBaseline`（GRU h=40／单层因果Transformer d_model=28，模块`scripts/training/task_baselines_22_4_a.py`） **逐字复用native可训练前端**（encoder/metadata/modality/embedding/text_input/convolutions/goal/outcome/action/记录元数据与来源），交付[静态审计](../../reports/taiji_u2_baseline_task_entry_audit_20261112.json)要求的五项适配。**放置边界**：对照臂必须在`taiji/`之外（22.4.4先例）——首版误置于`taiji/u2_task_baselines.py`触发native自足契约2条红（`nn.MultiheadAttention`禁入native包），已`git mv`迁出并改绝对导入，行为与参数量不变，契约13项复绿。
 
 | 审计要求 | 交付 |
 |---|---|
@@ -34,7 +34,7 @@
 ## 4. 检查与成本
 
 - 新增测试**19项全过**（请求9＋基线10，含float32/64、恢复、信用、角色、预算负例），CPU 4.71875/wall 6.71038。
-- u2全套回归**218项全过**（wall 60.93），u1冻结产物与22.4.1执行图读数不受影响。
+- u2全套回归**218项全过**（wall 60.93）；迁出后合跑u2＋架构契约**231项全过**，u1冻结产物与22.4.1执行图读数不受影响。
 - CI棘轮恢复：HEAD存在5条mypy红（22.4.2提交引入）、WIP新增8条，共13条**全部以纯标注/等价改写修复**（`restore`返回类型、`bodies/answers/sessions`标注、`max`键lambda、前端类型声明），`mypy --follow-imports=silent seed taiji` **0错/248文件**；ruff（含B/SIM）与black全绿。
 
 ## 5. 源覆盖与已知限制
