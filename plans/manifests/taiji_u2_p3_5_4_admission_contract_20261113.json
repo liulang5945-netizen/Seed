@@ -1,0 +1,21 @@
+{
+  "schema": "taiji-u2-p3-5-4-admission-contract-v1",
+  "cpu_cap": 120,
+  "wall_cap": 240,
+  "train_cpu_per_learner": 600,
+  "maximum_updates": 8192,
+  "price_blocks": 8,
+  "price_episode_indices": [0, 1, 60, 61, 120, 121, 178, 179],
+  "order_seed": 2026111301,
+  "cpu_endpoint": "Last accepted checkpoint at or below600 measured forward/backward/Adam CPU seconds, fixed before any new task accuracy is read",
+  "overshoot_policy": "One computed update beyond600 is durably quarantined; restore prior accepted parameter/Adam/RNG/cursor; count all real steps and all spent CPU",
+  "learner_optimizer_steps": 0,
+  "shadow_optimizer_steps": 16,
+  "runner_proposed_cpu_cap": 2400,
+  "runner_proposed_wall_cap": 4800,
+  "batch_size": 1,
+  "training_compute_tolerance": 0.05,
+  "check_reads": 0,
+  "final_reads": 0,
+  "budget_accounting": "Admission120 reserved from12810 leaving12690; runner2400 upon admission leaves10290."
+}
