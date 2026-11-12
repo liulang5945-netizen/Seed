@@ -1,0 +1,26 @@
+{
+  "schema": "taiji-u2-physical-runtime-regression-v1",
+  "verdict": "pass",
+  "exit_code": 0,
+  "expected_tests": 126,
+  "arguments": [
+    "-p",
+    "no:cacheprovider",
+    "tests/taiji_native/test_u2_runtime_recovery_22_3.py",
+    "tests/taiji_native/test_u2_history_22_3.py",
+    "tests/taiji_native/test_u2_reencoding_22_3.py",
+    "tests/taiji_native/test_u2_metadata_groups_22_4.py",
+    "tests/taiji_native/test_u2_physical_runtime_22_4_2.py",
+    "-q",
+    "--basetemp=.seed_test_tmp/u2_physical_full_regression"
+  ],
+  "optimizer_steps": 0,
+  "cpu_seconds": 44.640625,
+  "wall_seconds": 43.64100000000326,
+  "run_conditions": {
+    "torch": "2.13.0+cpu",
+    "threads": 1,
+    "device": "cpu",
+    "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]"
+  }
+}

@@ -1206,6 +1206,31 @@ class U2Subject(_WorldKernel):
             raise ValueError("pending critic cached value is inconsistent")
         return cast(torch.Tensor, rebuilt)
 
+    def validate_pending_receipt(self, pending):
+        if pending.get("origin") != "external_observation":
+            self.pending_value(pending["decision"])
+            return
+        action = pending["action"]
+        if (
+            pending["decision"] is not None
+            or pending["operation"] != "observe"
+            or pending["dt"] not in (0.0, 0.05)
+            or action.shape != (15,)
+            or action.dtype != self.native_w.dtype
+            or action.device != self.native_w.device
+            or bool(action.any())
+        ):
+            raise ValueError("invalid_external_observation_bundle")
+        expected = dict(self.policy_named_parameters())
+        trace = pending["eligibility_before"]
+        if set(trace) != set(expected) or any(
+            value.shape != expected[name].shape
+            or value.dtype != expected[name].dtype
+            or not bool(torch.isfinite(value).all())
+            for name, value in trace.items()
+        ):
+            raise ValueError("invalid_external_observation_eligibility")
+
     def choose_operation(self, state: Any, legal_mask: Any = None) -> Any:
         policy = self.policy(state, legal_mask)
         generator = torch.Generator(device="cpu")
@@ -1619,7 +1644,7 @@ class U2Subject(_WorldKernel):
         if state["pending"] is not None:
             if state["pending"]["subject_version"] != self.parameter_revision:
                 raise ValueError("pending version differs from subject parameters")
-            self.pending_value(state["pending"]["decision"])
+            self.validate_pending_receipt(state["pending"])
         return {
             "schema": (
                 "taiji-u2-subject-v3"
@@ -1678,7 +1703,7 @@ class U2Subject(_WorldKernel):
             pending = state["pending"]
             if pending["subject_version"] != model.parameter_revision:
                 raise ValueError("pending bundle parameter version mismatch")
-            model.pending_value(pending["decision"])
+            model.validate_pending_receipt(pending)
         return model, state
 
 

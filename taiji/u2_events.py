@@ -28,7 +28,7 @@ def validate_event(state: Any, packet: Any) -> Any:
         raise ValueError("receipt mismatch")
     if receipt["subject_version"] != state["revision"]:
         raise ValueError("parameters changed while pending")
-    if packet.t_end > receipt["world_end"] or packet.t_arrival > state["process_time"]:
+    if packet.t_end > receipt["world_end"] + 1e-10 or packet.t_arrival > state["process_time"]:
         raise ValueError("event not arrived")
     if (
         not math.isclose(packet.t_end, receipt["world_end"], rel_tol=0.0, abs_tol=1e-10)
@@ -39,6 +39,12 @@ def validate_event(state: Any, packet: Any) -> Any:
 
 
 def eligibility_carry(receipt: Any, goal_version: int) -> Any:
+    if receipt.get("origin") == "external_observation":
+        factor = (0.99 * 0.95) ** (receipt["dt"] / 0.05)
+        return {
+            name: factor * value if receipt["goal_version"] == goal_version else value * 0
+            for name, value in receipt["eligibility_before"].items()
+        }
     return {
         name: (
             (0.99 * 0.95) ** max(1.0, receipt["dt"] / 0.05) * value
@@ -143,7 +149,7 @@ def assimilate(model: Any, state: Any, packet: Any, *, receipt: Any = None) -> A
             for row in result["history"][old_rows:]
         ],
     ]
-    result["world_time"] = receipt["world_end"]
+    result["world_time"] = packet.t_end
     result["process_time"] = state["process_time"]
     result["pending"] = None
     result["seen_packets"] = [*state["seen_packets"], packet.packet_id]
@@ -185,6 +191,11 @@ def receive(model: Any, state: Any, packet: Any) -> Any:
     if packet.packet_id in state["seen_packets"]:
         return state, {}
     receipt = validate_event(state, packet)
+    if receipt.get("origin") == "external_observation":
+        result, observation = assimilate(model, state, packet, receipt=receipt)
+        if result["pending"] is None:
+            result["eligibility"] = eligibility_carry(receipt, state["goal_version"])
+        return result, {**observation, "behavior_credit_valid": False}
     old_value = model.pending_value(receipt["decision"])
     result, observation = assimilate(model, state, packet, receipt=receipt)
     if not observation or observation.get("status") == "awaiting_outcome":
@@ -192,3 +203,46 @@ def receive(model: Any, state: Any, packet: Any) -> Any:
     actor_loss, critic_loss = behavior_credit(model, result, packet, receipt, old_value)
     result["eligibility"] = eligibility_carry(receipt, state["goal_version"])
     return result, {**observation, "actor": actor_loss, "critic": critic_loss}
+
+
+def observation_intent(model, state, identity, dt):
+    if (
+        state["pending"] is not None
+        or state["utterance_active"]
+        or not identity
+        or dt not in (0.0, 0.05)
+    ):
+        raise ValueError("invalid_external_observation_boundary")
+    if state["revision"] != model.parameter_revision:
+        raise ValueError("external_observation_requires_current_parameters")
+    import torch
+
+    action = model.native_w.new_zeros(15)
+    goal = model.goal(state["goal_raw"])
+    prior = model.predict(state, goal, action, dt)
+    receipt = {
+        "id": identity,
+        "subject_version": model.parameter_revision,
+        "goal_version": state["goal_version"],
+        "goal_raw": state["goal_raw"],
+        "operation": "observe",
+        "origin": "external_observation",
+        "action": action,
+        "dt": dt,
+        "prior": prior,
+        "decision": None,
+        "world_end": state["world_time"] + dt,
+        "eligibility_before": {
+            name: value.detach().clone() for name, value in state["eligibility"].items()
+        },
+    }
+    if not bool(torch.isfinite(action).all()):
+        raise ValueError("invalid_external_prediction")
+    return {
+        **state,
+        "pending": receipt,
+        "journal": [
+            *state["journal"],
+            {"id": identity, "status": "intent", "operation": "observe"},
+        ],
+    }

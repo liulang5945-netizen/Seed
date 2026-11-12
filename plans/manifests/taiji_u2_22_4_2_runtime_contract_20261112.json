@@ -1,0 +1,57 @@
+{
+  "schema": "taiji-u2-physical-runtime-contract-v1",
+  "card": "22.4.2.3",
+  "source_pins": {
+    "taiji/u2_recovery.py": "6a2af76404ee2311c37010ee06ee6edc9909307f9ca18981ab13bd9b7f65030b",
+    "taiji/u2_history.py": "89cd2e9d178eb2ca56e020b3c160e6b7545c11303df116ff158b1315c02728f6",
+    "taiji/u2_history_store.py": "3ac8eedfccbfe57bbc6402ff0c07c0bcfed7d2d9d7a72e8a5476b0fe21c97914",
+    "taiji/u2_task_executor.py": "2eb1343f505a81f1b981402aae62a2d731a1d2025154b6f5c5b5b46f162f6fae",
+    "taiji/u2_events.py": "33f04d7fc9923250e5d77b2d1acdcdac51b3e6aac0b9aabf0d39179aba5d3beb",
+    "taiji/u2_learning_transaction.py": "931c61e020d445c09160a85e78840a53e133825d3f040d8c646e06330c489be1",
+    "taiji/u2_record_metadata.py": "39e57e9dd406f3442bc85e055ebb7d3a813ea981ff1cda0cf119f90c20c35da5",
+    "taiji/u2_group_structure.py": "daabe312bff754bdd70208597f8363180dc459964b5cc7c5120610ca00d69ffa",
+    "taiji/u2_subject.py": "cfe785cfcdf8c8ed2f2679dc615810e0ee2014fc136d0eb7b1eaf7d37466d370",
+    "taiji/u2_operators.py": "d09f5784bffaf0a3247006c0d67062f18825ba8dc8a431b7c1d0cc778a249559",
+    "taiji/utf8_state.py": "6ec7e96b2994dfa8eea430b3a08ddb5ff0fd877cf70c8cc288f57bab2efcac09",
+    "taiji/u2_task_world.py": "cde18d7fa1040be5d752f5de4d08b363d7a2fb54b4497800e7ecde9382d57892",
+    "taiji/u2_task_sensors.py": "7a434173bcf9d28b0e45c7575326c37048ad53d9d06de987f3c5a573d2026e10",
+    "taiji/u2_task_physics.py": "c542e4445dcbc140a65dee32c7828bb89ce7737d776230c1e5084a451dfc0b37",
+    "scripts/training/verify_taiji_u2_physical_runtime_22_4_2.py": "58e0c749796472b8b8bf31be09d143b6a6fdd95d293fcd2c4c0a1840cf8dd0f7",
+    "tests/taiji_native/test_u2_physical_runtime_22_4_2.py": "c403fdf8cc48384f7bd7f9a3770fc347b3da9d8ff2783c0c77783602da5e1df7"
+  },
+  "base_initial_parameters": {
+    "float64": "6ec1c6db11373b5aba8676f25ef5a1bcd48f71430bc44dce9e228a8b833b3842",
+    "float32": "b3e8a106ecdd34ad40f8983a7cb8c4c756097d0c089b013d1587f70a6397acfc"
+  },
+  "profile": "small, record_metadata=True, CPU float32/64, 194 parameter tensors",
+  "source_epoch": "physical executor dispatch, exogenous pending, paged raw history; historical source contracts remain bound to their original commits",
+  "history": {
+    "page_entries": 96,
+    "max_pages": 16,
+    "max_bytes": 16777216,
+    "active_operations": 32
+  },
+  "exogenous_credit": "no autonomous actor or critic loss; eligibility decays by elapsed world time",
+  "time_tolerance": 1e-10,
+  "authoritative_time": "accepted sensor packet t_end",
+  "physical_command_dtype": "original neural dtype retained separately from float64 mechanics",
+  "cross_process_precisions": [
+    "float32",
+    "float64"
+  ],
+  "prefix_ticks_per_precision": 24,
+  "losses": [
+    "expression_literal",
+    "predictive",
+    "actor",
+    "critic"
+  ],
+  "cpu_cap": 180,
+  "wall_cap": 360,
+  "budget_source": "22.4 structure/recovery 300 CPU, zero optimizer steps; reserve after earlier engineering receipts",
+  "optimizer_steps": 0,
+  "project_data_reads": 0,
+  "check_reads": 0,
+  "final_reads": 0,
+  "capability_qualifications": []
+}

@@ -226,6 +226,7 @@ class CausalHistory:
             "records",
             "choose",
             "issue",
+            "observe_intent",
             "ack",
             "process_time",
             "receive",
@@ -304,8 +305,16 @@ class CausalHistory:
             ),
         )
 
+    def iter_entries(self):
+        for node in self._entries:
+            yield detached_tree(node)
+
     @classmethod
     def restore(cls, payload: dict[str, Any]) -> CausalHistory:
+        if payload.get("schema") == "taiji-u2-paged-history-v1":
+            from .u2_history_store import PagedCausalHistory
+
+            return PagedCausalHistory.restore(payload)
         if (
             set(payload)
             != {

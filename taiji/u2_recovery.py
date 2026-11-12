@@ -56,6 +56,8 @@ def _source_pins() -> dict[str, str]:
     names = (
         "u2_recovery.py",
         "u2_history.py",
+        "u2_history_store.py",
+        "u2_task_executor.py",
         "u2_events.py",
         "u2_learning_transaction.py",
         "u2_record_metadata.py",
@@ -305,6 +307,9 @@ class ReferenceExecutor:
             "action_id": action_id,
         }
 
+    def execute_observation(self, event_id, dt, *, action):
+        raise ValueError("external_observation_requires_physical_executor")
+
     def execute(self, action_id: str, action: torch.Tensor) -> dict[str, Any]:
         if not action_id or action.shape != (15,) or not bool(torch.isfinite(action).all()):
             raise ValueError("Invalid reference execution command")
@@ -418,6 +423,10 @@ class U2Runtime:
                 "anchor_state": None if state is None else self.state,
             }
         )
+        if getattr(self.executor, "history_profile", None) == "physical_paged_v1":
+            from .u2_history_store import PagedCausalHistory
+
+            self.history = PagedCausalHistory.from_history(self.history)
         self._history_segment = 0
         self._history_anchor = self.history.reference()
         self.host_clock: dict[str, Any] = {
@@ -500,6 +509,18 @@ class U2Runtime:
         found = self.executor.query(identity)
         return {"status": "unknown", "action_id": identity} if found is None else found
 
+    @_history_atomic
+    def begin_observation(self, identity: str, dt: float = 0.05) -> str:
+        from .u2_events import observation_intent
+
+        self._check_window()
+        if self.last_decision is not None or identity in self.execution:
+            raise ValueError("observation_intent_conflicts_with_existing_decision")
+        self.state = observation_intent(self.model, self.state, identity, dt)
+        self.execution[identity] = {"status": "intent"}
+        self._record("observe_intent", {"identity": identity, "dt": dt}, identity)
+        return identity
+
     def execute_pending(
         self, checkpoint: str | Path | None = None, fault: str | None = None
     ) -> dict[str, Any]:
@@ -515,6 +536,9 @@ class U2Runtime:
         if status["status"] != "not_seen":
             return {"status": "awaiting_execution_status", "action_id": identity}
         # An acknowledgment must fit before any irreversible executor effect.
+        validate_intent = getattr(self.executor, "validate_intent", None)
+        if validate_intent is not None:
+            validate_intent(pending)
         self._check_window()
         self.history.append(self._history_payload("ack", {"identity": identity}))
         if checkpoint is None:
@@ -524,7 +548,10 @@ class U2Runtime:
             raise RuntimeError("injected after_intent")
         self.execution[identity] = {"status": "sent"}
         self.save(checkpoint)
-        self.executor.execute(identity, pending["action"])
+        if pending.get("origin") == "external_observation":
+            self.executor.execute_observation(identity, pending["dt"], action=pending["action"])
+        else:
+            self.executor.execute(identity, pending["action"])
         if fault == "after_execute_before_ack":
             raise RuntimeError("injected after_execute_before_ack")
         result = cast(dict[str, Any], self.acknowledge_pending())
@@ -867,7 +894,7 @@ class U2Runtime:
 
         if not ancestry_compatible(root["config"], model.c):
             raise ValueError("Raw history root configuration mismatch")
-        entries = envelope["history"]["entries"]
+        entries = list(history.iter_entries())
         segment = entries[-1]["payload"]["segment"] if entries else 0
         if window["history_segment"] != segment:
             raise ValueError("Raw history window segment mismatch")
@@ -896,11 +923,14 @@ class U2Runtime:
             result = cls(model, state=anchor["state"], max_operations=window["max_operations"])
         else:
             raise ValueError("Unknown learning-window anchor")
-        result.executor = (
-            executor
-            if executor is not None
-            else ReferenceExecutor.from_snapshot(envelope["executor_snapshot"])
-        )
+        if executor is not None:
+            result.executor = executor
+        elif envelope["executor_snapshot"].get("schema") == "taiji-u2-physical-executor-v1":
+            from .u2_task_executor import PhysicalExecutor
+
+            result.executor = PhysicalExecutor.from_snapshot(envelope["executor_snapshot"])
+        else:
+            result.executor = ReferenceExecutor.from_snapshot(envelope["executor_snapshot"])
         result.optimizer = _restore_optimizer(
             model, envelope["optimizer_layout"], envelope["subject_bundle"]["optimizer"]
         )
@@ -965,6 +995,9 @@ class U2Runtime:
         elif kind == "issue":
             identity = self.issue(**args)
             assert_values_equal(operation["expected"], identity, "replayed_intent")
+        elif kind == "observe_intent":
+            identity = self.begin_observation(**args)
+            assert_values_equal(operation["expected"], identity, "replayed_observation_intent")
         elif kind == "ack":
             self._check_window()
             self._apply_ack(args["identity"])

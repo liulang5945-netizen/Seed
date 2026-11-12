@@ -163,6 +163,10 @@ class _HistoryReplay:
             self.decision = detached_tree(operation["expected"])
         elif kind == "issue":
             self._issue(arguments, operation["expected"], payload["parameter_revision"])
+        elif kind == "observe_intent":
+            from .u2_events import observation_intent
+
+            self.state = observation_intent(self.model, self.state, **arguments)
         elif kind == "ack":
             self._acknowledge(arguments["identity"])
         elif kind == "process_time":
@@ -217,7 +221,7 @@ def rebuild_state(
         raise ValueError("Reencoding configuration mismatch")
     with torch.no_grad():
         replay = _HistoryReplay(model, factual_state["subject_id"], deadline)
-        for node in verified.export()["entries"]:
+        for node in verified.iter_entries():
             replay.apply(node["payload"])
     state = replay.state
     if state["pending"] is not None or state["utterance_active"] or replay.decision is not None:
