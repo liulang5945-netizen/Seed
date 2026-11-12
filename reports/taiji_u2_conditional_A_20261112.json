@@ -1,0 +1,2151 @@
+{
+  "schema": "taiji-conditional-A-results-v1",
+  "verdict": "completed_conditional_A_intervention",
+  "arms": {
+    "native-token": {
+      "initial": {
+        "correct": 0,
+        "denominator": 32,
+        "accuracy": 0.0,
+        "rows": [
+          {
+            "id": "fit-128",
+            "target": "左边",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-129",
+            "target": "中间",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-130",
+            "target": "右边",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-131",
+            "target": "未知",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-132",
+            "target": "左边",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-133",
+            "target": "中间",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-134",
+            "target": "右边",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-135",
+            "target": "未知",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-136",
+            "target": "左边",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-137",
+            "target": "中间",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-138",
+            "target": "右边",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-139",
+            "target": "未知",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-140",
+            "target": "左边",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-141",
+            "target": "中间",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-142",
+            "target": "右边",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-143",
+            "target": "未知",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-144",
+            "target": "左边",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-145",
+            "target": "中间",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-146",
+            "target": "右边",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-147",
+            "target": "未知",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-148",
+            "target": "左边",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-149",
+            "target": "中间",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-150",
+            "target": "右边",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-151",
+            "target": "未知",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-152",
+            "target": "左边",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-153",
+            "target": "中间",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-154",
+            "target": "右边",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-155",
+            "target": "未知",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-156",
+            "target": "左边",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-157",
+            "target": "中间",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-158",
+            "target": "右边",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-159",
+            "target": "未知",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          }
+        ]
+      },
+      "final": {
+        "correct": 0,
+        "denominator": 32,
+        "accuracy": 0.0,
+        "rows": [
+          {
+            "id": "fit-128",
+            "target": "左边",
+            "output_hex": "e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-129",
+            "target": "中间",
+            "output_hex": "e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-130",
+            "target": "右边",
+            "output_hex": "e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-131",
+            "target": "未知",
+            "output_hex": "e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-132",
+            "target": "左边",
+            "output_hex": "e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-133",
+            "target": "中间",
+            "output_hex": "e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-134",
+            "target": "右边",
+            "output_hex": "e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-135",
+            "target": "未知",
+            "output_hex": "e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-136",
+            "target": "左边",
+            "output_hex": "e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-137",
+            "target": "中间",
+            "output_hex": "e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-138",
+            "target": "右边",
+            "output_hex": "e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-139",
+            "target": "未知",
+            "output_hex": "e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-140",
+            "target": "左边",
+            "output_hex": "e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-141",
+            "target": "中间",
+            "output_hex": "e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-142",
+            "target": "右边",
+            "output_hex": "e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-143",
+            "target": "未知",
+            "output_hex": "e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-144",
+            "target": "左边",
+            "output_hex": "e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-145",
+            "target": "中间",
+            "output_hex": "e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-146",
+            "target": "右边",
+            "output_hex": "e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-147",
+            "target": "未知",
+            "output_hex": "e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-148",
+            "target": "左边",
+            "output_hex": "e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-149",
+            "target": "中间",
+            "output_hex": "e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-150",
+            "target": "右边",
+            "output_hex": "e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-151",
+            "target": "未知",
+            "output_hex": "e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-152",
+            "target": "左边",
+            "output_hex": "e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-153",
+            "target": "中间",
+            "output_hex": "e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-154",
+            "target": "右边",
+            "output_hex": "e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-155",
+            "target": "未知",
+            "output_hex": "e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-156",
+            "target": "左边",
+            "output_hex": "e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-157",
+            "target": "中间",
+            "output_hex": "e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-158",
+            "target": "右边",
+            "output_hex": "e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-159",
+            "target": "未知",
+            "output_hex": "e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b7e5bea6e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          }
+        ]
+      },
+      "updates": 23,
+      "training_cpu": 30.53125,
+      "pair_margin_before": -2.4437904357910156e-06,
+      "pair_margin_after": -0.00011461973190307617,
+      "checkpoint": "E:\\Seed\\data\\experiments\\taiji_u2\\conditional_a\\20261112T091353Z\\native-token\\update-000023.bin"
+    },
+    "native-conditional": {
+      "initial": {
+        "correct": 0,
+        "denominator": 32,
+        "accuracy": 0.0,
+        "rows": [
+          {
+            "id": "fit-128",
+            "target": "左边",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-129",
+            "target": "中间",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-130",
+            "target": "右边",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-131",
+            "target": "未知",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-132",
+            "target": "左边",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-133",
+            "target": "中间",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-134",
+            "target": "右边",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-135",
+            "target": "未知",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-136",
+            "target": "左边",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-137",
+            "target": "中间",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-138",
+            "target": "右边",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-139",
+            "target": "未知",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-140",
+            "target": "左边",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-141",
+            "target": "中间",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-142",
+            "target": "右边",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-143",
+            "target": "未知",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-144",
+            "target": "左边",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-145",
+            "target": "中间",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-146",
+            "target": "右边",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-147",
+            "target": "未知",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-148",
+            "target": "左边",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-149",
+            "target": "中间",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-150",
+            "target": "右边",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-151",
+            "target": "未知",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-152",
+            "target": "左边",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-153",
+            "target": "中间",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-154",
+            "target": "右边",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-155",
+            "target": "未知",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-156",
+            "target": "左边",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-157",
+            "target": "中间",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-158",
+            "target": "右边",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-159",
+            "target": "未知",
+            "output_hex": "e5bea650",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          }
+        ]
+      },
+      "final": {
+        "correct": 0,
+        "denominator": 32,
+        "accuracy": 0.0,
+        "rows": [
+          {
+            "id": "fit-128",
+            "target": "左边",
+            "output_hex": "e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-129",
+            "target": "中间",
+            "output_hex": "e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-130",
+            "target": "右边",
+            "output_hex": "e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-131",
+            "target": "未知",
+            "output_hex": "e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-132",
+            "target": "左边",
+            "output_hex": "e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-133",
+            "target": "中间",
+            "output_hex": "e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-134",
+            "target": "右边",
+            "output_hex": "e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-135",
+            "target": "未知",
+            "output_hex": "e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-136",
+            "target": "左边",
+            "output_hex": "e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-137",
+            "target": "中间",
+            "output_hex": "e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-138",
+            "target": "右边",
+            "output_hex": "e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-139",
+            "target": "未知",
+            "output_hex": "e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-140",
+            "target": "左边",
+            "output_hex": "e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-141",
+            "target": "中间",
+            "output_hex": "e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-142",
+            "target": "右边",
+            "output_hex": "e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-143",
+            "target": "未知",
+            "output_hex": "e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-144",
+            "target": "左边",
+            "output_hex": "e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-145",
+            "target": "中间",
+            "output_hex": "e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-146",
+            "target": "右边",
+            "output_hex": "e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-147",
+            "target": "未知",
+            "output_hex": "e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-148",
+            "target": "左边",
+            "output_hex": "e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-149",
+            "target": "中间",
+            "output_hex": "e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-150",
+            "target": "右边",
+            "output_hex": "e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-151",
+            "target": "未知",
+            "output_hex": "e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-152",
+            "target": "左边",
+            "output_hex": "e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-153",
+            "target": "中间",
+            "output_hex": "e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-154",
+            "target": "右边",
+            "output_hex": "e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-155",
+            "target": "未知",
+            "output_hex": "e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-156",
+            "target": "左边",
+            "output_hex": "e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-157",
+            "target": "中间",
+            "output_hex": "e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-158",
+            "target": "右边",
+            "output_hex": "e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-159",
+            "target": "未知",
+            "output_hex": "e8a6b72c",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          }
+        ]
+      },
+      "updates": 11,
+      "training_cpu": 28.796875,
+      "pair_margin_before": -2.4437904357910156e-06,
+      "pair_margin_after": -2.0742416381835938e-05,
+      "checkpoint": "E:\\Seed\\data\\experiments\\taiji_u2\\conditional_a\\20261112T091353Z\\native-conditional\\update-000011.bin"
+    },
+    "transformer-token": {
+      "initial": {
+        "correct": 8,
+        "denominator": 32,
+        "accuracy": 0.25,
+        "rows": [
+          {
+            "id": "fit-128",
+            "target": "左边",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-129",
+            "target": "中间",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-130",
+            "target": "右边",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": true
+          },
+          {
+            "id": "fit-131",
+            "target": "未知",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-132",
+            "target": "左边",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-133",
+            "target": "中间",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-134",
+            "target": "右边",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": true
+          },
+          {
+            "id": "fit-135",
+            "target": "未知",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-136",
+            "target": "左边",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-137",
+            "target": "中间",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-138",
+            "target": "右边",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": true
+          },
+          {
+            "id": "fit-139",
+            "target": "未知",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-140",
+            "target": "左边",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-141",
+            "target": "中间",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-142",
+            "target": "右边",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": true
+          },
+          {
+            "id": "fit-143",
+            "target": "未知",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-144",
+            "target": "左边",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-145",
+            "target": "中间",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-146",
+            "target": "右边",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": true
+          },
+          {
+            "id": "fit-147",
+            "target": "未知",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-148",
+            "target": "左边",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-149",
+            "target": "中间",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-150",
+            "target": "右边",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": true
+          },
+          {
+            "id": "fit-151",
+            "target": "未知",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-152",
+            "target": "左边",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-153",
+            "target": "中间",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-154",
+            "target": "右边",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": true
+          },
+          {
+            "id": "fit-155",
+            "target": "未知",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-156",
+            "target": "左边",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-157",
+            "target": "中间",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-158",
+            "target": "右边",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": true
+          },
+          {
+            "id": "fit-159",
+            "target": "未知",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          }
+        ]
+      },
+      "final": {
+        "correct": 8,
+        "denominator": 32,
+        "accuracy": 0.25,
+        "rows": [
+          {
+            "id": "fit-128",
+            "target": "左边",
+            "output_hex": "e5b7a6e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": true
+          },
+          {
+            "id": "fit-129",
+            "target": "中间",
+            "output_hex": "e5b7a6e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-130",
+            "target": "右边",
+            "output_hex": "e5b7a6e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-131",
+            "target": "未知",
+            "output_hex": "e5b7a6e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-132",
+            "target": "左边",
+            "output_hex": "e5b7a6e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": true
+          },
+          {
+            "id": "fit-133",
+            "target": "中间",
+            "output_hex": "e5b7a6e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-134",
+            "target": "右边",
+            "output_hex": "e5b7a6e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-135",
+            "target": "未知",
+            "output_hex": "e5b7a6e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-136",
+            "target": "左边",
+            "output_hex": "e5b7a6e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": true
+          },
+          {
+            "id": "fit-137",
+            "target": "中间",
+            "output_hex": "e5b7a6e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-138",
+            "target": "右边",
+            "output_hex": "e5b7a6e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-139",
+            "target": "未知",
+            "output_hex": "e5b7a6e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-140",
+            "target": "左边",
+            "output_hex": "e5b7a6e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": true
+          },
+          {
+            "id": "fit-141",
+            "target": "中间",
+            "output_hex": "e5b7a6e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-142",
+            "target": "右边",
+            "output_hex": "e5b7a6e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-143",
+            "target": "未知",
+            "output_hex": "e5b7a6e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-144",
+            "target": "左边",
+            "output_hex": "e5b7a6e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": true
+          },
+          {
+            "id": "fit-145",
+            "target": "中间",
+            "output_hex": "e5b7a6e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-146",
+            "target": "右边",
+            "output_hex": "e5b7a6e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-147",
+            "target": "未知",
+            "output_hex": "e5b7a6e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-148",
+            "target": "左边",
+            "output_hex": "e5b7a6e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": true
+          },
+          {
+            "id": "fit-149",
+            "target": "中间",
+            "output_hex": "e5b7a6e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-150",
+            "target": "右边",
+            "output_hex": "e5b7a6e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-151",
+            "target": "未知",
+            "output_hex": "e5b7a6e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-152",
+            "target": "左边",
+            "output_hex": "e5b7a6e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": true
+          },
+          {
+            "id": "fit-153",
+            "target": "中间",
+            "output_hex": "e5b7a6e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-154",
+            "target": "右边",
+            "output_hex": "e5b7a6e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-155",
+            "target": "未知",
+            "output_hex": "e5b7a6e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-156",
+            "target": "左边",
+            "output_hex": "e5b7a6e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": true
+          },
+          {
+            "id": "fit-157",
+            "target": "中间",
+            "output_hex": "e5b7a6e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-158",
+            "target": "右边",
+            "output_hex": "e5b7a6e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-159",
+            "target": "未知",
+            "output_hex": "e5b7a6e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          }
+        ]
+      },
+      "updates": 163,
+      "training_cpu": 29.4375,
+      "pair_margin_before": -0.0003193169832229614,
+      "pair_margin_after": -7.302314043045044e-05,
+      "checkpoint": "E:\\Seed\\data\\experiments\\taiji_u2\\conditional_a\\20261112T091353Z\\transformer-token\\update-000163.bin"
+    },
+    "transformer-conditional": {
+      "initial": {
+        "correct": 8,
+        "denominator": 32,
+        "accuracy": 0.25,
+        "rows": [
+          {
+            "id": "fit-128",
+            "target": "左边",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-129",
+            "target": "中间",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-130",
+            "target": "右边",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": true
+          },
+          {
+            "id": "fit-131",
+            "target": "未知",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-132",
+            "target": "左边",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-133",
+            "target": "中间",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-134",
+            "target": "右边",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": true
+          },
+          {
+            "id": "fit-135",
+            "target": "未知",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-136",
+            "target": "左边",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-137",
+            "target": "中间",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-138",
+            "target": "右边",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": true
+          },
+          {
+            "id": "fit-139",
+            "target": "未知",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-140",
+            "target": "左边",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-141",
+            "target": "中间",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-142",
+            "target": "右边",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": true
+          },
+          {
+            "id": "fit-143",
+            "target": "未知",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-144",
+            "target": "左边",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-145",
+            "target": "中间",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-146",
+            "target": "右边",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": true
+          },
+          {
+            "id": "fit-147",
+            "target": "未知",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-148",
+            "target": "左边",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-149",
+            "target": "中间",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-150",
+            "target": "右边",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": true
+          },
+          {
+            "id": "fit-151",
+            "target": "未知",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-152",
+            "target": "左边",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-153",
+            "target": "中间",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-154",
+            "target": "右边",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": true
+          },
+          {
+            "id": "fit-155",
+            "target": "未知",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-156",
+            "target": "左边",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-157",
+            "target": "中间",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-158",
+            "target": "右边",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": true
+          },
+          {
+            "id": "fit-159",
+            "target": "未知",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          }
+        ]
+      },
+      "final": {
+        "correct": 8,
+        "denominator": 32,
+        "accuracy": 0.25,
+        "rows": [
+          {
+            "id": "fit-128",
+            "target": "左边",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-129",
+            "target": "中间",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-130",
+            "target": "右边",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": true
+          },
+          {
+            "id": "fit-131",
+            "target": "未知",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-132",
+            "target": "左边",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-133",
+            "target": "中间",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-134",
+            "target": "右边",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": true
+          },
+          {
+            "id": "fit-135",
+            "target": "未知",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-136",
+            "target": "左边",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-137",
+            "target": "中间",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-138",
+            "target": "右边",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": true
+          },
+          {
+            "id": "fit-139",
+            "target": "未知",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-140",
+            "target": "左边",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-141",
+            "target": "中间",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-142",
+            "target": "右边",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": true
+          },
+          {
+            "id": "fit-143",
+            "target": "未知",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-144",
+            "target": "左边",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-145",
+            "target": "中间",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-146",
+            "target": "右边",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": true
+          },
+          {
+            "id": "fit-147",
+            "target": "未知",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-148",
+            "target": "左边",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-149",
+            "target": "中间",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-150",
+            "target": "右边",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": true
+          },
+          {
+            "id": "fit-151",
+            "target": "未知",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-152",
+            "target": "左边",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-153",
+            "target": "中间",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-154",
+            "target": "右边",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": true
+          },
+          {
+            "id": "fit-155",
+            "target": "未知",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-156",
+            "target": "左边",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-157",
+            "target": "中间",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          },
+          {
+            "id": "fit-158",
+            "target": "右边",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": true
+          },
+          {
+            "id": "fit-159",
+            "target": "未知",
+            "output_hex": "e58fb3e8beb9",
+            "eos": true,
+            "valid_utf8": true,
+            "correct": false
+          }
+        ]
+      },
+      "updates": 85,
+      "training_cpu": 30.375,
+      "pair_margin_before": -0.0003193169832229614,
+      "pair_margin_after": -0.00011444836854934692,
+      "checkpoint": "E:\\Seed\\data\\experiments\\taiji_u2\\conditional_a\\20261112T091353Z\\transformer-conditional\\update-000085.bin"
+    }
+  },
+  "optimizer_steps": 282,
+  "cpu_seconds": 267.28125,
+  "accounted_cpu_seconds": 316.359375,
+  "wall_seconds": 275.98500000004424,
+  "run_conditions": {
+    "device": "cpu",
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "scope": "post-P1 objective intervention, development fit only",
+  "check_reads": 0,
+  "final_reads": 0,
+  "capability_qualifications": []
+}

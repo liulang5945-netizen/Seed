@@ -1,0 +1,89 @@
+{
+  "schema": "taiji-u2-evidence-reader-local-v1",
+  "verdict": "passed_local_reader_only",
+  "scope": "Standalone module; subject normal entry, provenance admission, canonical history rebuild and independent-process restoration remain pending. Random synthetic inputs; no task data or optimizer updates.",
+  "precisions": {
+    "torch.float32": {
+      "verdict": "passed_local_reader_checks",
+      "parameters": 584,
+      "parameter_grad_norms": {
+        "input_query.weight": 0.018104994669556618,
+        "input_query.bias": 0.0048721954226493835,
+        "key.weight": 0.0155129199847579,
+        "value.weight": 0.12196117639541626,
+        "query.weight": 0.014740154147148132,
+        "message.weight": 0.06806209683418274,
+        "output.weight": 0.06788100302219391
+      },
+      "encoded_grad_norm": 0.011874589137732983,
+      "metadata_grad_norm": 0.01567075401544571,
+      "request_grad_norm": 0.001617485424503684,
+      "query_content_mixed_difference": 0.004869520664215088,
+      "checks": [
+        "finite",
+        "normalized_masked_attention",
+        "token_permutation",
+        "invalid_nan_mask",
+        "all_missing",
+        "zero_tokens",
+        "query_content_interaction",
+        "all_parameter_credit",
+        "input_credit",
+        "invalid_token_zero_credit",
+        "parameters_unchanged",
+        "state_dict_restore",
+        "invalid_shape_rejected",
+        "token_budget_rejected"
+      ]
+    },
+    "torch.float64": {
+      "verdict": "passed_local_reader_checks",
+      "parameters": 584,
+      "parameter_grad_norms": {
+        "input_query.weight": 0.012544146315691163,
+        "input_query.bias": 0.003856565211874248,
+        "key.weight": 0.02111545632038918,
+        "value.weight": 0.04754496590432779,
+        "query.weight": 0.010387641304252652,
+        "message.weight": 0.03353715047290028,
+        "output.weight": 0.02506532763083681
+      },
+      "encoded_grad_norm": 0.009328557801906326,
+      "metadata_grad_norm": 0.008518612289608807,
+      "request_grad_norm": 0.0012743386915768109,
+      "query_content_mixed_difference": 0.0037551717203518353,
+      "checks": [
+        "finite",
+        "normalized_masked_attention",
+        "token_permutation",
+        "invalid_nan_mask",
+        "all_missing",
+        "zero_tokens",
+        "query_content_interaction",
+        "all_parameter_credit",
+        "input_credit",
+        "invalid_token_zero_credit",
+        "parameters_unchanged",
+        "state_dict_restore",
+        "invalid_shape_rejected",
+        "token_budget_rejected"
+      ]
+    }
+  },
+  "source_sha256": {
+    "taiji\\u2_evidence_read.py": "0823d2adab2e03f0b1ad5e90759232c278caf1bd43f0aba739a3a12e8fa30bd2",
+    "scripts\\training\\verify_u2_evidence_read_22_5.py": "128d7b0d569d974121b3e8c949b04ea7ed44e02a231cb94a07439a7f2e1226c8"
+  },
+  "optimizer_steps": 0,
+  "task_data_reads": 0,
+  "check_reads": 0,
+  "final_reads": 0,
+  "capability_qualifications": [],
+  "cpu_seconds": 5.359375,
+  "wall_seconds": 6.530999999959022,
+  "run_conditions": {
+    "device": "cpu",
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  }
+}

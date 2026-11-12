@@ -642,4 +642,14 @@ owner明确选择先冻结A/B必要对照与预算，进行首次有界学习，
 
 [首轮结案](CLOSEOUT-TAIJI_FIRST_A_PILOT_20261112.md)：455更新、三臂训练CPU32.30/35.59/34.91（10%内），fit32为0/0/8正确。Native/GRU输出固定无效词，TF恒右边。训练内自由生成及四序列重评分亦无条件化，图像NLL影响弱，P1无A父。此限定预算/配方结果不能推翻整个模型，也不能只归未见对象数或自由滚动。
 
-当前[22.5.P2配对信用干预](PLAN-TAIJI_FIRST_A_CONDITIONAL_CREDIT_20261112.md)已冻结四臂，同架构从P1末参数fork并重置相同Adam，Native-token23/Native-conditional11/TF-token163/TF-conditional85更新，每臂约32训练CPU；新fit为recipe128–159例，check/final0。600 CPU/1200 wall从22.5另预留，P1已预留1200，正式A/B预算剩17400。原自由字节/64字节/EOS/完整分母保留，主门fit≥0.50且conditional相对token增益≥0.15，不改正式A父门。
+[22.5.P2配对信用干预](PLAN-TAIJI_FIRST_A_CONDITIONAL_CREDIT_20261112.md)已完成Native-token23/Native-conditional11/TF-token163/TF-conditional85更新，共282次。新fit32为0/0/8/8，未达到主门0.50及相对增益0.15；按[回执](CLOSEOUT-TAIJI_FIRST_A_CONDITIONAL_20261112.md)结案为intervention_not_supported_no_A_parent。CPU316.359375符合600帽，check/final0。原自由字节/64字节/EOS/完整分母与正式A父门保留。
+
+## P3全局收束及读取架构候选
+
+P1/P2累计737次学习更新，当前无A学习父。恢复、物理环境和同主体工程资产保留，任务、保持、自驱及生长联合能力仍按各自资格验证。后继B/C/D/J等待实际父，23–28长期责任轴保持，不能以工程阶段推进代签能力。
+
+[P3卡](PLAN-TAIJI_FIRST_A_READING_REVIEW_20261112.md)的只读链路核查耗费12.453125 CPU，查询通路存在但请求对对象注意力/读取的影响很弱。依据该证据冻结[请求条件证据读取候选](SPEC-TAIJI_U2_QUERY_EVIDENCE_20261112.md)，新增584参数的两步共享读取，显式使用请求与公开感知token/位置，不读取物理私有状态。
+
+[局部检查](../../reports/taiji_u2_evidence_reader_local_20261112.json)在float32/64各通过14项，7个参数张量及请求/感知/元数据输入均有梯度，空证据、mask、置换、局部恢复和容量边界通过，CPU5.359375、0step、0任务数据。该报告仅签局部算子。
+
+**唯一队首为P3.3正常主体集成与恢复迁移**。原生正常入口、合法证据目录、来源/权限/撤销、当前编码器重建、旧checkpoint源身份迁移及独立进程恢复仍待完成。全部通过后再做参数配平控制、实价与新有界训练合同。P3研发预算120+30另预留，正式A/B未分配17250 CPU；当前已知P1/P2及两项诊断/局部核查累计819.9375 CPU。

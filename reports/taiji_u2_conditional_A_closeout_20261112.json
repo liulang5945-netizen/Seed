@@ -1,0 +1,4102 @@
+{
+  "schema": "taiji-conditional-A-closeout-v1",
+  "verdict": "intervention_not_supported_no_A_parent",
+  "checkpoint_audit": {
+    "native-token": {
+      "updates": 23,
+      "matching_claim_and_checkpoint_files": 23,
+      "final_cursor": 46,
+      "adam_parameter_states": 171,
+      "initial_parameter_digest": "8f0df68a031a43a7afd1fd6a1a8f616b229e9977e2964a13c99492e380dda3fb",
+      "final_parameter_digest": "67bb3259fc44bbedbe7dd2c45556fb338715024dbe4d00e408cc83b0c06ca9f8",
+      "checkpoint_sha256": "c08898a4b31a55fc36346d97a518d9897f37ac0599af34e37cb65ca07fabbf7e",
+      "initial_fit": 0.0,
+      "final_fit": 0.0,
+      "pair_margin_before": -2.4437904357910156e-06,
+      "pair_margin_after": -0.00011461973190307617,
+      "training_cpu_seconds": 30.53125
+    },
+    "native-conditional": {
+      "updates": 11,
+      "matching_claim_and_checkpoint_files": 11,
+      "final_cursor": 22,
+      "adam_parameter_states": 171,
+      "initial_parameter_digest": "8f0df68a031a43a7afd1fd6a1a8f616b229e9977e2964a13c99492e380dda3fb",
+      "final_parameter_digest": "2b9dc796d75c853de01522fd059d758ce0bc04110b29fef84bb8638d342ad1dd",
+      "checkpoint_sha256": "bdba4bdcbe3e86515c29b577a39cd5cfe80556686703a286f291084fb11f07b2",
+      "initial_fit": 0.0,
+      "final_fit": 0.0,
+      "pair_margin_before": -2.4437904357910156e-06,
+      "pair_margin_after": -2.0742416381835938e-05,
+      "training_cpu_seconds": 28.796875
+    },
+    "transformer-token": {
+      "updates": 163,
+      "matching_claim_and_checkpoint_files": 163,
+      "final_cursor": 326,
+      "adam_parameter_states": 42,
+      "initial_parameter_digest": "ff2460fd0ef8b7ad7d9c27d692447abbca8d79a2312542009a787629ec8c00e7",
+      "final_parameter_digest": "5baab079835db698f2211b1b01ccf95bb8184b65d03bd1ae17a2a7d5c6c17f44",
+      "checkpoint_sha256": "8c175fbdb9a093f6604cfbb2d655b3550be0e684af61131bfadf846c5ba80068",
+      "initial_fit": 0.25,
+      "final_fit": 0.25,
+      "pair_margin_before": -0.0003193169832229614,
+      "pair_margin_after": -7.302314043045044e-05,
+      "training_cpu_seconds": 29.4375
+    },
+    "transformer-conditional": {
+      "updates": 85,
+      "matching_claim_and_checkpoint_files": 85,
+      "final_cursor": 170,
+      "adam_parameter_states": 42,
+      "initial_parameter_digest": "ff2460fd0ef8b7ad7d9c27d692447abbca8d79a2312542009a787629ec8c00e7",
+      "final_parameter_digest": "d6280090b19e774d5cd86a3d4be00422d261abce8ec8dafa302bab5718723de9",
+      "checkpoint_sha256": "44d6c80c74a2c41de776fa8d219093b01804f3ec9e977c70bd14327d935b64d5",
+      "initial_fit": 0.25,
+      "final_fit": 0.25,
+      "pair_margin_before": -0.0003193169832229614,
+      "pair_margin_after": -0.00011444836854934692,
+      "training_cpu_seconds": 30.375
+    }
+  },
+  "native_sensitivity": {
+    "native-token": {
+      "samples": 16,
+      "mean_sensitivity": {
+        "rgb_zero": {
+          "rgb_tokens": {
+            "delta_rms": 0.09979521948844194,
+            "reference_rms": 0.27580503560602665,
+            "max_abs": 0.2632637061178684
+          },
+          "object_z": {
+            "delta_rms": 0.0014906227006576955,
+            "reference_rms": 0.3318036384880543,
+            "max_abs": 0.0025887982919812202
+          },
+          "object_position": {
+            "delta_rms": 0.007399954280117527,
+            "reference_rms": 0.5131165944039822,
+            "max_abs": 0.008087530732154846
+          },
+          "H": {
+            "delta_rms": 0.0020311445550760254,
+            "reference_rms": 0.4718725774437189,
+            "max_abs": 0.002670319750905037
+          },
+          "F": {
+            "delta_rms": 0.001175582321593538,
+            "reference_rms": 0.2678835280239582,
+            "max_abs": 0.00199136883020401
+          },
+          "request_embedding": {
+            "delta_rms": 0.0,
+            "reference_rms": 0.2613311819732189,
+            "max_abs": 0.0
+          },
+          "read_h": {
+            "delta_rms": 0.0010934459423879161,
+            "reference_rms": 0.304657531902194,
+            "max_abs": 0.0016143731772899628
+          },
+          "object_attention": {
+            "delta_rms": 2.0537499267447856e-05,
+            "reference_rms": 0.25002672895789146,
+            "max_abs": 3.68412584066391e-05
+          },
+          "read_o": {
+            "delta_rms": 0.00028634430054808035,
+            "reference_rms": 0.2006209958344698,
+            "max_abs": 0.0006917594000697136
+          },
+          "branch_context": {
+            "delta_rms": 0.0004547991611616453,
+            "reference_rms": 0.2648523114621639,
+            "max_abs": 0.0007425155490636826
+          },
+          "first_byte_probability": {
+            "delta_rms": 6.047423752875147e-07,
+            "reference_rms": 0.004666504159104079,
+            "max_abs": 2.8850045055150986e-06
+          }
+        },
+        "different_entity_query": {
+          "rgb_tokens": {
+            "delta_rms": 0.0,
+            "reference_rms": 0.27580503560602665,
+            "max_abs": 0.0
+          },
+          "object_z": {
+            "delta_rms": 0.0,
+            "reference_rms": 0.3318036384880543,
+            "max_abs": 0.0
+          },
+          "object_position": {
+            "delta_rms": 0.0,
+            "reference_rms": 0.5131165944039822,
+            "max_abs": 0.0
+          },
+          "H": {
+            "delta_rms": 0.0004943566841575375,
+            "reference_rms": 0.4718725774437189,
+            "max_abs": 0.000780399888753891
+          },
+          "F": {
+            "delta_rms": 0.0,
+            "reference_rms": 0.2678835280239582,
+            "max_abs": 0.0
+          },
+          "request_embedding": {
+            "delta_rms": 0.00761966504069278,
+            "reference_rms": 0.2613311819732189,
+            "max_abs": 0.012671161442995071
+          },
+          "read_h": {
+            "delta_rms": 0.00027990040314307407,
+            "reference_rms": 0.304657531902194,
+            "max_abs": 0.0004388950765132904
+          },
+          "object_attention": {
+            "delta_rms": 2.9380300006209836e-06,
+            "reference_rms": 0.25002672895789146,
+            "max_abs": 5.124136805534363e-06
+          },
+          "read_o": {
+            "delta_rms": 9.036687558250378e-07,
+            "reference_rms": 0.2006209958344698,
+            "max_abs": 1.4528632164001465e-06
+          },
+          "branch_context": {
+            "delta_rms": 0.00021639087390212808,
+            "reference_rms": 0.2648523114621639,
+            "max_abs": 0.00039362162351608276
+          },
+          "first_byte_probability": {
+            "delta_rms": 2.8883905400789445e-07,
+            "reference_rms": 0.004666504159104079,
+            "max_abs": 1.4061806723475456e-06
+          }
+        }
+      },
+      "rows": [
+        {
+          "id": "train-0",
+          "split": "train",
+          "rgb_zero": {
+            "rgb_tokens": {
+              "delta_rms": 0.09467176347970963,
+              "reference_rms": 0.27275437116622925,
+              "max_abs": 0.23575516045093536
+            },
+            "object_z": {
+              "delta_rms": 0.001431342912837863,
+              "reference_rms": 0.3317992389202118,
+              "max_abs": 0.002530105412006378
+            },
+            "object_position": {
+              "delta_rms": 0.007106051314622164,
+              "reference_rms": 0.51282799243927,
+              "max_abs": 0.007668435573577881
+            },
+            "H": {
+              "delta_rms": 0.0019416854484006763,
+              "reference_rms": 0.47220954298973083,
+              "max_abs": 0.002561509609222412
+            },
+            "F": {
+              "delta_rms": 0.0011381717631593347,
+              "reference_rms": 0.2678454518318176,
+              "max_abs": 0.0019355416297912598
+            },
+            "request_embedding": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.2677769660949707,
+              "max_abs": 0.0
+            },
+            "read_h": {
+              "delta_rms": 0.0010447076056152582,
+              "reference_rms": 0.30485403537750244,
+              "max_abs": 0.0015432536602020264
+            },
+            "object_attention": {
+              "delta_rms": 1.9802933820756152e-05,
+              "reference_rms": 0.25002679228782654,
+              "max_abs": 3.59266996383667e-05
+            },
+            "read_o": {
+              "delta_rms": 0.0002751435386016965,
+              "reference_rms": 0.2006167471408844,
+              "max_abs": 0.0006686896085739136
+            },
+            "branch_context": {
+              "delta_rms": 0.0004364521009847522,
+              "reference_rms": 0.2650172710418701,
+              "max_abs": 0.000713646411895752
+            },
+            "first_byte_probability": {
+              "delta_rms": 5.795739639324893e-07,
+              "reference_rms": 0.004666522610932589,
+              "max_abs": 2.766493707895279e-06
+            }
+          },
+          "different_entity_query": {
+            "rgb_tokens": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.27275437116622925,
+              "max_abs": 0.0
+            },
+            "object_z": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.3317992389202118,
+              "max_abs": 0.0
+            },
+            "object_position": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.51282799243927,
+              "max_abs": 0.0
+            },
+            "H": {
+              "delta_rms": 4.57017777080182e-05,
+              "reference_rms": 0.47220954298973083,
+              "max_abs": 7.832050323486328e-05
+            },
+            "F": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.2678454518318176,
+              "max_abs": 0.0
+            },
+            "request_embedding": {
+              "delta_rms": 0.0009983750060200691,
+              "reference_rms": 0.2677769660949707,
+              "max_abs": 0.0024562180042266846
+            },
+            "read_h": {
+              "delta_rms": 2.617115569591988e-05,
+              "reference_rms": 0.30485403537750244,
+              "max_abs": 3.921985626220703e-05
+            },
+            "object_attention": {
+              "delta_rms": 2.788249844343227e-07,
+              "reference_rms": 0.25002679228782654,
+              "max_abs": 4.917383193969727e-07
+            },
+            "read_o": {
+              "delta_rms": 7.98768624576951e-08,
+              "reference_rms": 0.2006167471408844,
+              "max_abs": 1.4901161193847656e-07
+            },
+            "branch_context": {
+              "delta_rms": 2.3293103367905132e-05,
+              "reference_rms": 0.2650172710418701,
+              "max_abs": 4.279613494873047e-05
+            },
+            "first_byte_probability": {
+              "delta_rms": 3.1141652812038956e-08,
+              "reference_rms": 0.004666522610932589,
+              "max_abs": 1.5087425708770752e-07
+            }
+          }
+        },
+        {
+          "id": "train-1",
+          "split": "train",
+          "rgb_zero": {
+            "rgb_tokens": {
+              "delta_rms": 0.09296397119760513,
+              "reference_rms": 0.2723599374294281,
+              "max_abs": 0.22529952228069305
+            },
+            "object_z": {
+              "delta_rms": 0.0014361917274072766,
+              "reference_rms": 0.3317981958389282,
+              "max_abs": 0.0024802125990390778
+            },
+            "object_position": {
+              "delta_rms": 0.007137039676308632,
+              "reference_rms": 0.5128875374794006,
+              "max_abs": 0.007912397384643555
+            },
+            "H": {
+              "delta_rms": 0.0019328659400343895,
+              "reference_rms": 0.47220444679260254,
+              "max_abs": 0.0025434792041778564
+            },
+            "F": {
+              "delta_rms": 0.0011254765558987856,
+              "reference_rms": 0.26783502101898193,
+              "max_abs": 0.0019060373306274414
+            },
+            "request_embedding": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.2677769660949707,
+              "max_abs": 0.0
+            },
+            "read_h": {
+              "delta_rms": 0.0010418641613796353,
+              "reference_rms": 0.3048529028892517,
+              "max_abs": 0.0015399456024169922
+            },
+            "object_attention": {
+              "delta_rms": 1.9825800336548127e-05,
+              "reference_rms": 0.25002676248550415,
+              "max_abs": 3.577768802642822e-05
+            },
+            "read_o": {
+              "delta_rms": 0.0002756955800577998,
+              "reference_rms": 0.20061618089675903,
+              "max_abs": 0.0006643831729888916
+            },
+            "branch_context": {
+              "delta_rms": 0.0004343719338066876,
+              "reference_rms": 0.26501572132110596,
+              "max_abs": 0.0007092058658599854
+            },
+            "first_byte_probability": {
+              "delta_rms": 5.774301143901539e-07,
+              "reference_rms": 0.004666522145271301,
+              "max_abs": 2.7525238692760468e-06
+            }
+          },
+          "different_entity_query": {
+            "rgb_tokens": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.2723599374294281,
+              "max_abs": 0.0
+            },
+            "object_z": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.3317981958389282,
+              "max_abs": 0.0
+            },
+            "object_position": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.5128875374794006,
+              "max_abs": 0.0
+            },
+            "H": {
+              "delta_rms": 4.569703742163256e-05,
+              "reference_rms": 0.47220444679260254,
+              "max_abs": 7.826089859008789e-05
+            },
+            "F": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.26783502101898193,
+              "max_abs": 0.0
+            },
+            "request_embedding": {
+              "delta_rms": 0.0009983750060200691,
+              "reference_rms": 0.2677769660949707,
+              "max_abs": 0.0024562180042266846
+            },
+            "read_h": {
+              "delta_rms": 2.6180099666817114e-05,
+              "reference_rms": 0.3048529028892517,
+              "max_abs": 3.921985626220703e-05
+            },
+            "object_attention": {
+              "delta_rms": 2.6966574750986183e-07,
+              "reference_rms": 0.25002676248550415,
+              "max_abs": 4.76837158203125e-07
+            },
+            "read_o": {
+              "delta_rms": 8.88620377281768e-08,
+              "reference_rms": 0.20061618089675903,
+              "max_abs": 1.4901161193847656e-07
+            },
+            "branch_context": {
+              "delta_rms": 2.3298178348341025e-05,
+              "reference_rms": 0.26501572132110596,
+              "max_abs": 4.2825937271118164e-05
+            },
+            "first_byte_probability": {
+              "delta_rms": 3.1025756186409126e-08,
+              "reference_rms": 0.004666522145271301,
+              "max_abs": 1.5087425708770752e-07
+            }
+          }
+        },
+        {
+          "id": "train-2",
+          "split": "train",
+          "rgb_zero": {
+            "rgb_tokens": {
+              "delta_rms": 0.0955212414264679,
+              "reference_rms": 0.2730574905872345,
+              "max_abs": 0.2812289595603943
+            },
+            "object_z": {
+              "delta_rms": 0.0014068164164200425,
+              "reference_rms": 0.3317985534667969,
+              "max_abs": 0.002423293888568878
+            },
+            "object_position": {
+              "delta_rms": 0.006983754690736532,
+              "reference_rms": 0.5127199292182922,
+              "max_abs": 0.007598221302032471
+            },
+            "H": {
+              "delta_rms": 0.0019421267788857222,
+              "reference_rms": 0.4721076786518097,
+              "max_abs": 0.002557516098022461
+            },
+            "F": {
+              "delta_rms": 0.0011306131491437554,
+              "reference_rms": 0.26783978939056396,
+              "max_abs": 0.0019200146198272705
+            },
+            "request_embedding": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.2663283944129944,
+              "max_abs": 0.0
+            },
+            "read_h": {
+              "delta_rms": 0.0010449057444930077,
+              "reference_rms": 0.30479511618614197,
+              "max_abs": 0.0015419423580169678
+            },
+            "object_attention": {
+              "delta_rms": 1.9019609680981375e-05,
+              "reference_rms": 0.25002679228782654,
+              "max_abs": 3.4227967262268066e-05
+            },
+            "read_o": {
+              "delta_rms": 0.0002707087551243603,
+              "reference_rms": 0.20061497390270233,
+              "max_abs": 0.0006540119647979736
+            },
+            "branch_context": {
+              "delta_rms": 0.0004352591058705002,
+              "reference_rms": 0.2649746239185333,
+              "max_abs": 0.0007113218307495117
+            },
+            "first_byte_probability": {
+              "delta_rms": 5.785005328107218e-07,
+              "reference_rms": 0.0046665179543197155,
+              "max_abs": 2.759043127298355e-06
+            }
+          },
+          "different_entity_query": {
+            "rgb_tokens": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.2730574905872345,
+              "max_abs": 0.0
+            },
+            "object_z": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.3317985534667969,
+              "max_abs": 0.0
+            },
+            "object_position": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.5127199292182922,
+              "max_abs": 0.0
+            },
+            "H": {
+              "delta_rms": 0.0001484354870626703,
+              "reference_rms": 0.4721076786518097,
+              "max_abs": 0.00024700164794921875
+            },
+            "F": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.26783978939056396,
+              "max_abs": 0.0
+            },
+            "request_embedding": {
+              "delta_rms": 0.0024690169375389814,
+              "reference_rms": 0.2663283944129944,
+              "max_abs": 0.005873948335647583
+            },
+            "read_h": {
+              "delta_rms": 8.397430792683735e-05,
+              "reference_rms": 0.30479511618614197,
+              "max_abs": 0.0001271963119506836
+            },
+            "object_attention": {
+              "delta_rms": 8.820367156658904e-07,
+              "reference_rms": 0.25002679228782654,
+              "max_abs": 1.5348196029663086e-06
+            },
+            "read_o": {
+              "delta_rms": 2.605973179470311e-07,
+              "reference_rms": 0.20061497390270233,
+              "max_abs": 4.172325134277344e-07
+            },
+            "branch_context": {
+              "delta_rms": 6.525412027258426e-05,
+              "reference_rms": 0.2649746239185333,
+              "max_abs": 0.00011894106864929199
+            },
+            "first_byte_probability": {
+              "delta_rms": 8.717584876194451e-08,
+              "reference_rms": 0.0046665179543197155,
+              "max_abs": 4.279427230358124e-07
+            }
+          }
+        },
+        {
+          "id": "train-3",
+          "split": "train",
+          "rgb_zero": {
+            "rgb_tokens": {
+              "delta_rms": 0.09355872124433517,
+              "reference_rms": 0.27225545048713684,
+              "max_abs": 0.22915294766426086
+            },
+            "object_z": {
+              "delta_rms": 0.0013975861947983503,
+              "reference_rms": 0.3317977488040924,
+              "max_abs": 0.002399493008852005
+            },
+            "object_position": {
+              "delta_rms": 0.006945343688130379,
+              "reference_rms": 0.5126943588256836,
+              "max_abs": 0.007680296897888184
+            },
+            "H": {
+              "delta_rms": 0.0019464626675471663,
+              "reference_rms": 0.47225481271743774,
+              "max_abs": 0.002558678388595581
+            },
+            "F": {
+              "delta_rms": 0.0011314761359244585,
+              "reference_rms": 0.26783838868141174,
+              "max_abs": 0.0019196867942810059
+            },
+            "request_embedding": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.26833242177963257,
+              "max_abs": 0.0
+            },
+            "read_h": {
+              "delta_rms": 0.0010485416278243065,
+              "reference_rms": 0.3048820197582245,
+              "max_abs": 0.0015497207641601562
+            },
+            "object_attention": {
+              "delta_rms": 1.871620952442754e-05,
+              "reference_rms": 0.25002679228782654,
+              "max_abs": 3.357231616973877e-05
+            },
+            "read_o": {
+              "delta_rms": 0.0002689492248464376,
+              "reference_rms": 0.200614333152771,
+              "max_abs": 0.0006478279829025269
+            },
+            "branch_context": {
+              "delta_rms": 0.00043609709246084094,
+              "reference_rms": 0.26503899693489075,
+              "max_abs": 0.0007123649120330811
+            },
+            "first_byte_probability": {
+              "delta_rms": 5.798283950753103e-07,
+              "reference_rms": 0.004666524939239025,
+              "max_abs": 2.7669593691825867e-06
+            }
+          },
+          "different_entity_query": {
+            "rgb_tokens": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.27225545048713684,
+              "max_abs": 0.0
+            },
+            "object_z": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.3317977488040924,
+              "max_abs": 0.0
+            },
+            "object_position": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.5126943588256836,
+              "max_abs": 0.0
+            },
+            "H": {
+              "delta_rms": 0.00014842413656879216,
+              "reference_rms": 0.47225481271743774,
+              "max_abs": 0.00024694204330444336
+            },
+            "F": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.26783838868141174,
+              "max_abs": 0.0
+            },
+            "request_embedding": {
+              "delta_rms": 0.0024690169375389814,
+              "reference_rms": 0.26833242177963257,
+              "max_abs": 0.005873948335647583
+            },
+            "read_h": {
+              "delta_rms": 8.39577114675194e-05,
+              "reference_rms": 0.3048820197582245,
+              "max_abs": 0.0001271367073059082
+            },
+            "object_attention": {
+              "delta_rms": 8.787895922068856e-07,
+              "reference_rms": 0.25002679228782654,
+              "max_abs": 1.519918441772461e-06
+            },
+            "read_o": {
+              "delta_rms": 2.819001281295641e-07,
+              "reference_rms": 0.200614333152771,
+              "max_abs": 4.76837158203125e-07
+            },
+            "branch_context": {
+              "delta_rms": 6.525836943183094e-05,
+              "reference_rms": 0.26503899693489075,
+              "max_abs": 0.00011900067329406738
+            },
+            "first_byte_probability": {
+              "delta_rms": 8.70015952614267e-08,
+              "reference_rms": 0.004666524939239025,
+              "max_abs": 4.2421743273735046e-07
+            }
+          }
+        },
+        {
+          "id": "train-4",
+          "split": "train",
+          "rgb_zero": {
+            "rgb_tokens": {
+              "delta_rms": 0.09679737687110901,
+              "reference_rms": 0.2745654881000519,
+              "max_abs": 0.2726132869720459
+            },
+            "object_z": {
+              "delta_rms": 0.0014579981798306108,
+              "reference_rms": 0.3318013548851013,
+              "max_abs": 0.002546541392803192
+            },
+            "object_position": {
+              "delta_rms": 0.007237257435917854,
+              "reference_rms": 0.5129556655883789,
+              "max_abs": 0.007920563220977783
+            },
+            "H": {
+              "delta_rms": 0.0020190346986055374,
+              "reference_rms": 0.4713764786720276,
+              "max_abs": 0.002637535333633423
+            },
+            "F": {
+              "delta_rms": 0.001167725189588964,
+              "reference_rms": 0.26787593960762024,
+              "max_abs": 0.001983940601348877
+            },
+            "request_embedding": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.2543931007385254,
+              "max_abs": 0.0
+            },
+            "read_h": {
+              "delta_rms": 0.0010876735905185342,
+              "reference_rms": 0.30437004566192627,
+              "max_abs": 0.001605987548828125
+            },
+            "object_attention": {
+              "delta_rms": 1.9958673874498345e-05,
+              "reference_rms": 0.2500267028808594,
+              "max_abs": 3.583729267120361e-05
+            },
+            "read_o": {
+              "delta_rms": 0.0002802364469971508,
+              "reference_rms": 0.20061741769313812,
+              "max_abs": 0.0006775408983230591
+            },
+            "branch_context": {
+              "delta_rms": 0.00045112473890185356,
+              "reference_rms": 0.2646409869194031,
+              "max_abs": 0.0007367134094238281
+            },
+            "first_byte_probability": {
+              "delta_rms": 5.996518552819907e-07,
+              "reference_rms": 0.004666480235755444,
+              "max_abs": 2.859160304069519e-06
+            }
+          },
+          "different_entity_query": {
+            "rgb_tokens": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.2745654881000519,
+              "max_abs": 0.0
+            },
+            "object_z": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.3318013548851013,
+              "max_abs": 0.0
+            },
+            "object_position": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.5129556655883789,
+              "max_abs": 0.0
+            },
+            "H": {
+              "delta_rms": 0.0009810414630919695,
+              "reference_rms": 0.4713764786720276,
+              "max_abs": 0.0015653371810913086
+            },
+            "F": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.26787593960762024,
+              "max_abs": 0.0
+            },
+            "request_embedding": {
+              "delta_rms": 0.0141541613265872,
+              "reference_rms": 0.2543931007385254,
+              "max_abs": 0.023932605981826782
+            },
+            "read_h": {
+              "delta_rms": 0.0005552033544518054,
+              "reference_rms": 0.30437004566192627,
+              "max_abs": 0.000866323709487915
+            },
+            "object_attention": {
+              "delta_rms": 5.8307564358983655e-06,
+              "reference_rms": 0.2500267028808594,
+              "max_abs": 1.017749309539795e-05
+            },
+            "read_o": {
+              "delta_rms": 1.7949348602996906e-06,
+              "reference_rms": 0.20061741769313812,
+              "max_abs": 2.8908252716064453e-06
+            },
+            "branch_context": {
+              "delta_rms": 0.00042262562783434987,
+              "reference_rms": 0.2646409869194031,
+              "max_abs": 0.0007680654525756836
+            },
+            "first_byte_probability": {
+              "delta_rms": 5.64089873478224e-07,
+              "reference_rms": 0.004666480235755444,
+              "max_abs": 2.745073288679123e-06
+            }
+          }
+        },
+        {
+          "id": "train-5",
+          "split": "train",
+          "rgb_zero": {
+            "rgb_tokens": {
+              "delta_rms": 0.09930697083473206,
+              "reference_rms": 0.2755129337310791,
+              "max_abs": 0.29231953620910645
+            },
+            "object_z": {
+              "delta_rms": 0.0014974114019423723,
+              "reference_rms": 0.3318033218383789,
+              "max_abs": 0.0026098936796188354
+            },
+            "object_position": {
+              "delta_rms": 0.007427810225635767,
+              "reference_rms": 0.5131312012672424,
+              "max_abs": 0.007985472679138184
+            },
+            "H": {
+              "delta_rms": 0.0020277996081858873,
+              "reference_rms": 0.472337543964386,
+              "max_abs": 0.002662748098373413
+            },
+            "F": {
+              "delta_rms": 0.0011769920820370317,
+              "reference_rms": 0.26788872480392456,
+              "max_abs": 0.001989305019378662
+            },
+            "request_embedding": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.26833242177963257,
+              "max_abs": 0.0
+            },
+            "read_h": {
+              "delta_rms": 0.001092787366360426,
+              "reference_rms": 0.3049297034740448,
+              "max_abs": 0.0016151070594787598
+            },
+            "object_attention": {
+              "delta_rms": 2.0911353203700855e-05,
+              "reference_rms": 0.25002676248550415,
+              "max_abs": 3.7416815757751465e-05
+            },
+            "read_o": {
+              "delta_rms": 0.00028751243371516466,
+              "reference_rms": 0.20062211155891418,
+              "max_abs": 0.0006948858499526978
+            },
+            "branch_context": {
+              "delta_rms": 0.00045521982247009873,
+              "reference_rms": 0.2650594711303711,
+              "max_abs": 0.0007433891296386719
+            },
+            "first_byte_probability": {
+              "delta_rms": 6.052463845662714e-07,
+              "reference_rms": 0.004666527267545462,
+              "max_abs": 2.8889626264572144e-06
+            }
+          },
+          "different_entity_query": {
+            "rgb_tokens": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.2755129337310791,
+              "max_abs": 0.0
+            },
+            "object_z": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.3318033218383789,
+              "max_abs": 0.0
+            },
+            "object_position": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.5131312012672424,
+              "max_abs": 0.0
+            },
+            "H": {
+              "delta_rms": 8.283276838483289e-05,
+              "reference_rms": 0.472337543964386,
+              "max_abs": 0.00013697147369384766
+            },
+            "F": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.26788872480392456,
+              "max_abs": 0.0
+            },
+            "request_embedding": {
+              "delta_rms": 0.0015251206932589412,
+              "reference_rms": 0.26833242177963257,
+              "max_abs": 0.0033298730850219727
+            },
+            "read_h": {
+              "delta_rms": 4.8089124902617186e-05,
+              "reference_rms": 0.3049297034740448,
+              "max_abs": 7.396936416625977e-05
+            },
+            "object_attention": {
+              "delta_rms": 5.076793172520411e-07,
+              "reference_rms": 0.25002676248550415,
+              "max_abs": 8.791685104370117e-07
+            },
+            "read_o": {
+              "delta_rms": 1.5862039504099812e-07,
+              "reference_rms": 0.20062211155891418,
+              "max_abs": 2.384185791015625e-07
+            },
+            "branch_context": {
+              "delta_rms": 3.5714703699341044e-05,
+              "reference_rms": 0.2650594711303711,
+              "max_abs": 6.4849853515625e-05
+            },
+            "first_byte_probability": {
+              "delta_rms": 4.775572648441084e-08,
+              "reference_rms": 0.004666527267545462,
+              "max_abs": 2.3329630494117737e-07
+            }
+          }
+        },
+        {
+          "id": "train-6",
+          "split": "train",
+          "rgb_zero": {
+            "rgb_tokens": {
+              "delta_rms": 0.09849991649389267,
+              "reference_rms": 0.27473118901252747,
+              "max_abs": 0.27922698855400085
+            },
+            "object_z": {
+              "delta_rms": 0.0014242586912587285,
+              "reference_rms": 0.3318009078502655,
+              "max_abs": 0.0024457424879074097
+            },
+            "object_position": {
+              "delta_rms": 0.007074752822518349,
+              "reference_rms": 0.5128023028373718,
+              "max_abs": 0.007647097110748291
+            },
+            "H": {
+              "delta_rms": 0.0020043666008859873,
+              "reference_rms": 0.47231146693229675,
+              "max_abs": 0.0026346445083618164
+            },
+            "F": {
+              "delta_rms": 0.0011556922690942883,
+              "reference_rms": 0.2678654193878174,
+              "max_abs": 0.0019584596157073975
+            },
+            "request_embedding": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.26833242177963257,
+              "max_abs": 0.0
+            },
+            "read_h": {
+              "delta_rms": 0.0010798408184200525,
+              "reference_rms": 0.3049144744873047,
+              "max_abs": 0.0015968084335327148
+            },
+            "object_attention": {
+              "delta_rms": 1.8939366782433353e-05,
+              "reference_rms": 0.25002679228782654,
+              "max_abs": 3.3974647521972656e-05
+            },
+            "read_o": {
+              "delta_rms": 0.0002742961223702878,
+              "reference_rms": 0.20061734318733215,
+              "max_abs": 0.0006622523069381714
+            },
+            "branch_context": {
+              "delta_rms": 0.0004481202340684831,
+              "reference_rms": 0.26505154371261597,
+              "max_abs": 0.0007319152355194092
+            },
+            "first_byte_probability": {
+              "delta_rms": 5.959830673418764e-07,
+              "reference_rms": 0.004666526801884174,
+              "max_abs": 2.8456561267375946e-06
+            }
+          },
+          "different_entity_query": {
+            "rgb_tokens": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.27473118901252747,
+              "max_abs": 0.0
+            },
+            "object_z": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.3318009078502655,
+              "max_abs": 0.0
+            },
+            "object_position": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.5128023028373718,
+              "max_abs": 0.0
+            },
+            "H": {
+              "delta_rms": 8.283002534881234e-05,
+              "reference_rms": 0.47231146693229675,
+              "max_abs": 0.00013697147369384766
+            },
+            "F": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.2678654193878174,
+              "max_abs": 0.0
+            },
+            "request_embedding": {
+              "delta_rms": 0.0015251206932589412,
+              "reference_rms": 0.26833242177963257,
+              "max_abs": 0.0033298730850219727
+            },
+            "read_h": {
+              "delta_rms": 4.8096870159497485e-05,
+              "reference_rms": 0.3049144744873047,
+              "max_abs": 7.402896881103516e-05
+            },
+            "object_attention": {
+              "delta_rms": 5.088534180686111e-07,
+              "reference_rms": 0.25002679228782654,
+              "max_abs": 8.940696716308594e-07
+            },
+            "read_o": {
+              "delta_rms": 1.4455613950303814e-07,
+              "reference_rms": 0.20061734318733215,
+              "max_abs": 2.384185791015625e-07
+            },
+            "branch_context": {
+              "delta_rms": 3.5722434404306114e-05,
+              "reference_rms": 0.26505154371261597,
+              "max_abs": 6.490945816040039e-05
+            },
+            "first_byte_probability": {
+              "delta_rms": 4.7641599110193056e-08,
+              "reference_rms": 0.004666526801884174,
+              "max_abs": 2.3329630494117737e-07
+            }
+          }
+        },
+        {
+          "id": "train-7",
+          "split": "train",
+          "rgb_zero": {
+            "rgb_tokens": {
+              "delta_rms": 0.1003832072019577,
+              "reference_rms": 0.27504321932792664,
+              "max_abs": 0.28044360876083374
+            },
+            "object_z": {
+              "delta_rms": 0.0015004335436969995,
+              "reference_rms": 0.3318040370941162,
+              "max_abs": 0.0025657862424850464
+            },
+            "object_position": {
+              "delta_rms": 0.007453031372278929,
+              "reference_rms": 0.5131759643554688,
+              "max_abs": 0.008190393447875977
+            },
+            "H": {
+              "delta_rms": 0.0020153129007667303,
+              "reference_rms": 0.4723252058029175,
+              "max_abs": 0.0026434659957885742
+            },
+            "F": {
+              "delta_rms": 0.0011773922014981508,
+              "reference_rms": 0.26788532733917236,
+              "max_abs": 0.001999974250793457
+            },
+            "request_embedding": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.26833242177963257,
+              "max_abs": 0.0
+            },
+            "read_h": {
+              "delta_rms": 0.0010838644811883569,
+              "reference_rms": 0.3049204349517822,
+              "max_abs": 0.0015994608402252197
+            },
+            "object_attention": {
+              "delta_rms": 2.077883982565254e-05,
+              "reference_rms": 0.25002676248550415,
+              "max_abs": 3.759562969207764e-05
+            },
+            "read_o": {
+              "delta_rms": 0.0002881480031646788,
+              "reference_rms": 0.20062245428562164,
+              "max_abs": 0.0006962418556213379
+            },
+            "branch_context": {
+              "delta_rms": 0.0004527948040049523,
+              "reference_rms": 0.2650567293167114,
+              "max_abs": 0.0007401108741760254
+            },
+            "first_byte_probability": {
+              "delta_rms": 6.016493330207595e-07,
+              "reference_rms": 0.004666526336222887,
+              "max_abs": 2.8708018362522125e-06
+            }
+          },
+          "different_entity_query": {
+            "rgb_tokens": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.27504321932792664,
+              "max_abs": 0.0
+            },
+            "object_z": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.3318040370941162,
+              "max_abs": 0.0
+            },
+            "object_position": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.5131759643554688,
+              "max_abs": 0.0
+            },
+            "H": {
+              "delta_rms": 4.568155054585077e-05,
+              "reference_rms": 0.4723252058029175,
+              "max_abs": 7.826089859008789e-05
+            },
+            "F": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.26788532733917236,
+              "max_abs": 0.0
+            },
+            "request_embedding": {
+              "delta_rms": 0.0009983750060200691,
+              "reference_rms": 0.26833242177963257,
+              "max_abs": 0.0024562180042266846
+            },
+            "read_h": {
+              "delta_rms": 2.6186142349615693e-05,
+              "reference_rms": 0.3049204349517822,
+              "max_abs": 3.9249658584594727e-05
+            },
+            "object_attention": {
+              "delta_rms": 2.778776888590073e-07,
+              "reference_rms": 0.25002676248550415,
+              "max_abs": 4.917383193969727e-07
+            },
+            "read_o": {
+              "delta_rms": 8.612594371015803e-08,
+              "reference_rms": 0.20062245428562164,
+              "max_abs": 1.4901161193847656e-07
+            },
+            "branch_context": {
+              "delta_rms": 2.3302574845729396e-05,
+              "reference_rms": 0.2650567293167114,
+              "max_abs": 4.279613494873047e-05
+            },
+            "first_byte_probability": {
+              "delta_rms": 3.107599866325472e-08,
+              "reference_rms": 0.004666526336222887,
+              "max_abs": 1.5087425708770752e-07
+            }
+          }
+        },
+        {
+          "id": "fit-128",
+          "split": "fit",
+          "rgb_zero": {
+            "rgb_tokens": {
+              "delta_rms": 0.10526268184185028,
+              "reference_rms": 0.2791494131088257,
+              "max_abs": 0.31370216608047485
+            },
+            "object_z": {
+              "delta_rms": 0.001557123032398522,
+              "reference_rms": 0.331809401512146,
+              "max_abs": 0.0027063116431236267
+            },
+            "object_position": {
+              "delta_rms": 0.007745994720607996,
+              "reference_rms": 0.5134230852127075,
+              "max_abs": 0.00829237699508667
+            },
+            "H": {
+              "delta_rms": 0.0021061724983155727,
+              "reference_rms": 0.4710313677787781,
+              "max_abs": 0.0027682483196258545
+            },
+            "F": {
+              "delta_rms": 0.0012425482273101807,
+              "reference_rms": 0.26794859766960144,
+              "max_abs": 0.0021044909954071045
+            },
+            "request_embedding": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.24701032042503357,
+              "max_abs": 0.0
+            },
+            "read_h": {
+              "delta_rms": 0.0011333589209243655,
+              "reference_rms": 0.3041647672653198,
+              "max_abs": 0.0016738474369049072
+            },
+            "object_attention": {
+              "delta_rms": 2.1694939277949743e-05,
+              "reference_rms": 0.2500266432762146,
+              "max_abs": 3.916025161743164e-05
+            },
+            "read_o": {
+              "delta_rms": 0.00029926671413704753,
+              "reference_rms": 0.20062552392482758,
+              "max_abs": 0.0007258355617523193
+            },
+            "branch_context": {
+              "delta_rms": 0.0004730417567770928,
+              "reference_rms": 0.26446083188056946,
+              "max_abs": 0.0007724165916442871
+            },
+            "first_byte_probability": {
+              "delta_rms": 6.288933036557864e-07,
+              "reference_rms": 0.004666460212320089,
+              "max_abs": 2.998858690261841e-06
+            }
+          },
+          "different_entity_query": {
+            "rgb_tokens": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.2791494131088257,
+              "max_abs": 0.0
+            },
+            "object_z": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.331809401512146,
+              "max_abs": 0.0
+            },
+            "object_position": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.5134230852127075,
+              "max_abs": 0.0
+            },
+            "H": {
+              "delta_rms": 0.0014266509097069502,
+              "reference_rms": 0.4710313677787781,
+              "max_abs": 0.002216935157775879
+            },
+            "F": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.26794859766960144,
+              "max_abs": 0.0
+            },
+            "request_embedding": {
+              "delta_rms": 0.021938497200608253,
+              "reference_rms": 0.24701032042503357,
+              "max_abs": 0.0327911376953125
+            },
+            "read_h": {
+              "delta_rms": 0.0008071891497820616,
+              "reference_rms": 0.3041647672653198,
+              "max_abs": 0.001276463270187378
+            },
+            "object_attention": {
+              "delta_rms": 8.467191037198063e-06,
+              "reference_rms": 0.2500266432762146,
+              "max_abs": 1.475214958190918e-05
+            },
+            "read_o": {
+              "delta_rms": 2.610956698845257e-06,
+              "reference_rms": 0.20062552392482758,
+              "max_abs": 4.202127456665039e-06
+            },
+            "branch_context": {
+              "delta_rms": 0.000628979760222137,
+              "reference_rms": 0.26446083188056946,
+              "max_abs": 0.0011442899703979492
+            },
+            "first_byte_probability": {
+              "delta_rms": 8.398348541049927e-07,
+              "reference_rms": 0.004666460212320089,
+              "max_abs": 4.088506102561951e-06
+            }
+          }
+        },
+        {
+          "id": "fit-129",
+          "split": "fit",
+          "rgb_zero": {
+            "rgb_tokens": {
+              "delta_rms": 0.10396335273981094,
+              "reference_rms": 0.2783597707748413,
+              "max_abs": 0.22826752066612244
+            },
+            "object_z": {
+              "delta_rms": 0.0015767741715535522,
+              "reference_rms": 0.33180809020996094,
+              "max_abs": 0.0027749352157115936
+            },
+            "object_position": {
+              "delta_rms": 0.007819565944373608,
+              "reference_rms": 0.5135420560836792,
+              "max_abs": 0.008816659450531006
+            },
+            "H": {
+              "delta_rms": 0.002108793007209897,
+              "reference_rms": 0.4723310172557831,
+              "max_abs": 0.0027595162391662598
+            },
+            "F": {
+              "delta_rms": 0.0011958926916122437,
+              "reference_rms": 0.26790565252304077,
+              "max_abs": 0.0020130574703216553
+            },
+            "request_embedding": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.2672158181667328,
+              "max_abs": 0.0
+            },
+            "read_h": {
+              "delta_rms": 0.0011351723223924637,
+              "reference_rms": 0.30492228269577026,
+              "max_abs": 0.0016744136810302734
+            },
+            "object_attention": {
+              "delta_rms": 2.2065447410568595e-05,
+              "reference_rms": 0.25002673268318176,
+              "max_abs": 3.889203071594238e-05
+            },
+            "read_o": {
+              "delta_rms": 0.00030205247458070517,
+              "reference_rms": 0.2006278932094574,
+              "max_abs": 0.000729873776435852
+            },
+            "branch_context": {
+              "delta_rms": 0.0004709194472525269,
+              "reference_rms": 0.2650395333766937,
+              "max_abs": 0.000766754150390625
+            },
+            "first_byte_probability": {
+              "delta_rms": 6.274340194067918e-07,
+              "reference_rms": 0.0046665258705616,
+              "max_abs": 2.99280509352684e-06
+            }
+          },
+          "different_entity_query": {
+            "rgb_tokens": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.2783597707748413,
+              "max_abs": 0.0
+            },
+            "object_z": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.33180809020996094,
+              "max_abs": 0.0
+            },
+            "object_position": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.5135420560836792,
+              "max_abs": 0.0
+            },
+            "H": {
+              "delta_rms": 8.283412898890674e-05,
+              "reference_rms": 0.4723310172557831,
+              "max_abs": 0.00013703107833862305
+            },
+            "F": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.26790565252304077,
+              "max_abs": 0.0
+            },
+            "request_embedding": {
+              "delta_rms": 0.0015251206932589412,
+              "reference_rms": 0.2672158181667328,
+              "max_abs": 0.0033298730850219727
+            },
+            "read_h": {
+              "delta_rms": 4.810718019143678e-05,
+              "reference_rms": 0.30492228269577026,
+              "max_abs": 7.402896881103516e-05
+            },
+            "object_attention": {
+              "delta_rms": 5.059267778051435e-07,
+              "reference_rms": 0.25002673268318176,
+              "max_abs": 8.791685104370117e-07
+            },
+            "read_o": {
+              "delta_rms": 1.6406086444931134e-07,
+              "reference_rms": 0.2006278932094574,
+              "max_abs": 2.682209014892578e-07
+            },
+            "branch_context": {
+              "delta_rms": 3.573903813958168e-05,
+              "reference_rms": 0.2650395333766937,
+              "max_abs": 6.496906280517578e-05
+            },
+            "first_byte_probability": {
+              "delta_rms": 4.7518746271180134e-08,
+              "reference_rms": 0.0046665258705616,
+              "max_abs": 2.300366759300232e-07
+            }
+          }
+        },
+        {
+          "id": "fit-130",
+          "split": "fit",
+          "rgb_zero": {
+            "rgb_tokens": {
+              "delta_rms": 0.10331729799509048,
+              "reference_rms": 0.2781432569026947,
+              "max_abs": 0.24096418917179108
+            },
+            "object_z": {
+              "delta_rms": 0.0015044377651065588,
+              "reference_rms": 0.33180609345436096,
+              "max_abs": 0.0026433058083057404
+            },
+            "object_position": {
+              "delta_rms": 0.007465621922165155,
+              "reference_rms": 0.5131966471672058,
+              "max_abs": 0.008426368236541748
+            },
+            "H": {
+              "delta_rms": 0.002098736120387912,
+              "reference_rms": 0.4714460074901581,
+              "max_abs": 0.0027639269828796387
+            },
+            "F": {
+              "delta_rms": 0.0011916222283616662,
+              "reference_rms": 0.2678961753845215,
+              "max_abs": 0.0020172297954559326
+            },
+            "request_embedding": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.2543931007385254,
+              "max_abs": 0.0
+            },
+            "read_h": {
+              "delta_rms": 0.0011293267598375678,
+              "reference_rms": 0.30440935492515564,
+              "max_abs": 0.0016645193099975586
+            },
+            "object_attention": {
+              "delta_rms": 2.0167890397715382e-05,
+              "reference_rms": 0.250026673078537,
+              "max_abs": 3.565847873687744e-05
+            },
+            "read_o": {
+              "delta_rms": 0.00028916302835568786,
+              "reference_rms": 0.20062202215194702,
+              "max_abs": 0.0006959736347198486
+            },
+            "branch_context": {
+              "delta_rms": 0.0004664910666178912,
+              "reference_rms": 0.26465553045272827,
+              "max_abs": 0.0007607936859130859
+            },
+            "first_byte_probability": {
+              "delta_rms": 6.210665333128418e-07,
+              "reference_rms": 0.004666482098400593,
+              "max_abs": 2.9634684324264526e-06
+            }
+          },
+          "different_entity_query": {
+            "rgb_tokens": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.2781432569026947,
+              "max_abs": 0.0
+            },
+            "object_z": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.33180609345436096,
+              "max_abs": 0.0
+            },
+            "object_position": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.5131966471672058,
+              "max_abs": 0.0
+            },
+            "H": {
+              "delta_rms": 0.0009809640469029546,
+              "reference_rms": 0.4714460074901581,
+              "max_abs": 0.001565098762512207
+            },
+            "F": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.2678961753845215,
+              "max_abs": 0.0
+            },
+            "request_embedding": {
+              "delta_rms": 0.0141541613265872,
+              "reference_rms": 0.2543931007385254,
+              "max_abs": 0.023932605981826782
+            },
+            "read_h": {
+              "delta_rms": 0.0005551642389036715,
+              "reference_rms": 0.30440935492515564,
+              "max_abs": 0.0008662641048431396
+            },
+            "object_attention": {
+              "delta_rms": 5.821244940307224e-06,
+              "reference_rms": 0.250026673078537,
+              "max_abs": 1.0162591934204102e-05
+            },
+            "read_o": {
+              "delta_rms": 1.7846065247795195e-06,
+              "reference_rms": 0.20062202215194702,
+              "max_abs": 2.86102294921875e-06
+            },
+            "branch_context": {
+              "delta_rms": 0.00042261442285962403,
+              "reference_rms": 0.26465553045272827,
+              "max_abs": 0.0007680356502532959
+            },
+            "first_byte_probability": {
+              "delta_rms": 5.640262088490999e-07,
+              "reference_rms": 0.004666482098400593,
+              "max_abs": 2.745073288679123e-06
+            }
+          }
+        },
+        {
+          "id": "fit-131",
+          "split": "fit",
+          "rgb_zero": {
+            "rgb_tokens": {
+              "delta_rms": 0.10397054255008698,
+              "reference_rms": 0.27824893593788147,
+              "max_abs": 0.24637070298194885
+            },
+            "object_z": {
+              "delta_rms": 0.001551658147946,
+              "reference_rms": 0.33180782198905945,
+              "max_abs": 0.0026796460151672363
+            },
+            "object_position": {
+              "delta_rms": 0.0077051944099366665,
+              "reference_rms": 0.5134198069572449,
+              "max_abs": 0.008534014225006104
+            },
+            "H": {
+              "delta_rms": 0.002078643999993801,
+              "reference_rms": 0.4710034728050232,
+              "max_abs": 0.002756863832473755
+            },
+            "F": {
+              "delta_rms": 0.001202037208713591,
+              "reference_rms": 0.2679084241390228,
+              "max_abs": 0.002043813467025757
+            },
+            "request_embedding": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.24701032042503357,
+              "max_abs": 0.0
+            },
+            "read_h": {
+              "delta_rms": 0.0011165996547788382,
+              "reference_rms": 0.3041483759880066,
+              "max_abs": 0.0016460418701171875
+            },
+            "object_attention": {
+              "delta_rms": 2.152724118786864e-05,
+              "reference_rms": 0.2500266432762146,
+              "max_abs": 3.884732723236084e-05
+            },
+            "read_o": {
+              "delta_rms": 0.0002977779367938638,
+              "reference_rms": 0.2006242275238037,
+              "max_abs": 0.000717654824256897
+            },
+            "branch_context": {
+              "delta_rms": 0.0004644621512852609,
+              "reference_rms": 0.2644525170326233,
+              "max_abs": 0.0007581114768981934
+            },
+            "first_byte_probability": {
+              "delta_rms": 6.173066253722936e-07,
+              "reference_rms": 0.004666459280997515,
+              "max_abs": 2.941116690635681e-06
+            }
+          },
+          "different_entity_query": {
+            "rgb_tokens": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.27824893593788147,
+              "max_abs": 0.0
+            },
+            "object_z": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.33180782198905945,
+              "max_abs": 0.0
+            },
+            "object_position": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.5134198069572449,
+              "max_abs": 0.0
+            },
+            "H": {
+              "delta_rms": 0.0012810616753995419,
+              "reference_rms": 0.4710034728050232,
+              "max_abs": 0.0019701123237609863
+            },
+            "F": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.2679084241390228,
+              "max_abs": 0.0
+            },
+            "request_embedding": {
+              "delta_rms": 0.020174428820610046,
+              "reference_rms": 0.24701032042503357,
+              "max_abs": 0.030378371477127075
+            },
+            "read_h": {
+              "delta_rms": 0.0007235632510855794,
+              "reference_rms": 0.3041483759880066,
+              "max_abs": 0.0011492371559143066
+            },
+            "object_attention": {
+              "delta_rms": 7.597204785270151e-06,
+              "reference_rms": 0.2500266432762146,
+              "max_abs": 1.3276934623718262e-05
+            },
+            "read_o": {
+              "delta_rms": 2.317993676115293e-06,
+              "reference_rms": 0.2006242275238037,
+              "max_abs": 3.6954879760742188e-06
+            },
+            "branch_context": {
+              "delta_rms": 0.0005636594723910093,
+              "reference_rms": 0.2644525170326233,
+              "max_abs": 0.0010252594947814941
+            },
+            "first_byte_probability": {
+              "delta_rms": 7.525777618866414e-07,
+              "reference_rms": 0.004666459280997515,
+              "max_abs": 3.664754331111908e-06
+            }
+          }
+        },
+        {
+          "id": "fit-132",
+          "split": "fit",
+          "rgb_zero": {
+            "rgb_tokens": {
+              "delta_rms": 0.10227605700492859,
+              "reference_rms": 0.277679443359375,
+              "max_abs": 0.22805792093276978
+            },
+            "object_z": {
+              "delta_rms": 0.001491452450864017,
+              "reference_rms": 0.33180510997772217,
+              "max_abs": 0.0025845319032669067
+            },
+            "object_position": {
+              "delta_rms": 0.007392792031168938,
+              "reference_rms": 0.513102650642395,
+              "max_abs": 0.008041858673095703
+            },
+            "H": {
+              "delta_rms": 0.002076665870845318,
+              "reference_rms": 0.4710031747817993,
+              "max_abs": 0.0027419328689575195
+            },
+            "F": {
+              "delta_rms": 0.001183310872875154,
+              "reference_rms": 0.26788952946662903,
+              "max_abs": 0.002000957727432251
+            },
+            "request_embedding": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.24701032042503357,
+              "max_abs": 0.0
+            },
+            "read_h": {
+              "delta_rms": 0.001117586623877287,
+              "reference_rms": 0.3041498064994812,
+              "max_abs": 0.0016486048698425293
+            },
+            "object_attention": {
+              "delta_rms": 2.0213085008435883e-05,
+              "reference_rms": 0.2500266432762146,
+              "max_abs": 3.6343932151794434e-05
+            },
+            "read_o": {
+              "delta_rms": 0.00028681804542429745,
+              "reference_rms": 0.20062029361724854,
+              "max_abs": 0.0006934851408004761
+            },
+            "branch_context": {
+              "delta_rms": 0.00046181920333765447,
+              "reference_rms": 0.2644498944282532,
+              "max_abs": 0.0007534921169281006
+            },
+            "first_byte_probability": {
+              "delta_rms": 6.138890285001253e-07,
+              "reference_rms": 0.004666457884013653,
+              "max_abs": 2.923421561717987e-06
+            }
+          },
+          "different_entity_query": {
+            "rgb_tokens": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.277679443359375,
+              "max_abs": 0.0
+            },
+            "object_z": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.33180510997772217,
+              "max_abs": 0.0
+            },
+            "object_position": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.513102650642395,
+              "max_abs": 0.0
+            },
+            "H": {
+              "delta_rms": 0.0014267116785049438,
+              "reference_rms": 0.4710031747817993,
+              "max_abs": 0.0022170543670654297
+            },
+            "F": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.26788952946662903,
+              "max_abs": 0.0
+            },
+            "request_embedding": {
+              "delta_rms": 0.021938497200608253,
+              "reference_rms": 0.24701032042503357,
+              "max_abs": 0.0327911376953125
+            },
+            "read_h": {
+              "delta_rms": 0.0008072284981608391,
+              "reference_rms": 0.3041498064994812,
+              "max_abs": 0.0012764930725097656
+            },
+            "object_attention": {
+              "delta_rms": 8.472671652270947e-06,
+              "reference_rms": 0.2500266432762146,
+              "max_abs": 1.4767050743103027e-05
+            },
+            "read_o": {
+              "delta_rms": 2.6084833280037856e-06,
+              "reference_rms": 0.20062029361724854,
+              "max_abs": 4.1425228118896484e-06
+            },
+            "branch_context": {
+              "delta_rms": 0.0006289167213253677,
+              "reference_rms": 0.2644498944282532,
+              "max_abs": 0.0011442005634307861
+            },
+            "first_byte_probability": {
+              "delta_rms": 8.398287150157557e-07,
+              "reference_rms": 0.004666457884013653,
+              "max_abs": 4.092231392860413e-06
+            }
+          }
+        },
+        {
+          "id": "fit-133",
+          "split": "fit",
+          "rgb_zero": {
+            "rgb_tokens": {
+              "delta_rms": 0.10511264950037003,
+              "reference_rms": 0.2787884771823883,
+              "max_abs": 0.34026551246643066
+            },
+            "object_z": {
+              "delta_rms": 0.001567299012094736,
+              "reference_rms": 0.3318093419075012,
+              "max_abs": 0.0027759596705436707
+            },
+            "object_position": {
+              "delta_rms": 0.007791554089635611,
+              "reference_rms": 0.5134426355361938,
+              "max_abs": 0.00819617509841919
+            },
+            "H": {
+              "delta_rms": 0.0021247905679047108,
+              "reference_rms": 0.47242990136146545,
+              "max_abs": 0.002758324146270752
+            },
+            "F": {
+              "delta_rms": 0.0012540919706225395,
+              "reference_rms": 0.26796257495880127,
+              "max_abs": 0.002125263214111328
+            },
+            "request_embedding": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.26833242177963257,
+              "max_abs": 0.0
+            },
+            "read_h": {
+              "delta_rms": 0.0011465258430689573,
+              "reference_rms": 0.3049819767475128,
+              "max_abs": 0.001698315143585205
+            },
+            "object_attention": {
+              "delta_rms": 2.215234599134419e-05,
+              "reference_rms": 0.25002676248550415,
+              "max_abs": 3.9950013160705566e-05
+            },
+            "read_o": {
+              "delta_rms": 0.000301076885079965,
+              "reference_rms": 0.20062874257564545,
+              "max_abs": 0.0007350444793701172
+            },
+            "branch_context": {
+              "delta_rms": 0.00047931523295119405,
+              "reference_rms": 0.26508277654647827,
+              "max_abs": 0.0007841587066650391
+            },
+            "first_byte_probability": {
+              "delta_rms": 6.36401978226786e-07,
+              "reference_rms": 0.004666529130190611,
+              "max_abs": 3.039836883544922e-06
+            }
+          },
+          "different_entity_query": {
+            "rgb_tokens": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.2787884771823883,
+              "max_abs": 0.0
+            },
+            "object_z": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.3318093419075012,
+              "max_abs": 0.0
+            },
+            "object_position": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.5134426355361938,
+              "max_abs": 0.0
+            },
+            "H": {
+              "delta_rms": 0.0001483991654822603,
+              "reference_rms": 0.47242990136146545,
+              "max_abs": 0.00024688243865966797
+            },
+            "F": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.26796257495880127,
+              "max_abs": 0.0
+            },
+            "request_embedding": {
+              "delta_rms": 0.0024690169375389814,
+              "reference_rms": 0.26833242177963257,
+              "max_abs": 0.005873948335647583
+            },
+            "read_h": {
+              "delta_rms": 8.394398173550144e-05,
+              "reference_rms": 0.3049819767475128,
+              "max_abs": 0.0001271963119506836
+            },
+            "object_attention": {
+              "delta_rms": 8.778099527262384e-07,
+              "reference_rms": 0.25002676248550415,
+              "max_abs": 1.5348196029663086e-06
+            },
+            "read_o": {
+              "delta_rms": 2.7502255761646666e-07,
+              "reference_rms": 0.20062874257564545,
+              "max_abs": 4.76837158203125e-07
+            },
+            "branch_context": {
+              "delta_rms": 6.525897333631292e-05,
+              "reference_rms": 0.26508277654647827,
+              "max_abs": 0.00011897087097167969
+            },
+            "first_byte_probability": {
+              "delta_rms": 8.690274455602776e-08,
+              "reference_rms": 0.004666529130190611,
+              "max_abs": 4.2049214243888855e-07
+            }
+          }
+        },
+        {
+          "id": "fit-134",
+          "split": "fit",
+          "rgb_zero": {
+            "rgb_tokens": {
+              "delta_rms": 0.09979929029941559,
+              "reference_rms": 0.2763071656227112,
+              "max_abs": 0.2752434313297272
+            },
+            "object_z": {
+              "delta_rms": 0.0015152887208387256,
+              "reference_rms": 0.33180421590805054,
+              "max_abs": 0.002622060477733612
+            },
+            "object_position": {
+              "delta_rms": 0.007516215555369854,
+              "reference_rms": 0.5132312774658203,
+              "max_abs": 0.008121609687805176
+            },
+            "H": {
+              "delta_rms": 0.0020307726226747036,
+              "reference_rms": 0.4721933901309967,
+              "max_abs": 0.002678990364074707
+            },
+            "F": {
+              "delta_rms": 0.0011710711987689137,
+              "reference_rms": 0.2678784728050232,
+              "max_abs": 0.0019771456718444824
+            },
+            "request_embedding": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.2663283944129944,
+              "max_abs": 0.0
+            },
+            "read_h": {
+              "delta_rms": 0.001092052087187767,
+              "reference_rms": 0.3048439025878906,
+              "max_abs": 0.0016077160835266113
+            },
+            "object_attention": {
+              "delta_rms": 2.1229772755759768e-05,
+              "reference_rms": 0.25002676248550415,
+              "max_abs": 3.7670135498046875e-05
+            },
+            "read_o": {
+              "delta_rms": 0.0002906492736656219,
+              "reference_rms": 0.20062297582626343,
+              "max_abs": 0.0006974339485168457
+            },
+            "branch_context": {
+              "delta_rms": 0.00045469103497453034,
+              "reference_rms": 0.26499447226524353,
+              "max_abs": 0.000741422176361084
+            },
+            "first_byte_probability": {
+              "delta_rms": 6.055159929019283e-07,
+              "reference_rms": 0.004666521679610014,
+              "max_abs": 2.8926879167556763e-06
+            }
+          },
+          "different_entity_query": {
+            "rgb_tokens": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.2763071656227112,
+              "max_abs": 0.0
+            },
+            "object_z": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.33180421590805054,
+              "max_abs": 0.0
+            },
+            "object_position": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.5132312774658203,
+              "max_abs": 0.0
+            },
+            "H": {
+              "delta_rms": 0.00014841227675788105,
+              "reference_rms": 0.4721933901309967,
+              "max_abs": 0.00024700164794921875
+            },
+            "F": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.2678784728050232,
+              "max_abs": 0.0
+            },
+            "request_embedding": {
+              "delta_rms": 0.0024690169375389814,
+              "reference_rms": 0.2663283944129944,
+              "max_abs": 0.005873948335647583
+            },
+            "read_h": {
+              "delta_rms": 8.397605415666476e-05,
+              "reference_rms": 0.3048439025878906,
+              "max_abs": 0.0001271963119506836
+            },
+            "object_attention": {
+              "delta_rms": 8.798942872090265e-07,
+              "reference_rms": 0.25002676248550415,
+              "max_abs": 1.5348196029663086e-06
+            },
+            "read_o": {
+              "delta_rms": 2.6902813488050015e-07,
+              "reference_rms": 0.20062297582626343,
+              "max_abs": 4.470348358154297e-07
+            },
+            "branch_context": {
+              "delta_rms": 6.526172364829108e-05,
+              "reference_rms": 0.26499447226524353,
+              "max_abs": 0.00011894106864929199
+            },
+            "first_byte_probability": {
+              "delta_rms": 8.692514086305891e-08,
+              "reference_rms": 0.004666521679610014,
+              "max_abs": 4.200264811515808e-07
+            }
+          }
+        },
+        {
+          "id": "fit-135",
+          "split": "fit",
+          "rgb_zero": {
+            "rgb_tokens": {
+              "delta_rms": 0.10131847113370895,
+              "reference_rms": 0.27592402696609497,
+              "max_abs": 0.24330784380435944
+            },
+            "object_z": {
+              "delta_rms": 0.0015338908415287733,
+              "reference_rms": 0.3318047821521759,
+              "max_abs": 0.0026329532265663147
+            },
+            "object_position": {
+              "delta_rms": 0.007597288582473993,
+              "reference_rms": 0.5133123993873596,
+              "max_abs": 0.00836855173110962
+            },
+            "H": {
+              "delta_rms": 0.0020440835505723953,
+              "reference_rms": 0.47139573097229004,
+              "max_abs": 0.0026977360248565674
+            },
+            "F": {
+              "delta_rms": 0.001165203400887549,
+              "reference_rms": 0.26787295937538147,
+              "max_abs": 0.0019669830799102783
+            },
+            "request_embedding": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.2543931007385254,
+              "max_abs": 0.0
+            },
+            "read_h": {
+              "delta_rms": 0.0011003274703398347,
+              "reference_rms": 0.3043813109397888,
+              "max_abs": 0.00162428617477417
+            },
+            "object_attention": {
+              "delta_rms": 2.159647920052521e-05,
+              "reference_rms": 0.2500266432762146,
+              "max_abs": 3.860890865325928e-05
+            },
+            "read_o": {
+              "delta_rms": 0.0002940143458545208,
+              "reference_rms": 0.20062269270420074,
+              "max_abs": 0.0007070153951644897
+            },
+            "branch_context": {
+              "delta_rms": 0.00045660685282200575,
+              "reference_rms": 0.26464608311653137,
+              "max_abs": 0.0007444322109222412
+            },
+            "first_byte_probability": {
+              "delta_rms": 6.075068768041092e-07,
+              "reference_rms": 0.004666482098400593,
+              "max_abs": 2.898275852203369e-06
+            }
+          },
+          "different_entity_query": {
+            "rgb_tokens": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.27592402696609497,
+              "max_abs": 0.0
+            },
+            "object_z": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.3318047821521759,
+              "max_abs": 0.0
+            },
+            "object_position": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.5133123993873596,
+              "max_abs": 0.0
+            },
+            "H": {
+              "delta_rms": 0.0008340288186445832,
+              "reference_rms": 0.47139573097229004,
+              "max_abs": 0.001318216323852539
+            },
+            "F": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.26787295937538147,
+              "max_abs": 0.0
+            },
+            "request_embedding": {
+              "delta_rms": 0.012108339928090572,
+              "reference_rms": 0.2543931007385254,
+              "max_abs": 0.0180586576461792
+            },
+            "read_h": {
+              "delta_rms": 0.00047137532965280116,
+              "reference_rms": 0.3043813109397888,
+              "max_abs": 0.0007390975952148438
+            },
+            "object_attention": {
+              "delta_rms": 4.95205267725396e-06,
+              "reference_rms": 0.2500266432762146,
+              "max_abs": 8.612871170043945e-06
+            },
+            "read_o": {
+              "delta_rms": 1.5330746236941195e-06,
+              "reference_rms": 0.20062269270420074,
+              "max_abs": 2.4437904357910156e-06
+            },
+            "branch_context": {
+              "delta_rms": 0.00035735475830733776,
+              "reference_rms": 0.26464608311653137,
+              "max_abs": 0.0006490945816040039
+            },
+            "first_byte_probability": {
+              "delta_rms": 4.769026418216527e-07,
+              "reference_rms": 0.004666482098400593,
+              "max_abs": 2.32132151722908e-06
+            }
+          }
+        }
+      ]
+    },
+    "native-conditional": {
+      "samples": 16,
+      "mean_sensitivity": {
+        "rgb_zero": {
+          "rgb_tokens": {
+            "delta_rms": 0.09794333623722196,
+            "reference_rms": 0.24472222104668617,
+            "max_abs": 0.26349717378616333
+          },
+          "object_z": {
+            "delta_rms": 0.0019526727410266176,
+            "reference_rms": 0.30112013779580593,
+            "max_abs": 0.003233260940760374
+          },
+          "object_position": {
+            "delta_rms": 0.0035872344888048247,
+            "reference_rms": 0.33567893505096436,
+            "max_abs": 0.0038680005818605423
+          },
+          "H": {
+            "delta_rms": 0.0013866576409782283,
+            "reference_rms": 0.19749015104025602,
+            "max_abs": 0.0021125953644514084
+          },
+          "F": {
+            "delta_rms": 0.0006390111520886421,
+            "reference_rms": 0.14942399598658085,
+            "max_abs": 0.001133001409471035
+          },
+          "request_embedding": {
+            "delta_rms": 0.0,
+            "reference_rms": 0.18395499419420958,
+            "max_abs": 0.0
+          },
+          "read_h": {
+            "delta_rms": 0.0006000922876410186,
+            "reference_rms": 0.12213377840816975,
+            "max_abs": 0.0009435387328267097
+          },
+          "object_attention": {
+            "delta_rms": 0.00017866142115963157,
+            "reference_rms": 0.25003821961581707,
+            "max_abs": 0.0003218613564968109
+          },
+          "read_o": {
+            "delta_rms": 0.0003453915542195318,
+            "reference_rms": 0.14850773848593235,
+            "max_abs": 0.000811510719358921
+          },
+          "branch_context": {
+            "delta_rms": 0.00016191233044082765,
+            "reference_rms": 0.11136360745877028,
+            "max_abs": 0.00028290413320064545
+          },
+          "first_byte_probability": {
+            "delta_rms": 2.0146092793993375e-07,
+            "reference_rms": 0.004652565199648961,
+            "max_abs": 6.800401024520397e-07
+          }
+        },
+        "different_entity_query": {
+          "rgb_tokens": {
+            "delta_rms": 0.0,
+            "reference_rms": 0.24472222104668617,
+            "max_abs": 0.0
+          },
+          "object_z": {
+            "delta_rms": 0.0,
+            "reference_rms": 0.30112013779580593,
+            "max_abs": 0.0
+          },
+          "object_position": {
+            "delta_rms": 0.0,
+            "reference_rms": 0.33567893505096436,
+            "max_abs": 0.0
+          },
+          "H": {
+            "delta_rms": 0.00039105934047256596,
+            "reference_rms": 0.19749015104025602,
+            "max_abs": 0.0007502734661102295
+          },
+          "F": {
+            "delta_rms": 0.0,
+            "reference_rms": 0.14942399598658085,
+            "max_abs": 0.0
+          },
+          "request_embedding": {
+            "delta_rms": 0.007010209206782747,
+            "reference_rms": 0.18395499419420958,
+            "max_abs": 0.012322713620960712
+          },
+          "read_h": {
+            "delta_rms": 0.00017735585970513057,
+            "reference_rms": 0.12213377840816975,
+            "max_abs": 0.00028525199741125107
+          },
+          "object_attention": {
+            "delta_rms": 9.60118835102719e-07,
+            "reference_rms": 0.25003821961581707,
+            "max_abs": 1.6763806343078613e-06
+          },
+          "read_o": {
+            "delta_rms": 2.3281219130311115e-07,
+            "reference_rms": 0.14850773848593235,
+            "max_abs": 4.163011908531189e-07
+          },
+          "branch_context": {
+            "delta_rms": 6.806087765198754e-05,
+            "reference_rms": 0.11136360745877028,
+            "max_abs": 0.00013880152255296707
+          },
+          "first_byte_probability": {
+            "delta_rms": 8.481323254816431e-08,
+            "reference_rms": 0.004652565199648961,
+            "max_abs": 3.0081719160079956e-07
+          }
+        }
+      },
+      "rows": [
+        {
+          "id": "train-0",
+          "split": "train",
+          "rgb_zero": {
+            "rgb_tokens": {
+              "delta_rms": 0.09181339293718338,
+              "reference_rms": 0.2411089539527893,
+              "max_abs": 0.23387426137924194
+            },
+            "object_z": {
+              "delta_rms": 0.0018544415943324566,
+              "reference_rms": 0.3011201322078705,
+              "max_abs": 0.0030478686094284058
+            },
+            "object_position": {
+              "delta_rms": 0.0034081628546118736,
+              "reference_rms": 0.3355167508125305,
+              "max_abs": 0.0036235153675079346
+            },
+            "H": {
+              "delta_rms": 0.001310089835897088,
+              "reference_rms": 0.19772133231163025,
+              "max_abs": 0.0020046979188919067
+            },
+            "F": {
+              "delta_rms": 0.0006102659972384572,
+              "reference_rms": 0.14939554035663605,
+              "max_abs": 0.0010892599821090698
+            },
+            "request_embedding": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.18950362503528595,
+              "max_abs": 0.0
+            },
+            "read_h": {
+              "delta_rms": 0.0005657043075188994,
+              "reference_rms": 0.12224216014146805,
+              "max_abs": 0.0008907616138458252
+            },
+            "object_attention": {
+              "delta_rms": 0.00016982649685814977,
+              "reference_rms": 0.2500380575656891,
+              "max_abs": 0.00030809640884399414
+            },
+            "read_o": {
+              "delta_rms": 0.00032850675052031875,
+              "reference_rms": 0.14850042760372162,
+              "max_abs": 0.0007711797952651978
+            },
+            "branch_context": {
+              "delta_rms": 0.0001533553731860593,
+              "reference_rms": 0.1114046648144722,
+              "max_abs": 0.0002682209014892578
+            },
+            "first_byte_probability": {
+              "delta_rms": 1.903982109752178e-07,
+              "reference_rms": 0.00465256767347455,
+              "max_abs": 6.463378667831421e-07
+            }
+          },
+          "different_entity_query": {
+            "rgb_tokens": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.2411089539527893,
+              "max_abs": 0.0
+            },
+            "object_z": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.3011201322078705,
+              "max_abs": 0.0
+            },
+            "object_position": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.3355167508125305,
+              "max_abs": 0.0
+            },
+            "H": {
+              "delta_rms": 6.059421139070764e-05,
+              "reference_rms": 0.19772133231163025,
+              "max_abs": 0.0001157224178314209
+            },
+            "F": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.14939554035663605,
+              "max_abs": 0.0
+            },
+            "request_embedding": {
+              "delta_rms": 0.001348125166259706,
+              "reference_rms": 0.18950362503528595,
+              "max_abs": 0.003272026777267456
+            },
+            "read_h": {
+              "delta_rms": 2.5366703994222917e-05,
+              "reference_rms": 0.12224216014146805,
+              "max_abs": 3.516674041748047e-05
+            },
+            "object_attention": {
+              "delta_rms": 1.345237308214564e-07,
+              "reference_rms": 0.2500380575656891,
+              "max_abs": 2.384185791015625e-07
+            },
+            "read_o": {
+              "delta_rms": 3.836551698555013e-08,
+              "reference_rms": 0.14850042760372162,
+              "max_abs": 7.450580596923828e-08
+            },
+            "branch_context": {
+              "delta_rms": 1.239944867847953e-05,
+              "reference_rms": 0.1114046648144722,
+              "max_abs": 2.586841583251953e-05
+            },
+            "first_byte_probability": {
+              "delta_rms": 1.5533817787627413e-08,
+              "reference_rms": 0.00465256767347455,
+              "max_abs": 5.3085386753082275e-08
+            }
+          }
+        },
+        {
+          "id": "train-1",
+          "split": "train",
+          "rgb_zero": {
+            "rgb_tokens": {
+              "delta_rms": 0.09002100676298141,
+              "reference_rms": 0.24097491800785065,
+              "max_abs": 0.22362011671066284
+            },
+            "object_z": {
+              "delta_rms": 0.001868049381300807,
+              "reference_rms": 0.30111420154571533,
+              "max_abs": 0.0030816495418548584
+            },
+            "object_position": {
+              "delta_rms": 0.003429578384384513,
+              "reference_rms": 0.33556026220321655,
+              "max_abs": 0.0037600696086883545
+            },
+            "H": {
+              "delta_rms": 0.0013095472240820527,
+              "reference_rms": 0.19772645831108093,
+              "max_abs": 0.001997530460357666
+            },
+            "F": {
+              "delta_rms": 0.0006029047654010355,
+              "reference_rms": 0.1493908166885376,
+              "max_abs": 0.001068398356437683
+            },
+            "request_embedding": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.18950362503528595,
+              "max_abs": 0.0
+            },
+            "read_h": {
+              "delta_rms": 0.0005680023459717631,
+              "reference_rms": 0.12224680930376053,
+              "max_abs": 0.0008872002363204956
+            },
+            "object_attention": {
+              "delta_rms": 0.00017074962670449167,
+              "reference_rms": 0.2500380575656891,
+              "max_abs": 0.00030857324600219727
+            },
+            "read_o": {
+              "delta_rms": 0.00032958766678348184,
+              "reference_rms": 0.14849866926670074,
+              "max_abs": 0.0007738620042800903
+            },
+            "branch_context": {
+              "delta_rms": 0.00015340844402089715,
+              "reference_rms": 0.1114049181342125,
+              "max_abs": 0.00026801228523254395
+            },
+            "first_byte_probability": {
+              "delta_rms": 1.909428135604685e-07,
+              "reference_rms": 0.004652567207813263,
+              "max_abs": 6.458722054958344e-07
+            }
+          },
+          "different_entity_query": {
+            "rgb_tokens": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.24097491800785065,
+              "max_abs": 0.0
+            },
+            "object_z": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.30111420154571533,
+              "max_abs": 0.0
+            },
+            "object_position": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.33556026220321655,
+              "max_abs": 0.0
+            },
+            "H": {
+              "delta_rms": 6.060170926502906e-05,
+              "reference_rms": 0.19772645831108093,
+              "max_abs": 0.0001157224178314209
+            },
+            "F": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.1493908166885376,
+              "max_abs": 0.0
+            },
+            "request_embedding": {
+              "delta_rms": 0.001348125166259706,
+              "reference_rms": 0.18950362503528595,
+              "max_abs": 0.003272026777267456
+            },
+            "read_h": {
+              "delta_rms": 2.537122963985894e-05,
+              "reference_rms": 0.12224680930376053,
+              "max_abs": 3.516674041748047e-05
+            },
+            "object_attention": {
+              "delta_rms": 1.359603345463256e-07,
+              "reference_rms": 0.2500380575656891,
+              "max_abs": 2.384185791015625e-07
+            },
+            "read_o": {
+              "delta_rms": 3.509492429998318e-08,
+              "reference_rms": 0.14849866926670074,
+              "max_abs": 7.450580596923828e-08
+            },
+            "branch_context": {
+              "delta_rms": 1.2405280358507298e-05,
+              "reference_rms": 0.1114049181342125,
+              "max_abs": 2.586841583251953e-05
+            },
+            "first_byte_probability": {
+              "delta_rms": 1.5489924010125833e-08,
+              "reference_rms": 0.004652567207813263,
+              "max_abs": 5.3085386753082275e-08
+            }
+          }
+        },
+        {
+          "id": "train-2",
+          "split": "train",
+          "rgb_zero": {
+            "rgb_tokens": {
+              "delta_rms": 0.09343221038579941,
+              "reference_rms": 0.24191470444202423,
+              "max_abs": 0.2793286144733429
+            },
+            "object_z": {
+              "delta_rms": 0.0018296653870493174,
+              "reference_rms": 0.3011244237422943,
+              "max_abs": 0.0029960647225379944
+            },
+            "object_position": {
+              "delta_rms": 0.0033623469062149525,
+              "reference_rms": 0.3354813754558563,
+              "max_abs": 0.0035980641841888428
+            },
+            "H": {
+              "delta_rms": 0.0013207755982875824,
+              "reference_rms": 0.19760063290596008,
+              "max_abs": 0.0020151138305664062
+            },
+            "F": {
+              "delta_rms": 0.0006111771217547357,
+              "reference_rms": 0.1493988186120987,
+              "max_abs": 0.001088857650756836
+            },
+            "request_embedding": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.18733453750610352,
+              "max_abs": 0.0
+            },
+            "read_h": {
+              "delta_rms": 0.0005709223332814872,
+              "reference_rms": 0.12218620628118515,
+              "max_abs": 0.0008995682001113892
+            },
+            "object_attention": {
+              "delta_rms": 0.00016619652160443366,
+              "reference_rms": 0.2500379979610443,
+              "max_abs": 0.0003000199794769287
+            },
+            "read_o": {
+              "delta_rms": 0.0003249742730986327,
+              "reference_rms": 0.14850008487701416,
+              "max_abs": 0.0007602274417877197
+            },
+            "branch_context": {
+              "delta_rms": 0.00015417778922710568,
+              "reference_rms": 0.1113852933049202,
+              "max_abs": 0.00026938319206237793
+            },
+            "first_byte_probability": {
+              "delta_rms": 1.919994190302532e-07,
+              "reference_rms": 0.004652567207813263,
+              "max_abs": 6.491318345069885e-07
+            }
+          },
+          "different_entity_query": {
+            "rgb_tokens": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.24191470444202423,
+              "max_abs": 0.0
+            },
+            "object_z": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.3011244237422943,
+              "max_abs": 0.0
+            },
+            "object_position": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.3354813754558563,
+              "max_abs": 0.0
+            },
+            "H": {
+              "delta_rms": 0.0001909275451907888,
+              "reference_rms": 0.19760063290596008,
+              "max_abs": 0.00038501620292663574
+            },
+            "F": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.1493988186120987,
+              "max_abs": 0.0
+            },
+            "request_embedding": {
+              "delta_rms": 0.0033883803989738226,
+              "reference_rms": 0.18733453750610352,
+              "max_abs": 0.007807910442352295
+            },
+            "read_h": {
+              "delta_rms": 8.610809891251847e-05,
+              "reference_rms": 0.12218620628118515,
+              "max_abs": 0.0001322925090789795
+            },
+            "object_attention": {
+              "delta_rms": 4.4963496748096077e-07,
+              "reference_rms": 0.2500379979610443,
+              "max_abs": 7.748603820800781e-07
+            },
+            "read_o": {
+              "delta_rms": 1.1635570018597718e-07,
+              "reference_rms": 0.14850008487701416,
+              "max_abs": 2.2351741790771484e-07
+            },
+            "branch_context": {
+              "delta_rms": 3.361027120263316e-05,
+              "reference_rms": 0.1113852933049202,
+              "max_abs": 6.887316703796387e-05
+            },
+            "first_byte_probability": {
+              "delta_rms": 4.185988089489001e-08,
+              "reference_rms": 0.004652567207813263,
+              "max_abs": 1.4808028936386108e-07
+            }
+          }
+        },
+        {
+          "id": "train-3",
+          "split": "train",
+          "rgb_zero": {
+            "rgb_tokens": {
+              "delta_rms": 0.09016677737236023,
+              "reference_rms": 0.2405618131160736,
+              "max_abs": 0.2129031866788864
+            },
+            "object_z": {
+              "delta_rms": 0.0018072533421218395,
+              "reference_rms": 0.30112341046333313,
+              "max_abs": 0.0029561370611190796
+            },
+            "object_position": {
+              "delta_rms": 0.003321428084746003,
+              "reference_rms": 0.3354552686214447,
+              "max_abs": 0.0036145150661468506
+            },
+            "H": {
+              "delta_rms": 0.0013142533134669065,
+              "reference_rms": 0.19777946174144745,
+              "max_abs": 0.0020046085119247437
+            },
+            "F": {
+              "delta_rms": 0.0006071447278372943,
+              "reference_rms": 0.14939135313034058,
+              "max_abs": 0.0010812431573867798
+            },
+            "request_embedding": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.19013991951942444,
+              "max_abs": 0.0
+            },
+            "read_h": {
+              "delta_rms": 0.0005695090512745082,
+              "reference_rms": 0.12227044999599457,
+              "max_abs": 0.0008906126022338867
+            },
+            "object_attention": {
+              "delta_rms": 0.0001638328394619748,
+              "reference_rms": 0.25003793835639954,
+              "max_abs": 0.0002948939800262451
+            },
+            "read_o": {
+              "delta_rms": 0.0003209125716239214,
+              "reference_rms": 0.14849792420864105,
+              "max_abs": 0.000753059983253479
+            },
+            "branch_context": {
+              "delta_rms": 0.00015349744353443384,
+              "reference_rms": 0.11141600459814072,
+              "max_abs": 0.0002681314945220947
+            },
+            "first_byte_probability": {
+              "delta_rms": 1.913300025080389e-07,
+              "reference_rms": 0.004652566276490688,
+              "max_abs": 6.430782377719879e-07
+            }
+          },
+          "different_entity_query": {
+            "rgb_tokens": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.2405618131160736,
+              "max_abs": 0.0
+            },
+            "object_z": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.30112341046333313,
+              "max_abs": 0.0
+            },
+            "object_position": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.3354552686214447,
+              "max_abs": 0.0
+            },
+            "H": {
+              "delta_rms": 0.00019093495211564004,
+              "reference_rms": 0.19777946174144745,
+              "max_abs": 0.00038507580757141113
+            },
+            "F": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.14939135313034058,
+              "max_abs": 0.0
+            },
+            "request_embedding": {
+              "delta_rms": 0.0033883803989738226,
+              "reference_rms": 0.19013991951942444,
+              "max_abs": 0.007807910442352295
+            },
+            "read_h": {
+              "delta_rms": 8.61071384861134e-05,
+              "reference_rms": 0.12227044999599457,
+              "max_abs": 0.00013230741024017334
+            },
+            "object_attention": {
+              "delta_rms": 4.562530193652492e-07,
+              "reference_rms": 0.25003793835639954,
+              "max_abs": 8.046627044677734e-07
+            },
+            "read_o": {
+              "delta_rms": 1.1163835011984702e-07,
+              "reference_rms": 0.14849792420864105,
+              "max_abs": 1.9371509552001953e-07
+            },
+            "branch_context": {
+              "delta_rms": 3.361207200214267e-05,
+              "reference_rms": 0.11141600459814072,
+              "max_abs": 6.890296936035156e-05
+            },
+            "first_byte_probability": {
+              "delta_rms": 4.189561053635771e-08,
+              "reference_rms": 0.004652566276490688,
+              "max_abs": 1.448206603527069e-07
+            }
+          }
+        },
+        {
+          "id": "train-4",
+          "split": "train",
+          "rgb_zero": {
+            "rgb_tokens": {
+              "delta_rms": 0.09384402632713318,
+              "reference_rms": 0.24290496110916138,
+              "max_abs": 0.29182806611061096
+            },
+            "object_z": {
+              "delta_rms": 0.0018924125470221043,
+              "reference_rms": 0.301120787858963,
+              "max_abs": 0.0031328201293945312
+            },
+            "object_position": {
+              "delta_rms": 0.0034753603395074606,
+              "reference_rms": 0.3355754613876343,
+              "max_abs": 0.0037311911582946777
+            },
+            "H": {
+              "delta_rms": 0.0013688324252143502,
+              "reference_rms": 0.19705341756343842,
+              "max_abs": 0.0020643621683120728
+            },
+            "F": {
+              "delta_rms": 0.0006311552133411169,
+              "reference_rms": 0.14941662549972534,
+              "max_abs": 0.0011270493268966675
+            },
+            "request_embedding": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.17713305354118347,
+              "max_abs": 0.0
+            },
+            "read_h": {
+              "delta_rms": 0.0005938699468970299,
+              "reference_rms": 0.1219317838549614,
+              "max_abs": 0.0009323656558990479
+            },
+            "object_attention": {
+              "delta_rms": 0.0001732660603011027,
+              "reference_rms": 0.25003814697265625,
+              "max_abs": 0.00031259655952453613
+            },
+            "read_o": {
+              "delta_rms": 0.000335156248183921,
+              "reference_rms": 0.1485031694173813,
+              "max_abs": 0.000783875584602356
+            },
+            "branch_context": {
+              "delta_rms": 0.00015949967200867832,
+              "reference_rms": 0.11129098385572433,
+              "max_abs": 0.00027874112129211426
+            },
+            "first_byte_probability": {
+              "delta_rms": 1.986456794611513e-07,
+              "reference_rms": 0.004652561619877815,
+              "max_abs": 6.700865924358368e-07
+            }
+          },
+          "different_entity_query": {
+            "rgb_tokens": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.24290496110916138,
+              "max_abs": 0.0
+            },
+            "object_z": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.301120787858963,
+              "max_abs": 0.0
+            },
+            "object_position": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.3355754613876343,
+              "max_abs": 0.0
+            },
+            "H": {
+              "delta_rms": 0.0008120827260427177,
+              "reference_rms": 0.19705341756343842,
+              "max_abs": 0.001590430736541748
+            },
+            "F": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.14941662549972534,
+              "max_abs": 0.0
+            },
+            "request_embedding": {
+              "delta_rms": 0.013244339264929295,
+              "reference_rms": 0.17713305354118347,
+              "max_abs": 0.022787809371948242
+            },
+            "read_h": {
+              "delta_rms": 0.00036974428803659976,
+              "reference_rms": 0.1219317838549614,
+              "max_abs": 0.000588536262512207
+            },
+            "object_attention": {
+              "delta_rms": 1.9965887076978106e-06,
+              "reference_rms": 0.25003814697265625,
+              "max_abs": 3.4570693969726562e-06
+            },
+            "read_o": {
+              "delta_rms": 4.892742140327755e-07,
+              "reference_rms": 0.1485031694173813,
+              "max_abs": 8.642673492431641e-07
+            },
+            "branch_context": {
+              "delta_rms": 0.00014013292093295604,
+              "reference_rms": 0.11129098385572433,
+              "max_abs": 0.0002855956554412842
+            },
+            "first_byte_probability": {
+              "delta_rms": 1.7463469248468755e-07,
+              "reference_rms": 0.004652561619877815,
+              "max_abs": 6.221234798431396e-07
+            }
+          }
+        },
+        {
+          "id": "train-5",
+          "split": "train",
+          "rgb_zero": {
+            "rgb_tokens": {
+              "delta_rms": 0.09750523418188095,
+              "reference_rms": 0.24439287185668945,
+              "max_abs": 0.29917001724243164
+            },
+            "object_z": {
+              "delta_rms": 0.001963909948244691,
+              "reference_rms": 0.30111706256866455,
+              "max_abs": 0.0032697543501853943
+            },
+            "object_position": {
+              "delta_rms": 0.003601966891437769,
+              "reference_rms": 0.33568301796913147,
+              "max_abs": 0.0038130879402160645
+            },
+            "H": {
+              "delta_rms": 0.0013861984480172396,
+              "reference_rms": 0.19784864783287048,
+              "max_abs": 0.0021055787801742554
+            },
+            "F": {
+              "delta_rms": 0.0006390812923200428,
+              "reference_rms": 0.14942890405654907,
+              "max_abs": 0.0011282414197921753
+            },
+            "request_embedding": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.19013991951942444,
+              "max_abs": 0.0
+            },
+            "read_h": {
+              "delta_rms": 0.0006013161619193852,
+              "reference_rms": 0.12230274826288223,
+              "max_abs": 0.0009407997131347656
+            },
+            "object_attention": {
+              "delta_rms": 0.00018090498633682728,
+              "reference_rms": 0.2500382363796234,
+              "max_abs": 0.0003255307674407959
+            },
+            "read_o": {
+              "delta_rms": 0.00034682336263358593,
+              "reference_rms": 0.14850768446922302,
+              "max_abs": 0.0008121579885482788
+            },
+            "branch_context": {
+              "delta_rms": 0.00016235510702244937,
+              "reference_rms": 0.11142521351575851,
+              "max_abs": 0.00028374791145324707
+            },
+            "first_byte_probability": {
+              "delta_rms": 2.0161073166491406e-07,
+              "reference_rms": 0.004652567207813263,
+              "max_abs": 6.766058504581451e-07
+            }
+          },
+          "different_entity_query": {
+            "rgb_tokens": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.24439287185668945,
+              "max_abs": 0.0
+            },
+            "object_z": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.30111706256866455,
+              "max_abs": 0.0
+            },
+            "object_position": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.33568301796913147,
+              "max_abs": 0.0
+            },
+            "H": {
+              "delta_rms": 9.891300578601658e-05,
+              "reference_rms": 0.19784864783287048,
+              "max_abs": 0.00019338726997375488
+            },
+            "F": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.14942890405654907,
+              "max_abs": 0.0
+            },
+            "request_embedding": {
+              "delta_rms": 0.002018551342189312,
+              "reference_rms": 0.19013991951942444,
+              "max_abs": 0.004215925931930542
+            },
+            "read_h": {
+              "delta_rms": 4.588831870933063e-05,
+              "reference_rms": 0.12230274826288223,
+              "max_abs": 7.197260856628418e-05
+            },
+            "object_attention": {
+              "delta_rms": 2.464329327267478e-07,
+              "reference_rms": 0.2500382363796234,
+              "max_abs": 4.470348358154297e-07
+            },
+            "read_o": {
+              "delta_rms": 4.6154525534802815e-08,
+              "reference_rms": 0.14850768446922302,
+              "max_abs": 8.940696716308594e-08
+            },
+            "branch_context": {
+              "delta_rms": 1.6715866877348162e-05,
+              "reference_rms": 0.11142521351575851,
+              "max_abs": 3.3915042877197266e-05
+            },
+            "first_byte_probability": {
+              "delta_rms": 2.0871121719778785e-08,
+              "reference_rms": 0.004652567207813263,
+              "max_abs": 7.264316082000732e-08
+            }
+          }
+        },
+        {
+          "id": "train-6",
+          "split": "train",
+          "rgb_zero": {
+            "rgb_tokens": {
+              "delta_rms": 0.09643688052892685,
+              "reference_rms": 0.24355082213878632,
+              "max_abs": 0.2770814299583435
+            },
+            "object_z": {
+              "delta_rms": 0.0018579731695353985,
+              "reference_rms": 0.30112791061401367,
+              "max_abs": 0.0030658766627311707
+            },
+            "object_position": {
+              "delta_rms": 0.00341645535081625,
+              "reference_rms": 0.3355253338813782,
+              "max_abs": 0.0036330819129943848
+            },
+            "H": {
+              "delta_rms": 0.0013686262536793947,
+              "reference_rms": 0.19782988727092743,
+              "max_abs": 0.0020833760499954224
+            },
+            "F": {
+              "delta_rms": 0.0006286673014983535,
+              "reference_rms": 0.1494169533252716,
+              "max_abs": 0.0011175870895385742
+            },
+            "request_embedding": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.19013991951942444,
+              "max_abs": 0.0
+            },
+            "read_h": {
+              "delta_rms": 0.0005930225015617907,
+              "reference_rms": 0.12229349464178085,
+              "max_abs": 0.0009272396564483643
+            },
+            "object_attention": {
+              "delta_rms": 0.0001682840520516038,
+              "reference_rms": 0.2500380277633667,
+              "max_abs": 0.00030305981636047363
+            },
+            "read_o": {
+              "delta_rms": 0.0003305962309241295,
+              "reference_rms": 0.14850391447544098,
+              "max_abs": 0.0007739514112472534
+            },
+            "branch_context": {
+              "delta_rms": 0.00015964139311108738,
+              "reference_rms": 0.11142221093177795,
+              "max_abs": 0.00027886033058166504
+            },
+            "first_byte_probability": {
+              "delta_rms": 1.9883732704784052e-07,
+              "reference_rms": 0.004652566742151976,
+              "max_abs": 6.700865924358368e-07
+            }
+          },
+          "different_entity_query": {
+            "rgb_tokens": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.24355082213878632,
+              "max_abs": 0.0
+            },
+            "object_z": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.30112791061401367,
+              "max_abs": 0.0
+            },
+            "object_position": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.3355253338813782,
+              "max_abs": 0.0
+            },
+            "H": {
+              "delta_rms": 9.89272230071947e-05,
+              "reference_rms": 0.19782988727092743,
+              "max_abs": 0.00019344687461853027
+            },
+            "F": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.1494169533252716,
+              "max_abs": 0.0
+            },
+            "request_embedding": {
+              "delta_rms": 0.002018551342189312,
+              "reference_rms": 0.19013991951942444,
+              "max_abs": 0.004215925931930542
+            },
+            "read_h": {
+              "delta_rms": 4.590055687003769e-05,
+              "reference_rms": 0.12229349464178085,
+              "max_abs": 7.198750972747803e-05
+            },
+            "object_attention": {
+              "delta_rms": 2.4422681121905043e-07,
+              "reference_rms": 0.2500380277633667,
+              "max_abs": 4.172325134277344e-07
+            },
+            "read_o": {
+              "delta_rms": 5.983702067169361e-08,
+              "reference_rms": 0.14850391447544098,
+              "max_abs": 1.1920928955078125e-07
+            },
+            "branch_context": {
+              "delta_rms": 1.6718486222089268e-05,
+              "reference_rms": 0.11142221093177795,
+              "max_abs": 3.392994403839111e-05
+            },
+            "first_byte_probability": {
+              "delta_rms": 2.065062609801771e-08,
+              "reference_rms": 0.004652566742151976,
+              "max_abs": 7.217749953269958e-08
+            }
+          }
+        },
+        {
+          "id": "train-7",
+          "split": "train",
+          "rgb_zero": {
+            "rgb_tokens": {
+              "delta_rms": 0.09864896535873413,
+              "reference_rms": 0.24363984167575836,
+              "max_abs": 0.29090210795402527
+            },
+            "object_z": {
+              "delta_rms": 0.0019690562039613724,
+              "reference_rms": 0.30111876130104065,
+              "max_abs": 0.003215596079826355
+            },
+            "object_position": {
+              "delta_rms": 0.003621331648901105,
+              "reference_rms": 0.3357181251049042,
+              "max_abs": 0.003935426473617554
+            },
+            "H": {
+              "delta_rms": 0.00137432967312634,
+              "reference_rms": 0.19783754646778107,
+              "max_abs": 0.0020821988582611084
+            },
+            "F": {
+              "delta_rms": 0.0006433564121834934,
+              "reference_rms": 0.14942923188209534,
+              "max_abs": 0.0011450201272964478
+            },
+            "request_embedding": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.19013991951942444,
+              "max_abs": 0.0
+            },
+            "read_h": {
+              "delta_rms": 0.0005943363648839295,
+              "reference_rms": 0.12229540199041367,
+              "max_abs": 0.0009371042251586914
+            },
+            "object_attention": {
+              "delta_rms": 0.00017984058649744838,
+              "reference_rms": 0.2500382363796234,
+              "max_abs": 0.0003253519535064697
+            },
+            "read_o": {
+              "delta_rms": 0.000348048924934119,
+              "reference_rms": 0.14850854873657227,
+              "max_abs": 0.0008157938718795776
+            },
+            "branch_context": {
+              "delta_rms": 0.00016122763918247074,
+              "reference_rms": 0.11142410337924957,
+              "max_abs": 0.0002816319465637207
+            },
+            "first_byte_probability": {
+              "delta_rms": 2.0026085678637173e-07,
+              "reference_rms": 0.004652567207813263,
+              "max_abs": 6.766058504581451e-07
+            }
+          },
+          "different_entity_query": {
+            "rgb_tokens": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.24363984167575836,
+              "max_abs": 0.0
+            },
+            "object_z": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.30111876130104065,
+              "max_abs": 0.0
+            },
+            "object_position": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.3357181251049042,
+              "max_abs": 0.0
+            },
+            "H": {
+              "delta_rms": 6.060335363144986e-05,
+              "reference_rms": 0.19783754646778107,
+              "max_abs": 0.0001157522201538086
+            },
+            "F": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.14942923188209534,
+              "max_abs": 0.0
+            },
+            "request_embedding": {
+              "delta_rms": 0.001348125166259706,
+              "reference_rms": 0.19013991951942444,
+              "max_abs": 0.003272026777267456
+            },
+            "read_h": {
+              "delta_rms": 2.5365709007019177e-05,
+              "reference_rms": 0.12229540199041367,
+              "max_abs": 3.516674041748047e-05
+            },
+            "object_attention": {
+              "delta_rms": 1.3462685899412463e-07,
+              "reference_rms": 0.2500382363796234,
+              "max_abs": 2.384185791015625e-07
+            },
+            "read_o": {
+              "delta_rms": 2.993300185494263e-08,
+              "reference_rms": 0.14850854873657227,
+              "max_abs": 5.960464477539063e-08
+            },
+            "branch_context": {
+              "delta_rms": 1.2403857908793725e-05,
+              "reference_rms": 0.11142410337924957,
+              "max_abs": 2.588331699371338e-05
+            },
+            "first_byte_probability": {
+              "delta_rms": 1.5564884492391684e-08,
+              "reference_rms": 0.004652567207813263,
+              "max_abs": 5.448237061500549e-08
+            }
+          }
+        },
+        {
+          "id": "fit-128",
+          "split": "fit",
+          "rgb_zero": {
+            "rgb_tokens": {
+              "delta_rms": 0.10460779815912247,
+              "reference_rms": 0.248665452003479,
+              "max_abs": 0.3133218288421631
+            },
+            "object_z": {
+              "delta_rms": 0.0020452893804758787,
+              "reference_rms": 0.30112358927726746,
+              "max_abs": 0.0033691972494125366
+            },
+            "object_position": {
+              "delta_rms": 0.003774218959733844,
+              "reference_rms": 0.33582356572151184,
+              "max_abs": 0.003987491130828857
+            },
+            "H": {
+              "delta_rms": 0.0014447373105213046,
+              "reference_rms": 0.19696921110153198,
+              "max_abs": 0.0021986961364746094
+            },
+            "F": {
+              "delta_rms": 0.0006860076100565493,
+              "reference_rms": 0.14946845173835754,
+              "max_abs": 0.0012190639972686768
+            },
+            "request_embedding": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.1729138344526291,
+              "max_abs": 0.0
+            },
+            "read_h": {
+              "delta_rms": 0.0006241058581508696,
+              "reference_rms": 0.12188640236854553,
+              "max_abs": 0.0009832680225372314
+            },
+            "object_attention": {
+              "delta_rms": 0.00018797053780872375,
+              "reference_rms": 0.25003841519355774,
+              "max_abs": 0.00034058094024658203
+            },
+            "read_o": {
+              "delta_rms": 0.000362388847861439,
+              "reference_rms": 0.14851625263690948,
+              "max_abs": 0.0008500814437866211
+            },
+            "branch_context": {
+              "delta_rms": 0.00016911642160266638,
+              "reference_rms": 0.11127161234617233,
+              "max_abs": 0.000295490026473999
+            },
+            "first_byte_probability": {
+              "delta_rms": 2.1066429667371267e-07,
+              "reference_rms": 0.0046525620855391026,
+              "max_abs": 7.124617695808411e-07
+            }
+          },
+          "different_entity_query": {
+            "rgb_tokens": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.248665452003479,
+              "max_abs": 0.0
+            },
+            "object_z": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.30112358927726746,
+              "max_abs": 0.0
+            },
+            "object_position": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.33582356572151184,
+              "max_abs": 0.0
+            },
+            "H": {
+              "delta_rms": 0.0009828025940805674,
+              "reference_rms": 0.19696921110153198,
+              "max_abs": 0.001845240592956543
+            },
+            "F": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.14946845173835754,
+              "max_abs": 0.0
+            },
+            "request_embedding": {
+              "delta_rms": 0.017974412068724632,
+              "reference_rms": 0.1729138344526291,
+              "max_abs": 0.028794825077056885
+            },
+            "read_h": {
+              "delta_rms": 0.000447104568593204,
+              "reference_rms": 0.12188640236854553,
+              "max_abs": 0.0007374584674835205
+            },
+            "object_attention": {
+              "delta_rms": 2.443983476041467e-06,
+              "reference_rms": 0.25003841519355774,
+              "max_abs": 4.26173210144043e-06
+            },
+            "read_o": {
+              "delta_rms": 5.933782176725799e-07,
+              "reference_rms": 0.14851625263690948,
+              "max_abs": 1.043081283569336e-06
+            },
+            "branch_context": {
+              "delta_rms": 0.00017134688096120954,
+              "reference_rms": 0.11127161234617233,
+              "max_abs": 0.0003489851951599121
+            },
+            "first_byte_probability": {
+              "delta_rms": 2.1354310320020886e-07,
+              "reference_rms": 0.0046525620855391026,
+              "max_abs": 7.576309144496918e-07
+            }
+          }
+        },
+        {
+          "id": "fit-129",
+          "split": "fit",
+          "rgb_zero": {
+            "rgb_tokens": {
+              "delta_rms": 0.102536641061306,
+              "reference_rms": 0.24767234921455383,
+              "max_abs": 0.23777464032173157
+            },
+            "object_z": {
+              "delta_rms": 0.002090301364660263,
+              "reference_rms": 0.30111393332481384,
+              "max_abs": 0.0035088658332824707
+            },
+            "object_position": {
+              "delta_rms": 0.0038332385011017323,
+              "reference_rms": 0.3359145522117615,
+              "max_abs": 0.004262208938598633
+            },
+            "H": {
+              "delta_rms": 0.0014521039556711912,
+              "reference_rms": 0.19781221449375153,
+              "max_abs": 0.002196207642555237
+            },
+            "F": {
+              "delta_rms": 0.0006561978370882571,
+              "reference_rms": 0.14944341778755188,
+              "max_abs": 0.001149788498878479
+            },
+            "request_embedding": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.1887633204460144,
+              "max_abs": 0.0
+            },
+            "read_h": {
+              "delta_rms": 0.0006289651500992477,
+              "reference_rms": 0.12228241562843323,
+              "max_abs": 0.0009906142950057983
+            },
+            "object_attention": {
+              "delta_rms": 0.00019164751574862748,
+              "reference_rms": 0.2500384449958801,
+              "max_abs": 0.00034102797508239746
+            },
+            "read_o": {
+              "delta_rms": 0.0003676060005091131,
+              "reference_rms": 0.14851558208465576,
+              "max_abs": 0.0008726716041564941
+            },
+            "branch_context": {
+              "delta_rms": 0.00016951694851741195,
+              "reference_rms": 0.11141636222600937,
+              "max_abs": 0.0002957582473754883
+            },
+            "first_byte_probability": {
+              "delta_rms": 2.113482366894459e-07,
+              "reference_rms": 0.004652566742151976,
+              "max_abs": 7.124617695808411e-07
+            }
+          },
+          "different_entity_query": {
+            "rgb_tokens": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.24767234921455383,
+              "max_abs": 0.0
+            },
+            "object_z": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.30111393332481384,
+              "max_abs": 0.0
+            },
+            "object_position": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.3359145522117615,
+              "max_abs": 0.0
+            },
+            "H": {
+              "delta_rms": 9.891433001030236e-05,
+              "reference_rms": 0.19781221449375153,
+              "max_abs": 0.00019341707229614258
+            },
+            "F": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.14944341778755188,
+              "max_abs": 0.0
+            },
+            "request_embedding": {
+              "delta_rms": 0.002018551342189312,
+              "reference_rms": 0.1887633204460144,
+              "max_abs": 0.004215925931930542
+            },
+            "read_h": {
+              "delta_rms": 4.588729643728584e-05,
+              "reference_rms": 0.12228241562843323,
+              "max_abs": 7.198750972747803e-05
+            },
+            "object_attention": {
+              "delta_rms": 2.4693926548025047e-07,
+              "reference_rms": 0.2500384449958801,
+              "max_abs": 4.470348358154297e-07
+            },
+            "read_o": {
+              "delta_rms": 5.8584557649510316e-08,
+              "reference_rms": 0.14851558208465576,
+              "max_abs": 1.1920928955078125e-07
+            },
+            "branch_context": {
+              "delta_rms": 1.6711255739210173e-05,
+              "reference_rms": 0.11141636222600937,
+              "max_abs": 3.3915042877197266e-05
+            },
+            "first_byte_probability": {
+              "delta_rms": 2.094980544598002e-08,
+              "reference_rms": 0.004652566742151976,
+              "max_abs": 7.543712854385376e-08
+            }
+          }
+        },
+        {
+          "id": "fit-130",
+          "split": "fit",
+          "rgb_zero": {
+            "rgb_tokens": {
+              "delta_rms": 0.10197232663631439,
+              "reference_rms": 0.2473970651626587,
+              "max_abs": 0.24326612055301666
+            },
+            "object_z": {
+              "delta_rms": 0.001979088643565774,
+              "reference_rms": 0.30112534761428833,
+              "max_abs": 0.0032969489693641663
+            },
+            "object_position": {
+              "delta_rms": 0.0036319964565336704,
+              "reference_rms": 0.33572983741760254,
+              "max_abs": 0.004027128219604492
+            },
+            "H": {
+              "delta_rms": 0.0014381743967533112,
+              "reference_rms": 0.19710871577262878,
+              "max_abs": 0.0022071897983551025
+            },
+            "F": {
+              "delta_rms": 0.0006481538875959814,
+              "reference_rms": 0.14942637085914612,
+              "max_abs": 0.0011454522609710693
+            },
+            "request_embedding": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.17713305354118347,
+              "max_abs": 0.0
+            },
+            "read_h": {
+              "delta_rms": 0.000621940940618515,
+              "reference_rms": 0.12195651233196259,
+              "max_abs": 0.000982135534286499
+            },
+            "object_attention": {
+              "delta_rms": 0.000179413371370174,
+              "reference_rms": 0.2500382363796234,
+              "max_abs": 0.0003204047679901123
+            },
+            "read_o": {
+              "delta_rms": 0.00035076483618468046,
+              "reference_rms": 0.1485116183757782,
+              "max_abs": 0.0008283704519271851
+            },
+            "branch_context": {
+              "delta_rms": 0.00016665631846990436,
+              "reference_rms": 0.11129780858755112,
+              "max_abs": 0.0002910792827606201
+            },
+            "first_byte_probability": {
+              "delta_rms": 2.071368498945958e-07,
+              "reference_rms": 0.004652563016861677,
+              "max_abs": 7.03614205121994e-07
+            }
+          },
+          "different_entity_query": {
+            "rgb_tokens": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.2473970651626587,
+              "max_abs": 0.0
+            },
+            "object_z": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.30112534761428833,
+              "max_abs": 0.0
+            },
+            "object_position": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.33572983741760254,
+              "max_abs": 0.0
+            },
+            "H": {
+              "delta_rms": 0.0008120638667605817,
+              "reference_rms": 0.19710871577262878,
+              "max_abs": 0.0015903711318969727
+            },
+            "F": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.14942637085914612,
+              "max_abs": 0.0
+            },
+            "request_embedding": {
+              "delta_rms": 0.013244339264929295,
+              "reference_rms": 0.17713305354118347,
+              "max_abs": 0.022787809371948242
+            },
+            "read_h": {
+              "delta_rms": 0.0003697373322211206,
+              "reference_rms": 0.12195651233196259,
+              "max_abs": 0.0005885511636734009
+            },
+            "object_attention": {
+              "delta_rms": 1.993228806895786e-06,
+              "reference_rms": 0.2500382363796234,
+              "max_abs": 3.4570693969726562e-06
+            },
+            "read_o": {
+              "delta_rms": 4.826488861908729e-07,
+              "reference_rms": 0.1485116183757782,
+              "max_abs": 8.642673492431641e-07
+            },
+            "branch_context": {
+              "delta_rms": 0.00014013933832757175,
+              "reference_rms": 0.11129780858755112,
+              "max_abs": 0.0002856254577636719
+            },
+            "first_byte_probability": {
+              "delta_rms": 1.7463948154272657e-07,
+              "reference_rms": 0.004652563016861677,
+              "max_abs": 6.188638508319855e-07
+            }
+          }
+        },
+        {
+          "id": "fit-131",
+          "split": "fit",
+          "rgb_zero": {
+            "rgb_tokens": {
+              "delta_rms": 0.10339348018169403,
+              "reference_rms": 0.24764493107795715,
+              "max_abs": 0.24484123289585114
+            },
+            "object_z": {
+              "delta_rms": 0.002051661955192685,
+              "reference_rms": 0.3011181950569153,
+              "max_abs": 0.0033909156918525696
+            },
+            "object_position": {
+              "delta_rms": 0.003768024267628789,
+              "reference_rms": 0.3358485996723175,
+              "max_abs": 0.00412866473197937
+            },
+            "H": {
+              "delta_rms": 0.0014254734851419926,
+              "reference_rms": 0.1969464272260666,
+              "max_abs": 0.002208396792411804
+            },
+            "F": {
+              "delta_rms": 0.0006561108748428524,
+              "reference_rms": 0.14943760633468628,
+              "max_abs": 0.0011669546365737915
+            },
+            "request_embedding": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.1729138344526291,
+              "max_abs": 0.0
+            },
+            "read_h": {
+              "delta_rms": 0.0006134877912700176,
+              "reference_rms": 0.12187529355287552,
+              "max_abs": 0.0009724348783493042
+            },
+            "object_attention": {
+              "delta_rms": 0.00018756439385470003,
+              "reference_rms": 0.25003841519355774,
+              "max_abs": 0.0003387928009033203
+            },
+            "read_o": {
+              "delta_rms": 0.00036203331546857953,
+              "reference_rms": 0.14851410686969757,
+              "max_abs": 0.0008504688739776611
+            },
+            "branch_context": {
+              "delta_rms": 0.00016580782539676875,
+              "reference_rms": 0.11126843839883804,
+              "max_abs": 0.0002898275852203369
+            },
+            "first_byte_probability": {
+              "delta_rms": 2.065000614948076e-07,
+              "reference_rms": 0.004652561619877815,
+              "max_abs": 6.970949470996857e-07
+            }
+          },
+          "different_entity_query": {
+            "rgb_tokens": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.24764493107795715,
+              "max_abs": 0.0
+            },
+            "object_z": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.3011181950569153,
+              "max_abs": 0.0
+            },
+            "object_position": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.3358485996723175,
+              "max_abs": 0.0
+            },
+            "H": {
+              "delta_rms": 0.0008006932912394404,
+              "reference_rms": 0.1969464272260666,
+              "max_abs": 0.0014602243900299072
+            },
+            "F": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.14943760633468628,
+              "max_abs": 0.0
+            },
+            "request_embedding": {
+              "delta_rms": 0.01567908748984337,
+              "reference_rms": 0.1729138344526291,
+              "max_abs": 0.025322750210762024
+            },
+            "read_h": {
+              "delta_rms": 0.00036191102117300034,
+              "reference_rms": 0.12187529355287552,
+              "max_abs": 0.0006051361560821533
+            },
+            "object_attention": {
+              "delta_rms": 1.9891165266017197e-06,
+              "reference_rms": 0.25003841519355774,
+              "max_abs": 3.4868717193603516e-06
+            },
+            "read_o": {
+              "delta_rms": 4.767862264998257e-07,
+              "reference_rms": 0.14851410686969757,
+              "max_abs": 8.344650268554688e-07
+            },
+            "branch_context": {
+              "delta_rms": 0.000137710667331703,
+              "reference_rms": 0.11126843839883804,
+              "max_abs": 0.00028002262115478516
+            },
+            "first_byte_probability": {
+              "delta_rms": 1.7167566568332404e-07,
+              "reference_rms": 0.004652561619877815,
+              "max_abs": 6.100162863731384e-07
+            }
+          }
+        },
+        {
+          "id": "fit-132",
+          "split": "fit",
+          "rgb_zero": {
+            "rgb_tokens": {
+              "delta_rms": 0.10094556957483292,
+              "reference_rms": 0.24704185128211975,
+              "max_abs": 0.21146781742572784
+            },
+            "object_z": {
+              "delta_rms": 0.0019570838194340467,
+              "reference_rms": 0.30112534761428833,
+              "max_abs": 0.003212973475456238
+            },
+            "object_position": {
+              "delta_rms": 0.0035882340744137764,
+              "reference_rms": 0.3356739580631256,
+              "max_abs": 0.0038465559482574463
+            },
+            "H": {
+              "delta_rms": 0.0014255831483751535,
+              "reference_rms": 0.19695256650447845,
+              "max_abs": 0.0021906495094299316
+            },
+            "F": {
+              "delta_rms": 0.0006428517517633736,
+              "reference_rms": 0.1494235098361969,
+              "max_abs": 0.0011337101459503174
+            },
+            "request_embedding": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.1729138344526291,
+              "max_abs": 0.0
+            },
+            "read_h": {
+              "delta_rms": 0.0006165546365082264,
+              "reference_rms": 0.1218801811337471,
+              "max_abs": 0.000970989465713501
+            },
+            "object_attention": {
+              "delta_rms": 0.00017847497656475753,
+              "reference_rms": 0.2500382363796234,
+              "max_abs": 0.00032195448875427246
+            },
+            "read_o": {
+              "delta_rms": 0.0003471244708634913,
+              "reference_rms": 0.1485101282596588,
+              "max_abs": 0.000812038779258728
+            },
+            "branch_context": {
+              "delta_rms": 0.00016523795784451067,
+              "reference_rms": 0.11126790195703506,
+              "max_abs": 0.00028890371322631836
+            },
+            "first_byte_probability": {
+              "delta_rms": 2.0558884727961413e-07,
+              "reference_rms": 0.004652561619877815,
+              "max_abs": 6.882473826408386e-07
+            }
+          },
+          "different_entity_query": {
+            "rgb_tokens": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.24704185128211975,
+              "max_abs": 0.0
+            },
+            "object_z": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.30112534761428833,
+              "max_abs": 0.0
+            },
+            "object_position": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.3356739580631256,
+              "max_abs": 0.0
+            },
+            "H": {
+              "delta_rms": 0.000982810859568417,
+              "reference_rms": 0.19695256650447845,
+              "max_abs": 0.001845240592956543
+            },
+            "F": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.1494235098361969,
+              "max_abs": 0.0
+            },
+            "request_embedding": {
+              "delta_rms": 0.017974412068724632,
+              "reference_rms": 0.1729138344526291,
+              "max_abs": 0.028794825077056885
+            },
+            "read_h": {
+              "delta_rms": 0.0004470961866900325,
+              "reference_rms": 0.1218801811337471,
+              "max_abs": 0.0007374435663223267
+            },
+            "object_attention": {
+              "delta_rms": 2.4418702651018975e-06,
+              "reference_rms": 0.2500382363796234,
+              "max_abs": 4.26173210144043e-06
+            },
+            "read_o": {
+              "delta_rms": 5.877685680388822e-07,
+              "reference_rms": 0.1485101282596588,
+              "max_abs": 1.0281801223754883e-06
+            },
+            "branch_context": {
+              "delta_rms": 0.00017131995991803706,
+              "reference_rms": 0.11126790195703506,
+              "max_abs": 0.00034891068935394287
+            },
+            "first_byte_probability": {
+              "delta_rms": 2.1337859834602568e-07,
+              "reference_rms": 0.004652561619877815,
+              "max_abs": 7.60890543460846e-07
+            }
+          }
+        },
+        {
+          "id": "fit-133",
+          "split": "fit",
+          "rgb_zero": {
+            "rgb_tokens": {
+              "delta_rms": 0.10422910004854202,
+              "reference_rms": 0.24809230864048004,
+              "max_abs": 0.36226680874824524
+            },
+            "object_z": {
+              "delta_rms": 0.002066526561975479,
+              "reference_rms": 0.3011206388473511,
+              "max_abs": 0.0034886449575424194
+            },
+            "object_position": {
+              "delta_rms": 0.0038143640849739313,
+              "reference_rms": 0.3358376622200012,
+              "max_abs": 0.004019439220428467
+            },
+            "H": {
+              "delta_rms": 0.0014698965242132545,
+              "reference_rms": 0.197930708527565,
+              "max_abs": 0.0021792352199554443
+            },
+            "F": {
+              "delta_rms": 0.0006996250012889504,
+              "reference_rms": 0.14948733150959015,
+              "max_abs": 0.0012485682964324951
+            },
+            "request_embedding": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.19013991951942444,
+              "max_abs": 0.0
+            },
+            "read_h": {
+              "delta_rms": 0.0006398485274985433,
+              "reference_rms": 0.12234027683734894,
+              "max_abs": 0.000995248556137085
+            },
+            "object_attention": {
+              "delta_rms": 0.0001917777699418366,
+              "reference_rms": 0.25003841519355774,
+              "max_abs": 0.00034758448600769043
+            },
+            "read_o": {
+              "delta_rms": 0.0003655274340417236,
+              "reference_rms": 0.14851738512516022,
+              "max_abs": 0.0008631646633148193
+            },
+            "branch_context": {
+              "delta_rms": 0.00017324485816061497,
+              "reference_rms": 0.11143575608730316,
+              "max_abs": 0.00030300021171569824
+            },
+            "first_byte_probability": {
+              "delta_rms": 2.1522450310840213e-07,
+              "reference_rms": 0.004652567207813263,
+              "max_abs": 7.273629307746887e-07
+            }
+          },
+          "different_entity_query": {
+            "rgb_tokens": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.24809230864048004,
+              "max_abs": 0.0
+            },
+            "object_z": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.3011206388473511,
+              "max_abs": 0.0
+            },
+            "object_position": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.3358376622200012,
+              "max_abs": 0.0
+            },
+            "H": {
+              "delta_rms": 0.0001909111742861569,
+              "reference_rms": 0.197930708527565,
+              "max_abs": 0.00038498640060424805
+            },
+            "F": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.14948733150959015,
+              "max_abs": 0.0
+            },
+            "request_embedding": {
+              "delta_rms": 0.0033883803989738226,
+              "reference_rms": 0.19013991951942444,
+              "max_abs": 0.007807910442352295
+            },
+            "read_h": {
+              "delta_rms": 8.609218639321625e-05,
+              "reference_rms": 0.12234027683734894,
+              "max_abs": 0.00013227760791778564
+            },
+            "object_attention": {
+              "delta_rms": 4.507755306804029e-07,
+              "reference_rms": 0.25003841519355774,
+              "max_abs": 7.748603820800781e-07
+            },
+            "read_o": {
+              "delta_rms": 1.195036105627878e-07,
+              "reference_rms": 0.14851738512516022,
+              "max_abs": 2.2351741790771484e-07
+            },
+            "branch_context": {
+              "delta_rms": 3.361804920132272e-05,
+              "reference_rms": 0.11143575608730316,
+              "max_abs": 6.891787052154541e-05
+            },
+            "first_byte_probability": {
+              "delta_rms": 4.184259339012897e-08,
+              "reference_rms": 0.004652567207813263,
+              "max_abs": 1.4761462807655334e-07
+            }
+          }
+        },
+        {
+          "id": "fit-134",
+          "split": "fit",
+          "rgb_zero": {
+            "rgb_tokens": {
+              "delta_rms": 0.09806907922029495,
+              "reference_rms": 0.24555501341819763,
+              "max_abs": 0.27298790216445923
+            },
+            "object_z": {
+              "delta_rms": 0.0019930668640881777,
+              "reference_rms": 0.3011155426502228,
+              "max_abs": 0.0033551454544067383
+            },
+            "object_position": {
+              "delta_rms": 0.0036600162275135517,
+              "reference_rms": 0.3357446491718292,
+              "max_abs": 0.003898918628692627
+            },
+            "H": {
+              "delta_rms": 0.0013912423746660352,
+              "reference_rms": 0.19766610860824585,
+              "max_abs": 0.002132400870323181
+            },
+            "F": {
+              "delta_rms": 0.0006368977483361959,
+              "reference_rms": 0.1494206041097641,
+              "max_abs": 0.0011231601238250732
+            },
+            "request_embedding": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.18733453750610352,
+              "max_abs": 0.0
+            },
+            "read_h": {
+              "delta_rms": 0.0006012330995872617,
+              "reference_rms": 0.12221615016460419,
+              "max_abs": 0.0009518712759017944
+            },
+            "object_attention": {
+              "delta_rms": 0.00018307205755263567,
+              "reference_rms": 0.2500382959842682,
+              "max_abs": 0.0003274679183959961
+            },
+            "read_o": {
+              "delta_rms": 0.00035129007301293314,
+              "reference_rms": 0.1485089212656021,
+              "max_abs": 0.0008281618356704712
+            },
+            "branch_context": {
+              "delta_rms": 0.0001622052222955972,
+              "reference_rms": 0.11139347404241562,
+              "max_abs": 0.00028312206268310547
+            },
+            "first_byte_probability": {
+              "delta_rms": 2.014540143591148e-07,
+              "reference_rms": 0.004652567207813263,
+              "max_abs": 6.82193785905838e-07
+            }
+          },
+          "different_entity_query": {
+            "rgb_tokens": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.24555501341819763,
+              "max_abs": 0.0
+            },
+            "object_z": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.3011155426502228,
+              "max_abs": 0.0
+            },
+            "object_position": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.3357446491718292,
+              "max_abs": 0.0
+            },
+            "H": {
+              "delta_rms": 0.00019092089496552944,
+              "reference_rms": 0.19766610860824585,
+              "max_abs": 0.00038501620292663574
+            },
+            "F": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.1494206041097641,
+              "max_abs": 0.0
+            },
+            "request_embedding": {
+              "delta_rms": 0.0033883803989738226,
+              "reference_rms": 0.18733453750610352,
+              "max_abs": 0.007807910442352295
+            },
+            "read_h": {
+              "delta_rms": 8.609646465629339e-05,
+              "reference_rms": 0.12221615016460419,
+              "max_abs": 0.00013230741024017334
+            },
+            "object_attention": {
+              "delta_rms": 4.562530193652492e-07,
+              "reference_rms": 0.2500382959842682,
+              "max_abs": 8.046627044677734e-07
+            },
+            "read_o": {
+              "delta_rms": 1.146586328104604e-07,
+              "reference_rms": 0.1485089212656021,
+              "max_abs": 2.086162567138672e-07
+            },
+            "branch_context": {
+              "delta_rms": 3.361333438078873e-05,
+              "reference_rms": 0.11139347404241562,
+              "max_abs": 6.890296936035156e-05
+            },
+            "first_byte_probability": {
+              "delta_rms": 4.184895274761402e-08,
+              "reference_rms": 0.004652567207813263,
+              "max_abs": 1.5133991837501526e-07
+            }
+          }
+        },
+        {
+          "id": "fit-135",
+          "split": "fit",
+          "rgb_zero": {
+            "rgb_tokens": {
+              "delta_rms": 0.09947089105844498,
+              "reference_rms": 0.24443767964839935,
+              "max_abs": 0.22132062911987305
+            },
+            "object_z": {
+              "delta_rms": 0.0020169836934655905,
+              "reference_rms": 0.30111292004585266,
+              "max_abs": 0.003343716263771057
+            },
+            "object_position": {
+              "delta_rms": 0.003689028788357973,
+              "reference_rms": 0.3357745409011841,
+              "max_abs": 0.004008650779724121
+            },
+            "H": {
+              "delta_rms": 0.001386658288538456,
+              "reference_rms": 0.19705908000469208,
+              "max_abs": 0.0021312832832336426
+            },
+            "F": {
+              "delta_rms": 0.0006245808908715844,
+              "reference_rms": 0.14940840005874634,
+              "max_abs": 0.0010956674814224243
+            },
+            "request_embedding": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.17713305354118347,
+              "max_abs": 0.0
+            },
+            "read_h": {
+              "delta_rms": 0.0005986575852148235,
+              "reference_rms": 0.12193416804075241,
+              "max_abs": 0.0009444057941436768
+            },
+            "object_attention": {
+              "delta_rms": 0.00018576094589661807,
+              "reference_rms": 0.25003835558891296,
+              "max_abs": 0.0003338456153869629
+            },
+            "read_o": {
+              "delta_rms": 0.0003549238608684391,
+              "reference_rms": 0.14850939810276031,
+              "max_abs": 0.0008351057767868042
+            },
+            "branch_context": {
+              "delta_rms": 0.00016164887347258627,
+              "reference_rms": 0.11129297316074371,
+              "max_abs": 0.00028255581855773926
+            },
+            "first_byte_probability": {
+              "delta_rms": 2.0143299650499102e-07,
+              "reference_rms": 0.00465256255120039,
+              "max_abs": 6.793998181819916e-07
+            }
+          },
+          "different_entity_query": {
+            "rgb_tokens": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.24443767964839935,
+              "max_abs": 0.0
+            },
+            "object_z": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.30111292004585266,
+              "max_abs": 0.0
+            },
+            "object_position": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.3357745409011841,
+              "max_abs": 0.0
+            },
+            "H": {
+              "delta_rms": 0.0006242477102205157,
+              "reference_rms": 0.19705908000469208,
+              "max_abs": 0.0012053251266479492
+            },
+            "F": {
+              "delta_rms": 0.0,
+              "reference_rms": 0.14940840005874634,
+              "max_abs": 0.0
+            },
+            "request_embedding": {
+              "delta_rms": 0.010393206030130386,
+              "reference_rms": 0.17713305354118347,
+              "max_abs": 0.014979898929595947
+            },
+            "read_h": {
+              "delta_rms": 0.0002839166554622352,
+              "reference_rms": 0.12193416804075241,
+              "max_abs": 0.00045627355575561523
+            },
+            "object_attention": {
+              "delta_rms": 1.541487108625006e-06,
+              "reference_rms": 0.25003835558891296,
+              "max_abs": 2.7120113372802734e-06
+            },
+            "read_o": {
+              "delta_rms": 3.650131077392871e-07,
+              "reference_rms": 0.14850939810276031,
+              "max_abs": 6.407499313354492e-07
+            },
+            "branch_context": {
+              "delta_rms": 0.00010651635238900781,
+              "reference_rms": 0.11129297316074371,
+              "max_abs": 0.00021670758724212646
+            },
+            "first_byte_probability": {
+              "delta_rms": 1.3263296239074407e-07,
+              "reference_rms": 0.00465256255120039,
+              "max_abs": 4.707835614681244e-07
+            }
+          }
+        }
+      ]
+    }
+  },
+  "scope": "Post-hoc forward sensitivity on train8 and already-read development-fit8. Sensitivity magnitude does not establish semantic information loss or task success. Claim filenames and final checkpoint contents checked; original runner did per-step readback.",
+  "evidence_sha256": {
+    "plans\\manifests\\taiji_u2_conditional_A_execution_20261112_v2.json": "0b1f2345a6e38c32290aa2880ffe3e4b6c0fe347d593fec306774e4c90ca7fc0",
+    "reports\\taiji_u2_conditional_A_20261112.json": "612900214a31195045bd28beaa1d54f8423e3ca7165058d2365d61f33df3841a",
+    "scripts\\training\\audit_conditional_a_22_5.py": "4499ac1560c5a2ed42bd176cf4ef12fb5a876dc0283e03f90ee7b52b54ce10b3"
+  },
+  "training_optimizer_steps": 282,
+  "audit_optimizer_steps": 0,
+  "intervention_accounted_cpu_seconds": 316.359375,
+  "cpu_seconds": 12.453125,
+  "wall_seconds": 14.78200000000652,
+  "run_conditions": {
+    "device": "cpu",
+    "dtype": "float32",
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "check_reads": 0,
+  "final_reads": 0,
+  "capability_qualifications": []
+}

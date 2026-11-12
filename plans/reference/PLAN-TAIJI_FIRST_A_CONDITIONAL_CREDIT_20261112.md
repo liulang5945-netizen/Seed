@@ -1,6 +1,6 @@
 # 输入—答案配对信用干预
 
-> 22.5.P2候选。P1已结案为无A父，本卡使用其研究checkpoint，能力资格为空。
+> 22.5.P2已执行并按intervention_not_supported_no_A_parent结案。本卡保留冻结设计，P1研究checkpoint与全部原始失败证据保持其身份。
 
 ## 1. 事实与命题
 
@@ -30,3 +30,9 @@ train沿P1的64场景，开发fit使用原recipe的128–159号新场景32例；
 另记录正确/错误请求下正确答案的NLL差、RGB切断差以及负责参数梯度与实际位移。只增加条件依赖但行为未过门为conditional_credit_only。未见增益为intervention_not_supported，不加步。异常、预算停止、无法配对均独立结案。
 
 若两臂都学不到输入关系，下一次重审应检查目标条件读取/感知表征路径。当前不以辅助分类头的成功替代原生表达能力。
+
+## 4. 实际结案
+
+四臂完成282次更新，Native-token/conditional均0/32，Transformer-token/conditional均8/32。准备及运行316.359375 CPU，符合600帽。原始completed标记只签运行完成，科学出口按[结案回执](CLOSEOUT-TAIJI_FIRST_A_CONDITIONAL_20261112.md)签为intervention_not_supported_no_A_parent。0.50及增益0.15均未成立，未追加本轮更新。
+
+后继[读取重审](PLAN-TAIJI_FIRST_A_READING_REVIEW_20261112.md)已完成只读归因，选定请求条件证据读取的架构候选。新模块局部核验与主体集成各自签署，新训练待新源与实价合同。
