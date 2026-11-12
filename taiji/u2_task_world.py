@@ -7,6 +7,7 @@ import hashlib
 import json
 import math
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 import torch
@@ -102,7 +103,7 @@ class PhysicalWorld:
             physics["radii"][i] for i in torch.randint(2, (count,), generator=geometry).tolist()
         ]
         colors = torch.randperm(len(camera["palette"]), generator=rng["appearance"]).tolist()
-        bodies = []
+        bodies: list[dict[str, Any]] = []
         for i, radius in enumerate(radii):
             limit = 1 - radius - physics["initial_wall_gap"]
             for _ in range(physics["placement_attempts"]):

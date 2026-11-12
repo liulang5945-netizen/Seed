@@ -2,16 +2,220 @@
   "schema": "taiji-u2-source-overlays-v1",
   "overlays": [
     {
+      "contract": "plans/manifests/taiji_u2_22_4_2_joint_price_20261112.json",
+      "source_path": "scripts/training/verify_taiji_u2_joint_session_22_4_2.py",
+      "archive": "scripts/archive/verify_taiji_u2_joint_session_20261112_v1.py",
+      "sha256": "bcd047d5b8e619a958898a03a16d56b9ce88c4057d4af3c204ba92bd368b773f"
+    },
+    {
+      "contract": "plans/manifests/taiji_u2_22_4_2_joint_price_20261112.json",
+      "source_path": "taiji/u2_group_structure.py",
+      "archive": "scripts/archive/u2_group_structure_20261112_v1.py",
+      "sha256": "daabe312bff754bdd70208597f8363180dc459964b5cc7c5120610ca00d69ffa"
+    },
+    {
+      "contract": "plans/manifests/taiji_u2_22_4_2_joint_price_20261112.json",
+      "source_path": "taiji/u2_history.py",
+      "archive": "scripts/archive/u2_history_20261112_v2.py",
+      "sha256": "89cd2e9d178eb2ca56e020b3c160e6b7545c11303df116ff158b1315c02728f6"
+    },
+    {
+      "contract": "plans/manifests/taiji_u2_22_4_2_joint_price_20261112.json",
+      "source_path": "taiji/u2_history_store.py",
+      "archive": "scripts/archive/u2_history_store_20261112_v1.py",
+      "sha256": "3ac8eedfccbfe57bbc6402ff0c07c0bcfed7d2d9d7a72e8a5476b0fe21c97914"
+    },
+    {
+      "contract": "plans/manifests/taiji_u2_22_4_2_joint_price_20261112.json",
+      "source_path": "taiji/u2_learning_transaction.py",
+      "archive": "scripts/archive/u2_learning_transaction_20261112_v1.py",
+      "sha256": "931c61e020d445c09160a85e78840a53e133825d3f040d8c646e06330c489be1"
+    },
+    {
+      "contract": "plans/manifests/taiji_u2_22_4_2_joint_price_20261112.json",
+      "source_path": "taiji/u2_recovery.py",
+      "archive": "scripts/archive/u2_recovery_20261112_v3.py",
+      "sha256": "aa2ff9bffe9a8dffea81066f8302eec810a7845a5d5ce0ebb337b534a9cbc3f8"
+    },
+    {
+      "contract": "plans/manifests/taiji_u2_22_4_2_joint_price_20261112.json",
+      "source_path": "taiji/u2_subject.py",
+      "archive": "scripts/archive/u2_subject_20261112_v3.py",
+      "sha256": "cf99503e2614e1b4bada401b2e4e4ce08d6cb779ebb6b84ef713e6b646fb2c2e"
+    },
+    {
+      "contract": "plans/manifests/taiji_u2_22_4_2_joint_price_20261112.json",
+      "source_path": "taiji/u2_task_episode.py",
+      "archive": "scripts/archive/u2_task_episode_20261112_v2.py",
+      "sha256": "5aac567d18fdd2e198bc9096c4b58f5fc5c493041c2f4ea49eed6df95f5038f1"
+    },
+    {
+      "contract": "plans/manifests/taiji_u2_22_4_2_joint_price_20261112.json",
+      "source_path": "taiji/u2_task_session.py",
+      "archive": "scripts/archive/u2_task_session_20261112_v1.py",
+      "sha256": "de2e9cb6960396350f7cb5af6a683a4fd726039656d28e237fe7d25de9d18838"
+    },
+    {
+      "contract": "plans/manifests/taiji_u2_22_4_2_joint_price_20261112.json",
+      "source_path": "taiji/u2_task_world.py",
+      "archive": "scripts/archive/u2_task_world_20261112_v1.py",
+      "sha256": "cde18d7fa1040be5d752f5de4d08b363d7a2fb54b4497800e7ecde9382d57892"
+    },
+    {
+      "contract": "plans/manifests/taiji_u2_22_4_2_joint_price_20261112_v2.json",
+      "source_path": "taiji/u2_group_structure.py",
+      "archive": "scripts/archive/u2_group_structure_20261112_v1.py",
+      "sha256": "daabe312bff754bdd70208597f8363180dc459964b5cc7c5120610ca00d69ffa"
+    },
+    {
+      "contract": "plans/manifests/taiji_u2_22_4_2_joint_price_20261112_v2.json",
+      "source_path": "taiji/u2_history.py",
+      "archive": "scripts/archive/u2_history_20261112_v2.py",
+      "sha256": "89cd2e9d178eb2ca56e020b3c160e6b7545c11303df116ff158b1315c02728f6"
+    },
+    {
+      "contract": "plans/manifests/taiji_u2_22_4_2_joint_price_20261112_v2.json",
+      "source_path": "taiji/u2_history_store.py",
+      "archive": "scripts/archive/u2_history_store_20261112_v1.py",
+      "sha256": "3ac8eedfccbfe57bbc6402ff0c07c0bcfed7d2d9d7a72e8a5476b0fe21c97914"
+    },
+    {
+      "contract": "plans/manifests/taiji_u2_22_4_2_joint_price_20261112_v2.json",
+      "source_path": "taiji/u2_learning_transaction.py",
+      "archive": "scripts/archive/u2_learning_transaction_20261112_v1.py",
+      "sha256": "931c61e020d445c09160a85e78840a53e133825d3f040d8c646e06330c489be1"
+    },
+    {
+      "contract": "plans/manifests/taiji_u2_22_4_2_joint_price_20261112_v2.json",
+      "source_path": "taiji/u2_recovery.py",
+      "archive": "scripts/archive/u2_recovery_20261112_v3.py",
+      "sha256": "aa2ff9bffe9a8dffea81066f8302eec810a7845a5d5ce0ebb337b534a9cbc3f8"
+    },
+    {
+      "contract": "plans/manifests/taiji_u2_22_4_2_joint_price_20261112_v2.json",
+      "source_path": "taiji/u2_subject.py",
+      "archive": "scripts/archive/u2_subject_20261112_v3.py",
+      "sha256": "cf99503e2614e1b4bada401b2e4e4ce08d6cb779ebb6b84ef713e6b646fb2c2e"
+    },
+    {
+      "contract": "plans/manifests/taiji_u2_22_4_2_joint_price_20261112_v2.json",
+      "source_path": "taiji/u2_task_episode.py",
+      "archive": "scripts/archive/u2_task_episode_20261112_v2.py",
+      "sha256": "5aac567d18fdd2e198bc9096c4b58f5fc5c493041c2f4ea49eed6df95f5038f1"
+    },
+    {
+      "contract": "plans/manifests/taiji_u2_22_4_2_joint_price_20261112_v2.json",
+      "source_path": "taiji/u2_task_session.py",
+      "archive": "scripts/archive/u2_task_session_20261112_v1.py",
+      "sha256": "de2e9cb6960396350f7cb5af6a683a4fd726039656d28e237fe7d25de9d18838"
+    },
+    {
+      "contract": "plans/manifests/taiji_u2_22_4_2_joint_price_20261112_v2.json",
+      "source_path": "taiji/u2_task_world.py",
+      "archive": "scripts/archive/u2_task_world_20261112_v1.py",
+      "sha256": "cde18d7fa1040be5d752f5de4d08b363d7a2fb54b4497800e7ecde9382d57892"
+    },
+    {
+      "contract": "plans/manifests/taiji_u2_22_4_2_runtime_contract_20261112.json",
+      "source_path": "taiji/u2_events.py",
+      "archive": "scripts/archive/u2_events_20261112_v2.py",
+      "sha256": "33f04d7fc9923250e5d77b2d1acdcdac51b3e6aac0b9aabf0d39179aba5d3beb"
+    },
+    {
+      "contract": "plans/manifests/taiji_u2_22_4_2_runtime_contract_20261112.json",
+      "source_path": "taiji/u2_group_structure.py",
+      "archive": "scripts/archive/u2_group_structure_20261112_v1.py",
+      "sha256": "daabe312bff754bdd70208597f8363180dc459964b5cc7c5120610ca00d69ffa"
+    },
+    {
+      "contract": "plans/manifests/taiji_u2_22_4_2_runtime_contract_20261112.json",
+      "source_path": "taiji/u2_history.py",
+      "archive": "scripts/archive/u2_history_20261112_v2.py",
+      "sha256": "89cd2e9d178eb2ca56e020b3c160e6b7545c11303df116ff158b1315c02728f6"
+    },
+    {
+      "contract": "plans/manifests/taiji_u2_22_4_2_runtime_contract_20261112.json",
+      "source_path": "taiji/u2_history_store.py",
+      "archive": "scripts/archive/u2_history_store_20261112_v1.py",
+      "sha256": "3ac8eedfccbfe57bbc6402ff0c07c0bcfed7d2d9d7a72e8a5476b0fe21c97914"
+    },
+    {
+      "contract": "plans/manifests/taiji_u2_22_4_2_runtime_contract_20261112.json",
+      "source_path": "taiji/u2_learning_transaction.py",
+      "archive": "scripts/archive/u2_learning_transaction_20261112_v1.py",
+      "sha256": "931c61e020d445c09160a85e78840a53e133825d3f040d8c646e06330c489be1"
+    },
+    {
+      "contract": "plans/manifests/taiji_u2_22_4_2_runtime_contract_20261112.json",
+      "source_path": "taiji/u2_recovery.py",
+      "archive": "scripts/archive/u2_recovery_20261112_v2.py",
+      "sha256": "6a2af76404ee2311c37010ee06ee6edc9909307f9ca18981ab13bd9b7f65030b"
+    },
+    {
+      "contract": "plans/manifests/taiji_u2_22_4_2_runtime_contract_20261112.json",
+      "source_path": "taiji/u2_subject.py",
+      "archive": "scripts/archive/u2_subject_20261112_v2.py",
+      "sha256": "cfe785cfcdf8c8ed2f2679dc615810e0ee2014fc136d0eb7b1eaf7d37466d370"
+    },
+    {
+      "contract": "plans/manifests/taiji_u2_22_4_2_runtime_contract_20261112.json",
+      "source_path": "taiji/u2_task_executor.py",
+      "archive": "scripts/archive/u2_task_executor_20261112_v1.py",
+      "sha256": "2eb1343f505a81f1b981402aae62a2d731a1d2025154b6f5c5b5b46f162f6fae"
+    },
+    {
+      "contract": "plans/manifests/taiji_u2_22_4_2_runtime_contract_20261112.json",
+      "source_path": "taiji/u2_task_world.py",
+      "archive": "scripts/archive/u2_task_world_20261112_v1.py",
+      "sha256": "cde18d7fa1040be5d752f5de4d08b363d7a2fb54b4497800e7ecde9382d57892"
+    },
+    {
+      "contract": "plans/manifests/taiji_u2_22_4_2_runtime_contract_20261112.json",
+      "source_path": "tests/taiji_native/test_u2_physical_runtime_22_4_2.py",
+      "archive": "scripts/archive/test_u2_physical_runtime_22_4_2_20261112_v1.py",
+      "sha256": "c403fdf8cc48384f7bd7f9a3770fc347b3da9d8ff2783c0c77783602da5e1df7"
+    },
+    {
       "contract": "plans/manifests/taiji_u2_22_4_2_temporal_fixture_20261112.json",
       "source_path": "taiji/u2_task_episode.py",
       "archive": "scripts/archive/taiji_u2_task_episode_20261112_v1.py",
       "sha256": "7b370fc4ab7913737b144ebeae353d89f57d13939188a38dc47de81620677a10"
     },
     {
-      "contract": "plans/manifests/taiji_u2_22_4_2_joint_price_20261112.json",
-      "source_path": "scripts/training/verify_taiji_u2_joint_session_22_4_2.py",
-      "archive": "scripts/archive/verify_taiji_u2_joint_session_20261112_v1.py",
-      "sha256": "bcd047d5b8e619a958898a03a16d56b9ce88c4057d4af3c204ba92bd368b773f"
+      "contract": "plans/manifests/taiji_u2_22_4_2_temporal_fixture_20261112.json",
+      "source_path": "taiji/u2_task_world.py",
+      "archive": "scripts/archive/u2_task_world_20261112_v1.py",
+      "sha256": "cde18d7fa1040be5d752f5de4d08b363d7a2fb54b4497800e7ecde9382d57892"
+    },
+    {
+      "contract": "plans/manifests/taiji_u2_22_4_2_world_contract_20261112.json",
+      "source_path": "taiji/u2_events.py",
+      "archive": "scripts/archive/u2_events_20261112_v1.py",
+      "sha256": "a06ad2b4421ab972b86a03980ab1a736d48d395f2776b5c56cfa69a7664783f6"
+    },
+    {
+      "contract": "plans/manifests/taiji_u2_22_4_2_world_contract_20261112.json",
+      "source_path": "taiji/u2_history.py",
+      "archive": "scripts/archive/u2_history_20261112_v1.py",
+      "sha256": "e648e53f59418e6ad0b58b7bcc3519e5e09304ef691a6387ec09490b7664d336"
+    },
+    {
+      "contract": "plans/manifests/taiji_u2_22_4_2_world_contract_20261112.json",
+      "source_path": "taiji/u2_recovery.py",
+      "archive": "scripts/archive/u2_recovery_20261112_v1.py",
+      "sha256": "d7a1b08de6a7608c35522bd5545736be7370ab145364cad35d8703ccda8bce2b"
+    },
+    {
+      "contract": "plans/manifests/taiji_u2_22_4_2_world_contract_20261112.json",
+      "source_path": "taiji/u2_subject.py",
+      "archive": "scripts/archive/u2_subject_20261112_v1.py",
+      "sha256": "aa7a23249ad6fdaff1900000c665d575651debc498e800b8c292839ea4f736a8"
+    },
+    {
+      "contract": "plans/manifests/taiji_u2_22_4_2_world_implementation_20261112_v2.json",
+      "source_path": "taiji/u2_task_world.py",
+      "archive": "scripts/archive/u2_task_world_20261112_v1.py",
+      "sha256": "cde18d7fa1040be5d752f5de4d08b363d7a2fb54b4497800e7ecde9382d57892"
     }
   ]
 }

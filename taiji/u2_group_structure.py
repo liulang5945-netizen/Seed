@@ -99,8 +99,8 @@ def ancestry_compatible(root, config):
     current = asdict(config)
     # Old value-only bundles predate these optional graph fields.
     original = dict(root)
-    for key in ("record_metadata", "base_units", "group_units"):
-        original.setdefault(key, False if key == "record_metadata" else None)
+    for key in ("record_metadata", "separate_requests", "base_units", "group_units"):
+        original.setdefault(key, False if key in {"record_metadata", "separate_requests"} else None)
     ignored = {"units", "base_units", "group_units"}
     if set(original) != set(current) or any(
         value != current[name] for name, value in original.items() if name not in ignored

@@ -65,6 +65,7 @@ class U2Config:
     record_metadata: bool = False
     base_units: int | None = None
     group_units: tuple[int, ...] | None = None
+    separate_requests: bool = False
 
     def __post_init__(self) -> None:
         if (
@@ -91,6 +92,8 @@ class U2Config:
             raise ValueError("invalid modality or group profile")
         if type(self.record_metadata) is not bool:
             raise ValueError("Invalid metadata graph flag")
+        if type(self.separate_requests) is not bool:
+            raise ValueError("Invalid native request profile flag")
         if self.group_units is None:
             if self.base_units is not None:
                 raise ValueError("A base width requires actual group widths")
@@ -580,7 +583,15 @@ class U2Subject(_WorldKernel):
         """Fork the parameter graph; the caller declares its new genesis state."""
         if self.c.record_metadata:
             raise ValueError("Record metadata is already enabled")
-        model = U2Subject(replace(self.c, record_metadata=True)).to(
+        return self._fork_candidate(record_metadata=True)
+
+    def request_candidate(self) -> U2Subject:
+        if self.c.separate_requests:
+            raise ValueError("Native requests are already enabled")
+        return self._fork_candidate(separate_requests=True)
+
+    def _fork_candidate(self, **options) -> U2Subject:
+        model = U2Subject(replace(self.c, **options)).to(
             dtype=self.native_w.dtype, device=self.native_w.device
         )
         values = model.state_dict()
@@ -672,9 +683,43 @@ class U2Subject(_WorldKernel):
                 "released_feedback_records": (),
             }
         )
+        if self.c.separate_requests:
+            state.update(answer_request=None, utterance_request=None)
+            state["nu"][4], state["nu"][12] = 0, 0
+            schema = list(state["nu_measurement_schema"])
+            schema[4] = "pending_answer_request"
+            state["nu_measurement_schema"] = tuple(schema)
         return state
 
+    def language_goal(self, state):
+        from .u2_request_state import active_request
+
+        raw = (
+            state["answer_request"]["raw"]
+            if self.c.separate_requests and active_request(state)
+            else state["goal_raw"]
+        )
+        return self.goal(raw)
+
+    def set_request(self, state, identity, raw, version=1):
+        from .u2_request_state import set_request
+
+        return set_request(self, state, identity, raw, version)
+
+    def cancel_request(self, state, identity, version):
+        from .u2_request_state import cancel_request
+
+        return cancel_request(self, state, identity, version)
+
     def set_goal(self, state: Any, raw: Any, version: Any = None) -> Any:
+        if self.c.separate_requests and state["utterance_active"]:
+            raise ValueError("persistent_goal_change_requires_utterance_boundary")
+        if (
+            self.c.separate_requests
+            and version is not None
+            and (type(version) is not int or version <= state["goal_version"])
+        ):
+            raise ValueError("persistent_goal_version_must_increase")
         child = dict(state)
         child["goal_raw"] = raw.encode() if isinstance(raw, str) else bytes(raw)
         child["goal_version"] = state["goal_version"] + 1 if version is None else int(version)
@@ -1066,6 +1111,10 @@ class U2Subject(_WorldKernel):
         child.update(
             utterance_active=True, previous_byte=256, utf8_remaining=0, utf8_lead=0, data_bytes=0
         )
+        if self.c.separate_requests:
+            from .u2_request_state import bind_utterance
+
+            child = bind_utterance(self, state, child)
         return child
 
     def output(self, state: Any, goal: Any, action: Any, previous: Any = None) -> Any:
@@ -1099,6 +1148,10 @@ class U2Subject(_WorldKernel):
         )
         if symbol == 256:
             child["utterance_active"] = False
+            if self.c.separate_requests:
+                from .u2_request_state import finish_utterance
+
+                child = finish_utterance(state, child)
             return child
         child["previous_byte"] = int(symbol)
         child["data_bytes"] += 1
@@ -1645,6 +1698,10 @@ class U2Subject(_WorldKernel):
         from .u2_group_structure import validate_structure
 
         validate_structure(self)
+        if self.c.separate_requests:
+            from .u2_request_state import validate
+
+            validate(self, state)
         if set(state) != set(self.state_registry()):
             raise ValueError("unregistered subject state")
         if state["structure"] != self.structure():
@@ -1659,9 +1716,13 @@ class U2Subject(_WorldKernel):
             self.validate_pending_receipt(state["pending"])
         return {
             "schema": (
-                "taiji-u2-subject-v3"
-                if self.c.record_metadata or self.c.group_units is not None
-                else "taiji-u2-subject-v2"
+                "taiji-u2-subject-v4"
+                if self.c.separate_requests
+                else (
+                    "taiji-u2-subject-v3"
+                    if self.c.record_metadata or self.c.group_units is not None
+                    else "taiji-u2-subject-v2"
+                )
             ),
             "credit_contract": {
                 "critic": "behavior_features_under_frozen_Psi",
@@ -1681,18 +1742,23 @@ class U2Subject(_WorldKernel):
             "taiji-u2-subject-v1",
             "taiji-u2-subject-v2",
             "taiji-u2-subject-v3",
+            "taiji-u2-subject-v4",
         }:
             raise ValueError("unsupported bundle schema")
         if bundle["schema"] == "taiji-u2-subject-v1" and bundle["state"].get("pending") is not None:
             raise ValueError("pending v1 bundle lacks recoverable critic/window credit inputs")
-        if bundle["schema"] in {"taiji-u2-subject-v2", "taiji-u2-subject-v3"} and bundle.get(
-            "credit_contract"
-        ) != {
+        if bundle["schema"] in {
+            "taiji-u2-subject-v2",
+            "taiji-u2-subject-v3",
+            "taiji-u2-subject-v4",
+        } and bundle.get("credit_contract") != {
             "critic": "behavior_features_under_frozen_Psi",
             "body_graph": "values_only_requires_window_replay",
         }:
             raise ValueError("bundle credit contract differs from supported recovery scope")
         model = cls(U2Config(**bundle["config"]))
+        if (bundle["schema"] == "taiji-u2-subject-v4") != model.c.separate_requests:
+            raise ValueError("request_profile_schema_mismatch")
         first = next(iter(bundle["parameters"].values()))
         model = model.to(dtype=first.dtype, device=first.device)
         model.load_state_dict(bundle["parameters"])
@@ -1707,6 +1773,10 @@ class U2Subject(_WorldKernel):
         state = clone_tree(bundle["state"], detach=True)
         if set(state) != set(model.state_registry()) or state["structure"] != model.structure():
             raise ValueError("bundle state registry mismatch")
+        if model.c.separate_requests:
+            from .u2_request_state import validate
+
+            validate(model, state)
         if state["revision"] != model.parameter_revision or any(
             row["parameter_revision"] != model.parameter_revision for row in state["history"]
         ):

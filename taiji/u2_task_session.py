@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import time
+from typing import Any
 
 from .u2_history import assert_values_equal, value_digest
 from .u2_recovery import U2Runtime
@@ -39,8 +40,8 @@ def run_joint_session(runtime, names, directory, *, cpu_cap=None):
     subject_id = runtime.state["subject_id"]
     parameter_id = value_digest(runtime.model.state_dict())
     facts = []
-    answers = []
-    sessions = []
+    answers: list[dict[str, Any]] = []
+    sessions: list[dict[str, Any]] = []
 
     def guard():
         if cpu_cap is not None and time.process_time() > cpu_cap:

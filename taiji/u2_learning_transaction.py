@@ -53,6 +53,9 @@ def _deadline(seconds: float) -> float:
 
 def _fact_view(state: dict[str, Any]) -> dict[str, Any]:
     view = {name: state[name] for name in FACT_FIELDS}
+    for name in ("answer_request", "utterance_request"):
+        if name in state:
+            view[name] = state[name]
     # The original parameter version remains in the factual evidence. Its shadow
     # counterpart was calculated by the current model during reencoding.
     view["evidence"] = [
@@ -159,6 +162,10 @@ class _HistoryReplay:
             self.state = self.model.set_goal(self.state, **arguments)
         elif kind == "records":
             self.state = self.model.set_records(self.state, **arguments)
+        elif kind == "request":
+            self.state = self.model.set_request(self.state, **arguments)
+        elif kind == "cancel_request":
+            self.state = self.model.cancel_request(self.state, **arguments)
         elif kind == "choose":
             self.decision = detached_tree(operation["expected"])
         elif kind == "issue":
@@ -180,7 +187,7 @@ class _HistoryReplay:
             self.state = self.model.begin_utterance(self.state)
         elif kind == "emit":
             for symbol in arguments["symbols"]:
-                goal = self.model.goal(self.state["goal_raw"])
+                goal = self.model.language_goal(self.state)
                 _, _, output = self.model.output(self.state, goal, self.state["prediction_action"])
                 self.state = self.model.accept_byte(self.state, symbol, output)
                 self.counts["bytes"] += int(symbol != 256)

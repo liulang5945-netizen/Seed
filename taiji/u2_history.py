@@ -223,6 +223,8 @@ class CausalHistory:
             raise ValueError("Unregistered raw operation fields")
         kinds = {
             "goal",
+            "request",
+            "cancel_request",
             "records",
             "choose",
             "issue",

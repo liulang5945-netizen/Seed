@@ -1,18 +1,18 @@
 # MASTER-PLAN（唯一权威主线）
 
-> 文档状态：[主线] — 2026-11-12。22.4.1接口与恢复工程已结案，当前22.4.2连续世界，随后完成分区与实价。
+> 文档状态：[主线] — 2026-11-12。22.4.1接口与恢复工程已结案，22.4.A.1原生请求/全字节基线工程已交付，当前22.4.A.2冻结A/B对照与实价。
 
 ## 0. 一句话与队首
 
 **唯一主线**沿N发展同一可学习、可恢复、按需生长的持续主体，使自驱、递归改进、经验学习与多模态物理认知形成可验证闭环。
 
-**队首（唯一）**：22.4.A.1，先补原生目标/请求角色与完整输入对照，再冻结首轮A/B学习预算及checkpoint门。owner已选学习前置，0新增训练。
+**队首（唯一）**：22.4.A.2，冻结单帧/多实体A与时间B的范围、train/fit与未见轴、新源强基线身份、同资源配平、数值门与学习步数/停止。22.4.A.1已按[工程回执](reference/VALIDATION-TAIJI-U2_22_4_A_1_20261112.md)交付原生goal/request分离与全字节基线，0新增训练；owner已选学习前置。
 
 22.3已按[工程结案](reference/VALIDATION-TAIJI-U2_22_3_CLOSEOUT_20261111.md)通过，交付[接受父](manifests/taiji_u2_22_3_accepted_parent_20261111.json)。8次attempt消耗完毕，其中6次真实Adam.step，8份S12/worker和8规范存档全部核验。最终runtime v3/原始链v2覆盖12类状态、34组float32/64独立接续，191参数逐项梯度最大差0，闭包0新增step。当前接受small profile未训练初始化，能力资格为空，22.4冻结有效任务及实价后再准入22.5。
 
 当前设计为[U2完整主体闭环候选](reference/SPEC-TAIJI-CLOSED_LOOP_U2_20261110.md)。U2正式参考图已按[22.2回执](reference/VALIDATION-TAIJI-U2_22_2_20261110.md)完成工程核验，191参数/40状态字段已登记，真实语义任务与持续能力仍待后继验收。唯一后继按[执行包22](reference/PLAN-TAIJI-CLOSED_LOOP_DEVELOPMENT_20261110.md)逐卡准入。22.1已按[v2回执](reference/VALIDATION-TAIJI-U2_22_1_20261110.md)结案为`passed_local_math_only`，13组局部核验与52个差分坐标通过。22.2仅签参考图工程，原等值读数的运行条件缺口已另附零步补证，跨进程更新一致性归22.3。合成夹具目标/标签不一致已记入22.4训练前硬门。
 
-22.4.0的[任务语义与信息权利合同](reference/SPEC-TAIJI-U2_TASK_SEMANTICS_22_4_20261111.md)已有23项微型检查。22.4.1已按[工程结案](reference/VALIDATION-TAIJI-U2_22_4_1_CLOSEOUT_20261112.md)完成元数据入口、逐群接口、u2正式单步及u3/u4恢复。5/5名额结清，记录3次工程optimizer调用，其中2次获接受post；本轮新增1次，u3/u4按既定无迁移规则各0步。独立进程194参数×4类损失共776项梯度比较最大差0，相关124项回归通过。能力资格为空，22.4.2.1现已冻结世界合同，22.4.2.2已完成纯世界实现，22.4.2.3已验完整主体接续，当前22.4.2.4任务可辨性。
+22.4.0的[任务语义与信息权利合同](reference/SPEC-TAIJI-U2_TASK_SEMANTICS_22_4_20261111.md)已有23项微型检查。22.4.1已按[工程结案](reference/VALIDATION-TAIJI-U2_22_4_1_CLOSEOUT_20261112.md)完成元数据入口、逐群接口、u2正式单步及u3/u4恢复。5/5名额结清，记录3次工程optimizer调用，其中2次获接受post；本轮新增1次，u3/u4按既定无迁移规则各0步。独立进程194参数×4类损失共776项梯度比较最大差0，相关124项回归通过。能力资格为空，22.4.2连续世界与任务工程已收束（见下段盘点），owner裁定A/B学习前置后队首转入22.4.A线；22.4.A.1已交付，当前22.4.A.2。
 
 当前全局盘点见[物理主体与任务收束](reference/CONSOLIDATION-TAIJI_U2_WORLD_TASKS_20261112.md)。本轮连续交付22.4.2.2、22.4.2.3与时间任务/课程接口；三会话冷主体18题为0/18。两次运行CPU159.22/135.48，后者超过冻结120门，按更正旁账budget_stop结算。追加完整冷运行已停止，owner已裁定先冻结A/B必要对照与预算并进行首次有界学习，C/D/J承接实际学习父。
 
@@ -61,6 +61,8 @@
 **逐轮一行（2026-11-12 u2 端到端 evidence-only 证据与 R06 发现）**：能力账**未新增条目**——证据只签"代码路径可跑通"，0 数据读取／未动 22.4.1 额度／未申请放行。①按三条约束完成一次性证据：`run_start→open→close` 齐全且每次 append 都 fsync，另加 close 后的 `annotation` 记 CPU／wall／账本路径；独立账本 `reports/taiji_u2_22_4_1_EVIDENCE_ONLY_20261112_attempts.ndjson`（4 行，`b2ddf456…`），`open` 行带 `evidence_only=true`，准入 `attempts_consumed` 仍 0。②读数：21,977/35 图上一步 Adam，**35/35** 参数有变化（`change` 0.00099998–0.00100005、`margin` 99,997.97–100,004.67、`barely_live=[]`）；`parent.bin`/`post.bin` 五项读回通过；worker `verdict=pass`、`adam_equations=35`；CPU 14.66 s／wall 59.42 s（帽 120／240）。③产物全部入库：证据报告 `fd07833d…`、S12 `82b4b526…`、worker `7f3a4eca…`、run 根 `reports/taiji_u2_22_4_1_20261112TEVID01Z/`（生成器 `scripts/training/evidence_taiji_u2_end_to_end_22_4_1.py`，create-once）。④**新阻断发现 F-20261112-E2E-01**：准入 manifest 的 u2 行 `precision="按22.4.4冻结身份"`，`check_r06` 却要求逐字相等，真实 `run.json` 写 `float32` 会退 3——这是架构层面"占位文案被当判据"的缺口，需 owner 先裁定（推荐 A：改回 `float32` 并重签 pin）。⑤证据落盘后自检仍 61 条全过、`optimizer_step_calls=0`。详见 [D-20261112-24](reference/DECISION-LEDGER_20261109.md)。
 
 **逐轮一行（2026-11-12 F-01 裁定 A：准入占位清零与下游重钉）**：能力账**未新增条目**——只签"R06 对 u2 的判据第一次能真正判真"，0 训练／0 `optimizer.step`／0 数据读取／未申请放行，R01–R12 判据、编号与退码未动。①准入 u2 行 `precision` 由 `"按22.4.4冻结身份"` **改实为 `"float32"`**，`u2.model` 同步改实；before/after／理由／判据未动／强度论证写进 `amendments` 机读块（不只写在台账）。②同类占位**一次扫清**：u1/u2 全部 measured；u3/u4 的 `model` 标 `pending_identity`（拒门 C10／C10+C11，补齐责任在 u1/u2 读数后的执行线）；执行清单 u1 补 `identity_status=filled`、u3/u4 补 `pending_*`；两文件各新增 `identity_settlement`。③下游重钉：准入 `05d8bc68…52bc`→**`34792bfb…4329`**、v2 `4fc2d042…4965`→**`b80f8b56…7f87`**、u2 草稿 `638cbc23…28c9`→**`70ae1f25…4bc2`**；u1 草稿与 v1、已入库证据/S12 **保留旧值只登记**（重放按 R04 退 5 属预期）。④0 步自检 61→**62 条**（新增 `u2_bound_r06_real_precision_accepted` 正向见证）全过、`failed=0`、`optimizer_step_calls=0`、cpu 7.48／wall 19.86；`r06_precision_mismatch` 仍退 3；u1 五产物哈希未变、`check_r05` 与 u1 调用顺序未动。⑤覆盖台账 69→**70 行**，未覆盖仍 **18**；**u2 因占位被拒的门 = 0**（改前 1，即 R06），u3/u4 各 2 道（C10／C11，成因是迁移方案未冻结，不是文案）。详见 [D-20261112-25](reference/DECISION-LEDGER_20261109.md)。
+
+**逐轮一行（2026-11-12 执行包22.4.A.1原生请求与全字节基线）**：能力账**未新增条目**——只签"原生持续goal/当前request分离与完整输入基线工程可运行、可信用、可恢复"，0训练／0 `optimizer.step`／0项目数据读取。①`separate_requests`profile：`request_candidate()`继承194张量逐字不变（22,742标量），状态登记40→42，`request`/`cancel_request`历史原子、goal仅utterance边界变更且版本严格递增，`language_goal`用活跃请求字节，v4 bundle拒v3冒充；float32/64回答NLL梯度到达请求编码/text_input/native嵌入，半截utterance保存/加载/重建逐值一致，同内容异id读取逐位相同。②`TaskSequenceBaseline`（GRU 23,509/34＋3.37%、因果Transformer 22,373/45−1.62%，均±10%带内）逐字复用native前端，交付[审计](../reports/taiji_u2_baseline_task_entry_audit_20261112.json)五项适配，当前/历史请求前缀碰撞消除；**新源身份未冻、实价未测**，22.4.4旧8步身份不得复用，重冻归A.2。③新增19测试全过（CPU4.71875/wall6.71038）、u2全套218全过；u1冻结产物与22.4.1执行图不受影响。④mypy棘轮恢复：HEAD 5条＋WIP 8条共13条纯标注修复，0错/248文件，ruff/black全绿。⑤[源覆盖清单](manifests/taiji_u2_22_4_2_source_overlays_20261112.json)新增18存档＋34登记（共36，sha0失配），闭合6份冻结合同失效pin及HEAD既存可恢复旧pin；v1失败回执3条pin从未入库、不可恢复，登记已知限制不伪造。详见[D-20261112-33](reference/DECISION-LEDGER_20261109.md)与[回执](reference/VALIDATION-TAIJI-U2_22_4_A_1_20261112.md)。
 
 ## 1. 状态表
 

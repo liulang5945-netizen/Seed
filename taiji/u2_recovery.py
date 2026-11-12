@@ -57,6 +57,7 @@ def _source_pins() -> dict[str, str]:
         "u2_recovery.py",
         "u2_history.py",
         "u2_history_store.py",
+        "u2_request_state.py",
         "u2_task_executor.py",
         "u2_events.py",
         "u2_learning_transaction.py",
@@ -489,6 +490,23 @@ class U2Runtime:
         return cast(dict[str, Any], decision)
 
     @_history_atomic
+    def set_request(self, identity: str, raw: str | bytes, version: int = 1):
+        self._check_window()
+        if self.last_decision is not None:
+            raise ValueError("request_requires_uncommitted_decision_resolution")
+        self.state = self.model.set_request(self.state, identity, raw, version)
+        self._record("request", {"identity": identity, "raw": raw, "version": version})
+        return self.state["answer_request"]
+
+    @_history_atomic
+    def cancel_request(self, identity: str, version: int):
+        self._check_window()
+        if self.last_decision is not None:
+            raise ValueError("request_requires_uncommitted_decision_resolution")
+        self.state = self.model.cancel_request(self.state, identity, version)
+        self._record("cancel_request", {"identity": identity, "version": version})
+
+    @_history_atomic
     def issue(self, decision: dict[str, Any] | None = None, dt: float = 0.05) -> str:
         self._check_window()
         chosen = self.last_decision if decision is None else decision
@@ -632,7 +650,7 @@ class U2Runtime:
         return self.state
 
     def output(self) -> tuple[Any, Any, Any]:
-        goal = self.model.goal(self.state["goal_raw"])
+        goal = self.model.language_goal(self.state)
         return cast(
             tuple[Any, Any, Any],
             self.model.output(self.state, goal, self.state["prediction_action"]),
@@ -989,6 +1007,10 @@ class U2Runtime:
             self.set_goal(**args)
         elif kind == "records":
             self.set_records(**args)
+        elif kind == "request":
+            self.set_request(**args)
+        elif kind == "cancel_request":
+            self.cancel_request(**args)
         elif kind == "choose":
             decision = self.choose(**args)
             assert_values_equal(operation["expected"], decision, "replayed_decision")

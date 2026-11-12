@@ -96,7 +96,7 @@ class PagedCausalHistory(CausalHistory):
         )
 
     @classmethod
-    def restore(cls, payload):
+    def restore(cls, payload) -> PagedCausalHistory:
         required = {
             "schema",
             "root",

@@ -253,7 +253,7 @@ def acquisition_fixture(seed, initial_x, known):
         "truth": truth,
         "answers": {"inspect": inspect_answer, "wait": wait_answer},
         "utilities": utilities,
-        "best": max(utilities, key=utilities.get),
+        "best": max(utilities, key=lambda name: utilities[name]),
         "source": "public history and calibrated fresh inspect RGB; constant neutral execution Outcome",
     }
 

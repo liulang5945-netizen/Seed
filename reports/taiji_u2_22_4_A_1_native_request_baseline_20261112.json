@@ -1,0 +1,123 @@
+{
+  "schema": "taiji-u2-22-4-a1-engineering-report-v1",
+  "card": "22.4.A.1",
+  "verdict": "passed_engineering_with_recorded_limits",
+  "scope": "native persistent-goal/current-request separation and full public-stream task baselines; no learning claim",
+  "native_request_interface": {
+    "config_flag": "U2Config.separate_requests",
+    "candidate": "request_candidate() forks metadata_candidate; all 194 parameter tensors inherited verbatim",
+    "parameter_scalars": 22742,
+    "parameter_tensors": 194,
+    "state_registry_base": 40,
+    "state_registry_request": 42,
+    "new_state_fields": [
+      "answer_request",
+      "utterance_request"
+    ],
+    "measurement_slots": {
+      "nu[4]": "active request indicator",
+      "nu[12]": "reserved zero"
+    },
+    "history_operations": [
+      "request",
+      "cancel_request"
+    ],
+    "bundle_schema": "taiji-u2-subject-v4",
+    "goal_rule": "goal changes only at utterance boundaries with strictly increasing goal_version",
+    "reading_rule": "language_goal uses active answer_request raw bytes; persistent goal_raw unchanged",
+    "credit": "answer NLL gradients reach request encoding, text_input and native embedding in float32/64",
+    "recovery": "partial utterance survives save/load and full history rebuild; request identity bound to utterance"
+  },
+  "full_stream_baselines": {
+    "module": "taiji/u2_task_baselines.py",
+    "frontend": "native trainable encoders reused verbatim (encoder/metadata/modality/embedding/text_input/convolutions/goal/outcome/action/record metadata/provenance)",
+    "intake": "full UTF-8 goal and request text, role tags, real coordinates, missing modalities, action/outcome/record events",
+    "state": "continuous GRU hidden or causal Transformer keys/values with parameter_revision reencoding and source-pinned save/load",
+    "identity": {
+      "gru": {
+        "scalars": 23509,
+        "tensors": 34,
+        "deviation_pct_vs_22742": 3.3726
+      },
+      "transformer": {
+        "scalars": 22373,
+        "tensors": 45,
+        "deviation_pct_vs_22742": -1.6225
+      }
+    },
+    "parity_band": "both within 22.4.4 +/-10% parameter band; identity and actual pricing NOT yet frozen (22.4.A.2)",
+    "prefix_collision": "current vs historical request produce distinct readouts; full question length > 8 tokens",
+    "budget": "explicit max_tokens sequence_budget_stop; no silent truncation"
+  },
+  "audit_resolution": {
+    "audit": "reports/taiji_u2_baseline_task_entry_audit_20261112.json",
+    "full_utf8_intake": "delivered",
+    "actual_coordinates_and_missing": "delivered",
+    "actual_actions_and_outcomes": "delivered",
+    "continuous_state_and_recovery": "delivered",
+    "same_public_records_and_metadata": "delivered",
+    "new_source_identity_and_actual_pricing": "pending_22_4_A_2",
+    "goal_request_role_audit": "reports/taiji_u2_goal_request_role_audit_20261112.json; J per-question goal_raw replacement superseded by native answer_request for request-profile subjects"
+  },
+  "checks": {
+    "new_tests": 19,
+    "new_tests_passed": 19,
+    "u2_suite_passed": 218,
+    "u2_suite_failed": 0,
+    "mypy_core": "mypy --follow-imports=silent seed taiji: 0 errors in 248 files (HEAD had 5, WIP added 8; all fixed annotation-only)",
+    "ruff": "clean incl. B/SIM ratchet",
+    "black": "clean"
+  },
+  "cost": {
+    "new_tests_cpu_seconds": 4.71875,
+    "new_tests_wall_seconds": 6.71038,
+    "u2_suite_wall_seconds": 60.93,
+    "identity_probe_cpu_seconds": 0.1094,
+    "budget_source": "22.4 generation/partition subitem; engineering only"
+  },
+  "source_overlays": {
+    "manifest": "plans/manifests/taiji_u2_22_4_2_source_overlays_20261112.json",
+    "new_archives": 18,
+    "total_entries": 36,
+    "unrecoverable_v1_pins": [
+      {
+        "contract": "plans/manifests/taiji_u2_22_4_2_world_implementation_20261112.json",
+        "path": "taiji/u2_task_world.py",
+        "sha256": "abac4595d68dda205641dafe89a8f8157c06ac8daef9b636b0c0c1b8b486619c"
+      },
+      {
+        "contract": "plans/manifests/taiji_u2_22_4_2_world_implementation_20261112.json",
+        "path": "scripts/training/verify_taiji_u2_physical_world_22_4_2.py",
+        "sha256": "570c1e2f0b3ce77c522fdfdb4dd23079c10387cf7d8917873adc9ca405c4a30d"
+      },
+      {
+        "contract": "plans/manifests/taiji_u2_22_4_2_world_implementation_20261112.json",
+        "path": "tests/taiji_native/test_u2_task_world_22_4_2.py",
+        "sha256": "7993f0ba7fd62bda2ddf48edf41b02b5979e1ab993aae8286f3e6179fed13e76"
+      }
+    ],
+    "note": "the three unrecoverable pins belong to the superseded v1 failure receipt whose bytes were never committed; v2 amendment governs; no fabrication"
+  },
+  "limits": [
+    "0 optimizer steps, 0 training, 0 project data reads; capability qualifications remain empty",
+    "baseline identity and actual compute pricing not frozen; 22.4.4 identity refers to the old 8-step entry and must not be reused for the full-stream baselines",
+    "request interface verified on synthetic fixtures only; real task learning benefit untested",
+    "u2 strong-baseline arm of 22.4.1 remains bound to its own frozen execution graph; this card does not alter it"
+  ],
+  "source_pins": {
+    "taiji/u2_subject.py": "01d54b472e6cc99728ca45b94aeb556148498081ce1128cf28f8bed2d8784025",
+    "taiji/u2_request_state.py": "80422d30fd3413b446a9306f9c7ca335b281f9216f46a285c17572ea2f43a8dc",
+    "taiji/u2_recovery.py": "2c9f525e48de65cbcd4b709ac1f39215f041cca8b3d28106f4ab228436467673",
+    "taiji/u2_history.py": "2e1a5cca3dcbd0138ae37e3c35da1170b24614d6647ee89e74ec2867d744ecf9",
+    "taiji/u2_history_store.py": "2133a22032e967af257cc8527891e6a029df32ddb18c0a95da2834c22592de3f",
+    "taiji/u2_learning_transaction.py": "fe6c3bfd1d7c695b93898c8de1a9bb0a9e5dd2ac728db37dc52043ff361f8337",
+    "taiji/u2_group_structure.py": "8131bffd6b904f27987c2b3a3846781ba4d1008ec634c7b86241626991e85176",
+    "taiji/u2_task_baselines.py": "28a8ffde3b918f9f0f15c50a88f8fc90fc5a098a7c184222ba57e06c532ab203",
+    "taiji/u2_task_world.py": "ae696d423e09be09c936dcbc8e3473e28c2c2c927f843bace21150c52d5d2e45",
+    "taiji/u2_task_episode.py": "fc5dbed68c9a428c4ec8725ba2d454564f153b8e60ed1d16fa7cfc13d16ab470",
+    "taiji/u2_task_session.py": "ecbbe69493f20024351cbd2c75502b2508016d756a0c9839016a7a55b4203b12",
+    "tests/taiji_native/test_u2_request_state.py": "1a4eb96c8d1bc4679f27ff439a3b525aca172b4e9ebfd770eec266adf8854f9e",
+    "tests/taiji_native/test_u2_task_baselines.py": "1bda30d24f4e8867ac5208b9cb865bfc3a54bfc525734a47bfd7cb847f4d6db4"
+  },
+  "next_card": "22.4.A.2"
+}
