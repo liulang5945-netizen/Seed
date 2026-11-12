@@ -1,0 +1,167 @@
+{
+  "schema": "taiji-u2-world-design-verification-v1",
+  "verdict": "frozen_design_contract_verified",
+  "contract_sha256": "f8617e59d7f4740822284d556e4a6196b1f852ef282a80e7da39cc43b93243fc",
+  "checks": [
+    {
+      "id": "W01",
+      "passed": true,
+      "detail": "design scope"
+    },
+    {
+      "id": "W02",
+      "passed": true,
+      "detail": "world dt and pulse separated"
+    },
+    {
+      "id": "W03",
+      "passed": true,
+      "detail": "finite positive physical domains"
+    },
+    {
+      "id": "W04",
+      "passed": true,
+      "detail": {
+        "local_collision_energy_max_error": 2.710505431213761e-20
+      }
+    },
+    {
+      "id": "W05",
+      "passed": true,
+      "detail": "drag and fractional pulse local identities"
+    },
+    {
+      "id": "W06",
+      "passed": true,
+      "detail": {
+        "rgb_shape": [
+          16,
+          48
+        ],
+        "crop_inside_arena": true
+      }
+    },
+    {
+      "id": "W07",
+      "passed": true,
+      "detail": "audio shape and magnitude bound"
+    },
+    {
+      "id": "W08",
+      "passed": true,
+      "detail": "proprio 1x16 and fixed coordinates"
+    },
+    {
+      "id": "W09",
+      "passed": true,
+      "detail": "public fields and feedback clock"
+    },
+    {
+      "id": "W10",
+      "passed": true,
+      "detail": "transaction and restore obligations"
+    },
+    {
+      "id": "W11",
+      "passed": true,
+      "detail": {
+        "existing_entry_limit": 96,
+        "B_minimum": 192,
+        "B_reserve": 584,
+        "segmented_capacity": 1536
+      }
+    },
+    {
+      "id": "W12",
+      "passed": true,
+      "detail": "future task gates retained"
+    },
+    {
+      "id": "W13",
+      "passed": true,
+      "detail": "static and local algebra scope"
+    }
+  ],
+  "negative_controls": [
+    {
+      "path": [
+        "action",
+        "world_dt",
+        "act"
+      ],
+      "caught_by": "W02"
+    },
+    {
+      "path": [
+        "physics",
+        "restitution"
+      ],
+      "caught_by": "W03"
+    },
+    {
+      "path": [
+        "audio",
+        "center"
+      ],
+      "caught_by": "W07"
+    },
+    {
+      "path": [
+        "permissions",
+        "public"
+      ],
+      "caught_by": "W09"
+    },
+    {
+      "path": [
+        "permissions",
+        "arrival_clock"
+      ],
+      "caught_by": "W09"
+    },
+    {
+      "path": [
+        "interface",
+        "duplicate_changed_command"
+      ],
+      "caught_by": "W10"
+    },
+    {
+      "path": [
+        "history",
+        "max_pages"
+      ],
+      "caught_by": "W11"
+    },
+    {
+      "path": [
+        "scope",
+        "optimizer_steps"
+      ],
+      "caught_by": "W13"
+    }
+  ],
+  "scope": {
+    "model_forwards": 0,
+    "optimizer_steps": 0,
+    "world_rollouts": 0,
+    "project_data_reads": 0,
+    "check_reads": 0,
+    "final_reads": 0,
+    "capability_qualifications": []
+  },
+  "cpu_seconds": 0.125,
+  "wall_seconds": 0.06299999996554106,
+  "run_conditions": {
+    "device": "cpu",
+    "arithmetic": "python_float64",
+    "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]"
+  },
+  "pending": [
+    "world implementation and actual trajectories",
+    "float32/64 codec and subject graph",
+    "executor dispatch and exogenous intent",
+    "segmented history and full recovery",
+    "legal-history oracle and task behavior"
+  ]
+}

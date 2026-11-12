@@ -1,0 +1,309 @@
+{
+  "schema": "taiji-u2-world-design-contract-v1",
+  "status": "frozen_design",
+  "card": "22.4.2.1",
+  "source_pins": {
+    "taiji/u2_subject.py": "aa7a23249ad6fdaff1900000c665d575651debc498e800b8c292839ea4f736a8",
+    "taiji/u2_recovery.py": "d7a1b08de6a7608c35522bd5545736be7370ab145364cad35d8703ccda8bce2b",
+    "taiji/u2_events.py": "a06ad2b4421ab972b86a03980ab1a736d48d395f2776b5c56cfa69a7664783f6",
+    "taiji/u2_history.py": "e648e53f59418e6ad0b58b7bcc3519e5e09304ef691a6387ec09490b7664d336",
+    "plans/reference/SPEC-TAIJI-U2_WORLD_22_4_2_20261112.md": "3407bca28ddfce704d19fabd9be572c2e47a95b682b834d888421bbfb1d1201c",
+    "reports/taiji_u2_22_4_1_closeout_20261112.json": "8253573e5a44ed4df0a4c3aaf8003a592ac4e59192419e8126d631ecb769fd62"
+  },
+  "physics": {
+    "arena": [
+      -1,
+      1
+    ],
+    "objects": [
+      1,
+      3
+    ],
+    "radii": [
+      0.14,
+      0.18
+    ],
+    "masses": [
+      0.5,
+      1,
+      2
+    ],
+    "drag_rates": [
+      0.5,
+      1,
+      2
+    ],
+    "restitution": 0.2,
+    "force_scale": 80,
+    "tool_radius": 0.1,
+    "tick": 0.05,
+    "substep_max": 0.001,
+    "max_substeps": 8192,
+    "contact_passes": 16,
+    "penetration_tolerance": 1e-09,
+    "normal_velocity_tolerance": 1e-08,
+    "initial_gap": 0.08,
+    "initial_wall_gap": 0.04,
+    "initial_speed": 0.2,
+    "placement_attempts": 1024,
+    "pulse": "overlap_fraction",
+    "integration": "implicit_drag_then_position_then_contacts"
+  },
+  "camera": {
+    "side": 16,
+    "patch": 4,
+    "spatial_offsets": [
+      0.25,
+      0.75
+    ],
+    "temporal_samples": 4,
+    "passive_exposure": 0.004,
+    "inspect_half_extent": "1-0.75*intensity",
+    "inspect_center": "(1-half_extent)*target",
+    "zero_exposure": "missing",
+    "background": [
+      24,
+      26,
+      30
+    ],
+    "occluder_rgb": [
+      96,
+      96,
+      96
+    ],
+    "palette": [
+      [
+        220,
+        45,
+        45
+      ],
+      [
+        45,
+        90,
+        220
+      ],
+      [
+        45,
+        190,
+        80
+      ],
+      [
+        230,
+        190,
+        40
+      ],
+      [
+        170,
+        60,
+        200
+      ],
+      [
+        40,
+        190,
+        195
+      ]
+    ],
+    "quantization": "uint8_round_half_even",
+    "y_axis": "up",
+    "noise_base": 0.00784313725490196,
+    "noise_reference_duration": 0.016,
+    "noise_cap": 0.1
+  },
+  "audio": {
+    "rate": 16000,
+    "samples": 256,
+    "fft": 64,
+    "hop": 32,
+    "frequencies": [
+      400,
+      700,
+      1000
+    ],
+    "decay_seconds": 0.012,
+    "impulse_scale": 0.5,
+    "amplitude_cap": 0.8,
+    "noise_std": 0.0001,
+    "center": false,
+    "normalized": false,
+    "onesided": true,
+    "periodic_hann": true,
+    "transform": "log1p_abs_stft",
+    "initial": "missing"
+  },
+  "proprio": {
+    "channels": [
+      "target_x",
+      "target_y",
+      "force_x",
+      "force_y",
+      "intensity",
+      "scaled_duration",
+      "reaction_x",
+      "reaction_y"
+    ],
+    "valid_bits": 8,
+    "reaction_scale": 4,
+    "reaction_noise_std": 0.005,
+    "coordinates": "all_zero"
+  },
+  "action": {
+    "width": 15,
+    "operations": [
+      "act",
+      "express",
+      "inspect",
+      "ask",
+      "replay",
+      "consolidate",
+      "grow",
+      "rest",
+      "wait"
+    ],
+    "world_dt": {
+      "act": 0.05,
+      "inspect": 0.05,
+      "ask": 0
+    },
+    "duration_semantics": "within_tick_force_or_exposure",
+    "onehot_tolerance": 1e-06
+  },
+  "interface": {
+    "world_schema": "taiji-u2-physical-world-v1",
+    "executor_schema": "taiji-u2-physical-executor-v1",
+    "methods": [
+      "reset",
+      "initial_observation",
+      "step",
+      "elapse",
+      "query",
+      "snapshot",
+      "restore"
+    ],
+    "result_fields": [
+      "event_id",
+      "action_id",
+      "kind",
+      "world_before",
+      "world_after",
+      "t_start",
+      "t_end",
+      "raw_media",
+      "observations",
+      "coordinates",
+      "execution_outcome",
+      "public_feedback",
+      "cost"
+    ],
+    "snapshot_fields": [
+      "schema",
+      "contract_hash",
+      "world_id",
+      "version",
+      "tick_index",
+      "world_time",
+      "bodies",
+      "occluder",
+      "rng_states",
+      "audio_bank",
+      "audio_ring",
+      "sample_index",
+      "transactions",
+      "byte_count",
+      "terminal"
+    ],
+    "duplicate_same_command": "cached",
+    "duplicate_changed_command": "reject",
+    "unknown_authority": "wait",
+    "commit": "atomic_world_rng_result_then_readback_then_ack",
+    "max_transactions": 512,
+    "max_bytes": 16777216
+  },
+  "permissions": {
+    "public": [
+      "goal_raw",
+      "request_raw",
+      "authorized_records",
+      "observations",
+      "coordinates",
+      "action",
+      "legal_mask",
+      "deadline"
+    ],
+    "private": [
+      "body_id",
+      "position",
+      "velocity",
+      "mass",
+      "drag_rate",
+      "radius",
+      "material_index",
+      "segmentation",
+      "target",
+      "score_only",
+      "seed",
+      "split"
+    ],
+    "outcome_mode": "execution_neutral",
+    "outcome": [
+      0,
+      1,
+      0,
+      0,
+      1,
+      1
+    ],
+    "arrival_clock": "host_process_epoch",
+    "packet_source": "sensor",
+    "packet_scope": "world"
+  },
+  "history": {
+    "current_entries": 96,
+    "page_entries": 96,
+    "max_pages": 16,
+    "total_bytes": 16777216,
+    "active_operations": 32,
+    "B_rounds": 48,
+    "minimum_operations_per_round": 4,
+    "reserved_operations_per_round": 12,
+    "initial_operations_reserve": 8,
+    "implementation_card": "22.4.2.3",
+    "implementation_status": "required_pending"
+  },
+  "rng": {
+    "backend": "cpu_torch_generator",
+    "tags": [
+      "geometry",
+      "material",
+      "appearance",
+      "image",
+      "audio",
+      "proprio"
+    ],
+    "derivation": "sha256_utf8_taiji-world-v1|seed|tag_first8_little_mod2^63",
+    "image_draws_per_tick": 768,
+    "audio_draws_per_tick": 800,
+    "proprio_draws_per_tick": 2
+  },
+  "scope": {
+    "model_forwards": 0,
+    "optimizer_steps": 0,
+    "world_rollouts": 0,
+    "project_data_reads": 0,
+    "check_reads": 0,
+    "final_reads": 0,
+    "capability_qualifications": []
+  },
+  "budget": {
+    "cpu_cap": 20,
+    "wall_cap": 60,
+    "allocation": "22.4 generation/partition 200 CPU"
+  },
+  "future_gates": {
+    "world_implementation": "22.4.2.2",
+    "executor_history_recovery": "22.4.2.3",
+    "legal_history_oracle_min": 0.95,
+    "blank_history_max": 0.6,
+    "oracle_card": "22.4.2.4",
+    "actual_16_round_reachability_required": true
+  }
+}
