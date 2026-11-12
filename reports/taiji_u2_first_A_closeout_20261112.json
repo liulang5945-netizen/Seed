@@ -1,0 +1,53 @@
+{
+  "schema": "taiji-first-A-closeout-v1",
+  "verdict": "task_gain_absent_no_A_parent",
+  "models": {
+    "native": {
+      "opened": 24,
+      "accepted": 24,
+      "checkpoint_update": 24,
+      "cursor": 48,
+      "optimizer_state_tensors": 171,
+      "initial_fit": 0.0,
+      "final_fit": 0.0,
+      "training_cpu": 32.296875
+    },
+    "gru": {
+      "opened": 243,
+      "accepted": 243,
+      "checkpoint_update": 243,
+      "cursor": 486,
+      "optimizer_state_tensors": 31,
+      "initial_fit": 0.0,
+      "final_fit": 0.0,
+      "training_cpu": 35.59375
+    },
+    "transformer": {
+      "opened": 188,
+      "accepted": 188,
+      "checkpoint_update": 188,
+      "cursor": 376,
+      "optimizer_state_tensors": 42,
+      "initial_fit": 0.0,
+      "final_fit": 0.25,
+      "training_cpu": 34.90625
+    }
+  },
+  "optimizer_calls": 455,
+  "training_compute_matched": true,
+  "accounted_pilot_cpu": 390.890625,
+  "readonly_diagnostic_cpu": 94.875,
+  "known_accounted_cpu_total": 485.765625,
+  "pilot_cpu_cap": 1200,
+  "ledger_rows": 910,
+  "ledger_sha256": "2e85c1878eea9489ca55d3097f7b60b80c0745851be62e3d8e44abb834c0b3bb",
+  "check_reads": 0,
+  "final_reads": 0,
+  "capability_qualifications": [],
+  "run_conditions": {
+    "device": "cpu",
+    "dtype": "float32",
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  }
+}

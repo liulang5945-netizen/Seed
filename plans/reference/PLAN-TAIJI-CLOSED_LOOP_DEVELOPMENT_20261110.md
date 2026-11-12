@@ -636,3 +636,10 @@ owner明确选择先冻结A/B必要对照与预算，进行首次有界学习，
 
 
 首轮学习已按[限定pilot](PLAN-TAIJI-U2_FIRST_A_LEARNING_20261112.md)冻结范围和[执行v3](../manifests/taiji_u2_first_A_execution_20261112_v3.json)。参数/optimizer/RNG/游标及下一批损失/梯度一致；全部初始checkpoint通过。实价Native1.373/GRU0.141/TF0.182 CPU每更新，原最低32步为未证人为门，撤销后按同CPU正剂量24/243/188更新，未改行为成功门或正式A父0.80/3seed/check。首pilot1200 CPU从22.5预算19200预留，prepare按150 CPU保守记账。训练只用train64，前后fit32评估，check/final/confirm均0。
+
+
+## 首轮A结果与下一干预
+
+[首轮结案](CLOSEOUT-TAIJI_FIRST_A_PILOT_20261112.md)：455更新、三臂训练CPU32.30/35.59/34.91（10%内），fit32为0/0/8正确。Native/GRU输出固定无效词，TF恒右边。训练内自由生成及四序列重评分亦无条件化，图像NLL影响弱，P1无A父。此限定预算/配方结果不能推翻整个模型，也不能只归未见对象数或自由滚动。
+
+当前[22.5.P2配对信用干预](PLAN-TAIJI_FIRST_A_CONDITIONAL_CREDIT_20261112.md)已冻结四臂，同架构从P1末参数fork并重置相同Adam，Native-token23/Native-conditional11/TF-token163/TF-conditional85更新，每臂约32训练CPU；新fit为recipe128–159例，check/final0。600 CPU/1200 wall从22.5另预留，P1已预留1200，正式A/B预算剩17400。原自由字节/64字节/EOS/完整分母保留，主门fit≥0.50且conditional相对token增益≥0.15，不改正式A父门。
