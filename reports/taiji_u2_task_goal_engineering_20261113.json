@@ -1,0 +1,230 @@
+{
+  "schema": "taiji-u2-task-goal-engineering-report-v1",
+  "status": "neutral_candidate_and_conditional_history_checked",
+  "parents": {
+    "active-query": {
+      "checkpoint": "E:\\Seed\\data\\experiments\\taiji_u2\\task_goal_engineering\\1794539865934723500\\active-query-float32\\research-parent.bin",
+      "sha256": "d45ce7a0d57002c515985eca3b45da352707ba19e891bb3e72adc8c31a2fda18",
+      "parameter_digest": "4b5b5894f4bbed002937be8d5240720d9619b22e1e6b43876f10002be50082c7",
+      "optimizer_digest": "7dea8c7da63fae95ad665677fffe5d6e92633f2f1e968438b508804995f32dca",
+      "architecture": "native-goal-query"
+    },
+    "persistent-control": {
+      "checkpoint": "E:\\Seed\\data\\experiments\\taiji_u2\\task_goal_engineering\\1794539865934723500\\persistent-control-float32\\research-parent.bin",
+      "sha256": "e2000fbb7b415be8a8b21faa6acef1c7a83d383fd7f53375b0e823e5f7a87109",
+      "parameter_digest": "4b5b5894f4bbed002937be8d5240720d9619b22e1e6b43876f10002be50082c7",
+      "optimizer_digest": "7dea8c7da63fae95ad665677fffe5d6e92633f2f1e968438b508804995f32dca",
+      "architecture": "native-goal-control"
+    }
+  },
+  "source_pins": {
+    "u2_recovery.py": "85fa1ad8fa6cdc8d98c612351cf4b440b046393614c1876cb8507eb4ba7b12de",
+    "u2_evidence_subject.py": "718a5c8ee4ad2e817734a51f404417b8e8f11988da8fd27f8eced30cab348b68",
+    "u2_evidence_read.py": "0823d2adab2e03f0b1ad5e90759232c278caf1bd43f0aba739a3a12e8fa30bd2",
+    "u2_evidence_runtime.py": "7f343a7982a69445872835d6c33c14dbc3ed2bee7a1ac22b8810bd142813fec4",
+    "u2_capacity_control.py": "9777487f010aa274781bccdb9d95023b142e831693617c1f4a992f49bdc99b00",
+    "u2_task_goal.py": "df70b736b08498f28555e5d2f13b5a7162e2fe536e65ca54f1dc3f74a257847f",
+    "u2_history.py": "067b9c07290d42bc08188b421267e7d9dca0f73343bc8e18c6e2a0a7e71e79bf",
+    "u2_history_store.py": "2133a22032e967af257cc8527891e6a029df32ddb18c0a95da2834c22592de3f",
+    "u2_request_state.py": "80422d30fd3413b446a9306f9c7ca335b281f9216f46a285c17572ea2f43a8dc",
+    "u2_task_executor.py": "207612939e8f32ba7b1ac32fcde378f39060789c570b40cc850cf70017d178a3",
+    "u2_events.py": "b89d5424a76263efab7a5c944dbc820b34fdef4ed12b10afc0b651193a34c944",
+    "u2_learning_transaction.py": "ea6203edd38083f58b09e2800bcf464e37c74b95d2be982cdecea3002c0b1ef4",
+    "u2_record_metadata.py": "39e57e9dd406f3442bc85e055ebb7d3a813ea981ff1cda0cf119f90c20c35da5",
+    "u2_group_structure.py": "8131bffd6b904f27987c2b3a3846781ba4d1008ec634c7b86241626991e85176",
+    "u2_subject.py": "01d54b472e6cc99728ca45b94aeb556148498081ce1128cf28f8bed2d8784025",
+    "u2_operators.py": "4b45e504e8ce90fd8bf5f794c107ef1f07128ac759a3f86c99914fe7dafae8c2",
+    "utf8_state.py": "6ec7e96b2994dfa8eea430b3a08ddb5ff0fd877cf70c8cc288f57bab2efcac09"
+  },
+  "data_manifest": "plans/manifests/taiji_u2_paired_task_20261112.json",
+  "data_digest": "65041f02e3a3410b307bc6e013d897ef747e7f890b3668db6b5852fdc9fdba1c",
+  "learning_admitted": false,
+  "learner_optimizer_steps": 0,
+  "capability_qualifications": [],
+  "verdict": "passed_neutral_goal_and_conditional_history_engineering",
+  "cases": [
+    {
+      "dtype": "torch.float32",
+      "mode": "active-query",
+      "history_source": "teacher",
+      "gradients_old_max_abs": 0.0,
+      "hvp_old_max_abs": 0.0,
+      "new_projection_gradient_norm": 2.6523974838710274e-07,
+      "new_projection_credit_singular_values": [
+        2.652397469502252e-07,
+        2.090746268805887e-11,
+        1.624724306404742e-14,
+        1.0077165528803e-14,
+        9.452126405519274e-15,
+        7.395863788559092e-15,
+        3.672382062190166e-15,
+        4.34362864831189e-16
+      ],
+      "shadow_projection_max_move": 0.0008334644953720272,
+      "neutral_logp_and_H_exact": true,
+      "old_policy_eligibility_unchanged": true
+    },
+    {
+      "dtype": "torch.float32",
+      "mode": "active-query",
+      "history_source": "actual-self",
+      "gradients_old_max_abs": 0.0,
+      "hvp_old_max_abs": 0.0,
+      "new_projection_gradient_norm": 2.67091650130169e-07,
+      "new_projection_credit_singular_values": [
+        2.670916507256572e-07,
+        1.998635000720488e-11,
+        3.217259303477839e-14,
+        1.5200896738890215e-14,
+        1.3970777954607312e-14,
+        8.603654305627075e-15,
+        2.9866317116727936e-15,
+        2.3684872276367605e-15
+      ],
+      "shadow_projection_max_move": 0.0008339638006873429,
+      "neutral_logp_and_H_exact": true,
+      "old_policy_eligibility_unchanged": true
+    },
+    {
+      "dtype": "torch.float32",
+      "mode": "persistent-control",
+      "history_source": "teacher",
+      "gradients_old_max_abs": 0.0,
+      "hvp_old_max_abs": 0.0,
+      "new_projection_gradient_norm": 2.6853737722376536e-07,
+      "new_projection_credit_singular_values": [
+        2.6853737723017555e-07,
+        1.7799646543650868e-14,
+        1.5036969806620327e-14,
+        1.3332126765069306e-14,
+        1.0751408554738278e-14,
+        8.976115916459705e-15,
+        5.2924969181666175e-15,
+        7.384309040794906e-17
+      ],
+      "shadow_projection_max_move": 0.0008354017045348883,
+      "neutral_logp_and_H_exact": true,
+      "old_policy_eligibility_unchanged": true
+    },
+    {
+      "dtype": "torch.float32",
+      "mode": "persistent-control",
+      "history_source": "actual-self",
+      "gradients_old_max_abs": 0.0,
+      "hvp_old_max_abs": 0.0,
+      "new_projection_gradient_norm": 2.7041315320275316e-07,
+      "new_projection_credit_singular_values": [
+        2.704131580857315e-07,
+        2.971992990684771e-14,
+        2.488783047581528e-14,
+        1.7490366154165367e-14,
+        1.2895732664164978e-14,
+        7.816736986617864e-15,
+        7.180261407096445e-15,
+        2.340070773914754e-15
+      ],
+      "shadow_projection_max_move": 0.0008358955383300781,
+      "neutral_logp_and_H_exact": true,
+      "old_policy_eligibility_unchanged": true
+    },
+    {
+      "dtype": "torch.float64",
+      "mode": "active-query",
+      "history_source": "teacher",
+      "gradients_old_max_abs": 0.0,
+      "hvp_old_max_abs": 0.0,
+      "new_projection_gradient_norm": 2.652379487987217e-07,
+      "new_projection_credit_singular_values": [
+        2.65237947975133e-07,
+        2.090200878446211e-11,
+        3.058273256389752e-23,
+        2.1441269442397213e-23,
+        1.8721618762286736e-23,
+        1.4294348221812948e-23,
+        3.8268161527712005e-24,
+        2.188759222590012e-24
+      ],
+      "shadow_projection_max_move": 0.000833463629791835,
+      "neutral_logp_and_H_exact": true,
+      "old_policy_eligibility_unchanged": true
+    },
+    {
+      "dtype": "torch.float64",
+      "mode": "active-query",
+      "history_source": "actual-self",
+      "gradients_old_max_abs": 0.0,
+      "hvp_old_max_abs": 0.0,
+      "new_projection_gradient_norm": 2.6709098720557217e-07,
+      "new_projection_credit_singular_values": [
+        2.6709098645772747e-07,
+        1.998712485435379e-11,
+        4.523560229998574e-23,
+        2.856726172398951e-23,
+        1.9996323858325442e-23,
+        1.5938264810433647e-23,
+        1.0642373981936122e-23,
+        2.5834418318225354e-24
+      ],
+      "shadow_projection_max_move": 0.0008339635551351447,
+      "neutral_logp_and_H_exact": true,
+      "old_policy_eligibility_unchanged": true
+    },
+    {
+      "dtype": "torch.float64",
+      "mode": "persistent-control",
+      "history_source": "teacher",
+      "gradients_old_max_abs": 0.0,
+      "hvp_old_max_abs": 0.0,
+      "new_projection_gradient_norm": 2.685355764924849e-07,
+      "new_projection_credit_singular_values": [
+        2.6853557649248495e-07,
+        4.434363285990828e-23,
+        2.8081374955337444e-23,
+        1.889997154747524e-23,
+        1.5501717028521744e-23,
+        7.675139197730147e-24,
+        4.827543723174369e-24,
+        2.7246580938288695e-25
+      ],
+      "shadow_projection_max_move": 0.0008354008591682197,
+      "neutral_logp_and_H_exact": true,
+      "old_policy_eligibility_unchanged": true
+    },
+    {
+      "dtype": "torch.float64",
+      "mode": "persistent-control",
+      "history_source": "actual-self",
+      "gradients_old_max_abs": 0.0,
+      "hvp_old_max_abs": 0.0,
+      "new_projection_gradient_norm": 2.7041251803411126e-07,
+      "new_projection_credit_singular_values": [
+        2.704125180341112e-07,
+        4.70826666148253e-23,
+        4.041112155838184e-23,
+        3.424491193283686e-23,
+        1.5537861551677628e-23,
+        9.986487745194332e-24,
+        7.806267973350841e-24,
+        1.9533810844431767e-24
+      ],
+      "shadow_projection_max_move": 0.0008358953092948664,
+      "neutral_logp_and_H_exact": true,
+      "old_policy_eligibility_unchanged": true
+    }
+  ],
+  "independent_recovery_cases": 4,
+  "recovery_gradient_comparisons": 808,
+  "recovery_gradient_max_difference": 0.0,
+  "optimizer_steps": 8,
+  "shadow_optimizer_steps": 8,
+  "check_reads": 0,
+  "final_reads": 0,
+  "cpu_seconds": 17.765625,
+  "wall_seconds": 21.82799999997951,
+  "run_conditions": {
+    "device": "cpu",
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "verifier_sha256": "51eee0d84bf6e6c3947c45c74c5017e2be57a6a66e1cf02d86fc9d4bde216672"
+}

@@ -31,13 +31,14 @@ NATIVE_TYPES: dict[str, type[U2Subject]] = {
 SCHEMA = "taiji-u2-evidence-A-learner-v1"
 
 
-def source_pins():
+def source_pins(extra_sources=()):
     pins = {f"taiji/{name}": digest for name, digest in _source_pins().items()}
-    for name in (
+    names = (
         "scripts/training/evidence_a_learner_22_5.py",
         "scripts/training/first_a_support_22_5.py",
         "scripts/training/task_baselines_22_4_a.py",
-    ):
+    )
+    for name in names + tuple(extra_sources):
         pins[name] = hashlib.sha256(
             (ROOT / name).read_text(encoding="utf-8-sig").encode()
         ).hexdigest()
@@ -51,13 +52,25 @@ def fresh_optimizer(model):
 
 
 def save_learner(
-    path, model, optimizer, architecture, lineage, *, update, cursor, order, data_digest
+    path,
+    model,
+    optimizer,
+    architecture,
+    lineage,
+    *,
+    update,
+    cursor,
+    order,
+    data_digest,
+    native_types=None,
+    extra_sources=(),
 ):
     destination = Path(path)
     if destination.exists():
         raise FileExistsError(destination)
-    if architecture in NATIVE_TYPES:
-        if not isinstance(model, U2Subject) or type(model) is not NATIVE_TYPES[architecture]:
+    factories = NATIVE_TYPES if native_types is None else native_types
+    if architecture in factories:
+        if not isinstance(model, U2Subject) or type(model) is not factories[architecture]:
             raise ValueError("learner_native_type_mismatch")
         bundle = model.export_bundle(model.initial("episodic-learner-boundary"))
     elif (
@@ -84,11 +97,13 @@ def save_learner(
         "order": list(order),
         "data_digest": data_digest,
         "torch_rng": torch.get_rng_state(),
-        "source_pins": source_pins(),
+        "source_pins": source_pins(extra_sources),
         "state_scope": "episodic public-input replay; native bundle state is the empty boundary",
     }
     atomic_save(payload, destination)
-    restored, other, loaded = load_learner(destination)
+    restored, other, loaded = load_learner(
+        destination, native_types=native_types, extra_sources=extra_sources
+    )
     assert_values_equal(model.state_dict(), restored.state_dict(), "learner.parameters")
     assert_values_equal(optimizer.state_dict(), other.state_dict(), "learner.optimizer")
     for name in ("training", "lineage", "update", "cursor", "order", "data_digest", "torch_rng"):
@@ -96,7 +111,7 @@ def save_learner(
     return value_digest(payload)
 
 
-def load_learner(path):
+def load_learner(path, *, native_types=None, extra_sources=()):
     payload = atomic_load(path)
     expected = {
         "schema",
@@ -115,12 +130,13 @@ def load_learner(path):
     }
     if set(payload) != expected or payload["schema"] != SCHEMA:
         raise ValueError("unsupported_evidence_learner_schema")
-    if payload["source_pins"] != source_pins():
+    if payload["source_pins"] != source_pins(extra_sources):
         raise ValueError("evidence_learner_source_identity_mismatch")
     architecture, bundle = payload["architecture"], payload["model"]
     model: U2Subject | TaskSequenceBaseline
-    if architecture in NATIVE_TYPES:
-        model, _ = NATIVE_TYPES[architecture].from_bundle(bundle)
+    factories = NATIVE_TYPES if native_types is None else native_types
+    if architecture in factories:
+        model, _ = factories[architecture].from_bundle(bundle)
     elif architecture == "transformer":
         if bundle["description"]["architecture"] != "transformer":
             raise ValueError("baseline_learner_type_mismatch")

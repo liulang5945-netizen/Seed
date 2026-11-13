@@ -1,0 +1,64 @@
+{
+  "schema": "taiji-u2-p3-6-interface-contract-v1",
+  "status": "interface_and_engineering_only",
+  "cpu_cap": 240,
+  "wall_cap": 480,
+  "parent": {
+    "checkpoint": "E:\\Seed\\data\\experiments\\taiji_u2\\paired_learning\\1794504603470358500\\native-query\\update-002009.bin",
+    "sha256": "7a02d245ce121a7403e08056459422158180481050c6987e70c73fdc7c00282f",
+    "parameter_digest": "23fd7b1b6e0f0cc8bb31e67dc63747f7a57db3be573a26b227e4772ff2792624",
+    "accepted_updates": 2009
+  },
+  "source_overlays": [
+    {
+      "source": "taiji/u2_recovery.py",
+      "archive": "scripts/archive/u2_recovery_20261113_pre_p3_6.py.txt",
+      "sha256": "eb392f4fd82bf0e15f1cd4aec8376c7b99cf796decaca5322c4c3db195f3cf10"
+    },
+    {
+      "source": "scripts/training/evidence_a_learner_22_5.py",
+      "archive": "scripts/archive/evidence_a_learner_22_5_20261113_pre_p3_6.py.txt",
+      "sha256": "1d572b6a8df74eb8b1811c98c92236f2f3ac9afe806389fbaee3eaf6cec3fc6d"
+    }
+  ],
+  "projection": {
+    "shape": [
+      8,
+      8
+    ],
+    "parameters": 64,
+    "bias": false,
+    "initial": "all zeros",
+    "owner": "Theta shared representation; unchanged Psi actor eligibility boundary",
+    "mask": "pending/answering irrespective of earlier allowed goal_version; inactive after answered/cancelled/absent",
+    "consumers": "goal argument to original Native recurrence and its queries/inputs, persistent goal raw/version retained"
+  },
+  "history": {
+    "sources": [
+      "teacher",
+      "actual-self"
+    ],
+    "first_ce_weight": 0.5,
+    "second_ce_weight": 0.5,
+    "first_generation": "greedy257-byte UTF8/EOS, max64 data bytes",
+    "selection_gradient": "argmax bytes fixed, conditional-state/shared-parameter gradient only",
+    "blocked_first": "Keep first CE weight0.5; second CE absent; add stopped blocked-outcome cost0.5; full task second round counted wrong; no forced EOS or gold-state replacement",
+    "rng": "no stochastic token sampling; source RNG persisted",
+    "loss_scope": "same parameters throughout paired episode; no update between requests"
+  },
+  "optimizer": "append projection in same single Adam group, inherited indices/moments unchanged, new projection moment absent until first future update",
+  "equivalence": {
+    "float32": {
+      "atol": 1e-06,
+      "rtol": 1e-05
+    },
+    "float64": {
+      "atol": 1e-10,
+      "rtol": 1e-08
+    }
+  },
+  "learning_dose": null,
+  "check_reads": 0,
+  "final_reads": 0,
+  "budget_accounting": "P3.6.1-3 engineering240 reserved from9990, remaining9750 CPU"
+}
