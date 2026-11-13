@@ -1,0 +1,39 @@
+{
+  "schema": "taiji-u2-first-round-calibration-contract-v1",
+  "cpu_cap": 120,
+  "wall_cap": 240,
+  "training_cpu_cap": 60,
+  "max_updates": 2000,
+  "seed": 2026111309,
+  "parameters": 65169,
+  "data_path": "E:\\Seed\\data\\experiments\\taiji_u2\\paired_task\\1794496638577954800\\data.bin",
+  "data_digest": "65041f02e3a3410b307bc6e013d897ef747e7f890b3668db6b5852fdc9fdba1c",
+  "source_pins": {
+    "scripts/training/first_round_baseline_22_5.py": "493426602f83026d69b19e62d0acac64741564fce432f8ebb3b1b992f6b8cce7",
+    "scripts/training/calibrate_first_round_22_5.py": "202a9da4a07e09d1b71dea3ebdda28971c789c09ab3d6cc72b4e0de02d58e41f",
+    "scripts/training/paired_world_22_5.py": "0d698d28d61be7fb492acb6f161aed75d39c637cdb2d0b8877361f7ffe287afb",
+    "scripts/training/check_report_run_conditions.py": "eb71cfe6fcf7c3b520eb5189d382225b1ccec6999b2ab011c211e90f01a5b0aa",
+    "taiji/u2_operators.py": "4b45e504e8ce90fd8bf5f794c107ef1f07128ac759a3f86c99914fe7dafae8c2",
+    "taiji/utf8_state.py": "6ec7e96b2994dfa8eea430b3a08ddb5ff0fd877cf70c8cc288f57bab2efcac09",
+    "taiji/u2_history.py": "067b9c07290d42bc08188b421267e7d9dca0f73343bc8e18c6e2a0a7e71e79bf"
+  },
+  "gates": {
+    "train": 0.95,
+    "dev": 0.8,
+    "each_question": 0.8
+  },
+  "image_sharing": "Raw public images grouped by world inside a partition; CNN computed once per image per theta, gathered to180 examples with complete gradient credit",
+  "evaluation": "all180 first rounds per partition; greedy raw bytes, EOS and strict UTF8; two post controls zero RGB/empty question each bound0.5",
+  "checkpoint_schedule": [
+    0,
+    1,
+    50
+  ],
+  "checkpoint_period": 50,
+  "selection": "last complete optimizer update at/below60 training CPU, otherwise2000; one overshoot quarantined; no dev selection",
+  "independent_recovery": "full train logits, all21 parameter gradients, optimizer digest and actual greedy outputs",
+  "check_reads": 0,
+  "final_reads": 0,
+  "capability_qualifications": [],
+  "budget_accounting": "calibration120 reserved from1110 leaves990 CPU; tools/regressions separate"
+}

@@ -44,3 +44,9 @@
 ## 4. 资产与退出
 
 现有U2动力学、世界、FP1、R/P成长、原始历史、typed恢复与Fusion实验源码保留其证据身份。P3.8的校准模型单列为基线，原Native研究父无替换。若该窗仍缺训练内可学性和可靠首问，则按实际失败层级全局裁决，新的函数类、任务或预算形成明确研究决定。
+
+## 5. P3.8.1实现及准入
+
+[机器合同](../manifests/taiji_u2_first_round_calibration_contract_20261113.json)已冻结65169参数条件CNN-GRU、seed2026111309、全批180例、训练60 CPU／总120 CPU及2000步保险上限。公开图像按分区内world关联复用CNN计算，再以可微gather展开到180例；原目标权重保留，图像bank数值索引仅用于关联其公开图像。共享／展开的全模型梯度等值回归通过，model不读取world标识值。
+
+源码位于scripts/training，6项回归覆盖数据／首字节信息隔离、真实像素布局、图像复用全梯度、teacher与正常step等值、完整生成分母及step0／非空Adam恢复。Ruff／Black／mypy定向检查通过。运行前step0读回并比较下一梯度，step1再次检查非空moment，末版本独立进程比对全部概率／梯度和greedy输出。预留后未分配990 CPU。

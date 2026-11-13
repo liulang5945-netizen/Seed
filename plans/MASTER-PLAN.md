@@ -12,7 +12,7 @@
 
 [P3.7完整收束](reference/CLOSEOUT-TAIJI_U2_JOINT_LEARNING_20261113.md)核验6513次真实learner调用、6509接受和4隔离文件。原D／问题Fusion／目标Fusion均恒答未知，train/dev50%；TF train/dev60.28%。训练CPU端点差0.04688%，runner1964.9375 CPU，独立审计7.59375 CPU。共享主体4次工程更新、8独立恢复／1712梯度等值另列，原0步执行器夹具失败保留。新路径工程成立，任务净收益按负结果结案。
 
-当前采用[P3.8学习校准计划](reference/PLAN-TAIJI_U2_LEARNING_CALIBRATION_20261113.md)。先以公开RGB和原始UTF-8的可批生成基线校准首问可学性，随后界定Native首／次问目标与经验聚合；各范围及能力分账。未分配1110 CPU，下一卡P3.8.1的120 CPU仍待源码和保存检查冻结。
+当前采用[P3.8学习校准计划](reference/PLAN-TAIJI_U2_LEARNING_CALIBRATION_20261113.md)。先以公开RGB和原始UTF-8的可批生成基线校准首问可学性，随后界定Native首／次问目标与经验聚合；各范围及能力分账。P3.8.1源码与6项回归已完成，[机器合同](manifests/taiji_u2_first_round_calibration_contract_20261113.json)冻结训练60 CPU／总120 CPU及独立恢复，预留后未分配990 CPU。
 
 ### 已交付资产与历史范围
 
