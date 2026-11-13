@@ -1,0 +1,224 @@
+"""Prepare the six-arm same-parent history/goal factorial without live updates."""
+
+# ruff: noqa: E402 -- account for startup
+from __future__ import annotations
+
+import hashlib
+import json
+import statistics
+import sys
+import time
+from pathlib import Path
+
+STARTED = time.monotonic()
+ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT))
+
+import torch
+
+from scripts.training import evidence_a_learner_22_5 as base
+from scripts.training.check_report_run_conditions import write_report
+from scripts.training.paired_compute_22_5 import shadow_optimizer
+from scripts.training.task_goal_learner_22_5 import load_learner, save_learner
+from scripts.training.task_history_loss_22_5 import history_loss
+from scripts.training.task_baselines_22_4_a import TaskSequenceBaseline
+from seed_platform.paths import get_external_path
+from taiji.u2_history import assert_values_equal, atomic_load, value_digest
+
+CONTRACT = ROOT / "plans/manifests/taiji_u2_p3_6_admission_contract_20261113.json"
+ADMISSION = ROOT / "plans/manifests/taiji_u2_task_goal_learning_admission_20261113.json"
+REPORT = ROOT / "reports/taiji_u2_task_goal_learning_admission_20261113.json"
+
+
+def sources():
+    result = base.source_pins(("scripts/training/task_goal_learner_22_5.py",))
+    for name in (
+        "task_history_loss_22_5.py",
+        "paired_episode_22_5.py",
+        "paired_world_22_5.py",
+        "paired_compute_22_5.py",
+        "prepare_task_goal_learning_22_5.py",
+    ):
+        path = ROOT / "scripts/training" / name
+        result[str(path.relative_to(ROOT)).replace("\\", "/")] = hashlib.sha256(
+            path.read_text(encoding="utf-8-sig").encode()
+        ).hexdigest()
+    return result
+
+
+def reference_parent(contract):
+    recipe = contract["reference_parent"]
+    assert hashlib.sha256(Path(recipe["checkpoint"]).read_bytes()).hexdigest() == recipe["sha256"]
+    payload = atomic_load(recipe["checkpoint"])
+    assert payload["architecture"] == "transformer"
+    interface = json.loads(
+        (ROOT / "plans/manifests/taiji_u2_p3_6_interface_contract_20261113.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    overlays = {row["source"]: row for row in interface["source_overlays"]}
+    current = base.source_pins()
+    assert set(current) - set(payload["source_pins"]) == {"taiji/u2_task_goal.py"}
+    assert not set(payload["source_pins"]) - set(current)
+    for name, pin in payload["source_pins"].items():
+        if pin != current[name]:
+            row = overlays[name]
+            assert row["sha256"] == pin
+            assert (
+                hashlib.sha256(
+                    (ROOT / row["archive"]).read_text(encoding="utf-8-sig").encode()
+                ).hexdigest()
+                == pin
+            )
+    bundle = payload["model"]
+    model = TaskSequenceBaseline(**bundle["description"])
+    model.load_state_dict(bundle["parameters"])
+    assert value_digest(model.state_dict()) == recipe["parameter_digest"]
+    model.parameter_revision = bundle["revision"] + 1
+    optimizer = base.fresh_optimizer(model)
+    optimizer.load_state_dict(payload["optimizer"])
+    torch.set_rng_state(payload["torch_rng"])
+    return model, optimizer, payload
+
+
+def gradient(model, partition, episode, history):
+    loss = history_loss(model, partition, episode, history)["loss"]
+    values = torch.autograd.grad(loss, list(model.parameters()), allow_unused=True)
+    return loss.detach(), [None if value is None else value.detach() for value in values]
+
+
+def prepare():
+    if ADMISSION.exists() or REPORT.exists():
+        raise FileExistsError("task_goal_learning_already_prepared")
+    torch.set_num_threads(1)
+    contract = json.loads(CONTRACT.read_text(encoding="utf-8"))
+    engineering = json.loads(
+        (ROOT / "plans/manifests/taiji_u2_task_goal_engineering_20261113.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    task = json.loads((ROOT / engineering["data_manifest"]).read_text(encoding="utf-8"))
+    data = atomic_load(task["data_path"])
+    assert value_digest(data) == engineering["data_digest"] == task["data_digest"]
+    order = torch.randperm(
+        180, generator=torch.Generator().manual_seed(contract["order_seed"])
+    ).tolist()
+    root = Path(get_external_path(f"data/experiments/taiji_u2/task_goal_learning/{time.time_ns()}"))
+    rows = {}
+    for name, recipe in contract["groups"].items():
+        if name.startswith("TF-"):
+            model, optimizer, old = reference_parent(contract)
+            lineage = {
+                **old["lineage"],
+                "source_checkpoint_sha256": contract["reference_parent"]["sha256"],
+            }
+        else:
+            parent = engineering["parents"][recipe["mode"]]
+            assert (
+                hashlib.sha256(Path(parent["checkpoint"]).read_bytes()).hexdigest()
+                == parent["sha256"]
+            )
+            model, optimizer, old = load_learner(parent["checkpoint"])
+            lineage = {**old["lineage"], "source_checkpoint_sha256": parent["sha256"]}
+        parameter_digest, moment_digest = value_digest(model.state_dict()), value_digest(
+            optimizer.state_dict()
+        )
+        initial = root / f"{name}-initial.bin"
+        lineage.update(history_source=recipe["history"], group=name)
+        save_learner(
+            initial,
+            model,
+            optimizer,
+            recipe["architecture"],
+            lineage,
+            update=0,
+            cursor=0,
+            order=order,
+            data_digest=task["data_digest"],
+        )
+        restored, other, payload = load_learner(initial)
+        assert_values_equal(optimizer.state_dict(), other.state_dict())
+        assert_values_equal(
+            gradient(model, data["train"], data["train"]["episodes"][order[0]], recipe["history"]),
+            gradient(
+                restored, data["train"], data["train"]["episodes"][order[0]], recipe["history"]
+            ),
+            "factorial.next-gradient",
+        )
+        temporary, shadow = shadow_optimizer(model, optimizer)
+        samples = []
+        for index in contract["price_indices"]:
+            start = time.process_time()
+            model.zero_grad(set_to_none=True)
+            history_loss(model, data["train"], data["train"]["episodes"][index], recipe["history"])[
+                "loss"
+            ].backward()
+            for source, target in zip(model.parameters(), temporary, strict=True):
+                target.grad = None if source.grad is None else source.grad.detach().clone()
+            shadow.step()
+            samples.append(time.process_time() - start)
+        assert parameter_digest == value_digest(
+            model.state_dict()
+        ) and moment_digest == value_digest(optimizer.state_dict())
+        median = statistics.median(samples)
+        assert median * contract["max_updates"] > contract["train_cpu_per_group"]
+        rows[name] = {
+            **recipe,
+            "initial": str(initial),
+            "initial_sha256": hashlib.sha256(initial.read_bytes()).hexdigest(),
+            "parameter_digest": parameter_digest,
+            "optimizer_digest": moment_digest,
+            "price_samples": samples,
+            "median_training_cpu": median,
+            "estimated_updates": int(contract["train_cpu_per_group"] / median),
+            "next_gradient_exact": True,
+            "inherited_moments": len(optimizer.state),
+        }
+    assert len({rows[name]["parameter_digest"] for name in ("A", "B", "C", "D")}) == 1
+    assert len({rows[name]["optimizer_digest"] for name in ("A", "B", "C", "D")}) == 1
+    assert rows["TF-teacher"]["parameter_digest"] == rows["TF-actual"]["parameter_digest"]
+    cpu = time.process_time()
+    assert cpu < contract["cpu_cap"] and time.monotonic() - STARTED < contract["wall_cap"]
+    manifest = {
+        "schema": "taiji-u2-task-goal-learning-admission-v1",
+        "status": "factorial_prepared_pending_runner",
+        "groups": rows,
+        "contract": contract,
+        "data": task,
+        "order": order,
+        "source_pins": sources(),
+        "run_root": str(root),
+        "learner_optimizer_steps": 0,
+        "shadow_optimizer_steps": 48,
+        "model_task_accuracy_evaluations": 0,
+        "check_reads": 0,
+        "final_reads": 0,
+        "capability_qualifications": [],
+        "cpu_seconds": cpu,
+    }
+    ADMISSION.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+    write_report(
+        REPORT,
+        {
+            **manifest,
+            "schema": "taiji-u2-task-goal-learning-admission-report-v1",
+            "verdict": "passed_same_parent_factorial_preflight",
+            "optimizer_steps": 48,
+            "wall_seconds": time.monotonic() - STARTED,
+            "run_conditions": {"device": "cpu", "threads": 1, "torch": torch.__version__},
+        },
+    )
+    print(
+        json.dumps(
+            {
+                "verdict": "passed_same_parent_factorial_preflight",
+                "cpu_seconds": cpu,
+                "prices": {name: row["median_training_cpu"] for name, row in rows.items()},
+            }
+        ),
+        flush=True,
+    )
+
+
+if __name__ == "__main__":
+    prepare()

@@ -1,0 +1,73 @@
+{
+  "schema": "taiji-u2-p3-6-admission-contract-v1",
+  "cpu_cap": 120,
+  "wall_cap": 240,
+  "train_cpu_per_group": 300,
+  "max_updates": 8192,
+  "runner_cpu_cap": 3600,
+  "runner_wall_cap": 7200,
+  "order_seed": 2026111306,
+  "price_indices": [
+    0,
+    1,
+    60,
+    61,
+    120,
+    121,
+    178,
+    179
+  ],
+  "reference_parent": {
+    "checkpoint": "E:\\Seed\\data\\experiments\\taiji_u2\\paired_learning\\1794504603470358500\\transformer\\update-005738.bin",
+    "sha256": "829a002d18d4188baa9b1a44a801e3c1089b9ce8144e796bb1f6d898d427681f",
+    "parameter_digest": "ef25ac2dd979381542a267827bf840ad108d23961e63b690b04ecf646e9dd527"
+  },
+  "groups": {
+    "A": {
+      "mode": "persistent-control",
+      "history": "teacher",
+      "architecture": "native-goal-control"
+    },
+    "B": {
+      "mode": "persistent-control",
+      "history": "actual-self",
+      "architecture": "native-goal-control"
+    },
+    "C": {
+      "mode": "active-query",
+      "history": "teacher",
+      "architecture": "native-goal-query"
+    },
+    "D": {
+      "mode": "active-query",
+      "history": "actual-self",
+      "architecture": "native-goal-query"
+    },
+    "TF-teacher": {
+      "mode": "transformer",
+      "history": "teacher",
+      "architecture": "transformer"
+    },
+    "TF-actual": {
+      "mode": "transformer",
+      "history": "actual-self",
+      "architecture": "transformer"
+    }
+  },
+  "main_group": "D",
+  "gates": {
+    "train_accuracy": 0.9,
+    "dev_accuracy": 0.8,
+    "each_dev_round_accuracy": 0.8,
+    "gain_over_frozen": 0.15,
+    "rgb_cut_drop": 0.15,
+    "question_cut_drop": 0.15
+  },
+  "factorial": "goal effect=((C-A)+(D-B))/2; history effect=((B-A)+(D-C))/2; interaction=D-C-B+A; point estimates descriptive; no independent-family confidence claims",
+  "cpu_endpoint": "last accepted at/below300, one overshoot isolated and restored; match tolerance5%",
+  "learner_optimizer_steps": 0,
+  "shadow_optimizer_steps": 48,
+  "check_reads": 0,
+  "final_reads": 0,
+  "budget_accounting": "admission120 reserved from9750 leaves9630; runner3600 upon admission leaves6030"
+}
