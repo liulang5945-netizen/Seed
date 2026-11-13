@@ -1,0 +1,54 @@
+{
+  "data_path": "E:\\Seed\\data\\experiments\\taiji_u2\\paired_task\\1794496638577954800\\data.bin",
+  "data_digest": "65041f02e3a3410b307bc6e013d897ef747e7f890b3668db6b5852fdc9fdba1c",
+  "head_seed": 2026111310,
+  "initial_checkpoint": "E:\\Seed\\data\\experiments\\taiji_u2\\first_round_calibration\\1794559320050250200\\update-000000.bin",
+  "initial_checkpoint_sha256": "e527e2bd28bc25d61fe94d9485189cbb9ff59396efbcab3e047a321ce614db6d",
+  "gates": {
+    "train": 0.95,
+    "dev": 0.8,
+    "each_question": 0.8
+  },
+  "schema": "taiji-u2-stable-credit-contract-v1",
+  "cpu_cap": 90,
+  "wall_cap": 180,
+  "training_cpu_cap": 60,
+  "max_attempts": 2000,
+  "source_pins": {
+    "scripts/training/first_round_baseline_22_5.py": "493426602f83026d69b19e62d0acac64741564fce432f8ebb3b1b992f6b8cce7",
+    "scripts/training/calibrate_first_round_22_5.py": "202a9da4a07e09d1b71dea3ebdda28971c789c09ab3d6cc72b4e0de02d58e41f",
+    "scripts/training/paired_world_22_5.py": "0d698d28d61be7fb492acb6f161aed75d39c637cdb2d0b8877361f7ffe287afb",
+    "scripts/training/check_report_run_conditions.py": "eb71cfe6fcf7c3b520eb5189d382225b1ccec6999b2ab011c211e90f01a5b0aa",
+    "taiji/u2_operators.py": "4b45e504e8ce90fd8bf5f794c107ef1f07128ac759a3f86c99914fe7dafae8c2",
+    "taiji/utf8_state.py": "6ec7e96b2994dfa8eea430b3a08ddb5ff0fd877cf70c8cc288f57bab2efcac09",
+    "taiji/u2_history.py": "067b9c07290d42bc08188b421267e7d9dca0f73343bc8e18c6e2a0a7e71e79bf",
+    "scripts/training/calibrate_content_credit_22_5.py": "a418d7f9ba49189c042294d613313afd485cf62c6ad8568f42fc85ca0d7f1ab0",
+    "scripts/training/calibrate_stable_credit_22_5.py": "d86f7c465a0ab5ae101833f47ede52c27fadc8187ac72cd2aa000c72ed18546e",
+    "scripts/training/credit_update_22_5.py": "8f3863538b1b2b1390206de691d938edf1baa9b2d351a559228c55dfb76e1166"
+  },
+  "scales": [
+    1,
+    0.5,
+    0.25,
+    0.125,
+    0.0625,
+    0.03125,
+    0.015625,
+    0.0078125
+  ],
+  "armijo": 0.0001,
+  "tolerance": 1e-06,
+  "controls": {
+    "byte_only": {
+      "report": "E:\\Seed\\reports\\taiji_u2_first_round_calibration_20261113.json",
+      "sha256": "4aa4208c4d952d5ff58096e470f1e98b45e9d1ef316fb17ac71e8e873ba009c6"
+    },
+    "content_adam": {
+      "report": "E:\\Seed\\reports\\taiji_u2_content_credit_20261113.json",
+      "sha256": "3e1559e5b9fdec132120d41d313522173a3282377bbe3d77216cc3d96fdf89b2"
+    }
+  },
+  "check_reads": 0,
+  "final_reads": 0,
+  "budget_accounting": "update calibration90 from Native engineering240; unallocated810, remaining Native engineering150/runner600/audit60"
+}
