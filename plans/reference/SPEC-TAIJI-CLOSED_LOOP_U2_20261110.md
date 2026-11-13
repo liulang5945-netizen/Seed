@@ -348,4 +348,12 @@ U1/MGW1仍为设计来源，历史数学回执按各自已声明的失效项解�
 
 当前共享同化入口执行事件校验、感知/FP1及ν测量，正常receive另计算原行为的actor/critic信用。历史重编码在no_grad区间进行，提交后以显式值锚点开启新信用窗并清零资格迹。缓存packet/观测packet/receipt/行为版本与当前parameter_revision分别登记。参数事务接收独立fork，校验同配置、结构、布局和父+1版本，经只读验收及父/源复核后提交完整状态与moment。runtime v3/原始链v2记录update边界，实施及40字段迁移矩阵见[22.3.4](PLAN-TAIJI-CLOSED_LOOP_DEVELOPMENT_20261110.md#2234-八步内的更新及故障核验)。
 
+## 17. 任务条件化修订的实证身份
+
+P3.6的研究子图在活跃request期间令g_eff=g+Aq，A为零初始化8×8矩阵，归Θ，旧Ψ资格迹沿原定义。persistent-control以g替换q。旧参数与真实moment继承，新矩阵moment从缺省开始，typed bundle明确mode及祖先摘要。该配置的函数中性、完整图旧梯度／HVP及独立恢复已有工程回执。
+
+[六臂实际学习](CLOSEOUT-TAIJI_U2_TASK_GOAL_LEARNING_20261113.md)在每组300实际训练CPU下，四个Native组均恒答未知、dev50%，两个因素与交互点估计0。新矩阵发生了float32真实更新，其任务净收益在该窗未获支持。源码与typed factory继续用于恢复相应研究候选，后继算法状态按新合同登记。
+
+[首问配对诊断](PLAN-TAIJI_U2_FIRST_BINDING_20261113.md)按完整序列优势的世界×问题混合差分测量联合分辨。Native部分Δ处于float32舍入量级，float64读取／感知参数的混合导数仍非零。该结果确定了一个需验证实际优化效果的弱任务交互路径。交互目标及可能的表示修订由P3.7冻结，当前局部证据按其开发范围解释，完整任务、自驱、保持与生长仍由各自验收裁决。
+
 22.3.4.3/5现按[工程结案](VALIDATION-TAIJI-U2_22_3_CLOSEOUT_20261111.md)完成6次实际Adam更新、2次无step故障及最终schema的12类/34组独立接续，逐参数梯度最大差0。接受范围为CPU small profile未训练初始化的图/恢复/更新语义，实际新旧任务收益、成熟生长、主动选择及nominal恢复按后继范围签署。

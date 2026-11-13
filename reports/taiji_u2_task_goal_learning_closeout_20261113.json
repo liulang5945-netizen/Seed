@@ -1,0 +1,156 @@
+{
+  "schema": "taiji-u2-task-goal-closeout-v1",
+  "verdict": "state_goal_factorial_not_supported",
+  "complete": true,
+  "groups": {
+    "A": {
+      "opened": 1830,
+      "accepted": 1829,
+      "quarantined": 1,
+      "selected_cpu": 299.921875,
+      "spent_cpu": 300.078125,
+      "initial_adam_max_step": 2499,
+      "selected_adam_max_step": 4328,
+      "projection_adam_step": 1829,
+      "train_accuracy": 0.5,
+      "dev_accuracy": 0.5,
+      "dev_by_round": {
+        "0": 0.5,
+        "1": 0.5
+      },
+      "controls": {
+        "without_rgb": 0.5,
+        "without_questions": 0.5
+      },
+      "partial_input_bound_consistent": true
+    },
+    "B": {
+      "opened": 1377,
+      "accepted": 1376,
+      "quarantined": 1,
+      "selected_cpu": 299.8125,
+      "spent_cpu": 300.03125,
+      "initial_adam_max_step": 2499,
+      "selected_adam_max_step": 3875,
+      "projection_adam_step": 1376,
+      "train_accuracy": 0.5,
+      "dev_accuracy": 0.5,
+      "dev_by_round": {
+        "0": 0.5,
+        "1": 0.5
+      },
+      "controls": {
+        "without_rgb": 0.5,
+        "without_questions": 0.5
+      },
+      "partial_input_bound_consistent": true
+    },
+    "C": {
+      "opened": 1482,
+      "accepted": 1481,
+      "quarantined": 1,
+      "selected_cpu": 299.90625,
+      "spent_cpu": 300.09375,
+      "initial_adam_max_step": 2499,
+      "selected_adam_max_step": 3980,
+      "projection_adam_step": 1481,
+      "train_accuracy": 0.5,
+      "dev_accuracy": 0.5,
+      "dev_by_round": {
+        "0": 0.5,
+        "1": 0.5
+      },
+      "controls": {
+        "without_rgb": 0.5,
+        "without_questions": 0.5
+      },
+      "partial_input_bound_consistent": true
+    },
+    "D": {
+      "opened": 1221,
+      "accepted": 1220,
+      "quarantined": 1,
+      "selected_cpu": 299.921875,
+      "spent_cpu": 300.15625,
+      "initial_adam_max_step": 2499,
+      "selected_adam_max_step": 3719,
+      "projection_adam_step": 1220,
+      "train_accuracy": 0.5,
+      "dev_accuracy": 0.5,
+      "dev_by_round": {
+        "0": 0.5,
+        "1": 0.5
+      },
+      "controls": {
+        "without_rgb": 0.5,
+        "without_questions": 0.5
+      },
+      "partial_input_bound_consistent": true
+    },
+    "TF-teacher": {
+      "opened": 4024,
+      "accepted": 4023,
+      "quarantined": 1,
+      "selected_cpu": 299.953125,
+      "spent_cpu": 300.03125,
+      "initial_adam_max_step": 9629,
+      "selected_adam_max_step": 13652,
+      "projection_adam_step": null,
+      "train_accuracy": 0.5111111111111111,
+      "dev_accuracy": 0.5222222222222223,
+      "dev_by_round": {
+        "0": 0.5222222222222223,
+        "1": 0.5222222222222223
+      },
+      "controls": {
+        "without_rgb": 0.0,
+        "without_questions": 0.0
+      },
+      "partial_input_bound_consistent": true
+    },
+    "TF-actual": {
+      "opened": 3861,
+      "accepted": 3860,
+      "quarantined": 1,
+      "selected_cpu": 299.984375,
+      "spent_cpu": 300.0625,
+      "initial_adam_max_step": 9629,
+      "selected_adam_max_step": 13489,
+      "projection_adam_step": null,
+      "train_accuracy": 0.5805555555555556,
+      "dev_accuracy": 0.5444444444444444,
+      "dev_by_round": {
+        "0": 0.5388888888888889,
+        "1": 0.55
+      },
+      "controls": {
+        "without_rgb": 0.0,
+        "without_questions": 0.0
+      },
+      "partial_input_bound_consistent": true
+    }
+  },
+  "endpoint_compute_spread": 0.0005729465076306058,
+  "accepted_files_verified": 13789,
+  "quarantined_files_verified": 6,
+  "original_learner_optimizer_steps": 13795,
+  "optimizer_steps": 0,
+  "new_predictions": 0,
+  "check_reads": 0,
+  "final_reads": 0,
+  "capability_qualifications": [],
+  "artifact_bytes": 5453951990,
+  "cpu_seconds": 14.265625,
+  "wall_seconds": 32.57799999997951,
+  "run_conditions": {
+    "device": "cpu",
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "evidence_sha256": {
+    "plans/manifests/taiji_u2_task_goal_learning_execution_20261113.json": "d0275b2a3748fc0eeace0f2f718371cd43eea070ecdd39b2f184df315a101a0d",
+    "plans/manifests/taiji_u2_task_goal_learning_admission_20261113_v2.json": "04a27b244f3080265b0efbc8756789935d80650b9f79ed75196b472219c6cf97",
+    "reports/taiji_u2_task_goal_learning_20261113.json": "ac0e8c0b3eacf7e6203c6929335eb30a672dde31fa4b69813e6ececaa2856354",
+    "data/experiments/taiji_u2/task_goal_learning/1794542732110342200/ledger.jsonl": "14a3fc3af28454210a00ac76afe5d94aca0fcde28dfa7a5d0002a8a848638917"
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "schema": "taiji-u2-first-binding-contract-v1",
+  "cpu_cap": 180,
+  "wall_cap": 360,
+  "profiles": [
+    [
+      "D",
+      "float32"
+    ],
+    [
+      "D",
+      "float64"
+    ],
+    [
+      "TF-actual",
+      "float32"
+    ],
+    [
+      "TF-actual",
+      "float64"
+    ]
+  ],
+  "positions": [
+    0,
+    1,
+    2
+  ],
+  "color_pairs": [
+    [
+      0,
+      1
+    ],
+    [
+      2,
+      3
+    ]
+  ],
+  "partition": "train only",
+  "data_path": "E:\\Seed\\data\\experiments\\taiji_u2\\paired_task\\1794496638577954800\\data.bin",
+  "data_digest": "65041f02e3a3410b307bc6e013d897ef747e7f890b3668db6b5852fdc9fdba1c",
+  "learning_report_sha256": "ac0e8c0b3eacf7e6203c6929335eb30a672dde31fa4b69813e6ececaa2856354",
+  "checkpoint_sha256": {
+    "D": "0487504f836e175243a2fb116a2669791b3feb3c228e53a442c2c2b4857e022e",
+    "TF-actual": "c911a71589d6b4a6c087bad7b9906f44b9479eb3ec8abd51253e4b270c7b1fdd"
+  },
+  "source_sha256": "5a6a3838d3df072086432830c1944d0f9967a17c0a23d2fff04867f8bbbdd6bf",
+  "score_evaluations": 192,
+  "learner_optimizer_steps": 0,
+  "check_reads": 0,
+  "final_reads": 0,
+  "scope": "First request only; supervision-side full-sequence log odds and mixed world/request differences; all parameter gradients; explicit dtype conversion from the same float32 checkpoint",
+  "interpretation": "Development diagnostic only. Positive interaction or nonzero gradients do not qualify free-generation behavior. Additive score null and bilinear witness have separate float32/64 tests.",
+  "budget_accounting": "180 reserved from5910 leaves5730 CPU"
+}
