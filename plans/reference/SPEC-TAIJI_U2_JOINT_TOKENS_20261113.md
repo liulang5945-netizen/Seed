@@ -64,7 +64,7 @@ R的Jacobian谱范数≤100，零点值和导数均有限。最后的径向映�
 |---|---|---|
 | initial／set_goal | 当前已保存的goal／request与已提交证据前缀 | 空输入中性、目标版本和父源 |
 | predict／action | 当前已提交证据与转换前H | 单次Native转换、动作身份保持 |
-| assimilate／receive内部Native | 当次转换可见的已登记证据前缀；新packet仍走原事件编码路径 | 未提交packet不进入目录读取，不增加第二次Native转换 |
+| assimilate／receive内部Native | 当次转换可见的已登记证据前缀；新packet仍走原事件编码路径 | 未提交packet不进入目录读取；保留原两次绑定纠正和一次快记忆后整合，融合不追加转换 |
 | packet提交后 | 新证据经既有注册／来源校验可供下一次转换及表达读取 | 同一canonical包、撤销、超窗、缺失和非法来源 |
 | set_request／accept_byte | 当前request及其实际字节历史，转换前H | 实际历史保留、EOS／状态边界一次推进 |
 | output／policy | 当前H与合法证据，按当前query来源重算 | 表达和递推参数共享，分支隔离 |

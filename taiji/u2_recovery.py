@@ -60,6 +60,8 @@ def _source_pins() -> dict[str, str]:
         "u2_evidence_runtime.py",
         "u2_capacity_control.py",
         "u2_task_goal.py",
+        "u2_joint_tokens.py",
+        "u2_joint_subject.py",
         "u2_history.py",
         "u2_history_store.py",
         "u2_request_state.py",
