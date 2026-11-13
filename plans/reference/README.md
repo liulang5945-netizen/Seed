@@ -4,6 +4,8 @@
 
 ## 1. 总计划步骤对应的原合同
 
+[2026-11-13神经单位生命周期修订](SPEC-TAIJI_U2_NEURAL_UNIT_LIFECYCLE_20261113.md)补齐U2的单位状态、连接及成长身份，数学核验与正式实现分账；实施依赖见执行包22的P3.9卡。
+
 当前设计与实施卡为[U2完整主体闭环候选](SPEC-TAIJI-CLOSED_LOOP_U2_20261110.md)和[执行包22](PLAN-TAIJI-CLOSED_LOOP_DEVELOPMENT_20261110.md)，状态与准入见[总计划](../MASTER-PLAN.md)。下表01–13与R编号只保留原合同/实验身份，原始批准与读数见[03台账](../active/roadmap/03_CURRENT_EXECUTION.md)。
 
 | 总计划步骤 | 原合同 | 约定范围 |

@@ -10,6 +10,8 @@
 
 U2同一主体参考图已完成[22.2工程核验](reference/VALIDATION-TAIJI-U2_22_2_20261110.md)，真实联合任务、学习保持、递归选择与成熟生长仍待验证。当前以[U2规格](reference/SPEC-TAIJI-CLOSED_LOOP_U2_20261110.md)及冻结实现承接状态、读取/表达、结果信用和发展关系。U1/MGW1为设计来源，R63边界线及F学习线按原范围结案。
 
+2026-11-13采用[有状态神经单位及生命周期方向](reference/SPEC-TAIJI_U2_NEURAL_UNIT_LIFECYCLE_20261113.md)：统一持续状态、可塑连接、出生与回收身份。当前R/P扩宽资产保留，单位图是待正式实现的后继；它的规格与局部代数已修订，能力资格未变。
+
 ## 3. 唯一执行队列
 
 [执行包22详细卡](reference/PLAN-TAIJI-CLOSED_LOOP_DEVELOPMENT_20261110.md)依次为22.1数学/反例、22.2正式参考图、22.3完整恢复、22.4环境/定价、22.5学习父、22.6自驱递归、22.7神经成长、22.8联合生命片段与全局收束。后卡执行以前卡接受身份和冻结合同为前提。
@@ -19,6 +21,8 @@ U2同一主体参考图已完成[22.2工程核验](reference/VALIDATION-TAIJI-U2
 [23–28长期路线](reference/PLAN-TAIJI-N_LONG_HORIZON_20261111.md)承接包22收束，展开中文组合、持续知识维护、结构演化、递归发展、物理迁移和长期联合运行。每包按实际父与实价准入。22.4.A.1请求接口及学习前置已经交付。P1完成455次更新，P2完成282次更新，均未取得A父；随后P3.4–P3.7均已完整结案，Native仍无A父。[共享Fusion收束](reference/CLOSEOUT-TAIJI_U2_JOINT_LEARNING_20261113.md)记录当前证据，[学习校准结案](reference/CLOSEOUT-TAIJI_U2_LEARNING_CALIBRATION_20261113.md)已取得去辅助头后的首问神经参照179/180，当前[迁移计划](reference/SPEC-TAIJI_U2_NATIVE_CREDIT_TRANSFER_20261113.md)在原Native上核验学习机制。
 
 ## 4. 顺序执行工作卡
+
+近期顺序为P3.8.2b学习信用迁移→P3.8.3有界行为比较→P3.8.4全局结案→P3.9.1–4有状态单位的正式图、恢复及比较。P3.9工程不要求先有A父；成熟保持仍要求已核验能力。单位图的首次实现提前到22.5，22.7负责真实成长收益，25扩大连接/群体/通信及回收范围。该顺序避免把神经结构基础一直推迟到全部能力完成之后，具体出口及预算身份见执行包22。
 
 [详细开发计划](reference/PLAN-TAIJI-CLOSED_LOOP_DEVELOPMENT_20261110.md)含父身份、数据分区、数值门、预算、风险、触发后的处置与有限出口。[核心规格](reference/SPEC-TAIJI-CLOSED_LOOP_U2_20261110.md)含状态/参数/信用/恢复覆盖合同。
 

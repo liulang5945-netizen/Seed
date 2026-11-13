@@ -65,3 +65,7 @@ J_{first}=L_{first}+J_{content}.
 正式更新与学习器实现拟落在taiji/u2_credit_update.py及taiji/u2_credit_learner.py，工程runner落在scripts/training/verify_native_credit_transfer_22_5.py，回归落在tests/taiji_native/test_u2_credit_learner.py。原已冻结研究算子保持可重现身份，正式实现须逐提案核验参数／moment／RNG等值。
 
 新增学习源由完整LearnerCapsule的source_pins统一签署，body原有typed schema及推理源范围按其原身份保留。完整学习器parameter_registry明确包含body与content_head两部分，学习器时钟及未结提案为持久状态，推理body导出单独声明范围。工程阶段固定源和实际提案次数后执行，现有Native父未被上述校准权重替换。
+
+## 6. 与神经单位修订的交接
+
+[有状态单位图](SPEC-TAIJI_U2_NEURAL_UNIT_LIFECYCLE_20261113.md)在P3.9引入；本卡维持原body以隔离信用更新效果。LearnerCapsule通过版本化结构registry关联parameter_id、unit_id/edge_id及moment，当前不存在的状态不伪造为已实现。禁止让参数数组下标成为跨代永久身份。P3.9将新增z/a、边和生命周期字段，重签其schema、恢复及真实更新；本卡216张量覆盖不自动继承为新图覆盖。

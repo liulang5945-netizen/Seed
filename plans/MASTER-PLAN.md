@@ -16,6 +16,8 @@
 
 当前按[Native迁移规范](reference/SPEC-TAIJI_U2_NATIVE_CREDIT_TRANSFER_20261113.md)核验原主体的内容误差职责、参数提案验收、学习器u／参数v及完整学习恢复。当前参照为单对象／固定问题／三几何族／单初始化首问，Native父资格保持为空。未分配790 CPU，后续工程130／行为runner600／审计60逐卡冻结。
 
+2026-11-13神经单位重审：采纳[有状态单位、连接和生命周期修订](reference/SPEC-TAIJI_U2_NEURAL_UNIT_LIFECYCLE_20261113.md)，现有H/群通信和R/P生长资产继续继承。P3.8先隔离学习规则效果并结案，P3.9随后交付单位图与完整恢复，再比较任务效果；首次单位工程不等待A父，保持/成熟资格仍须真实能力。P3.9为新函数类范围的设计卡，当前未获训练剂量，不挪用790 CPU或改写历史门。当前队首不变。
+
 ### 已交付资产与历史范围
 
 22.3已按[工程结案](reference/VALIDATION-TAIJI-U2_22_3_CLOSEOUT_20261111.md)通过，交付[接受父](manifests/taiji_u2_22_3_accepted_parent_20261111.json)。8次attempt消耗完毕，其中6次真实Adam.step，8份S12/worker和8规范存档全部核验。最终runtime v3/原始链v2覆盖12类状态、34组float32/64独立接续，191参数逐项梯度最大差0，闭包0新增step。22.3当时接受small profile未训练初始化，能力资格为空；后续任务及实际学习进度见最新队首。
