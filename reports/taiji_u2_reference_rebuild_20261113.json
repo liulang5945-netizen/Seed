@@ -1,0 +1,27 @@
+{
+  "schema": "taiji-u2-reference-rebuild-v1",
+  "verdict": "regenerable_exact",
+  "constructed_from": "repository source, deterministic public-world recipe, initial CPU RNG and factual optimizer decisions",
+  "optimizer_replay_calls": 1844,
+  "accepted_parameter_updates": 1715,
+  "largest_objective_difference": 0.0,
+  "data_digest": "65041f02e3a3410b307bc6e013d897ef747e7f890b3668db6b5852fdc9fdba1c",
+  "parameter_digest": "04bcc7a508f7b62158ecd1bff6fca3bc9fb315693aeda6a779c1351be49a623c",
+  "optimizer_digest": "9b68a1e1b8f30ae84963e83eec81857d31d716a3bef4313cbac4976fd5d05f0f",
+  "generation_exact": true,
+  "runtime_parameter_count": 65169,
+  "reconstructed_checkpoint": "E:\\Seed\\data\\experiments\\taiji_u2\\reference_rebuild\\1794576104972183500\\inference-only.bin",
+  "sha256": "653c45ce86e00511f7b6bb22d5bafea5884da43dc776eafebd77fe6a95712306",
+  "original_file_sha256": "653c45ce86e00511f7b6bb22d5bafea5884da43dc776eafebd77fe6a95712306",
+  "cpu_seconds": 32.515625,
+  "wall_seconds": 35.51600000006147,
+  "check_reads": 0,
+  "final_reads": 0,
+  "capability_qualifications": [],
+  "run_conditions": {
+    "device": "cpu",
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "recipe_sha256": "fc23c43aa2e4cd051507af51cb9b514768199f3ba3683b1376e11805cd6a8783"
+}

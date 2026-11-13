@@ -2,7 +2,7 @@
 
 > 文档状态：[主线] — 2026-11-13全局收束。唯一主线沿N推进，状态与调度权归[MASTER-PLAN](MASTER-PLAN.md)。
 
-**队首（唯一）**：22.5.P3.8.2a，校准带目标验收的参数更新，保持网络和监督目标、固定终点评分；两项原校准结果保留，当前无A父。
+**队首（唯一）**：22.5.P3.8.2b，将内容信用与参数验收机制迁移到原Native学习接口，核验双时钟、完整学习恢复及真实更新；首问参照已校准，Native A父仍未成立。
 
 ## 1. 长期目标与当前主计算图
 
@@ -16,7 +16,7 @@ U2同一主体参考图已完成[22.2工程核验](reference/VALIDATION-TAIJI-U2
 
 执行包号与S18–S22长期责任轴独立。R3b等旧编号保留原合同身份。旧包20/21、F线和R系列的“下一步”只解释其历史时点。
 
-[23–28长期路线](reference/PLAN-TAIJI-N_LONG_HORIZON_20261111.md)承接包22收束，展开中文组合、持续知识维护、结构演化、递归发展、物理迁移和长期联合运行。每包按实际父与实价准入。22.4.A.1请求接口及学习前置已经交付。P1完成455次更新，P2完成282次更新，均未取得A父；随后P3.4–P3.7均已完整结案，Native仍无A父。[共享Fusion收束](reference/CLOSEOUT-TAIJI_U2_JOINT_LEARNING_20261113.md)记录当前证据，[学习校准计划](reference/PLAN-TAIJI_U2_LEARNING_CALIBRATION_20261113.md)定义唯一后继及剩余资源。
+[23–28长期路线](reference/PLAN-TAIJI-N_LONG_HORIZON_20261111.md)承接包22收束，展开中文组合、持续知识维护、结构演化、递归发展、物理迁移和长期联合运行。每包按实际父与实价准入。22.4.A.1请求接口及学习前置已经交付。P1完成455次更新，P2完成282次更新，均未取得A父；随后P3.4–P3.7均已完整结案，Native仍无A父。[共享Fusion收束](reference/CLOSEOUT-TAIJI_U2_JOINT_LEARNING_20261113.md)记录当前证据，[学习校准结案](reference/CLOSEOUT-TAIJI_U2_LEARNING_CALIBRATION_20261113.md)已取得去辅助头后的首问神经参照179/180，当前[迁移计划](reference/SPEC-TAIJI_U2_NATIVE_CREDIT_TRANSFER_20261113.md)在原Native上核验学习机制。
 
 ## 4. 顺序执行工作卡
 

@@ -1,18 +1,20 @@
 # MASTER-PLAN（唯一权威主线）
 
-> 文档状态：[主线] — 2026-11-13。P3.7主体、四臂学习及独立审计已全局结案，Native仍无A父，当前进入首问端到端可学性与更新接口校准。
+> 文档状态：[主线] — 2026-11-13。P3.7主体、四臂学习及独立审计已全局结案，Native仍无A父，首问神经参照已校准，当前将内容信用与受验收更新迁移到Native学习接口。
 
 ## 0. 一句话与队首
 
 **唯一主线**沿N发展同一可学习、可恢复、按需生长的持续主体，使自驱、递归改进、经验学习与多模态物理认知形成可验证闭环。
 
-**队首（唯一）**：22.5.P3.8.2a，校准带目标验收的参数更新，保持网络和监督目标、固定终点评分；两项原校准结果保留，当前无A父。
+**队首（唯一）**：22.5.P3.8.2b，将内容信用与参数验收机制迁移到原Native学习接口，核验双时钟、完整学习恢复及真实更新；首问参照已校准，Native A父仍未成立。
 
 [P3.4](reference/CLOSEOUT-TAIJI_U2_EVIDENCE_LEARNING_20261112.md)、[P3.5](reference/CLOSEOUT-TAIJI_U2_PAIRED_LEARNING_20261113.md)及[P3.6](reference/CLOSEOUT-TAIJI_U2_TASK_GOAL_LEARNING_20261113.md)保留各自完整负结果与限定。配对任务每分区360轮，部分输入上界50%；空复制集合前反向约3.78倍加速，实际CPU终点、真实Adam及完整恢复均有直接证据。上述工程成果尚未取得Native任务父。
 
 [P3.7完整收束](reference/CLOSEOUT-TAIJI_U2_JOINT_LEARNING_20261113.md)核验6513次真实learner调用、6509接受和4隔离文件。原D／问题Fusion／目标Fusion均恒答未知，train/dev50%；TF train/dev60.28%。训练CPU端点差0.04688%，runner1964.9375 CPU，独立审计7.59375 CPU。共享主体4次工程更新、8独立恢复／1712梯度等值另列，原0步执行器夹具失败保留。新路径工程成立，任务净收益按负结果结案。
 
-当前采用[P3.8学习校准计划](reference/PLAN-TAIJI_U2_LEARNING_CALIBRATION_20261113.md)。先以公开RGB和原始UTF-8的可批生成基线校准首问可学性，随后界定Native首／次问目标与经验聚合；各范围及能力分账。P3.8.1源码与6项回归已完成，[机器合同](manifests/taiji_u2_first_round_calibration_contract_20261113.json)冻结训练60 CPU／总120 CPU及独立恢复，预留后未分配990 CPU。
+[P3.8校准结案](reference/CLOSEOUT-TAIJI_U2_LEARNING_CALIBRATION_20261113.md)已取得合格首问参照。字节CE、内容监督原Adam、受验收更新三项固定末点的dev依次为50%、63.33%、99.44%；最后一项去头后train/dev各179/180，最差问题组29/30，两输入控制50%，独立23梯度及生成恢复精确。126份文件审计通过，旧负结果和实际费用保留。
+
+当前按[Native迁移规范](reference/SPEC-TAIJI_U2_NATIVE_CREDIT_TRANSFER_20261113.md)核验原主体的内容误差职责、参数提案验收、学习器u／参数v及完整学习恢复。当前参照为单对象／固定问题／三几何族／单初始化首问，Native父资格保持为空。未分配790 CPU，后续工程130／行为runner600／审计60逐卡冻结。
 
 ### 已交付资产与历史范围
 
@@ -161,6 +163,12 @@ MAINLINE、MASTER与ROADMAP的逐轮重复正文已蒸馏，原字节可按[Git�
 
 **默认入库与默认 skip 都是禁止项**：默认入库会撑大库体并掩盖"当年怎么造的"这一缺口；默认 skip 会让读数悄悄失去消费方。成本先估再跑，超预算按放权流程留档。本规则不构成任何读取授权，与 R-SEAL-1 互不影响。
 
-P3.8.1已按[固定剂量结案](reference/CLOSEOUT-TAIJI_U2_FIRST_ROUND_CALIBRATION_20261113.md)完成2000步／360000样本呈现，train/dev50%，总29 CPU，独立恢复精确。context显著趋同并高饱和。当前按[独立内容信用合同](reference/SPEC-TAIJI_U2_CONTENT_CREDIT_20261113.md)复用该控制、从原step0检验答案标签对共享context的直接训练信用，移除头后仍走257字节生成。使用原90余量，未分配900 CPU。
 
-P3.8.1b移除辅助头后train66.11%／dev63.33%，未过原校准门，真实2000步及原控制保留，独立恢复精确。保存点暴露联合训练目标的大幅回升。当前按[目标验收更新合同](reference/SPEC-TAIJI_U2_ACCEPTED_CREDIT_UPDATE_20261113.md)执行P3.8.2a，网络／目标固定，参数提案与学习器时钟分账，工程内90预留后未分配810 CPU。
+
+## P3.8首问参照接受与Native迁移
+
+[三项校准结案](reference/CLOSEOUT-TAIJI_U2_LEARNING_CALIBRATION_20261113.md)保留字节CE50%、内容监督66.11%/63.33%的原始结果。带目标验收的同网络／内容目标在预算内1844梯度批次、1715参数接受后，去头实际生成train/dev各179/180，最差问题组29/30；两输入控制50%。总83.34375 CPU，有限提案／参数版本分账，独立23梯度及全部生成精确恢复。
+
+[阶段审计](../reports/taiji_u2_calibration_audit_20261113.json)已验证三项126文件、全部时钟、原评分及去头包，0optimizer。合格身份见[首问参照](manifests/taiji_u2_first_round_reference_20261113.json)。此为单对象／六问题／三几何族／单初始化首问参考，Native权重尚无新能力结论。当前按[Native迁移规范](reference/SPEC-TAIJI_U2_NATIVE_CREDIT_TRANSFER_20261113.md)实施P3.8.2b，阶段审计预留20后未分配790 CPU，Native工程130／runner600／最终审计60仍待逐卡冻结。
+
+首问参照输入已按[源码重建](../reports/taiji_u2_reference_rebuild_20261113.json)验证regenerable_exact，推理包SHA与原始文件逐位相同，生成结果一致。重建以原世界recipe、CPU RNG初态及既定学习选择复算，32.515625 CPU，复算调用单列；使用首卡已结案释放的90预留，原1110及后续790额度保持。

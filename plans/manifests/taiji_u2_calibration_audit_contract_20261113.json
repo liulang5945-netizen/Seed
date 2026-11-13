@@ -1,0 +1,12 @@
+{
+  "schema": "taiji-u2-calibration-audit-contract-v1",
+  "cpu_cap": 20,
+  "wall_cap": 60,
+  "auditor_sha256": "8054198a413387697c75fa3450636254950eb043892c91efaea1eead92317622",
+  "optimizer_steps": 0,
+  "new_free_generation_evaluations": 0,
+  "teacher_gradient_rechecks": 3,
+  "check_reads": 0,
+  "final_reads": 0,
+  "budget_accounting": "phase audit20 from remaining Native engineering150; unallocated790 with Native130/runner600/audit60"
+}

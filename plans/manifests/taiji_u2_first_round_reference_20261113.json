@@ -1,0 +1,26 @@
+{
+  "schema": "taiji-u2-first-round-reference-v1",
+  "status": "calibrated_first_round_reference",
+  "role": "public-input first-round neural reference",
+  "checkpoint": "E:\\Seed\\data\\experiments\\taiji_u2\\stable_credit\\1794572012385331600\\inference-only.bin",
+  "sha256": "653c45ce86e00511f7b6bb22d5bafea5884da43dc776eafebd77fe6a95712306",
+  "parameters": 65169,
+  "train_correct": 179,
+  "dev_correct": 179,
+  "denominator_per_partition": 180,
+  "native_parent_qualified": false,
+  "data_digest": "65041f02e3a3410b307bc6e013d897ef747e7f890b3668db6b5852fdc9fdba1c",
+  "audit_report_sha256": "7628cfdcd1647e77b0f1a770d0c8d094f1b3df78489318c2829997213fb2d821",
+  "run_conditions": {
+    "device": "cpu",
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "reconstruction": {
+    "classification": "regenerable_exact",
+    "recipe": "plans/manifests/taiji_u2_reference_rebuild_20261113.json",
+    "script": "scripts/training/rebuild_first_round_reference_22_5.py",
+    "report": "reports/taiji_u2_reference_rebuild_20261113.json",
+    "report_sha256": "4a7570fa868243a2ad4eeb152ef330b46a60ef82bb84590ddddd53f7530c51e8"
+  }
+}
