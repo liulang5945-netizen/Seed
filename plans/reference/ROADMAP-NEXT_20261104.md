@@ -1,12 +1,12 @@
 # ROADMAP-NEXT（唯一推进轨道）
 
-> 文档状态：[索引] — 2026-11-10同步。当前状态归[MASTER-PLAN](../MASTER-PLAN.md)，本页只作依赖导航。
+> 文档状态：[索引] — 2026-11-13同步。当前状态归[MASTER-PLAN](../MASTER-PLAN.md)，本页只作依赖导航。
 
-**队首（唯一）**：22.5.P3.7.4，执行原D／问题融合／目标融合控制／Transformer四臂实际历史学习，每组300训练CPU，随后全局收束；主体共享信用与恢复已验，当前无A父。
+**队首（唯一）**：22.5.P3.8.1，冻结并完成首问端到端可学性强基线校准；P3.7四臂已负结案，共享主体和恢复工程保留，当前无A父。
 
 ## 0. 坐标系与当前步
 
-当前算法为[U2完整主体闭环候选](SPEC-TAIJI-CLOSED_LOOP_U2_20261110.md)。22.3恢复、22.4物理/请求接口和首次学习前置已交付。P1/P2实际有界学习均未取得A父，当前按[读取重审卡](PLAN-TAIJI_FIRST_A_READING_REVIEW_20261112.md)完成归因及架构候选设计；后继按[执行包22](PLAN-TAIJI-CLOSED_LOOP_DEVELOPMENT_20261110.md)准入。
+当前算法为[U2完整主体闭环候选](SPEC-TAIJI-CLOSED_LOOP_U2_20261110.md)。22.3恢复、22.4物理/请求接口和首次学习前置已交付。P1–P3.7实际学习仍无A父，当前按[学习校准卡](PLAN-TAIJI_U2_LEARNING_CALIBRATION_20261113.md)处理首问可学性与更新接口；后继按[执行包22](PLAN-TAIJI-CLOSED_LOOP_DEVELOPMENT_20261110.md)准入。
 
 ## 1. 19窗口结案与父资产
 
@@ -16,7 +16,7 @@
 
 包20已结案，20.5未释放新确认。[原合同](PLAN-PACKAGE20_RULE_LEARNING_CORRECTION_20261105.md)与[结案报告](../../reports/taiji_package20_6_package_close_20261107.json)保留。
 
-## 2b. 执行包 21：读出/发射零训练分解（当前唯一主线）
+## 2b. 执行包21读出／发射零训练分解（历史已结案）
 
 本历史标题保留旧锚点。包21已[全局结案](CLOSEOUT-PACKAGE21_GLOBAL_20261107.md)，后续v2 F学习、桥及R63线按各自结案，不从本标题发布现行队列。
 

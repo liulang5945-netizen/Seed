@@ -1,0 +1,136 @@
+{
+  "schema": "taiji-u2-joint-learning-closeout-v1",
+  "verdict": "joint_task_not_supported",
+  "complete": true,
+  "groups": {
+    "native-base": {
+      "opened": 932,
+      "accepted": 931,
+      "quarantined": 1,
+      "selected_cpu": 299.828125,
+      "spent_cpu": 300.125,
+      "initial_adam_max_step": 3719,
+      "selected_adam_max_step": 4650,
+      "fusion_adam_ages": {},
+      "train_accuracy": 0.5,
+      "dev_accuracy": 0.5,
+      "dev_by_round": {
+        "0": 0.5,
+        "1": 0.5
+      },
+      "controls": {
+        "without_rgb": 0.5,
+        "without_questions": 0.5
+      }
+    },
+    "joint-query": {
+      "opened": 759,
+      "accepted": 758,
+      "quarantined": 1,
+      "selected_cpu": 299.859375,
+      "spent_cpu": 300.21875,
+      "initial_adam_max_step": 3719,
+      "selected_adam_max_step": 4477,
+      "fusion_adam_ages": {
+        "joint_fusion.roles": 758,
+        "joint_fusion.metadata.weight": 758,
+        "joint_fusion.blocks.0.qkv.weight": 758,
+        "joint_fusion.blocks.0.output.weight": 758,
+        "joint_fusion.blocks.0.up.weight": 758,
+        "joint_fusion.blocks.0.down.weight": 758,
+        "joint_fusion.blocks.1.qkv.weight": 758,
+        "joint_fusion.blocks.1.output.weight": 758,
+        "joint_fusion.blocks.1.up.weight": 758,
+        "joint_fusion.blocks.1.down.weight": 758,
+        "joint_fusion.pool_score.weight": 758,
+        "joint_fusion.pool_value.weight": 758
+      },
+      "train_accuracy": 0.5,
+      "dev_accuracy": 0.5,
+      "dev_by_round": {
+        "0": 0.5,
+        "1": 0.5
+      },
+      "controls": {
+        "without_rgb": 0.5,
+        "without_questions": 0.5
+      }
+    },
+    "joint-goal": {
+      "opened": 841,
+      "accepted": 840,
+      "quarantined": 1,
+      "selected_cpu": 299.9375,
+      "spent_cpu": 300.3125,
+      "initial_adam_max_step": 3719,
+      "selected_adam_max_step": 4559,
+      "fusion_adam_ages": {
+        "joint_fusion.roles": 840,
+        "joint_fusion.metadata.weight": 840,
+        "joint_fusion.blocks.0.qkv.weight": 840,
+        "joint_fusion.blocks.0.output.weight": 840,
+        "joint_fusion.blocks.0.up.weight": 840,
+        "joint_fusion.blocks.0.down.weight": 840,
+        "joint_fusion.blocks.1.qkv.weight": 840,
+        "joint_fusion.blocks.1.output.weight": 840,
+        "joint_fusion.blocks.1.up.weight": 840,
+        "joint_fusion.blocks.1.down.weight": 840,
+        "joint_fusion.pool_score.weight": 840,
+        "joint_fusion.pool_value.weight": 840
+      },
+      "train_accuracy": 0.5,
+      "dev_accuracy": 0.5,
+      "dev_by_round": {
+        "0": 0.5,
+        "1": 0.5
+      },
+      "controls": {
+        "without_rgb": 0.5,
+        "without_questions": 0.5
+      }
+    },
+    "transformer": {
+      "opened": 3981,
+      "accepted": 3980,
+      "quarantined": 1,
+      "selected_cpu": 299.96875,
+      "spent_cpu": 300.03125,
+      "initial_adam_max_step": 13489,
+      "selected_adam_max_step": 17469,
+      "fusion_adam_ages": {},
+      "train_accuracy": 0.6027777777777777,
+      "dev_accuracy": 0.6027777777777777,
+      "dev_by_round": {
+        "0": 0.5888888888888889,
+        "1": 0.6166666666666667
+      },
+      "controls": {
+        "without_rgb": 0.0,
+        "without_questions": 0.0
+      }
+    }
+  },
+  "accepted_files_verified": 6509,
+  "quarantined_files_verified": 4,
+  "original_learner_optimizer_steps": 6513,
+  "endpoint_compute_spread": 0.0004687988332117929,
+  "optimizer_steps": 0,
+  "new_predictions": 0,
+  "check_reads": 0,
+  "final_reads": 0,
+  "capability_qualifications": [],
+  "artifact_bytes": 2588989444,
+  "cpu_seconds": 7.59375,
+  "wall_seconds": 11.078000000095926,
+  "run_conditions": {
+    "device": "cpu",
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "evidence_sha256": {
+    "plans/manifests/taiji_u2_joint_learning_admission_20261113.json": "8e010247aedc6b7c087d390bf9a73d099950ba6b2dd520c0a25211e2a3208d3e",
+    "plans/manifests/taiji_u2_joint_learning_execution_20261113.json": "a83614e070d217552ab3df6e2381e681c763d08a2933bce5e555d19d2aad8366",
+    "reports/taiji_u2_joint_learning_20261113.json": "daf0c991d1f7e41457286407629332c3dc9ff3f6b378b86b6c01c6f6c1897f88",
+    "data/experiments/taiji_u2/joint_learning/1794554480667378100/ledger.jsonl": "e551d544dbfba9845dd6ab6e57560707cf7d1f6042aee2d4ca8429aee4deba72"
+  }
+}

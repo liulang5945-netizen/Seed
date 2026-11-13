@@ -35,3 +35,5 @@
 ## 4. 工程及实价结案
 
 [主体／价格回执](VALIDATION-TAIJI_U2_JOINT_SUBJECT_20261113.md)记录全部4步及8独立恢复／1712梯度等值。首次默认执行器夹具在0更新时失败，旧报告／合同／源码归档，PhysicalExecutor按同一genesis重建并逐值核验公开输入；总CPU27.75包含失败5.953125。当前四臂实价与完整检查点准入已冻结，下一P3.7.4按实际CPU终点及原任务门裁决。
+
+后续P3.7.4/5已按[四臂全局收束](CLOSEOUT-TAIJI_U2_JOINT_LEARNING_20261113.md)负结果结案。工程接受范围保留，正式任务资格为空；当前唯一后继见[P3.8学习校准](PLAN-TAIJI_U2_LEARNING_CALIBRATION_20261113.md)。

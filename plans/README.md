@@ -6,11 +6,11 @@
 
 ## 按顺序推进只读一份
 
-[MAINLINE](MAINLINE.md)是唯一入口，状态与队首归[MASTER-PLAN](MASTER-PLAN.md)，[ROADMAP-NEXT](reference/ROADMAP-NEXT_20261104.md)同步依赖。[U2完整主体闭环候选](reference/SPEC-TAIJI-CLOSED_LOOP_U2_20261110.md)沿[执行包22](reference/PLAN-TAIJI-CLOSED_LOOP_DEVELOPMENT_20261110.md)推进，22.1局部数学、22.2参考图及22.3恢复工程均已结案。当前22.5.P3.7.4执行四臂实际历史学习并全局结案，六项目标按同一主体逐层取证。S18–S22为长期责任轴，与执行包号独立。
+[MAINLINE](MAINLINE.md)是唯一入口，状态与队首归[MASTER-PLAN](MASTER-PLAN.md)，[ROADMAP-NEXT](reference/ROADMAP-NEXT_20261104.md)同步依赖。[U2完整主体闭环候选](reference/SPEC-TAIJI-CLOSED_LOOP_U2_20261110.md)沿[执行包22](reference/PLAN-TAIJI-CLOSED_LOOP_DEVELOPMENT_20261110.md)推进，22.1局部数学、22.2参考图及22.3恢复工程均已结案。当前22.5.P3.8.1校准首问端到端可学性与实际费用，六项目标按同一主体逐层取证。S18–S22为长期责任轴，与执行包号独立。
 
 本轮范围、顺序、预算、风险与具名出口见[闭环开发卡](reference/PLAN-TAIJI-CLOSED_LOOP_DEVELOPMENT_20261110.md)。22.3已按[工程结案](reference/VALIDATION-TAIJI-U2_22_3_CLOSEOUT_20261111.md)交付small初始化接受父，学习前置与配对任务已经交付，实际学习尚无正式A父。包20、包21、v2 F学习线与桥/边界线按各自结案保存，阶段编号不表示长期能力完成比例。
 
-22.4.1已按[接口与恢复回执](reference/VALIDATION-TAIJI-U2_22_4_1_CLOSEOUT_20261112.md)结案，五个计费名额结清，能力资格为空。连续物理世界与A/B学习前置已按后续回执收束，当前细卡见[首问绑定计划](reference/PLAN-TAIJI_U2_FIRST_BINDING_20261113.md)。
+22.4.1已按[接口与恢复回执](reference/VALIDATION-TAIJI-U2_22_4_1_CLOSEOUT_20261112.md)结案，五个计费名额结清，能力资格为空。连续物理世界与A/B学习前置已按后续回执收束，当前细卡见[学习校准计划](reference/PLAN-TAIJI_U2_LEARNING_CALIBRATION_20261113.md)。
 
 [N长期路线](reference/PLAN-TAIJI-N_LONG_HORIZON_20261111.md)将包22之后的23–28展开为组合泛化、跨会话知识、结构演化、递归发展、物理迁移和长期联合运行，列明父资格、算法责任、对照及有限出口。
 

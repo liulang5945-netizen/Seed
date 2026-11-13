@@ -1,22 +1,28 @@
 # MASTER-PLAN（唯一权威主线）
 
-> 文档状态：[主线] — 2026-11-13。P3.6六臂学习与独立审计已结案，Native仍无A父，P3.7.2固定交互更新配方已负结案，P3.7.3a/b联合表征局部算子已交付，当前正常主体与恢复已通过，进入四臂实际学习。
+> 文档状态：[主线] — 2026-11-13。P3.7主体、四臂学习及独立审计已全局结案，Native仍无A父，当前进入首问端到端可学性与更新接口校准。
 
 ## 0. 一句话与队首
 
 **唯一主线**沿N发展同一可学习、可恢复、按需生长的持续主体，使自驱、递归改进、经验学习与多模态物理认知形成可验证闭环。
 
-**队首（唯一）**：22.5.P3.7.4，执行原D／问题融合／目标融合控制／Transformer四臂实际历史学习，每组300训练CPU，随后全局收束；主体共享信用与恢复已验，当前无A父。
+**队首（唯一）**：22.5.P3.8.1，冻结并完成首问端到端可学性强基线校准；P3.7四臂已负结案，共享主体和恢复工程保留，当前无A父。
 
-[四臂全局结案](reference/CLOSEOUT-TAIJI_U2_EVIDENCE_LEARNING_20261112.md)已核验5381个更新及检查点，完整fit为0/8/8/9正确。v1归因段错误已按原前缀恢复，原证据保留。四臂训练CPU配平12.63%超过10%门，Native子比较4.38%在容差内；query/capacity均恒左边，读取独立收益未证。训练内诊断及数据支持审计见回执。[P3.5.1配对任务](reference/SPEC-TAIJI_U2_PAIRED_WORLD_20261112.md)已完成，修正循环缺席规则的2/3历史旁路；每分区360轮，所有部分输入/完整非RGB历史上界0.50，804条跨进程梯度比较一致，29项回归通过。[P3.5.2–3](reference/VALIDATION-TAIJI_U2_PAIRED_COMPUTE_20261113.md)又完成学习链与空复制集合等值优化，前反向约3.78倍加速，90项回归通过。[P3.5全轮](reference/CLOSEOUT-TAIJI_U2_PAIRED_LEARNING_20261113.md)已完成7749次更新及全部审计，终点训练CPU配平约0.01%，Native训练/dev均50%，TF dev47.22%。[P3.6.1–3](reference/VALIDATION-TAIJI_U2_TASK_GOAL_20261113.md)已核验函数中性64参数投影、实际历史、moment继承及4组恢复，808条梯度一致。[P3.6.4准入](reference/VALIDATION-TAIJI_U2_TASK_GOAL_ADMISSION_20261113.md)已冻结四个Native正交组及两个TF历史参考，每组300实际训练CPU，六份检查点续接梯度一致。准备CPU16.671875、影子Adam48、真实learner更新0。[P3.6完整结案](reference/CLOSEOUT-TAIJI_U2_TASK_GOAL_LEARNING_20261113.md)已核验13795次真实更新，四个Native组均恒答未知，dev50%；TF-teacher/actual为52.22%/54.44%。训练CPU端点差0.0573%，runner2884.859375 CPU，0能力晋级。[P3.7首问诊断](reference/PLAN-TAIJI_U2_FIRST_BINDING_20261113.md)在两父/双精度完成192次监督序列评分，Native交互很弱且部分值受float32舍入影响，读取参数仍有混合信用。[P3.7.2结案](reference/CLOSEOUT-TAIJI_U2_FIRST_BINDING_UPDATE_20261113.md)完成24次隔离Adam、119.125 CPU，Native单位权重组合目标未取得float32可分辨交互改善，研究父更新0。[局部单位联合表征](reference/SPEC-TAIJI_U2_JOINT_TOKENS_20261113.md)已交付1696参数／12张量的双精度局部核验，完整方向差分及混合响应通过，2.90625 CPU、0optimizer、0任务数据。[P3.7.3c/d回执](reference/VALIDATION-TAIJI_U2_JOINT_SUBJECT_20261113.md)已核验4次真实工程更新、8个独立恢复及1712条逐参数梯度等值，CPU27.75含0更新夹具失败。四臂各8次影子Adam完成实价，32影子／0learner步，CPU16。当前P3.7.4各300实际训练CPU，runner3600／7200帽，未分配1230 CPU。
+[P3.4](reference/CLOSEOUT-TAIJI_U2_EVIDENCE_LEARNING_20261112.md)、[P3.5](reference/CLOSEOUT-TAIJI_U2_PAIRED_LEARNING_20261113.md)及[P3.6](reference/CLOSEOUT-TAIJI_U2_TASK_GOAL_LEARNING_20261113.md)保留各自完整负结果与限定。配对任务每分区360轮，部分输入上界50%；空复制集合前反向约3.78倍加速，实际CPU终点、真实Adam及完整恢复均有直接证据。上述工程成果尚未取得Native任务父。
 
-22.3已按[工程结案](reference/VALIDATION-TAIJI-U2_22_3_CLOSEOUT_20261111.md)通过，交付[接受父](manifests/taiji_u2_22_3_accepted_parent_20261111.json)。8次attempt消耗完毕，其中6次真实Adam.step，8份S12/worker和8规范存档全部核验。最终runtime v3/原始链v2覆盖12类状态、34组float32/64独立接续，191参数逐项梯度最大差0，闭包0新增step。当前接受small profile未训练初始化，能力资格为空，22.4冻结有效任务及实价后再准入22.5。
+[P3.7完整收束](reference/CLOSEOUT-TAIJI_U2_JOINT_LEARNING_20261113.md)核验6513次真实learner调用、6509接受和4隔离文件。原D／问题Fusion／目标Fusion均恒答未知，train/dev50%；TF train/dev60.28%。训练CPU端点差0.04688%，runner1964.9375 CPU，独立审计7.59375 CPU。共享主体4次工程更新、8独立恢复／1712梯度等值另列，原0步执行器夹具失败保留。新路径工程成立，任务净收益按负结果结案。
+
+当前采用[P3.8学习校准计划](reference/PLAN-TAIJI_U2_LEARNING_CALIBRATION_20261113.md)。先以公开RGB和原始UTF-8的可批生成基线校准首问可学性，随后界定Native首／次问目标与经验聚合；各范围及能力分账。未分配1110 CPU，下一卡P3.8.1的120 CPU仍待源码和保存检查冻结。
+
+### 已交付资产与历史范围
+
+22.3已按[工程结案](reference/VALIDATION-TAIJI-U2_22_3_CLOSEOUT_20261111.md)通过，交付[接受父](manifests/taiji_u2_22_3_accepted_parent_20261111.json)。8次attempt消耗完毕，其中6次真实Adam.step，8份S12/worker和8规范存档全部核验。最终runtime v3/原始链v2覆盖12类状态、34组float32/64独立接续，191参数逐项梯度最大差0，闭包0新增step。22.3当时接受small profile未训练初始化，能力资格为空；后续任务及实际学习进度见最新队首。
 
 当前设计为[U2完整主体闭环候选](reference/SPEC-TAIJI-CLOSED_LOOP_U2_20261110.md)。U2正式参考图已按[22.2回执](reference/VALIDATION-TAIJI-U2_22_2_20261110.md)完成工程核验，191参数/40状态字段已登记，真实语义任务与持续能力仍待后继验收。唯一后继按[执行包22](reference/PLAN-TAIJI-CLOSED_LOOP_DEVELOPMENT_20261110.md)逐卡准入。22.1已按[v2回执](reference/VALIDATION-TAIJI-U2_22_1_20261110.md)结案为`passed_local_math_only`，13组局部核验与52个差分坐标通过。22.2仅签参考图工程，原等值读数的运行条件缺口已另附零步补证，跨进程更新一致性归22.3。合成夹具目标/标签不一致已记入22.4训练前硬门。
 
-22.4.0的[任务语义与信息权利合同](reference/SPEC-TAIJI-U2_TASK_SEMANTICS_22_4_20261111.md)已有23项微型检查。22.4.1已按[工程结案](reference/VALIDATION-TAIJI-U2_22_4_1_CLOSEOUT_20261112.md)完成元数据入口、逐群接口、u2正式单步及u3/u4恢复。5/5名额结清，记录3次工程optimizer调用，其中2次获接受post；本轮新增1次，u3/u4按既定无迁移规则各0步。独立进程194参数×4类损失共776项梯度比较最大差0，相关124项回归通过。能力资格为空，22.4.2连续世界与任务工程已收束（见下段盘点），owner裁定A/B学习前置后队首转入22.4.A线；22.4.A.1已交付，当前22.4.A.2。
+22.4.0的[任务语义与信息权利合同](reference/SPEC-TAIJI-U2_TASK_SEMANTICS_22_4_20261111.md)已有23项微型检查。22.4.1已按[工程结案](reference/VALIDATION-TAIJI-U2_22_4_1_CLOSEOUT_20261112.md)完成元数据入口、逐群接口、u2正式单步及u3/u4恢复。5/5名额结清，记录3次工程optimizer调用，其中2次获接受post；本轮新增1次，u3/u4按既定无迁移规则各0步。独立进程194参数×4类损失共776项梯度比较最大差0，相关124项回归通过。能力资格为空，22.4.2连续世界与任务工程已收束（见下段盘点），owner裁定A/B学习前置后队首转入22.4.A线；22.4.A.1当时已交付，后续学习和结案见最新队首。
 
-当前全局盘点见[物理主体与任务收束](reference/CONSOLIDATION-TAIJI_U2_WORLD_TASKS_20261112.md)。本轮连续交付22.4.2.2、22.4.2.3与时间任务/课程接口；三会话冷主体18题为0/18。两次运行CPU159.22/135.48，后者超过冻结120门，按更正旁账budget_stop结算。追加完整冷运行已停止，owner已裁定先冻结A/B必要对照与预算并进行首次有界学习，C/D/J承接实际学习父。
+早期物理主体盘点见[物理主体与任务收束](reference/CONSOLIDATION-TAIJI_U2_WORLD_TASKS_20261112.md)。本轮连续交付22.4.2.2、22.4.2.3与时间任务/课程接口；三会话冷主体18题为0/18。两次运行CPU159.22/135.48，后者超过冻结120门，按更正旁账budget_stop结算。追加完整冷运行已停止，owner已裁定先冻结A/B必要对照与预算并进行首次有界学习，C/D/J承接实际学习父。
 
 ## 0a. 算法层诊断（2026-11-08 全局收束，不改任何代码行为）
 
