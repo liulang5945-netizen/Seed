@@ -64,3 +64,7 @@ m_t在request为pending/answering时为1，answered/cancelled/不存在时为0�
 ## 7. P3.6.4准入
 
 [六臂准入回执](VALIDATION-TAIJI_U2_TASK_GOAL_ADMISSION_20261113.md)已冻结每组300实际训练CPU及完整持久终点。主组D沿两轮各≥0.80及RGB/问题必要性门裁决。首个越界更新隔离后恢复预算内参数、Adam、RNG和游标，六组CPU配平容差5%。14项相关回归通过，真实learner更新0、影子Adam48，准备程序16.671875 CPU。
+
+## 8. P3.6.5独立结案预检
+
+执行期间冻结[零更新审计合同](../manifests/taiji_u2_task_goal_closeout_contract_20261113.json)，120 CPU/240 wall，逐份检查已接受及隔离checkpoint哈希、真实Adam继承和新A步龄、参数版本、数据游标及完整分母。禁止新预测和optimizer更新。预留后未分配5910 CPU。训练source/父/数据/门/预算保持冻结。

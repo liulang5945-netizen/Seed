@@ -1,0 +1,19 @@
+{
+  "schema": "taiji-u2-task-goal-closeout-contract-v1",
+  "cpu_cap": 120,
+  "wall_cap": 240,
+  "learner_optimizer_steps": 0,
+  "new_predictions": 0,
+  "check_reads": 0,
+  "final_reads": 0,
+  "auditor_sha256": "a3fcdb2bdbdded91b68a658e1f750897e7eecb6490e9e1981691d78132098a6f",
+  "scope": [
+    "all accepted and quarantined checkpoint hashes",
+    "full denominator and partial input bounds",
+    "exact selected checkpoint and source identity",
+    "real inherited Adam maximum age and projection age",
+    "opened/accepted/quarantined optimizer accounting",
+    "original parameter revision and data cursor"
+  ],
+  "budget_accounting": "read-only audit120 reserved from6030 leaves5910 CPU"
+}
