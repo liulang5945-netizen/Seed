@@ -1,0 +1,29 @@
+{
+  "schema": "taiji-u2-joint-tokens-local-contract-v1",
+  "cpu_cap": 180,
+  "wall_cap": 360,
+  "seed": 20261113,
+  "source_pins": {
+    "taiji/u2_joint_tokens.py": "c3b60b2813858c47961f83cac525dd6a9b0db1df3fb71bd339de73ec260229e0",
+    "scripts/training/verify_joint_tokens_22_5.py": "ca7ee31a689f2acb1066f66178d265068c7cd94bd5cc42340326bae91f5d813f",
+    "scripts/training/verify_taiji_u2_metadata_groups_22_4.py": "f842524ae5f1340df70ac545cb8fbe425d3eb88b15ae142e8deca1492ac95b93",
+    "taiji/u2_history.py": "067b9c07290d42bc08188b421267e7d9dca0f73343bc8e18c6e2a0a7e71e79bf"
+  },
+  "difference_step": {
+    "float32": 0.001,
+    "float64": 1e-05
+  },
+  "derivative_atol": {
+    "float32": 0.001,
+    "float64": 1e-06
+  },
+  "derivative_rtol": 0.001,
+  "minimum_mixed_norm": 0.001,
+  "parameters": 1696,
+  "parameter_tensors": 12,
+  "scope": "local synthetic operator only; no task dataset or subject integration",
+  "optimizer_steps": 0,
+  "check_reads": 0,
+  "final_reads": 0,
+  "budget_accounting": "local180 reserved from5490 leaves5310 CPU"
+}

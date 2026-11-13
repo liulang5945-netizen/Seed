@@ -33,3 +33,7 @@
 `first_binding_objective_22_5.quad_terms`在同一首问状态复用两个候选答案评分，gold CE用于原实际历史目标。监督答案仅由数据标签提供，实际首答由正常greedy字节输出生成。原生成的64字节／EOS和blocked分母沿用。
 
 核验脚本记录全部逐参数梯度／位移、原状态摘要及实际影子调用数。回归覆盖原CE及全部参数梯度等值、空首答实际历史、None所有权、未用参数的Adam步龄和四格完整日程。核验源、父文件、数据和报告SHA在机器合同中冻结后执行。
+
+## 5. 实际结案
+
+本卡已按[更新结案](CLOSEOUT-TAIJI_U2_FIRST_BINDING_UPDATE_20261113.md)完整执行，24次影子Adam、119.125 CPU，研究父更新0。固定组合目标在Native float32未获可分辨交互改善，预注册出口fixed_joint_objective_not_supported。后续按[联合表征规格](SPEC-TAIJI_U2_JOINT_TOKENS_20261113.md)处理负责接口，原门与原始读数保留。

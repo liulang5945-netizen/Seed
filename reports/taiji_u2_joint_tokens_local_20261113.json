@@ -1,0 +1,79 @@
+{
+  "schema": "taiji-u2-joint-tokens-local-v1",
+  "verdict": "passed_local_joint_token_operator",
+  "precisions": {
+    "float32": {
+      "parameters": 1696,
+      "parameter_tensors": 12,
+      "parameter_gradient_norms": {
+        "roles": 2.598829746246338,
+        "metadata.weight": 0.8022582530975342,
+        "blocks.0.qkv.weight": 2.436922550201416,
+        "blocks.0.output.weight": 1.1959139108657837,
+        "blocks.0.up.weight": 4.636538505554199,
+        "blocks.0.down.weight": 4.104747295379639,
+        "blocks.1.qkv.weight": 3.372619390487671,
+        "blocks.1.output.weight": 1.132400393486023,
+        "blocks.1.up.weight": 3.598215103149414,
+        "blocks.1.down.weight": 3.208789587020874,
+        "pool_score.weight": 1.039836049079895,
+        "pool_value.weight": 4.472671985626221
+      },
+      "input_gradient_norms": [
+        1.9092494249343872,
+        0.4445040822029114,
+        0.5064683556556702,
+        0.39024078845977783
+      ],
+      "analytic_directional_derivative": 10.693494214631402,
+      "finite_directional_derivative": 10.69331169128418,
+      "sign_reversed_control_rejected": true,
+      "mixed_norm": 0.41526105999946594,
+      "maximum_output_rms_squared": 0.4961034059524536,
+      "parameter_digest": "d189b11ded166f89bdb49b986a84bfabde533e4e3f63058d9a8c194a3f7f273c"
+    },
+    "float64": {
+      "parameters": 1696,
+      "parameter_tensors": 12,
+      "parameter_gradient_norms": {
+        "roles": 2.5988295104658325,
+        "metadata.weight": 0.8022583030943888,
+        "blocks.0.qkv.weight": 2.4369224478859115,
+        "blocks.0.output.weight": 1.1959138768992938,
+        "blocks.0.up.weight": 4.636539169182289,
+        "blocks.0.down.weight": 4.104747733353164,
+        "blocks.1.qkv.weight": 3.3726193221977008,
+        "blocks.1.output.weight": 1.132400329903143,
+        "blocks.1.up.weight": 3.598214993561877,
+        "blocks.1.down.weight": 3.208789529472696,
+        "pool_score.weight": 1.0398360582525858,
+        "pool_value.weight": 4.472671440354216
+      },
+      "input_gradient_norms": [
+        1.9092492808737183,
+        0.44450405612688165,
+        0.5064683258798669,
+        0.39024073144218796
+      ],
+      "analytic_directional_derivative": 10.693494290481192,
+      "finite_directional_derivative": 10.693494286562188,
+      "sign_reversed_control_rejected": true,
+      "mixed_norm": 0.4152615750841994,
+      "maximum_output_rms_squared": 0.49610337991904246,
+      "parameter_digest": "2b57490a4bbbd66cd8475b911e732ef5b8ae79788515b7a72d739121523abba2"
+    }
+  },
+  "optimizer_steps": 0,
+  "subject_integration_verified": false,
+  "check_reads": 0,
+  "final_reads": 0,
+  "capability_qualifications": [],
+  "cpu_seconds": 2.90625,
+  "wall_seconds": 4.047000000020489,
+  "contract_sha256": "f6cf1c29e07d3c0f63eab4fdcddbff4e084be85cb3880f80a48fc2896d78936f",
+  "run_conditions": {
+    "device": "cpu",
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  }
+}
