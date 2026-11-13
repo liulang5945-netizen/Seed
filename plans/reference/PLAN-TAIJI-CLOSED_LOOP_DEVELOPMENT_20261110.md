@@ -689,3 +689,5 @@ P3.6.4已按[六臂准入](VALIDATION-TAIJI_U2_TASK_GOAL_ADMISSION_20261113.md)�
 [六臂收束](CLOSEOUT-TAIJI_U2_TASK_GOAL_LEARNING_20261113.md)已核验13789接受和6隔离文件，真实更新13795次。四个Native组dev均50%且恒答未知，两个因素及交互点估计0；TF-teacher/actual为52.22%/54.44%，无A父。各组约300实际训练CPU，端点配平差0.0573%，runner2884.859375 CPU，审计14.265625 CPU。
 
 [首问绑定计划](PLAN-TAIJI_U2_FIRST_BINDING_20261113.md)已完成P3.7.1两父/双精度/6四格诊断，192监督序列评分，17 CPU、0step。Native混合交互约1e-8–1e-6且部分符号受float32舍入影响，读取/感知的混合梯度非零。唯一后继P3.7.2验证真实Adam下的有效更新并定稿单一修订，当前未分配5730 CPU。后继自主、保持、生长及23–28按各自父资格承接。
+
+P3.7.2已冻结[实际更新规格](SPEC-TAIJI_U2_FIRST_BINDING_UPDATE_20261113.md)，两父／双精度／三目标／两moment配置，共24次独立影子Adam。真实研究父更新0，工程240预留后未分配5490 CPU。

@@ -1,0 +1,98 @@
+{
+  "profiles": [
+    [
+      "D",
+      "float32"
+    ],
+    [
+      "D",
+      "float64"
+    ],
+    [
+      "TF-actual",
+      "float32"
+    ],
+    [
+      "TF-actual",
+      "float64"
+    ]
+  ],
+  "positions": [
+    0,
+    1,
+    2
+  ],
+  "color_pairs": [
+    [
+      0,
+      1
+    ],
+    [
+      2,
+      3
+    ]
+  ],
+  "data_path": "E:\\Seed\\data\\experiments\\taiji_u2\\paired_task\\1794496638577954800\\data.bin",
+  "data_digest": "65041f02e3a3410b307bc6e013d897ef747e7f890b3668db6b5852fdc9fdba1c",
+  "learning_report_sha256": "ac0e8c0b3eacf7e6203c6929335eb30a672dde31fa4b69813e6ececaa2856354",
+  "checkpoint_sha256": {
+    "D": "0487504f836e175243a2fb116a2669791b3feb3c228e53a442c2c2b4857e022e",
+    "TF-actual": "c911a71589d6b4a6c087bad7b9906f44b9479eb3ec8abd51253e4b270c7b1fdd"
+  },
+  "schema": "taiji-u2-first-binding-update-contract-v1",
+  "cpu_cap": 240,
+  "wall_cap": 480,
+  "source_pins": {
+    "taiji/u2_recovery.py": "85fa1ad8fa6cdc8d98c612351cf4b440b046393614c1876cb8507eb4ba7b12de",
+    "taiji/u2_evidence_subject.py": "718a5c8ee4ad2e817734a51f404417b8e8f11988da8fd27f8eced30cab348b68",
+    "taiji/u2_evidence_read.py": "0823d2adab2e03f0b1ad5e90759232c278caf1bd43f0aba739a3a12e8fa30bd2",
+    "taiji/u2_evidence_runtime.py": "7f343a7982a69445872835d6c33c14dbc3ed2bee7a1ac22b8810bd142813fec4",
+    "taiji/u2_capacity_control.py": "9777487f010aa274781bccdb9d95023b142e831693617c1f4a992f49bdc99b00",
+    "taiji/u2_task_goal.py": "df70b736b08498f28555e5d2f13b5a7162e2fe536e65ca54f1dc3f74a257847f",
+    "taiji/u2_history.py": "067b9c07290d42bc08188b421267e7d9dca0f73343bc8e18c6e2a0a7e71e79bf",
+    "taiji/u2_history_store.py": "2133a22032e967af257cc8527891e6a029df32ddb18c0a95da2834c22592de3f",
+    "taiji/u2_request_state.py": "80422d30fd3413b446a9306f9c7ca335b281f9216f46a285c17572ea2f43a8dc",
+    "taiji/u2_task_executor.py": "207612939e8f32ba7b1ac32fcde378f39060789c570b40cc850cf70017d178a3",
+    "taiji/u2_events.py": "b89d5424a76263efab7a5c944dbc820b34fdef4ed12b10afc0b651193a34c944",
+    "taiji/u2_learning_transaction.py": "ea6203edd38083f58b09e2800bcf464e37c74b95d2be982cdecea3002c0b1ef4",
+    "taiji/u2_record_metadata.py": "39e57e9dd406f3442bc85e055ebb7d3a813ea981ff1cda0cf119f90c20c35da5",
+    "taiji/u2_group_structure.py": "8131bffd6b904f27987c2b3a3846781ba4d1008ec634c7b86241626991e85176",
+    "taiji/u2_subject.py": "01d54b472e6cc99728ca45b94aeb556148498081ce1128cf28f8bed2d8784025",
+    "taiji/u2_operators.py": "4b45e504e8ce90fd8bf5f794c107ef1f07128ac759a3f86c99914fe7dafae8c2",
+    "taiji/utf8_state.py": "6ec7e96b2994dfa8eea430b3a08ddb5ff0fd877cf70c8cc288f57bab2efcac09",
+    "scripts/training/evidence_a_learner_22_5.py": "713aa07a84031bb0f2c9cdb9d6d8c89062ad5d34b62c1c959aacaca00181f5c5",
+    "scripts/training/first_a_support_22_5.py": "33d9301f98859934c1413e25765c55e6bc7b64dfa410d65b03f0e5a198041b4c",
+    "scripts/training/task_baselines_22_4_a.py": "8fd2b8e26299d3c2039583080d5c5cb97b4b9562be5f0ace53eaabc6ab96369a",
+    "scripts/training/task_goal_learner_22_5.py": "dec7ccf693950196b80e34b93bbd8cd8c1ad465fd2665a1f7475e3c8fbb5f0c5",
+    "scripts/training/task_history_loss_22_5.py": "888fe74c0296141873937e171f3bb73d41ec976e7523dc2cf630a66d9fc4edab",
+    "scripts/training/paired_episode_22_5.py": "9120b0595f3f471428186fae7ee2281fc994cede8439f876aa36537264e39089",
+    "scripts/training/paired_world_22_5.py": "0d698d28d61be7fb492acb6f161aed75d39c637cdb2d0b8877361f7ffe287afb",
+    "scripts/training/paired_compute_22_5.py": "eb338f5d50671f2882768e254731a8641daf37ff75046e8ef4505dc700e669f3",
+    "scripts/training/prepare_task_goal_learning_22_5.py": "e6d87ff06a6ddc1ae9564952d5165b468a55201811fb04d437fafa742ecb6ac3",
+    "scripts/training/run_task_goal_learning_22_5.py": "da0d1abe37a27a59cd042944855455857b800dc7300e5061833068776c21baab",
+    "scripts/training/run_paired_learning_22_5.py": "d583e17f40f327ac72613c9bcdcd5ef1484ab2865a22180a6a6efa7f5aaf2b78",
+    "scripts/training/probe_first_binding_22_5.py": "5a6a3838d3df072086432830c1944d0f9967a17c0a23d2fff04867f8bbbdd6bf",
+    "scripts/training/first_binding_objective_22_5.py": "be6c6eb4b19a42ce9f96afd8765405bb50ed2e2f8a0b858ec7282c3ad2e595b1",
+    "scripts/training/verify_first_binding_update_22_5.py": "384f464795376ceb9220be98b85b8af42d9fbcd187e4aabe9b00ee907bb22981"
+  },
+  "moment_modes": [
+    "inherited",
+    "zero_first_moment"
+  ],
+  "shadow_optimizer_steps": 24,
+  "learner_optimizer_steps": 0,
+  "objective_weights": {
+    "ce": 1,
+    "mixed": 1
+  },
+  "delta_tolerance": {
+    "float32": 8e-06,
+    "float64": 1e-10
+  },
+  "minimum_improving_quads": 4,
+  "ce_increase_tolerance": 0.005,
+  "main_recipe": "D/combined/inherited; both precisions",
+  "check_reads": 0,
+  "final_reads": 0,
+  "budget_accounting": "engineering240 reserved from5730 leaves5490 CPU"
+}
