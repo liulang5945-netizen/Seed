@@ -1,0 +1,15 @@
+{
+  "schema": "taiji-u2-joint-closeout-contract-v1",
+  "cpu_cap": 120,
+  "wall_cap": 240,
+  "source_pins": {
+    "scripts/training/closeout_joint_learning_22_5.py": "c29e06f418f6c4538c2ecbac2a712e234cfd0754ade62acb1e9aafd755cfa8ef",
+    "scripts/training/closeout_task_goal_learning_22_5.py": "a3fcdb2bdbdded91b68a658e1f750897e7eecb6490e9e1981691d78132098a6f"
+  },
+  "optimizer_steps": 0,
+  "new_predictions": 0,
+  "check_reads": 0,
+  "final_reads": 0,
+  "scope": "All checkpoint hashes, accepted CPU endpoints, isolated overshoot, full denominator, inherited ages and all12 fusion ages",
+  "budget_accounting": "audit120 reserved from1230 leaves1110 CPU"
+}
