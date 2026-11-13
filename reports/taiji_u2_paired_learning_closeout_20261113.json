@@ -1,0 +1,60 @@
+{
+  "schema": "taiji-u2-paired-learning-closeout-v1",
+  "verdict": "paired_learning_not_supported",
+  "complete": true,
+  "learners": {
+    "native-query": {
+      "accepted": 2009,
+      "quarantined": 1,
+      "selected_cpu": 599.953125,
+      "spent_cpu": 600.25,
+      "initial_adam_max_step": 490,
+      "selected_adam_max_step": 2499,
+      "adam_parameter_states": 178,
+      "train_accuracy": 0.5,
+      "dev_accuracy": 0.5,
+      "control_accuracy": {
+        "without_rgb": 0.5,
+        "without_questions": 0.5
+      },
+      "partial_input_bound_consistent": true
+    },
+    "transformer": {
+      "accepted": 5738,
+      "quarantined": 1,
+      "selected_cpu": 599.890625,
+      "spent_cpu": 600.015625,
+      "initial_adam_max_step": 3891,
+      "selected_adam_max_step": 9629,
+      "adam_parameter_states": 42,
+      "train_accuracy": 0.5,
+      "dev_accuracy": 0.4722222222222222,
+      "control_accuracy": {
+        "without_rgb": 0.005555555555555556,
+        "without_questions": 0.0
+      },
+      "partial_input_bound_consistent": true
+    }
+  },
+  "accepted_files_verified": 7747,
+  "quarantined_files_verified": 2,
+  "original_model_optimizer_steps": 7749,
+  "optimizer_steps": 0,
+  "new_predictions": 0,
+  "check_reads": 0,
+  "final_reads": 0,
+  "capability_qualifications": [],
+  "run_artifact_bytes": 2834535303,
+  "cpu_seconds": 8.953125,
+  "wall_seconds": 12.062000000034459,
+  "run_conditions": {
+    "device": "cpu",
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "evidence_sha256": {
+    "plans/manifests/taiji_u2_paired_learning_execution_20261113.json": "6112699b63187252e5e1c43bc6fdf20b0fdf4fbfc0d142a497fe7f071d32e997",
+    "reports/taiji_u2_paired_learning_20261113.json": "a3e8cce4573281007f2337eb2f7e28f1b94ca2007b89d28a6f8a05dac5d26474",
+    "data/experiments/taiji_u2/paired_learning/1794504603470358500/ledger.jsonl": "eb2df1d28a4c5365683c9acbf45b1f20ebeb81110c82876344a4b85f16ecd9f7"
+  }
+}

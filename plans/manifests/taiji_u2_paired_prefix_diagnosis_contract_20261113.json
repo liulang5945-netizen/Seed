@@ -1,0 +1,12 @@
+{
+  "schema": "taiji-u2-paired-prefix-diagnosis-contract-v1",
+  "cpu_cap": 180,
+  "wall_cap": 360,
+  "scope": "Post-hoc fixed middle-position family, all60 entity/absent/order episodes in train and dev; four-word likelihood ranking at first request and second request under gold versus actual first output",
+  "selection": "position==1 from frozen episode audit, no output-based selection",
+  "scientific_boundary": "Gold first output is an explicit privileged diagnostic context, not model performance. Main360-round free task and gates remain authoritative.",
+  "learner_optimizer_steps": 0,
+  "check_reads": 0,
+  "final_reads": 0,
+  "budget_accounting": "180 reserved after closeout120, remaining9990 CPU"
+}

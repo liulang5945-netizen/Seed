@@ -1,0 +1,10 @@
+{
+  "schema": "taiji-u2-paired-closeout-contract-v1",
+  "cpu_cap": 120,
+  "wall_cap": 240,
+  "scope": "Read-only every-file digest, inherited counter, selected endpoint and overshoot rollback audit; no new model predictions",
+  "learner_optimizer_steps": 0,
+  "check_reads": 0,
+  "final_reads": 0,
+  "budget_accounting": "120 reserved from10290, remaining10170 CPU"
+}

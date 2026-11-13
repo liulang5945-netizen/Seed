@@ -1,0 +1,61 @@
+{
+  "schema": "taiji-u2-paired-query-representation-v1",
+  "scope": "Post-hoc six existing queries on fixed middle train scene and six color variants. Rank/sensitivity only, no task accuracy; zero training.",
+  "profiles": {
+    "native-query": {
+      "query_centered_singular_values": [
+        0.12686664221653784,
+        0.0033216041834205237,
+        0.0014756472571462063,
+        0.00019447961339833148,
+        5.5630360448741e-05,
+        1.2334596271081167e-16
+      ],
+      "query_pairwise_max_l2": 0.13167719727169086,
+      "query_rms": 0.5174847873420432,
+      "rgb_mean_centered_singular_values": [
+        0.010508945040202061,
+        0.008305675807435407,
+        0.005374356765600995,
+        0.0001465224892145885,
+        4.605148901441248e-05,
+        1.583136047318925e-17
+      ],
+      "first_byte_probability_max_change": 7.450580596923828e-06,
+      "exact_unique_query_vectors": 6
+    },
+    "transformer": {
+      "query_centered_singular_values": [
+        0.6509488926128721,
+        0.01847535767390771,
+        0.008710712551743412,
+        0.00624339133742372,
+        0.0008035110731541373,
+        2.840727639193535e-17
+      ],
+      "query_pairwise_max_l2": 0.7261764009870125,
+      "query_rms": 0.0975390464446775,
+      "rgb_mean_centered_singular_values": [
+        0.10056897228279564,
+        0.03529429929620679,
+        0.008849100761281101,
+        0.0024389298541926258,
+        0.0004671412888075247,
+        1.6737430183488374e-17
+      ],
+      "first_byte_probability_max_change": 0.015076011419296265,
+      "exact_unique_query_vectors": 6
+    }
+  },
+  "optimizer_steps": 0,
+  "check_reads": 0,
+  "final_reads": 0,
+  "cpu_seconds": 3.59375,
+  "run_conditions": {
+    "device": "cpu",
+    "dtype": "float32",
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "endpoint_report_sha256": "a3e8cce4573281007f2337eb2f7e28f1b94ca2007b89d28a6f8a05dac5d26474"
+}
