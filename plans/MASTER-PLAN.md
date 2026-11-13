@@ -6,7 +6,7 @@
 
 **唯一主线**沿N发展同一可学习、可恢复、按需生长的持续主体，使自驱、递归改进、经验学习与多模态物理认知形成可验证闭环。
 
-**队首（唯一）**：22.5.P3.8.1，冻结并完成首问端到端可学性强基线校准；P3.7四臂已负结案，共享主体和恢复工程保留，当前无A父。
+**队首（唯一）**：22.5.P3.8.1b，执行训练期内容监督与原字节CE的受控校准，移除辅助头后按完整首问评分；原生成基线已负结案，当前无A父。
 
 [P3.4](reference/CLOSEOUT-TAIJI_U2_EVIDENCE_LEARNING_20261112.md)、[P3.5](reference/CLOSEOUT-TAIJI_U2_PAIRED_LEARNING_20261113.md)及[P3.6](reference/CLOSEOUT-TAIJI_U2_TASK_GOAL_LEARNING_20261113.md)保留各自完整负结果与限定。配对任务每分区360轮，部分输入上界50%；空复制集合前反向约3.78倍加速，实际CPU终点、真实Adam及完整恢复均有直接证据。上述工程成果尚未取得Native任务父。
 
@@ -160,3 +160,5 @@ MAINLINE、MASTER与ROADMAP的逐轮重复正文已蒸馏，原字节可按[Git�
 3. **按结果三选一**：`regenerable_exact`（按需生成，不入库）／`regenerable_equivalent`（按需生成，把容差写成显式条件并写明范围）／`not_regenerable`（入库，并写明为何必须入库）。
 
 **默认入库与默认 skip 都是禁止项**：默认入库会撑大库体并掩盖"当年怎么造的"这一缺口；默认 skip 会让读数悄悄失去消费方。成本先估再跑，超预算按放权流程留档。本规则不构成任何读取授权，与 R-SEAL-1 互不影响。
+
+P3.8.1已按[固定剂量结案](reference/CLOSEOUT-TAIJI_U2_FIRST_ROUND_CALIBRATION_20261113.md)完成2000步／360000样本呈现，train/dev50%，总29 CPU，独立恢复精确。context显著趋同并高饱和。当前按[独立内容信用合同](reference/SPEC-TAIJI_U2_CONTENT_CREDIT_20261113.md)复用该控制、从原step0检验答案标签对共享context的直接训练信用，移除头后仍走257字节生成。使用原90余量，未分配900 CPU。
