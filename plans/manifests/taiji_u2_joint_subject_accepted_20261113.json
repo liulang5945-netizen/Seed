@@ -1,0 +1,45 @@
+{
+  "schema": "taiji-u2-joint-subject-accepted-v1",
+  "status": "shared_task_credit_updates_and_recovery_verified",
+  "parents": {
+    "query": {
+      "checkpoint": "E:\\Seed\\data\\experiments\\taiji_u2\\joint_subject\\1794554092758878300\\query-float32\\pre-learner.bin",
+      "sha256": "0918a458ad498381a267f6af138c4fa34ad9d51c1f5e2a1cc3c06cdc757d09c1",
+      "parameter_digest": "d2a38c6a110253b998083c8fcdd2bf78e54a4b80926b37840866213e6ef652f4",
+      "optimizer_digest": "445e0b9c45dd9bceb8b8737cd696c4a489c77f67506d22aad13072d1cad07182",
+      "architecture": "native-joint-query"
+    },
+    "goal-control": {
+      "checkpoint": "E:\\Seed\\data\\experiments\\taiji_u2\\joint_subject\\1794554092758878300\\goal-control-float32\\pre-learner.bin",
+      "sha256": "ecb2aa9efa97e2c5156678ef07b75f590bf3d5879eb844a737558b1b5e4ab1db",
+      "parameter_digest": "d2a38c6a110253b998083c8fcdd2bf78e54a4b80926b37840866213e6ef652f4",
+      "optimizer_digest": "445e0b9c45dd9bceb8b8737cd696c4a489c77f67506d22aad13072d1cad07182",
+      "architecture": "native-joint-control"
+    }
+  },
+  "source_pins": {
+    "u2_recovery.py": "17879bd9ddbbcbbb56aebe0dd4cccd719b8be3dd947aada13ce7f244460d0952",
+    "u2_evidence_subject.py": "718a5c8ee4ad2e817734a51f404417b8e8f11988da8fd27f8eced30cab348b68",
+    "u2_evidence_read.py": "0823d2adab2e03f0b1ad5e90759232c278caf1bd43f0aba739a3a12e8fa30bd2",
+    "u2_evidence_runtime.py": "7f343a7982a69445872835d6c33c14dbc3ed2bee7a1ac22b8810bd142813fec4",
+    "u2_capacity_control.py": "9777487f010aa274781bccdb9d95023b142e831693617c1f4a992f49bdc99b00",
+    "u2_task_goal.py": "df70b736b08498f28555e5d2f13b5a7162e2fe536e65ca54f1dc3f74a257847f",
+    "u2_joint_tokens.py": "c3b60b2813858c47961f83cac525dd6a9b0db1df3fb71bd339de73ec260229e0",
+    "u2_joint_subject.py": "e9de4a68e6bb53ed8b0c236cb4617d196aff84a6767124b7e3552a88124cec0d",
+    "u2_history.py": "067b9c07290d42bc08188b421267e7d9dca0f73343bc8e18c6e2a0a7e71e79bf",
+    "u2_history_store.py": "2133a22032e967af257cc8527891e6a029df32ddb18c0a95da2834c22592de3f",
+    "u2_request_state.py": "80422d30fd3413b446a9306f9c7ca335b281f9216f46a285c17572ea2f43a8dc",
+    "u2_task_executor.py": "207612939e8f32ba7b1ac32fcde378f39060789c570b40cc850cf70017d178a3",
+    "u2_events.py": "b89d5424a76263efab7a5c944dbc820b34fdef4ed12b10afc0b651193a34c944",
+    "u2_learning_transaction.py": "ea6203edd38083f58b09e2800bcf464e37c74b95d2be982cdecea3002c0b1ef4",
+    "u2_record_metadata.py": "39e57e9dd406f3442bc85e055ebb7d3a813ea981ff1cda0cf119f90c20c35da5",
+    "u2_group_structure.py": "8131bffd6b904f27987c2b3a3846781ba4d1008ec634c7b86241626991e85176",
+    "u2_subject.py": "01d54b472e6cc99728ca45b94aeb556148498081ce1128cf28f8bed2d8784025",
+    "u2_operators.py": "4b45e504e8ce90fd8bf5f794c107ef1f07128ac759a3f86c99914fe7dafae8c2",
+    "utf8_state.py": "6ec7e96b2994dfa8eea430b3a08ddb5ff0fd877cf70c8cc288f57bab2efcac09"
+  },
+  "learning_admitted": false,
+  "engineering_optimizer_steps": 4,
+  "capability_qualifications": [],
+  "run_root": "E:\\Seed\\data\\experiments\\taiji_u2\\joint_subject\\1794554092758878300"
+}

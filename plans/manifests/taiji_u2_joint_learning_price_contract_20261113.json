@@ -1,0 +1,49 @@
+{
+  "schema": "taiji-u2-joint-learning-price-contract-v1",
+  "cpu_cap": 120,
+  "wall_cap": 240,
+  "cpu_per_group": 300,
+  "max_updates": 8192,
+  "order_seed": 2026111308,
+  "price_indices": [
+    0,
+    1,
+    60,
+    61,
+    120,
+    121,
+    178,
+    179
+  ],
+  "groups": {
+    "native-base": {
+      "mode": "native-base",
+      "architecture": "native-goal-query"
+    },
+    "joint-query": {
+      "mode": "query",
+      "architecture": "native-joint-query"
+    },
+    "joint-goal": {
+      "mode": "goal-control",
+      "architecture": "native-joint-control"
+    },
+    "transformer": {
+      "mode": "transformer",
+      "architecture": "transformer"
+    }
+  },
+  "shadow_optimizer_steps": 32,
+  "learner_optimizer_steps": 0,
+  "gates": {
+    "train_accuracy": 0.9,
+    "dev_accuracy": 0.8,
+    "each_dev_round_accuracy": 0.8,
+    "gain_over_frozen": 0.15,
+    "rgb_cut_drop": 0.15,
+    "question_cut_drop": 0.15
+  },
+  "budget_accounting": "price120 reserved from4950 leaves4830; runner3600 upon admission leaves1230 before audit",
+  "check_reads": 0,
+  "final_reads": 0
+}

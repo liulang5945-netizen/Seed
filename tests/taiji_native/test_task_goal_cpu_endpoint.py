@@ -9,7 +9,10 @@ from scripts.training import run_task_goal_learning_22_5 as runner
 from taiji.u2_history import assert_values_equal
 
 
-def test_one_overbudget_update_is_saved_and_then_fully_rolled_back(tmp_path, monkeypatch):
+@pytest.mark.parametrize("explicit_api", [False, True])
+def test_one_overbudget_update_is_saved_and_then_fully_rolled_back(
+    tmp_path, monkeypatch, explicit_api
+):
     clock = [0.0]
     loaded = []
 
@@ -49,6 +52,16 @@ def test_one_overbudget_update_is_saved_and_then_fully_rolled_back(tmp_path, mon
     monkeypatch.setattr(runner, "history_loss", loss)
     monkeypatch.setattr(runner, "sources", lambda: {"test": "fixed"})
     monkeypatch.setattr(runner.time, "process_time", lambda: clock[0])
+    options = {}
+    if explicit_api:
+
+        def unexpected(*_args, **_kwargs):
+            raise AssertionError("default learner API must not be used")
+
+        monkeypatch.setattr(runner, "load_learner", unexpected)
+        monkeypatch.setattr(runner, "save_learner", unexpected)
+        monkeypatch.setattr(runner, "sources", unexpected)
+        options = {"loader": load, "saver": save, "source_reader": lambda: {"test": "fixed"}}
     counters = {"optimizer_steps": 0}
     restored, summary = runner.train_group(
         "A",
@@ -69,6 +82,7 @@ def test_one_overbudget_update_is_saved_and_then_fully_rolled_back(tmp_path, mon
         tmp_path,
         lambda: None,
         counters,
+        **options,
     )
     assert counters["optimizer_steps"] == summary["model_optimizer_steps"] == 2
     assert summary["selected_updates"] == 1

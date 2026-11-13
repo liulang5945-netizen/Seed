@@ -16,6 +16,7 @@ from scripts.training.joint_token_learner_22_5 import (
 from scripts.training.paired_episode_22_5 import start_episode
 from scripts.training.paired_world_22_5 import build_partition
 from scripts.training.task_history_loss_22_5 import score_answer
+from scripts.training.verify_joint_subject_22_5 import make_runtime
 from taiji.u2_events import observation_intent
 from taiji.u2_evidence_subject import EvidenceSubject
 from taiji.u2_history import assert_values_equal, value_digest
@@ -112,6 +113,26 @@ def test_current_packet_enters_fusion_after_the_original_correction_transitions(
     assert prefixes and all(not prefix for prefix in prefixes)
     assert set(result["evidence_directory"]) == {"frame"}
     assert model.evidence_tokens(result)[0].shape[0] > 0
+
+
+def test_full_runtime_fixture_uses_the_same_physical_world_and_complete_history(
+    tmp_path, partition
+):
+    model = JointQuerySubject.from_parent(parent())
+    runtime = make_runtime(
+        model,
+        fresh_optimizer(model),
+        JointQueryRuntime,
+        partition,
+        partition["episodes"][0],
+        tmp_path,
+    )
+    assert runtime.executor.effect_count == 1
+    assert len(runtime.state["evidence_directory"]) == 1
+    runtime.history.require_complete()
+    runtime.save(tmp_path / "complete.bin")
+    restored = JointQueryRuntime.load(tmp_path / "complete.bin")
+    assert value_digest(restored.state) == value_digest(runtime.state)
 
 
 @pytest.mark.parametrize(

@@ -81,12 +81,14 @@
     "scripts/training/task_baselines_22_4_a.py": "8fd2b8e26299d3c2039583080d5c5cb97b4b9562be5f0ace53eaabc6ab96369a",
     "scripts/training/task_goal_learner_22_5.py": "dec7ccf693950196b80e34b93bbd8cd8c1ad465fd2665a1f7475e3c8fbb5f0c5",
     "scripts/training/joint_token_learner_22_5.py": "31430e7802e02850223321d54e0be4e9ed8c4fb3b6f2b60d8b19ad9c80814d3e",
-    "scripts/training/verify_joint_subject_22_5.py": "cff5a4112577ed27dd4669643d2826b3459e584a033a5bf3dfaa078b8882847b",
+    "scripts/training/verify_joint_subject_22_5.py": "9c6a61de3879f93bca87829a150369366ae8cdb6e1dbe6988e019dffe6e59b95",
     "scripts/training/verify_task_goal_22_5.py": "51eee0d84bf6e6c3947c45c74c5017e2be57a6a66e1cf02d86fc9d4bde216672",
     "scripts/training/verify_first_binding_update_22_5.py": "384f464795376ceb9220be98b85b8af42d9fbcd187e4aabe9b00ee907bb22981",
     "scripts/training/task_history_loss_22_5.py": "888fe74c0296141873937e171f3bb73d41ec976e7523dc2cf630a66d9fc4edab",
     "scripts/training/paired_episode_22_5.py": "9120b0595f3f471428186fae7ee2281fc994cede8439f876aa36537264e39089",
-    "scripts/training/paired_world_22_5.py": "0d698d28d61be7fb492acb6f161aed75d39c637cdb2d0b8877361f7ffe287afb"
+    "scripts/training/paired_world_22_5.py": "0d698d28d61be7fb492acb6f161aed75d39c637cdb2d0b8877361f7ffe287afb",
+    "taiji/u2_task_world.py": "ae696d423e09be09c936dcbc8e3473e28c2c2c927f843bace21150c52d5d2e45",
+    "taiji/u2_task_sensors.py": "7a434173bcf9d28b0e45c7575326c37048ad53d9d06de987f3c5a573d2026e10"
   },
   "equivalence": {
     "float32": {
@@ -98,5 +100,12 @@
       "rtol": 1e-08
     }
   },
-  "independent_recoveries": 8
+  "independent_recoveries": 8,
+  "source_amendment": {
+    "scope": "Physical executor for recorded observation; same world genesis, public tensors, models, four real engineering updates and gates",
+    "prior_contract_sha256": "7926691bde1eca5218635dd66c0838f82cfbd8d9755c80ef2d43413f1daf8a44",
+    "failed_report": "reports/taiji_u2_joint_subject_20261113_v1.json",
+    "original_verifier_archive": "scripts/archive/verify_joint_subject_22_5_20261113_v1.py.txt"
+  },
+  "prior_failure_cpu_seconds": 5.953125
 }

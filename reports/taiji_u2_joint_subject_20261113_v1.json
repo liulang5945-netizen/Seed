@@ -1,0 +1,19 @@
+{
+  "schema": "taiji-u2-joint-subject-report-v1",
+  "verdict": "engineering_failure",
+  "error": "Traceback (most recent call last):\n  File \"E:\\Seed\\scripts\\training\\verify_joint_subject_22_5.py\", line 361, in <module>\n    verify()\n  File \"E:\\Seed\\scripts\\training\\verify_joint_subject_22_5.py\", line 212, in verify\n    runtime = make_runtime(model, optimizer, runtime_cls, partition, episode, directory)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:\\Seed\\scripts\\training\\verify_joint_subject_22_5.py\", line 85, in make_runtime\n    runtime.execute_pending(directory / \"intent.bin\")\n  File \"E:\\Seed\\taiji\\u2_recovery.py\", line 579, in execute_pending\n    self.executor.execute_observation(identity, pending[\"dt\"], action=pending[\"action\"])\n  File \"E:\\Seed\\taiji\\u2_recovery.py\", line 319, in execute_observation\n    raise ValueError(\"external_observation_requires_physical_executor\")\nValueError: external_observation_requires_physical_executor\n",
+  "engineering_optimizer_steps": 0,
+  "optimizer_steps": 0,
+  "run_root": "E:\\Seed\\data\\experiments\\taiji_u2\\joint_subject\\1794553908586532500",
+  "learning_admitted": false,
+  "capability_qualifications": [],
+  "check_reads": 0,
+  "final_reads": 0,
+  "cpu_seconds": 5.953125,
+  "wall_seconds": 8.093999999924563,
+  "run_conditions": {
+    "device": "cpu",
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  }
+}

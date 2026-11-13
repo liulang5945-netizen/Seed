@@ -96,9 +96,26 @@ def prepare():
     )
 
 
-def train_group(name, recipe, admission, contract, data, root, guard, counters):
+def train_group(
+    name,
+    recipe,
+    admission,
+    contract,
+    data,
+    root,
+    guard,
+    counters,
+    *,
+    loader=None,
+    saver=None,
+    source_reader=None,
+    watched_prefixes=(),
+):
+    loader = load_learner if loader is None else loader
+    saver = save_learner if saver is None else saver
+    source_reader = sources if source_reader is None else source_reader
     assert digest(recipe["initial"]) == recipe["initial_sha256"]
-    model, optimizer, payload = load_learner(recipe["initial"])
+    model, optimizer, payload = loader(recipe["initial"])
     directory = root / name
     directory.mkdir()
     spent = selected_cpu = 0.0
@@ -109,7 +126,7 @@ def train_group(name, recipe, admission, contract, data, root, guard, counters):
     blocked_count = 0
     for update in range(1, contract["max_updates"] + 1):
         guard()
-        assert sources() == contract["source_pins"]
+        assert source_reader() == contract["source_pins"]
         episode = data["train"]["episodes"][admission["order"][cursor % 180]]
         ledger(root, {"learner": name, "update": update, "cursor": cursor, "status": "opened"})
         watched = {
@@ -119,6 +136,7 @@ def train_group(name, recipe, admission, contract, data, root, guard, counters):
             and (
                 key == "native_task_projection.weight"
                 or key in {"encoder.rgb.weight", "text_input.weight", "byte_head.weight"}
+                or key.startswith(watched_prefixes)
             )
         }
         start = time.process_time()
@@ -151,7 +169,7 @@ def train_group(name, recipe, admission, contract, data, root, guard, counters):
                 assert first_credit["native_task_projection.weight"]["max_parameter_change"] > 0
         beyond = spent > contract["cpu_per_group"]
         checkpoint = directory / f"{'overshoot' if beyond else 'update'}-{update:06}.bin"
-        save_learner(
+        saver(
             checkpoint,
             model,
             optimizer,
@@ -176,7 +194,7 @@ def train_group(name, recipe, admission, contract, data, root, guard, counters):
                 "first_ended": result["first_ended"],
             },
         )
-        assert sources() == contract["source_pins"]
+        assert source_reader() == contract["source_pins"]
         if beyond:
             overshoot = {
                 "update": update,
@@ -184,7 +202,7 @@ def train_group(name, recipe, admission, contract, data, root, guard, counters):
                 "training_cpu": spent,
                 "step_cpu": step_cpu,
             }
-            model, optimizer, restored = load_learner(selected_path)
+            model, optimizer, restored = loader(selected_path)
             assert restored["update"] == selected_update
             break
         selected_update, selected_cpu, selected_path = update, spent, checkpoint

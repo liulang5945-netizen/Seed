@@ -48,13 +48,15 @@ from taiji.u2_joint_subject import (
     JointQuerySubject,
 )
 from taiji.u2_recovery import _source_pins
-from taiji.u2_subject import U2Packet
+from taiji.u2_task_executor import PhysicalExecutor
+from taiji.u2_task_world import PhysicalWorld
 
 CONTRACT = ROOT / "plans/manifests/taiji_u2_joint_subject_contract_20261113.json"
 REPORT = ROOT / "reports/taiji_u2_joint_subject_20261113.json"
 ACCEPTED = ROOT / "plans/manifests/taiji_u2_joint_subject_accepted_20261113.json"
 STEPS = 0
 RUN_ROOT = None
+PRIOR_CPU = 0.0
 FACTORIES = {
     "query": (JointQuerySubject, JointQueryRuntime, "native-joint-query"),
     "goal-control": (JointGoalSubject, JointGoalRuntime, "native-joint-control"),
@@ -79,22 +81,18 @@ def measure_runtime(runtime, target):
 
 def make_runtime(model, optimizer, runtime_cls, partition, episode, directory):
     public = public_example(partition, episode)["public"]
-    runtime = runtime_cls(model, optimizer=optimizer, subject_id="joint-token-protocol")
+    genesis = partition["worlds"][episode["world_id"]]["audit"]["genesis"]
+    executor = PhysicalExecutor.create(PhysicalWorld.restore(genesis), directory / "executor.bin")
+    runtime = runtime_cls(
+        model, optimizer=optimizer, executor=executor, subject_id="joint-token-protocol"
+    )
     runtime.set_goal(public["goal"])
     runtime.begin_observation("recorded-observation", 0.05)
     runtime.execute_pending(directory / "intent.bin")
-    packet = U2Packet(
-        "recorded-public-frame",
-        "sensor",
-        "world",
-        public["t_start"],
-        public["t_end"],
-        0.0,
-        public["observations"],
-        public["coordinates"],
-        public["outcome"],
-        "recorded-observation",
-    )
+    packet = executor.packet(runtime)
+    assert_values_equal(packet.observations, public["observations"], "physical.public_observations")
+    assert_values_equal(packet.coordinates, public["coordinates"], "physical.public_coordinates")
+    assert_values_equal(packet.outcome, public["outcome"], "physical.public_outcome")
     runtime.receive(packet)
     runtime.set_request("first", episode["requests"][0])
     runtime.begin_utterance()
@@ -124,11 +122,12 @@ def worker(jobs_path, output):
 
 
 def verify():
-    global STEPS, RUN_ROOT
+    global STEPS, RUN_ROOT, PRIOR_CPU
     if REPORT.exists() or ACCEPTED.exists():
         raise FileExistsError("joint_subject_engineering_already_run")
     torch.set_num_threads(1)
     contract = json.loads(CONTRACT.read_text(encoding="utf-8"))
+    PRIOR_CPU = contract.get("prior_failure_cpu_seconds", 0.0)
     for name, pin in contract["source_pins"].items():
         assert (
             hashlib.sha256((ROOT / name).read_text(encoding="utf-8-sig").encode()).hexdigest()
@@ -142,7 +141,7 @@ def verify():
 
     def guard():
         if (
-            time.process_time() > contract["cpu_cap"]
+            time.process_time() + PRIOR_CPU > contract["cpu_cap"]
             or time.monotonic() - STARTED > contract["wall_cap"]
         ):
             raise RuntimeError("joint_subject_budget_stop")
@@ -219,6 +218,10 @@ def verify():
         changed_opt.zero_grad(set_to_none=True)
         task = history_loss(changed, partition, episode, "actual-self")
         task["loss"].backward()
+        assert all(
+            parameter.grad is None or bool(torch.isfinite(parameter.grad).all())
+            for parameter in changed.parameters()
+        )
         gradients = {
             name: float(parameter.grad.norm())
             for name, parameter in changed.named_parameters()
@@ -227,6 +230,11 @@ def verify():
         assert len(gradients) == 12 and all(value > 0 for value in gradients.values())
         changed_opt.step()
         STEPS += 1
+        assert all(bool(torch.isfinite(parameter).all()) for parameter in changed.parameters())
+        assert all(
+            int(changed_opt.state[parameter]["step"]) == 1
+            for parameter in changed.joint_fusion.parameters()
+        )
         changed.parameter_revision += 1
         moves = {
             name: float((changed.state_dict()[name] - model.state_dict()[name]).abs().max())
@@ -305,7 +313,7 @@ def verify():
     restored = atomic_load(root / "worker.bin")
     assert restored["pid"] != os.getpid() and restored["optimizer_steps"] == 0
     assert_values_equal(expected, restored["rows"], "joint.independent_recovery")
-    cpu = time.process_time() + restored["cpu_seconds"]
+    cpu = time.process_time() + restored["cpu_seconds"] + PRIOR_CPU
     assert cpu < contract["cpu_cap"] and time.monotonic() - STARTED < contract["wall_cap"]
     assert contract["engineering_optimizer_steps"] == STEPS
     manifest = {
@@ -330,6 +338,7 @@ def verify():
         "check_reads": 0,
         "final_reads": 0,
         "cpu_seconds": cpu,
+        "prior_failure_cpu_seconds": PRIOR_CPU,
         "wall_seconds": time.monotonic() - STARTED,
         "run_conditions": {"device": "cpu", "threads": 1, "torch": torch.__version__},
         "contract_sha256": hashlib.sha256(CONTRACT.read_bytes()).hexdigest(),
@@ -372,7 +381,7 @@ if __name__ == "__main__":
                 "capability_qualifications": [],
                 "check_reads": 0,
                 "final_reads": 0,
-                "cpu_seconds": time.process_time(),
+                "cpu_seconds": time.process_time() + PRIOR_CPU,
                 "wall_seconds": time.monotonic() - STARTED,
                 "run_conditions": {"device": "cpu", "threads": 1, "torch": torch.__version__},
             }

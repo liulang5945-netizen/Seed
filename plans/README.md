@@ -6,7 +6,7 @@
 
 ## 按顺序推进只读一份
 
-[MAINLINE](MAINLINE.md)是唯一入口，状态与队首归[MASTER-PLAN](MASTER-PLAN.md)，[ROADMAP-NEXT](reference/ROADMAP-NEXT_20261104.md)同步依赖。[U2完整主体闭环候选](reference/SPEC-TAIJI-CLOSED_LOOP_U2_20261110.md)沿[执行包22](reference/PLAN-TAIJI-CLOSED_LOOP_DEVELOPMENT_20261110.md)推进，22.1局部数学、22.2参考图及22.3恢复工程均已结案。当前22.5.P3.7.3c集成联合表征到Native递推与表达并核验恢复，六项目标按同一主体逐层取证。S18–S22为长期责任轴，与执行包号独立。
+[MAINLINE](MAINLINE.md)是唯一入口，状态与队首归[MASTER-PLAN](MASTER-PLAN.md)，[ROADMAP-NEXT](reference/ROADMAP-NEXT_20261104.md)同步依赖。[U2完整主体闭环候选](reference/SPEC-TAIJI-CLOSED_LOOP_U2_20261110.md)沿[执行包22](reference/PLAN-TAIJI-CLOSED_LOOP_DEVELOPMENT_20261110.md)推进，22.1局部数学、22.2参考图及22.3恢复工程均已结案。当前22.5.P3.7.4执行四臂实际历史学习并全局结案，六项目标按同一主体逐层取证。S18–S22为长期责任轴，与执行包号独立。
 
 本轮范围、顺序、预算、风险与具名出口见[闭环开发卡](reference/PLAN-TAIJI-CLOSED_LOOP_DEVELOPMENT_20261110.md)。22.3已按[工程结案](reference/VALIDATION-TAIJI-U2_22_3_CLOSEOUT_20261111.md)交付small初始化接受父，学习前置与配对任务已经交付，实际学习尚无正式A父。包20、包21、v2 F学习线与桥/边界线按各自结案保存，阶段编号不表示长期能力完成比例。
 
