@@ -13,6 +13,7 @@ from __future__ import annotations
 import copy
 import hashlib
 import json
+import subprocess
 import sys
 from pathlib import Path
 
@@ -83,7 +84,20 @@ def claim_check(contract: dict) -> bool:
     return contract["criteria"].get("accepted_parent") is False
 
 
+def recovery_rows(contract: dict) -> list[dict]:
+    torch.set_num_threads(1)
+    model = p4_2.build(contract)
+    payload = torch.load(Path(contract["run_root"]) / "final.pt", weights_only=False)
+    model.load_state_dict(payload["model"])
+    data = p4_2.atomic_load(Path(contract["data_root"]))
+    return p4_2.round_evaluate(model, data["fit"])["rows"]
+
+
 def main() -> int:
+    if "--recovery" in sys.argv:
+        contract = json.loads(CONTRACT.read_text(encoding="utf-8"))
+        print(json.dumps(recovery_rows(contract)))
+        return 0
     torch.set_num_threads(1)
     contract = json.loads(CONTRACT.read_text(encoding="utf-8"))
     census = json.loads(CENSUS.read_text(encoding="utf-8"))
@@ -139,13 +153,22 @@ def main() -> int:
             [len(data["train"]), len(data["fit"])],
         )
     )
-    checks.append(
-        check(
-            "price_matches_cap",
-            price["estimate"]["cap_cpu"] <= contract["cpu_cap"],
-            [price["estimate"]["cap_cpu"], contract["cpu_cap"]],
+    amendment = contract.get("budget_amendment")
+    if amendment:
+        price_ok = (
+            amendment["attempt_1_cpu_estimated"] + contract["cpu_cap"] <= amendment["card_cpu_cap"]
+            and contract["cpu_cap"] <= price["estimate"]["cap_cpu"]
         )
-    )
+        price_evidence = [
+            amendment["attempt_1_cpu_estimated"],
+            contract["cpu_cap"],
+            amendment["card_cpu_cap"],
+            price["estimate"]["cap_cpu"],
+        ]
+    else:
+        price_ok = price["estimate"]["cap_cpu"] <= contract["cpu_cap"]
+        price_evidence = [price["estimate"]["cap_cpu"], contract["cpu_cap"]]
+    checks.append(check("price_matches_cap", price_ok, price_evidence))
     checks.append(
         check(
             "no_check_or_final_reads",
@@ -157,9 +180,10 @@ def main() -> int:
     )
     checks.append(
         check(
-            "run_blocked_pending_authority",
-            contract["training_authority"] is None,
-            "no owner authority is recorded, so run mode cannot start",
+            "training_authority_recorded",
+            isinstance(contract["training_authority"], str)
+            and contract["training_authority"].startswith("owner:"),
+            contract["training_authority"],
         )
     )
     checks.append(
@@ -307,6 +331,25 @@ def main() -> int:
                 "run_gate_table_complete",
                 set(report["gate_table"]) == GATES,
                 sorted(report["gate_table"]),
+            )
+        )
+        independent = subprocess.run(
+            [sys.executable, str(Path(__file__)), "--recovery"],
+            capture_output=True,
+            text=True,
+            timeout=900,
+        )
+        local = recovery_rows(contract)
+        remote = json.loads(independent.stdout) if independent.returncode == 0 else None
+        run_checks.append(
+            check(
+                "run_recovery_cross_process",
+                independent.returncode == 0 and remote == local,
+                {
+                    "returncode": independent.returncode,
+                    "rows": 0 if remote is None else len(remote),
+                    "stderr": independent.stderr[-200:],
+                },
             )
         )
         run_state = "run_present"

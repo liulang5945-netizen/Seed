@@ -1,0 +1,75 @@
+{
+  "schema": "taiji-u2-p4-2-reconstruction-v1",
+  "card": "22.5.P4.2",
+  "date": "2026-11-15",
+  "source": "scripts/training/run_p4_1_22_5.py arm B, frozen contract unchanged",
+  "doses": [
+    {
+      "update": 1844,
+      "fit_correct": 22,
+      "train_correct": 216,
+      "colour_accuracy_fit": 0.8125,
+      "colour_accuracy_train": 0.8671875,
+      "centroid_column_hits_fit": 14,
+      "centroid_column_total_fit": 24,
+      "abstain_on_unknown_fit": 5,
+      "abstain_on_other_fit": 3,
+      "probe_painted_fit": 0.692307710647583,
+      "probe_overall_fit": 0.767578125,
+      "cpu": 0.640625,
+      "bundle": "data\\experiments\\taiji_u2\\p4_2\\20261116T0500Z\\reconstruct-B-001844.pt",
+      "bundle_sha256": "3c97e00ede0da4d1218565def8e8500be53d2a23f186b8823e23fb2e595fdd97"
+    },
+    {
+      "update": 3688,
+      "fit_correct": 25,
+      "train_correct": 228,
+      "colour_accuracy_fit": 0.8125,
+      "colour_accuracy_train": 0.8671875,
+      "centroid_column_hits_fit": 15,
+      "centroid_column_total_fit": 24,
+      "abstain_on_unknown_fit": 5,
+      "abstain_on_other_fit": 1,
+      "probe_painted_fit": 0.6307692527770996,
+      "probe_overall_fit": 0.755859375,
+      "cpu": 0.59375,
+      "bundle": "data\\experiments\\taiji_u2\\p4_2\\20261116T0500Z\\reconstruct-B-003688.pt",
+      "bundle_sha256": "f87089a06d1ecaf12862b0f573b49d5e4c52c3802cd8695000f30f94f1e60ef7"
+    },
+    {
+      "update": 7376,
+      "fit_correct": 29,
+      "train_correct": 252,
+      "colour_accuracy_fit": 1.0,
+      "colour_accuracy_train": 1.0,
+      "centroid_column_hits_fit": 13,
+      "centroid_column_total_fit": 24,
+      "abstain_on_unknown_fit": 7,
+      "abstain_on_other_fit": 0,
+      "probe_painted_fit": 0.607692301273346,
+      "probe_overall_fit": 0.75,
+      "cpu": 0.609375,
+      "bundle": "data\\experiments\\taiji_u2\\p4_2\\20261116T0500Z\\reconstruct-B-007376.pt",
+      "bundle_sha256": "f670508850685cb8aa4e9ed385eb2f5997154524e606d1ab7cbfbd5230eb0f2f"
+    }
+  ],
+  "signature_fields": [
+    "fit_correct",
+    "train_correct",
+    "colour_accuracy_fit",
+    "colour_accuracy_train",
+    "centroid_column_hits_fit",
+    "centroid_column_total_fit",
+    "abstain_on_unknown_fit",
+    "abstain_on_other_fit",
+    "probe_painted_fit",
+    "probe_overall_fit"
+  ],
+  "mismatches": [],
+  "verdict": "p4_1_arm_b_reconstructed",
+  "discipline": {
+    "optimizer_calls": 7376,
+    "check_reads": 0,
+    "final_reads": 0
+  }
+}

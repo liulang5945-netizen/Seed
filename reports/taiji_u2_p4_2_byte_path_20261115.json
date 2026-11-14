@@ -1,0 +1,239 @@
+{
+  "schema": "taiji-u2-p4-2-byte-path-v1",
+  "card": "22.5.P4.2",
+  "date": "2026-11-15",
+  "phase": "column_pathway_through_byte_emission",
+  "verdict": "byte_path_blocks",
+  "reconstruction": {
+    "verdict": "p4_1_arm_b_reconstructed",
+    "doses": [
+      {
+        "update": 1844,
+        "fit_correct": 22,
+        "train_correct": 216,
+        "colour_accuracy_fit": 0.8125,
+        "colour_accuracy_train": 0.8671875,
+        "centroid_column_hits_fit": 14,
+        "centroid_column_total_fit": 24,
+        "abstain_on_unknown_fit": 5,
+        "abstain_on_other_fit": 3,
+        "probe_painted_fit": 0.692307710647583,
+        "probe_overall_fit": 0.767578125,
+        "cpu": 0.640625,
+        "bundle": "data\\experiments\\taiji_u2\\p4_2\\20261116T0500Z\\reconstruct-B-001844.pt",
+        "bundle_sha256": "3c97e00ede0da4d1218565def8e8500be53d2a23f186b8823e23fb2e595fdd97"
+      },
+      {
+        "update": 3688,
+        "fit_correct": 25,
+        "train_correct": 228,
+        "colour_accuracy_fit": 0.8125,
+        "colour_accuracy_train": 0.8671875,
+        "centroid_column_hits_fit": 15,
+        "centroid_column_total_fit": 24,
+        "abstain_on_unknown_fit": 5,
+        "abstain_on_other_fit": 1,
+        "probe_painted_fit": 0.6307692527770996,
+        "probe_overall_fit": 0.755859375,
+        "cpu": 0.59375,
+        "bundle": "data\\experiments\\taiji_u2\\p4_2\\20261116T0500Z\\reconstruct-B-003688.pt",
+        "bundle_sha256": "f87089a06d1ecaf12862b0f573b49d5e4c52c3802cd8695000f30f94f1e60ef7"
+      },
+      {
+        "update": 7376,
+        "fit_correct": 29,
+        "train_correct": 252,
+        "colour_accuracy_fit": 1.0,
+        "colour_accuracy_train": 1.0,
+        "centroid_column_hits_fit": 13,
+        "centroid_column_total_fit": 24,
+        "abstain_on_unknown_fit": 7,
+        "abstain_on_other_fit": 0,
+        "probe_painted_fit": 0.607692301273346,
+        "probe_overall_fit": 0.75,
+        "cpu": 0.609375,
+        "bundle": "data\\experiments\\taiji_u2\\p4_2\\20261116T0500Z\\reconstruct-B-007376.pt",
+        "bundle_sha256": "f670508850685cb8aa4e9ed385eb2f5997154524e606d1ab7cbfbd5230eb0f2f"
+      }
+    ],
+    "mismatches": [],
+    "encoder_sha256": "2f9df10a394957418728a50be007fa6453732a1bcd60c90e286622f2e55bcd3c"
+  },
+  "stage1": {
+    "status": "scaffold_cannot_read_answer",
+    "doses": [
+      {
+        "update": 1844,
+        "train_accuracy": 0.40625,
+        "fit_accuracy": 0.3125,
+        "fit_correct": 10,
+        "checkpoint": "data\\experiments\\taiji_u2\\p4_2\\20261116T0500Z\\phase1-001844.pt",
+        "checkpoint_sha256": "e2d40351962d7d0b33cff0d6666cbb788d5e7fdec0dc0977bee2da02b8697b66"
+      },
+      {
+        "update": 3688,
+        "train_accuracy": 0.40625,
+        "fit_accuracy": 0.34375,
+        "fit_correct": 11,
+        "checkpoint": "data\\experiments\\taiji_u2\\p4_2\\20261116T0500Z\\phase1-003688.pt",
+        "checkpoint_sha256": "cb093f724f687feb0b1843c7b7b6478ac1edae6feac37815d0d9e152736914c1"
+      }
+    ],
+    "trainable_parameters": 192,
+    "scaffold_parameters": 100,
+    "scaffold_role": "training-only 4-way head on the read context; never at evaluation"
+  },
+  "stage2": {
+    "doses": [
+      {
+        "update": 461,
+        "train_accuracy": 0.4375,
+        "train_correct": 14,
+        "fit_accuracy": 0.28125,
+        "fit_correct": 9,
+        "checkpoint": "data\\experiments\\taiji_u2\\p4_2\\20261116T0500Z\\phase2-000461.pt",
+        "checkpoint_sha256": "3f9997063a800de955c26c782ce8261d03f1cd39dfc20b93218be61dda27ec69"
+      },
+      {
+        "update": 922,
+        "train_accuracy": 0.375,
+        "train_correct": 12,
+        "fit_accuracy": 0.28125,
+        "fit_correct": 9,
+        "checkpoint": "data\\experiments\\taiji_u2\\p4_2\\20261116T0500Z\\phase2-000922.pt",
+        "checkpoint_sha256": "ba88e3112a9a5c1293bb6c8c6813295bc3073b66a589b47cd6faafc0ef08c1f3"
+      },
+      {
+        "update": 1844,
+        "train_accuracy": 0.46875,
+        "train_correct": 15,
+        "fit_accuracy": 0.25,
+        "fit_correct": 8,
+        "checkpoint": "data\\experiments\\taiji_u2\\p4_2\\20261116T0500Z\\phase2-001844.pt",
+        "checkpoint_sha256": "5eb033efd3d0bb0bb816ccf54b51cc0fed742aa6db11143c392c415fed9589f4"
+      }
+    ],
+    "trainable_parameters": [
+      "byte_head.bias",
+      "byte_head.weight",
+      "copy_gate.bias",
+      "copy_gate.weight",
+      "joint_readout.first.bias",
+      "joint_readout.first.weight",
+      "joint_readout.last.bias",
+      "joint_readout.last.weight"
+    ],
+    "cache_positions": 1792,
+    "cache_replay_checks": [
+      {
+        "example": "train-0",
+        "position": 0,
+        "body_log_probability": -5.190194129943848,
+        "replayed": -5.190194129943848,
+        "equal": true
+      },
+      {
+        "example": "train-85",
+        "position": 2,
+        "body_log_probability": -4.3776164054870605,
+        "replayed": -4.3776164054870605,
+        "equal": true
+      },
+      {
+        "example": "train-170",
+        "position": 4,
+        "body_log_probability": -4.302970886230469,
+        "replayed": -4.302970886230469,
+        "equal": true
+      }
+    ]
+  },
+  "feedback": {
+    "first_pass_correct": 8,
+    "first_pass_errors": 24,
+    "control_second_pass": 0.25,
+    "learned_second_pass": 0.3125,
+    "correction_rate": 0.4166666666666667,
+    "feedback_gain": 0.0625,
+    "feedback_updates": 192,
+    "control_updates": 0,
+    "control_state_unchanged": true,
+    "learned_checkpoint": "data\\experiments\\taiji_u2\\p4_2\\20261116T0500Z\\feedback-learned.pt",
+    "learned_sha256": "c682764109681f6c931aa7adbde971e0e5cfa0f65f85ee8298b22b7a26f71c21",
+    "stability_losses": 8
+  },
+  "recovery": {
+    "equal_in_process": true,
+    "final_sha256": "e3b9ebaca0a61a3486b65850e0879b4f0bbe9a00397a667d69e3059a83865181"
+  },
+  "gate_table": {
+    "full_answer_round_fit": "failed",
+    "correction": "failed",
+    "feedback_gain": "passed",
+    "recovery": "passed",
+    "world_paired_95_lower": "not_in_scope_single_seed",
+    "three_seed_direction": "not_in_scope_single_seed",
+    "a_retention": "not_applicable_no_A_parent",
+    "check2": "not_read"
+  },
+  "criteria": {
+    "response_round": "exact answer bytes plus EOS plus valid UTF-8, greedy, 65-byte cap",
+    "main_denominator": "all 32 fit rounds; a failed or extra-byte round is counted, never deleted or filtered",
+    "main_gate": 0.8,
+    "correction_gate": 0.8,
+    "feedback_gain_gate": 0.05,
+    "correction_protocol": "first pass on fit; for every first-pass error release the correct answer and take 8 Adam updates at the feedback lr; re-ask the same input once",
+    "correction_denominator": "first-pass fit errors",
+    "control_arm": "same trained subject, same feedback exposure, zero parameter updates and zero state writes",
+    "feedback_gain": "learned second-pass fit accuracy minus control second-pass fit accuracy",
+    "recovery": "save the trained bundle, reload in an independent process, re-ask all 32; outputs must be byte-identical",
+    "not_identifiable_rule": "if first-pass fit errors are below 4, correction and feedback gain are recorded as not_identifiable_by_design, not as passes or failures",
+    "scaffold_gate": 0.95,
+    "scaffold_flat": 0.35,
+    "scaffold_early_stop": "stop stage 1 at a dose when train and fit scaffold accuracy are both >= 0.95; stop at the second dose when fit scaffold accuracy is <= 0.35 at both doses",
+    "trend_gate": 0.1,
+    "verdicts": [
+      "byte_path_carries_answer",
+      "byte_path_carries_answer_gates_incomplete",
+      "byte_path_learning_below_gate",
+      "byte_path_blocks",
+      "p4_1_reconstruction_mismatch",
+      "budget_stop",
+      "engineering_failure"
+    ],
+    "a_retention": "not_applicable_no_A_parent; no accepted A parent exists, so no A suite exists to retain",
+    "three_seed": "not_in_scope_single_seed",
+    "check2": "not_read; no check suite exists and no check budget is consumed",
+    "accepted_parent": false,
+    "parent_candidate": "main gate plus correction and feedback gain plus recovery, on development fit only"
+  },
+  "optimizer": {
+    "lr": 0.01,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "weight_decay": 0.0
+  },
+  "data_digest": "1dec5429a1110dc9a23a8f38329e1bce1cb8824e6d2ca89fc96b429487e9addf",
+  "init_encoder_sha256": "2f9df10a394957418728a50be007fa6453732a1bcd60c90e286622f2e55bcd3c",
+  "cost": {
+    "total_cpu": 1968.90625,
+    "total_wall": 1974.759639,
+    "cap_cpu": 2080.0,
+    "cap_wall": 4160.0
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "capability_claims": 0,
+    "accepted_parent": false
+  },
+  "run_conditions": {
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "scope": "development fit only; the served output is the subject's byte head; a parent candidate, not an accepted learning parent"
+}

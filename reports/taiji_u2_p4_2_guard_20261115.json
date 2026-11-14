@@ -2,7 +2,7 @@
   "schema": "taiji-u2-p4-2-guard-v1",
   "card": "22.5.P4.2",
   "date": "2026-11-15",
-  "contract_sha256": "deda59be046362ec64adc30d42909b20fa29681006dec4c29c204cfa08941a24",
+  "contract_sha256": "8ac20916a5e63bd1909d826cc32479e94573760d213e05f1c47be7fff1d352f2",
   "checks": [
     {
       "name": "contract_status_frozen",
@@ -13,8 +13,8 @@
       "name": "caps_positive",
       "passed": true,
       "evidence": [
-        3960.0,
-        7920.0
+        2080.0,
+        4160.0
       ]
     },
     {
@@ -25,7 +25,7 @@
         "support": "33d9301f98859934c1413e25765c55e6bc7b64dfa410d65b03f0e5a198041b4c",
         "column_pathway": "4afb7c94a0641f6f5eb943339d19f13c8f690ddcf6956bc6787cba5aa4653476",
         "subject": "01d54b472e6cc99728ca45b94aeb556148498081ce1128cf28f8bed2d8784025",
-        "runner": "e0e40a8cdbe78795b65a314a36f5bb383297313aea6d419d3f8748f62feb8c51"
+        "runner": "c479d90963cf3a21b43700115fc8c94f418b4a396a8526fadb5e8c3b322859ff"
       }
     },
     {
@@ -69,8 +69,10 @@
       "name": "price_matches_cap",
       "passed": true,
       "evidence": [
-        3959.0,
-        3960.0
+        1880.0,
+        2080.0,
+        3960.0,
+        3959.0
       ]
     },
     {
@@ -79,9 +81,9 @@
       "evidence": "price and contract both report zero sealed reads"
     },
     {
-      "name": "run_blocked_pending_authority",
+      "name": "training_authority_recorded",
       "passed": true,
-      "evidence": "no owner authority is recorded, so run mode cannot start"
+      "evidence": "owner:chat:2026-11-15#是，有问题给弹窗，不用中断"
     },
     {
       "name": "verdict_table_defined",
@@ -153,8 +155,75 @@
       }
     }
   ],
-  "run_state": "run_not_present",
-  "run_checks": [],
+  "run_state": "run_present",
+  "run_checks": [
+    {
+      "name": "run_denominator_all_32",
+      "passed": true,
+      "evidence": [
+        8,
+        24
+      ]
+    },
+    {
+      "name": "run_control_has_zero_updates",
+      "passed": true,
+      "evidence": [
+        0,
+        true
+      ]
+    },
+    {
+      "name": "run_does_not_claim_parent",
+      "passed": true,
+      "evidence": {
+        "check_reads": 0,
+        "final_reads": 0,
+        "confirm_reads": 0,
+        "capability_claims": 0,
+        "accepted_parent": false
+      }
+    },
+    {
+      "name": "run_cost_within_cap",
+      "passed": true,
+      "evidence": [
+        1968.90625,
+        2080.0
+      ]
+    },
+    {
+      "name": "run_learned_checkpoint_present",
+      "passed": true,
+      "evidence": [
+        "data\\experiments\\taiji_u2\\p4_2\\20261116T0500Z\\feedback-learned.pt",
+        "c682764109681f6c931aa7adbde971e0e5cfa0f65f85ee8298b22b7a26f71c21"
+      ]
+    },
+    {
+      "name": "run_gate_table_complete",
+      "passed": true,
+      "evidence": [
+        "a_retention",
+        "check2",
+        "correction",
+        "feedback_gain",
+        "full_answer_round_fit",
+        "recovery",
+        "three_seed_direction",
+        "world_paired_95_lower"
+      ]
+    },
+    {
+      "name": "run_recovery_cross_process",
+      "passed": true,
+      "evidence": {
+        "returncode": 0,
+        "rows": 32,
+        "stderr": ""
+      }
+    }
+  ],
   "red_directions": [
     {
       "name": "wrong_symbol_replay_mismatch",
@@ -184,6 +253,6 @@
     "green": 16,
     "red_defined": 5,
     "red_triggered": 5,
-    "run_checks": 0
+    "run_checks": 7
   }
 }
