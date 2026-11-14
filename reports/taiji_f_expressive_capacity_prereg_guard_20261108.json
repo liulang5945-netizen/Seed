@@ -24,16 +24,16 @@
       "red_mutation_detected": true,
       "comparator": "all_identical(texts) == len(set(texts)) == 1, shared by both directions",
       "lengths": {
-        "MAINLINE.md": 182,
-        "MASTER-PLAN.md": 182,
-        "ROADMAP-NEXT_20261104.md": 182
+        "MAINLINE.md": 229,
+        "MASTER-PLAN.md": 229,
+        "ROADMAP-NEXT_20261104.md": 229
       },
       "sha256": {
-        "MAINLINE.md": "988f5b27650c8fc8c4da394752078d5b4c8d002e2b0aa7f49090cade5fad7774",
-        "MASTER-PLAN.md": "988f5b27650c8fc8c4da394752078d5b4c8d002e2b0aa7f49090cade5fad7774",
-        "ROADMAP-NEXT_20261104.md": "988f5b27650c8fc8c4da394752078d5b4c8d002e2b0aa7f49090cade5fad7774"
+        "MAINLINE.md": "415cd22266704f07ddc65ae1a0c8a91de6f27bdb08c3069ee2c75ebe979d6159",
+        "MASTER-PLAN.md": "415cd22266704f07ddc65ae1a0c8a91de6f27bdb08c3069ee2c75ebe979d6159",
+        "ROADMAP-NEXT_20261104.md": "415cd22266704f07ddc65ae1a0c8a91de6f27bdb08c3069ee2c75ebe979d6159"
       },
-      "headline": "22.5.P3.8.3 预注册已冻结（criteria_sha256=b88b3381…；实价 128 次配对更新≈461.77 CPU／600 帽、两臂等样本暴露、训练前完整包恢复硬门），待裁定执行。P3.8.2b 工程结案有效，父仍为 P3.7 且 native_parent_qualified=false；0 比较读数 / 0 能力声称，P3.9 未准入。"
+      "headline": "22.5.P3.8.3 已按冻结合同执行：128 次配对更新、两臂 before/after 全 0.5、Δ=0（CI [0,0]）、控制也 0.5、CPU 271.375 / cpu_ratio 1.153，独立审计判 budget_cannot_express（预算不足以表达，不是配方被否决），不加剂量。唯一后继：P3.8.4 全局收束卡，再交 P3.9.1 A/B 双图冻结；native_parent_qualified=false，0 能力声称。"
     },
     "spec": {
       "green_spec_has_no_gate_literal": true,

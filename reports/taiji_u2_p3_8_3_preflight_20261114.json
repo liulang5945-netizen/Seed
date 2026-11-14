@@ -1,0 +1,36 @@
+{
+  "schema": "taiji-u2-p3-8-3-preflight-v1",
+  "date": "2026-11-14",
+  "criteria_sha256": "b88b33818dd850439ca8f915caedbe1fce85a568f26ae566a9c8efbc294b94e6",
+  "feature_card": "plans/manifests/taiji_u2_p3_8_3_feature_card_20261114.json",
+  "feature_card_sha256": "cd4fdabfde20901c9f73f42fa146f257dd3595e2a37ce6a7ba9dfe103e4a5c3f",
+  "source_pins": {
+    "scripts/training/run_p3_8_3_recipe_comparison_22_5.py": "49d9f2705dd92792df5519beec854aecec2e53363b3df1982101c0488d65f5f0",
+    "scripts/training/verify_native_credit_transfer_22_5.py": "f68a761e78b83cbfafa439058f0e08ba1f37965b177ddabfebed87d8be8bf806",
+    "taiji/u2_credit_update.py": "8f3863538b1b2b1390206de691d938edf1baa9b2d351a559228c55dfb76e1166",
+    "taiji/u2_credit_learner.py": "0e820081716a8320059cf4ae892f2aec1c9d591a8c865b4b808f1b6770a5ceda"
+  },
+  "parent_sha256": "c8f2359b0bef3085bce88a0a0a8ee7eff5f66a0bc614d2bf52e7ef361638b017",
+  "data_digest": "65041f02e3a3410b307bc6e013d897ef747e7f890b3668db6b5852fdc9fdba1c",
+  "checkpoint_restores": [
+    {
+      "digest_matches": true,
+      "point": "preflight_A"
+    },
+    {
+      "digest_matches": true,
+      "point": "preflight_B"
+    }
+  ],
+  "evaluation_price_probe": {
+    "dev_full_cpu": 23.6562,
+    "dev_without_rgb_cpu": 21.2656,
+    "dev_accuracy": 0.5,
+    "dev_without_rgb_accuracy": 0.5,
+    "note": "price probe measured the full 180-episode two-question evaluate; the frozen conservative estimate used a single forward and underestimates evaluation by ~116x"
+  },
+  "optimizer_steps": 0,
+  "dev_reads": 0,
+  "dev_reads_note": "originally registered as 1; corrected to 0 before submission. The preflight only restored capsules; the dev evaluation price came from a separate read-only probe.",
+  "verdict": "preflight_passed"
+}

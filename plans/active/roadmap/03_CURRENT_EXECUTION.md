@@ -3201,3 +3201,18 @@ owner 本轮重述[根需求 §2.1](../TAIJI_CORE_REQUIREMENTS.md#21-统一目�
 **父身份**：P3.8.2b 的事务提交只在隔离影子 runtime 中发生、未写出新接受父，故 P3.8.3 父仍是 P3.7 问题 Fusion `update-000758.bin`，manifest 明确 `native_parent_qualified=false`；首问合格参照权重继续独立于 Native。0 check／final／confirm 读取，正式 A 的多实体／三 seed／独立 check 仍需对应父与范围，P3.9 不提前准入。
 
 **停止线**：停在裁定节点「是否按本预注册执行 128 次配对更新（CPU ≤600）」。**准入 ≠ 执行 ≠ 里程碑关闭**；本轮 0 比较读数、0 能力声称。
+
+
+## 2026-11-14 22.5.P3.8.3 整体配方比较执行与结案（`budget_cannot_express`）
+
+按[冻结预注册](../../manifests/taiji_u2_p3_8_3_prereg_20261114.json)（`criteria_sha256=b88b3381…`）执行：特征卡读前落盘、双列 runner sha 与入库字节一致、[训练前预检](../../../reports/taiji_u2_p3_8_3_preflight_20261114.json)两臂各一次独立进程完整包恢复通过且 0 优化器步，然后两臂各跑 128 次配对更新。
+
+**读数**[机器卡](../../../reports/taiji_u2_p3_8_3_recipe_comparison_20261114.json)：A 臂（原字节／普通 Adam）与 B 臂（内容信用／受验收更新）在首问与实际两问的 before／after **全部 0.5**（首问 90/180、两问 180/360）；`without_rgb` 与 `without_questions` 两控制也全 0.5；配对 bootstrap 2000 次得 **Δ=0、CI [0,0]**。两臂各 128 次更新全接受、各 2 次完整包独立恢复一致；CPU **271.375** / wall 290.75（帽 600/1200），A 145.2344 / B 125.9531，`cpu_ratio=1.153` 在带内；criteria sha 读后未改；0 check／final／confirm。
+
+**独立审计**[回执](../../../reports/taiji_u2_p3_8_3_recipe_comparison_audit_20261114.json)按合同 `decision_rule` 重判与 runner 自报一致：**`budget_cannot_express`**，12 项检查全过、0 缺口；红方向给 A 臂注入动态范围后 verdict 立刻改变 ⇒ 守卫非恒真。**这不是配方被否决，也不构成加剂量理由**：A 臂在两面均无动态范围，按预注册该预算不足以表达假设。P3.8.3 按有限出口结案，**不自动转训练剂量、不改门值、不缩数据重跑**。
+
+**归因（按 owner 要求明确区分架构与剂量）**：父在 dev 上对 RGB 置零、问题置空均保持 0.5，输入不敏感；与 P3.7「Native 恒答未知」、21.3 表示轴关闭、FEC-1 旧图写键塌缩同向。本卡**不判定**「架构不可能」，只登记「输入不敏感」为架构级缺口的候选证据，须由 P3.9 的 A 兼容／B 单位原生核心比较裁决；128 次更新内两臂逐位相同也可由预算不足解释，两种解释不相互代签。能力账无变化，`native_parent_qualified=false`。
+
+**两处如实登记的实现事实**：① 冻结定价用「单次前向 0.2031 CPU」估计评估，实测完整 dev `evaluate`（180 episodes × 2 问自由生成）为 **23.6562 CPU**，低估约 116 倍；实际总费 271.375 CPU 仍远低于 600 帽（B 臂实测每次仅 1 次 α 评估，未按保守 8 次计），预算结论未翻转，但该低估必须随定价回执一起引用。② 预注册要求两臂各构造完整 `NativeLearnerCapsule`，而 A 臂按定义无内容头（214 张量），原 `u2_credit_learner.py` 硬编码 216 会拒绝；本轮把 registry 校验改为**按 owners 求和**（B 仍 216、A 214），新增契约测试 `test_body_only_arm_registry_is_valid`（绿＋红），31 项契约测试全过。这是修实现以符合合同，不是改判据。
+
+**唯一后继**：按执行包 22 §P3.9「P3.8 的负出口或预算出口也先结案，不能反复加剂量把单位设计无限延期」——产出 **P3.8.4 全局收束卡**（合并 P3.8.1–P3.8.3 的能力／负结果／成本总账，登记 `native_parent_qualified=false`、输入不敏感线索与全部费用），再交 P3.9.1 的 A/B 双图冻结与定价。正式 A 的多实体／三 seed／独立 check 仍待对应父。

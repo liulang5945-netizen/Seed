@@ -1,0 +1,157 @@
+{
+  "schema": "taiji-u2-p3-8-3-recipe-comparison-v1",
+  "date": "2026-11-14",
+  "card": "22.5.P3.8.3",
+  "criteria_sha256": "b88b33818dd850439ca8f915caedbe1fce85a568f26ae566a9c8efbc294b94e6",
+  "feature_card_sha256": "cd4fdabfde20901c9f73f42fa146f257dd3595e2a37ce6a7ba9dfe103e4a5c3f",
+  "parent_sha256": "c8f2359b0bef3085bce88a0a0a8ee7eff5f66a0bc614d2bf52e7ef361638b017",
+  "data_digest": "65041f02e3a3410b307bc6e013d897ef747e7f890b3668db6b5852fdc9fdba1c",
+  "source_pins": {
+    "scripts/training/run_p3_8_3_recipe_comparison_22_5.py": "49d9f2705dd92792df5519beec854aecec2e53363b3df1982101c0488d65f5f0",
+    "scripts/training/verify_native_credit_transfer_22_5.py": "f68a761e78b83cbfafa439058f0e08ba1f37965b177ddabfebed87d8be8bf806",
+    "taiji/u2_credit_update.py": "8f3863538b1b2b1390206de691d938edf1baa9b2d351a559228c55dfb76e1166",
+    "taiji/u2_credit_learner.py": "0e820081716a8320059cf4ae892f2aec1c9d591a8c865b4b808f1b6770a5ceda"
+  },
+  "arms": {
+    "A": {
+      "arm": "A",
+      "restores": [
+        {
+          "digest_matches": true,
+          "point": "A_initial"
+        },
+        {
+          "digest_matches": true,
+          "point": "A_first_nonempty_moment"
+        }
+      ],
+      "before": {
+        "label": "A_before",
+        "correct": 180,
+        "denominator": 360,
+        "accuracy": 0.5,
+        "first_turn_correct": 90,
+        "first_turn_denominator": 180,
+        "first_turn_accuracy": 0.5
+      },
+      "after": {
+        "label": "A_after",
+        "correct": 180,
+        "denominator": 360,
+        "accuracy": 0.5,
+        "first_turn_correct": 90,
+        "first_turn_denominator": 180,
+        "first_turn_accuracy": 0.5
+      },
+      "controls": {
+        "without_rgb": {
+          "label": "A_without_rgb",
+          "correct": 180,
+          "denominator": 360,
+          "accuracy": 0.5,
+          "first_turn_correct": 90,
+          "first_turn_denominator": 180,
+          "first_turn_accuracy": 0.5
+        },
+        "without_questions": {
+          "label": "A_without_questions",
+          "correct": 180,
+          "denominator": 360,
+          "accuracy": 0.5,
+          "first_turn_correct": 90,
+          "first_turn_denominator": 180,
+          "first_turn_accuracy": 0.5
+        }
+      },
+      "counters": {
+        "real_adam_calls": 128
+      },
+      "cpu_seconds": 145.2344,
+      "wall_seconds": 154.704,
+      "update_count": 128,
+      "accepted_updates": 128
+    },
+    "B": {
+      "arm": "B",
+      "restores": [
+        {
+          "digest_matches": true,
+          "point": "B_initial"
+        },
+        {
+          "digest_matches": true,
+          "point": "B_first_nonempty_moment"
+        }
+      ],
+      "before": {
+        "label": "B_before",
+        "correct": 180,
+        "denominator": 360,
+        "accuracy": 0.5,
+        "first_turn_correct": 90,
+        "first_turn_denominator": 180,
+        "first_turn_accuracy": 0.5
+      },
+      "after": {
+        "label": "B_after",
+        "correct": 180,
+        "denominator": 360,
+        "accuracy": 0.5,
+        "first_turn_correct": 90,
+        "first_turn_denominator": 180,
+        "first_turn_accuracy": 0.5
+      },
+      "controls": {
+        "without_rgb": {
+          "label": "B_without_rgb",
+          "correct": 180,
+          "denominator": 360,
+          "accuracy": 0.5,
+          "first_turn_correct": 90,
+          "first_turn_denominator": 180,
+          "first_turn_accuracy": 0.5
+        },
+        "without_questions": {
+          "label": "B_without_questions",
+          "correct": 180,
+          "denominator": 360,
+          "accuracy": 0.5,
+          "first_turn_correct": 90,
+          "first_turn_denominator": 180,
+          "first_turn_accuracy": 0.5
+        }
+      },
+      "counters": {
+        "real_adam_calls": 128
+      },
+      "cpu_seconds": 125.9531,
+      "wall_seconds": 135.813,
+      "update_count": 128,
+      "accepted_updates": 128
+    }
+  },
+  "paired_bootstrap": {
+    "paired_units": 360,
+    "observed_delta": 0.0,
+    "ci_lower": 0.0,
+    "ci_upper": 0.0,
+    "resamples": 2000
+  },
+  "cpu_ratio": 1.1530831714344465,
+  "reasons": [
+    "arm A shows no dynamic range on either face"
+  ],
+  "measured": {
+    "cpu_seconds": 271.375,
+    "wall_seconds": 290.75
+  },
+  "discipline": {
+    "dev_reads": 8,
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "capability_claims": 0,
+    "criteria_sha_unchanged_after_reading": true
+  },
+  "verdict": "budget_cannot_express"
+}

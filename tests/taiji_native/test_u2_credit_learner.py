@@ -172,6 +172,21 @@ def test_headless_runtime_excludes_training_only_state():
         headless_runtime(polluted)
 
 
+def test_body_only_arm_registry_is_valid():
+    """An arm without a content head owns 214 tensors, not 216."""
+    capsule = make_capsule()
+    capsule["identity"]["parameter_registry"]["parameter_ids"] = [
+        f"body.{index}" for index in range(BODY_TENSORS)
+    ]
+    capsule["identity"]["parameter_registry"]["owners"] = {"body": BODY_TENSORS}
+    capsule["capsule_digest"] = value_digest({key: capsule[key] for key in capsule_mod.PARTS})
+    validate_capsule(capsule)
+    assert capsule_summary(capsule)["registry_tensors"] == BODY_TENSORS
+    capsule["identity"]["parameter_registry"]["owners"] = {"body": BODY_TENSORS - 1}
+    with pytest.raises(ValueError, match="capsule_registry"):
+        validate_capsule(capsule)
+
+
 def test_registry_and_clock_guards_fire():
     capsule = make_capsule()
     capsule["identity"]["parameter_registry"]["parameter_ids"] = capsule["identity"][

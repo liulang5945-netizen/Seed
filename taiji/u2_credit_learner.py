@@ -47,17 +47,18 @@ def _validate_parts(parts: dict[str, Any]) -> None:
     _require(isinstance(registry, dict), "capsule_registry_missing")
     ids = registry.get("parameter_ids")
     _require(isinstance(ids, (list, tuple)), "capsule_registry_ids_type")
-    _require(len(ids) == REGISTRY_TENSORS, "capsule_registry_count")
-    _require(len(set(ids)) == REGISTRY_TENSORS, "capsule_registry_duplicate")
     owners = registry.get("owners")
     _require(
-        isinstance(owners, dict) and set(owners) == {"body", "content_head"},
+        isinstance(owners, dict) and "body" in owners and owners["body"] == BODY_TENSORS,
         "capsule_registry_owners",
     )
-    _require(
-        owners["body"] == BODY_TENSORS and owners["content_head"] == HEAD_TENSORS,
-        "capsule_registry_owner_count",
-    )
+    if "content_head" in owners:
+        _require(owners["content_head"] == HEAD_TENSORS, "capsule_registry_owner_count")
+    # A recipe without a content head owns 214 tensors; one with the head owns
+    # 216. The registry length must equal the sum of its declared owners.
+    expected = sum(owners.values())
+    _require(len(ids) == expected, "capsule_registry_count")
+    _require(len(set(ids)) == expected, "capsule_registry_duplicate")
 
     state = parts["learning_state"]
     _require(isinstance(state, dict), "capsule_learning_state_type")
@@ -154,6 +155,6 @@ def capsule_summary(capsule: dict[str, Any]) -> dict[str, Any]:
         "proposal_clock": state["proposal_clock"],
         "parameter_version": state["parameter_version"],
         "proposal_present": parts["proposal"] is not None,
-        "registry_tensors": REGISTRY_TENSORS,
+        "registry_tensors": sum(parts["identity"]["parameter_registry"]["owners"].values()),
         "episode_cursor": parts["sampling"]["episode_cursor"],
     }

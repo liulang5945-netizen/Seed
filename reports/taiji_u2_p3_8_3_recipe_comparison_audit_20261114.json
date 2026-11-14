@@ -1,0 +1,29 @@
+{
+  "schema": "taiji-u2-p3-8-3-comparison-audit-v1",
+  "date": "2026-11-14",
+  "criteria_sha256": "b88b33818dd850439ca8f915caedbe1fce85a568f26ae566a9c8efbc294b94e6",
+  "receipt_sha256": "35da0346adc4ce90ecacc52a82e1dd414c591b613433a5ab9764ba8736108223",
+  "runner_sha256": "49d9f2705dd92792df5519beec854aecec2e53363b3df1982101c0488d65f5f0",
+  "agrees_with_receipt": true,
+  "red_direction_verdict_with_dynamic_arm_a": "recipe_no_gain",
+  "red_guard_fires": true,
+  "note": "Independent read-only re-adjudication; the receipt is not modified.",
+  "checks": {
+    "criteria_sha_matches": true,
+    "criteria_unchanged_after_reading": true,
+    "two_arms_present": true,
+    "both_completed_128_updates": true,
+    "both_arms_full_capsule_restores": true,
+    "preflight_passed_before_run": true,
+    "within_runner_budget": true,
+    "within_per_arm_budget": true,
+    "cpu_parity_within_band": true,
+    "data_rights_respected": true,
+    "bootstrap_complete": true,
+    "dual_runner_hashes_match_bytes": true,
+    "all_faces_and_controls_reported": true
+  },
+  "uncovered": [],
+  "a_arm_dynamic_range": false,
+  "audited_verdict": "budget_cannot_express"
+}
