@@ -45,7 +45,7 @@
   "failed": [],
   "drills_not_firing": [],
   "measured": {
-    "cpu_seconds": 1.234375,
-    "wall_seconds": 1.615685
+    "cpu_seconds": 1.21875,
+    "wall_seconds": 1.540986
   }
 }

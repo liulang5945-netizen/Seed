@@ -1,0 +1,110 @@
+{
+  "schema": "taiji-u2-p4-1-column-supervision-v1",
+  "date": "2026-11-15",
+  "card": "22.5.P4.1",
+  "phase": "column_colour_supervision",
+  "verdict": "inconclusive_column_supervision",
+  "baseline_probe": {
+    "train": 0.658203125,
+    "fit": 0.662109375,
+    "classes": 7
+  },
+  "doses": [
+    {
+      "update": 1844,
+      "train_accuracy": 0.71484375,
+      "fit_accuracy": 0.6875,
+      "train_correct": 183,
+      "fit_correct": 22,
+      "colour_accuracy_train": 0.69921875,
+      "colour_accuracy_fit": 0.78125,
+      "centroid_column_hits_fit": 12,
+      "centroid_column_total_fit": 23,
+      "abstain_on_unknown_fit": 4,
+      "abstain_on_other_fit": 2,
+      "probe_train": 0.713867,
+      "probe_fit": 0.722656,
+      "aux_last": 0.723078,
+      "aux_supervised_last": 20,
+      "prototype_pairwise_min": 0.298562,
+      "geometry_collapse": false,
+      "cpu": 0.125
+    },
+    {
+      "update": 3688,
+      "train_accuracy": 0.72265625,
+      "fit_accuracy": 0.65625,
+      "train_correct": 185,
+      "fit_correct": 21,
+      "colour_accuracy_train": 0.8671875,
+      "colour_accuracy_fit": 0.8125,
+      "centroid_column_hits_fit": 12,
+      "centroid_column_total_fit": 23,
+      "abstain_on_unknown_fit": 4,
+      "abstain_on_other_fit": 3,
+      "probe_train": 0.695801,
+      "probe_fit": 0.714844,
+      "aux_last": 0.816214,
+      "aux_supervised_last": 20,
+      "prototype_pairwise_min": 0.008883,
+      "geometry_collapse": false,
+      "cpu": 0.15625
+    },
+    {
+      "update": 7376,
+      "train_accuracy": 0.89453125,
+      "fit_accuracy": 0.71875,
+      "train_correct": 229,
+      "fit_correct": 23,
+      "colour_accuracy_train": 1.0,
+      "colour_accuracy_fit": 1.0,
+      "centroid_column_hits_fit": 9,
+      "centroid_column_total_fit": 23,
+      "abstain_on_unknown_fit": 5,
+      "abstain_on_other_fit": 3,
+      "probe_train": 0.707764,
+      "probe_fit": 0.712891,
+      "aux_last": 0.655251,
+      "aux_supervised_last": 24,
+      "prototype_pairwise_min": 0.907217,
+      "geometry_collapse": false,
+      "cpu": 0.15625
+    }
+  ],
+  "trainable_parameters": {
+    "encoder_rgb": 392,
+    "module": 59
+  },
+  "batch": 8,
+  "optimizer": {
+    "lr": 0.01,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "weight_decay": 0.0
+  },
+  "control_arms": {
+    "p3_30_frozen_encoder": "same readout, encoder frozen: fit 0.3125, colour 0.8125, column hits 1/24, probe fit 0.674",
+    "p3_28_pixels": "same readout on raw pixels: fit 0.9688, colour 1.000"
+  },
+  "training_authority": "owner:chat:2026-11-15#授权",
+  "cost": {
+    "total_cpu": 64.265625,
+    "total_wall": 64.78493,
+    "cap_cpu": 127.6,
+    "cap_wall": 255.2
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "capability_claims": 0
+  },
+  "run_conditions": {
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "scope": "single-variable card against P3.30: encoder.rgb unfreezes and receives a per-column prototype-distance CE; the 59-parameter readout, data, order, doses and query-colour head are unchanged; prototypes are per-step derived reference geometry and never a gradient path; no capability claim"
+}

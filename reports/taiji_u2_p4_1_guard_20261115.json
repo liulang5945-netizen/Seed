@@ -1,0 +1,71 @@
+{
+  "schema": "taiji-u2-p4-1-guard-v1",
+  "card": "22.5.P4.1",
+  "verdict": "guard_passed",
+  "checks": {
+    "contract_frozen": true,
+    "criteria_sha256_matches": true,
+    "runner_pin_live": true,
+    "support_pin_live": true,
+    "column_pathway_pin_live": true,
+    "authority_recorded": true,
+    "dose_set_matches": true,
+    "baseline_check_passed": true,
+    "recompute_matches_every_dose": true,
+    "verdict_matches_ladder": true,
+    "no_capability_claims": true,
+    "no_sealed_reads": true,
+    "cost_within_cap": true,
+    "single_variable_honoured": true,
+    "collapse_override_is_explicit": true
+  },
+  "drills": {
+    "claim_the_unlock": true,
+    "inflate_the_probe": true,
+    "inflate_the_fit": true,
+    "inject_capability_claim": true,
+    "escape_the_cap": true,
+    "hide_a_widened_encoder": true
+  },
+  "failed": [],
+  "drills_not_firing": [],
+  "recomputed": {
+    "1844": {
+      "train_accuracy": 0.71484375,
+      "fit_accuracy": 0.6875,
+      "colour_accuracy_fit": 0.78125,
+      "centroid_column_hits_fit": 12,
+      "centroid_column_total_fit": 23,
+      "abstain_on_other_fit": 2,
+      "probe_train": 0.713867,
+      "probe_fit": 0.722656,
+      "prototype_pairwise_min": 0.298562
+    },
+    "3688": {
+      "train_accuracy": 0.72265625,
+      "fit_accuracy": 0.65625,
+      "colour_accuracy_fit": 0.8125,
+      "centroid_column_hits_fit": 12,
+      "centroid_column_total_fit": 23,
+      "abstain_on_other_fit": 3,
+      "probe_train": 0.695801,
+      "probe_fit": 0.714844,
+      "prototype_pairwise_min": 0.008883
+    },
+    "7376": {
+      "train_accuracy": 0.89453125,
+      "fit_accuracy": 0.71875,
+      "colour_accuracy_fit": 1.0,
+      "centroid_column_hits_fit": 9,
+      "centroid_column_total_fit": 23,
+      "abstain_on_other_fit": 3,
+      "probe_train": 0.707764,
+      "probe_fit": 0.712891,
+      "prototype_pairwise_min": 0.907217
+    }
+  },
+  "measured": {
+    "cpu_seconds": 1.796875,
+    "wall_seconds": 2.166767
+  }
+}

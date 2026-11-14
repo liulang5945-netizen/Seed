@@ -1,0 +1,53 @@
+{
+  "schema": "taiji-u2-p4-1-price-v1",
+  "date": "2026-11-15",
+  "card": "22.5.P4.1",
+  "phase": "price_probe",
+  "trainable_parameters": {
+    "encoder_rgb": 392,
+    "module": 59
+  },
+  "measurements": {
+    "per_step_cpu": [
+      0.015625,
+      0.0,
+      0.015625
+    ],
+    "per_step_cpu_median": 0.015625,
+    "eval_cpu": 0.09375,
+    "eval_accuracy_at_zero": 0.25,
+    "baseline_probe": {
+      "train": 0.6572265625,
+      "fit": 0.6484375,
+      "classes": 7
+    },
+    "baseline_matches_preflight": true,
+    "geometry_at_zero": {
+      "prototype_pairwise_min": 0.258725,
+      "prototype_pairwise_mean": 0.503099
+    }
+  },
+  "derived": {
+    "curve_updates": 7376,
+    "curve_cpu_estimate": 116.0,
+    "cap_cpu": 127.6,
+    "cap_wall": 255.2
+  },
+  "verdict": "price_measured",
+  "discipline": {
+    "checkpoints_written": 0,
+    "optimizer_calls": 3,
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0
+  },
+  "run_conditions": {
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "measured": {
+    "cpu_seconds": 0.953125,
+    "wall_seconds": 1.282189
+  },
+  "scope": "pricing only; three in-memory steps are discarded, no capability claim"
+}
