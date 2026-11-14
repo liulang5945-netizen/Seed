@@ -3145,3 +3145,18 @@ owner 本轮重述[根需求 §2.1](../TAIJI_CORE_REQUIREMENTS.md#21-统一目�
 
 **唯一后继**：仍为现行队首 **22.5.P3.8.2b**（内容信用与参数验收机制迁移到原 Native 学习接口），已由 D-20261114-01 §74 与 D-20261114-02 两次重申。P3.9 的 A／B 双图冻结在 P3.8 结案后按备案 §4 准入，本轮不提前抢跑。本轮 0 训练 / 0 优化器 / 0 前向 / 0 confirm / 0 新任务数据读取；冻结新写入与独立复核后按作用域提交。
 
+
+
+## 2026-11-14 22.5.P3.8.2b 完整学习包预检（0 训练 / 0 前向 / 0 dev）
+
+并行会话已停，owner 授权按新计划接管队首。按[Native迁移卡 §3](../../reference/SPEC-TAIJI_U2_NATIVE_CREDIT_TRANSFER_20261113.md)「执行前先检查初始完整包可保存／恢复」与 owner 常设要求「训练前检查 checkpoint 能否正确保存」，先完成预检，**0 次 Adam / 0 优化器 / 0 新任务数据读取**。
+
+**落点（卡 §5 指定）**：[taiji/u2_credit_update.py](../../../taiji/u2_credit_update.py)（把 P3.8.2a 已校准算子逐字节迁移到正式模块；测试断言双文件字节相同，且同 seed／同模型下输出、参数字节、optimizer digest 逐位一致）、[taiji/u2_credit_learner.py](../../../taiji/u2_credit_learner.py)（NativeLearnerCapsule 五部分 native_runtime／learning_state／sampling／proposal／identity，216 张量 parameter_registry＝214 body＋2 content_head，u/v 双时钟、摘要自洽、去头隔离）、[契约测试](../../../tests/taiji_native/test_u2_credit_learner.py)（6 项，每项带红方向）、[runner](../../../scripts/training/verify_native_credit_transfer_22_5.py)（phase=precheck）。
+
+**父身份**：P3.7 问题 Fusion `update-000758.bin`（sha `c8f2359b…`），`native-joint-query`、**25086 参数／214 张量／state_dict 214**、optimizer 191 state、`update=cursor=758`，source_pins 校验通过；与卡 §1 完全一致。
+
+**预检读数** `precheck_passed_admitted`：CPU **1.9688** / wall 7.188；10 项检查中 9 项 true、1 项 `first_nonempty_moment_check=deferred_to_first_proposal`（按卡要求须在首个非空 moment 再做一次，不提前伪造）。独立进程（PID 不同）恢复后 capsule digest 逐值一致、headless runtime 与训练标签隔离、篡改一个字节被 framing 拒绝。定价：P3.7 实测 1964.9375 CPU / 6513 次 learner 调用＝0.3017 CPU/次，按 8 个 α 评估 × 6 次提案＋4 组恢复＋启动余量估 **27.31 CPU**，130 帽余 **102.69 CPU**，准入成立。机器读数见[预检卡](../../../reports/taiji_u2_native_credit_transfer_precheck_20261114.json)。
+
+**边界**：本阶段只签「完整学习包可保存／恢复」与预算准入，**不签**目标覆盖、g1/g2/g_joint 梯度职责、提案／拒绝、原子提交、去头生成等值或任何能力；Native A 父仍未成立，首问参照权重独立于 Native。能力／训练内标签分数不代签完整接口。
+
+**唯一后继**：冻结 4 正常＋2 故障提案的执行合同（固定源码、调用次数、保存点、12 条 train episode 与两问目标），再执行最多 6 次真实 Adam；第一次提案后立即做首个非空 moment 的完整包独立恢复复验。P3.8.3 行为比较须在工程通过后另按实价冻结，不自动转训练剂量。

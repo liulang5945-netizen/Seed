@@ -24,16 +24,16 @@
       "red_mutation_detected": true,
       "comparator": "all_identical(texts) == len(set(texts)) == 1, shared by both directions",
       "lengths": {
-        "MAINLINE.md": 80,
-        "MASTER-PLAN.md": 80,
-        "ROADMAP-NEXT_20261104.md": 80
+        "MAINLINE.md": 160,
+        "MASTER-PLAN.md": 160,
+        "ROADMAP-NEXT_20261104.md": 160
       },
       "sha256": {
-        "MAINLINE.md": "5e342063dc2d6abfd2f3c27f6893b32e183da2ce8f9b3a705650808467c49760",
-        "MASTER-PLAN.md": "5e342063dc2d6abfd2f3c27f6893b32e183da2ce8f9b3a705650808467c49760",
-        "ROADMAP-NEXT_20261104.md": "5e342063dc2d6abfd2f3c27f6893b32e183da2ce8f9b3a705650808467c49760"
+        "MAINLINE.md": "7b3dc908543f2a8a17a0ea5dffeefbad55a79d12781c4a8d2902ff4dc7093db3",
+        "MASTER-PLAN.md": "7b3dc908543f2a8a17a0ea5dffeefbad55a79d12781c4a8d2902ff4dc7093db3",
+        "ROADMAP-NEXT_20261104.md": "7b3dc908543f2a8a17a0ea5dffeefbad55a79d12781c4a8d2902ff4dc7093db3"
       },
-      "headline": "22.5.P3.8.2b，将内容信用与参数验收机制迁移到原Native学习接口，核验双时钟、完整学习恢复及真实更新；首问参照已校准，Native A父仍未成立。"
+      "headline": "22.5.P3.8.2b 完整学习包保存/恢复预检通过（0 Adam、独立进程逐值一致、篡改被拒、216 张量 registry），130 CPU 帽余 102.69，准入成立。唯一后继：冻结 4 正常＋2 故障提案的执行合同，并在首个非空 moment 再次校验完整恢复；首问参照已校准，Native A 父仍未成立。"
     },
     "spec": {
       "green_spec_has_no_gate_literal": true,

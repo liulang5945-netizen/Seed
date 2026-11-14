@@ -1,0 +1,65 @@
+{
+  "schema": "taiji-u2-native-credit-transfer-precheck-v1",
+  "date": "2026-11-14",
+  "phase": "precheck",
+  "card": "22.5.P3.8.2b",
+  "parent": {
+    "path": "data/experiments/taiji_u2/joint_learning/1794554480667378100/joint-query/update-000758.bin",
+    "sha256": "c8f2359b0bef3085bce88a0a0a8ee7eff5f66a0bc614d2bf52e7ef361638b017",
+    "architecture": "native-joint-query",
+    "parent_update": 758,
+    "parent_cursor": 758,
+    "body_parameters": 25086,
+    "body_state_dict_tensors": 214,
+    "body_named_parameters": 214,
+    "body_moment_entries": 191,
+    "head_parameters": 36,
+    "registry_tensors": 216,
+    "parameter_digest": "b2292b2866f4ba16a1f57f539c041ced67f3cd7ef96e8dccdb6c3c1c3512188e"
+  },
+  "checks": {
+    "parent_sha_matches": true,
+    "parent_loads_with_source_pins": true,
+    "registry_216_tensors": true,
+    "formal_operator_byte_identical": true,
+    "initial_capsule_saved": true,
+    "independent_process_restore_matches": true,
+    "worker_pid_distinct": true,
+    "headless_runtime_isolated": true,
+    "tampered_capsule_rejected": true,
+    "first_nonempty_moment_check": "deferred_to_first_proposal"
+  },
+  "pricing": {
+    "p37_total_cpu": 1964.9375,
+    "p37_learner_calls": 6513,
+    "p37_cpu_per_call": 0.301695,
+    "worst_case_per_proposal_cpu": 2.413558,
+    "estimated_six_proposals_plus_recovery_cpu": 27.3085,
+    "cpu_cap": 130.0,
+    "wall_cap": 260.0,
+    "margin_cpu": 102.6915,
+    "basis": "P3.7 measured cpu_seconds / learner_optimizer_steps (both read from the frozen report), 8 alpha evaluations per proposal, 4 restore pairs, fixed startup allowance; two-question objective priced conservatively at 8x"
+  },
+  "source_pins": {
+    "scripts/training/verify_native_credit_transfer_22_5.py": "f4accfc04b9c74e22fdc2fd7b0284983471bf0b73016b6d31252e9d58007e587",
+    "scripts/training/joint_token_learner_22_5.py": "31430e7802e02850223321d54e0be4e9ed8c4fb3b6f2b60d8b19ad9c80814d3e",
+    "scripts/training/credit_update_22_5.py": "8f3863538b1b2b1390206de691d938edf1baa9b2d351a559228c55dfb76e1166",
+    "taiji/u2_credit_update.py": "8f3863538b1b2b1390206de691d938edf1baa9b2d351a559228c55dfb76e1166",
+    "taiji/u2_credit_learner.py": "90d571ce97448fa681bad967a90948b37ae2866ab5c0cc63040852159b31353f"
+  },
+  "measured": {
+    "cpu_seconds": 1.9688,
+    "wall_seconds": 7.188
+  },
+  "discipline": {
+    "training_updates": 0,
+    "optimizer_steps": 0,
+    "dev_reads": 0,
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "new_task_data_reads": 0
+  },
+  "verdict": "precheck_passed_admitted",
+  "next_action": "execute 4 normal + 2 fault Adam proposals under the frozen contract"
+}
