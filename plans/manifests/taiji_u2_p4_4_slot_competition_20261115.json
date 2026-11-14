@@ -1,0 +1,153 @@
+{
+  "schema": "taiji-u2-p4-4-slot-competition-v1",
+  "status": "frozen",
+  "card": "22.5.P4.4",
+  "date": "2026-11-15",
+  "candidate": {
+    "architecture": "native slot-competition read v2",
+    "seed": 20261110,
+    "init": "p4.1 arm B encoder from the pinned p4.2 bundle",
+    "observation_layout": "column-observation-v1"
+  },
+  "p4_1_bundle": "data/experiments/taiji_u2/p4_2/20261116T0500Z/reconstruct-B-007376.pt",
+  "p4_1_bundle_sha256": "f670508850685cb8aa4e9ed385eb2f5997154524e606d1ab7cbfbd5230eb0f2f",
+  "p4_3_result": "plans/reference/RESULT-TAIJI_U2_P4_3_OBJECT_READ_20261115.md",
+  "data_root": "data/experiments/taiji_u2/p3_19/three_object_volume_20261114.bin",
+  "data_digest": "1dec5429a1110dc9a23a8f38329e1bce1cb8824e6d2ca89fc96b429487e9addf",
+  "splits": {
+    "train": 256,
+    "fit": 32,
+    "check": "not read",
+    "final": "not read"
+  },
+  "batch": 8,
+  "optimizer": {
+    "lr": 0.01,
+    "betas": [0.9, 0.999],
+    "eps": 1e-08,
+    "weight_decay": 0.0
+  },
+  "feedback_optimizer": {
+    "lr": 0.001,
+    "betas": [0.9, 0.999],
+    "eps": 1e-08,
+    "weight_decay": 0.0
+  },
+  "scaffold_dose_points": [1844, 3688],
+  "byte_dose_points": [461, 922, 1844],
+  "feedback_updates": 8,
+  "feedback_errors_allowance": 32,
+  "emission_parameters": [
+    "byte_head.bias",
+    "byte_head.weight",
+    "copy_gate.bias",
+    "copy_gate.weight",
+    "joint_readout.first.bias",
+    "joint_readout.first.weight",
+    "joint_readout.last.bias",
+    "joint_readout.last.weight"
+  ],
+  "read_scaffold": {
+    "role": "training-only per-slot head on object_z; never at evaluation",
+    "input": "object_z [branches, 3, 8], branch mean",
+    "colour_classes": 7,
+    "position_classes": 3,
+    "existence_gate": true,
+    "duplicate_penalty_weight": 0.5,
+    "existence_weight": 0.5,
+    "hidden": 16,
+    "parameters": 619,
+    "matching": "exact minimum over the 6 slot permutations",
+    "labels": "the world's exact position for every colour the public image shows; visible subset, 0-3 pairs; no mean-column bin"
+  },
+  "criteria": {
+    "read_pair_gate": 0.95,
+    "read_set_gate": 0.8,
+    "read_flat": 0.35,
+    "read_early_stop": "stop stage 1 when train and fit pair accuracy are both >=0.95 and fit set accuracy >=0.80; stop at the second dose when fit pair accuracy is <=0.35 at both doses",
+    "read_blind_rule": "if stage 1 is read_still_blind, skip stage 2; the p4.2 card already measured the blind-read to chance byte-head link",
+    "main_gate": 0.8,
+    "correction_gate": 0.8,
+    "feedback_gain_gate": 0.05,
+    "stability_ceiling": 0.1,
+    "response_round": "exact answer bytes plus EOS plus valid UTF-8, greedy, 65-byte cap",
+    "main_denominator": "all 32 fit rounds; no filtering",
+    "correction_protocol": "first pass on fit; for every first-pass error release the correct answer and take 8 Adam updates at the feedback lr; re-ask the same input once",
+    "correction_denominator": "first-pass fit errors",
+    "feedback_joint_rule": "correction >=0.80 and stability losses <= max(1, 10% of first-pass correct) and gain >=0.05",
+    "control_arm": "same trained subject, same feedback exposure, zero parameter updates and zero state writes",
+    "recovery": "save the trained bundle, reload in an independent process, re-ask all 32; outputs must be byte-identical",
+    "a_retention": "not_applicable_no_A_parent",
+    "three_seed": "not_in_scope_single_seed",
+    "check2": "not_read",
+    "accepted_parent": false,
+    "parent_candidate": "read gate plus byte-path main gate plus joint feedback rule plus recovery, on development fit only",
+    "verdicts": [
+      "read_taught_byte_path_carries_answer",
+      "read_taught_byte_path_below_gate",
+      "read_partial",
+      "read_still_blind",
+      "p4_1_bundle_mismatch",
+      "budget_stop",
+      "engineering_failure"
+    ]
+  },
+  "stop_conditions": {
+    "budget": "cpu_cap or wall_cap reached -> budget_stop, keep every checkpoint and report the last dose",
+    "read": "read gate fails at the final dose -> close as read_still_blind or read_partial without stage 2",
+    "engineering": "non-finite gradient, bundle mismatch, cache replay mismatch, or source pin mismatch -> engineering_failure"
+  },
+  "artifacts": [
+    "scripts/training/run_p4_4_22_5.py",
+    "scripts/training/verify_p4_4_20261115.py",
+    "reports/taiji_u2_p4_4_price_20261115.json",
+    "reports/taiji_u2_p4_4_slot_competition_20261115.json",
+    "reports/taiji_u2_p4_4_guard_20261115.json",
+    "plans/reference/PREREG-TAIJI_U2_P4_4_SLOT_COMPETITION_20261115.md",
+    "plans/reference/RESULT-TAIJI_U2_P4_4_SLOT_COMPETITION_20261115.md"
+  ],
+  "guards": [
+    "source_pins_match_worktree",
+    "p4_1_bundle_sha256_matches",
+    "label_cache_visible_subset_only",
+    "read_checkpoint_saved_and_read_back",
+    "read_gate_branch_matches_status",
+    "cache_replay_equals_body",
+    "main_denominator_equals_32",
+    "joint_feedback_rule_enforced",
+    "control_updates_equal_zero",
+    "recovery_outputs_byte_identical_in_independent_process",
+    "parent_not_claimed",
+    "check_and_final_reads_zero"
+  ],
+  "cpu_cap": 1900.0,
+  "wall_cap": 3800.0,
+  "price_cap_cpu": 60.0,
+  "design_cap_cpu": 1900.0,
+  "price_measured": {
+    "label_cache_cpu": 3.203125,
+    "per_read_update_cpu": 0.421875,
+    "per_byte_update_cpu": 0.015625,
+    "per_fit_round_evaluate_cpu": 1.59375,
+    "estimate_cpu": 1898.0,
+    "adopted_cap_cpu": 1900.0,
+    "note": "label cache is one-time; the read curve to 3688 steps dominates"
+  },
+  "criteria_sha256": "369b127b61e8b2e0dab3397dfe5311bda4432f7311ee663fbe9df3c2605f3471",
+  "run_root": "data/experiments/taiji_u2/p4_4/20261115T2000Z",
+  "source_pins": {
+    "runner": "5463e570b8cd9ce6eefd727fe8ff747b1060848071bc46da2bccd549fc7172c1",
+    "p4_3_runner": "d289f9355c4bb595f4eb19cf2b5598a9c814653f0e52379394069a2efbbd65c9",
+    "p4_2_runner": "c479d90963cf3a21b43700115fc8c94f418b4a396a8526fadb5e8c3b322859ff",
+    "p4_1_runner": "fe722cb41b6149f4bf5a709c546ac5fc5b644e1b8f01da1e870ec1e6a6134877",
+    "support": "33d9301f98859934c1413e25765c55e6bc7b64dfa410d65b03f0e5a198041b4c",
+    "subject": "01d54b472e6cc99728ca45b94aeb556148498081ce1128cf28f8bed2d8784025"
+  },
+  "training_authority": "owner:chat:2026-11-15#做，同意训练",
+  "note": "pricing stage with training already authorized; the cap freezes after the price measurement",
+  "scoping": {
+    "why_this_card": "P4.3 read_partial: pair 0.359 to 0.436 but set 0; decomposition shows duplicates 6/32, wrong count 20/32, all colours 3/32",
+    "changes": "truth-anchored visible labels, per-slot existence gate, duplicate-colour penalty; encoder/data/observation/byte head unchanged",
+    "closure_rule": "if set stays below 0.30 at the second dose, the column branch closes as slot_structure_unavailable"
+  }
+}
