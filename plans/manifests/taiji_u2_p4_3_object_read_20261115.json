@@ -161,20 +161,20 @@
   "criteria_sha256": "369b127b61e8b2e0dab3397dfe5311bda4432f7311ee663fbe9df3c2605f3471",
   "authorization": {
     "asked": "是否授权执行 22.5.P4.3（读层对象级稠密监督 1844/3688 步 + 条件性字节头 1844 步 + 纠正/恢复，实测帽 2000 CPU／4000 wall）",
-    "reply": null,
+    "reply": "是",
     "scope": "development fit only; no check or final read; no capability claim; parent candidate only",
-    "note": "contract frozen with a measured cap; the run is blocked until training_authority is filled by the owner"
+    "note": "owner authorized the run on 2026-11-15; run mode was completed and format-checked before the run started"
   },
   "run_root": "data/experiments/taiji_u2/p4_3/20261115T1900Z",
   "source_pins": {
-    "runner": "1c6ad5fbace66e290795b79ccb971293263e6ad4adfdc131fc5fe30705498bd7",
+    "runner": "d289f9355c4bb595f4eb19cf2b5598a9c814653f0e52379394069a2efbbd65c9",
     "p4_2_runner": "c479d90963cf3a21b43700115fc8c94f418b4a396a8526fadb5e8c3b322859ff",
     "p4_1_runner": "fe722cb41b6149f4bf5a709c546ac5fc5b644e1b8f01da1e870ec1e6a6134877",
     "support": "33d9301f98859934c1413e25765c55e6bc7b64dfa410d65b03f0e5a198041b4c",
     "column_pathway": "4afb7c94a0641f6f5eb943339d19f13c8f690ddcf6956bc6787cba5aa4653476",
     "subject": "01d54b472e6cc99728ca45b94aeb556148498081ce1128cf28f8bed2d8784025"
   },
-  "training_authority": null,
+  "training_authority": "owner:chat:2026-11-15#是",
   "note": "pre-registration and price frozen; the run needs owner authority; no optimizer step has been taken under this contract",
   "scoping": {
     "why_this_card": "P4.2 closed byte_path_blocks with the read at chance (fit pair 0.3125 to 0.34375); the dense identity-label rule that worked for the encoder in P4.1 is applied to the object read",

@@ -186,7 +186,7 @@ def load_p4_1_bundle(contract: dict) -> dict:
     return torch.load(bundle, weights_only=False)["encoder"]
 
 
-def stage1(contract: dict, data: dict, encoder: dict, root: Path) -> tuple:
+def stage1(contract: dict, data: dict, encoder: dict, root: Path, budget) -> tuple:
     model = p4_2.build(contract, encoder)
     frozen = {name for name, _ in model.named_parameters() if name.startswith("encoder.rgb.")}
     names = p4_2.set_requires_grad(model, {name for name, _ in model.named_parameters()} - frozen)
@@ -199,8 +199,7 @@ def stage1(contract: dict, data: dict, encoder: dict, root: Path) -> tuple:
     rows = []
     status = "max_dose"
     for update in range(1, max(contract["scaffold_dose_points"]) + 1):
-        if time.process_time() > contract["cpu_cap"]:
-            raise BudgetStop("p4_3_stage1_budget_stop")
+        budget()
         batch = p4_2.batch_at(data["train"], contract["batch"], update)
         optimizer.zero_grad(set_to_none=True)
         loss = scaffold_loss(model, scaffold, batch)
@@ -355,6 +354,187 @@ def feedback_round(contract: dict, data: dict, model, budget) -> dict:
     }
 
 
+def run(contract: dict) -> int:
+    guards(contract, "run")
+    torch.set_num_threads(1)
+    wall_start, cpu_start = time.perf_counter(), time.process_time()
+    data = atomic_load(Path(contract["data_root"]))
+    assert value_digest(data) == contract["data_digest"]
+    encoder = load_p4_1_bundle(contract)
+    root = Path(contract["run_root"])
+    if root.exists() and any(root.iterdir()):
+        raise FileExistsError("p4_3_run_already_started")
+    root.mkdir(parents=True, exist_ok=True)
+
+    def budget() -> None:
+        if time.process_time() - cpu_start > contract["cpu_cap"]:
+            raise BudgetStop("p4_3_budget_stop")
+        if time.perf_counter() - wall_start > contract["wall_cap"]:
+            raise BudgetStop("p4_3_wall_stop")
+
+    initial = p4_2.build(contract, encoder)
+    torch.manual_seed(int(contract["candidate"]["seed"]))
+    scaffold = ObjectScaffold()
+    p4_2.save_checkpoint(
+        root / "initial.pt",
+        {
+            "model": {k: v.detach().clone() for k, v in initial.state_dict().items()},
+            "scaffold": {k: v.detach().clone() for k, v in scaffold.state_dict().items()},
+            "revision": initial.parameter_revision,
+        },
+    )
+    model, scaffold, read_names, read_rows, read_status = stage1(
+        contract, data, encoder, root, budget
+    )
+    taught = read_status == "read_taught"
+    feedback: dict = {}
+    stage2_rows: list[dict] = []
+    stage2_names: list[str] = []
+    checks: list[dict] = []
+    final = None
+    recovery_equal = None
+    final_digest = None
+    positions_count = 0
+    if taught:
+        stage2_names, positions, checks, stage2_rows = stage2(contract, data, model, root, budget)
+        positions_count = len(positions)
+        feedback = feedback_round(contract, data, model, budget)
+        learned = feedback.pop("learned_model")
+        learned_path = root / "feedback-learned.pt"
+        feedback["learned_checkpoint"] = str(learned_path)
+        feedback["learned_sha256"] = p4_2.save_checkpoint(
+            learned_path,
+            {
+                "model": {k: v.detach().clone() for k, v in learned.state_dict().items()},
+                "update": "feedback",
+                "revision": learned.parameter_revision,
+            },
+        )
+        final = p4_2.round_evaluate(model, data["fit"], budget_guard=budget)
+        final_path = root / "final.pt"
+        final_digest = p4_2.save_checkpoint(
+            final_path,
+            {
+                "model": {k: v.detach().clone() for k, v in model.state_dict().items()},
+                "update": max(contract["byte_dose_points"]),
+                "revision": model.parameter_revision,
+            },
+        )
+        restored = p4_2.build(contract)
+        restored.load_state_dict(torch.load(final_path, weights_only=False)["model"])
+        recovered = p4_2.round_evaluate(restored, data["fit"], budget_guard=budget)
+        recovery_equal = recovered["rows"] == final["rows"]
+    criteria = contract["criteria"]
+    read_final = read_rows[-1] if read_rows else {"fit_pair_accuracy": 0.0, "fit_set_accuracy": 0.0}
+    main_gate = bool(final and final["accuracy"] >= criteria["main_gate"])
+    joint_ok = False
+    if feedback:
+        correction = feedback["correction_rate"]
+        gain = feedback["feedback_gain"]
+        joint_ok = (
+            (correction is None or correction >= criteria["correction_gate"])
+            and (gain is None or gain >= criteria["feedback_gain_gate"])
+            and feedback["stability_losses"] <= feedback["stability_ceiling"]
+        )
+    if read_status == "read_still_blind":
+        verdict = "read_still_blind"
+    elif read_status != "read_taught":
+        verdict = "read_partial"
+    elif main_gate and joint_ok and recovery_equal:
+        verdict = "read_taught_byte_path_carries_answer"
+    else:
+        verdict = "read_taught_byte_path_below_gate"
+
+    def mark(value: bool | None, blind: str = "not_run_read_blind") -> str:
+        if not taught:
+            return blind
+        if value is None:
+            return "not_identifiable_by_design"
+        return "passed" if value else "failed"
+
+    gate_table = {
+        "read_pair": mark(read_final["fit_pair_accuracy"] >= criteria["read_pair_gate"], "failed"),
+        "read_set": mark(read_final["fit_set_accuracy"] >= criteria["read_set_gate"], "failed"),
+        "full_answer_round_fit": mark(main_gate),
+        "correction": mark(
+            None
+            if not feedback or feedback.get("correction_rate") is None
+            else feedback["correction_rate"] >= criteria["correction_gate"]
+        ),
+        "feedback_gain": mark(
+            None
+            if not feedback or feedback.get("feedback_gain") is None
+            else feedback["feedback_gain"] >= criteria["feedback_gain_gate"]
+        ),
+        "stability": mark(
+            None if not feedback else feedback["stability_losses"] <= feedback["stability_ceiling"]
+        ),
+        "recovery": mark(recovery_equal),
+        "world_paired_95_lower": "not_in_scope_single_seed",
+        "three_seed_direction": "not_in_scope_single_seed",
+        "a_retention": "not_applicable_no_A_parent",
+        "check2": "not_read",
+    }
+    report = {
+        "schema": "taiji-u2-p4-3-object-read-v1",
+        "card": "22.5.P4.3",
+        "date": "2026-11-15",
+        "verdict": verdict,
+        "read": {
+            "status": read_status,
+            "doses": read_rows,
+            "trainable_parameters": len(read_names),
+            "scaffold_parameters": sum(p.numel() for p in scaffold.parameters()),
+            "baselines": contract["read_baselines"],
+        },
+        "byte": {
+            "doses": stage2_rows,
+            "trainable_parameters": stage2_names,
+            "cache_positions": positions_count,
+            "cache_replay_checks": checks,
+        },
+        "feedback": feedback,
+        "recovery": {
+            "equal_in_process": recovery_equal,
+            "final_sha256": final_digest,
+        },
+        "gate_table": gate_table,
+        "criteria": criteria,
+        "criteria_sha256": contract["criteria_sha256"],
+        "data_digest": contract["data_digest"],
+        "init_bundle_sha256": contract["p4_1_bundle_sha256"],
+        "cost": {
+            "total_cpu": round(time.process_time() - cpu_start, 6),
+            "total_wall": round(time.perf_counter() - wall_start, 6),
+            "cap_cpu": contract["cpu_cap"],
+            "cap_wall": contract["wall_cap"],
+        },
+        "discipline": {
+            "check_reads": 0,
+            "final_reads": 0,
+            "confirm_reads": 0,
+            "capability_claims": 0,
+            "accepted_parent": False,
+        },
+        "run_conditions": {"threads": torch.get_num_threads(), "torch": torch.__version__},
+        "scope": (
+            "development fit only; the served output is the subject's byte head; "
+            "a parent candidate, not an accepted learning parent"
+        ),
+    }
+    write_report(RUN_REPORT, report)
+    print(
+        json.dumps(
+            {
+                "verdict": verdict,
+                "read": read_status,
+                "cost": report["cost"],
+            }
+        )
+    )
+    return 0
+
+
 def price(contract: dict) -> int:
     guards(contract, "price")
     torch.set_num_threads(1)
@@ -452,7 +632,7 @@ def main() -> int:
     contract = json.loads(CONTRACT.read_text(encoding="utf-8"))
     if args.mode == "price":
         return price(contract)
-    raise NotImplementedError("run mode lands after the frozen cap and owner authority")
+    return run(contract)
 
 
 if __name__ == "__main__":
