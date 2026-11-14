@@ -419,6 +419,13 @@ def main() -> int:
         return price(contract)
     if args.mode == "verify":
         return verify(args.bundle, float(args.expect_next_loss))
+    # Contract-level refusals must not write a curve report: a refused run has
+    # no reading, and the report path is create-once for the real run.
+    try:
+        guards(contract, "run")
+    except ValueError as error:
+        print(json.dumps({"verdict": "refused", "reason": str(error)}))
+        return 2
     try:
         return run(contract)
     except BudgetStop as error:

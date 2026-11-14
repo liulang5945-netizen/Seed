@@ -124,7 +124,7 @@
   },
   "criteria_sha256": "0450c5e213329a9fe866a7c24162f89adfa414ab89736e68e4f7037fff3ea24f",
   "source_pins": {
-    "runner": "cbdc31e944dd9643dca874e4226adbb0731642afaac1501f59b32260d5a9e887",
+    "runner": "f5db0151facf9729344254348b031266ac6eeb960f59e09fde926965893e3ff5",
     "support": "33d9301f98859934c1413e25765c55e6bc7b64dfa410d65b03f0e5a198041b4c"
   },
   "note": "pricing stage only; run requires status=frozen plus a non-empty owner training authority and a measured cpu_cap",
