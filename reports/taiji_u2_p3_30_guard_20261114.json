@@ -1,0 +1,33 @@
+{
+  "schema": "taiji-u2-p3-30-guard-v1",
+  "date": "2026-11-14",
+  "card": "22.5.P3.30",
+  "verdict": "guard_passed",
+  "checks": {
+    "criteria_hash": true,
+    "status_frozen": true,
+    "verdict_rule": true,
+    "fit_matches_recompute": true,
+    "colour_matches_recompute": true,
+    "pathway_adds_no_parameters": true,
+    "token_shape_is_16_by_8": true
+  },
+  "drills": {
+    "bump_fit": true,
+    "flip_verdict": true,
+    "fake_colour_accuracy": true
+  },
+  "recomputed": {
+    "accuracy": 0.3125,
+    "correct": 10,
+    "denominator": 32,
+    "colour_accuracy": 0.8125,
+    "centroid_column_hits": 1,
+    "centroid_column_total": 24
+  },
+  "measured": {
+    "threads": 12,
+    "torch": "2.13.0+cpu"
+  },
+  "scope": "independent recomputation from the saved checkpoint; no training"
+}
