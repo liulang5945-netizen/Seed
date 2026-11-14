@@ -24,16 +24,16 @@
       "red_mutation_detected": true,
       "comparator": "all_identical(texts) == len(set(texts)) == 1, shared by both directions",
       "lengths": {
-        "MAINLINE.md": 229,
-        "MASTER-PLAN.md": 229,
-        "ROADMAP-NEXT_20261104.md": 229
+        "MAINLINE.md": 222,
+        "MASTER-PLAN.md": 222,
+        "ROADMAP-NEXT_20261104.md": 222
       },
       "sha256": {
-        "MAINLINE.md": "415cd22266704f07ddc65ae1a0c8a91de6f27bdb08c3069ee2c75ebe979d6159",
-        "MASTER-PLAN.md": "415cd22266704f07ddc65ae1a0c8a91de6f27bdb08c3069ee2c75ebe979d6159",
-        "ROADMAP-NEXT_20261104.md": "415cd22266704f07ddc65ae1a0c8a91de6f27bdb08c3069ee2c75ebe979d6159"
+        "MAINLINE.md": "9dcd10bbf4177908f6ef1b3320a510e146614bbac9bc8ddebcd0e5896b3e3366",
+        "MASTER-PLAN.md": "9dcd10bbf4177908f6ef1b3320a510e146614bbac9bc8ddebcd0e5896b3e3366",
+        "ROADMAP-NEXT_20261104.md": "9dcd10bbf4177908f6ef1b3320a510e146614bbac9bc8ddebcd0e5896b3e3366"
       },
-      "headline": "22.5.P3.8.3 已按冻结合同执行：128 次配对更新、两臂 before/after 全 0.5、Δ=0（CI [0,0]）、控制也 0.5、CPU 271.375 / cpu_ratio 1.153，独立审计判 budget_cannot_express（预算不足以表达，不是配方被否决），不加剂量。唯一后继：P3.8.4 全局收束卡，再交 P3.9.1 A/B 双图冻结；native_parent_qualified=false，0 能力声称。"
+      "headline": "22.5.P3.8 已按负结果＋预算停止有限出口全局收束（P3.8.4 收束卡：16 份报告逐字节绑定、8 项结项条件全过、入库读数 480.359425 CPU、790 中未用 498.0937 不转移），native_parent_qualified=false、能力账无变化、0 能力声称。唯一后继：P3.9.1 的 A/B 双图实价定价与冻结，先定价后执行，不转移 790 CPU、不触及封存面；收束 ≠ 里程碑关闭 ≠ 范围排除批准。"
     },
     "spec": {
       "green_spec_has_no_gate_literal": true,

@@ -1,12 +1,12 @@
 # ROADMAP-NEXT（唯一推进轨道）
 
-> 文档状态：[索引] — 2026-11-14同步。当前状态归[MASTER-PLAN](../MASTER-PLAN.md)，本页只作依赖导航。
+> 文档状态：[索引] — 2026-11-14同步；P3.8 已全局收束，队首交 P3.9.1。当前状态归[MASTER-PLAN](../MASTER-PLAN.md)，本页只作依赖导航。
 
-**队首（唯一）**：22.5.P3.8.3 已按冻结合同执行：128 次配对更新、两臂 before/after 全 0.5、Δ=0（CI [0,0]）、控制也 0.5、CPU 271.375 / cpu_ratio 1.153，独立审计判 budget_cannot_express（预算不足以表达，不是配方被否决），不加剂量。唯一后继：P3.8.4 全局收束卡，再交 P3.9.1 A/B 双图冻结；native_parent_qualified=false，0 能力声称。
+**队首（唯一）**：22.5.P3.8 已按负结果＋预算停止有限出口全局收束（P3.8.4 收束卡：16 份报告逐字节绑定、8 项结项条件全过、入库读数 480.359425 CPU、790 中未用 498.0937 不转移），native_parent_qualified=false、能力账无变化、0 能力声称。唯一后继：P3.9.1 的 A/B 双图实价定价与冻结，先定价后执行，不转移 790 CPU、不触及封存面；收束 ≠ 里程碑关闭 ≠ 范围排除批准。
 
 ## 0. 坐标系与当前步
 
-当前算法为[U2完整主体闭环候选](SPEC-TAIJI-CLOSED_LOOP_U2_20261110.md)。22.3恢复、22.4物理/请求接口和首次学习前置已交付。P1–P3.7实际学习仍无A父，P3.8已取得首问神经参照，当前按[Native迁移卡](SPEC-TAIJI_U2_NATIVE_CREDIT_TRANSFER_20261113.md)核验内容信用与受验收更新；后继按[执行包22](PLAN-TAIJI-CLOSED_LOOP_DEVELOPMENT_20261110.md)准入。
+当前算法为[U2完整主体闭环候选](SPEC-TAIJI-CLOSED_LOOP_U2_20261110.md)。22.3恢复、22.4物理/请求接口和首次学习前置已交付。P1–P3.7实际学习仍无A父；P3.8 已按[全局收束卡](CLOSEOUT-TAIJI_U2_P3_8_4_GLOBAL_20261114.md)结案（首问神经参照仍限单对象／固定问题／单初始化，Native 工程接口与完整学习包恢复一致性通过，整体配方比较判 budget_cannot_express），后继按[执行包22](PLAN-TAIJI-CLOSED_LOOP_DEVELOPMENT_20261110.md)的 P3.9.1 先定价再冻结。
 
 ## 1. 19窗口结案与父资产
 

@@ -1,0 +1,60 @@
+{
+  "schema": "taiji-u2-p3-8-4-global-closeout-guard-v1",
+  "date": "2026-11-14",
+  "closeout": "taiji_u2_p3_8_4_global_closeout_20261114.json",
+  "closeout_sha256": "056e2a7bb2fda49f7087cc7319bd40e5f389783ec03ae90cbc6c7d06823d437a",
+  "checks": {
+    "all_stage_sha_match": true,
+    "all_stage_verdict_match": true,
+    "all_stage_cpu_match": true,
+    "group_sums_match": true,
+    "total_and_unused_match": true,
+    "closeout_sha_match": true,
+    "conditions_all_passed": true,
+    "condition_evidence_exists": true,
+    "discipline_all_zero": true,
+    "exit_semantics_boundaries": true,
+    "parent_sha_match": true,
+    "headline_three_identical": true,
+    "headline_marks_closeout_and_handoff": true
+  },
+  "in_memory_red_drills": {
+    "stage_verdict": true,
+    "stage_report_sha": true,
+    "stage_cpu": true,
+    "group_sum": true,
+    "condition_passed": true,
+    "condition_evidence": true,
+    "discipline_zero": true,
+    "exit_boundary": true,
+    "parent_sha": true,
+    "closeout_sha": true
+  },
+  "real_file_red_drill": {
+    "passed": true,
+    "red_fired": true,
+    "restored_byte_identical": true,
+    "green_after_restore": true,
+    "failing_checks_while_mutated": [
+      "headline_three_identical",
+      "headline_marks_closeout_and_handoff"
+    ],
+    "headline_sha256": "9dcd10bbf4177908f6ef1b3320a510e146614bbac9bc8ddebcd0e5896b3e3366"
+  },
+  "detail": {
+    "group_sums": {
+      "p3_8_1_settled_20261113": 188.453125,
+      "p3_8_2b_engineering_20261114": 15.9688,
+      "p3_8_3_runner_20261114": 275.9375
+    },
+    "total_cpu": 480.359425,
+    "headline_sha256": "9dcd10bbf4177908f6ef1b3320a510e146614bbac9bc8ddebcd0e5896b3e3366",
+    "headline": "22.5.P3.8 已按负结果＋预算停止有限出口全局收束（P3.8.4 收束卡：16 份报告逐字节绑定、8 项结项条件全过、入库读数 480.359425 CPU、790 中未用 498.0937 不转移），native_parent_qualified=false、能力账无变化、0 能力声称。唯一后继：P3.9.1 的 A/B 双图实价定价与冻结，先定价后执行，不转移 790 CPU、不触及封存面；收束 ≠ 里程碑关闭 ≠ 范围排除批准。"
+  },
+  "passed": true,
+  "measured": {
+    "cpu_seconds": 0.1875,
+    "wall_seconds": 0.25
+  },
+  "note": "0 model loads / 0 forward passes / 0 optimizer steps / 0 sealed-face reads; the guard only re-reads reports, the frozen parent blob sha and three headline files"
+}

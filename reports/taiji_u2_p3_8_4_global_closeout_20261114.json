@@ -1,0 +1,328 @@
+{
+  "schema": "taiji-u2-p3-8-4-global-closeout-v1",
+  "date": "2026-11-14",
+  "card": "22.5.P3.8.4",
+  "verdict": "p3_8_closed_limited_exit",
+  "exit_classes": [
+    "negative_result",
+    "budget_stop"
+  ],
+  "stages": [
+    {
+      "card": "P3.8.1",
+      "verdict": "first_round_not_calibrated",
+      "key_readout": "train/dev 50%/50%; 2000 Adam / 360000 gradient sample presentations; negative closeout",
+      "cpu_seconds": 29.0,
+      "report": "reports/taiji_u2_first_round_calibration_20261113.json",
+      "report_sha256": "4aa4208c4d952d5ff58096e470f1e98b45e9d1ef316fb17ac71e8e873ba009c6"
+    },
+    {
+      "card": "P3.8.1b",
+      "verdict": "content_credit_not_calibrated",
+      "key_readout": "train 66.11% / dev 63.33%; headless-equivalent fixed endpoint did not pass the original gate",
+      "cpu_seconds": 38.296875,
+      "report": "reports/taiji_u2_content_credit_20261113.json",
+      "report_sha256": "3e1559e5b9fdec132120d41d313522173a3282377bbe3d77216cc3d96fdf89b2"
+    },
+    {
+      "card": "P3.8.2a",
+      "verdict": "first_round_calibrated_stable_credit",
+      "key_readout": "train/dev 99.44%; 1845 Adam, one overshoot isolated, 1844 attempts / 1715 parameter accepts",
+      "cpu_seconds": 83.34375,
+      "report": "reports/taiji_u2_stable_credit_20261113.json",
+      "report_sha256": "baad2586e54770679359e2547022c6524c96126ea1a7c1cb62c3e9ea5ca8fb6e"
+    },
+    {
+      "card": "P3.8.2a-audit",
+      "verdict": "passed_calibration_evidence_audit",
+      "key_readout": "126 intermediate/endpoint/isolation files; 3 teacher gradient rechecks; 0 optimizer",
+      "cpu_seconds": 5.296875,
+      "report": "reports/taiji_u2_calibration_audit_20261113.json",
+      "report_sha256": "7628cfdcd1647e77b0f1a770d0c8d094f1b3df78489318c2829997213fb2d821"
+    },
+    {
+      "card": "P3.8.2a-rebuild",
+      "verdict": "regenerable_exact",
+      "key_readout": "regenerable_exact; 1844 Adam recompute listed separately, inference pack sha byte-identical",
+      "cpu_seconds": 32.515625,
+      "report": "reports/taiji_u2_reference_rebuild_20261113.json",
+      "report_sha256": "4a7570fa868243a2ad4eeb152ef330b46a60ef82bb84590ddddd53f7530c51e8"
+    },
+    {
+      "card": "P3.8.2b-precheck",
+      "verdict": "precheck_passed_admitted",
+      "key_readout": "full capsule save / independent-process restore / tamper rejection; 0 Adam",
+      "cpu_seconds": 1.9688,
+      "report": "reports/taiji_u2_native_credit_transfer_precheck_20261114.json",
+      "report_sha256": "2eff5b9c22a619718f61d1eabee311eb163e3cea72f324562a11effe33166be3"
+    },
+    {
+      "card": "P3.8.2b-duty-v1",
+      "verdict": "engineering_failure",
+      "key_readout": "engineering_failure: v1 atol=1e-12 is below float32 machine epsilon, so its PASS branch is arithmetically unreachable; reading preserved verbatim",
+      "cpu_seconds": 2.2188,
+      "report": "reports/taiji_u2_native_credit_transfer_duty_20261114.json",
+      "report_sha256": "c06f7ce9f1c1c32e11d0fbb9528f4b3383e726cad28ff8e7fbc7982558aae8de"
+    },
+    {
+      "card": "P3.8.2b-duty-v2",
+      "verdict": "duty_verified",
+      "key_readout": "duty_verified under v2 prereg (rtol 1e-5 / atol 1e-7 / max_abs 1e-6); J_content computed explicitly",
+      "cpu_seconds": 2.6875,
+      "report": "reports/taiji_u2_native_credit_transfer_duty_v2_20261114.json",
+      "report_sha256": "ea157e849b4f8a617773995c55064bcd0c6affe4bcaa68d4271859e37f308bbc"
+    },
+    {
+      "card": "P3.8.2b-proposals-v1",
+      "verdict": "engineering_transfer_verified",
+      "key_readout": "6 real Adam, u6/v4; runner self-reported engineering_transfer_verified, later overridden by independent audit",
+      "cpu_seconds": 4.0625,
+      "report": "reports/taiji_u2_native_credit_transfer_proposals_20261114.json",
+      "report_sha256": "2a20bf1692aefee65da95f9f49a744f57bdcd4b68ae18bcde180719c5f064e14"
+    },
+    {
+      "card": "P3.8.2b-audit-v1",
+      "verdict": "inconclusive_coverage_gaps",
+      "key_readout": "inconclusive_coverage_gaps; restore coverage 1/8, 4 uncovered evidence classes",
+      "cpu_seconds": null,
+      "report": "reports/taiji_u2_native_credit_transfer_proposals_audit_20261114.json",
+      "report_sha256": "3ef81e8ed0e4d598f8ff9f33ffb8a78bb99089cad0693e30a374d257cf31fae1"
+    },
+    {
+      "card": "P3.8.2b-proposals-r2",
+      "verdict": "engineering_transfer_verified",
+      "key_readout": "6 real Adam, u6/v4; 9 independent restores, 4 committed migration receipts, measured digest pairs",
+      "cpu_seconds": 5.0312,
+      "report": "reports/taiji_u2_native_credit_transfer_proposals_r2_20261114.json",
+      "report_sha256": "e13a24cc7126626cf19e18b5c2ff8aadf14d52a16deaad47bbb7e784b4af2e8a"
+    },
+    {
+      "card": "P3.8.2b-audit-r2",
+      "verdict": "engineering_transfer_verified",
+      "key_readout": "engineering_transfer_verified; 13/13 checks, uncovered=[], restores 9/8; rebuild.entries=0 registered as scope limit",
+      "cpu_seconds": null,
+      "report": "reports/taiji_u2_native_credit_transfer_proposals_audit_r2_20261114.json",
+      "report_sha256": "53b772d270b9faffd1adb95f63f8516bf633839f767757e8708d25f81b8a9562"
+    },
+    {
+      "card": "P3.8.3-price",
+      "verdict": "price_measured_admission_possible",
+      "key_readout": "price_measured_admission_possible; 128 paired updates estimated 461.7749 CPU under the 600 cap",
+      "cpu_seconds": 4.5625,
+      "report": "reports/taiji_u2_p3_8_3_price_20261114.json",
+      "report_sha256": "0c7f25dd2f8fffd9285b274f610c688d91c7c3b96febb261974f7242477d86fb"
+    },
+    {
+      "card": "P3.8.3-preflight",
+      "verdict": "preflight_passed",
+      "key_readout": "preflight_passed; both arms full-capsule independent restore, 0 optimizer steps; dev_full evaluation price 23.6562 CPU recorded",
+      "cpu_seconds": null,
+      "report": "reports/taiji_u2_p3_8_3_preflight_20261114.json",
+      "report_sha256": "2ae51623f67c6bea3653635398c1bfdcb8abe77a9825d16a0950805a66ae9cb6"
+    },
+    {
+      "card": "P3.8.3-run",
+      "verdict": "budget_cannot_express",
+      "key_readout": "budget_cannot_express; 128 paired updates per arm, before/after all 0.5, paired delta 0 CI [0,0], controls 0.5",
+      "cpu_seconds": 271.375,
+      "report": "reports/taiji_u2_p3_8_3_recipe_comparison_20261114.json",
+      "report_sha256": "35da0346adc4ce90ecacc52a82e1dd414c591b613433a5ab9764ba8736108223"
+    },
+    {
+      "card": "P3.8.3-audit",
+      "verdict": "budget_cannot_express",
+      "key_readout": "budget_cannot_express confirmed; 12/12 checks, uncovered=[], red guard fires when arm A is given dynamic range",
+      "cpu_seconds": null,
+      "report": "reports/taiji_u2_p3_8_3_recipe_comparison_audit_20261114.json",
+      "report_sha256": "9106dd96c48880de0f1d31cf081a887bffffd258672e3e845033edfe98d1199e"
+    }
+  ],
+  "closeout_conditions": [
+    {
+      "id": "C1",
+      "condition": "P3.8.1/1b/2a calibration, stage audit and reference rebuild all closed with original negative readings preserved",
+      "evidence": [
+        "reports/taiji_u2_first_round_calibration_20261113.json",
+        "reports/taiji_u2_content_credit_20261113.json",
+        "reports/taiji_u2_stable_credit_20261113.json",
+        "reports/taiji_u2_calibration_audit_20261113.json",
+        "reports/taiji_u2_reference_rebuild_20261113.json"
+      ],
+      "passed": true
+    },
+    {
+      "id": "C2",
+      "condition": "P3.8.2b engineering interface and full-capsule recovery consistency verified by independent audit",
+      "evidence": [
+        "reports/taiji_u2_native_credit_transfer_proposals_audit_r2_20261114.json"
+      ],
+      "passed": true
+    },
+    {
+      "id": "C3",
+      "condition": "P3.8.3 executed under the frozen preregistration and independently re-adjudicated",
+      "evidence": [
+        "reports/taiji_u2_p3_8_3_recipe_comparison_20261114.json",
+        "reports/taiji_u2_p3_8_3_recipe_comparison_audit_20261114.json"
+      ],
+      "passed": true
+    },
+    {
+      "id": "C4",
+      "condition": "v1 unreachable tolerance and the runner's over-claim are preserved verbatim and superseded only by a separately registered v2 preregistration",
+      "evidence": [
+        "reports/taiji_u2_native_credit_transfer_duty_20261114.json",
+        "reports/taiji_u2_native_credit_transfer_proposals_audit_20261114.json",
+        "plans/manifests/taiji_u2_native_credit_transfer_proposals_v2_20261114.json"
+      ],
+      "passed": true
+    },
+    {
+      "id": "C5",
+      "condition": "every cited stage report is byte-bound by sha256 and its verdict is re-read from the file itself by the closeout guard",
+      "evidence": [
+        "reports/taiji_u2_native_credit_transfer_proposals_r2_20261114.json",
+        "reports/taiji_u2_p3_8_3_recipe_comparison_20261114.json",
+        "scripts/training/verify_taiji_p3_8_4_global_closeout_20261114.py"
+      ],
+      "passed": true
+    },
+    {
+      "id": "C6",
+      "condition": "parent identity and lineage are unique; no new accepted parent was produced by P3.8.2b/3",
+      "evidence": [
+        "reports/taiji_u2_native_credit_transfer_proposals_r2_20261114.json"
+      ],
+      "passed": true
+    },
+    {
+      "id": "C7",
+      "condition": "capability ledger unchanged, zero capability claims, formal A still not admitted",
+      "evidence": [
+        "reports/taiji_u2_p3_8_3_recipe_comparison_20261114.json"
+      ],
+      "passed": true
+    },
+    {
+      "id": "C8",
+      "condition": "cost ledger and budget boundary recorded; unused P3.8 allowance is not transferred to P3.9 and no further dose is added",
+      "evidence": [
+        "plans/reference/PLAN-TAIJI-CLOSED_LOOP_DEVELOPMENT_20261110.md"
+      ],
+      "passed": true
+    }
+  ],
+  "cost_ledger": {
+    "original_p3_8_budget_cpu": 1110,
+    "settled_reservations_cpu": {
+      "p3_8_1_sealed": 30,
+      "reference_rebuild": 90,
+      "content_credit": 90,
+      "accepted_update": 90,
+      "stage_audit": 20
+    },
+    "settled_reservations_total_cpu": 320,
+    "unallocated_790_split_cpu": {
+      "engineering_cap": 130,
+      "runner_cap": 600,
+      "final_audit_cap": 60
+    },
+    "unallocated_790_total_cpu": 790,
+    "instrumented_report_cpu_by_group": {
+      "p3_8_1_settled_20261113": 188.453125,
+      "p3_8_2b_engineering_20261114": 15.9688,
+      "p3_8_3_runner_20261114": 275.9375
+    },
+    "instrumented_report_cpu_total": 480.359425,
+    "engineering_cap_cpu": 130,
+    "engineering_measured_cpu": 15.9688,
+    "runner_cap_cpu": 600,
+    "runner_measured_cpu": 275.9375,
+    "p3_8_3_run_cpu": 271.375,
+    "p3_8_3_run_wall_seconds": 290.75,
+    "p3_8_3_cpu_ratio": 1.1530831714344465,
+    "dev_full_evaluation_measured_cpu": 23.6562,
+    "evaluation_price_underestimate_factor": 116.48,
+    "uninstrumented_categories": [
+      "temporary price/migration/fp64 probes whose readings are not in a committed report",
+      "guard and preregistration self-check scripts",
+      "independent audit scripts that only re-read JSON",
+      "ruff/black/pytest contract gates",
+      "this closeout card and its own guard (measured in the guard receipt)"
+    ],
+    "double_run_note": "v1 and r2 of duty/proposals are two real executions; both instrumented CPU readings are counted, and the v1 verdict remains in the record.",
+    "unused_unallocated_cpu": 498.0937,
+    "not_transferred_to_p3_9": true
+  },
+  "parent_identity": {
+    "path": "data/experiments/taiji_u2/joint_learning/1794554480667378100/joint-query/update-000758.bin",
+    "sha256": "c8f2359b0bef3085bce88a0a0a8ee7eff5f66a0bc614d2bf52e7ef361638b017",
+    "architecture": "native-joint-query",
+    "update": 758,
+    "cursor": 758,
+    "native_parent_qualified": false,
+    "source": "P3.7 joint learning research parent; P3.8.2b transactions committed only in an isolated shadow runtime and wrote no new accepted parent; P3.8.3 ran on in-memory copies",
+    "formal_a_status": "not_admitted: multi-entity / three seeds / independent check still require the corresponding parent"
+  },
+  "capability_ledger": {
+    "only_positive_learning_result": "calibrated_first_round_reference: train/dev 179/180 neural first-question byte generation after removing the auxiliary head",
+    "scope_of_that_result": "single object, six fixed questions, three geometric families, single initialization; not a Native subject capability",
+    "native_subject_capability_change": "none",
+    "capability_claims": 0,
+    "input_insensitivity_evidence": [
+      "P3.8.3: parent stays 0.5 on dev with RGB zeroed and with questions emptied",
+      "P3.7: Native consistently answers unknown",
+      "21.3: representation axis closed for this graph",
+      "FEC-1 old graph: write-key function class collapses"
+    ],
+    "architecture_verdict": "not decided: input insensitivity is registered only as a candidate architectural-gap signal; P3.9 A/B comparison must adjudicate it",
+    "budget_confound": "two arms bit-identical within 128 updates is also explainable by insufficient budget; the two explanations do not sign for each other"
+  },
+  "limitations": [
+    "P3.8.2b migration receipts all have rebuild.entries=0: the isolated shadow runtime has empty CausalHistory, so non-empty subject-history re-encoding under new theta is NOT covered",
+    "P3.8.2b single-writer guarantee comes from the library transaction and was not independently measured",
+    "P3.8.3 frozen pricing used a single forward pass 0.2031 CPU as the evaluation proxy; the real full dev evaluate (180 episodes x 2 questions free generation) is 23.6562 CPU, an underestimate of about 116x; the budget verdict did not flip because arm B used one alpha evaluation per update",
+    "v1 criteria atol=1e-12 was below float32 machine epsilon: PASS branch arithmetically unreachable; v1 readings kept and covered by a v2 preregistration",
+    "the first runner self-report of engineering_transfer_verified was over-claimed and was overridden by an independent audit to inconclusive_coverage_gaps before r2 evidence",
+    "P3.8.3 required both arms to build a full NativeLearnerCapsule while arm A has no content head (214 tensors); registry validation was generalized by owners sum (B=216, A=214) with a green/red contract test - implementation fixed to match the contract, criteria untouched",
+    "P3.8.3 is a whole-recipe comparison with no ablation arms: only recipe-level conclusions are allowed, never attribution to content supervision or alpha search alone",
+    "0 check / final / confirm reads; no sealed face was touched"
+  ],
+  "exit_semantics": {
+    "closed_object": "card 22.5.P3.8 only",
+    "verdict": "p3_8_closed_limited_exit",
+    "exit_classes": [
+      "negative_result",
+      "budget_stop"
+    ],
+    "not_a_milestone_close": true,
+    "not_a_scope_exclusion_approval": true,
+    "not_a_formula_rejection": true,
+    "no_dose_increase": true,
+    "no_gate_change": true,
+    "no_data_shrink_rerun": true,
+    "no_new_package": true,
+    "basis": "execution package 22 section P3.9: a negative or budget exit of P3.8 must also be closed first, and the unit-graph design cannot be postponed by repeatedly adding dose"
+  },
+  "handoff": {
+    "next_card": "22.5.P3.9.1",
+    "action": "price both reference graphs first, then freeze A-compatible mapping and B full input/communication/direct-query/consumption interfaces; the original 120 CPU / 240 wall draft must be re-priced for two graphs and is not executed or doubled before freezing",
+    "parent_rule": "take the last recoverable, fully sourced Native research parent of P3.8; since no new accepted parent exists, use its frozen starting point and register native_parent_qualified=false in the manifest",
+    "budget_boundary": "do not transfer the 790 CPU of P3.8; P3.9 has no execution budget until priced and frozen",
+    "sealed_faces": "do not touch sealed check / final / confirm",
+    "review_point": "D-20261114-01 review point 'P3.8.4 global closeout' is reached with this card; remaining review points are P3.9.1 graph freeze and P3.9.4 route adjudication"
+  },
+  "discipline": {
+    "closeout_card_training_updates": 0,
+    "closeout_card_optimizer_steps": 0,
+    "closeout_card_forward_passes": 0,
+    "closeout_card_dev_reads": 0,
+    "closeout_card_check_reads": 0,
+    "closeout_card_final_reads": 0,
+    "closeout_card_confirm_reads": 0,
+    "closeout_card_new_parents": 0,
+    "closeout_card_capability_claims": 0,
+    "note": "this card only reads already committed reports and the frozen parent blob for its sha"
+  },
+  "closeout_sha256": "056e2a7bb2fda49f7087cc7319bd40e5f389783ec03ae90cbc6c7d06823d437a"
+}
