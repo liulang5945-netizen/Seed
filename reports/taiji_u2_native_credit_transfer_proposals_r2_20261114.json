@@ -1,0 +1,291 @@
+{
+  "schema": "taiji-u2-native-credit-transfer-proposals-v1",
+  "date": "2026-11-14",
+  "card": "22.5.P3.8.2b",
+  "contract": "taiji_u2_native_credit_transfer_proposals_v2_20261114.json",
+  "criteria_sha256": "c26b78229679a7740bd4d64576ebc767c2bfa7c4e17befd8a4f02e5c709a8541",
+  "r2_evidence_completion": true,
+  "predecessor": {
+    "report": "reports/taiji_u2_native_credit_transfer_proposals_20261114.json",
+    "audit": "reports/taiji_u2_native_credit_transfer_proposals_audit_20261114.json",
+    "audited_verdict": "inconclusive_coverage_gaps",
+    "note": "v1 receipt retained verbatim; r2 fills its four evidence gaps without changing the v2 criteria"
+  },
+  "parent_sha256": "c8f2359b0bef3085bce88a0a0a8ee7eff5f66a0bc614d2bf52e7ef361638b017",
+  "data_digest": "65041f02e3a3410b307bc6e013d897ef747e7f890b3668db6b5852fdc9fdba1c",
+  "coverage_indices": [
+    0,
+    1,
+    10,
+    11,
+    84,
+    85,
+    94,
+    95,
+    168,
+    169,
+    178,
+    179
+  ],
+  "class_hex": [
+    "e4b8ade997b4",
+    "e58fb3e8beb9",
+    "e5b7a6e8beb9",
+    "e69caae79fa5"
+  ],
+  "class_counts": {
+    "e4b8ade997b4": 30,
+    "e58fb3e8beb9": 30,
+    "e5b7a6e8beb9": 30,
+    "e69caae79fa5": 90
+  },
+  "class_weights": [
+    1.5,
+    1.5,
+    1.5,
+    0.5
+  ],
+  "proposals": [
+    {
+      "call": 1,
+      "kind": "normal",
+      "accepted": true,
+      "scale": 1,
+      "before": 0.28247541189193726,
+      "after": 0.27367615699768066,
+      "fallback": false,
+      "evaluations": 1,
+      "reason": "accepted",
+      "u": 1,
+      "v": 1,
+      "commit_receipt": {
+        "transaction": "taiji.u2_learning_transaction.migrate_parameters",
+        "status": "committed",
+        "revision": 4519,
+        "parameter_digest": "e9a0d70693006d45ee4a144c3482a033ea3cfe0ed2d9fdd1ad99b3008e75dbde",
+        "rebuild": {
+          "entries": 0,
+          "observations": 0,
+          "duplicates": 0,
+          "bytes": 0,
+          "internal": 0,
+          "births": 0,
+          "updates": 0,
+          "cpu_seconds": 0.015625,
+          "history_reference": {
+            "entries": 0,
+            "head": "ac77edf1ed3b45e40aae42c9f48fe63d8284e01a5c8e18fa7cba57271c5d1420"
+          },
+          "eligibility_reset": true
+        },
+        "cpu_seconds": 0.046875,
+        "optimizer_digest_before": "b41df47289dc2e603526cb84837b87c52ca731ab71492a37f3a2d135b6f75edd",
+        "single_writer_guarantee": "provided_by_library_transaction_not_independently_measured",
+        "nonempty_history_reencoding": "not_exercised: the engineering runtime starts with an empty CausalHistory, so rebuild.entries is 0"
+      }
+    },
+    {
+      "call": 2,
+      "kind": "normal",
+      "accepted": true,
+      "scale": 1,
+      "before": 2.5557363033294678,
+      "after": 2.4551591873168945,
+      "fallback": false,
+      "evaluations": 1,
+      "reason": "accepted",
+      "u": 2,
+      "v": 2,
+      "commit_receipt": {
+        "transaction": "taiji.u2_learning_transaction.migrate_parameters",
+        "status": "committed",
+        "revision": 4519,
+        "parameter_digest": "cfc820f06f6cd6f33a2c8a6f5e51dbd5b5d2ef3e217a91a59397bfcb7e8516a5",
+        "rebuild": {
+          "entries": 0,
+          "observations": 0,
+          "duplicates": 0,
+          "bytes": 0,
+          "internal": 0,
+          "births": 0,
+          "updates": 0,
+          "cpu_seconds": 0.0,
+          "history_reference": {
+            "entries": 0,
+            "head": "3fa826d794e6a0d79bb1577afcb535468155a99094cf9fad13eed929c205f16b"
+          },
+          "eligibility_reset": true
+        },
+        "cpu_seconds": 0.046875,
+        "optimizer_digest_before": "b0816278ef3e2a5cd78af62a312f54da594582fadd959c87e33e5f38833fafd0",
+        "single_writer_guarantee": "provided_by_library_transaction_not_independently_measured",
+        "nonempty_history_reencoding": "not_exercised: the engineering runtime starts with an empty CausalHistory, so rebuild.entries is 0"
+      }
+    },
+    {
+      "call": 3,
+      "kind": "normal",
+      "accepted": true,
+      "scale": 1,
+      "before": 0.281718373298645,
+      "after": 0.14991824328899384,
+      "fallback": true,
+      "evaluations": 1,
+      "reason": "accepted",
+      "u": 3,
+      "v": 3,
+      "commit_receipt": {
+        "transaction": "taiji.u2_learning_transaction.migrate_parameters",
+        "status": "committed",
+        "revision": 4519,
+        "parameter_digest": "88da7903fc15794992c98cf98af0cfac67e63b10a55ea105527ca43223008f99",
+        "rebuild": {
+          "entries": 0,
+          "observations": 0,
+          "duplicates": 0,
+          "bytes": 0,
+          "internal": 0,
+          "births": 0,
+          "updates": 0,
+          "cpu_seconds": 0.015625,
+          "history_reference": {
+            "entries": 0,
+            "head": "8c5d628748771596981a05754e251b90698ff12eec6f00b217f334b90d50ada4"
+          },
+          "eligibility_reset": true
+        },
+        "cpu_seconds": 0.046875,
+        "optimizer_digest_before": "2b992140c988e2fa2e3deb4689a7cbd41b9eee2e0a27978160b8119940c4cadd",
+        "single_writer_guarantee": "provided_by_library_transaction_not_independently_measured",
+        "nonempty_history_reencoding": "not_exercised: the engineering runtime starts with an empty CausalHistory, so rebuild.entries is 0"
+      }
+    },
+    {
+      "call": 4,
+      "kind": "normal",
+      "accepted": true,
+      "scale": 1,
+      "before": 2.6820058822631836,
+      "after": 2.535841941833496,
+      "fallback": false,
+      "evaluations": 1,
+      "reason": "accepted",
+      "u": 4,
+      "v": 4,
+      "commit_receipt": {
+        "transaction": "taiji.u2_learning_transaction.migrate_parameters",
+        "status": "committed",
+        "revision": 4519,
+        "parameter_digest": "22ee78841c0385aed91158955092a58814de143af9dfc7c3ae1c5dd458fbe8f6",
+        "rebuild": {
+          "entries": 0,
+          "observations": 0,
+          "duplicates": 0,
+          "bytes": 0,
+          "internal": 0,
+          "births": 0,
+          "updates": 0,
+          "cpu_seconds": 0.0,
+          "history_reference": {
+            "entries": 0,
+            "head": "cd853ab825e0143e9d338cde38f0b8d5261db708213ca748f6cd28d21f68ede2"
+          },
+          "eligibility_reset": true
+        },
+        "cpu_seconds": 0.046875,
+        "optimizer_digest_before": "899c866d3ddc3fede3e395593aad23b9852784aea111065a088719b17483b918",
+        "single_writer_guarantee": "provided_by_library_transaction_not_independently_measured",
+        "nonempty_history_reencoding": "not_exercised: the engineering runtime starts with an empty CausalHistory, so rebuild.entries is 0"
+      }
+    },
+    {
+      "call": 5,
+      "kind": "fault_before_commit",
+      "proposal": "accepted",
+      "before_loss": 0.16135208308696747,
+      "restored_loss": 0.16135208308696747,
+      "loss_restored": true,
+      "digest_before": "22ee78841c0385aed91158955092a58814de143af9dfc7c3ae1c5dd458fbe8f6",
+      "digest_after": "22ee78841c0385aed91158955092a58814de143af9dfc7c3ae1c5dd458fbe8f6",
+      "parameter_digest_restored": true
+    },
+    {
+      "call": 6,
+      "kind": "fault_before_commit",
+      "proposal": "accepted",
+      "before_loss": 0.16135208308696747,
+      "restored_loss": 0.16135208308696747,
+      "loss_restored": true,
+      "digest_before": "22ee78841c0385aed91158955092a58814de143af9dfc7c3ae1c5dd458fbe8f6",
+      "digest_after": "22ee78841c0385aed91158955092a58814de143af9dfc7c3ae1c5dd458fbe8f6",
+      "parameter_digest_restored": true
+    }
+  ],
+  "counters": {
+    "real_adam_calls": 6,
+    "proposal_clock_u": 6,
+    "parameter_version_v": 4,
+    "accepted_commits": 4
+  },
+  "restore_checks": [
+    {
+      "point": "before_call_1",
+      "digest_matches": true
+    },
+    {
+      "point": "after_call_1",
+      "digest_matches": true
+    },
+    {
+      "point": "first_nonempty_moment",
+      "digest_matches": true
+    },
+    {
+      "point": "before_call_2",
+      "digest_matches": true
+    },
+    {
+      "point": "after_call_2",
+      "digest_matches": true
+    },
+    {
+      "point": "before_call_3",
+      "digest_matches": true
+    },
+    {
+      "point": "after_call_3",
+      "digest_matches": true
+    },
+    {
+      "point": "before_call_4",
+      "digest_matches": true
+    },
+    {
+      "point": "after_call_4",
+      "digest_matches": true
+    }
+  ],
+  "headless": {
+    "before_head_digest": "01933cca839c02d7242d1da9bc7ed267ef7cf74c8e4ed3bdfd8c5759bef86b4b",
+    "after_head_digest": "01933cca839c02d7242d1da9bc7ed267ef7cf74c8e4ed3bdfd8c5759bef86b4b",
+    "head_perturbation_digest": "01933cca839c02d7242d1da9bc7ed267ef7cf74c8e4ed3bdfd8c5759bef86b4b",
+    "body_digest_before": "b2292b2866f4ba16a1f57f539c041ced67f3cd7ef96e8dccdb6c3c1c3512188e",
+    "body_digest_after": "b2292b2866f4ba16a1f57f539c041ced67f3cd7ef96e8dccdb6c3c1c3512188e",
+    "runtime_unchanged_by_head": true,
+    "head_attached_to_runtime": false,
+    "content_label_indices_in_runtime": false
+  },
+  "measured": {
+    "cpu_seconds": 5.0312,
+    "wall_seconds": 40.891
+  },
+  "discipline": {
+    "dev_reads": 0,
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "capability_claims": 0,
+    "criteria_sha_unchanged_after_reading": true
+  },
+  "verdict": "engineering_transfer_verified"
+}

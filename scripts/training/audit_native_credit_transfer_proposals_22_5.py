@@ -7,6 +7,7 @@ verdict cannot be quoted as an engineering closeout.
 
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
 import sys
@@ -137,6 +138,13 @@ def audit(contract: dict, receipt: dict, duty: dict) -> dict:
 
 
 def main() -> int:
+    global RECEIPT, OUTPUT
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--receipt", default=str(RECEIPT))
+    parser.add_argument("--output", default=str(OUTPUT))
+    args = parser.parse_args()
+    RECEIPT = Path(args.receipt)
+    OUTPUT = Path(args.output)
     contract = json.loads(CONTRACT.read_text(encoding="utf-8"))
     receipt = json.loads(RECEIPT.read_text(encoding="utf-8"))
     duty = json.loads(DUTY.read_text(encoding="utf-8"))
@@ -170,24 +178,39 @@ def main() -> int:
             ensure_ascii=False,
         )
     )
-    # Red direction: hiding a gap must change the verdict.
+    # Red direction: filling every gap and stripping every evidence item must
+    # produce different verdicts, so the audit cannot be a constant-true guard.
     planted = json.loads(json.dumps(receipt))
-    planted["restore_checks"] = planted["restore_checks"] * 8
-    planted["headless"]["before_head_digest"] = "x"
-    planted["headless"]["after_head_digest"] = "x"
+    planted["restore_checks"] = (planted["restore_checks"] or [{"digest_matches": True}]) * 8
+    planted["headless"] = {
+        **(planted.get("headless") or {}),
+        "before_head_digest": "x",
+        "after_head_digest": "x",
+    }
     for row in planted["proposals"]:
         if row.get("kind") == "normal":
-            row["commit_receipt"] = {"history_reencoded": True}
+            row["commit_receipt"] = {"status": "committed"}
         if row.get("kind") == "fault_before_commit":
             row["digest_before"] = row["digest_after"] = "x"
-    planted_result = audit(contract, planted, duty)
+    filled = audit(contract, planted, duty)
+    stripped = json.loads(json.dumps(receipt))
+    stripped["restore_checks"] = []
+    stripped["headless"] = {}
+    for row in stripped["proposals"]:
+        row.pop("commit_receipt", None)
+        row.pop("digest_before", None)
+        row.pop("digest_after", None)
+    emptied = audit(contract, stripped, duty)
     print(
         json.dumps(
-            {"red_direction_verdict_after_filling_gaps": planted_result["audited_verdict"]},
+            {
+                "red_filled": filled["audited_verdict"],
+                "red_stripped": emptied["audited_verdict"],
+            },
             ensure_ascii=False,
         )
     )
-    assert planted_result["audited_verdict"] != "inconclusive_coverage_gaps"
+    assert filled["audited_verdict"] != emptied["audited_verdict"], "audit guard is decorative"
     return 0
 
 

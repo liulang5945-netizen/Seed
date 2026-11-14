@@ -520,12 +520,24 @@ def _write_report(path: Path, report: dict[str, Any]) -> None:
     temporary.replace(path)
 
 
-def proposals() -> int:
-    """Four normal + two fault Adam proposals under the frozen v2 contract."""
+def proposals(r2: bool = False) -> int:
+    """Four normal + two fault Adam proposals under the frozen v2 contract.
+
+    r2 fills the four evidence gaps named by the independent audit; the v1
+    receipt is left on disk untouched and is linked as predecessor.
+    """
+    import copy  # noqa: PLC0415
+
     from scripts.training.task_history_loss_22_5 import score_answer  # noqa: PLC0415
     from taiji.u2_credit_update import accepted_adam_step  # noqa: PLC0415
+    from taiji.u2_learning_transaction import migrate_parameters  # noqa: PLC0415
+    from taiji.u2_recovery import U2Runtime  # noqa: PLC0415
 
-    report_path = ROOT / "reports/taiji_u2_native_credit_transfer_proposals_20261114.json"
+    report_path = ROOT / (
+        "reports/taiji_u2_native_credit_transfer_proposals_r2_20261114.json"
+        if r2
+        else "reports/taiji_u2_native_credit_transfer_proposals_20261114.json"
+    )
     if report_path.exists():
         raise FileExistsError(report_path)
     torch.set_num_threads(1)
@@ -542,6 +554,34 @@ def proposals() -> int:
     optimizer.add_param_group({"params": list(head.parameters())})
     parameters = [*model.parameters(), *head.parameters()]
     assert len(parameters) == REGISTRY_TENSORS
+
+    # Headless equivalence measured with a real perturbation probe: the content
+    # head must be unable to change the body-only runtime distribution.
+    probe_episode = partition["episodes"][coverage[0]]
+    headless_initial = start_episode(model, partition, probe_episode)
+    log_before, _, _ = output(model, headless_initial)
+    body_digest_before = value_digest(model.state_dict())
+    log_after, _, _ = output(model, headless_initial)
+    body_digest_after = value_digest(model.state_dict())
+    with torch.no_grad():
+        head.weight.add_(3.0)
+    log_perturbed, _, _ = output(model, headless_initial)
+    with torch.no_grad():
+        head.weight.sub_(3.0)
+    headless_measurement = {
+        "before_head_digest": value_digest(log_before.detach()),
+        "after_head_digest": value_digest(log_after.detach()),
+        "head_perturbation_digest": value_digest(log_perturbed.detach()),
+        "body_digest_before": body_digest_before,
+        "body_digest_after": body_digest_after,
+        "runtime_unchanged_by_head": (
+            value_digest(log_before.detach())
+            == value_digest(log_after.detach())
+            == value_digest(log_perturbed.detach())
+        ),
+        "head_attached_to_runtime": False,
+        "content_label_indices_in_runtime": False,
+    }
 
     rows: list[dict[str, Any]] = []
     capsule_root = ROOT / "data/experiments/taiji_u2/credit_transfer_proposals"
@@ -639,16 +679,28 @@ def proposals() -> int:
             is_fault = call in (4, 5)
             episode_index = 0 if is_fault else call
             before = snapshot()
+            before_digest = value_digest(model.state_dict())
             objective = objective_for(episode_index)
             before_loss = float(objective().detach())
+            if r2 and not is_fault:
+                pre_pack = capsule(f"before_call_{call + 1}", call)
+                pre_receipt = independent_restore(pre_pack, capsule_root)
+                restore_checks.append(
+                    {
+                        "point": f"before_call_{call + 1}",
+                        "digest_matches": pre_receipt["capsule_digest"] == value_digest(pre_pack),
+                    }
+                )
             outcome = accepted_adam_step(parameters, optimizer, objective, counters)
             u += 1
             if is_fault:
                 # Fault lands after the real Adam proposal and before any commit.
                 # Roll back the whole capsule state, keep the call and its cost.
                 rollback(before)
+                after_digest = value_digest(model.state_dict())
                 after_loss = float(objective().detach())
                 rollback(before)
+                restored = before_digest == after_digest
                 rows.append(
                     {
                         "call": call + 1,
@@ -657,35 +709,75 @@ def proposals() -> int:
                         "before_loss": before_loss,
                         "restored_loss": after_loss,
                         "loss_restored": abs(after_loss - before_loss) <= 1e-9,
-                        "parameter_digest_restored": True,
+                        "digest_before": before_digest,
+                        "digest_after": after_digest,
+                        "parameter_digest_restored": restored,
                     }
                 )
-                if abs(after_loss - before_loss) > 1e-9:
+                if abs(after_loss - before_loss) > 1e-9 or not restored:
                     verdict = "engineering_failure"
                 continue
+            commit_receipt = None
             if outcome["accepted"]:
                 v += 1
                 accepted_commits += 1
-            rows.append(
-                {
-                    "call": call + 1,
-                    "kind": "normal",
-                    **{
-                        key: outcome[key]
-                        for key in (
-                            "accepted",
-                            "scale",
-                            "before",
-                            "after",
-                            "fallback",
-                            "evaluations",
-                            "reason",
-                        )
-                    },
-                    "u": u,
-                    "v": v,
-                }
-            )
+                if r2:
+                    # Real single-transaction parameter migration with history
+                    # re-encoding, exercised in an isolated shadow runtime.
+                    shadow = U2Runtime(model, optimizer=None, subject_id=f"p382b-commit-{call + 1}")
+                    candidate = copy.deepcopy(model)
+                    candidate.parameter_revision = model.parameter_revision + 1
+                    migration = migrate_parameters(
+                        shadow,
+                        candidate,
+                        optimizer=None,
+                        acceptance=lambda _m, _s, _o: True,
+                        cpu_budget_seconds=20,
+                    )
+                    commit_receipt = {
+                        "transaction": "taiji.u2_learning_transaction.migrate_parameters",
+                        "status": migration["status"],
+                        "revision": migration["revision"],
+                        "parameter_digest": migration["parameter_digest"],
+                        "rebuild": migration["rebuild"],
+                        "cpu_seconds": migration["cpu_seconds"],
+                        "optimizer_digest_before": value_digest(optimizer.state_dict()),
+                        "single_writer_guarantee": "provided_by_library_transaction_not_independently_measured",
+                        "nonempty_history_reencoding": (
+                            "not_exercised: the engineering runtime starts with an empty "
+                            "CausalHistory, so rebuild.entries is 0"
+                        ),
+                    }
+                    post_pack = capsule(f"after_call_{call + 1}", call)
+                    post_receipt = independent_restore(post_pack, capsule_root)
+                    restore_checks.append(
+                        {
+                            "point": f"after_call_{call + 1}",
+                            "digest_matches": post_receipt["capsule_digest"]
+                            == value_digest(post_pack),
+                        }
+                    )
+            row = {
+                "call": call + 1,
+                "kind": "normal",
+                **{
+                    key: outcome[key]
+                    for key in (
+                        "accepted",
+                        "scale",
+                        "before",
+                        "after",
+                        "fallback",
+                        "evaluations",
+                        "reason",
+                    )
+                },
+                "u": u,
+                "v": v,
+            }
+            if commit_receipt is not None:
+                row["commit_receipt"] = commit_receipt
+            rows.append(row)
             # First non-empty moment: full capsule save + independent restore.
             if call == 0:
                 pack = capsule("first_nonempty_moment", call)
@@ -698,21 +790,30 @@ def proposals() -> int:
                 )
                 if receipt["capsule_digest"] != value_digest(pack):
                     verdict = "engineering_failure"
-        # Headless equivalence: the body distribution cannot see the training head.
-        probe_episode = partition["episodes"][coverage[0]]
-        initial = start_episode(model, partition, probe_episode)
-        log_output, _, _ = output(model, initial)
-        headless_digest = value_digest(model.state_dict())
-        headless = {
-            "log_output_digest": value_digest(log_output.detach()),
-            "body_digest": headless_digest,
-            "head_attached_to_runtime": False,
-            "content_label_indices_in_runtime": False,
-        }
+        headless = headless_measurement
         if counters["optimizer_steps"] > 6 or u > 6 or v > u:
             verdict = "engineering_failure"
         if accepted_commits == 0 and verdict == "engineering_transfer_verified":
             verdict = "inconclusive"
+        if r2 and verdict == "engineering_transfer_verified":
+            restore_ok = all(item["digest_matches"] for item in restore_checks)
+            commits_ok = all(
+                row.get("commit_receipt", {}).get("status") == "committed"
+                for row in rows
+                if row.get("kind") == "normal" and row.get("accepted")
+            )
+            if (
+                not restore_ok
+                or not commits_ok
+                or not headless["runtime_unchanged_by_head"]
+                or len(restore_checks) < 2 * accepted_commits
+                or not all(
+                    row.get("parameter_digest_restored") is True
+                    for row in rows
+                    if row.get("kind") == "fault_before_commit"
+                )
+            ):
+                verdict = "engineering_failure"
     except RuntimeError as error:
         if str(error).startswith("budget_stop"):
             verdict = "budget_stop"
@@ -729,6 +830,17 @@ def proposals() -> int:
         "card": "22.5.P3.8.2b",
         "contract": CONTRACT.name,
         "criteria_sha256": CRITERIA_SHA256,
+        "r2_evidence_completion": r2,
+        "predecessor": (
+            {
+                "report": "reports/taiji_u2_native_credit_transfer_proposals_20261114.json",
+                "audit": "reports/taiji_u2_native_credit_transfer_proposals_audit_20261114.json",
+                "audited_verdict": "inconclusive_coverage_gaps",
+                "note": "v1 receipt retained verbatim; r2 fills its four evidence gaps without changing the v2 criteria",
+            }
+            if r2
+            else None
+        ),
         "parent_sha256": PARENT_SHA256,
         "data_digest": DATA_DIGEST,
         "coverage_indices": coverage,
@@ -779,7 +891,11 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--worker", default=None)
     parser.add_argument("--output", default=None)
-    parser.add_argument("--phase", default="precheck", choices=["precheck", "duty", "proposals"])
+    parser.add_argument(
+        "--phase",
+        default="precheck",
+        choices=["precheck", "duty", "proposals", "proposals-r2"],
+    )
     args = parser.parse_args()
     if args.worker:
         assert args.output
@@ -789,6 +905,8 @@ def main() -> int:
         return duty()
     if args.phase == "proposals":
         return proposals()
+    if args.phase == "proposals-r2":
+        return proposals(r2=True)
     return precheck()
 
 

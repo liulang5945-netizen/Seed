@@ -2,7 +2,7 @@
 
 > 文档状态：[索引] — 2026-11-14同步。当前状态归[MASTER-PLAN](../MASTER-PLAN.md)，本页只作依赖导航。
 
-**队首（唯一）**：22.5.P3.8.2b 六次提案读数已取得（6 次真实 Adam、u6/v4、2 次故障损失逐位还原、CPU 4.06），但独立审计判 inconclusive_coverage_gaps：恢复覆盖 1/8、原子提交与历史重编码、去头前后对照等 4 项未覆盖，原 engineering_transfer_verified 不得引用为工程结案。唯一后继：补齐 8 次独立恢复与提交事务证据后重判；P3.8.3 未准入，Native A 父仍未成立。
+**队首（唯一）**：22.5.P3.8.2b 工程合同结案 engineering_transfer_verified（独立审计 0 缺口／13 项检查全过、9/8 次独立恢复、4 份 committed 事务回执、去头扰动实测、故障 digest 实测；6 Adam、CPU 5.0312）。范围限制：事务 rebuild.entries=0，非空主体历史重编码未覆盖。唯一后继：按卡 §4 以实价冻结 P3.8.3 整体配方行为比较；仍 0 能力声称，Native A 父未成立。
 
 ## 0. 坐标系与当前步
 

@@ -3173,3 +3173,16 @@ owner 本轮重述[根需求 §2.1](../TAIJI_CORE_REQUIREMENTS.md#21-统一目�
 **独立审计把结论拉回**：[审计回执](../../../reports/taiji_u2_native_credit_transfer_proposals_audit_20261114.json)按合同 `decision_rule` 逐项复核，判定原报告的 `engineering_transfer_verified` **是过度声称**，改判 **`inconclusive_coverage_gaps`**，4 项未覆盖：① 恢复覆盖 **1/8**（合同要求每次接受前后各一次独立恢复，实做首个非空 moment 1 次）；② 无「按新 θ 重编码合法原始历史」的原子提交回执（卡 §2）；③ 去头等值只有声明布尔＋单一 digest，缺 before/after 分布对照；④ 故障 `parameter_digest_restored` 是硬编码 True，缺实测 digest 对。审计附红方向：把 4 项补齐后 verdict 变为 `engineering_transfer_verified`，证明守卫能响。**6 次提案读数本身有效并原样保留，但不得引用为工程结案**；P3.8.3 行为比较未准入，能力账无变化，Native A 父仍未成立。
 
 **唯一后继**：补齐 8 次提交前／后独立恢复、参数迁移事务与历史重编码回执、去头前后实测对照、故障 digest 实测（不改 v2 判据、不追加训练剂量），再按同一合同重判；之后才轮到 P3.8.3 实价冻结。
+
+
+## 2026-11-14 22.5.P3.8.2b r2 补齐证据并结案（工程通过，0 能力声称）
+
+按上段审计的 4 项缺口，在**不改 v2 判据、不追加训练剂量**的前提下补齐证据，v1 读数与 v1 审计原样保留。
+
+**r2 读数**[机器卡](../../../reports/taiji_u2_native_credit_transfer_proposals_r2_20261114.json)：6 次真实 Adam、u6／v4、CPU **5.0312** / wall 40.891（帽 130／260）、criteria sha 读后未改、0 dev／check／final／confirm。四项补齐分别是：① **9 次独立进程恢复**（4 次接受各前后一次＝8，加首个非空 moment 1 次），全部 `digest_matches=true`；② 每次接受各产出一份真实 `taiji.u2_learning_transaction.migrate_parameters` 回执（`status=committed`、revision／`parameter_digest`／`rebuild` metrics／实耗 CPU），完整 4 份；③ 去头等值改为**实测**：`before/after/head_perturbation` 三个运行时 log 分布 digest 均为 `01933cca…`，把训练头权重加 3.0 后 body-only 分布仍逐位不变，证明训练头未接入运行时；④ 两次故障回滚改为**实测参数 digest 对**，前后相等且 `restored_loss==before_loss` 逐位相同。
+
+**独立审计**[r2 回执](../../../reports/taiji_u2_native_credit_transfer_proposals_audit_r2_20261114.json)按同一 v2 合同 `decision_rule` 重判：**`engineering_transfer_verified`，13/13 检查通过、`uncovered=[]`、恢复覆盖 9/8**。红方向双向演练：填满缺口判 verified、抽掉全部证据判 `inconclusive_coverage_gaps`，两者不同 ⇒ 守卫不是恒真式。
+
+**必须随结论引用的范围限制**：4 份事务回执的 `rebuild.entries` 全为 **0**——工程阶段在隔离影子 runtime 中构造的是空 `CausalHistory`，`rebuild_state` 被真实调用且提交成功，但**非空主体历史按新 θ 重编码未覆盖**；该面归 22.3／22.5 的运行时历史链，不因本卡通过而自动签署。单写者保证由库事务提供，本卡未独立测量。因此本结案只签**工程接口与恢复一致性**，不签行为收益、不签能力、不签训练剂量正当性；能力账无变化，Native A 父仍未成立，首问参照权重仍独立于 Native。
+
+**唯一后继**：按[Native迁移卡 §4](../../reference/SPEC-TAIJI_U2_NATIVE_CREDIT_TRANSFER_20261113.md)「工程通过后才以实价冻结 P3.8.3」——在同一 Native 父与相同公开输入上，比较「原字节目标／原更新」与「内容信用／验收更新」这**一整个配方**，按真实 CPU 与样本暴露量分账；无足够消融只签配方级结论，不单独归因内容监督或搜索。首问及实际两问分别报告，正式 A 的多实体／三 seed／独立 check 仍待对应父与范围。P3.9 不因本卡通过提前准入。
