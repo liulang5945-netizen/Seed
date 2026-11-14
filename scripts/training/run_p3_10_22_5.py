@@ -272,6 +272,7 @@ def run(contract: dict) -> int:
                     "correct": scored["correct"],
                     "denominator": scored["denominator"],
                     "cpu": cpu_here,
+                    "elapsed_cpu": round(time.process_time() - cpu_start, 6),
                 }
             )
             results.append(
@@ -287,8 +288,10 @@ def run(contract: dict) -> int:
             )
         control_started = time.process_time()
         fixed = contract["controls"]["fixed_question"].encode()
-        zero_rgb = evaluate([with_rgb_zero(example) for example in data["fit"]])
-        fixed_question = evaluate([with_fixed_question(example, fixed) for example in data["fit"]])
+        zero_rgb = evaluate(model, [with_rgb_zero(example) for example in data["fit"]])
+        fixed_question = evaluate(
+            model, [with_fixed_question(example, fixed) for example in data["fit"]]
+        )
         baseline_outputs = [row["output_hex"] for row in results[-1]["rows"]]
         controls = {
             "rgb_zero_correct": zero_rgb["correct"],
@@ -386,6 +389,162 @@ def run(contract: dict) -> int:
     return 0 if verdict != "engineering_failure" else 5
 
 
+def resume(contract: dict) -> int:
+    """Complete a run whose training and dose bundles already exist.
+
+    Every dose reading is recomputed from its bundle instead of trusting the
+    in-run evaluation; the controls and the restore check run on the final
+    bundle. No training happens here.
+    """
+
+    guards(contract, "run")
+    torch.set_num_threads(1)
+    wall_start, cpu_start = time.perf_counter(), time.process_time()
+    root = Path(contract["run_root"])
+    rows = [
+        json.loads(line)
+        for line in (root / "curve.ndjson").read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]
+    dose_rows = [row for row in rows if row["event"] == "dose"]
+    zero_row = next(row for row in rows if row["event"] == "evaluate")
+    data = atomic_load(Path(contract["data_root"]))
+    if value_digest(data) != contract["data_digest"]:
+        raise ValueError("data_digest_mismatch")
+    last_update = max(row["update"] for row in dose_rows)
+    doses, final_model, final_rows = [], None, None
+    for row in dose_rows:
+        model, _, _ = load_learner(Path(row["bundle"]))
+        scored = evaluate(model, data["fit"])
+        doses.append(
+            {
+                "update": row["update"],
+                "correct": scored["correct"],
+                "denominator": scored["denominator"],
+                "accuracy": scored["accuracy"],
+                "ledger_correct": row["correct"],
+                "matches_ledger": scored["correct"] == row["correct"],
+                "next_loss": row["next_loss"],
+                "bundle_digest": row["bundle_digest"],
+            }
+        )
+        if row["update"] == last_update:
+            final_model, final_rows = model, scored["rows"]
+    if final_model is None:
+        raise ValueError("final_bundle_absent")
+    control_started = time.process_time()
+    fixed = contract["controls"]["fixed_question"].encode()
+    zero_rgb = evaluate(final_model, [with_rgb_zero(example) for example in data["fit"]])
+    fixed_question = evaluate(
+        final_model, [with_fixed_question(example, fixed) for example in data["fit"]]
+    )
+    baseline = [row["output_hex"] for row in final_rows]
+    controls = {
+        "rgb_zero_correct": zero_rgb["correct"],
+        "rgb_zero_accuracy": zero_rgb["accuracy"],
+        "rgb_zero_agreement_with_final": round(agreement(zero_rgb["rows"], baseline), 6),
+        "fixed_question_agreement_with_final": round(
+            agreement(fixed_question["rows"], baseline), 6
+        ),
+        "fixed_question_text": fixed.decode(),
+        "control_cpu": round(time.process_time() - control_started, 6),
+    }
+    verify = subprocess.run(
+        [
+            sys.executable,
+            str(Path(__file__)),
+            "--mode",
+            "verify",
+            "--bundle",
+            str(root / f"dose-{last_update:04d}.bin"),
+            "--expect-next-loss",
+            str(doses[-1]["next_loss"]),
+        ],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    restored = json.loads(verify.stdout.strip().splitlines()[-1]) if verify.stdout.strip() else {}
+    accuracy = {str(item["update"]): item["accuracy"] for item in doses}
+    zero_accuracy = zero_row["correct"] / zero_row["denominator"]
+    last = accuracy[str(last_update)]
+    if zero_accuracy < GATE <= accuracy.get("256", -1.0):
+        verdict = "dose_curve_measured"
+    elif accuracy.get("256", -1.0) < GATE <= last:
+        verdict = "gate_dose_infeasible"
+    elif last < GATE and last - accuracy.get("64", 0.0) < FLAT_DELTA:
+        verdict = "recipe_scoped_flat"
+    else:
+        verdict = "inconclusive_curve"
+    observed_wall = round(
+        (root / f"dose-{last_update:04d}.bin").stat().st_mtime
+        - (root / "curve.lock").stat().st_mtime,
+        3,
+    )
+    payload = {
+        "schema": "taiji-u2-p3-10-curve-v1",
+        "date": "2026-11-14",
+        "card": "22.5.P3.10",
+        "phase": "dose_curve",
+        "verdict": verdict,
+        "gate": GATE,
+        "flat_delta": FLAT_DELTA,
+        "assembled_from": "ledger plus independent bundle recomputation; resume mode, no training",
+        "doses": doses,
+        "zero": {
+            "correct": zero_row["correct"],
+            "denominator": zero_row["denominator"],
+            "accuracy": zero_accuracy,
+        },
+        "dose_recompute_matches_ledger": all(item["matches_ledger"] for item in doses),
+        "controls": controls,
+        "restore": {
+            "returncode": verify.returncode,
+            "stdout": verify.stdout.strip()[-400:],
+            "stderr": verify.stderr.strip()[-400:],
+            "next_loss_equal": bool(restored.get("next_loss_equal")),
+            "next_loss": restored.get("next_loss"),
+        },
+        "training_authority": contract["training_authority"],
+        "cost": {
+            "resume_cpu": round(time.process_time() - cpu_start, 6),
+            "resume_wall": round(time.perf_counter() - wall_start, 6),
+            "dose_eval_save_cpu_sum": round(sum(row["cpu"] for row in dose_rows), 6),
+            "training_cpu_instrumented": False,
+            "wall_seconds_from_artifacts": observed_wall,
+            "cap_cpu": contract["cpu_cap"],
+            "cap_wall": contract["wall_cap"],
+        },
+        "discipline": {
+            "check_reads": 0,
+            "final_reads": 0,
+            "confirm_reads": 0,
+            "capability_claims": 0,
+            "gate_values_changed": 0,
+        },
+        "run_conditions": {
+            "device": str(next(final_model.parameters()).device),
+            "dtype": str(next(final_model.parameters()).dtype),
+            "threads": torch.get_num_threads(),
+            "torch": torch.__version__,
+        },
+        "scope": "single-seed dose curve on synthetic legal inputs; no natural-language, no project task, no capability claim",
+    }
+    write_report(CURVE_REPORT, payload)
+    print(
+        json.dumps(
+            {
+                "verdict": verdict,
+                "accuracy": accuracy,
+                "controls": controls,
+                "restore": restored,
+                "matches": payload["dose_recompute_matches_ledger"],
+            }
+        )
+    )
+    return 0
+
+
 def verify(bundle: str, expect: float) -> int:
     torch.set_num_threads(1)
     contract = json.loads(CONTRACT.read_text(encoding="utf-8"))
@@ -410,7 +569,7 @@ def verify(bundle: str, expect: float) -> int:
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--mode", choices=("price", "run", "verify"), default="price")
+    parser.add_argument("--mode", choices=("price", "run", "resume", "verify"), default="price")
     parser.add_argument("--bundle", default="")
     parser.add_argument("--expect-next-loss", default="0")
     args = parser.parse_args()
@@ -419,6 +578,8 @@ def main() -> int:
         return price(contract)
     if args.mode == "verify":
         return verify(args.bundle, float(args.expect_next_loss))
+    if args.mode == "resume":
+        return resume(contract)
     # Contract-level refusals must not write a curve report: a refused run has
     # no reading, and the report path is create-once for the real run.
     try:

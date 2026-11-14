@@ -1,0 +1,85 @@
+{
+  "schema": "taiji-u2-p3-10-guard-v1",
+  "date": "2026-11-14",
+  "card": "22.5.P3.10",
+  "checks": {
+    "contract_frozen": true,
+    "authority_present": true,
+    "caps_set": true,
+    "criteria_sha_matches": true,
+    "verdict_matches_rule": true,
+    "dose_accuracy_matches_recompute": true,
+    "dose_correct_matches_recompute": true,
+    "restore_next_loss_equal": true,
+    "ledger_recompute_flag": true,
+    "collapse_fact_consistent": true,
+    "no_capability_claims": true,
+    "no_sealed_reads": true,
+    "wall_within_cap": true
+  },
+  "red_drills": {
+    "tamper_verdict": true,
+    "tamper_accuracy": true,
+    "claim_capability": true,
+    "deny_restore": true
+  },
+  "real_file_drill": {
+    "performed": true,
+    "red_checks": [
+      "collapse_fact_consistent",
+      "dose_correct_matches_recompute"
+    ],
+    "restored_byte_exact": true,
+    "green_after_restore": true
+  },
+  "recomputed": {
+    "64": {
+      "accuracy": 0.0,
+      "correct": 0,
+      "distinct_outputs": 1,
+      "modal_count": 32,
+      "modal_bytes": "e8b897e8b897e8b897e8b897e8b897e8b897e8b897e8b897e8b897e8b897e8b897e8b897e8b897e8b897e8b897e8b897e8b897e8b897e8b897e8b897e8b897",
+      "modal_target_matches": 0
+    },
+    "256": {
+      "accuracy": 0.0,
+      "correct": 0,
+      "distinct_outputs": 1,
+      "modal_count": 32,
+      "modal_bytes": "",
+      "modal_target_matches": 0
+    },
+    "768": {
+      "accuracy": 0.25,
+      "correct": 8,
+      "distinct_outputs": 1,
+      "modal_count": 32,
+      "modal_bytes": "e5b7a6e8beb9",
+      "modal_target_matches": 8
+    },
+    "1844": {
+      "accuracy": 0.25,
+      "correct": 8,
+      "distinct_outputs": 1,
+      "modal_count": 32,
+      "modal_bytes": "e58fb3e8beb9",
+      "modal_target_matches": 8
+    }
+  },
+  "verdict": "pass",
+  "failed": [],
+  "run_conditions": {
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "discipline": {
+    "training_runs": 0,
+    "optimizer_calls": 0,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "measured": {
+    "cpu_seconds": 13.53125,
+    "wall_seconds": 14.511346
+  }
+}

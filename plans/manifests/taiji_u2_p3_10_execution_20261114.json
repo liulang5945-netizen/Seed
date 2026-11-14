@@ -1,6 +1,6 @@
 {
   "schema": "taiji-u2-p3-10-contract-v1",
-  "status": "pricing",
+  "status": "frozen",
   "card": "22.5.P3.10",
   "date": "2026-11-14",
   "candidate": {
@@ -101,7 +101,7 @@
   "design_cap_cpu": 3300.0,
   "cpu_cap": 615.192,
   "wall_cap": 1230.384,
-  "training_authority": null,
+  "training_authority": "owner:chat:2026-11-14#authorize-p3-10-dose-curve",
   "criteria": {
     "gate": 0.8,
     "flat_delta": 0.05,
@@ -124,7 +124,7 @@
   },
   "criteria_sha256": "0450c5e213329a9fe866a7c24162f89adfa414ab89736e68e4f7037fff3ea24f",
   "source_pins": {
-    "runner": "f5db0151facf9729344254348b031266ac6eeb960f59e09fde926965893e3ff5",
+    "runner": "39639ccd8bf54e83d08e6d9dc898a2fffec97d7a4e89ef3f7296cfbaadd43232",
     "support": "33d9301f98859934c1413e25765c55e6bc7b64dfa410d65b03f0e5a198041b4c"
   },
   "note": "pricing stage only; run requires status=frozen plus a non-empty owner training authority and a measured cpu_cap",
@@ -152,5 +152,26 @@
     "variance_note": "two probes differ by ~19 percent under system load; probe 1 report was overwritten by probe 2, both values preserved here",
     "report": "reports/taiji_u2_p3_10_price_20261114.json"
   },
-  "freeze_note": "caps measured by the pricing probe; status stays pricing and training_authority stays null until the owner grants the run"
+  "freeze_note": "caps measured by the pricing probe; status stays pricing and training_authority stays null until the owner grants the run",
+  "authorization": {
+    "asked": "是否授权现在执行 P3.10 剂量曲线（上限 615.192 CPU / 1,230.384 wall）",
+    "reply": "授权",
+    "scope": "single-seed native dose curve on train64/fit32; 0 check/final/confirm",
+    "note": "user replied to the priced yes/no; not a verbatim long-form grant"
+  },
+  "revision": 2,
+  "amendment": {
+    "reason": "run v1 trained all 1844 updates and wrote four bundles, then failed in the controls call because evaluate() was missing its model argument",
+    "change": "controls call fixed; resume mode added that recomputes every dose from its bundle and completes controls plus restore",
+    "unchanged": [
+      "criteria",
+      "criteria_sha256",
+      "dose_points",
+      "cpu_cap",
+      "wall_cap",
+      "training_authority",
+      "data_digest"
+    ],
+    "cost_note": "v1 training is reused, not repeated; total stays inside the authorized cap"
+  }
 }

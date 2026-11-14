@@ -1,0 +1,97 @@
+{
+  "schema": "taiji-u2-p3-10-curve-v1",
+  "date": "2026-11-14",
+  "card": "22.5.P3.10",
+  "phase": "dose_curve",
+  "verdict": "inconclusive_curve",
+  "gate": 0.8,
+  "flat_delta": 0.05,
+  "assembled_from": "ledger plus independent bundle recomputation; resume mode, no training",
+  "doses": [
+    {
+      "update": 64,
+      "correct": 0,
+      "denominator": 32,
+      "accuracy": 0.0,
+      "ledger_correct": 0,
+      "matches_ledger": true,
+      "next_loss": 3.609162331,
+      "bundle_digest": "6a8a76ac0d0378dbf6d1a5966ae2df12340ba88a097b2f3805e439ca67015c73"
+    },
+    {
+      "update": 256,
+      "correct": 0,
+      "denominator": 32,
+      "accuracy": 0.0,
+      "ledger_correct": 0,
+      "matches_ledger": true,
+      "next_loss": 2.071352005,
+      "bundle_digest": "e461824a9837afbc083e00b799e61d860b91eeb9cd185fdf337d6d4d76f777a1"
+    },
+    {
+      "update": 768,
+      "correct": 8,
+      "denominator": 32,
+      "accuracy": 0.25,
+      "ledger_correct": 8,
+      "matches_ledger": true,
+      "next_loss": 1.10902071,
+      "bundle_digest": "d284abfaf57fa751eeae48cda57e20abd4d51b4b54f50bd814befad6e4466953"
+    },
+    {
+      "update": 1844,
+      "correct": 8,
+      "denominator": 32,
+      "accuracy": 0.25,
+      "ledger_correct": 8,
+      "matches_ledger": true,
+      "next_loss": 0.361442208,
+      "bundle_digest": "96bc0d2174c5acadd174bc92913f992145439656d831809d637355ae1d185993"
+    }
+  ],
+  "zero": {
+    "correct": 0,
+    "denominator": 32,
+    "accuracy": 0.0
+  },
+  "dose_recompute_matches_ledger": true,
+  "controls": {
+    "rgb_zero_correct": 8,
+    "rgb_zero_accuracy": 0.25,
+    "rgb_zero_agreement_with_final": 1.0,
+    "fixed_question_agreement_with_final": 1.0,
+    "fixed_question_text": "蓝色圆片现在在哪里？",
+    "control_cpu": 2.75
+  },
+  "restore": {
+    "returncode": 0,
+    "stdout": "{\"next_loss\": 0.361442208, \"expected\": 0.361442208, \"next_loss_equal\": true, \"update\": 1844, \"cursor\": 3688}",
+    "stderr": "",
+    "next_loss_equal": true,
+    "next_loss": 0.361442208
+  },
+  "training_authority": "owner:chat:2026-11-14#authorize-p3-10-dose-curve",
+  "cost": {
+    "resume_cpu": 16.8125,
+    "resume_wall": 24.542312,
+    "dose_eval_save_cpu_sum": 12.6875,
+    "training_cpu_instrumented": false,
+    "wall_seconds_from_artifacts": 422.475,
+    "cap_cpu": 615.192,
+    "cap_wall": 1230.384
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "capability_claims": 0,
+    "gate_values_changed": 0
+  },
+  "run_conditions": {
+    "device": "cpu",
+    "dtype": "torch.float32",
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "scope": "single-seed dose curve on synthetic legal inputs; no natural-language, no project task, no capability claim"
+}

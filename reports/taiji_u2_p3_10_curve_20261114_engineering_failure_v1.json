@@ -1,0 +1,14 @@
+{
+  "schema": "taiji-u2-p3-10-curve-v1",
+  "date": "2026-11-14",
+  "card": "22.5.P3.10",
+  "phase": "dose_curve",
+  "verdict": "engineering_failure",
+  "error": "TypeError: evaluate() missing 1 required positional argument: 'examples'",
+  "training_authority": "owner:chat:2026-11-14#authorize-p3-10-dose-curve",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0
+  }
+}
