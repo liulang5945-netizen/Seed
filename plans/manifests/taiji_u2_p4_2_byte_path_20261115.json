@@ -87,7 +87,7 @@
   ],
   "emission_scalar_count": 3919,
   "frozen_scope": "every parameter not listed in emission_parameters, including the whole rgb encoder, binding, native recurrence and decoders",
-  "gradient_scope": "prepared states and per-byte state evolution are constants; the byte loss trains only the emission read of those constants",
+  "gradient_scope": "prepared states and per-byte state evolution are constants; the byte loss trains only the emission read of those constants; feedback updates act on the same declared emission set",
   "observation_rule": "same packet, same pixel values: rgb patches [16,48] regrouped to columns [16,48] with column coordinates; audio and proprio unchanged",
   "criteria": {
     "response_round": "exact answer bytes plus EOS plus valid UTF-8, greedy, 65-byte cap",
@@ -196,7 +196,7 @@
     "support": "33d9301f98859934c1413e25765c55e6bc7b64dfa410d65b03f0e5a198041b4c",
     "column_pathway": "4afb7c94a0641f6f5eb943339d19f13c8f690ddcf6956bc6787cba5aa4653476",
     "subject": "01d54b472e6cc99728ca45b94aeb556148498081ce1128cf28f8bed2d8784025",
-    "runner": "9b21f0eb89da576b7924cbc88519d08af661c40887fc203d2603209111e64ab3"
+    "runner": "e0e40a8cdbe78795b65a314a36f5bb383297313aea6d419d3f8748f62feb8c51"
   },
   "training_authority": null,
   "note": "pre-registration and price frozen; the run needs owner authority; no optimizer step has been taken under this contract",

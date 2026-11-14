@@ -295,6 +295,15 @@ def main() -> int:
         )
         run_checks.append(
             check(
+                "run_learned_checkpoint_present",
+                isinstance(rows.get("learned_sha256"), str)
+                and len(rows["learned_sha256"]) == 64
+                and Path(rows.get("learned_checkpoint", "")).exists(),
+                [rows.get("learned_checkpoint"), rows.get("learned_sha256")],
+            )
+        )
+        run_checks.append(
+            check(
                 "run_gate_table_complete",
                 set(report["gate_table"]) == GATES,
                 sorted(report["gate_table"]),

@@ -3800,5 +3800,5 @@ P2冻结同图像不同实体、正确答案相同的输入差分目标，逐例
 
 **唯一的下一步（是非题）**：是否授权执行 22.5.P4.2（重建 + 两阶段 + 纠正/恢复，帽 3960 CPU／7920 wall）。授权后一次跑完；未授权不训练。
 
-**预运行补记（2026-11-15，0 训练）**：守卫 [`verify_p4_2_20261115.py`](../../scripts/training/verify_p4_2_20261115.py) **16 项全绿、5 项红方向全响**；缓存回放在 3 个位置与主体自己 `output()` 的 log-prob 一致（最大差 5e-7，约 2 ulp）。两处实现修正：①梯度支撑检查必须重算"byte-side − upstream"，只查 byte-side 会把 action／background／convolutions 等"读状态"参数误判为多余；②陈旧缓存红方向用编码器权重 +0.5（+0.05 只产生 1e-6 级差、被容差吞掉）。run 报告补 `control_updates=0` 与对照前后 state digest，判据／剂量／帽不变，runner pin `75d196dc…`→`9b21f0eb…`。run 回执尚未存在，守卫 `run_state=run_not_present`。
+**预运行补记（2026-11-15，0 训练）**：守卫 [`verify_p4_2_20261115.py`](../../scripts/training/verify_p4_2_20261115.py) **16 项全绿、5 项红方向全响**；缓存回放在 3 个位置与主体自己 `output()` 的 log-prob 一致（最大差 5e-7，约 2 ulp）。三处实现修正：①梯度支撑检查必须重算"byte-side − upstream"，只查 byte-side 会把 action／background／convolutions 等"读状态"参数误判为多余；②陈旧缓存红方向用编码器权重 +0.5（+0.05 只产生 1e-6 级差、被容差吞掉）；③纠正副本另存 `feedback-learned.pt` 并记 sha256，使纠正读数可复核。run 报告补 `control_updates=0` 与对照前后 state digest，判据／剂量／帽不变，runner pin `75d196dc…`→`e0e40a8c…`。run 回执尚未存在，守卫 `run_state=run_not_present`。
 

@@ -825,6 +825,15 @@ def run(contract: dict) -> int:
     correction = corrected / len(errors) if len(errors) >= 4 else None
     gain = learned_second["accuracy"] - control_second["accuracy"] if len(errors) >= 4 else None
     stable = [row["id"] for row in first["rows"] if row["correct"] and not learned_hits[row["id"]]]
+    learned_path = root / "feedback-learned.pt"
+    learned_digest = save_checkpoint(
+        learned_path,
+        {
+            "model": {k: v.detach().clone() for k, v in learned.state_dict().items()},
+            "update": "feedback",
+            "revision": learned.parameter_revision,
+        },
+    )
 
     final_path = root / "final.pt"
     final_digest = save_checkpoint(
@@ -908,6 +917,8 @@ def run(contract: dict) -> int:
             "feedback_updates": feedback_updates,
             "control_updates": 0,
             "control_state_unchanged": control_before == control_after,
+            "learned_checkpoint": str(learned_path),
+            "learned_sha256": learned_digest,
             "stability_losses": len(stable),
         },
         "recovery": {"equal_in_process": recovery_equal, "final_sha256": final_digest},

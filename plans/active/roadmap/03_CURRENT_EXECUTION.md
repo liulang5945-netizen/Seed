@@ -3547,4 +3547,4 @@ P4.1 被两个会话各执行一次：会话乙已在 `d5aa1fc12` 结案（B 臂
 
 **状态**：预注册与实价已冻结，`training_authority=null`，**未申请放行、未训练**。唯一后继：请求 owner 授权执行 P4.2。
 
-**守卫预检（2026-11-15，0 训练）**：[`verify_p4_2_20261115.py`](../../../scripts/training/verify_p4_2_20261115.py) **16 项检查全绿、5 项红方向全响**（错符号→回放不符、换编码器权重的陈旧缓存→回放不符、列序置换→往返失败、声称父→拒、pin 篡改→拒）；缓存回放在 3 个位置与主体自己 `output()` 的 log-prob 一致（最大差 5e-7，约 2 ulp）。run 回执尚未存在，`run_state=run_not_present`、`run_checks=0`。预运行补记一处：run 报告新增 `control_updates=0` 与对照前后 state digest，判据／剂量／帽不变（manifest `implementation_facts` 第 2 条，runner pin `75d196dc…`→`9b21f0eb…`）。
+**守卫预检（2026-11-15，0 训练）**：[`verify_p4_2_20261115.py`](../../../scripts/training/verify_p4_2_20261115.py) **16 项检查全绿、5 项红方向全响**（错符号→回放不符、换编码器权重的陈旧缓存→回放不符、列序置换→往返失败、声称父→拒、pin 篡改→拒）；缓存回放在 3 个位置与主体自己 `output()` 的 log-prob 一致（最大差 5e-7，约 2 ulp）。run 回执尚未存在，`run_state=run_not_present`、`run_checks=0`。预运行补记两处：①run 报告新增 `control_updates=0` 与对照前后 state digest；②纠正副本另存 `feedback-learned.pt` 并记 sha256（纠正读数必须能从 checkpoint 复核）；判据／剂量／帽不变（manifest `implementation_facts`，runner pin `75d196dc…`→`e0e40a8c…`）。
