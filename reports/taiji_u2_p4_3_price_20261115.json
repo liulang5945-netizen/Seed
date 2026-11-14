@@ -1,0 +1,40 @@
+{
+  "schema": "taiji-u2-p4-3-price-v1",
+  "card": "22.5.P4.3",
+  "date": "2026-11-15",
+  "measurements": {
+    "per_read_update_cpu": 0.4375,
+    "per_byte_update_cpu": 0.015625,
+    "per_cache_position_cpu": 0.008929,
+    "per_fit_round_evaluate_cpu": 1.609375,
+    "read_samples": [
+      0.4375,
+      0.4375,
+      0.421875
+    ],
+    "byte_samples": [
+      0.015625,
+      0.015625,
+      0.015625
+    ]
+  },
+  "estimate": {
+    "read_curve_cpu": 1613.5,
+    "byte_curve_cpu": 28.8125,
+    "cache_cpu": 18.0,
+    "evaluation_cpu": 16.09375,
+    "feedback_reserve_cpu": 40.0,
+    "margin_cpu": 6.0,
+    "cap_cpu": 1981.0
+  },
+  "measured": {
+    "cpu_seconds": 8.703125,
+    "wall_seconds": 9.450889
+  },
+  "discipline": {
+    "optimizer_calls": 9,
+    "checkpoints": 0,
+    "check_reads": 0
+  },
+  "note": "in-memory timing steps; nothing is saved apart from this receipt"
+}
