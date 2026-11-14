@@ -19,8 +19,8 @@
   "date": "2026-11-14",
   "failed": [],
   "measured": {
-    "cpu_seconds": 0.015625,
-    "wall_seconds": 0.022967
+    "cpu_seconds": 0.0,
+    "wall_seconds": 0.02445
   },
   "real_file_drill": {
     "green_after_restore": true,

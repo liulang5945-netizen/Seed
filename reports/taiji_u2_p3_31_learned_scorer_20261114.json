@@ -1,0 +1,86 @@
+{
+  "schema": "taiji-u2-p3-31-learned-scorer-v1",
+  "date": "2026-11-14",
+  "card": "22.5.P3.31",
+  "phase": "learned_token_scorer",
+  "verdict": "column_tokens_insufficient_under_learned_scorer",
+  "doses": [
+    {
+      "update": 1844,
+      "train_accuracy": 0.515625,
+      "fit_accuracy": 0.40625,
+      "train_correct": 132,
+      "fit_correct": 13,
+      "colour_accuracy_train": 0.8671875,
+      "colour_accuracy_fit": 0.8125,
+      "centroid_column_hits_fit": 4,
+      "centroid_column_total_fit": 24,
+      "abstain_on_unknown_fit": 1,
+      "abstain_on_other_fit": 3,
+      "cpu": 0.109375
+    },
+    {
+      "update": 3688,
+      "train_accuracy": 0.57421875,
+      "fit_accuracy": 0.4375,
+      "train_correct": 147,
+      "fit_correct": 14,
+      "colour_accuracy_train": 0.8671875,
+      "colour_accuracy_fit": 0.8125,
+      "centroid_column_hits_fit": 7,
+      "centroid_column_total_fit": 24,
+      "abstain_on_unknown_fit": 2,
+      "abstain_on_other_fit": 3,
+      "cpu": 0.09375
+    },
+    {
+      "update": 7376,
+      "train_accuracy": 0.6328125,
+      "fit_accuracy": 0.34375,
+      "train_correct": 162,
+      "fit_correct": 11,
+      "colour_accuracy_train": 0.8671875,
+      "colour_accuracy_fit": 0.8125,
+      "centroid_column_hits_fit": 7,
+      "centroid_column_total_fit": 24,
+      "abstain_on_unknown_fit": 1,
+      "abstain_on_other_fit": 4,
+      "cpu": 0.09375
+    }
+  ],
+  "trainable_parameters": 112,
+  "scorer_weight_norm": 19.214243,
+  "abstain_bias": -0.520917,
+  "batch": 8,
+  "optimizer": {
+    "lr": 0.01,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "weight_decay": 0.0
+  },
+  "control_arms": {
+    "p3_30_fixed_geometry": "same tokens, fixed prototype distance: fit 0.3125, colour 0.8125",
+    "p3_28_pixels": "same readout on raw pixels: fit 0.9688, colour 1.000"
+  },
+  "training_authority": "owner:chat:2026-11-14#跑",
+  "cost": {
+    "total_cpu": 47.90625,
+    "total_wall": 48.172296,
+    "cap_cpu": 70.0,
+    "cap_wall": 200.0
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "capability_claims": 0
+  },
+  "run_conditions": {
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "scope": "geometry control for P3.30; features are the body's own [16, 8] column tokens, each colour gets a learned linear scorer instead of a fixed prototype distance; U2 body frozen; no capability claim"
+}
