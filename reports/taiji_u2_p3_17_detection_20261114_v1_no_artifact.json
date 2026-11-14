@@ -1,0 +1,83 @@
+{
+  "schema": "taiji-u2-p3-17-detection-v1",
+  "date": "2026-11-14",
+  "card": "22.5.P3.17",
+  "phase": "detector",
+  "verdict": "detector_learns_task_split_blocks",
+  "doses": [
+    {
+      "update": 64,
+      "train_accuracy": 0.421875,
+      "fit_accuracy": 0.28125,
+      "train_correct": 27,
+      "fit_correct": 9,
+      "attention_entropy_train": 2.772546,
+      "attention_entropy_fit": 2.772548,
+      "cpu": 0.03125
+    },
+    {
+      "update": 256,
+      "train_accuracy": 0.71875,
+      "fit_accuracy": 0.28125,
+      "train_correct": 46,
+      "fit_correct": 9,
+      "attention_entropy_train": 0.733297,
+      "attention_entropy_fit": 0.763258,
+      "cpu": 0.015625
+    },
+    {
+      "update": 768,
+      "train_accuracy": 0.984375,
+      "fit_accuracy": 0.28125,
+      "train_correct": 63,
+      "fit_correct": 9,
+      "attention_entropy_train": 0.228755,
+      "attention_entropy_fit": 0.313711,
+      "cpu": 0.03125
+    },
+    {
+      "update": 1844,
+      "train_accuracy": 1.0,
+      "fit_accuracy": 0.25,
+      "train_correct": 64,
+      "fit_correct": 8,
+      "attention_entropy_train": 0.093056,
+      "attention_entropy_fit": 0.225788,
+      "cpu": 0.03125
+    }
+  ],
+  "trainable_parameters": 588,
+  "module_parameters": 196,
+  "batch": 8,
+  "optimizer": {
+    "lr": 0.01,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "weight_decay": 0.0
+  },
+  "control_arms": {
+    "plain_adam": "P3.10 byte fit 0/0/0.25/0.25",
+    "encoder_supervision": "P3.16 head train 0.25->0.39, no transfer"
+  },
+  "training_authority": "owner:chat:2026-11-14#continue",
+  "cost": {
+    "total_cpu": 10.9375,
+    "total_wall": 11.242338,
+    "cap_cpu": 60.0,
+    "cap_wall": 300.0
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "capability_claims": 0
+  },
+  "run_conditions": {
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "scope": "isolated detector only; byte path not wired and not evaluated; no capability claim"
+}

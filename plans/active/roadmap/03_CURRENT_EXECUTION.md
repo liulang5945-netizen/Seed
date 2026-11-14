@@ -3342,3 +3342,13 @@ owner 本轮重述[根需求 §2.1](../TAIJI_CORE_REQUIREMENTS.md#21-统一目�
 **唯一后继**：22.5.P3.17 结构卡——**查询条件的逐 patch 检测**（`score=(W_q·查询)·(W_p·patch)`，16 patch 归一化；位置由 patch 索引给出），把「找对象」与「读位置」拆开；结构改动需新身份、对照与定价，**先写设计卡再定价**，不直接开跑。若该结构下 train 过 0.80 而 fit 不过，优先修任务切分（3 对象 vs 1–2 对象），不再改结构。
 
 **P3.17 设计稿已出**：[SPEC](../../reference/SPEC-TAIJI_U2_P3_17_DETECTION_DRAFT_20261114.md)（[设计·待准入]）——零初始化查询条件 patch 注意力（约 200 参数）＋4 条出口（`conjunction_expressed`／`structure_learns_task_split_blocks`／`structure_insufficient`／`inconclusive_patch_attention`）＋预算估计约 580 CPU。**前置核验已完成**：六个颜色名的请求嵌入可分（两两平均距离 0.0229、逐维 std 0.0069），注意力有可学的查询信号，但弱。实现、定价、冻结均未做。
+
+## 2026-11-14 22.5.P3.17 查询条件 patch 检测（`detector_learns_task_split_blocks`，全线首个训练侧满分）
+
+[设计稿](../../reference/SPEC-TAIJI_U2_P3_17_DETECTION_DRAFT_20261114.md) 实现后按隔离范围执行（只训 rgb 编码器＋注意力模块，588 参数，其余冻结；字节路径不接线、不评估）。契约 rev3（`f883e318…`、帽 60 CPU），产出[结果卡](../../reference/RESULT-TAIJI_U2_P3_17_DETECTOR_20261114.md)、[报告](../../../reports/taiji_u2_p3_17_detection_20261114.json)、[守卫](../../../reports/taiji_u2_p3_17_guard_20261114.json)。
+
+**读数**：1844 步后 **train 64/64＝1.000**、fit 9/32＝0.281；注意力熵 2.77→0.159（train）／0.118（fit）。出口 `detector_learns_task_split_blocks`：**结构能表达合取**（训练侧首次到 0.80 门），失败在迁移；fit 注意力同样锐利但看错地方，最可疑是切分（train 1–2 对象、fit 3 对象）。成本 **10.828 CPU／11.27 wall**，比此前各卡便宜两个数量级。
+
+**两次工程修正（产物保留）**：v1 训练后未保存检测器产物 ⇒ `_v1_no_artifact`；v2 补存后读数变化（fit 8/32→12/32），根因是模块初始权重取自全局 RNG ⇒ v3 加 `torch.manual_seed(candidate.seed)`，判据／剂量／帽／授权未动，v2 保留 `_v2_unseeded*`；三次运行 train 恒 1.000、fit 8／12／9 均在机会附近，结论稳定。
+
+**唯一后继**：22.5.P3.18 切分匹配——用同一 `generate_examples` 让 train 也含 3 对象（或 train 覆盖 1–3、fit 只在 3 对象留出），重冻 `data_digest`，重训同一检测器（约 11 CPU）；判据 fit ≥0.80 → `task_learned_under_matched_split`，fit ≤0.35 → `detector_fails_matched_split`，其间 `inconclusive_split`。不覆盖旧 `data.bin`、不扩容、不改门值。

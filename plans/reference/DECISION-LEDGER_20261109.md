@@ -3553,3 +3553,17 @@ P2冻结同图像不同实体、正确答案相同的输入差分目标，逐例
 **成本**：346.734375 CPU／347.96 wall（帽内）；0 封存读取、0 能力声称。
 
 **唯一后继**：22.5.P3.17 结构卡——查询条件的逐 patch 检测（`score=(W_q·查询)·(W_p·patch)`，16 patch 归一化；位置由 patch 索引给出），把「找对象」与「读位置」拆开；新身份、对照与定价，先设计卡再定价。若 train 过 0.80 而 fit 不过，优先修任务切分（3 对象 vs 1–2 对象），不再改结构。
+
+## D-20261114-12 — P3.17 检测器：训练侧首次满分，失败在切分不在结构
+
+取证基线 `dcfaede33`。[设计稿](SPEC-TAIJI_U2_P3_17_DETECTION_DRAFT_20261114.md) 实现后按**隔离范围**执行：只训 rgb 编码器＋查询条件 patch 注意力（588 参数），其余 193 张量冻结，**字节路径不接线、不评估**。契约 [P3.17](../manifests/taiji_u2_p3_17_detection_20261114.json) rev3（`criteria_sha256=f883e318…`、帽 60 CPU／300 wall）。
+
+**读数**（[报告](../../reports/taiji_u2_p3_17_detection_20261114.json)）：1844 步后 **train 64/64＝1.000**、**fit 9/32＝0.281**；注意力熵 2.773→0.159（train）／0.118（fit）。出口 `detector_learns_task_split_blocks`。
+
+**判读**：①**结构能表达合取**——训练侧首次到 0.80 门，说明 P3.10–P3.16 的 0.39 天花板是**池化表示**的上限，不是任务上限；②不是优化问题——1844 步单调到 1.000、注意力同步锐化；③失败在**迁移**——fit 注意力同样锐利却看错地方，最可疑是切分（train 1–2 对象、fit 3 对象）。
+
+**两次工程修正（产物保留）**：v1 未保存检测器产物 ⇒ `_v1_no_artifact`；v2 补存后读数变化（fit 8/32→12/32），根因是模块初始权重取全局 RNG；v3 加 `torch.manual_seed(candidate.seed)`，判据／剂量／帽／授权未动，v2 保留 `_v2_unseeded*`。三次运行 train 恒 1.000、fit 8／12／9 均近机会，结论稳定。
+
+**成本**：10.828125 CPU／11.27 wall（帽内），比此前各卡便宜两个数量级。
+
+**唯一后继**：22.5.P3.18 切分匹配——同一 `generate_examples` 让 train 也含 3 对象（或覆盖 1–3、fit 只在 3 对象留出），重冻 `data_digest`、不覆盖旧 `data.bin`，重训同一检测器（约 11 CPU）；出口 `task_learned_under_matched_split`／`detector_fails_matched_split`／`inconclusive_split`。不扩容、不改门值、不放行 22.6／22.7。
