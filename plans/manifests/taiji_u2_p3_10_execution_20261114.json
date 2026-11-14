@@ -1,0 +1,156 @@
+{
+  "schema": "taiji-u2-p3-10-contract-v1",
+  "status": "pricing",
+  "card": "22.5.P3.10",
+  "date": "2026-11-14",
+  "candidate": {
+    "architecture": "native",
+    "parameters": 22742,
+    "tensors": 194,
+    "seed": 20261110
+  },
+  "data_root": "data/experiments/taiji_u2/first_a/20261112T074836Z/data.bin",
+  "data_digest": "40813b4cc8ffec0c3ae5639941b373c139422b4ccbaa34790de34a9e1149d214",
+  "order": [
+    11,
+    57,
+    30,
+    12,
+    44,
+    19,
+    15,
+    18,
+    54,
+    41,
+    61,
+    17,
+    13,
+    49,
+    1,
+    43,
+    26,
+    55,
+    27,
+    7,
+    56,
+    33,
+    16,
+    62,
+    50,
+    10,
+    22,
+    8,
+    14,
+    59,
+    31,
+    40,
+    39,
+    53,
+    38,
+    20,
+    48,
+    3,
+    9,
+    24,
+    2,
+    29,
+    37,
+    4,
+    46,
+    23,
+    45,
+    25,
+    21,
+    36,
+    42,
+    6,
+    47,
+    32,
+    58,
+    63,
+    51,
+    0,
+    5,
+    35,
+    28,
+    52,
+    60,
+    34
+  ],
+  "optimizer": {
+    "lr": 0.001,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "weight_decay": 0.0
+  },
+  "dose_points": [
+    64,
+    256,
+    768,
+    1844
+  ],
+  "controls": {
+    "fixed_question": "蓝色圆片现在在哪里？",
+    "rgb_zero": true
+  },
+  "run_root": "data/experiments/taiji_u2/p3_10/20261114T1847Z",
+  "price_cap_cpu": 400.0,
+  "design_cap_cpu": 3300.0,
+  "cpu_cap": 615.192,
+  "wall_cap": 1230.384,
+  "training_authority": null,
+  "criteria": {
+    "gate": 0.8,
+    "flat_delta": 0.05,
+    "dose_points": [
+      64,
+      256,
+      768,
+      1844
+    ],
+    "exits": {
+      "C1": "dose_curve_measured",
+      "C2": "gate_dose_infeasible",
+      "C3": "recipe_scoped_flat",
+      "C4": "inconclusive_curve"
+    },
+    "rule": "C1 zero<gate<=acc256; C2 acc256<gate<=acc1844; C3 acc1844<gate and acc1844-acc64<flat_delta; else C4",
+    "gate_values_changed": 0,
+    "single_seed": 20261110,
+    "capability_claims": 0
+  },
+  "criteria_sha256": "0450c5e213329a9fe866a7c24162f89adfa414ab89736e68e4f7037fff3ea24f",
+  "source_pins": {
+    "runner": "cbdc31e944dd9643dca874e4226adbb0731642afaac1501f59b32260d5a9e887",
+    "support": "33d9301f98859934c1413e25765c55e6bc7b64dfa410d65b03f0e5a198041b4c"
+  },
+  "note": "pricing stage only; run requires status=frozen plus a non-empty owner training authority and a measured cpu_cap",
+  "price_report": "reports/taiji_u2_p3_10_price_20261114.json",
+  "price_measured": {
+    "probes": [
+      {
+        "index": 1,
+        "per_update_cpu": 0.21875,
+        "eval_cpu": 9.296875,
+        "curve_cpu": 468.453,
+        "cap_cpu": 515.298
+      },
+      {
+        "index": 2,
+        "per_update_cpu": 0.265625,
+        "eval_cpu": 9.921875,
+        "curve_cpu": 559.266,
+        "cap_cpu": 615.192
+      }
+    ],
+    "cap_policy": "take the higher probe times 1.1; cap_cpu is the conservative value",
+    "cap_cpu": 615.192,
+    "wall_cap": 1230.384,
+    "variance_note": "two probes differ by ~19 percent under system load; probe 1 report was overwritten by probe 2, both values preserved here",
+    "report": "reports/taiji_u2_p3_10_price_20261114.json"
+  },
+  "freeze_note": "caps measured by the pricing probe; status stays pricing and training_authority stays null until the owner grants the run"
+}

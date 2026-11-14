@@ -1,0 +1,58 @@
+{
+  "schema": "taiji-u2-p3-10-price-v1",
+  "date": "2026-11-14",
+  "card": "22.5.P3.10",
+  "phase": "price_probe",
+  "candidate": {
+    "architecture": "native",
+    "parameters": 22742,
+    "tensors": 194,
+    "seed": 20261110
+  },
+  "measurements": {
+    "updates": 3,
+    "per_update_cpu": [
+      0.296875,
+      0.25,
+      0.265625
+    ],
+    "per_update_cpu_median": 0.265625,
+    "losses": [
+      4.701831,
+      4.473139,
+      4.548445
+    ],
+    "eval_cpu": 9.921875,
+    "eval_correct": 0,
+    "eval_denominator": 32,
+    "eval_accuracy_at_zero": 0.0
+  },
+  "derived": {
+    "curve_updates": 1844,
+    "curve_evaluations": 7,
+    "curve_cpu_estimate": 559.266,
+    "cap_cpu": 615.192,
+    "cap_wall": 1230.384
+  },
+  "verdict": "price_measured",
+  "discipline": {
+    "checkpoints_written": 0,
+    "ledger_written": false,
+    "optimizer_calls": 3,
+    "new_parent": false,
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0
+  },
+  "run_conditions": {
+    "device": "cpu",
+    "dtype": "torch.float32",
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "scope": "pricing only; three in-memory Adam calls are discarded, no capability claim",
+  "measured": {
+    "cpu_seconds": 12.0,
+    "wall_seconds": 12.933273
+  }
+}

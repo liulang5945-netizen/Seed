@@ -3254,3 +3254,7 @@ owner 本轮重述[根需求 §2.1](../TAIJI_CORE_REQUIREMENTS.md#21-统一目�
 **设计稿已出**：[P3.10 设计·待准入](../../reference/SPEC-TAIJI_U2_P3_10_DOSE_CURVE_DRAFT_20261114.md)——唯一问题、候选与初态、剂量点 `{0,64,256,768,1844}`、四出口（`dose_curve_measured`／`gate_dose_infeasible`／`recipe_scoped_flat`／`inconclusive_curve`）与 `[60, 2481.7]` CPU 价格带齐备；**runner 与 manifest 未写、未冻结**，冻结前须清四维打分器、新初态身份、预检定价、是否加配方臂（默认不加）。本稿 0 计算、0 额度。
 
 **初态漂移实测（冻结前必须遵守）**：pilot `initial_v3.bin` 的四份源码 pin（`u2_operators`／`u2_history`／`u2_recovery`／`u2_learning_transaction`）在当前工作树全部漂移，`load_learner` 已 fail-closed 拒绝；按当前源码重算记录批次的 `next_loss` 得 **4.7018** vs 记录 **4.528439521789551**（差 **0.1734**）。⇒ pilot 初态**不得**复用为曲线 0 点，P3.10 改用当前冻源码的新初始化并重测 0 点；pilot 的 24 点只作历史背景。
+
+**P3.10 工程与定价（同日）**：[runner](../../../scripts/training/run_p3_10_22_5.py) 已写并钉源码哈希（文本模式哈希，CRLF 检出不改身份），含 `price`／`run`／`verify` 三模式；`run` 需 **status=frozen ＋ 非空 `training_authority` ＋ `cpu_cap`** 三道闸，缺一即拒。两次定价探针：**0.21875–0.265625 CPU/更新、9.30–9.92 CPU/评估** ⇒ 曲线 **468.453／559.266 CPU**，帽取较高值 **615.192／1,230.384 wall**，占 22.5 的 18,000 的 **3.4%**；0 点 0/32，每次 3 次内存 Adam 后即弃（0 checkpoint／0 ledger／0 新父），单次约 12 CPU／13 wall。契约 [manifest](../../manifests/taiji_u2_p3_10_execution_20261114.json) 现处 `pricing`、`training_authority=null`，**执行待 owner 授权**。
+
+**两处如实登记**：①两次探针相差约 **19%**（系统负载），帽按较高值取，不取均值；②**探针 1 的报告被探针 2 覆盖**（定价阶段未做 create-once），两个读数只能以契约里的 `price_measured.probes` 为机读来源——曲线报告已做 create-once，不会复发。
