@@ -1,0 +1,53 @@
+{
+  "schema": "taiji-u2-p3-19-guard-v1",
+  "date": "2026-11-14",
+  "card": "22.5.P3.19",
+  "checks": {
+    "contract_frozen": true,
+    "authority_present": true,
+    "criteria_sha_matches": true,
+    "verdict_matches_rule": true,
+    "final_readings_match_recompute": true,
+    "entropy_matches_recompute": true,
+    "module_parameters": true,
+    "cost_within_cap": true,
+    "no_capability_claims": true,
+    "no_sealed_reads": true
+  },
+  "red_drills": {
+    "tamper_verdict": true,
+    "tamper_fit": true,
+    "tamper_entropy": true,
+    "claim_capability": true
+  },
+  "real_file_drill": {
+    "performed": true,
+    "red_checks": [
+      "final_readings_match_recompute"
+    ],
+    "restored_byte_exact": true,
+    "green_after_restore": true
+  },
+  "recomputed": {
+    "train_correct": 187,
+    "train_accuracy": 0.73046875,
+    "fit_correct": 10,
+    "fit_accuracy": 0.3125,
+    "entropy_train": 0.040154,
+    "entropy_fit": 0.037926
+  },
+  "verdict": "pass",
+  "failed": [],
+  "run_conditions": {
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "discipline": {
+    "training_runs": 0,
+    "optimizer_calls": 0
+  },
+  "measured": {
+    "cpu_seconds": 0.1875,
+    "wall_seconds": 0.221108
+  }
+}

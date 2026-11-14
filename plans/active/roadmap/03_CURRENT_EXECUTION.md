@@ -3364,3 +3364,17 @@ owner 本轮重述[根需求 §2.1](../TAIJI_CORE_REQUIREMENTS.md#21-统一目�
 **成本**：11.0 CPU／11.23 wall（帽内）。
 
 **唯一后继**：22.5.P3.19 数据量——同一生成器产出 288 个 3 对象场景（train 256／fit 32，fit 与 P3.18 **同一批**），同检测器同 1844 步，成本约 45 CPU；判据 fit ≥0.55 → `data_volume_helps`，≤0.45 → `data_volume_does_not_help`，其间 `inconclusive_volume`。不扩容、不改门值。
+
+## 2026-11-14 22.5.P3.19 数据量（`data_volume_does_not_help`）
+
+数据：288 个 3 对象场景，train 256（＝P3.18 的 64＋192 新）、fit 32（与 P3.18 同一批），`data_digest=1dec5429…`（[回执](../../../reports/taiji_u2_p3_19_split_20261114.json)）。契约 [manifest](../../manifests/taiji_u2_p3_19_detection_20261114.json) rev2（`54aa0d5f…`、帽 90 CPU）。产出[结果卡](../../reference/RESULT-TAIJI_U2_P3_19_VOLUME_20261114.md)、[v2 报告](../../../reports/taiji_u2_p3_19_detection_20261114.json)、[v1 留存](../../../reports/taiji_u2_p3_19_detection_20261114_v1_undertrained.json)、[守卫](../../../reports/taiji_u2_p3_19_guard_20261114.json)。
+
+**读数（等轮数 7376 步＝230 轮）**：train **187/256＝0.730**、fit **10/32＝0.3125**，熵 0.040／0.038（极度锐利）。出口 `data_volume_does_not_help`。
+
+**一次设计缺陷**：v1 沿用 1844 步，对 256 场景只等于 58 轮（P3.18 是 230 轮），train 0.605 是训练不足，不能读成"数据无用"；rev2 延伸到 7376 步等轮数，判据／数据／模型／lr／授权未动，v1 保留 `_v1_undertrained`。
+
+**判读**：数据 ×4 后 fit 无改善（0.406→0.3125，在 ±0.08 噪声内），而 **train 从 1.000 跌到 0.730** ⇒ 588 个可训参数**装不下** 256 个场景，是**容量受限**而非数据受限。
+
+**成本**：v1 11.219＋v2 41.078 CPU（帽 90）。
+
+**唯一后继**：22.5.P3.20 容量——同一 256/32 数据、同 7376 步、同 lr，把 rgb 编码器 8→32 维（约 +1.5k 参数）、模块宽度随之为 32；判据 train ≥0.95 且 fit ≥0.55 → `capacity_helps`；train ≥0.95 且 fit ≤0.45 → `capacity_alone_insufficient`；train <0.95 → `capacity_still_insufficient`。**首次真正扩容**：新身份、同数据同剂量、只加宽度、不改门值、报参数量与成本差分。

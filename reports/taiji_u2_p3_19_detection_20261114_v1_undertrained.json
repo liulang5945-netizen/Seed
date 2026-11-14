@@ -1,0 +1,82 @@
+{
+  "schema": "taiji-u2-p3-19-split-v1",
+  "date": "2026-11-14",
+  "card": "22.5.P3.19",
+  "phase": "data_volume",
+  "verdict": "data_volume_does_not_help",
+  "doses": [
+    {
+      "update": 64,
+      "train_accuracy": 0.21484375,
+      "fit_accuracy": 0.25,
+      "train_correct": 55,
+      "fit_correct": 8,
+      "attention_entropy_train": 2.772575,
+      "attention_entropy_fit": 2.772574,
+      "cpu": 0.078125
+    },
+    {
+      "update": 256,
+      "train_accuracy": 0.31640625,
+      "fit_accuracy": 0.3125,
+      "train_correct": 81,
+      "fit_correct": 10,
+      "attention_entropy_train": 2.746664,
+      "attention_entropy_fit": 2.748893,
+      "cpu": 0.09375
+    },
+    {
+      "update": 768,
+      "train_accuracy": 0.484375,
+      "fit_accuracy": 0.3125,
+      "train_correct": 124,
+      "fit_correct": 10,
+      "attention_entropy_train": 0.545254,
+      "attention_entropy_fit": 0.584504,
+      "cpu": 0.078125
+    },
+    {
+      "update": 1844,
+      "train_accuracy": 0.60546875,
+      "fit_accuracy": 0.28125,
+      "train_correct": 155,
+      "fit_correct": 9,
+      "attention_entropy_train": 0.173659,
+      "attention_entropy_fit": 0.278587,
+      "cpu": 0.09375
+    }
+  ],
+  "trainable_parameters": 588,
+  "module_parameters": 196,
+  "batch": 8,
+  "optimizer": {
+    "lr": 0.01,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "weight_decay": 0.0
+  },
+  "control_arms": {
+    "p3_18": "train 256->64 scenes, fit 13/32 = 0.406"
+  },
+  "training_authority": "owner:chat:2026-11-14#continue",
+  "cost": {
+    "total_cpu": 11.21875,
+    "total_wall": 11.50092,
+    "cap_cpu": 60.0,
+    "cap_wall": 300.0
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "capability_claims": 0
+  },
+  "run_conditions": {
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "scope": "isolated detector only; byte path not wired and not evaluated; no capability claim"
+}
