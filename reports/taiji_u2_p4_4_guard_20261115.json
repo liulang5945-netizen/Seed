@@ -1,0 +1,122 @@
+{
+  "schema": "taiji-u2-p4-4-guard-v1",
+  "card": "22.5.P4.4",
+  "date": "2026-11-15",
+  "contract_sha256": "094414119775d7ab20a920354fe84c8cf73decc1d43f6b360183d23a981e1650",
+  "checks": [
+    {
+      "name": "contract_status_frozen",
+      "passed": true,
+      "evidence": "frozen"
+    },
+    {
+      "name": "source_pins_match",
+      "passed": true,
+      "evidence": {
+        "runner": "5463e570b8cd9ce6eefd727fe8ff747b1060848071bc46da2bccd549fc7172c1",
+        "p4_3_runner": "d289f9355c4bb595f4eb19cf2b5598a9c814653f0e52379394069a2efbbd65c9",
+        "p4_2_runner": "c479d90963cf3a21b43700115fc8c94f418b4a396a8526fadb5e8c3b322859ff",
+        "p4_1_runner": "fe722cb41b6149f4bf5a709c546ac5fc5b644e1b8f01da1e870ec1e6a6134877",
+        "support": "33d9301f98859934c1413e25765c55e6bc7b64dfa410d65b03f0e5a198041b4c",
+        "subject": "01d54b472e6cc99728ca45b94aeb556148498081ce1128cf28f8bed2d8784025"
+      }
+    },
+    {
+      "name": "criteria_sha256_matches",
+      "passed": true,
+      "evidence": "369b127b61e8b2e0dab3397dfe5311bda4432f7311ee663fbe9df3c2605f3471"
+    },
+    {
+      "name": "p4_1_bundle_matches",
+      "passed": true,
+      "evidence": "f670508850685cb8aa4e9ed385eb2f5997154524e606d1ab7cbfbd5230eb0f2f"
+    },
+    {
+      "name": "labels_are_visible_world_subsets",
+      "passed": true,
+      "evidence": [
+        288,
+        692
+      ]
+    },
+    {
+      "name": "training_authority_recorded",
+      "passed": true,
+      "evidence": "owner:chat:2026-11-15#做，同意训练"
+    },
+    {
+      "name": "no_sealed_reads",
+      "passed": true,
+      "evidence": "check and final are not read"
+    },
+    {
+      "name": "parent_not_claimed",
+      "passed": true,
+      "evidence": "not_applicable_no_A_parent"
+    },
+    {
+      "name": "cache_replay_equals_body",
+      "passed": true,
+      "evidence": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  ],
+  "run_state": "run_present",
+  "run_checks": [
+    {
+      "name": "run_cost_within_cap",
+      "passed": true,
+      "evidence": [
+        1527.9375,
+        1900.0
+      ]
+    },
+    {
+      "name": "run_no_parent_claim",
+      "passed": true,
+      "evidence": {
+        "check_reads": 0,
+        "final_reads": 0,
+        "confirm_reads": 0,
+        "capability_claims": 0,
+        "accepted_parent": false
+      }
+    },
+    {
+      "name": "run_read_verdict_consistent",
+      "passed": true,
+      "evidence": [
+        "read_still_blind",
+        "failed"
+      ]
+    }
+  ],
+  "red_directions": [
+    {
+      "name": "parent_claim_fails",
+      "triggered": true
+    },
+    {
+      "name": "pin_tamper_fails",
+      "triggered": true
+    },
+    {
+      "name": "bundle_tamper_detected",
+      "triggered": true
+    },
+    {
+      "name": "extra_label_fails_subset",
+      "triggered": true
+    }
+  ],
+  "summary": {
+    "checks": 9,
+    "green": 9,
+    "red_defined": 4,
+    "red_triggered": 4,
+    "run_checks": 3
+  }
+}
