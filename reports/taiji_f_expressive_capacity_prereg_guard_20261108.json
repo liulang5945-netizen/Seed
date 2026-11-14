@@ -24,16 +24,16 @@
       "red_mutation_detected": true,
       "comparator": "all_identical(texts) == len(set(texts)) == 1, shared by both directions",
       "lengths": {
-        "MAINLINE.md": 163,
-        "MASTER-PLAN.md": 163,
-        "ROADMAP-NEXT_20261104.md": 163
+        "MAINLINE.md": 80,
+        "MASTER-PLAN.md": 80,
+        "ROADMAP-NEXT_20261104.md": 80
       },
       "sha256": {
-        "MAINLINE.md": "d61a79fe6f5fe8440b0d0861d80f4bbc7bcc3a36a93bd12b2838ba5e3eab1c0b",
-        "MASTER-PLAN.md": "d61a79fe6f5fe8440b0d0861d80f4bbc7bcc3a36a93bd12b2838ba5e3eab1c0b",
-        "ROADMAP-NEXT_20261104.md": "d61a79fe6f5fe8440b0d0861d80f4bbc7bcc3a36a93bd12b2838ba5e3eab1c0b"
+        "MAINLINE.md": "5e342063dc2d6abfd2f3c27f6893b32e183da2ce8f9b3a705650808467c49760",
+        "MASTER-PLAN.md": "5e342063dc2d6abfd2f3c27f6893b32e183da2ce8f9b3a705650808467c49760",
+        "ROADMAP-NEXT_20261104.md": "5e342063dc2d6abfd2f3c27f6893b32e183da2ce8f9b3a705650808467c49760"
       },
-      "headline": "包 21 已全局收束，唯一可对外能力仍为 C12；这是包 21 收束，不是 M 线或里程碑关闭。收束卡 §5 的下一轮唯一核心问题已由 owner 裁定为「先立零训练可表达性判据专项」，FEC-1 判据已冻结、待 owner 单独裁定执行；未裁决前不得再以训练剂量立项，21.2／21.4／U1 与各训练包保持冻结，不新开包。"
+      "headline": "22.5.P3.8.2b，将内容信用与参数验收机制迁移到原Native学习接口，核验双时钟、完整学习恢复及真实更新；首问参照已校准，Native A父仍未成立。"
     },
     "spec": {
       "green_spec_has_no_gate_literal": true,

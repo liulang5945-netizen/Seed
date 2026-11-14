@@ -56,3 +56,9 @@ P3.3通过后唯一转P3.4预注册。主比较沿当前有界自然中文A任�
 [正常主体回执](VALIDATION-TAIJI_U2_EVIDENCE_SUBJECT_20261112.md)已交付上述a–e。显式EvidenceSubject/EvidenceRuntime身份、新源/旧learner迁移、44字段、实际公开感知包目录、两次编码迁移与双精度6例独立接续通过。全部1,206个逐参数梯度条目及None模式一致，最大差0；必要回归108项通过。工程只签本夹具范围，0训练，任务能力未晋级。
 
 元数据有效位与时间语义在正常感知入口对齐，24token含完整RGB。目录撤销控制后续直接读取权限，历史H/F影响另由知识纠正任务验证。后续P3.4.1已[交付控制与四份研究父](VALIDATION-TAIJI_U2_EVIDENCE_PARENTS_20261112.md)，P3.4.2已[交付实价与新fit分区](VALIDATION-TAIJI_U2_EVIDENCE_PRICE_20261112.md)。工程/价格各预留180后，当前未分配16590 CPU。P3.4已[完整结案](CLOSEOUT-TAIJI_U2_EVIDENCE_LEARNING_20261112.md)，后续P3.6已[完整结案](CLOSEOUT-TAIJI_U2_TASK_GOAL_LEARNING_20261113.md)，P3.7亦已[全局结案](CLOSEOUT-TAIJI_U2_JOINT_LEARNING_20261113.md)，当前唯一后继见[P3.8学习校准](PLAN-TAIJI_U2_LEARNING_CALIBRATION_20261113.md)。
+
+## 判据、出口与验收（索引）
+
+本卡的冻结判据与出口分散在 §1（120 CPU 秒／240 wall、0 优化器更新、check/final 读取 0，越帽或异常按预算停止／工程失败结案，无扩样本重跑）、§2（归因规则）、§4（P3.1 结案与P3.2 单一修订选择）、§6（P3.3 交付与后继）。P2 四臂的 0.50 与相对增益 0.15 门及`intervention_not_supported` 出口按原合同保留；正式 A 父仍须 0.80、3 seed 与独立 check。
+
+**本节只作索引**：判据先落盘、跑完不改；成功／负结果／不可判／工程失败／预算停止按具名 `verdict` 结案，负结果与成本原值保留。本节不改上文任何门值、预算、父资格或结案含义，也不新增判据；上位口径见[执行包22](PLAN-TAIJI-CLOSED_LOOP_DEVELOPMENT_20261110.md)与[长期路线](PLAN-TAIJI-N_LONG_HORIZON_20261111.md)。
