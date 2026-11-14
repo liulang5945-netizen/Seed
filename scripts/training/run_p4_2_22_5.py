@@ -803,7 +803,9 @@ def run(contract: dict) -> int:
     first = round_evaluate(model, data["fit"], budget_guard=budget)
     errors = [row for row in first["rows"] if not row["correct"]]
     control = copy.deepcopy(model)
+    control_before = value_digest(control.state_dict())
     control_second = round_evaluate(control, data["fit"], budget_guard=budget)
+    control_after = value_digest(control.state_dict())
     learned = copy.deepcopy(model)
     feedback_optimizer = optimizer_for(learned.parameters(), contract["feedback_optimizer"])
     feedback_updates = 0
@@ -904,6 +906,8 @@ def run(contract: dict) -> int:
             "correction_rate": correction,
             "feedback_gain": gain,
             "feedback_updates": feedback_updates,
+            "control_updates": 0,
+            "control_state_unchanged": control_before == control_after,
             "stability_losses": len(stable),
         },
         "recovery": {"equal_in_process": recovery_equal, "final_sha256": final_digest},
