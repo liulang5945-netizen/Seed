@@ -1,0 +1,80 @@
+{
+  "schema": "taiji-u2-p4-1-guard-v1",
+  "card": "22.5.P4.1",
+  "verdict": "guard_passed",
+  "checks": {
+    "contract_frozen_and_authorized": true,
+    "criteria_sha256_matches": true,
+    "runner_pin_live": true,
+    "report_carries_the_frozen_criteria": true,
+    "two_arms_three_doses": true,
+    "arm_a_has_no_scaffold": true,
+    "arm_b_scaffold_is_63": true,
+    "arms_share_trainable_count": true,
+    "zero_capability_claims": true,
+    "no_sealed_reads": true,
+    "cost_within_cap": true,
+    "recompute_matches_every_row": true,
+    "verdict_matches_frozen_rule": true,
+    "arm_b_fit_passes_the_gate": true,
+    "verdict_is_contradicted_by_its_own_reading": true,
+    "arm_b_beats_arm_a_on_fit": true,
+    "probe_is_not_monotone": true,
+    "baseline_probe_published_with_floors": true
+  },
+  "drills": {
+    "inject_capability_claim": true,
+    "inflate_arm_b_fit": true,
+    "relabel_the_verdict": true,
+    "flatten_the_probe_dip": true,
+    "hide_the_scaffold": true,
+    "quote_overall_as_background": true
+  },
+  "failed": [],
+  "drills_not_firing": [],
+  "recomputed": {
+    "A-1844": {
+      "fit_correct": 12,
+      "train_correct": 154,
+      "colour_accuracy_fit": 0.59375,
+      "probe_painted": 0.39230769872665405,
+      "probe_overall": 0.6796875
+    },
+    "A-3688": {
+      "fit_correct": 15,
+      "train_correct": 187,
+      "colour_accuracy_fit": 0.8125,
+      "probe_painted": 0.4769230782985687,
+      "probe_overall": 0.70703125
+    },
+    "A-7376": {
+      "fit_correct": 17,
+      "train_correct": 201,
+      "colour_accuracy_fit": 0.8125,
+      "probe_painted": 0.5307692289352417,
+      "probe_overall": 0.71875
+    },
+    "B-1844": {
+      "fit_correct": 22,
+      "train_correct": 216,
+      "colour_accuracy_fit": 0.8125,
+      "probe_painted": 0.692307710647583,
+      "probe_overall": 0.767578125
+    },
+    "B-3688": {
+      "fit_correct": 25,
+      "train_correct": 228,
+      "colour_accuracy_fit": 0.8125,
+      "probe_painted": 0.6307692527770996,
+      "probe_overall": 0.755859375
+    },
+    "B-7376": {
+      "fit_correct": 29,
+      "train_correct": 252,
+      "colour_accuracy_fit": 1.0,
+      "probe_painted": 0.607692301273346,
+      "probe_overall": 0.75
+    }
+  },
+  "note": "the contradiction check is deliberate: the frozen rule labels this card encoder_cannot_carry_colour while arm B passes the fit gate"
+}

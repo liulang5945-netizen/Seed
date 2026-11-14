@@ -1,0 +1,296 @@
+{
+  "schema": "taiji-u2-p4-1-column-supervision-v1",
+  "date": "2026-11-14",
+  "card": "22.5.P4.1",
+  "phase": "column_supervision",
+  "verdict": "encoder_cannot_carry_colour",
+  "baseline_probe": {
+    "train": {
+      "overall": 0.686279296875,
+      "painted": 0.4000000059604645,
+      "background": 0.7818300127983093,
+      "painted_columns": 1025,
+      "background_columns": 3071,
+      "background_fraction": 0.749755859375,
+      "painted_majority": 0.21658536585365853
+    },
+    "fit": {
+      "overall": 0.67578125,
+      "painted": 0.3692307770252228,
+      "background": 0.7801046967506409,
+      "painted_columns": 130,
+      "background_columns": 382,
+      "background_fraction": 0.74609375,
+      "painted_majority": 0.2076923076923077
+    }
+  },
+  "arms": {
+    "A": {
+      "doses": [
+        {
+          "update": 1844,
+          "probe_train": {
+            "overall": 0.690673828125,
+            "painted": 0.47512194514274597,
+            "background": 0.7626180648803711,
+            "painted_columns": 1025,
+            "background_columns": 3071,
+            "background_fraction": 0.749755859375,
+            "painted_majority": 0.21658536585365853
+          },
+          "probe_fit": {
+            "overall": 0.6796875,
+            "painted": 0.39230769872665405,
+            "background": 0.7774869203567505,
+            "painted_columns": 130,
+            "background_columns": 382,
+            "background_fraction": 0.74609375,
+            "painted_majority": 0.2076923076923077
+          },
+          "probe_painted_fit": 0.39230769872665405,
+          "probe_overall_fit": 0.6796875,
+          "fit_accuracy": 0.375,
+          "train_accuracy": 0.6015625,
+          "fit_correct": 12,
+          "train_correct": 154,
+          "colour_accuracy_fit": 0.59375,
+          "colour_accuracy_train": 0.69140625,
+          "centroid_column_hits_fit": 8,
+          "centroid_column_total_fit": 24,
+          "abstain_on_unknown_fit": 0,
+          "abstain_on_other_fit": 3,
+          "cpu": 0.375
+        },
+        {
+          "update": 3688,
+          "probe_train": {
+            "overall": 0.722900390625,
+            "painted": 0.5424390435218811,
+            "background": 0.7831325531005859,
+            "painted_columns": 1025,
+            "background_columns": 3071,
+            "background_fraction": 0.749755859375,
+            "painted_majority": 0.21658536585365853
+          },
+          "probe_fit": {
+            "overall": 0.70703125,
+            "painted": 0.4769230782985687,
+            "background": 0.7853403091430664,
+            "painted_columns": 130,
+            "background_columns": 382,
+            "background_fraction": 0.74609375,
+            "painted_majority": 0.2076923076923077
+          },
+          "probe_painted_fit": 0.4769230782985687,
+          "probe_overall_fit": 0.70703125,
+          "fit_accuracy": 0.46875,
+          "train_accuracy": 0.73046875,
+          "fit_correct": 15,
+          "train_correct": 187,
+          "colour_accuracy_fit": 0.8125,
+          "colour_accuracy_train": 0.8671875,
+          "centroid_column_hits_fit": 8,
+          "centroid_column_total_fit": 24,
+          "abstain_on_unknown_fit": 3,
+          "abstain_on_other_fit": 4,
+          "cpu": 0.359375
+        },
+        {
+          "update": 7376,
+          "probe_train": {
+            "overall": 0.72998046875,
+            "painted": 0.6146341562271118,
+            "background": 0.7684793472290039,
+            "painted_columns": 1025,
+            "background_columns": 3071,
+            "background_fraction": 0.749755859375,
+            "painted_majority": 0.21658536585365853
+          },
+          "probe_fit": {
+            "overall": 0.71875,
+            "painted": 0.5307692289352417,
+            "background": 0.782722532749176,
+            "painted_columns": 130,
+            "background_columns": 382,
+            "background_fraction": 0.74609375,
+            "painted_majority": 0.2076923076923077
+          },
+          "probe_painted_fit": 0.5307692289352417,
+          "probe_overall_fit": 0.71875,
+          "fit_accuracy": 0.53125,
+          "train_accuracy": 0.78515625,
+          "fit_correct": 17,
+          "train_correct": 201,
+          "colour_accuracy_fit": 0.8125,
+          "colour_accuracy_train": 0.8671875,
+          "centroid_column_hits_fit": 7,
+          "centroid_column_total_fit": 24,
+          "abstain_on_unknown_fit": 4,
+          "abstain_on_other_fit": 5,
+          "cpu": 0.34375
+        }
+      ],
+      "trainable_parameters": 451,
+      "scaffold_parameters": 0
+    },
+    "B": {
+      "doses": [
+        {
+          "update": 1844,
+          "probe_train": {
+            "overall": 0.7724609375,
+            "painted": 0.7629268169403076,
+            "background": 0.7756431102752686,
+            "painted_columns": 1025,
+            "background_columns": 3071,
+            "background_fraction": 0.749755859375,
+            "painted_majority": 0.21658536585365853
+          },
+          "probe_fit": {
+            "overall": 0.767578125,
+            "painted": 0.692307710647583,
+            "background": 0.7931936979293823,
+            "painted_columns": 130,
+            "background_columns": 382,
+            "background_fraction": 0.74609375,
+            "painted_majority": 0.2076923076923077
+          },
+          "probe_painted_fit": 0.692307710647583,
+          "probe_overall_fit": 0.767578125,
+          "fit_accuracy": 0.6875,
+          "train_accuracy": 0.84375,
+          "fit_correct": 22,
+          "train_correct": 216,
+          "colour_accuracy_fit": 0.8125,
+          "colour_accuracy_train": 0.8671875,
+          "centroid_column_hits_fit": 14,
+          "centroid_column_total_fit": 24,
+          "abstain_on_unknown_fit": 5,
+          "abstain_on_other_fit": 3,
+          "cpu": 0.359375
+        },
+        {
+          "update": 3688,
+          "probe_train": {
+            "overall": 0.77587890625,
+            "painted": 0.7658536434173584,
+            "background": 0.7792249917984009,
+            "painted_columns": 1025,
+            "background_columns": 3071,
+            "background_fraction": 0.749755859375,
+            "painted_majority": 0.21658536585365853
+          },
+          "probe_fit": {
+            "overall": 0.755859375,
+            "painted": 0.6307692527770996,
+            "background": 0.7984293103218079,
+            "painted_columns": 130,
+            "background_columns": 382,
+            "background_fraction": 0.74609375,
+            "painted_majority": 0.2076923076923077
+          },
+          "probe_painted_fit": 0.6307692527770996,
+          "probe_overall_fit": 0.755859375,
+          "fit_accuracy": 0.78125,
+          "train_accuracy": 0.890625,
+          "fit_correct": 25,
+          "train_correct": 228,
+          "colour_accuracy_fit": 0.8125,
+          "colour_accuracy_train": 0.8671875,
+          "centroid_column_hits_fit": 15,
+          "centroid_column_total_fit": 24,
+          "abstain_on_unknown_fit": 5,
+          "abstain_on_other_fit": 1,
+          "cpu": 0.375
+        },
+        {
+          "update": 7376,
+          "probe_train": {
+            "overall": 0.77392578125,
+            "painted": 0.7463414669036865,
+            "background": 0.7831325531005859,
+            "painted_columns": 1025,
+            "background_columns": 3071,
+            "background_fraction": 0.749755859375,
+            "painted_majority": 0.21658536585365853
+          },
+          "probe_fit": {
+            "overall": 0.75,
+            "painted": 0.607692301273346,
+            "background": 0.7984293103218079,
+            "painted_columns": 130,
+            "background_columns": 382,
+            "background_fraction": 0.74609375,
+            "painted_majority": 0.2076923076923077
+          },
+          "probe_painted_fit": 0.607692301273346,
+          "probe_overall_fit": 0.75,
+          "fit_accuracy": 0.90625,
+          "train_accuracy": 0.984375,
+          "fit_correct": 29,
+          "train_correct": 252,
+          "colour_accuracy_fit": 1.0,
+          "colour_accuracy_train": 1.0,
+          "centroid_column_hits_fit": 13,
+          "centroid_column_total_fit": 24,
+          "abstain_on_unknown_fit": 7,
+          "abstain_on_other_fit": 0,
+          "cpu": 0.375
+        }
+      ],
+      "trainable_parameters": 451,
+      "scaffold_parameters": 63
+    }
+  },
+  "criteria": {
+    "probe_gate": 0.95,
+    "fit_gate": 0.8,
+    "fit_low": 0.55,
+    "decision": "painted_fit>=probe_gate and overall_fit>=overall_gate and fit>=fit_gate -> column_supervision_makes_parent_reachable; painted_fit>=probe_gate and overall_fit>=overall_gate and fit<=fit_low -> colour_in_tokens_readout_still_blocks; painted_fit<probe_gate -> encoder_cannot_carry_colour; else inconclusive_column_supervision",
+    "probe": "ridge from the body's 16 column tokens to the 7-way column label, fit on train 256, tested on fit 32, lambda 1.0, features standardised on train",
+    "baseline": "P3.30 measured the same probe at 0.690 train / 0.674 fit on the body's frozen encoder; this card re-measures it at update 0 as a reproduction check",
+    "arms": "A: encoder.rgb + readout, four-way answer plus the colour-classifier term; B: identical plus a 7-way column colour cross-entropy through a 63-parameter training-only head",
+    "single_variable": "A and B share seed, data, order, optimiser, doses, readout and encoder; only the column term differs",
+    "served_readout": "the same 59-parameter module P3.30 used; the column head never appears at evaluation",
+    "prototypes": "recomputed from the current encoder every forward, so at step zero both arms equal P3.30's build",
+    "capability_claims": 0,
+    "overall_gate": 0.95,
+    "probe_metric": "painted columns only (the label is one of the six palette colours); background columns are 74.6% of the fit split and are reported separately",
+    "baselines": {
+      "painted_chance": 0.16666666666666666,
+      "painted_majority": 0.2077,
+      "always_background_overall": 0.7461,
+      "reading": "the overall figure 0.674 quoted by P3.30 is BELOW the 0.746 always-background rate, so it must not be cited as evidence that colour is decodable"
+    }
+  },
+  "criteria_sha256": "afc58f36c862275fa1522efd16f6a09bf31694486d4b051e8fa504d82bacda7e",
+  "batch": 8,
+  "aux_weight": 1.0,
+  "optimizer": {
+    "lr": 0.01,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "weight_decay": 0.0
+  },
+  "training_authority": "owner:chat:2026-11-14#授权",
+  "cost": {
+    "total_cpu": 168.75,
+    "total_wall": 169.382782,
+    "cap_cpu": 260.0,
+    "cap_wall": 600.0
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "capability_claims": 0
+  },
+  "run_conditions": {
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "scope": "two arms on the body's own rgb encoder: A trains encoder plus readout on the four-way answer, B adds a 7-way column colour objective via a declared training-time head; the served readout is unchanged; no capability claim"
+}

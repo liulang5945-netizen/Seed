@@ -1,0 +1,25 @@
+{
+  "schema": "taiji-u2-p4-1-price-v1",
+  "card": "22.5.P4.1",
+  "date": "2026-11-14",
+  "measurements": {
+    "per_step_cpu": 0.015625,
+    "per_step_samples": [
+      0.015625,
+      0.015625,
+      0.015625
+    ],
+    "curve_two_arms_cpu_lower_bound": 230.546875,
+    "probe_cpu_estimate": 0.375
+  },
+  "measured": {
+    "cpu_seconds": 0.9375,
+    "wall_seconds": 1.277784
+  },
+  "discipline": {
+    "optimizer_calls": 3,
+    "checkpoints": 0,
+    "ledger_writes": 0
+  },
+  "note": "three in-memory steps; nothing is saved apart from this receipt"
+}
