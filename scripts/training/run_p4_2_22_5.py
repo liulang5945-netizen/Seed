@@ -149,8 +149,10 @@ def byte_loss(model, state, target: bytes):
     return torch.stack(terms).mean()
 
 
-def round_evaluate(model, examples: list[dict], guard=None) -> dict:
-    return evaluate(model, [column_example(example) for example in examples], budget_guard=guard)
+def round_evaluate(model, examples: list[dict], budget_guard=None) -> dict:
+    return evaluate(
+        model, [column_example(example) for example in examples], budget_guard=budget_guard
+    )
 
 
 def read_context(model, state):
@@ -741,7 +743,7 @@ def run(contract: dict) -> int:
     for item in positions[:: max(1, len(positions) // 3)][:3]:
         example = next(e for e in data["train"] if e["id"] == item["example"])
         body = body_log_probability(model, example, item["position"], item["symbol"])
-        replay = -float(emission_loss(model, [item]))
+        replay = -float(emission_loss(model, [item]).detach())
         checks.append(
             {
                 "example": item["example"],

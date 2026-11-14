@@ -161,8 +161,8 @@
     "red_direction_control_update_count_turns_red",
     "red_direction_parent_claim_turns_red"
   ],
-  "cpu_cap": 3960.0,
-  "wall_cap": 7920.0,
+  "cpu_cap": 2080.0,
+  "wall_cap": 4160.0,
   "price_cap_cpu": 60.0,
   "design_cap_cpu": 600.0,
   "price_measured": {
@@ -190,13 +190,32 @@
     "scope": "development fit only; no check or final read; no capability claim; parent candidate only",
     "note": "owner authorized the run on 2026-11-15; problems are surfaced in the receipt instead of pausing the run"
   },
-  "run_root": "data/experiments/taiji_u2/p4_2/20261116T0000Z",
+  "run_root": "data/experiments/taiji_u2/p4_2/20261116T0500Z",
+  "attempts": [
+    {
+      "attempt": 1,
+      "run_root": "data/experiments/taiji_u2/p4_2/20261116T0000Z",
+      "verdict": "engineering_failure",
+      "error": "TypeError: round_evaluate() got an unexpected keyword argument 'budget_guard'",
+      "stage1": "scaffold_cannot_read_answer at 3688: fit 0.3125 to 0.34375, train 0.40625 on the 32-example slice",
+      "cpu_estimated": 1880.0,
+      "checkpoints_kept": true,
+      "failure_receipt": "reports/taiji_u2_p4_2_engineering_failure_20261116T0000Z.json",
+      "note": "stage 2 cache and replay check passed; the crash happened at the first phase-2 dose evaluation"
+    }
+  ],
+  "budget_amendment": {
+    "card_cpu_cap": 3960.0,
+    "attempt_1_cpu_estimated": 1880.0,
+    "attempt_2_cpu_cap": 2080.0,
+    "reason": "attempt 1 crashed on a helper keyword mismatch; the remaining authorized budget funds attempt 2, which reruns the deterministic stages and completes phase 2"
+  },
   "source_pins": {
     "p4_1_runner": "fe722cb41b6149f4bf5a709c546ac5fc5b644e1b8f01da1e870ec1e6a6134877",
     "support": "33d9301f98859934c1413e25765c55e6bc7b64dfa410d65b03f0e5a198041b4c",
     "column_pathway": "4afb7c94a0641f6f5eb943339d19f13c8f690ddcf6956bc6787cba5aa4653476",
     "subject": "01d54b472e6cc99728ca45b94aeb556148498081ce1128cf28f8bed2d8784025",
-    "runner": "e0e40a8cdbe78795b65a314a36f5bb383297313aea6d419d3f8748f62feb8c51"
+    "runner": "c479d90963cf3a21b43700115fc8c94f418b4a396a8526fadb5e8c3b322859ff"
   },
   "training_authority": "owner:chat:2026-11-15#是，有问题给弹窗，不用中断",
   "note": "pre-registration and price frozen; the run needs owner authority; no optimizer step has been taken under this contract",
@@ -211,6 +230,13 @@
       "when": "pre-run, after the guard was written",
       "fact": "the control arm had no recorded update count or state digest, so the guard could not prove it was frozen",
       "fix": "the run report now records control_updates=0 and a before/after state digest; no criterion, dose, cap or arm changed",
+      "criteria_changed": false
+    },
+    {
+      "when": "attempt 1, first phase-2 dose evaluation",
+      "fact": "round_evaluate was defined with a parameter named guard while every call site passed budget_guard, so the first phase-2 dose evaluation raised TypeError after phase 1 had already stopped flat",
+      "fix": "the parameter is now budget_guard; the phase-2, feedback, save and recovery paths were smoke-tested at zero training before attempt 2",
+      "training_lost_cpu_estimated": 1880.0,
       "criteria_changed": false
     }
   ],

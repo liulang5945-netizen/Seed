@@ -3548,3 +3548,5 @@ P4.1 被两个会话各执行一次：会话乙已在 `d5aa1fc12` 结案（B 臂
 **状态**：owner 已于 2026-11-15 授权执行（`owner:chat:2026-11-15#是，有问题给弹窗，不用中断`），`training_authority` 已写入 contract，按"有问题如实报、不中断"开跑；判据、剂量、帽未动。
 
 **守卫预检（2026-11-15，0 训练）**：[`verify_p4_2_20261115.py`](../../../scripts/training/verify_p4_2_20261115.py) **16 项检查全绿、5 项红方向全响**（错符号→回放不符、换编码器权重的陈旧缓存→回放不符、列序置换→往返失败、声称父→拒、pin 篡改→拒）；缓存回放在 3 个位置与主体自己 `output()` 的 log-prob 一致（最大差 5e-7，约 2 ulp）。run 回执尚未存在，`run_state=run_not_present`、`run_checks=0`。预运行补记两处：①run 报告新增 `control_updates=0` 与对照前后 state digest；②纠正副本另存 `feedback-learned.pt` 并记 sha256（纠正读数必须能从 checkpoint 复核）；判据／剂量／帽不变（manifest `implementation_facts`，runner pin `75d196dc…`→`e0e40a8c…`）。
+
+**第一次尝试（2026-11-15，工程失败＋一个实质读数）**：阶段 2 首次剂量评估因 `round_evaluate` 参数名写成 `guard`、调用点写 `budget_guard` 而崩溃（`TypeError`），进程在写回执前退出；约 **1,880 CPU（估计）**，全部 checkpoint 保留，[失败回执](../../../reports/taiji_u2_p4_2_engineering_failure_20261116T0000Z.json)。从 checkpoint 零训练重算阶段 1：fit **0.3125（10/32）→0.34375（11/32）**，train 0.40625，两剂量都 ≤0.35 ⇒ 预注册的 `scaffold_cannot_read_answer` 成立——**卡在主体的绑定／对象读，不是字节头**（编码器能承载颜色已由 P4.1 证明）。修复后冒烟测试了阶段 2／反馈／保存／恢复路径；第二次尝试用剩余 **2,080 CPU**（1,880+2,080=3,960）在新 run 根续跑，阶段 2 仍跑一次给可比读数。

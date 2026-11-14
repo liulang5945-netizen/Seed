@@ -1,0 +1,56 @@
+{
+  "schema": "taiji-u2-p4-2-engineering-failure-v1",
+  "card": "22.5.P4.2",
+  "date": "2026-11-15",
+  "attempt": 1,
+  "run_root": "E:\\Seed\\data\\experiments\\taiji_u2\\p4_2\\20261116T0000Z",
+  "error": "TypeError: round_evaluate() got an unexpected keyword argument 'budget_guard'",
+  "where": "run_p4_2_22_5.py line 780, first phase-2 dose evaluation",
+  "cause": "the helper parameter was named 'guard' while every call site passed 'budget_guard'",
+  "state": {
+    "stage0_reconstruction": "completed, signature accepted",
+    "stage1": "converged at 3688 steps and broke early",
+    "stage2": "cache built and replay check passed; died at the first dose evaluation",
+    "run_report_written": false
+  },
+  "recovered_phase1": [
+    {
+      "update": 1844,
+      "train_accuracy": 0.40625,
+      "train_correct": 13,
+      "fit_accuracy": 0.3125,
+      "fit_correct": 10,
+      "checkpoint": "E:\\Seed\\data\\experiments\\taiji_u2\\p4_2\\20261116T0000Z\\phase1-001844.pt",
+      "checkpoint_sha256": "e2d40351962d7d0b33cff0d6666cbb788d5e7fdec0dc0977bee2da02b8697b66"
+    },
+    {
+      "update": 3688,
+      "train_accuracy": 0.40625,
+      "train_correct": 13,
+      "fit_accuracy": 0.34375,
+      "fit_correct": 11,
+      "checkpoint": "E:\\Seed\\data\\experiments\\taiji_u2\\p4_2\\20261116T0000Z\\phase1-003688.pt",
+      "checkpoint_sha256": "cb093f724f687feb0b1843c7b7b6478ac1edae6feac37815d0d9e152736914c1"
+    }
+  ],
+  "kept_checkpoints": [
+    "E:\\Seed\\data\\experiments\\taiji_u2\\p4_2\\20261116T0000Z\\initial.pt",
+    "E:\\Seed\\data\\experiments\\taiji_u2\\p4_2\\20261116T0000Z\\phase1-001844.pt",
+    "E:\\Seed\\data\\experiments\\taiji_u2\\p4_2\\20261116T0000Z\\phase1-003688.pt",
+    "E:\\Seed\\data\\experiments\\taiji_u2\\p4_2\\20261116T0000Z\\reconstruct-B-001844.pt",
+    "E:\\Seed\\data\\experiments\\taiji_u2\\p4_2\\20261116T0000Z\\reconstruct-B-003688.pt",
+    "E:\\Seed\\data\\experiments\\taiji_u2\\p4_2\\20261116T0000Z\\reconstruct-B-007376.pt"
+  ],
+  "cost": {
+    "cpu_observed_at_last_check": 1395.609375,
+    "cpu_estimated_final": 1880.0,
+    "basis": "last process_time reading at 04:19:45 plus the measured one-core rate to the crash time",
+    "note": "the process died before writing a receipt, so the final figure is an estimate, not a measurement"
+  },
+  "discipline": {
+    "training_resumed": false,
+    "checkpoints_deleted": 0,
+    "check_reads": 0,
+    "final_reads": 0
+  }
+}
