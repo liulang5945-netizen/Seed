@@ -1,0 +1,73 @@
+{
+  "schema": "taiji-u2-p3-20-capacity-v1",
+  "date": "2026-11-14",
+  "card": "22.5.P3.20",
+  "phase": "capacity",
+  "verdict": "capacity_still_insufficient",
+  "doses": [
+    {
+      "update": 1844,
+      "train_accuracy": 0.625,
+      "fit_accuracy": 0.4375,
+      "train_correct": 160,
+      "fit_correct": 14,
+      "attention_entropy_train": 0.142801,
+      "attention_entropy_fit": 0.162777,
+      "cpu": 0.0625
+    },
+    {
+      "update": 3688,
+      "train_accuracy": 0.82421875,
+      "fit_accuracy": 0.25,
+      "train_correct": 211,
+      "fit_correct": 8,
+      "attention_entropy_train": 0.078273,
+      "attention_entropy_fit": 0.052035,
+      "cpu": 0.046875
+    },
+    {
+      "update": 7376,
+      "train_accuracy": 0.91015625,
+      "fit_accuracy": 0.28125,
+      "train_correct": 233,
+      "fit_correct": 9,
+      "attention_entropy_train": 0.126018,
+      "attention_entropy_fit": 0.178452,
+      "cpu": 0.046875
+    }
+  ],
+  "trainable_parameters": 3012,
+  "module_parameters": 3012,
+  "width": 32,
+  "batch": 8,
+  "optimizer": {
+    "lr": 0.01,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "weight_decay": 0.0
+  },
+  "control_arms": {
+    "p3_19": "width 8 on model encoding: train 0.730, fit 0.3125 at 7376 steps"
+  },
+  "training_authority": "owner:chat:2026-11-14#continue",
+  "cost": {
+    "total_cpu": 30.3125,
+    "total_wall": 30.658941,
+    "cap_cpu": 150.0,
+    "cap_wall": 600.0
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "capability_claims": 0
+  },
+  "run_conditions": {
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "scope": "detector-only capacity test on raw rgb patches; U2 body frozen and unused except for the request embedding; no capability claim"
+}
