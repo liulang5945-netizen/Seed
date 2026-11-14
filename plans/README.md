@@ -21,6 +21,7 @@ R1、R3b、R5b 等保留为原合同和实验身份，N1–N6 保留为机制责
 ## 需要核验时再查
 
 - [有状态神经单位与生命周期](reference/SPEC-TAIJI_U2_NEURAL_UNIT_LIFECYCLE_20261113.md)：持续状态、可塑连接、历史出生信用、复制/休眠/退役及兼容迁移；设计与局部数学，不是新增能力声明。
+- [神经核心两路线备案](reference/DECISION-TAIJI_NEURAL_CORE_PATH_20261114.md)：兼容嵌入与单位原生重构的设计比较、保留/替换边界、转换条件及22–28影响。
 
 - [核心算法主稿](reference/TAIJI_CORE_ALGORITHM_V1_DRAFT_20261031.md)：v1.1底座与§24的v1.2生长信用/覆盖出生候选，具体方程、证据与反证统一维护，不另发执行队列。
 - [R021工程接口](reference/SPEC-TAIJI-CORE_REFERENCE_GRAPH_R021_20261031.md)：六项唯一前向接口、凸分区软门和覆盖工程界；当前实际交付/后继只查总计划。
