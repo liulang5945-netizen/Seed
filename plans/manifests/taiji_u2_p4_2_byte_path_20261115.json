@@ -1,0 +1,216 @@
+{
+  "schema": "taiji-u2-p4-2-byte-path-v1",
+  "status": "frozen",
+  "card": "22.5.P4.2",
+  "date": "2026-11-15",
+  "candidate": {
+    "architecture": "native column bytes v1",
+    "seed": 20261110,
+    "token_width": 8,
+    "observation_layout": "column-observation-v1",
+    "init": "reconstructed p4.1 arm B encoder, verified against the published dose signature"
+  },
+  "p4_1": {
+    "contract": "plans/manifests/taiji_u2_p4_1_column_supervision_20261114.json",
+    "criteria_sha256": "afc58f36c862275fa1522efd16f6a09bf31694486d4b051e8fa504d82bacda7e",
+    "report": "reports/taiji_u2_p4_1_column_supervision_20261114.json",
+    "checkpoint_state": "absent_from_worktree_and_git",
+    "reconstruction_rule": "rebuild arm B from the frozen runner; accept only if all three published dose signatures reproduce exactly",
+    "reconstructed_signature": [
+      "fit_correct",
+      "train_correct",
+      "colour_accuracy_fit",
+      "colour_accuracy_train",
+      "centroid_column_hits_fit",
+      "centroid_column_total_fit",
+      "abstain_on_unknown_fit",
+      "abstain_on_other_fit",
+      "probe_painted_fit",
+      "probe_overall_fit"
+    ]
+  },
+  "data_root": "data/experiments/taiji_u2/p3_19/three_object_volume_20261114.bin",
+  "data_digest": "1dec5429a1110dc9a23a8f38329e1bce1cb8824e6d2ca89fc96b429487e9addf",
+  "splits": {
+    "train": 256,
+    "fit": 32,
+    "check": "not read",
+    "final": "not read"
+  },
+  "batch": 8,
+  "optimizer": {
+    "lr": 0.01,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "weight_decay": 0.0
+  },
+  "feedback_optimizer": {
+    "lr": 0.001,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "weight_decay": 0.0
+  },
+  "dose_points": [
+    1844,
+    3688,
+    7376
+  ],
+  "scaffold_dose_points": [
+    1844,
+    3688,
+    7376
+  ],
+  "byte_dose_points": [
+    461,
+    922,
+    1844
+  ],
+  "scaffold_parameters": 100,
+  "scaffold_role": "training-only 4-way head on the read context; never at evaluation",
+  "feedback_updates": 8,
+  "feedback_errors_allowance": 32,
+  "emission_parameters": [
+    "byte_head.bias",
+    "byte_head.weight",
+    "copy_gate.bias",
+    "copy_gate.weight",
+    "joint_readout.first.bias",
+    "joint_readout.first.weight",
+    "joint_readout.last.bias",
+    "joint_readout.last.weight"
+  ],
+  "emission_scalar_count": 3919,
+  "frozen_scope": "every parameter not listed in emission_parameters, including the whole rgb encoder, binding, native recurrence and decoders",
+  "gradient_scope": "prepared states and per-byte state evolution are constants; the byte loss trains only the emission read of those constants",
+  "observation_rule": "same packet, same pixel values: rgb patches [16,48] regrouped to columns [16,48] with column coordinates; audio and proprio unchanged",
+  "criteria": {
+    "response_round": "exact answer bytes plus EOS plus valid UTF-8, greedy, 65-byte cap",
+    "main_denominator": "all 32 fit rounds; a failed or extra-byte round is counted, never deleted or filtered",
+    "main_gate": 0.8,
+    "correction_gate": 0.8,
+    "feedback_gain_gate": 0.05,
+    "correction_protocol": "first pass on fit; for every first-pass error release the correct answer and take 8 Adam updates at the feedback lr; re-ask the same input once",
+    "correction_denominator": "first-pass fit errors",
+    "control_arm": "same trained subject, same feedback exposure, zero parameter updates and zero state writes",
+    "feedback_gain": "learned second-pass fit accuracy minus control second-pass fit accuracy",
+    "recovery": "save the trained bundle, reload in an independent process, re-ask all 32; outputs must be byte-identical",
+    "not_identifiable_rule": "if first-pass fit errors are below 4, correction and feedback gain are recorded as not_identifiable_by_design, not as passes or failures",
+    "scaffold_gate": 0.95,
+    "scaffold_flat": 0.35,
+    "scaffold_early_stop": "stop stage 1 at a dose when train and fit scaffold accuracy are both >= 0.95; stop at the second dose when fit scaffold accuracy is <= 0.35 at both doses",
+    "trend_gate": 0.1,
+    "verdicts": [
+      "byte_path_carries_answer",
+      "byte_path_carries_answer_gates_incomplete",
+      "byte_path_learning_below_gate",
+      "byte_path_blocks",
+      "p4_1_reconstruction_mismatch",
+      "budget_stop",
+      "engineering_failure"
+    ],
+    "a_retention": "not_applicable_no_A_parent; no accepted A parent exists, so no A suite exists to retain",
+    "three_seed": "not_in_scope_single_seed",
+    "check2": "not_read; no check suite exists and no check budget is consumed",
+    "accepted_parent": false,
+    "parent_candidate": "main gate plus correction and feedback gain plus recovery, on development fit only"
+  },
+  "criteria_sha256": "633a8618cac11295a612ee4395ce9daf8f9a70d03f59ece1b8752c530173c635",
+  "stop_conditions": {
+    "budget": "cpu_cap or wall_cap reached -> budget_stop, keep every checkpoint and report the last dose",
+    "reconstruction": "any signature mismatch -> p4_1_reconstruction_mismatch, stop before stage 1",
+    "scaffold": "train and fit both >= 0.95 -> stop stage 1 and enter stage 2; fit <= 0.35 at the first two doses -> scaffold_cannot_read_answer and stage 2 still runs once for the comparable reading",
+    "engineering": "non-finite gradient or parameter, missing checkpoint, cache replay mismatch, or source pin mismatch -> engineering_failure"
+  },
+  "artifacts": [
+    "scripts/training/run_p4_2_22_5.py",
+    "scripts/training/verify_p4_2_20261115.py",
+    "reports/taiji_u2_p4_2_census_20261115.json",
+    "reports/taiji_u2_p4_2_price_20261115.json",
+    "reports/taiji_u2_p4_2_reconstruction_20261115.json",
+    "reports/taiji_u2_p4_2_byte_path_20261115.json",
+    "reports/taiji_u2_p4_2_guard_20261115.json",
+    "plans/reference/PREREG-TAIJI_U2_P4_2_BYTE_PATH_20261115.md",
+    "plans/reference/RESULT-TAIJI_U2_P4_2_BYTE_PATH_20261115.md"
+  ],
+  "guards": [
+    "source_pins_match_worktree",
+    "data_digest_matches_contract",
+    "p4_1_reconstruction_signature_exact_at_three_doses",
+    "init_encoder_equals_reconstructed_bundle",
+    "non_encoder_parameters_equal_fresh_seeded_subject",
+    "trainable_set_equals_declared_emission_parameters",
+    "frozen_set_receives_zero_gradient",
+    "checkpoint_saved_and_read_back_at_every_dose",
+    "fit_and_train_recomputed_from_checkpoints",
+    "main_denominator_equals_32_with_no_filtering",
+    "correction_denominator_equals_first_pass_errors",
+    "control_updates_equal_zero",
+    "recovery_outputs_byte_identical_in_independent_process",
+    "verdict_branch_matches_gate_table",
+    "parent_not_claimed",
+    "a_retention_marked_not_applicable",
+    "check_and_final_reads_zero",
+    "red_direction_tampered_fit_correct_turns_red",
+    "red_direction_dropped_error_from_denominator_turns_red",
+    "red_direction_control_update_count_turns_red",
+    "red_direction_parent_claim_turns_red"
+  ],
+  "cpu_cap": 3960.0,
+  "wall_cap": 7920.0,
+  "price_cap_cpu": 60.0,
+  "design_cap_cpu": 600.0,
+  "price_measured": {
+    "per_prepare_cpu": 0.03125,
+    "per_scaffold_update_cpu": 0.421875,
+    "per_byte_update_cpu": 0.015625,
+    "per_cache_position_cpu": 0.007952,
+    "per_full_single_update_cpu": 0.0625,
+    "per_fit_round_evaluate_cpu": 1.40625,
+    "per_p4_1_reconstruction_update_cpu": 0.03125,
+    "per_p4_1_probe_cpu": 0.375,
+    "estimate_cpu": 3959.0,
+    "adopted_cap_cpu": 3960.0,
+    "note": "two price runs: an idle-machine run measured 0.28125 per scaffold step, a loaded-machine run measured 0.421875; the cap adopts the slower run as an upper bound, so a fast run finishes well below it",
+    "earlier_run": {
+      "per_scaffold_update_cpu": 0.28125,
+      "per_p4_1_reconstruction_update_cpu": 0.015625,
+      "per_p4_1_probe_cpu": 0.265625,
+      "estimate_cpu": 2614.0
+    }
+  },
+  "authorization": {
+    "asked": "是否授权执行 22.5.P4.2 两阶段字节路径卡（重建 P4.1 B 臂 + 读取脚手架 7376 步 + 字节头 1844 步 + 纠正/恢复，实测帽 3960 CPU／7920 wall）",
+    "reply": null,
+    "scope": "development fit only; no check or final read; no capability claim; parent candidate only",
+    "note": "contract frozen with a measured cap; the run is blocked until training_authority is filled by the owner"
+  },
+  "run_root": "data/experiments/taiji_u2/p4_2/20261116T0000Z",
+  "source_pins": {
+    "p4_1_runner": "fe722cb41b6149f4bf5a709c546ac5fc5b644e1b8f01da1e870ec1e6a6134877",
+    "support": "33d9301f98859934c1413e25765c55e6bc7b64dfa410d65b03f0e5a198041b4c",
+    "column_pathway": "4afb7c94a0641f6f5eb943339d19f13c8f690ddcf6956bc6787cba5aa4653476",
+    "subject": "01d54b472e6cc99728ca45b94aeb556148498081ce1128cf28f8bed2d8784025",
+    "runner": "75d196dcf8220a08e734abefad35e47283ce2011d778e015e891ea27228a3f25"
+  },
+  "training_authority": null,
+  "note": "pre-registration and price frozen; the run needs owner authority; no optimizer step has been taken under this contract",
+  "implementation_facts": [
+    {
+      "when": "pricing, before freeze",
+      "fact": "a forward hook returned the captured tensor through dict.setdefault, and PyTorch treats a non-None hook return as the module output, so the 8-dim context was replaced by its 24-dim input",
+      "fix": "hooks return None explicitly; the affected price reading was discarded and the price re-measured",
+      "training_runs_affected": 0
+    }
+  ],
+  "scoping_correction": {
+    "claim": "this card can produce a parent candidate on development fit, not an accepted learning parent",
+    "why": "22.5.1 also requires A retention, a three-seed paired-world lower bound and check2; no accepted A parent exists, so A retention has no object, and no check suite or check budget is touched",
+    "source": "plans/reference/REVIEW-TAIJI_22_6_ENTRY_20261115.md G1-G3"
+  }
+}

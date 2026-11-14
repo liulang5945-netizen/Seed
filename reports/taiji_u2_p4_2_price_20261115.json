@@ -1,0 +1,54 @@
+{
+  "schema": "taiji-u2-p4-2-price-v1",
+  "card": "22.5.P4.2",
+  "date": "2026-11-15",
+  "measurements": {
+    "per_prepare_cpu": 0.015625,
+    "per_scaffold_update_cpu": 0.421875,
+    "per_byte_update_cpu": 0.015625,
+    "per_cache_position_cpu": 0.007952,
+    "per_full_single_update_cpu": 0.0625,
+    "per_fit_round_evaluate_cpu": 1.40625,
+    "per_p4_1_reconstruction_update_cpu": 0.03125,
+    "per_p4_1_probe_cpu": 0.375,
+    "prepare_samples": [
+      0.03125,
+      0.015625,
+      0.015625
+    ],
+    "scaffold_samples": [
+      0.421875,
+      0.40625,
+      0.421875
+    ],
+    "byte_samples": [
+      0.015625,
+      0.015625,
+      0.015625
+    ]
+  },
+  "estimate": {
+    "reconstruction_cpu": 233.625,
+    "scaffold_curve_cpu": 3111.75,
+    "cache_cpu": 16.03125,
+    "byte_curve_cpu": 28.8125,
+    "evaluation_cpu": 19.6875,
+    "feedback_cpu_allowance": 24.21875,
+    "guard_and_margin_cpu": 8.0,
+    "cap_cpu": 3959.0
+  },
+  "readings": {
+    "fit_accuracy_at_price": 0.0
+  },
+  "measured": {
+    "cpu_seconds": 7.96875,
+    "wall_seconds": 8.171983
+  },
+  "discipline": {
+    "optimizer_calls": 12,
+    "checkpoints": 0,
+    "ledger_writes": 0,
+    "check_reads": 0
+  },
+  "note": "in-memory timing steps; nothing is saved apart from this receipt"
+}
