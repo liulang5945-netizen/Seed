@@ -1,0 +1,44 @@
+{
+  "schema": "taiji-u2-p3-9-prereg-guard-v1",
+  "date": "2026-11-14",
+  "manifest": "taiji_u2_p3_9_prereg_20261114.json",
+  "criteria_sha256": "2545c44bcd8fdadf57bc570011eea34faf18a9ef638feb08cea39e7cdef05fe6",
+  "checks": {
+    "criteria_sha_matches": true,
+    "price_sha_matches": true,
+    "price_verdict_admitted": true,
+    "parent_sha_matches": true,
+    "parent_qualification_registered": true,
+    "spec_has_no_second_gate_set": true,
+    "budget_not_transferred": true,
+    "execution_hashes_not_prefilled": true,
+    "decision_rule_complete": true,
+    "headline_three_identical": true,
+    "headline_names_p3_9": true
+  },
+  "in_memory_red_drills": {
+    "gate_value": true,
+    "price_sha": true,
+    "parent_qualification": true,
+    "budget_transfer": true,
+    "execution_hash": true,
+    "criteria_sha": true,
+    "spec_second_gate_set": true
+  },
+  "real_file_red_drill": {
+    "passed": true,
+    "red_fired": true,
+    "restored_byte_identical": true,
+    "green_after_restore": true,
+    "failing_checks_while_mutated": [
+      "headline_three_identical",
+      "headline_names_p3_9"
+    ]
+  },
+  "passed": true,
+  "measured": {
+    "cpu_seconds": 0.0,
+    "wall_seconds": 0.032
+  },
+  "note": "0 model loads / 0 forward passes / 0 optimizer steps / 0 sealed-face reads"
+}

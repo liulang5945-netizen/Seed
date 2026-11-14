@@ -144,8 +144,10 @@ def evaluate(report: dict) -> tuple[dict[str, bool], dict]:
 
     headlines = [headline_of(path) for path in HEADLINE_FILES]
     checks["headline_three_identical"] = len(set(headlines)) == 1 and bool(headlines[0])
+    # Navigation probe only: after P3.9 closed, the headline names the P3.9
+    # line rather than the P3.9.1 card. No scientific criterion is relaxed.
     checks["headline_marks_closeout_and_handoff"] = all(
-        "P3.8" in text and "收束" in text and "P3.9.1" in text for text in headlines
+        "收束" in text and "P3.9" in text for text in headlines
     )
     detail["group_sums"] = group_sum
     detail["total_cpu"] = total
@@ -215,9 +217,9 @@ def file_drill(report: dict) -> dict:
     original = target.read_bytes()
     lines = original.decode("utf-8").splitlines(keepends=True)
     target_index = next((i for i, line in enumerate(lines) if HEADLINE_MARK in line), None)
-    if target_index is None or "P3.9.1" not in lines[target_index]:
+    if target_index is None or "P3.9" not in lines[target_index]:
         return {"passed": False, "reason": "headline_marker_not_found"}
-    lines[target_index] = lines[target_index].replace("P3.9.1", "P3.9.9", 1)
+    lines[target_index] = lines[target_index].replace("P3.9", "P3.8", 1)
     mutated = "".join(lines)
     if mutated == original.decode("utf-8"):
         return {"passed": False, "reason": "headline_mutation_failed"}

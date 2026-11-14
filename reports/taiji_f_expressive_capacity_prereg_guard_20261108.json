@@ -24,16 +24,16 @@
       "red_mutation_detected": true,
       "comparator": "all_identical(texts) == len(set(texts)) == 1, shared by both directions",
       "lengths": {
-        "MAINLINE.md": 222,
-        "MASTER-PLAN.md": 222,
-        "ROADMAP-NEXT_20261104.md": 222
+        "MAINLINE.md": 301,
+        "MASTER-PLAN.md": 301,
+        "ROADMAP-NEXT_20261104.md": 301
       },
       "sha256": {
-        "MAINLINE.md": "9dcd10bbf4177908f6ef1b3320a510e146614bbac9bc8ddebcd0e5896b3e3366",
-        "MASTER-PLAN.md": "9dcd10bbf4177908f6ef1b3320a510e146614bbac9bc8ddebcd0e5896b3e3366",
-        "ROADMAP-NEXT_20261104.md": "9dcd10bbf4177908f6ef1b3320a510e146614bbac9bc8ddebcd0e5896b3e3366"
+        "MAINLINE.md": "b32e2c06a21d7c0e404ecceb91c95f39d08006a48cfbae5618b73991a1d1fd0d",
+        "MASTER-PLAN.md": "b32e2c06a21d7c0e404ecceb91c95f39d08006a48cfbae5618b73991a1d1fd0d",
+        "ROADMAP-NEXT_20261104.md": "b32e2c06a21d7c0e404ecceb91c95f39d08006a48cfbae5618b73991a1d1fd0d"
       },
-      "headline": "22.5.P3.8 已按负结果＋预算停止有限出口全局收束（P3.8.4 收束卡：16 份报告逐字节绑定、8 项结项条件全过、入库读数 480.359425 CPU、790 中未用 498.0937 不转移），native_parent_qualified=false、能力账无变化、0 能力声称。唯一后继：P3.9.1 的 A/B 双图实价定价与冻结，先定价后执行，不转移 790 CPU、不触及封存面；收束 ≠ 里程碑关闭 ≠ 范围排除批准。"
+      "headline": "22.5.P3.9 四张卡已按 p3_9_closed_limited_exit 全局收束：A/B 正式参考图 19/19、两图完整包与两代生命周期恢复 14/14、独立审计 22/22；一次预注册行为窗因 cpu_ratio 1.6005 超冻结带判 compute_parity_unavailable（Δ=0.03125、CI 覆盖 0），范围内未证优劣，不加剂量、不改门值。唯一后继：按 D-20261114-01 §4 重新评审结构目标覆盖与阶段父资格，不切换生产默认图、不提前放行 22.6／22.7；native_parent_qualified=false，能力账无变化、0 能力声称。"
     },
     "spec": {
       "green_spec_has_no_gate_literal": true,

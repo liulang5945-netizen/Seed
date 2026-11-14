@@ -1,0 +1,112 @@
+{
+  "schema": "taiji-u2-p3-9-prereg-v1",
+  "date": "2026-11-14",
+  "card": "22.5.P3.9.1-4",
+  "status": "frozen_before_execution",
+  "basis": [
+    "execution package 22 section P3.9: price both graphs before freezing; the 120 CPU / 240 wall draft is not executed or doubled before freezing",
+    "D-20261114-01 sections 2 and 4: A is the compatible embedding, B is the unit-native core; no behaviour outcome is assumed",
+    "SPEC-TAIJI_U2_NEURAL_UNIT_LIFECYCLE_20261113 section 3 synchronous recurrence and section 8 recovery contract"
+  ],
+  "parent": {
+    "path": "data/experiments/taiji_u2/joint_learning/1794554480667378100/joint-query/update-000758.bin",
+    "sha256": "c8f2359b0bef3085bce88a0a0a8ee7eff5f66a0bc614d2bf52e7ef361638b017",
+    "native_parent_qualified": false,
+    "note": "no new accepted parent was produced by P3.8; both P3.9 reference graphs are new research identities built from the frozen starting point"
+  },
+  "price": {
+    "report": "reports/taiji_u2_p3_9_1_price_20261114.json",
+    "sha256": "4fda4b71072b5c6d21ddc8d27262d0c566e08d1dff0d8224a6b74a3d442f6460",
+    "verdict": "price_measured_admission_possible",
+    "affordable_paired_updates": 2303,
+    "per_paired_update_cpu": 0.0312,
+    "per_evaluation_cpu": 0.0156,
+    "resolution_note": "Windows process_time resolution is 0.0156 s; several per-operation samples read 0.0 because they are below one tick, not because they are free. All estimates use the conservative max."
+  },
+  "criteria": {
+    "budget": {
+      "cap_cpu": 120.0,
+      "cap_wall": 240.0,
+      "p3_8_budget_transferred": false,
+      "sealed_faces": ["check", "final", "confirm"],
+      "new_packages": 0
+    },
+    "graph": {
+      "routes": ["A", "B"],
+      "precisions": ["float32", "float64"],
+      "compat_output_fp64_atol": 1e-10,
+      "compat_output_fp32_atol": 1e-5,
+      "required_checks": [
+        "A compatible endpoint output and r/p gradient align with the old R/P form",
+        "each declared parameter of each graph receives a gradient; structural zeros are reported, never hidden",
+        "B readout is bit-identical when H scratch is zeroed and changes when unit activity is gated off",
+        "B has no h_readout / ell / w_g parameter and is not a head attached to old H",
+        "exactly neutral birth for both routes, all six legal input channels covered, missing input fails closed",
+        "A and B states are isolated"
+      ],
+      "verdict_pass": "reference_graphs_verified",
+      "verdict_fail": "reference_graph_incomplete"
+    },
+    "restore": {
+      "required_routes": ["A", "B"],
+      "required_restores": 4,
+      "requirements": [
+        "initial full capsule independently restored in a different process",
+        "first non-empty optimizer moment full capsule independently restored",
+        "two generations of neutral birth, dormancy/wake and rollback to generation 1",
+        "next gradient digest after rollback equals generation 1",
+        "unit registry IDs are never reused and a tampered capsule is rejected"
+      ],
+      "verdict_pass": "restore_and_lifecycle_verified",
+      "verdict_fail": "engineering_failure"
+    },
+    "behavior": {
+      "kind": "synthetic engineering behaviour window only",
+      "paired_updates": 64,
+      "train_episodes": 32,
+      "dev_episodes": 32,
+      "seed": 20261114,
+      "learning_rate": 0.001,
+      "steps_per_episode": 6,
+      "label_classes": 4,
+      "min_meaningful_effect": 0.05,
+      "bootstrap_rounds": 2000,
+      "cpu_ratio_band": [0.8, 1.25],
+      "cap_cpu": 120.0,
+      "cap_wall": 240.0,
+      "equal_exposure": "same parent spec, same seed, same episode order, same update count, same optimizer and learning rate",
+      "controls": ["without_edges", "without_state"],
+      "metrics": ["before_accuracy", "after_accuracy", "paired_delta", "paired_bootstrap_ci_95", "per_arm_cpu", "cpu_ratio"],
+      "decision_rule": {
+        "comparison_not_admitted": "total CPU exceeds cap_cpu",
+        "compute_parity_unavailable": "cpu_ratio outside the frozen band",
+        "budget_cannot_express": "neither arm shows any accuracy or loss dynamic range",
+        "b_superior_in_window": "ci_lower > 0 and delta >= min_meaningful_effect",
+        "a_superior_in_window": "ci_upper < 0 and -delta >= min_meaningful_effect",
+        "inconclusive_within_window": "otherwise"
+      },
+      "retention": "no_verified_old_capability: retention is not signed",
+      "capability_claims": 0
+    },
+    "closeout": {
+      "ledgers": ["birth", "credit", "behavior", "recovery", "cost"],
+      "capability_ledger_change": "none",
+      "formal_ab_handoff": "only if the behaviour window is superior-in-window AND retention evidence exists",
+      "verdict": "p3_9_closed_limited_exit",
+      "not_a_milestone_close": true,
+      "not_a_scope_exclusion_approval": true
+    },
+    "discipline": {
+      "project_task_data_reads": 0,
+      "check_reads": 0,
+      "final_reads": 0,
+      "confirm_reads": 0,
+      "capability_claims": 0,
+      "new_parents": 0,
+      "criteria_unchanged_after_reading": true
+    }
+  },
+  "execution_runner_sha256": null,
+  "execution_report_sha256": null,
+  "criteria_sha256": "2545c44bcd8fdadf57bc570011eea34faf18a9ef638feb08cea39e7cdef05fe6"
+}

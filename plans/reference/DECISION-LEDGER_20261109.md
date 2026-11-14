@@ -3449,3 +3449,13 @@ P2冻结同图像不同实体、正确答案相同的输入差分目标，逐例
 裁定 `p3_8_closed_limited_exit`，出口类 `negative_result` ＋ `budget_stop`。**卡关闭 ≠ M 线或里程碑关闭 ≠ 范围排除批准 ≠ 配方被否决**；不改门值、不加剂量、不缩数据重跑、不新开包。评估实价低估 116.48 倍、v1 判据 PASS 分支算术不可达、runner 首份过度声称被独立审计改判、`rebuild.entries=0` 等限制随收束卡一并引用。
 
 唯一后继 P3.9.1：先按两图实价定价，再冻结 A 兼容映射与 B 完整输入／通信／直接查询／消费接口；父取冻结起点并登记 `native_parent_qualified=false`；不转移 790 CPU、不触及 sealed check／final／confirm。本条只追加状态、台账与守卫，0 训练／0 优化器／0 前向／0 新任务数据读取；未改变 D-20261114-01／02 的设计裁定与长期目标覆盖。
+
+## D-20261114-04 — P3.9 A/B 双图工程包与行为窗全局收束
+
+取证基线 `70aceaecd`（P3.8.4 收束）。按执行包 22 §P3.9「先按两图定价再冻结」「一次工程包＋一次预注册行为窗后必须全局收束」，[预注册 manifest](../manifests/taiji_u2_p3_9_prereg_20261114.json)（`criteria_sha256=2545c44b…`）在实价报告落盘后一次冻结、读结果前未改。父仍为 P3.7 冻结起点 `c8f2359b…`，`native_parent_qualified=false`，不转移 P3.8 的 498.0937 CPU，0 check／final／confirm 读取。
+
+四张卡读数：[定价](../../reports/taiji_u2_p3_9_1_price_20261114.json) `price_measured_admission_possible`；[正式图](../../reports/taiji_u2_p3_9_1_graph_20261114.json) 19/19 `reference_graphs_verified`；[恢复](../../reports/taiji_u2_p3_9_2_restore_20261114.json) 14/14 `restore_and_lifecycle_verified`（8 次独立进程完整包恢复、两代出生与休眠／唤醒／回滚）；[行为窗](../../reports/taiji_u2_p3_9_3_behavior_20261114.json) `compute_parity_unavailable`（`cpu_ratio=1.600512` 超冻结带，Δ=0.03125／CI 覆盖 0，A 0.1875→0.1875、B 0.1875→0.21875）。[独立审计](../../reports/taiji_u2_p3_9_audit_20261114.json) 22/22、5 项红方向全响；[收束卡](CLOSEOUT-TAIJI_U2_P3_9_GLOBAL_20261114.md) 判 `p3_9_closed_limited_exit`，五本账合并、能力账零变化、`handoff_to_formal_ab_qualification=false`。
+
+裁定：**范围内未证优劣，成本无法配平**。按路径备案 §4 决策表行 64／63，记范围内未证优劣、按资格保留阶段父、复评结构目标覆盖；不宣布单位思想被否定、不靠扩大规模继续消耗、不改门值、不加剂量、不切换生产默认图、不把工程通过放行到 22.6／22.7 的能力父门。卡关闭 ≠ M 线或里程碑关闭 ≠ 范围排除批准。
+
+两处实现缺陷（A readout group 维、B 缺门控与 `units.p` 无梯度）已修复并如实登记，判据未改、图验收修复后重跑一次、旧未入库报告不引用。合成合法输入行为窗不是自然中文／项目任务，0 能力声称；无已验旧能力，保持不签。D-20261114-01 的复核点「P3.9.1 图冻结」「P3.9.4 路线裁决」由本条达成。

@@ -1,0 +1,180 @@
+{
+  "schema": "taiji-u2-p3-9-1-price-v1",
+  "date": "2026-11-14",
+  "card": "22.5.P3.9.1",
+  "phase": "price",
+  "verdict": "price_measured_admission_possible",
+  "measured": {
+    "A_float32": {
+      "init": {
+        "samples": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "median": 0.0,
+        "max": 0.0
+      },
+      "forward_backward": {
+        "samples": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "median": 0.0,
+        "max": 0.0
+      },
+      "adam_step": {
+        "samples": [
+          0.0,
+          0.0156,
+          0.0
+        ],
+        "median": 0.0,
+        "max": 0.0156
+      },
+      "evaluation": {
+        "samples": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "median": 0.0,
+        "max": 0.0
+      }
+    },
+    "A_float64": {
+      "init": {
+        "samples": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "median": 0.0,
+        "max": 0.0
+      },
+      "forward_backward": {
+        "samples": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "median": 0.0,
+        "max": 0.0
+      },
+      "adam_step": {
+        "samples": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "median": 0.0,
+        "max": 0.0
+      },
+      "evaluation": {
+        "samples": [
+          0.0,
+          0.0156,
+          0.0
+        ],
+        "median": 0.0,
+        "max": 0.0156
+      }
+    },
+    "B_float32": {
+      "init": {
+        "samples": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "median": 0.0,
+        "max": 0.0
+      },
+      "forward_backward": {
+        "samples": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "median": 0.0,
+        "max": 0.0
+      },
+      "adam_step": {
+        "samples": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "median": 0.0,
+        "max": 0.0
+      },
+      "evaluation": {
+        "samples": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "median": 0.0,
+        "max": 0.0
+      }
+    },
+    "B_float64": {
+      "init": {
+        "samples": [
+          0.0,
+          0.0,
+          0.0156
+        ],
+        "median": 0.0,
+        "max": 0.0156
+      },
+      "forward_backward": {
+        "samples": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "median": 0.0,
+        "max": 0.0
+      },
+      "adam_step": {
+        "samples": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "median": 0.0,
+        "max": 0.0
+      },
+      "evaluation": {
+        "samples": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "median": 0.0,
+        "max": 0.0
+      }
+    }
+  },
+  "conservative": {
+    "per_paired_update_cpu": 0.0312,
+    "per_evaluation_cpu": 0.0156,
+    "fixed_evaluations": 8,
+    "draft_cap_cpu": 120.0,
+    "draft_cap_wall": 240.0,
+    "affordable_paired_updates": 2303
+  },
+  "discipline": {
+    "pricing_adam_calls_per_graph": 3,
+    "checkpoint_writes": 0,
+    "parent_files_mutated": 0,
+    "project_task_data_reads": 0,
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0
+  },
+  "measured_cpu_seconds": 1.2031,
+  "measured_wall_seconds": 2.062
+}

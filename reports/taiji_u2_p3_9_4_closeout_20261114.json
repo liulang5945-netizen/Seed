@@ -1,0 +1,60 @@
+{
+  "schema": "taiji-u2-p3-9-4-closeout-v1",
+  "date": "2026-11-14",
+  "card": "22.5.P3.9.4",
+  "phase": "closeout",
+  "verdict": "p3_9_closed_limited_exit",
+  "five_ledgers": {
+    "birth": "two generations of exact neutral birth, registry IDs never reused, dormant/wake/rollback",
+    "credit": "per-parameter gradient coverage for both routes, structural zeros reported",
+    "behavior": "compute_parity_unavailable",
+    "recovery": "independent-process full-capsule restores for both routes, initial and first non-empty moment",
+    "cost": "per-stage CPU reported; no P3.8 budget transferred; no sealed face opened"
+  },
+  "capability_ledger": {
+    "change": "none",
+    "capability_claims": 0,
+    "native_parent_qualified": false,
+    "formal_a_status": "not_admitted"
+  },
+  "six_axis_card": {
+    "status": "unchanged",
+    "reason": "engineering graphs and a synthetic window carry no verified task capability"
+  },
+  "handoff_to_formal_ab_qualification": false,
+  "handoff_note": "only a superior-in-window verdict with retention evidence may be handed to formal A/B qualification; this window signs none",
+  "stages": [
+    {
+      "report": "reports/taiji_u2_p3_9_1_price_20261114.json",
+      "sha256": "4fda4b71072b5c6d21ddc8d27262d0c566e08d1dff0d8224a6b74a3d442f6460",
+      "verdict": "price_measured_admission_possible",
+      "cpu_seconds": 1.2031
+    },
+    {
+      "report": "reports/taiji_u2_p3_9_1_graph_20261114.json",
+      "sha256": "894c1b95b798f795a1e926f9277f1c5948aedac8f2b51d0c5016942250d66068",
+      "verdict": "reference_graphs_verified",
+      "cpu_seconds": 0.0312
+    },
+    {
+      "report": "reports/taiji_u2_p3_9_2_restore_20261114.json",
+      "sha256": "b5292feb7834b25ff18e4478660cefad7d7ca45326eca41e6666f426936a4d00",
+      "verdict": "restore_and_lifecycle_verified",
+      "cpu_seconds": 1.625
+    },
+    {
+      "report": "reports/taiji_u2_p3_9_3_behavior_20261114.json",
+      "sha256": "bb0182ffd981a3e07b77e3d00f59b2dc8ae8ee3075c4271f5ede6064776dc5b7",
+      "verdict": "compute_parity_unavailable",
+      "cpu_seconds": 1.8125
+    }
+  ],
+  "total_stage_cpu": 4.6718,
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "capability_claims": 0,
+    "new_parents": 0
+  }
+}
