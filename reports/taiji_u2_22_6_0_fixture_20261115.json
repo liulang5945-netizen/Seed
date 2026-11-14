@@ -1,0 +1,159 @@
+{
+  "schema": "taiji-u2-22-6-0-fixture-report-v1",
+  "card": "22.6.0",
+  "date": "2026-11-15",
+  "verdict": "fixture_valid",
+  "failures": [],
+  "seeds": [
+    {
+      "schema": "taiji-u2-drive-task-v1",
+      "digest": "a17c59d7a0d2f66a3226f24d8271207766a60f0fe8f62cb661bda652c99d7020",
+      "valid": true,
+      "verdict": "fixture_valid",
+      "failures": [],
+      "totals": {
+        "act_now": 27,
+        "deferred": 21,
+        "oracle": 48
+      },
+      "counts": {
+        "sessions": 3,
+        "opportunities": 48,
+        "requires_waiting": 21,
+        "requires_immediate": 27,
+        "pending_results": 6,
+        "prompt_free": 9
+      },
+      "checked": [
+        "session_count",
+        "opportunity_count",
+        "wait_idle_optimal",
+        "no_action_value",
+        "deadline_not_binding",
+        "window_equals_deadline_everywhere",
+        "wait_never_optimal",
+        "wait_always_optimal",
+        "no_feedback_change",
+        "feedback_change_affects_nothing_later",
+        "no_contiguous_prompt_free_run",
+        "prompt_inside_the_quiet_run",
+        "no_pending_result",
+        "help_not_metered_or_not_removed"
+      ],
+      "not_checked_here": [
+        "actual execution receipts (22.6.2)",
+        "policy learning and net utility (22.6.2-22.6.5)"
+      ],
+      "deterministic": true,
+      "seed": 20261110
+    },
+    {
+      "schema": "taiji-u2-drive-task-v1",
+      "digest": "b0cd8b8788732b203b32d3f4e96e28f1f7a49cd393a585580821df014fdef509",
+      "valid": true,
+      "verdict": "fixture_valid",
+      "failures": [],
+      "totals": {
+        "act_now": 27,
+        "deferred": 21,
+        "oracle": 48
+      },
+      "counts": {
+        "sessions": 3,
+        "opportunities": 48,
+        "requires_waiting": 21,
+        "requires_immediate": 27,
+        "pending_results": 6,
+        "prompt_free": 9
+      },
+      "checked": [
+        "session_count",
+        "opportunity_count",
+        "wait_idle_optimal",
+        "no_action_value",
+        "deadline_not_binding",
+        "window_equals_deadline_everywhere",
+        "wait_never_optimal",
+        "wait_always_optimal",
+        "no_feedback_change",
+        "feedback_change_affects_nothing_later",
+        "no_contiguous_prompt_free_run",
+        "prompt_inside_the_quiet_run",
+        "no_pending_result",
+        "help_not_metered_or_not_removed"
+      ],
+      "not_checked_here": [
+        "actual execution receipts (22.6.2)",
+        "policy learning and net utility (22.6.2-22.6.5)"
+      ],
+      "deterministic": true,
+      "seed": 20261111
+    },
+    {
+      "schema": "taiji-u2-drive-task-v1",
+      "digest": "64bfa268249604825727cfb38b2d1fb199e0423aad5bdc7de384db447e5cc0fb",
+      "valid": true,
+      "verdict": "fixture_valid",
+      "failures": [],
+      "totals": {
+        "act_now": 27,
+        "deferred": 21,
+        "oracle": 48
+      },
+      "counts": {
+        "sessions": 3,
+        "opportunities": 48,
+        "requires_waiting": 21,
+        "requires_immediate": 27,
+        "pending_results": 6,
+        "prompt_free": 9
+      },
+      "checked": [
+        "session_count",
+        "opportunity_count",
+        "wait_idle_optimal",
+        "no_action_value",
+        "deadline_not_binding",
+        "window_equals_deadline_everywhere",
+        "wait_never_optimal",
+        "wait_always_optimal",
+        "no_feedback_change",
+        "feedback_change_affects_nothing_later",
+        "no_contiguous_prompt_free_run",
+        "prompt_inside_the_quiet_run",
+        "no_pending_result",
+        "help_not_metered_or_not_removed"
+      ],
+      "not_checked_here": [
+        "actual execution receipts (22.6.2)",
+        "policy learning and net utility (22.6.2-22.6.5)"
+      ],
+      "deterministic": true,
+      "seed": 20261112
+    }
+  ],
+  "criteria_sha256": "b76efa9dc7d3b66b632417b1852eddb38d2732ac6ce3d992e25eeca2cb6eed0d",
+  "parent": {
+    "required": "the learning parent accepted at 22.5",
+    "present": false,
+    "native_parent_qualified": false,
+    "note": "22.6.1-5 stay closed until a parent exists; this card freezes only the C task and the operation/information/resource rights"
+  },
+  "discipline": {
+    "optimizer_calls": 0,
+    "model_forwards": 0,
+    "world_steps": 0,
+    "sealed_reads": 0,
+    "project_data_reads": 0,
+    "capability_claims": 0
+  },
+  "not_measured_here": [
+    "policy choice quality",
+    "gain/risk/cost predictor",
+    "net utility against fixed and reactive controls"
+  ],
+  "measured": {
+    "cpu_seconds": 0.0,
+    "wall_seconds": 0.001874
+  }
+}

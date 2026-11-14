@@ -1,0 +1,91 @@
+{
+  "schema": "taiji-u2-22-6-entry-v1",
+  "card": "22.6",
+  "date": "2026-11-15",
+  "verdict": "entry_limited_to_fixture_parent_absent",
+  "capability_entry": false,
+  "fixture_entry": true,
+  "blocking_rows": [
+    "G1",
+    "G2",
+    "G3"
+  ],
+  "gate": [
+    {
+      "id": "G1",
+      "requirement": "父身份为22.5接受的同一学习父，每个前后版本沿该谱系。",
+      "state": "absent",
+      "evidence": "accepted learning parent 不存在；native_parent_qualified=false；P3.10–P3.31 无任何能力证据",
+      "blocking": true
+    },
+    {
+      "id": "G2",
+      "requirement": "check②B资格未过不进入22.6。",
+      "state": "blocked",
+      "evidence": "22.5 的 check② 从未按其自身口径执行；P3.4–P3.9 全为替代夹具",
+      "blocking": true
+    },
+    {
+      "id": "G3",
+      "requirement": "22.5.1 B父门：全应答轮成功率≥0.80、真实反馈学习增益≥0.05、world配对95%下界>0且3seed同向、纠正率≥0.80、A保持损伤≤0.02。",
+      "state": "unmeasured",
+      "evidence": "五项均无读数；无父即无 A 保持对象",
+      "blocking": true
+    },
+    {
+      "id": "G4",
+      "requirement": "系数、单位、期限在22.4冻结。",
+      "state": "partial",
+      "evidence": "deadline 已在 world contract 的 permissions.public 中；效用系数与归一成本单位未冻结",
+      "blocking": false
+    },
+    {
+      "id": "G5",
+      "requirement": "22.6 资源：计划 8,000、余量 1,600、合计帽 9,600 CPU／19,200 wall／check 上限 2。",
+      "state": "available",
+      "evidence": "本卡 0 优化器调用、0 模型前向、0 world 步进，预算未消费",
+      "blocking": false
+    }
+  ],
+  "allowed_now": [
+    "22.6.0: freeze the C task, the operation rights, the information rights and the resource rights",
+    "fixture validity checks and their red directions"
+  ],
+  "forbidden_now": [
+    "22.6.1 gain/risk/cost predictor",
+    "22.6.2 policy versus fixed schedule, reactive control and wait control",
+    "22.6.3 two dependent improvements with a fixed-parent counterfactual",
+    "22.6.4 check①/check②",
+    "22.6.5 whole-package closeout",
+    "any capability claim of any kind"
+  ],
+  "why_not_forced": "读卡而不读父，会把一次夹具通过记成能力通过；这恰是本项目反复拒绝的那种改判。",
+  "fixture": {
+    "report": "reports/taiji_u2_22_6_0_fixture_20261115.json",
+    "report_sha256": "f2375dfc2211c15308666406adafa3d6756bca25f9a8dc0ed21e5467c0569413",
+    "verdict": "fixture_valid",
+    "seeds": [
+      20261110,
+      20261111,
+      20261112
+    ],
+    "criteria_sha256": "b76efa9dc7d3b66b632417b1852eddb38d2732ac6ce3d992e25eeca2cb6eed0d"
+  },
+  "source_pins": {
+    "module": "88c13b08fb24f78cc309922f439fe4b5ff0bb3f9a19aa4745d93fa44ce139b13",
+    "manifest": "91c1c78eaa77ade4b9a19b20c6e09e1e462da8a6bd45e86bfd96bcb5743df2d9",
+    "fixture_script": "abc36ede9b9fce3be2d983a5c1e87834263778180659cfc34601b831e41bad35"
+  },
+  "discipline": {
+    "optimizer_calls": 0,
+    "model_forwards": 0,
+    "world_steps": 0,
+    "sealed_reads": 0,
+    "capability_claims": 0,
+    "checks_consumed": 0,
+    "budget_consumed_cpu": 0.0
+  },
+  "measured": {
+    "wall_seconds": 0.000287
+  }
+}

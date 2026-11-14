@@ -1,0 +1,88 @@
+{
+  "schema": "taiji-u2-22-6-0-fixture-contract-v1",
+  "status": "frozen",
+  "card": "22.6.0",
+  "date": "2026-11-15",
+  "scope": "fixture and rights only; no policy learning, no world stepping, no model forward, no capability reading",
+  "parent": {
+    "required": "the learning parent accepted at 22.5",
+    "present": false,
+    "native_parent_qualified": false,
+    "note": "22.6.1-5 stay closed until a parent exists; this card freezes only the C task and the operation/information/resource rights"
+  },
+  "seeds": [
+    20261110,
+    20261111,
+    20261112
+  ],
+  "task": {
+    "sessions_per_world": 3,
+    "decision_opportunities_per_session": 16,
+    "operations": [
+      "act",
+      "express",
+      "inspect",
+      "ask",
+      "replay",
+      "consolidate",
+      "grow",
+      "rest",
+      "wait"
+    ],
+    "value_model": "act only, integer value on a tick grid, zero strictly after the deadline",
+    "composition_per_session": {
+      "pay_only_if_acted_immediately": 9,
+      "pay_only_after_reveal_at_tick_3": 5,
+      "pay_only_after_a_result_two_ticks_late": 2,
+      "contiguous_prompt_free_steps": 3
+    },
+    "feedback_change": "exactly one per session, colour cue becomes position cue, must affect at least one later opportunity",
+    "help": "96 bytes per session granted to the helped arm only; the task is also scored after help removal"
+  },
+  "criteria": {
+    "exit_rule": "every seed must pass every check, otherwise fixture_invalid",
+    "checks": [
+      "sessions == 3 and opportunities == 16",
+      "value_of(act, deadline + 1) == 0 for every opportunity",
+      "some window closes strictly before its deadline",
+      "at least one opportunity where deferring pays more than acting now",
+      "at least one opportunity where acting now pays more than deferring",
+      "one feedback change per session with a later effect",
+      "a contiguous prompt-free run of three steps with no prompt inside it",
+      "at least one pending result per session with delay > 0",
+      "help is metered and the removal arm exists",
+      "rebuilding from the same seed reproduces the digest",
+      "rights' operation list equals the 22.4 world contract action list",
+      "rights' public information list equals the 22.4 world contract permissions"
+    ],
+    "stop_conditions": {
+      "wait_idle_optimal": "fixture_invalid, per the plan's own stop for 22.6.0",
+      "deadline_not_binding": "fixture_invalid",
+      "no_feedback_change": "fixture_invalid",
+      "no_pending_result": "fixture_invalid"
+    },
+    "capability_claims": 0
+  },
+  "caps": {
+    "cpu": 5.0,
+    "wall": 60.0
+  },
+  "discipline": {
+    "optimizer_calls": 0,
+    "model_forwards": 0,
+    "world_steps": 0,
+    "sealed_reads": 0,
+    "project_data_reads": 0,
+    "capability_claims": 0
+  },
+  "source_pins": {
+    "module": "88c13b08fb24f78cc309922f439fe4b5ff0bb3f9a19aa4745d93fa44ce139b13",
+    "test": "697b71f65d07e120fa6dabb490e871d444d7f3be53ff3ba873eb4a1167c88ec9"
+  },
+  "exits": [
+    "fixture_valid",
+    "fixture_invalid"
+  ],
+  "note": "arithmetic only; the receipt's cost is hashing and integer sums, so a 0.0 CPU reading below the timer tick is expected and must be reported as wall time instead",
+  "criteria_sha256": "b76efa9dc7d3b66b632417b1852eddb38d2732ac6ce3d992e25eeca2cb6eed0d"
+}

@@ -1,0 +1,51 @@
+{
+  "schema": "taiji-u2-22-6-0-guard-v1",
+  "card": "22.6.0",
+  "verdict": "guard_passed",
+  "checks": {
+    "contract_frozen": true,
+    "criteria_sha256_matches": true,
+    "module_pin_live": true,
+    "test_pin_live": true,
+    "report_verdict_is_valid": true,
+    "report_has_no_failures": true,
+    "seed_set_matches": true,
+    "every_seed_valid_and_deterministic": true,
+    "parent_is_absent": true,
+    "zero_capability_claims": true,
+    "no_optimizer_no_forward_no_world_step": true,
+    "recompute_matches_every_seed": true,
+    "recompute_says_valid": true,
+    "composition_is_seed_invariant": true,
+    "digests_differ_by_seed": true,
+    "cost_within_cap": true,
+    "cpu_below_timer_tick_is_declared": true,
+    "nav_heads_agree": true,
+    "entry_verdict_is_limited": true,
+    "capability_entry_is_false": true,
+    "fixture_entry_is_true": true,
+    "gate_rows_complete": true,
+    "blocking_rows_are_the_three_parent_rows": true,
+    "forbidden_lists_every_subcard": true,
+    "entry_claims_nothing": true,
+    "entry_pins_live": true,
+    "entry_matches_contract_parent": true
+  },
+  "drills": {
+    "inject_capability_claim": true,
+    "claim_a_parent": true,
+    "inflate_oracle_total": true,
+    "erase_waiting_count": true,
+    "flip_verdict": true,
+    "hide_an_optimizer_call": true,
+    "open_capability_entry": true,
+    "rename_the_verdict": true,
+    "entry_checks_all_hold": true
+  },
+  "failed": [],
+  "drills_not_firing": [],
+  "measured": {
+    "cpu_seconds": 1.1875,
+    "wall_seconds": 1.570159
+  }
+}
