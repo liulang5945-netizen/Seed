@@ -79,7 +79,7 @@
     "final_reads": 0
   },
   "measured": {
-    "cpu_seconds": 13.53125,
-    "wall_seconds": 14.511346
+    "cpu_seconds": 10.6875,
+    "wall_seconds": 11.0431
   }
 }

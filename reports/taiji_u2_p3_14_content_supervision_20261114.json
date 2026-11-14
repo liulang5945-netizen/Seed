@@ -1,0 +1,85 @@
+{
+  "schema": "taiji-u2-p3-14-content-v1",
+  "date": "2026-11-14",
+  "card": "22.5.P3.14",
+  "phase": "content_supervision",
+  "verdict": "content_supervision_insufficient",
+  "lambda": 1.0,
+  "doses": [
+    {
+      "update": 64,
+      "correct": 0,
+      "accuracy": 0.0,
+      "train_correct": 0,
+      "train_accuracy": 0.0,
+      "head_fit_accuracy": 0.25,
+      "head_train_accuracy": 0.25,
+      "distinct_outputs": 1,
+      "bundle_digest": "e74a680e0459ee31f567cba1a99371edec03bb7bd686543c452043b4ab7dc575"
+    },
+    {
+      "update": 256,
+      "correct": 0,
+      "accuracy": 0.0,
+      "train_correct": 0,
+      "train_accuracy": 0.0,
+      "head_fit_accuracy": 0.25,
+      "head_train_accuracy": 0.25,
+      "distinct_outputs": 1,
+      "bundle_digest": "7039c04638cd231ae7960499efaf0da576b32e33eae82e3058d6e39ad2c2e6e0"
+    },
+    {
+      "update": 768,
+      "correct": 8,
+      "accuracy": 0.25,
+      "train_correct": 16,
+      "train_accuracy": 0.25,
+      "head_fit_accuracy": 0.25,
+      "head_train_accuracy": 0.25,
+      "distinct_outputs": 1,
+      "bundle_digest": "8842874611acf9ae17e35e0ba924dc9480ff5dd7c993eb6f09fbfa9b5d32142d"
+    },
+    {
+      "update": 1844,
+      "correct": 8,
+      "accuracy": 0.25,
+      "train_correct": 16,
+      "train_accuracy": 0.25,
+      "head_fit_accuracy": 0.25,
+      "head_train_accuracy": 0.25,
+      "distinct_outputs": 1,
+      "bundle_digest": "492beea644c98182f9ee6b6bd9b0aa0fe585a42a1be3d9feebc0deb0a6602c22"
+    }
+  ],
+  "zero": {
+    "correct": 0,
+    "denominator": 32,
+    "accuracy": 0.0
+  },
+  "head": {
+    "parameters": 36,
+    "initialised_zero": true
+  },
+  "control_arms": {
+    "plain_adam": "22.5.P3.10 fit 0/0/0.25/0.25, train 0/0/0.25/0.25",
+    "accepted_update": "22.5.P3.13 fit 0/0/0.25/0.25, train 0/0/0.25/0.25"
+  },
+  "training_authority": "owner:chat:2026-11-14#continue",
+  "cost": {
+    "total_cpu": 459.875,
+    "total_wall": 461.386741,
+    "cap_cpu": 518.719,
+    "cap_wall": 1037.438
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "capability_claims": 0
+  },
+  "run_conditions": {
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "scope": "single-seed content-supervised arm on synthetic legal inputs; no natural-language, no capability claim"
+}

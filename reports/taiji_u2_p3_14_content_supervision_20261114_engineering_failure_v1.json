@@ -1,0 +1,7 @@
+{
+  "schema": "taiji-u2-p3-14-content-v1",
+  "date": "2026-11-14",
+  "card": "22.5.P3.14",
+  "verdict": "engineering_failure",
+  "error": "ValueError: loaded state dict contains a parameter group that doesn't match the size of optimizer's group"
+}

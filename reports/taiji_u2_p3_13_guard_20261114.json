@@ -47,7 +47,7 @@
     "optimizer_calls": 0
   },
   "measured": {
-    "cpu_seconds": 4.140625,
-    "wall_seconds": 4.372955
+    "cpu_seconds": 4.15625,
+    "wall_seconds": 4.399316
   }
 }
