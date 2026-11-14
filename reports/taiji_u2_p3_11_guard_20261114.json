@@ -1,0 +1,55 @@
+{
+  "schema": "taiji-u2-p3-11-12-guard-v1",
+  "date": "2026-11-14",
+  "card": "22.5.P3.11-12",
+  "checks": {
+    "contracts_frozen": true,
+    "scripts_pinned": true,
+    "criteria_sha_unchanged": true,
+    "probe_11_matches": true,
+    "context_11_matches": true,
+    "sensitivity_11_matches": true,
+    "verdict_11_matches_rule": true,
+    "probe_12_matches": true,
+    "verdict_12_matches_rule": true,
+    "no_capability_claims": true,
+    "no_optimizer_calls": true,
+    "no_sealed_reads": true
+  },
+  "red_drills": {
+    "tamper_verdict_11": true,
+    "tamper_probe_11": true,
+    "tamper_probe_12": true,
+    "claim_capability": true
+  },
+  "real_file_drill": {
+    "performed": true,
+    "red_checks": [
+      "probe_11_matches"
+    ],
+    "restored_byte_exact": true,
+    "green_after_restore": true
+  },
+  "recomputed": {
+    "p3_11_encoding_accuracy": 0.28125,
+    "p3_11_context_accuracy": 0.15625,
+    "p3_11_median_relative": 0.109043233,
+    "p3_12_correct": 11,
+    "p3_12_accuracy": 0.34375,
+    "p3_12_shuffle": 0.40625
+  },
+  "verdict": "pass",
+  "failed": [],
+  "run_conditions": {
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "discipline": {
+    "training_runs": 0,
+    "optimizer_calls": 0
+  },
+  "measured": {
+    "cpu_seconds": 2.3125,
+    "wall_seconds": 3.004195
+  }
+}

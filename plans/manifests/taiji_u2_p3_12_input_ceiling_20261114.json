@@ -1,0 +1,33 @@
+{
+  "schema": "taiji-u2-p3-12-contract-v1",
+  "status": "frozen",
+  "card": "22.5.P3.12",
+  "date": "2026-11-14",
+  "data_root": "data/experiments/taiji_u2/first_a/20261112T074836Z/data.bin",
+  "data_digest": "40813b4cc8ffec0c3ae5639941b373c139422b4ccbaa34790de34a9e1149d214",
+  "criteria": {
+    "probe_high": 0.6,
+    "probe_low": 0.35,
+    "ridge_lambda": 1.0,
+    "shuffle_seed": 20261114,
+    "protocol": "ridge fit on train64 raw rgb (768 dims), test on fit32",
+    "decision": "accuracy>=high and shuffle < accuracy-0.2 -> input_contains_position_encoder_loses_it; accuracy<=low -> input_split_not_linearly_separable; else inconclusive_input_ceiling"
+  },
+  "criteria_sha256": "d15c3dc5fc1dbf755c4d740c398781d6e3fe2cc822ff722e8cf73b8da48fce2c",
+  "exits": [
+    "input_contains_position_encoder_loses_it",
+    "input_split_not_linearly_separable",
+    "inconclusive_input_ceiling"
+  ],
+  "cpu_cap": 50.0,
+  "source_pins": {
+    "script": "e513b1e91dce964f950887e3d681360bccbace8baff1a3386525deed8b79ddea"
+  },
+  "discipline": {
+    "training_runs": 0,
+    "optimizer_calls": 0,
+    "model_forward_passes": 0,
+    "capability_claims": 0
+  },
+  "note": "criteria frozen before reading; raw input only, no model"
+}

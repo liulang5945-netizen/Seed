@@ -1,0 +1,34 @@
+{
+  "schema": "taiji-u2-p3-12-input-ceiling-v1",
+  "date": "2026-11-14",
+  "card": "22.5.P3.12",
+  "phase": "input_ceiling",
+  "verdict": "input_split_not_linearly_separable",
+  "features": "flattened 16x48 rgb frame, 768 dimensions, standardized",
+  "probe": {
+    "correct": 11,
+    "denominator": 32,
+    "accuracy": 0.34375,
+    "shuffled_control_accuracy": 0.40625,
+    "majority_baseline": 0.25,
+    "ridge_lambda": 1.0,
+    "protocol": "ridge fit on train64, test on fit32"
+  },
+  "discipline": {
+    "optimizer_calls": 0,
+    "model_forward_passes": 0,
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "capability_claims": 0
+  },
+  "run_conditions": {
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "measured": {
+    "cpu_seconds": 0.046875,
+    "wall_seconds": 0.054181
+  },
+  "scope": "input-side ceiling only; no model, no training, no capability claim"
+}

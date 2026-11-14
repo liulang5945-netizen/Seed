@@ -1,0 +1,44 @@
+{
+  "schema": "taiji-u2-p3-11-contract-v1",
+  "status": "frozen",
+  "card": "22.5.P3.11",
+  "date": "2026-11-14",
+  "parent_bundle": "data/experiments/taiji_u2/p3_10/20261114T1847Z/dose-1844.bin",
+  "parent_update": 1844,
+  "parent_bundle_digest": "96bc0d2174c5acadd174bc92913f992145439656d831809d637355ae1d185993",
+  "data_root": "data/experiments/taiji_u2/first_a/20261112T074836Z/data.bin",
+  "data_digest": "40813b4cc8ffec0c3ae5639941b373c139422b4ccbaa34790de34a9e1149d214",
+  "criteria": {
+    "encoder_invariance_threshold": 0.001,
+    "probe_high": 0.6,
+    "probe_low": 0.35,
+    "shuffle_max": 0.35,
+    "ridge_lambda": 1.0,
+    "shuffle_seed": 20261114,
+    "protocol": "ridge fit on train64, test on fit32, features standardized",
+    "decision": "D1 median relative rgb-zero delta < threshold -> representation_invariant; D2 probe>=high and shuffle<=max -> information_present_credit_missing; D3 probe<=low -> information_absent_from_representation; else inconclusive_attribution",
+    "gradient_norms_are_descriptive_only": true,
+    "capability_claims": 0
+  },
+  "criteria_sha256": "8db1abd2062a6a21c7b76cf35d4588c03d619d0709848cb5f26a3f267187c573",
+  "exits": [
+    "representation_invariant",
+    "information_present_credit_missing",
+    "information_absent_from_representation",
+    "inconclusive_attribution"
+  ],
+  "cpu_cap": 200.0,
+  "source_pins": {
+    "script": "23b15349dfd7e70e673cd6c5d3ea9a0b4a197dc56b3e18b39ef40d5656c39d09",
+    "support": "33d9301f98859934c1413e25765c55e6bc7b64dfa410d65b03f0e5a198041b4c"
+  },
+  "discipline": {
+    "training_runs": 0,
+    "optimizer_calls": 0,
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "capability_claims": 0
+  },
+  "note": "criteria frozen before any reading; zero training; one bundle and train/fit only"
+}
