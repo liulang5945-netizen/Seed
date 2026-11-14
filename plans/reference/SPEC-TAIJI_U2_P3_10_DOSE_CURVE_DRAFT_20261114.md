@@ -19,7 +19,8 @@
 | 项 | 取值 |
 |---|---|
 | 候选 | Native（22.4.A.1 profile，22,742 参数／194 张量）；不跑 GRU／Transformer 基线，不以基线代签主体 |
-| 初始 checkpoint | `data/experiments/taiji_u2/first_a/20261112T074836Z/native/initial_v3.bin`（`parameter_sha256=c58aca6c…`，`next_loss=4.528439521789551`，`parameter_revision=0`） |
+| 初始化 | **当前冻源码下的新初始化**（`U2Config` 取 pilot `description`，seed 20261110）。**不复用** pilot `initial_v3.bin`：其四份源码 pin 已漂移，当前源码重算 `next_loss=4.7018` vs 记录 `4.528439521789551`（Δ0.1734），`load_learner` 已 fail-closed 拒绝；见复评 §3.2 |
+| 0 点 | 在新初始化上**重测** fit32，不引用 pilot 的 0.0 |
 | 数据 | 同一 `data.bin`（`data_digest=40813b4c…`）：train64／fit32，不读 check／final／confirm |
 | 顺序 | 同一 `order`（64 项）、batch=2、cursor 从 0 开始 |
 | seed / 优化器 | 20261110；Adam lr=1e-3、betas=(0.9,0.999)、eps=1e-8、weight_decay=0；不 clip、不看 fit 调 lr |
@@ -62,7 +63,7 @@
 ## 7. 冻结前必须清的四项
 
 1. **四维打分器**：本任务的答案只有「左边／中间／右边／未知」四类，内容与位置可能不可分；须给出映射表，或明确写「联合即全维」并说明为何不拆。
-2. **初始 checkpoint sha**：`c58aca6c…` 与 `next_loss=4.528439521789551` 已由 pilot manifest 钉住，本卡引用不重签；R-REBUILD-1 已登记该输入为 `regenerable_exact`。
+2. **新初态身份**：pilot 初态已判不可复用（四份源码漂移、`next_loss` 4.5284→4.7018）。新初始化必须写进 manifest：`U2Config`、seed、`parameter_sha256`、0 点 `next_loss` 与 0 点 fit32 读数；R-REBUILD-1 的 `regenerable_exact` 只对 pilot 初态成立，不自动覆盖新初态。
 3. **预检定价**：单次更新（不落盘）／单次评估／单次控制评估的实测 CPU，决定 §5 的最终帽。
 4. **是否加 accepted-update 配方臂**：默认**不加**（会翻倍预算且引入第二个变量）；若 C3 触发，另卡比较配方，不在本卡加臂。
 

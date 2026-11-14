@@ -91,6 +91,21 @@
     "capability_claims": 0,
     "gate_values_changed": 0
   },
+  "source_drift_check": {
+    "checkpoint": "data/experiments/taiji_u2/first_a/20261112T074836Z/native/initial_v3.bin",
+    "stale_pins": [
+      "taiji/u2_operators.py",
+      "taiji/u2_history.py",
+      "taiji/u2_recovery.py",
+      "taiji/u2_learning_transaction.py"
+    ],
+    "recorded_next_loss": 4.528439521789551,
+    "recomputed_next_loss": 4.701830863952637,
+    "abs_diff": 0.17339134216308594,
+    "verdict": "initial_checkpoint_not_reusable_under_current_source",
+    "loader_behaviour": "load_learner fails closed on the stale pins",
+    "consequence": "P3.10 must re-initialize under the frozen current source and re-measure the zero point; the pilot 24-update point is context only"
+  },
   "next_card": {
     "id": "22.5.P3.10",
     "title": "门-剂量一致性与学习曲线校准",

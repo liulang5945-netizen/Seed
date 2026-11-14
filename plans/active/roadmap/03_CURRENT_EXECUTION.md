@@ -3251,4 +3251,6 @@ owner 本轮重述[根需求 §2.1](../TAIJI_CORE_REQUIREMENTS.md#21-统一目�
 
 **验收**：守卫 14 项检查全绿、5 项内存红方向全响，并做真实文件篡改（`能力成立 0`→`1`）——2 项检查转红、逐字节恢复后复绿；`measured.cpu_seconds=0.0` 低于 0.0156 s 计时刻度，wall 秒数以机读回执为准。
 
-**设计稿已出**：[P3.10 设计·待准入](../../reference/SPEC-TAIJI_U2_P3_10_DOSE_CURVE_DRAFT_20261114.md)——唯一问题、候选与初态（`initial_v3.bin`，`c58aca6c…`）、剂量点 `{0,64,256,768,1844}`、四出口（`dose_curve_measured`／`gate_dose_infeasible`／`recipe_scoped_flat`／`inconclusive_curve`）与 `[60, 2481.7]` CPU 价格带齐备；**runner 与 manifest 未写、未冻结**，冻结前须清四维打分器、初态 sha、预检定价、是否加配方臂（默认不加）。本稿 0 计算、0 额度。
+**设计稿已出**：[P3.10 设计·待准入](../../reference/SPEC-TAIJI_U2_P3_10_DOSE_CURVE_DRAFT_20261114.md)——唯一问题、候选与初态、剂量点 `{0,64,256,768,1844}`、四出口（`dose_curve_measured`／`gate_dose_infeasible`／`recipe_scoped_flat`／`inconclusive_curve`）与 `[60, 2481.7]` CPU 价格带齐备；**runner 与 manifest 未写、未冻结**，冻结前须清四维打分器、新初态身份、预检定价、是否加配方臂（默认不加）。本稿 0 计算、0 额度。
+
+**初态漂移实测（冻结前必须遵守）**：pilot `initial_v3.bin` 的四份源码 pin（`u2_operators`／`u2_history`／`u2_recovery`／`u2_learning_transaction`）在当前工作树全部漂移，`load_learner` 已 fail-closed 拒绝；按当前源码重算记录批次的 `next_loss` 得 **4.7018** vs 记录 **4.528439521789551**（差 **0.1734**）。⇒ pilot 初态**不得**复用为曲线 0 点，P3.10 改用当前冻源码的新初始化并重测 0 点；pilot 的 24 点只作历史背景。
