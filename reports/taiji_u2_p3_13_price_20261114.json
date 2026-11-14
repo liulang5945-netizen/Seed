@@ -1,0 +1,60 @@
+{
+  "schema": "taiji-u2-p3-13-price-v1",
+  "date": "2026-11-14",
+  "card": "22.5.P3.13",
+  "phase": "price_probe",
+  "steps": [
+    {
+      "accepted": true,
+      "scale": 1,
+      "evaluations": 1
+    },
+    {
+      "accepted": true,
+      "scale": 1,
+      "evaluations": 1
+    },
+    {
+      "accepted": true,
+      "scale": 1,
+      "evaluations": 1
+    }
+  ],
+  "measurements": {
+    "per_step_cpu": [
+      0.28125,
+      0.265625,
+      0.25
+    ],
+    "per_step_cpu_median": 0.265625,
+    "eval_cpu": 7.765625,
+    "eval_correct_at_zero": 0,
+    "eval_denominator": 32
+  },
+  "derived": {
+    "curve_updates": 1844,
+    "curve_evaluations": 5,
+    "curve_cpu_estimate": 528.641,
+    "cap_cpu": 581.505,
+    "cap_wall": 1163.01
+  },
+  "verdict": "price_measured",
+  "discipline": {
+    "checkpoints_written": 0,
+    "ledger_written": false,
+    "optimizer_calls": 3,
+    "new_parent": false,
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0
+  },
+  "run_conditions": {
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "measured": {
+    "cpu_seconds": 9.703125,
+    "wall_seconds": 10.477534
+  },
+  "scope": "pricing only; three in-memory accepted steps are discarded, no capability claim"
+}

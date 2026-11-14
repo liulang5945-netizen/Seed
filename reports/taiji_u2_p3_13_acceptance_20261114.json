@@ -1,0 +1,77 @@
+{
+  "schema": "taiji-u2-p3-13-acceptance-v1",
+  "date": "2026-11-14",
+  "card": "22.5.P3.13",
+  "phase": "acceptance_transplant",
+  "verdict": "acceptance_alone_insufficient",
+  "doses": [
+    {
+      "update": 64,
+      "correct": 0,
+      "accuracy": 0.0,
+      "train_correct": 0,
+      "train_accuracy": 0.0,
+      "distinct_outputs": 1,
+      "bundle_digest": "49d34a3758e7b0d4c8e01b5c49c3c3228a2559398dfc1f76efa73c07fcf7411a"
+    },
+    {
+      "update": 256,
+      "correct": 0,
+      "accuracy": 0.0,
+      "train_correct": 0,
+      "train_accuracy": 0.0,
+      "distinct_outputs": 1,
+      "bundle_digest": "a05b4c903079c7750bf4b2a74df339953f41320cec8c2c54c528a8f059ba09b0"
+    },
+    {
+      "update": 768,
+      "correct": 8,
+      "accuracy": 0.25,
+      "train_correct": 16,
+      "train_accuracy": 0.25,
+      "distinct_outputs": 1,
+      "bundle_digest": "31caaac80e21d66ab8a4de9b07c75fc6932b90f4d9e2fcb1f773dd6496015b71"
+    },
+    {
+      "update": 1844,
+      "correct": 8,
+      "accuracy": 0.25,
+      "train_correct": 16,
+      "train_accuracy": 0.25,
+      "distinct_outputs": 1,
+      "bundle_digest": "83f44045f8b4ef240c5f9828a22da9ba0d38707dac5f693965a7d1308a133d6b"
+    }
+  ],
+  "zero": {
+    "correct": 0,
+    "denominator": 32,
+    "accuracy": 0.0
+  },
+  "acceptance": {
+    "accepted": 1844,
+    "rejected": 0,
+    "optimizer_steps": 1844
+  },
+  "control": {
+    "card": "22.5.P3.10",
+    "readings": "fit 0/0/0.25/0.25; train 16/64"
+  },
+  "training_authority": "owner:chat:2026-11-14#continue",
+  "cost": {
+    "total_cpu": 489.640625,
+    "total_wall": 491.439406,
+    "cap_cpu": 581.505,
+    "cap_wall": 1163.01
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "capability_claims": 0
+  },
+  "run_conditions": {
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "scope": "single-seed accepted-update arm on synthetic legal inputs; no natural-language, no capability claim"
+}
