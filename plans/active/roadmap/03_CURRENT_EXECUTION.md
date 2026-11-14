@@ -3340,3 +3340,5 @@ owner 本轮重述[根需求 §2.1](../TAIJI_CORE_REQUIREMENTS.md#21-统一目�
 **成本**：346.734375 CPU／347.96 wall（帽内）；0 能力声称。
 
 **唯一后继**：22.5.P3.17 结构卡——**查询条件的逐 patch 检测**（`score=(W_q·查询)·(W_p·patch)`，16 patch 归一化；位置由 patch 索引给出），把「找对象」与「读位置」拆开；结构改动需新身份、对照与定价，**先写设计卡再定价**，不直接开跑。若该结构下 train 过 0.80 而 fit 不过，优先修任务切分（3 对象 vs 1–2 对象），不再改结构。
+
+**P3.17 设计稿已出**：[SPEC](../../reference/SPEC-TAIJI_U2_P3_17_DETECTION_DRAFT_20261114.md)（[设计·待准入]）——零初始化查询条件 patch 注意力（约 200 参数）＋4 条出口（`conjunction_expressed`／`structure_learns_task_split_blocks`／`structure_insufficient`／`inconclusive_patch_attention`）＋预算估计约 580 CPU。**前置核验已完成**：六个颜色名的请求嵌入可分（两两平均距离 0.0229、逐维 std 0.0069），注意力有可学的查询信号，但弱。实现、定价、冻结均未做。
