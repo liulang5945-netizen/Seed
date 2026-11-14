@@ -1,0 +1,113 @@
+{
+  "schema": "taiji-u2-structural-coverage-v1",
+  "date": "2026-11-14",
+  "card": "22.5.P3.9.5",
+  "decision_id": "D-20261114-05",
+  "verdict": "coverage_review_recorded",
+  "route_verdict": "unproven_within_scope",
+  "parent_verdict": "capability_parent_absent",
+  "basis": {
+    "decision": "plans/reference/DECISION-TAIJI_NEURAL_CORE_PATH_20261114.md",
+    "decision_rows": [63, 64],
+    "closeout": "plans/reference/CLOSEOUT-TAIJI_U2_P3_9_GLOBAL_20261114.md",
+    "behavior_report": "reports/taiji_u2_p3_9_3_behavior_20261114.json",
+    "criteria_sha256": "2545c44bcd8fdadf57bc570011eea34faf18a9ef638feb08cea39e7cdef05fe6"
+  },
+  "rows": [
+    {"id": "CR-1", "clause": "唯一认知主体", "owner": "22.3/22.4.1/P3.9.2", "status": "engineering", "evidence": "单主体身份、谱系、事务、8 次独立进程恢复；认知所有权未由任务验证"},
+    {"id": "CR-2", "clause": "异质性与 1+1>2", "owner": "P3.9.1 figure", "status": "structural", "evidence": "6 groups x 2 units ring edges; zero collaborative-gain evidence"},
+    {"id": "CR-3", "clause": "自适应激活与协作", "owner": "P3.9.1 B gate", "status": "structural", "evidence": "gate and activity intervention present; routing not experience-formed, zero calibration"},
+    {"id": "CR-4", "clause": "结构可塑与成长", "owner": "P3.9.2", "status": "engineering", "evidence": "two-generation neutral birth plus dormant/wake/rollback; growth benefit unverified"},
+    {"id": "CR-5", "clause": "身体与真实因果", "owner": "22.4.2", "status": "absent", "evidence": "cold subject 0/18; no action loop in current U2"},
+    {"id": "CR-6", "clause": "内生生命调节", "owner": "none", "status": "absent", "evidence": "no implementation, no contract"},
+    {"id": "CR-7", "clause": "睡眠/梦境/玩耍", "owner": "none", "status": "absent", "evidence": "no implementation, no contract"},
+    {"id": "CR-8", "clause": "多系统记忆与自传", "owner": "22.4 metadata + F/E", "status": "structural", "evidence": "metadata entry and F/E assets runnable; cross-session unverified"},
+    {"id": "CR-9", "clause": "自主学习与递归改进", "owner": "22.6", "status": "blocked", "evidence": "card and criteria registered; admission needs 22.5 accepted parent"},
+    {"id": "CR-10", "clause": "多模态与跨域组合", "owner": "MGW1", "status": "structural", "evidence": "reference and algebra delivered; production task unverified"},
+    {"id": "AX-1", "clause": "未见任务表现", "owner": "22.5.0", "status": "absent", "evidence": "gate never executed on its own terms; all recent cards are surrogates"},
+    {"id": "AX-2", "clause": "必要机制的实际贡献", "owner": "P3.9.1", "status": "engineering", "evidence": "16/16 declared parameters have gradient; structural and intervention checks; behaviour zero information"},
+    {"id": "AX-3", "clause": "反馈对负责模块的作用", "owner": "P3.8.2b/22.5.1", "status": "blocked", "evidence": "transfer 13/13 and 9/8 restores; no capability parent to sign"},
+    {"id": "AX-4", "clause": "有效旧能力保持", "owner": "needs capability parent", "status": "absent", "evidence": "no verified old capability, retention not signed"},
+    {"id": "AX-5", "clause": "主体连续性与恢复一致性", "owner": "22.3/22.4.1/P3.9.2", "status": "engineering", "evidence": "194 parameters cross-process max diff 0; P3.9.2 14/14"},
+    {"id": "AX-6", "clause": "结构生长的真实收益", "owner": "22.7", "status": "blocked", "evidence": "needs 22.6 accepted parent and capacity residual evidence"},
+    {"id": "AX-7", "clause": "多模态与行动后果理解", "owner": "22.4.2/MGW1", "status": "absent", "evidence": "design only, no behaviour"},
+    {"id": "AX-8", "clause": "主动选择效果", "owner": "22.6", "status": "blocked", "evidence": "policy assets registered; net utility unproven"},
+    {"id": "AX-9", "clause": "全过程资源成本", "owner": "P3.8.4/P3.9.4", "status": "engineering", "evidence": "480.359425 + 1.2031 + 1.8125 CPU booked; unbooked categories listed"}
+  ],
+  "counts": {
+    "total": 19,
+    "capability": 0,
+    "engineering": 5,
+    "structural": 4,
+    "blocked": 4,
+    "absent": 6
+  },
+  "summary_line": "覆盖合计（19 项）：能力成立 0／工程可运行 5／仅结构 4／阻塞于能力父 4／缺席 6。",
+  "parent_qualification": {
+    "capability_parent": null,
+    "native_parent_qualified": false,
+    "engineering_continuity_parent": {
+      "id": "P3.7 joint-query/update-000758.bin",
+      "sha256_prefix": "c8f2359b"
+    },
+    "structural_parent": "plans/manifests/taiji_u2_22_3_accepted_parent_20261111.json",
+    "gates_released": {"22.6": false, "22.7": false},
+    "production_default_graph_switched": false,
+    "capability_ledger": "unchanged"
+  },
+  "p3_9_3_information": {
+    "updates_per_arm": 64,
+    "dev_episodes": 32,
+    "delta": 0.03125,
+    "ci": [-0.1875, 0.25],
+    "delta_is_one_sample": true,
+    "loss_delta": {"A": -0.001074, "B": 0.00005},
+    "chance_loss_ln4": 1.386294,
+    "cpu_ratio": 1.600512,
+    "reading": "no route evidence in either direction; B loss rose while one extra sample was correct"
+  },
+  "dose_ladder": {
+    "gate_cap_updates_per_seed_arch": 256,
+    "measured_points": [
+      {"updates": 24, "carrier": "first-A pilot native (compute-matched)", "reading": "fit 0.0 -> 0.0"},
+      {"updates": 188, "carrier": "first-A pilot transformer", "reading": "fit 0.0 -> 0.25"},
+      {"updates": 243, "carrier": "first-A pilot gru", "reading": "fit 0.0 -> 0.0"},
+      {"updates": 64, "carrier": "P3.9.3 synthetic 4-way", "reading": "platform, loss delta <= 1.1e-3"},
+      {"updates": 128, "carrier": "P3.8.3 recipe comparison", "reading": "all 0.5, delta 0"},
+      {"updates": 1844, "carrier": "P3.8 calibration (narrow task, different recipe)", "reading": "dev 0.9944, 179/180"}
+    ],
+    "ratio_success_to_cap": 7.203125,
+    "classification": "gate_dose_below_lowest_successful_dose",
+    "limitation": "1844 is a different task and recipe; it proves 256 has no evidential support, not that 256 is unreachable"
+  },
+  "discipline": {
+    "training_runs": 0,
+    "optimizer_calls": 0,
+    "forward_passes": 0,
+    "new_task_data_reads": 0,
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "capability_claims": 0,
+    "gate_values_changed": 0
+  },
+  "next_card": {
+    "id": "22.5.P3.10",
+    "title": "门-剂量一致性与学习曲线校准",
+    "phase0": "zero-compute price of 3-seed curve from measured marginal cost",
+    "phase0_arithmetic": {
+      "native_cpu_per_update": 1.345703,
+      "updates_to_1844_cpu": 2481.7,
+      "eval_cpu_each": 96.609375,
+      "single_seed_curve_cpu": 2964.7,
+      "three_seed_curve_cpu": 8894.2,
+      "formal_ab_budget_cpu": 18000,
+      "affordable": true,
+      "reading": "the 256 cap was not budget-driven; it is an uncalibrated design choice",
+      "caveat": "arithmetic from existing readings only; execution pricing must be re-measured"
+    },
+    "phase1": "single-arm single-seed curve at {0,64,256,768,1844}, full-denominator joint success",
+    "exits": ["dose_curve_measured", "gate_dose_infeasible", "budget_cannot_express", "pricing_over_budget"],
+    "owner_decision_if_infeasible": "raise dose or re-base gate criterion; assistant does not change gate unilaterally"
+  }
+}

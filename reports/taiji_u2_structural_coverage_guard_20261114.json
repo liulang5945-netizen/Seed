@@ -1,0 +1,43 @@
+{
+  "card": "22.5.P3.9.5",
+  "checks": {
+    "capability_count_is_zero": true,
+    "capability_parent_absent": true,
+    "declared_counts_match_rows": true,
+    "default_graph_not_switched": true,
+    "document_contains_every_row_id": true,
+    "dose_ladder_documented": true,
+    "downstream_gates_not_released": true,
+    "headlines_agree_and_name_head": true,
+    "no_forbidden_claims": true,
+    "row_status_vocabulary": true,
+    "rows_have_unique_ids": true,
+    "summary_line_matches_counts": true,
+    "total_is_19": true,
+    "verdicts_are_expected": true
+  },
+  "date": "2026-11-14",
+  "failed": [],
+  "measured": {
+    "cpu_seconds": 0.0,
+    "wall_seconds": 0.022135
+  },
+  "real_file_drill": {
+    "green_after_restore": true,
+    "performed": true,
+    "red_checks": [
+      "no_forbidden_claims",
+      "summary_line_matches_counts"
+    ],
+    "restored_byte_exact": true
+  },
+  "red_drills": {
+    "claim_capability_parent": true,
+    "drop_one_row": true,
+    "inject_capability_claim": true,
+    "release_22_6_gate": true,
+    "tamper_summary_line": true
+  },
+  "schema": "taiji-u2-structural-coverage-guard-v1",
+  "verdict": "pass"
+}
