@@ -1,0 +1,205 @@
+{
+  "schema": "taiji-u2-p3-27-prototype-v1",
+  "date": "2026-11-14",
+  "card": "22.5.P3.27",
+  "phase": "prototype_mixture",
+  "verdict": "colour_learned_centroid_path_broken",
+  "arms": {
+    "outcome": {
+      "arm": "outcome",
+      "lambda_colour": 0.0,
+      "parameters": 76,
+      "prototypes": [
+        [
+          0.45,
+          0.4637,
+          0.6245
+        ],
+        [
+          0.8483,
+          0.5229,
+          0.5037
+        ],
+        [
+          0.0627,
+          0.0735,
+          0.9893
+        ],
+        [
+          0.6819,
+          0.5795,
+          0.5448
+        ],
+        [
+          0.3637,
+          0.2053,
+          0.7291
+        ],
+        [
+          0.7134,
+          0.597,
+          0.5699
+        ]
+      ],
+      "doses": [
+        {
+          "update": 1844,
+          "train_accuracy": 0.26171875,
+          "fit_accuracy": 0.21875,
+          "train_correct": 67,
+          "fit_correct": 7,
+          "colour_accuracy_train": 0.1328125,
+          "colour_accuracy_fit": 0.1875,
+          "centroid_column_hits_fit": 1,
+          "centroid_column_total_fit": 24,
+          "abstain_on_unknown_fit": 0,
+          "abstain_on_other_fit": 2,
+          "cpu": 0.109375
+        },
+        {
+          "update": 3688,
+          "train_accuracy": 0.29296875,
+          "fit_accuracy": 0.25,
+          "train_correct": 75,
+          "fit_correct": 8,
+          "colour_accuracy_train": 0.1328125,
+          "colour_accuracy_fit": 0.1875,
+          "centroid_column_hits_fit": 1,
+          "centroid_column_total_fit": 24,
+          "abstain_on_unknown_fit": 4,
+          "abstain_on_other_fit": 10,
+          "cpu": 0.078125
+        },
+        {
+          "update": 7376,
+          "train_accuracy": 0.296875,
+          "fit_accuracy": 0.28125,
+          "train_correct": 76,
+          "fit_correct": 9,
+          "colour_accuracy_train": 0.1328125,
+          "colour_accuracy_fit": 0.1875,
+          "centroid_column_hits_fit": 1,
+          "centroid_column_total_fit": 24,
+          "abstain_on_unknown_fit": 4,
+          "abstain_on_other_fit": 10,
+          "cpu": 0.09375
+        }
+      ]
+    },
+    "colour": {
+      "arm": "colour",
+      "lambda_colour": 1.0,
+      "parameters": 76,
+      "prototypes": [
+        [
+          0.5297,
+          0.4751,
+          0.5552
+        ],
+        [
+          0.5848,
+          0.5163,
+          0.5174
+        ],
+        [
+          0.0646,
+          0.0782,
+          0.993
+        ],
+        [
+          0.64,
+          0.6484,
+          0.0402
+        ],
+        [
+          0.3115,
+          0.0321,
+          0.844
+        ],
+        [
+          0.1032,
+          0.9977,
+          0.9283
+        ]
+      ],
+      "doses": [
+        {
+          "update": 1844,
+          "train_accuracy": 0.25,
+          "fit_accuracy": 0.25,
+          "train_correct": 64,
+          "fit_correct": 8,
+          "colour_accuracy_train": 0.8671875,
+          "colour_accuracy_fit": 0.8125,
+          "centroid_column_hits_fit": 0,
+          "centroid_column_total_fit": 24,
+          "abstain_on_unknown_fit": 0,
+          "abstain_on_other_fit": 0,
+          "cpu": 0.078125
+        },
+        {
+          "update": 3688,
+          "train_accuracy": 0.2578125,
+          "fit_accuracy": 0.21875,
+          "train_correct": 66,
+          "fit_correct": 7,
+          "colour_accuracy_train": 0.8671875,
+          "colour_accuracy_fit": 0.8125,
+          "centroid_column_hits_fit": 0,
+          "centroid_column_total_fit": 24,
+          "abstain_on_unknown_fit": 0,
+          "abstain_on_other_fit": 1,
+          "cpu": 0.078125
+        },
+        {
+          "update": 7376,
+          "train_accuracy": 0.33984375,
+          "fit_accuracy": 0.34375,
+          "train_correct": 87,
+          "fit_correct": 11,
+          "colour_accuracy_train": 0.8671875,
+          "colour_accuracy_fit": 0.8125,
+          "centroid_column_hits_fit": 2,
+          "centroid_column_total_fit": 24,
+          "abstain_on_unknown_fit": 4,
+          "abstain_on_other_fit": 2,
+          "cpu": 0.078125
+        }
+      ]
+    }
+  },
+  "tau_initial": 0.05,
+  "aux_weight": 1.0,
+  "batch": 8,
+  "optimizer": {
+    "lr": 0.01,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "weight_decay": 0.0
+  },
+  "control_arms": {
+    "p3_24": "soft centroid with a bilinear score: train 0.250, fit 0.250",
+    "p3_26": "density arms withdrawn before freeze; five escapes documented"
+  },
+  "training_authority": "owner:chat:2026-11-14#立项",
+  "cost": {
+    "total_cpu": 85.84375,
+    "total_wall": 86.35563,
+    "cap_cpu": 253.55,
+    "cap_wall": 600.0
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "capability_claims": 0
+  },
+  "run_conditions": {
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "scope": "detector-only card; six learned colour prototypes plus a six-way query classifier; the answer is the class of the mixture centroid; arm colour also sees the colour named in the request; U2 body frozen; no capability claim"
+}

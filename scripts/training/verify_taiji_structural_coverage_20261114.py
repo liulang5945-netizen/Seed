@@ -25,7 +25,7 @@ HEADLINE_FILES = (
     ROOT / "plans/MASTER-PLAN.md",
     ROOT / "plans/reference/ROADMAP-NEXT_20261104.md",
 )
-HEAD_MARKERS = ("P3.17", "P3.27")  # navigation probe only; update when the head advances
+HEAD_MARKERS = ("P3.28", "P3.29")  # navigation probe only; update when the head advances
 STATUSES = ("capability", "engineering", "structural", "blocked", "absent")
 EXPECTED_TOTAL = 19
 FORBIDDEN = ("B 胜出", "能力成立 1／", "已切换默认图", "路线B已证明")

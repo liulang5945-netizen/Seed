@@ -1,0 +1,52 @@
+{
+  "schema": "taiji-u2-p3-28-guard-v1",
+  "date": "2026-11-14",
+  "card": "22.5.P3.28",
+  "verdict": "guard_passed",
+  "checks": {
+    "criteria_hash": true,
+    "status_frozen": true,
+    "verdict_rule": true,
+    "palette_outcome_fit_matches_recompute": true,
+    "palette_outcome_colour_matches_recompute": true,
+    "palette_colour_fit_matches_recompute": true,
+    "palette_colour_colour_matches_recompute": true,
+    "colour_arm_reads_every_colour": true,
+    "colour_arm_column_hits_15": true,
+    "outcome_arm_below_colour": true,
+    "position_is_column_coordinate": true
+  },
+  "drills": {
+    "bump_colour_fit": true,
+    "flip_verdict": true,
+    "fake_colour_accuracy": true,
+    "interleaved_positions": true
+  },
+  "recomputed": {
+    "palette_outcome": {
+      "accuracy": 0.5625,
+      "correct": 18,
+      "denominator": 32,
+      "colour_accuracy": 0.46875,
+      "centroid_column_hits": 9,
+      "centroid_column_total": 24,
+      "abstain_on_unknown": 4,
+      "abstain_on_other": 1
+    },
+    "palette_colour": {
+      "accuracy": 0.96875,
+      "correct": 31,
+      "denominator": 32,
+      "colour_accuracy": 1.0,
+      "centroid_column_hits": 15,
+      "centroid_column_total": 24,
+      "abstain_on_unknown": 8,
+      "abstain_on_other": 0
+    }
+  },
+  "measured": {
+    "threads": 12,
+    "torch": "2.13.0+cpu"
+  },
+  "scope": "independent recomputation from saved checkpoints; no training"
+}
