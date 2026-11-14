@@ -3352,3 +3352,15 @@ owner 本轮重述[根需求 §2.1](../TAIJI_CORE_REQUIREMENTS.md#21-统一目�
 **两次工程修正（产物保留）**：v1 训练后未保存检测器产物 ⇒ `_v1_no_artifact`；v2 补存后读数变化（fit 8/32→12/32），根因是模块初始权重取自全局 RNG ⇒ v3 加 `torch.manual_seed(candidate.seed)`，判据／剂量／帽／授权未动，v2 保留 `_v2_unseeded*`；三次运行 train 恒 1.000、fit 8／12／9 均在机会附近，结论稳定。
 
 **唯一后继**：22.5.P3.18 切分匹配——用同一 `generate_examples` 让 train 也含 3 对象（或 train 覆盖 1–3、fit 只在 3 对象留出），重冻 `data_digest`，重训同一检测器（约 11 CPU）；判据 fit ≥0.80 → `task_learned_under_matched_split`，fit ≤0.35 → `detector_fails_matched_split`，其间 `inconclusive_split`。不覆盖旧 `data.bin`、不扩容、不改门值。
+
+## 2026-11-14 22.5.P3.18 切分匹配（`inconclusive_split`）
+
+用同一生成器产出 96 个 **3 对象**场景，按序号切 64/32（标签各 8/8/8/8），新数据落盘并冻结 `data_digest=4c186357…`（[回执](../../../reports/taiji_u2_p3_18_split_20261114.json)），不覆盖原始 `data.bin`。契约 [manifest](../../manifests/taiji_u2_p3_18_detection_20261114.json)（`24d4fd2b…`、帽 60 CPU）。产出[结果卡](../../reference/RESULT-TAIJI_U2_P3_18_SPLIT_20261114.md)、[报告](../../../reports/taiji_u2_p3_18_detection_20261114.json)、[守卫](../../../reports/taiji_u2_p3_18_guard_20261114.json)。
+
+**读数**：train **64/64＝1.000**、fit **13/32＝0.406**（P3.17 为 9/32＝0.281）；fit 注意力熵 0.268（train 0.123）。出口 `inconclusive_split`。
+
+**判读**：切分贡献 +4 样本（+12.5 点），但远不足以解释差距 ⇒ 现在是**过拟合**：588 参数能完全记住 64 个场景，却只有 0.406 迁移到 32 个未见场景。下一个变量是**数据量**，不是结构、配方或切分。
+
+**成本**：11.0 CPU／11.23 wall（帽内）。
+
+**唯一后继**：22.5.P3.19 数据量——同一生成器产出 288 个 3 对象场景（train 256／fit 32，fit 与 P3.18 **同一批**），同检测器同 1844 步，成本约 45 CPU；判据 fit ≥0.55 → `data_volume_helps`，≤0.45 → `data_volume_does_not_help`，其间 `inconclusive_volume`。不扩容、不改门值。

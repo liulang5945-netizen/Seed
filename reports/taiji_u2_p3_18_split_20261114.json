@@ -1,0 +1,31 @@
+{
+  "schema": "taiji-u2-p3-18-split-v1",
+  "date": "2026-11-14",
+  "card": "22.5.P3.18",
+  "source": "generate_examples('fit', 96) from scripts/training/first_a_support_22_5.py",
+  "objects_per_scene": 3,
+  "split": {
+    "train": 64,
+    "fit": 32
+  },
+  "data_path": "data/experiments/taiji_u2/p3_18/three_object_split_20261114.bin",
+  "data_digest": "4c186357a796f60a7b8fab83ae98ffb5ab2d60bd1bc2a4d4f0de19622471493f",
+  "label_histogram_train": {
+    "左边": 16,
+    "中间": 16,
+    "右边": 16,
+    "未知": 16
+  },
+  "label_histogram_fit": {
+    "左边": 8,
+    "中间": 8,
+    "右边": 8,
+    "未知": 8
+  },
+  "discipline": {
+    "training_runs": 0,
+    "optimizer_calls": 0,
+    "model_forward_passes": 0
+  },
+  "scope": "data preparation only; no model, no training, no capability claim"
+}

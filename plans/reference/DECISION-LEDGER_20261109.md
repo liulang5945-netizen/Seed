@@ -3567,3 +3567,15 @@ P2冻结同图像不同实体、正确答案相同的输入差分目标，逐例
 **成本**：10.828125 CPU／11.27 wall（帽内），比此前各卡便宜两个数量级。
 
 **唯一后继**：22.5.P3.18 切分匹配——同一 `generate_examples` 让 train 也含 3 对象（或覆盖 1–3、fit 只在 3 对象留出），重冻 `data_digest`、不覆盖旧 `data.bin`，重训同一检测器（约 11 CPU）；出口 `task_learned_under_matched_split`／`detector_fails_matched_split`／`inconclusive_split`。不扩容、不改门值、不放行 22.6／22.7。
+
+## D-20261114-13 — P3.18 切分匹配：+4 个样本，仍不足
+
+取证基线 `00c1f0fad`。同一生成器产出 96 个 3 对象场景、按序号切 64/32（标签各 8/8/8/8），新数据冻结 `data_digest=4c186357…`（[回执](../../reports/taiji_u2_p3_18_split_20261114.json)），不覆盖原始 `data.bin`。契约 [P3.18](../manifests/taiji_u2_p3_18_detection_20261114.json)（`criteria_sha256=24d4fd2b…`、帽 60 CPU）。
+
+**读数**：train **64/64＝1.000**、fit **13/32＝0.406**（P3.17 为 9/32＝0.281）；fit 注意力熵 0.268（train 0.123）。出口 `inconclusive_split`。
+
+**判读**：切分贡献 +4 样本（+12.5 点），但远不足以解释差距 ⇒ 现在是**过拟合**（588 参数完全记住 64 场景、只迁移 0.406），不是分布错配、不是结构不会。下一个变量是**数据量**。
+
+**成本**：11.0 CPU／11.23 wall（帽内）。
+
+**唯一后继**：22.5.P3.19 数据量——288 个 3 对象场景（train 256／fit 32，fit 与 P3.18 同一批），同检测器同 1844 步（约 45 CPU）；判据 fit ≥0.55 → `data_volume_helps`，≤0.45 → `data_volume_does_not_help`，其间 `inconclusive_volume`。不扩容、不改门值、不放行 22.6／22.7。
