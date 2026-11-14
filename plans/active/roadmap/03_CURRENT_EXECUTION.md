@@ -3186,3 +3186,18 @@ owner 本轮重述[根需求 §2.1](../TAIJI_CORE_REQUIREMENTS.md#21-统一目�
 **必须随结论引用的范围限制**：4 份事务回执的 `rebuild.entries` 全为 **0**——工程阶段在隔离影子 runtime 中构造的是空 `CausalHistory`，`rebuild_state` 被真实调用且提交成功，但**非空主体历史按新 θ 重编码未覆盖**；该面归 22.3／22.5 的运行时历史链，不因本卡通过而自动签署。单写者保证由库事务提供，本卡未独立测量。因此本结案只签**工程接口与恢复一致性**，不签行为收益、不签能力、不签训练剂量正当性；能力账无变化，Native A 父仍未成立，首问参照权重仍独立于 Native。
 
 **唯一后继**：按[Native迁移卡 §4](../../reference/SPEC-TAIJI_U2_NATIVE_CREDIT_TRANSFER_20261113.md)「工程通过后才以实价冻结 P3.8.3」——在同一 Native 父与相同公开输入上，比较「原字节目标／原更新」与「内容信用／验收更新」这**一整个配方**，按真实 CPU 与样本暴露量分账；无足够消融只签配方级结论，不单独归因内容监督或搜索。首问及实际两问分别报告，正式 A 的多实体／三 seed／独立 check 仍待对应父与范围。P3.9 不因本卡通过提前准入。
+
+
+## 2026-11-14 22.5.P3.8.3 实价与预注册冻结（0 比较更新 / 0 前向评估 / 0 confirm）
+
+按[迁移卡 §4](../../reference/SPEC-TAIJI_U2_NATIVE_CREDIT_TRANSFER_20261113.md)「工程通过后才以实价冻结」，准入证据为 r2 [独立审计](../../../reports/taiji_u2_native_credit_transfer_proposals_audit_r2_20261114.json) 的 `engineering_transfer_verified`。本轮只做定价与预注册，**不开展行为比较**。
+
+**实价**[回执](../../../reports/taiji_u2_p3_8_3_price_20261114.json)：两臂在内存副本上各 3 次测量，A 臂（原字节／普通 Adam）单次更新最大 0.5 CPU、B 臂（内容信用／受验收更新）0.3125、单次评估前向 0.2031。按保守上界（B 计满 8 次 α 搜索）得每次配对更新 **3.0 CPU**；128 次估 **461.7749 CPU** 落在 runner 600 帽内，256 次估 922.5749 超帽 ⇒ **最大可支付剂量 128 次配对更新**。定价本身 4.5625 CPU / 5.453 wall，3+3 次定价用 Adam 只在内存副本、**0 写 checkpoint / 0 产生父 / 0 dev 读取**。
+
+**冻结件**：[人读规格](../../reference/SPEC-TAIJI_U2_P3_8_3_RECIPE_COMPARISON_PREREG_20261114.md)＋[机读 manifest](../../manifests/taiji_u2_p3_8_3_prereg_20261114.json)（`criteria_sha256=b88b33818dd850439ca8f915caedbe1fce85a568f26ae566a9c8efbc294b94e6`，canonical JSON 可重算）＋[守卫回执](../../../reports/taiji_u2_p3_8_3_prereg_guard_20261114.json)（7 项绿／红演练全过，含 SPEC 不携带第二套门值）。执行 runner 与报告 sha 两列在 runner 未写前保持 `null`，**不得预填**。
+
+**口径落点**：① 两臂各是**整体配方**，无内容单独／验收单独的消融臂 ⇒ 只能签配方级结论，不单独归因内容监督或 α 搜索；② 配平取**等样本暴露**（同父、同 seed、同 episode 顺序、同更新数），真实 CPU 逐臂分账报 `cpu_ratio`，只按参数量配平不合格，配平不可达即 `compute_parity_unavailable` 停卡，不放大便宜臂剂量；③ 若两臂都停在地板或逐位相同，判 **`budget_cannot_express`**——预算不足以表达假设，不是假设被否决，也不构成加剂量理由；④ 首问与实际两问**分别报告**，A 臂须有动态范围，否则通过／判负都无效；⑤ **训练前硬门**：两臂初始完整 `NativeLearnerCapsule` 独立进程保存／恢复一致，且每臂首个非空 moment 后复验，失败即 `engineering_failure`。
+
+**父身份**：P3.8.2b 的事务提交只在隔离影子 runtime 中发生、未写出新接受父，故 P3.8.3 父仍是 P3.7 问题 Fusion `update-000758.bin`，manifest 明确 `native_parent_qualified=false`；首问合格参照权重继续独立于 Native。0 check／final／confirm 读取，正式 A 的多实体／三 seed／独立 check 仍需对应父与范围，P3.9 不提前准入。
+
+**停止线**：停在裁定节点「是否按本预注册执行 128 次配对更新（CPU ≤600）」。**准入 ≠ 执行 ≠ 里程碑关闭**；本轮 0 比较读数、0 能力声称。

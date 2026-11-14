@@ -1,0 +1,71 @@
+{
+  "schema": "taiji-u2-p3-8-3-price-v1",
+  "date": "2026-11-14",
+  "card": "22.5.P3.8.3",
+  "phase": "pricing_only",
+  "parent_sha256": "c8f2359b0bef3085bce88a0a0a8ee7eff5f66a0bc614d2bf52e7ef361638b017",
+  "data_digest": "65041f02e3a3410b307bc6e013d897ef747e7f890b3668db6b5852fdc9fdba1c",
+  "episode_index": 0,
+  "measured": {
+    "byte_update": {
+      "samples": [
+        0.4844,
+        0.5,
+        0.4062
+      ],
+      "median": 0.4844,
+      "max": 0.5
+    },
+    "credit_update": {
+      "samples": [
+        0.2969,
+        0.3125,
+        0.2969
+      ],
+      "median": 0.2969,
+      "max": 0.3125
+    },
+    "eval_forward": {
+      "samples": [
+        0.2031,
+        0.2031,
+        0.2031
+      ],
+      "median": 0.2031,
+      "max": 0.2031
+    }
+  },
+  "conservative": {
+    "per_paired_update_cpu": 3.0,
+    "per_evaluation_cpu": 0.2031,
+    "budget": {
+      "cpu_cap": 600,
+      "wall_cap": 1200
+    },
+    "estimated_cpu_by_updates": {
+      "8": 29.7749,
+      "16": 58.5749,
+      "32": 116.1749,
+      "64": 231.3749,
+      "128": 461.7749,
+      "256": 922.5749,
+      "512": 1844.1749
+    },
+    "largest_admissible_updates": 128,
+    "basis": "1.2 x (updates x (armA max + 8 x armB max) + 4 evaluation forwards); arm B charged a full 8-alpha search although r2 observed 1 evaluation per accepted proposal"
+  },
+  "discipline": {
+    "pricing_adam_calls_arm_a": 3,
+    "pricing_adam_calls_arm_b": 3,
+    "checkpoint_writes": 0,
+    "parent_files_mutated": 0,
+    "dev_reads": 0,
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "note": "pricing calls run on in-memory loads of the frozen parent; no checkpoint is written and no parent is produced"
+  },
+  "verdict": "price_measured_admission_possible",
+  "measured_cpu_seconds": 4.5625,
+  "measured_wall_seconds": 5.453
+}

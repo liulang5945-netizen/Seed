@@ -6,7 +6,7 @@
 
 **唯一主线**沿N发展同一可学习、可恢复、按需生长的持续主体，使自驱、递归改进、经验学习与多模态物理认知形成可验证闭环。
 
-**队首（唯一）**：22.5.P3.8.2b 工程合同结案 engineering_transfer_verified（独立审计 0 缺口／13 项检查全过、9/8 次独立恢复、4 份 committed 事务回执、去头扰动实测、故障 digest 实测；6 Adam、CPU 5.0312）。范围限制：事务 rebuild.entries=0，非空主体历史重编码未覆盖。唯一后继：按卡 §4 以实价冻结 P3.8.3 整体配方行为比较；仍 0 能力声称，Native A 父未成立。
+**队首（唯一）**：22.5.P3.8.3 预注册已冻结（criteria_sha256=b88b3381…；实价 128 次配对更新≈461.77 CPU／600 帽、两臂等样本暴露、训练前完整包恢复硬门），待裁定执行。P3.8.2b 工程结案有效，父仍为 P3.7 且 native_parent_qualified=false；0 比较读数 / 0 能力声称，P3.9 未准入。
 
 [P3.4](reference/CLOSEOUT-TAIJI_U2_EVIDENCE_LEARNING_20261112.md)、[P3.5](reference/CLOSEOUT-TAIJI_U2_PAIRED_LEARNING_20261113.md)及[P3.6](reference/CLOSEOUT-TAIJI_U2_TASK_GOAL_LEARNING_20261113.md)保留各自完整负结果与限定。配对任务每分区360轮，部分输入上界50%；空复制集合前反向约3.78倍加速，实际CPU终点、真实Adam及完整恢复均有直接证据。上述工程成果尚未取得Native任务父。
 

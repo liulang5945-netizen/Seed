@@ -1,0 +1,147 @@
+{
+  "schema": "taiji-u2-p3-8-3-recipe-comparison-prereg-v1",
+  "card": "22.5.P3.8.3",
+  "date": "2026-11-14",
+  "status": "frozen_pending_execution",
+  "note": "Pre-registration only. No behaviour comparison has been run. criteria is the single machine-readable source of every gate; criteria_sha256 is SHA-256 over its canonical JSON and must be recomputable. Pricing measurements are read-only in-memory loads; no parent was produced.",
+  "spec": "plans/reference/SPEC-TAIJI_U2_P3_8_3_RECIPE_COMPARISON_PREREG_20261114.md",
+  "authority": {
+    "upstream": "plans/reference/SPEC-TAIJI_U2_NATIVE_CREDIT_TRANSFER_20261113.md section 4",
+    "admission": "reports/taiji_u2_native_credit_transfer_proposals_audit_r2_20261114.json audited_verdict=engineering_transfer_verified",
+    "budget_source": "plans/reference/CLOSEOUT-TAIJI_U2_LEARNING_CALIBRATION_20261113.md (P3.8 unallocated 790 CPU: engineering 130 / runner 600 / final audit 60)",
+    "owner_authorisation": "standing authorisation to execute the current plan; this card is the pricing and pre-registration gate, not training admission"
+  },
+  "price": {
+    "report": "reports/taiji_u2_p3_8_3_price_20261114.json",
+    "verdict": "price_measured_admission_possible",
+    "price_runner_sha256": "f68a761e78b83cbfafa439058f0e08ba1f37965b177ddabfebed87d8be8bf806",
+    "arm_a_update_cpu_max": 0.5,
+    "arm_b_update_cpu_max": 0.3125,
+    "evaluation_forward_cpu_max": 0.2031,
+    "per_paired_update_cpu_conservative": 3.0,
+    "estimated_cpu_by_updates": {
+      "32": 116.1749,
+      "64": 231.3749,
+      "128": 461.7749,
+      "256": 922.5749
+    },
+    "pricing_cost_cpu": 4.5625,
+    "pricing_cost_wall": 5.453
+  },
+  "parent": {
+    "path": "data/experiments/taiji_u2/joint_learning/1794554480667378100/joint-query/update-000758.bin",
+    "sha256": "c8f2359b0bef3085bce88a0a0a8ee7eff5f66a0bc614d2bf52e7ef361638b017",
+    "architecture": "native-joint-query",
+    "body_parameters": 25086,
+    "body_tensors": 214,
+    "optimizer_states": 191,
+    "native_parent_qualified": false,
+    "note": "P3.8.2b committed only inside isolated shadow runtimes and wrote no accepted parent; the comparison parent is therefore still the frozen P3.7 research parent"
+  },
+  "criteria": {
+    "question": "On the same Native parent and the same public inputs, does the WHOLE recipe (content credit + accepted parameter update) improve first-question and actual-two-question behaviour over the whole original recipe (byte objective + plain Adam), per real CPU and sample exposure?",
+    "arms": {
+      "A_original": {
+        "objective": "history_loss(model, train, episode, 'actual-self')['loss'] = 0.5*(first_ce + second_ce + blocked)",
+        "update": "plain Adam, lr=1e-3, betas=(0.9,0.999), eps=1e-8, weight_decay=0, no acceptance test, no alpha search",
+        "content_head": "absent"
+      },
+      "B_credit": {
+        "objective": "J_first = first_ce + J_content, with J_content = -w_y*logsumexp_b(log(omega_b)+log_softmax(W_c h_b+b_c)_y)",
+        "update": "taiji.u2_credit_update.accepted_adam_step with the frozen v2 alpha grid, armijo=1e-4, tolerance=1e-6 and the fallback direction rule",
+        "content_head": "Linear(8,4), 36 parameters, seed 2026111311, absent from runtime"
+      },
+      "ablation_limit": "this is a whole-recipe comparison; without a separate content-only or acceptance-only arm no verdict may attribute a gain to content supervision or to the search individually"
+    },
+    "identity_and_inputs": {
+      "same_parent": true,
+      "same_public_inputs": true,
+      "same_episode_order": true,
+      "same_seed": 20261114,
+      "same_initial_parameters_and_moments": true,
+      "allowed_partition": "train only for updates and acceptance; dev only for the frozen endpoint scoring",
+      "data_digest": "65041f02e3a3410b307bc6e013d897ef747e7f890b3668db6b5852fdc9fdba1c"
+    },
+    "parity": {
+      "primary": "equal sample exposure: both arms see the same 128 ordered train episodes with the same seed and the same data order",
+      "cpu_accounting": "real CPU and wall are billed per arm and reported separately with cpu_ratio; equality of parameter count is NOT accepted as compute parity",
+      "on_failure": "if cpu_ratio > 2.0, either arm exceeds 240 CPU, or the two arms cannot be compared at matched exposure, stop with compute_parity_unavailable; do not enlarge the cheaper arm to win",
+      "timing": "single-thread, repeat-mean >=8 samples, median frozen before reading; Windows 15.6 ms timer granularity handled explicitly"
+    },
+    "dose": {
+      "paired_updates": 128,
+      "budget_basis": "largest update count whose conservative estimate (461.7749 CPU) fits the 600 CPU runner budget; 256 would cost 922.5749",
+      "stop_rule": "budget gate at 600 CPU / 1200 wall; no shrink-and-rerun, no dose increase after reading",
+      "no_escalation": "if both arms sit on the floor or are bit-identical, the verdict is budget_cannot_express, NOT a negative result and NOT a reason to add dose"
+    },
+    "evaluation": {
+      "faces": ["first_question_dev", "actual_two_question_dev"],
+      "reported_separately": true,
+      "full_denominator": true,
+      "per_question_group_minimum_reported": true,
+      "controls": ["rgb_zeroed", "empty_question", "headless_body_only_equivalence"],
+      "legacy_scope": "P3.8.1 first-round complete denominator, RGB/question necessity and descriptive ranges stay on their original contracts",
+      "no_formal_A": "the formal A multi-entity / 3-seed / independent-check gate still needs its own parent and scope; this card does not sign it"
+    },
+    "gates": {
+      "minimum_meaningful_gain": 0.05,
+      "paired_bootstrap_resamples": 2000,
+      "confidence_lower_bound": 0.95,
+      "dynamic_range_required": "arm A must produce a non-zero, non-chance endpoint on at least one face; otherwise neither a pass nor a negative verdict is valid",
+      "retention": "Task1 C12 structural capability must not regress; learned-then-retained old capability remains unmeasured and is registered as such"
+    },
+    "checkpoint_preflight": {
+      "before_any_optimizer_step": "initial full NativeLearnerCapsule must save and restore in an independent process with matching digest",
+      "first_nonempty_moment": "repeat the full independent-process restore immediately after the first real Adam call of each arm",
+      "on_failure": "engineering_failure; stop the card, keep incurred cost"
+    },
+    "budget": {
+      "runner_cpu_cap": 600,
+      "runner_wall_cap": 1200,
+      "per_arm_cpu_cap": 240,
+      "final_audit_reserve_cpu": 60,
+      "pricing_already_spent_cpu": 4.5625,
+      "note": "budget is taken from the frozen P3.8 unallocated 790; no transfer from P3.9, no new cap"
+    },
+    "decision_rule": {
+      "recipe_gain": "both faces report delta = acc_B - acc_A; pass requires delta >= 0.05 AND paired bootstrap 95% lower bound > 0 on the primary face, with arm A showing dynamic range, matched exposure and parity; signs only a recipe-level comparative result, not a capability",
+      "recipe_no_gain": "arm A has dynamic range and delta <= 0 or the confidence lower bound <= 0; range-limited negative, not 'impossible'",
+      "inconclusive": "confidence interval crosses zero with arm A dynamic range, or the two faces disagree",
+      "budget_cannot_express": "both arms sit at floor/chance or produce bit-identical endpoints; this is insufficient budget to express the hypothesis, not a rejection",
+      "compute_parity_unavailable": "matched exposure or CPU parity cannot be achieved under the frozen budget",
+      "engineering_failure": "parent/source/digest mismatch, checkpoint preflight or first-non-empty-moment restore failure, headless leakage, non-finite state",
+      "budget_stop": "cpu >= 600 or wall >= 1200; keep all cost, no shrink-and-rerun",
+      "comparison_not_admitted": "a frozen prerequisite is missing at the pre-run gate"
+    },
+    "verdict_precedence": [
+      "engineering_failure",
+      "comparison_not_admitted",
+      "compute_parity_unavailable",
+      "budget_stop",
+      "budget_cannot_express",
+      "recipe_gain",
+      "recipe_no_gain",
+      "inconclusive"
+    ]
+  },
+  "criteria_sha256": "b88b33818dd850439ca8f915caedbe1fce85a568f26ae566a9c8efbc294b94e6",
+  "execution_runner": "scripts/training/run_p3_8_3_recipe_comparison_22_5.py",
+  "execution_runner_sha256": null,
+  "submitted_runner_sha256": null,
+  "report": "reports/taiji_u2_p3_8_3_recipe_comparison_20261114.json",
+  "report_sha256": null,
+  "discipline": {
+    "training_admitted_by_this_file": false,
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "capability_claims": 0,
+    "criteria_frozen_before_any_reading": true,
+    "no_threshold_change_after_reading": true
+  },
+  "stop_line": {
+    "state": "frozen_pending_execution",
+    "decision_to_owner": "Whether to execute the 128-update comparison under this frozen contract (CPU <= 600). Admission is not execution and execution is not a milestone close.",
+    "not_authorized_by_this_file": ["running the comparison", "changing any gate", "opening a formal A window", "claiming a capability"]
+  }
+}

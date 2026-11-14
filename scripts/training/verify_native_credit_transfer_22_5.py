@@ -887,6 +887,136 @@ def proposals(r2: bool = False) -> int:
     return 0 if verdict == "engineering_transfer_verified" else 1
 
 
+def price_p383() -> int:
+    """Zero-parent-mutation price probe for the two P3.8.3 recipe arms."""
+    from scripts.training.task_history_loss_22_5 import score_answer  # noqa: PLC0415
+    from taiji.u2_credit_update import accepted_adam_step  # noqa: PLC0415
+
+    price_report = ROOT / "reports/taiji_u2_p3_8_3_price_20261114.json"
+    if price_report.exists():
+        raise FileExistsError(price_report)
+    torch.set_num_threads(1)
+    started_cpu, started_wall = time.process_time(), time.monotonic()
+    partition = train_partition()
+    order, counts, weights = class_table(partition)
+    coverage = coverage_indices(partition)
+    episode = partition["episodes"][coverage[0]]
+    label = order.index(bytes(episode["targets"][0]).hex())
+    readings: dict[str, list[float]] = {"byte_update": [], "credit_update": [], "eval_forward": []}
+
+    # Arm A: original byte / two-question joint objective with a plain Adam step.
+    model_a, optimizer_a, _ = load_learner(PARENT)
+    for _ in range(3):
+        optimizer_a.zero_grad(set_to_none=True)
+        start = time.process_time()
+        loss = history_loss(model_a, partition, episode, "actual-self")["loss"]
+        loss.backward()
+        optimizer_a.step()
+        readings["byte_update"].append(round(time.process_time() - start, 4))
+
+    # Arm B: first-question content credit with the accepted-update operator.
+    model_b, optimizer_b, _ = load_learner(PARENT)
+    with torch.random.fork_rng(devices=[]):
+        torch.manual_seed(HEAD_SEED)
+        head = torch.nn.Linear(8, 4)
+    optimizer_b.add_param_group({"params": list(head.parameters())})
+    parameters = [*model_b.parameters(), *head.parameters()]
+    counters = {"optimizer_steps": 0}
+
+    def objective():
+        initial = start_episode(model_b, partition, episode)
+        first_ce, _ = score_answer(model_b, initial, episode["targets"][0])
+        _, context, _ = output(model_b, initial)
+        omega = initial["logw"].detach().softmax(0)
+        mixed = torch.logsumexp(
+            head(context).log_softmax(-1) + torch.log(omega.clamp_min(1e-12))[:, None], 0
+        )
+        return first_ce - weights[label] * mixed[label]
+
+    for _ in range(3):
+        start = time.process_time()
+        accepted_adam_step(parameters, optimizer_b, objective, counters)
+        readings["credit_update"].append(round(time.process_time() - start, 4))
+
+    # Evaluation proxy: one full two-question forward without backward.
+    model_e, _, _ = load_learner(PARENT)
+    for _ in range(3):
+        start = time.process_time()
+        with torch.no_grad():
+            history_loss(model_e, partition, episode, "actual-self")
+        readings["eval_forward"].append(round(time.process_time() - start, 4))
+
+    def stats(values: list[float]) -> dict:
+        ordered = sorted(values)
+        return {
+            "samples": values,
+            "median": ordered[1],
+            "max": max(values),
+        }
+
+    summary = {key: stats(values) for key, values in readings.items()}
+    # Conservative per-update price uses the max; one update = one objective
+    # evaluation plus an eight-alpha search allowance only for arm B.
+    per_pair_cpu = summary["byte_update"]["max"] + summary["credit_update"]["max"] * 8
+    eval_cpu = summary["eval_forward"]["max"]
+    budget = {"cpu_cap": 600, "wall_cap": 1200}
+
+    # 2 arms x (updates + 2 evaluation points), plus 20% recovery/startup margin.
+    def estimated(updates: int) -> float:
+        return round(1.2 * (updates * per_pair_cpu + 4 * eval_cpu), 4)
+
+    scale = next(
+        (n for n in (512, 256, 128, 64, 32, 16, 8) if estimated(n) <= budget["cpu_cap"]),
+        0,
+    )
+    report = {
+        "schema": "taiji-u2-p3-8-3-price-v1",
+        "date": "2026-11-14",
+        "card": "22.5.P3.8.3",
+        "phase": "pricing_only",
+        "parent_sha256": PARENT_SHA256,
+        "data_digest": DATA_DIGEST,
+        "episode_index": coverage[0],
+        "measured": summary,
+        "conservative": {
+            "per_paired_update_cpu": round(per_pair_cpu, 4),
+            "per_evaluation_cpu": eval_cpu,
+            "budget": budget,
+            "estimated_cpu_by_updates": {
+                str(n): estimated(n) for n in (8, 16, 32, 64, 128, 256, 512)
+            },
+            "largest_admissible_updates": scale,
+            "basis": "1.2 x (updates x (armA max + 8 x armB max) + 4 evaluation forwards); arm B charged a full 8-alpha search although r2 observed 1 evaluation per accepted proposal",
+        },
+        "discipline": {
+            "pricing_adam_calls_arm_a": 3,
+            "pricing_adam_calls_arm_b": counters["optimizer_steps"],
+            "checkpoint_writes": 0,
+            "parent_files_mutated": 0,
+            "dev_reads": 0,
+            "check_reads": 0,
+            "final_reads": 0,
+            "confirm_reads": 0,
+            "note": "pricing calls run on in-memory loads of the frozen parent; no checkpoint is written and no parent is produced",
+        },
+        "verdict": "price_measured_admission_possible" if scale > 0 else "not_admitted_for_budget",
+        "measured_cpu_seconds": round(time.process_time() - started_cpu, 4),
+        "measured_wall_seconds": round(time.monotonic() - started_wall, 4),
+    }
+    _write_report(price_report, report)
+    print(
+        json.dumps(
+            {
+                "verdict": report["verdict"],
+                "largest_admissible_updates": scale,
+                "per_paired_update_cpu": round(per_pair_cpu, 4),
+            },
+            ensure_ascii=False,
+        )
+    )
+    return 0 if scale > 0 else 2
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--worker", default=None)
@@ -894,7 +1024,7 @@ def main() -> int:
     parser.add_argument(
         "--phase",
         default="precheck",
-        choices=["precheck", "duty", "proposals", "proposals-r2"],
+        choices=["precheck", "duty", "proposals", "proposals-r2", "price-p383"],
     )
     args = parser.parse_args()
     if args.worker:
@@ -907,6 +1037,8 @@ def main() -> int:
         return proposals()
     if args.phase == "proposals-r2":
         return proposals(r2=True)
+    if args.phase == "price-p383":
+        return price_p383()
     return precheck()
 
 

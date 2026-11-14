@@ -24,16 +24,16 @@
       "red_mutation_detected": true,
       "comparator": "all_identical(texts) == len(set(texts)) == 1, shared by both directions",
       "lengths": {
-        "MAINLINE.md": 232,
-        "MASTER-PLAN.md": 232,
-        "ROADMAP-NEXT_20261104.md": 232
+        "MAINLINE.md": 182,
+        "MASTER-PLAN.md": 182,
+        "ROADMAP-NEXT_20261104.md": 182
       },
       "sha256": {
-        "MAINLINE.md": "65c333297ca054d8b84ee26731be89ddc89861af80f8e7ab628b13764540fb2d",
-        "MASTER-PLAN.md": "65c333297ca054d8b84ee26731be89ddc89861af80f8e7ab628b13764540fb2d",
-        "ROADMAP-NEXT_20261104.md": "65c333297ca054d8b84ee26731be89ddc89861af80f8e7ab628b13764540fb2d"
+        "MAINLINE.md": "988f5b27650c8fc8c4da394752078d5b4c8d002e2b0aa7f49090cade5fad7774",
+        "MASTER-PLAN.md": "988f5b27650c8fc8c4da394752078d5b4c8d002e2b0aa7f49090cade5fad7774",
+        "ROADMAP-NEXT_20261104.md": "988f5b27650c8fc8c4da394752078d5b4c8d002e2b0aa7f49090cade5fad7774"
       },
-      "headline": "22.5.P3.8.2b 工程合同结案 engineering_transfer_verified（独立审计 0 缺口／13 项检查全过、9/8 次独立恢复、4 份 committed 事务回执、去头扰动实测、故障 digest 实测；6 Adam、CPU 5.0312）。范围限制：事务 rebuild.entries=0，非空主体历史重编码未覆盖。唯一后继：按卡 §4 以实价冻结 P3.8.3 整体配方行为比较；仍 0 能力声称，Native A 父未成立。"
+      "headline": "22.5.P3.8.3 预注册已冻结（criteria_sha256=b88b3381…；实价 128 次配对更新≈461.77 CPU／600 帽、两臂等样本暴露、训练前完整包恢复硬门），待裁定执行。P3.8.2b 工程结案有效，父仍为 P3.7 且 native_parent_qualified=false；0 比较读数 / 0 能力声称，P3.9 未准入。"
     },
     "spec": {
       "green_spec_has_no_gate_literal": true,

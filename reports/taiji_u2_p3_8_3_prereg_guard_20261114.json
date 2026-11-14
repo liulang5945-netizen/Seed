@@ -1,0 +1,19 @@
+{
+  "schema": "taiji-u2-p3-8-3-prereg-guard-v1",
+  "date": "2026-11-14",
+  "criteria_sha256": "b88b33818dd850439ca8f915caedbe1fce85a568f26ae566a9c8efbc294b94e6",
+  "recomputed": "b88b33818dd850439ca8f915caedbe1fce85a568f26ae566a9c8efbc294b94e6",
+  "mutated": "24368d25b36bba778068c68ce7ec5e9faf6e7cf1b1516d6c787b54cd3048db3b",
+  "guards": {
+    "criteria_sha_green": true,
+    "criteria_sha_red": true,
+    "spec_no_gate_literal_green": true,
+    "spec_no_gate_literal_red": true,
+    "price_report_cited": true,
+    "execution_runner_hash_null": true,
+    "report_hash_null": true
+  },
+  "offenders": [],
+  "passed": true,
+  "note": "document-and-hash guard only; 0 graph loads, 0 optimizer steps, 0 data reads"
+}
