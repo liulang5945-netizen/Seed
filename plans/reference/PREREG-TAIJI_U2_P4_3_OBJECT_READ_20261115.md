@@ -1,6 +1,6 @@
 # 22.5.P4.3 预注册：读层对象级稠密监督（2026-11-15）
 
-> 状态：判据与实价已冻结，**未获授权、0 训练、0 optimizer step**。契约 [`taiji_u2_p4_3_object_read_20261115.json`](../manifests/taiji_u2_p4_3_object_read_20261115.json)（`criteria_sha256=369b127b…`，帽 **2000 CPU／4000 wall**），实价 [`taiji_u2_p4_3_price_20261115.json`](../../reports/taiji_u2_p4_3_price_20261115.json)。
+> 状态：判据与实价已冻结；**owner 已于 2026-11-15 授权执行**（`owner:chat:2026-11-15#是`），run 模式与守卫已落地，运行中。契约 [`taiji_u2_p4_3_object_read_20261115.json`](../manifests/taiji_u2_p4_3_object_read_20261115.json)（`criteria_sha256=369b127b…`，帽 **2000 CPU／4000 wall**），实价 [`taiji_u2_p4_3_price_20261115.json`](../../reports/taiji_u2_p4_3_price_20261115.json)。
 
 ## 1 一句话
 
