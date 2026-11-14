@@ -1,0 +1,144 @@
+{
+  "schema": "taiji-u2-p3-29-reproduction-v1",
+  "date": "2026-11-14",
+  "card": "22.5.P3.29",
+  "phase": "reproduction",
+  "verdict": "reproduced_on_both_axes",
+  "cells": {
+    "seed_b": {
+      "cell": "seed_b",
+      "seed": 20261111,
+      "style": "original",
+      "parameters": 77,
+      "doses": [
+        {
+          "update": 1844,
+          "train_accuracy": 0.875,
+          "fit_accuracy": 0.90625,
+          "train_correct": 224,
+          "fit_correct": 29,
+          "colour_accuracy_train": 1.0,
+          "colour_accuracy_fit": 1.0,
+          "centroid_column_hits_fit": 5,
+          "centroid_column_total_fit": 24,
+          "abstain_on_unknown_fit": 8,
+          "abstain_on_other_fit": 0,
+          "cpu": 0.09375
+        },
+        {
+          "update": 3688,
+          "train_accuracy": 0.921875,
+          "fit_accuracy": 0.9375,
+          "train_correct": 236,
+          "fit_correct": 30,
+          "colour_accuracy_train": 1.0,
+          "colour_accuracy_fit": 1.0,
+          "centroid_column_hits_fit": 10,
+          "centroid_column_total_fit": 24,
+          "abstain_on_unknown_fit": 8,
+          "abstain_on_other_fit": 0,
+          "cpu": 0.078125
+        },
+        {
+          "update": 7376,
+          "train_accuracy": 0.98828125,
+          "fit_accuracy": 1.0,
+          "train_correct": 253,
+          "fit_correct": 32,
+          "colour_accuracy_train": 1.0,
+          "colour_accuracy_fit": 1.0,
+          "centroid_column_hits_fit": 11,
+          "centroid_column_total_fit": 24,
+          "abstain_on_unknown_fit": 8,
+          "abstain_on_other_fit": 0,
+          "cpu": 0.09375
+        }
+      ]
+    },
+    "paraphrase": {
+      "cell": "paraphrase",
+      "seed": 20261110,
+      "style": "paraphrase",
+      "parameters": 77,
+      "doses": [
+        {
+          "update": 1844,
+          "train_accuracy": 0.84765625,
+          "fit_accuracy": 0.71875,
+          "train_correct": 217,
+          "fit_correct": 23,
+          "colour_accuracy_train": 0.8671875,
+          "colour_accuracy_fit": 0.8125,
+          "centroid_column_hits_fit": 11,
+          "centroid_column_total_fit": 24,
+          "abstain_on_unknown_fit": 6,
+          "abstain_on_other_fit": 1,
+          "cpu": 0.078125
+        },
+        {
+          "update": 3688,
+          "train_accuracy": 0.87890625,
+          "fit_accuracy": 0.78125,
+          "train_correct": 225,
+          "fit_correct": 25,
+          "colour_accuracy_train": 0.8671875,
+          "colour_accuracy_fit": 0.8125,
+          "centroid_column_hits_fit": 13,
+          "centroid_column_total_fit": 24,
+          "abstain_on_unknown_fit": 6,
+          "abstain_on_other_fit": 1,
+          "cpu": 0.09375
+        },
+        {
+          "update": 7376,
+          "train_accuracy": 0.96875,
+          "fit_accuracy": 0.875,
+          "train_correct": 248,
+          "fit_correct": 28,
+          "colour_accuracy_train": 1.0,
+          "colour_accuracy_fit": 1.0,
+          "centroid_column_hits_fit": 16,
+          "centroid_column_total_fit": 24,
+          "abstain_on_unknown_fit": 6,
+          "abstain_on_other_fit": 1,
+          "cpu": 0.078125
+        }
+      ]
+    }
+  },
+  "reference_cell": {
+    "seed": 20261110,
+    "style": "original",
+    "fit_accuracy": 0.96875,
+    "source": "P3.28 palette_colour"
+  },
+  "aux_weight": 1.0,
+  "batch": 8,
+  "optimizer": {
+    "lr": 0.01,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "weight_decay": 0.0
+  },
+  "training_authority": "owner:chat:2026-11-14#下一步",
+  "cost": {
+    "total_cpu": 90.046875,
+    "total_wall": 90.402024,
+    "cap_cpu": 120.0,
+    "cap_wall": 300.0
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "capability_claims": 0
+  },
+  "run_conditions": {
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "scope": "detector-only reproduction card; palette-anchored readout with the colour named in the request; one cell changes the seed, one rewrites the request template; U2 body frozen; no capability claim"
+}

@@ -1,0 +1,49 @@
+{
+  "schema": "taiji-u2-p3-29-guard-v1",
+  "date": "2026-11-14",
+  "card": "22.5.P3.29",
+  "verdict": "guard_passed",
+  "checks": {
+    "criteria_hash": true,
+    "status_frozen": true,
+    "verdict_rule": true,
+    "seed_b_fit_matches_recompute": true,
+    "seed_b_colour_matches_recompute": true,
+    "paraphrase_fit_matches_recompute": true,
+    "paraphrase_colour_matches_recompute": true,
+    "paraphrase_reads_every_colour": true,
+    "seed_b_reaches_gate": true,
+    "paraphrase_differs_from_original": true
+  },
+  "drills": {
+    "bump_paraphrase_fit": true,
+    "flip_verdict": true,
+    "fake_colour_accuracy": true,
+    "identical_template": true
+  },
+  "recomputed": {
+    "seed_b": {
+      "accuracy": 1.0,
+      "correct": 32,
+      "denominator": 32,
+      "colour_accuracy": 1.0,
+      "centroid_column_hits": 11,
+      "abstain_on_unknown": 8,
+      "abstain_on_other": 0
+    },
+    "paraphrase": {
+      "accuracy": 0.875,
+      "correct": 28,
+      "denominator": 32,
+      "colour_accuracy": 1.0,
+      "centroid_column_hits": 16,
+      "abstain_on_unknown": 6,
+      "abstain_on_other": 1
+    }
+  },
+  "measured": {
+    "threads": 12,
+    "torch": "2.13.0+cpu"
+  },
+  "scope": "independent recomputation from saved checkpoints; no training"
+}
