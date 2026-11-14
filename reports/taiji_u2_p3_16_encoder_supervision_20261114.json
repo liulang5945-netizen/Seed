@@ -1,0 +1,87 @@
+{
+  "schema": "taiji-u2-p3-16-encoder-v1",
+  "date": "2026-11-14",
+  "card": "22.5.P3.16",
+  "phase": "encoder_supervision",
+  "verdict": "inconclusive_encoder_supervision",
+  "lambda": 1.0,
+  "doses": [
+    {
+      "update": 64,
+      "correct": 0,
+      "accuracy": 0.0,
+      "train_correct": 0,
+      "train_accuracy": 0.0,
+      "head_fit_accuracy": 0.25,
+      "head_train_accuracy": 0.25,
+      "distinct_outputs": 1,
+      "bundle_digest": "b421cae177242e193d55ab59600633f5fc44b29c861c4167d99374317b6ecf45"
+    },
+    {
+      "update": 256,
+      "correct": 0,
+      "accuracy": 0.0,
+      "train_correct": 0,
+      "train_accuracy": 0.0,
+      "head_fit_accuracy": 0.21875,
+      "head_train_accuracy": 0.296875,
+      "distinct_outputs": 1,
+      "bundle_digest": "81c15e43681c68ee5369eec2ef9bf64f1f7c0debb3dc661b17039dae44ec0813"
+    },
+    {
+      "update": 768,
+      "correct": 8,
+      "accuracy": 0.25,
+      "train_correct": 16,
+      "train_accuracy": 0.25,
+      "head_fit_accuracy": 0.21875,
+      "head_train_accuracy": 0.40625,
+      "distinct_outputs": 1,
+      "bundle_digest": "b4805cc7a111ce630c11763bc476f4f69d17da05c93f9be2fccaf37c839eaa01"
+    },
+    {
+      "update": 1844,
+      "correct": 8,
+      "accuracy": 0.25,
+      "train_correct": 16,
+      "train_accuracy": 0.25,
+      "head_fit_accuracy": 0.34375,
+      "head_train_accuracy": 0.390625,
+      "distinct_outputs": 1,
+      "bundle_digest": "11511983cbf7a057867258e4558a3986bce2201f68c71023fe8d3a3c52ccbf40"
+    }
+  ],
+  "zero": {
+    "correct": 0,
+    "denominator": 32,
+    "accuracy": 0.0
+  },
+  "head": {
+    "parameters": 132,
+    "initialised_zero": true,
+    "attach_point": "pooled observation encoding (encoder output)"
+  },
+  "control_arms": {
+    "plain_adam": "P3.10 fit 0/0/0.25/0.25, head n/a",
+    "accepted_update": "P3.13 fit 0/0/0.25/0.25",
+    "context_supervision": "P3.14 fit 0/0/0.25/0.25, head 0.25 at every dose"
+  },
+  "training_authority": "owner:chat:2026-11-14#continue",
+  "cost": {
+    "total_cpu": 346.734375,
+    "total_wall": 347.958921,
+    "cap_cpu": 358.273,
+    "cap_wall": 716.546
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "capability_claims": 0
+  },
+  "run_conditions": {
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "scope": "single-seed encoder-supervised arm on synthetic legal inputs; no natural-language, no capability claim"
+}
