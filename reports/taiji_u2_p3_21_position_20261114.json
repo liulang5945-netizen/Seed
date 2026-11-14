@@ -1,0 +1,83 @@
+{
+  "schema": "taiji-u2-p3-21-position-v1",
+  "date": "2026-11-14",
+  "card": "22.5.P3.21",
+  "phase": "position_channel",
+  "verdict": "position_channel_insufficient",
+  "doses": [
+    {
+      "update": 1844,
+      "train_accuracy": 0.79296875,
+      "fit_accuracy": 0.1875,
+      "train_correct": 203,
+      "fit_correct": 6,
+      "attention_entropy_train": 0.122859,
+      "attention_entropy_fit": 0.150618,
+      "attention_column_hits_fit": 9,
+      "attention_column_total_fit": 24,
+      "cpu": 0.078125
+    },
+    {
+      "update": 3688,
+      "train_accuracy": 0.91015625,
+      "fit_accuracy": 0.1875,
+      "train_correct": 233,
+      "fit_correct": 6,
+      "attention_entropy_train": 0.085449,
+      "attention_entropy_fit": 0.136649,
+      "attention_column_hits_fit": 10,
+      "attention_column_total_fit": 24,
+      "cpu": 0.078125
+    },
+    {
+      "update": 7376,
+      "train_accuracy": 0.9765625,
+      "fit_accuracy": 0.15625,
+      "train_correct": 250,
+      "fit_correct": 5,
+      "attention_entropy_train": 0.102131,
+      "attention_entropy_fit": 0.117809,
+      "attention_column_hits_fit": 10,
+      "attention_column_total_fit": 24,
+      "cpu": 0.09375
+    }
+  ],
+  "trainable_parameters": 3524,
+  "module_parameters": 3524,
+  "position_parameters": 512,
+  "width": 32,
+  "batch": 8,
+  "optimizer": {
+    "lr": 0.01,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "weight_decay": 0.0
+  },
+  "control_arms": {
+    "p3_17": "position-blind, 588 trainable: train 1.000, fit 0.281",
+    "p3_18": "position-blind, matched split: train 1.000, fit 0.406",
+    "p3_19": "position-blind, 4x data: train 0.730, fit 0.3125",
+    "p3_20": "position-blind, width 32: train 0.910, fit 0.281"
+  },
+  "training_authority": "owner:chat:2026-11-14#continue",
+  "cost": {
+    "total_cpu": 31.125,
+    "total_wall": 31.352692,
+    "cap_cpu": 60.0,
+    "cap_wall": 300.0
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "capability_claims": 0
+  },
+  "run_conditions": {
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "scope": "detector-only card on raw rgb patches; the only change against P3.20 is a per-patch position table added to the attended summary; U2 body frozen; no capability claim"
+}

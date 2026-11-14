@@ -1,0 +1,114 @@
+{
+  "schema": "taiji-u2-p3-21-25-guard-v1",
+  "date": "2026-11-14",
+  "cards": [
+    "22.5.P3.21",
+    "22.5.P3.22",
+    "22.5.P3.23",
+    "22.5.P3.24",
+    "22.5.P3.25"
+  ],
+  "verdict": "guard_passed",
+  "checks": {
+    "p21_criteria_hash": true,
+    "p21_frozen": true,
+    "p22_criteria_hash": true,
+    "p22_frozen": true,
+    "p23_criteria_hash": true,
+    "p23_frozen": true,
+    "p24_criteria_hash": true,
+    "p24_frozen": true,
+    "p25_not_frozen": true,
+    "p21_verdict_rule": true,
+    "p21_fit_matches_recompute": true,
+    "p21_train_matches_recompute": true,
+    "p21_no_column_targeting_on_fit": true,
+    "p22_verdict_rule": true,
+    "p22_selection_fit_matches_recompute": true,
+    "p22_bypass_fit_matches_recompute": true,
+    "p22_selection_abstains_on_all_non_unknown": true,
+    "p23_verdict_rule": true,
+    "p23_fit_matches_recompute": true,
+    "p23_attention_is_uniform": true,
+    "p23_entropy_matches_recompute": true,
+    "p24_verdict_rule": true,
+    "p24_fit_matches_recompute": true,
+    "p24_attention_is_uniform": true,
+    "p24_entropy_matches_recompute": true
+  },
+  "drills": {
+    "bump_p21_fit": true,
+    "flip_p21_verdict": true,
+    "bump_p22_selection_fit": true,
+    "fake_p23_entropy": true,
+    "flip_p24_verdict": true,
+    "freeze_p25": true
+  },
+  "recomputed": {
+    "p21_fit": {
+      "accuracy": 0.15625,
+      "correct": 5,
+      "denominator": 32,
+      "mean_attention_entropy": 0.117809
+    },
+    "p21_train": {
+      "accuracy": 0.9765625,
+      "correct": 250,
+      "denominator": 256,
+      "mean_attention_entropy": 0.102131
+    },
+    "p22_selection_fit": {
+      "accuracy": 0.3125,
+      "correct": 10,
+      "denominator": 32,
+      "mean_attention_entropy": 1.955328
+    },
+    "p22_selection_train": {
+      "accuracy": 0.5,
+      "correct": 128,
+      "denominator": 256,
+      "mean_attention_entropy": 2.024718
+    },
+    "p22_bypass_fit": {
+      "accuracy": 0.375,
+      "correct": 12,
+      "denominator": 32,
+      "mean_attention_entropy": 0.996564
+    },
+    "p22_bypass_train": {
+      "accuracy": 0.94140625,
+      "correct": 241,
+      "denominator": 256,
+      "mean_attention_entropy": 1.044841
+    },
+    "p23_fit": {
+      "accuracy": 0.21875,
+      "correct": 7,
+      "denominator": 32,
+      "mean_attention_entropy": 2.772589
+    },
+    "p23_train": {
+      "accuracy": 0.2265625,
+      "correct": 58,
+      "denominator": 256,
+      "mean_attention_entropy": 2.772589
+    },
+    "p24_fit": {
+      "accuracy": 0.25,
+      "correct": 8,
+      "denominator": 32,
+      "mean_attention_entropy": 5.545164
+    },
+    "p24_train": {
+      "accuracy": 0.25,
+      "correct": 64,
+      "denominator": 256,
+      "mean_attention_entropy": 5.545165
+    }
+  },
+  "measured": {
+    "threads": 12,
+    "torch": "2.13.0+cpu"
+  },
+  "scope": "independent recomputation from saved checkpoints; no training"
+}

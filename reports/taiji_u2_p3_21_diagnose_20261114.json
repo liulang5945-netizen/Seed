@@ -1,0 +1,45 @@
+{
+  "schema": "taiji-u2-p3-21-diagnose-v1",
+  "date": "2026-11-14",
+  "card": "22.5.P3.21",
+  "phase": "diagnose",
+  "verdict": "task_and_query_verified",
+  "oracle_from_observations": {
+    "train": {
+      "oracle_correct": 256,
+      "denominator": 256,
+      "oracle_accuracy": 1.0
+    },
+    "fit": {
+      "oracle_correct": 32,
+      "denominator": 32,
+      "oracle_accuracy": 1.0
+    }
+  },
+  "query_color_probe": {
+    "train_accuracy": 1.0,
+    "fit_accuracy": 1.0,
+    "ridge_lambda": 1.0,
+    "features": 8,
+    "classes": 6
+  },
+  "checks": {
+    "oracle_train_exact": true,
+    "oracle_fit_exact": true,
+    "query_probe_above_floor": true
+  },
+  "reading": "the reconstructed image reproduces the label exactly on both splits, and the frozen query decodes the six colours; so the input and the labels are sound and the earlier failures were on the readout side",
+  "discipline": {
+    "training_runs": 0,
+    "optimizer_calls": 0,
+    "capability_claims": 0
+  },
+  "run_conditions": {
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "measured": {
+    "cpu_seconds": 0.15625,
+    "wall_seconds": 0.143505
+  }
+}

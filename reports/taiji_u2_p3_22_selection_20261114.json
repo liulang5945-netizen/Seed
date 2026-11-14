@@ -1,0 +1,165 @@
+{
+  "schema": "taiji-u2-p3-22-selection-v1",
+  "date": "2026-11-14",
+  "card": "22.5.P3.22",
+  "phase": "selection_as_output",
+  "verdict": "selection_cannot_fit",
+  "arms": {
+    "selection": {
+      "arm": "selection",
+      "bypass": false,
+      "parameters": 1833,
+      "shared_init_digest": "4a820d8476c10d4f774b67ce3d6d3d06265a054ffe0ace37fdcef2dd323f2ca5",
+      "doses": [
+        {
+          "update": 1844,
+          "train_accuracy": 0.484375,
+          "fit_accuracy": 0.4375,
+          "train_correct": 124,
+          "fit_correct": 14,
+          "attention_entropy_train": 2.462052,
+          "attention_entropy_fit": 2.451805,
+          "attention_column_hits_fit": 4,
+          "attention_column_total_fit": 24,
+          "null_on_unknown_fit": 8,
+          "false_abstain_fit": 24,
+          "cpu": 0.125
+        },
+        {
+          "update": 3688,
+          "train_accuracy": 0.50390625,
+          "fit_accuracy": 0.34375,
+          "train_correct": 129,
+          "fit_correct": 11,
+          "attention_entropy_train": 2.154355,
+          "attention_entropy_fit": 2.11195,
+          "attention_column_hits_fit": 5,
+          "attention_column_total_fit": 24,
+          "null_on_unknown_fit": 8,
+          "false_abstain_fit": 24,
+          "cpu": 0.09375
+        },
+        {
+          "update": 7376,
+          "train_accuracy": 0.5,
+          "fit_accuracy": 0.3125,
+          "train_correct": 128,
+          "fit_correct": 10,
+          "attention_entropy_train": 2.024718,
+          "attention_entropy_fit": 1.955328,
+          "attention_column_hits_fit": 5,
+          "attention_column_total_fit": 24,
+          "null_on_unknown_fit": 8,
+          "false_abstain_fit": 24,
+          "cpu": 0.09375
+        }
+      ]
+    },
+    "bypass": {
+      "arm": "bypass",
+      "bypass": true,
+      "parameters": 1965,
+      "shared_init_digest": "4a820d8476c10d4f774b67ce3d6d3d06265a054ffe0ace37fdcef2dd323f2ca5",
+      "doses": [
+        {
+          "update": 1844,
+          "train_accuracy": 0.6328125,
+          "fit_accuracy": 0.375,
+          "train_correct": 162,
+          "fit_correct": 12,
+          "attention_entropy_train": 1.852863,
+          "attention_entropy_fit": 1.800305,
+          "attention_column_hits_fit": 4,
+          "attention_column_total_fit": 24,
+          "null_on_unknown_fit": 0,
+          "false_abstain_fit": 0,
+          "cpu": 0.09375
+        },
+        {
+          "update": 3688,
+          "train_accuracy": 0.76171875,
+          "fit_accuracy": 0.375,
+          "train_correct": 195,
+          "fit_correct": 12,
+          "attention_entropy_train": 1.503747,
+          "attention_entropy_fit": 1.470463,
+          "attention_column_hits_fit": 7,
+          "attention_column_total_fit": 24,
+          "null_on_unknown_fit": 0,
+          "false_abstain_fit": 0,
+          "cpu": 0.09375
+        },
+        {
+          "update": 7376,
+          "train_accuracy": 0.94140625,
+          "fit_accuracy": 0.375,
+          "train_correct": 241,
+          "fit_correct": 12,
+          "attention_entropy_train": 1.044841,
+          "attention_entropy_fit": 0.996564,
+          "attention_column_hits_fit": 7,
+          "attention_column_total_fit": 24,
+          "null_on_unknown_fit": 0,
+          "false_abstain_fit": 0,
+          "cpu": 0.09375
+        }
+      ]
+    }
+  },
+  "column_members": {
+    "0": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "1": [
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "2": [
+      11,
+      12,
+      13,
+      14,
+      15
+    ]
+  },
+  "batch": 8,
+  "optimizer": {
+    "lr": 0.01,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "weight_decay": 0.0
+  },
+  "control_arms": {
+    "p3_21": "position channel on patch attention: train 0.977, fit 0.156, attention column 0/24 on fit",
+    "p3_20": "position-blind width 32: train 0.910, fit 0.281"
+  },
+  "training_authority": "owner:chat:2026-11-14#continue",
+  "cost": {
+    "total_cpu": 84.921875,
+    "total_wall": 85.415541,
+    "cap_cpu": 150.0,
+    "cap_wall": 600.0
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "capability_claims": 0
+  },
+  "run_conditions": {
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "scope": "detector-only card; class logits are the attention mass per column class plus a null slot; arm B adds a scene-summary bypass; U2 body frozen; no capability claim"
+}

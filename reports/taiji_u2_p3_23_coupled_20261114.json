@@ -1,0 +1,85 @@
+{
+  "schema": "taiji-u2-p3-23-coupled-v1",
+  "date": "2026-11-14",
+  "card": "22.5.P3.23",
+  "phase": "coupled_abstention",
+  "verdict": "coupled_selection_cannot_fit",
+  "doses": [
+    {
+      "update": 1844,
+      "train_accuracy": 0.25,
+      "fit_accuracy": 0.25,
+      "train_correct": 64,
+      "fit_correct": 8,
+      "attention_entropy_train": 2.772589,
+      "attention_entropy_fit": 2.772589,
+      "attention_column_hits_fit": 0,
+      "attention_column_total_fit": 24,
+      "abstain_on_unknown_fit": 0,
+      "abstain_on_other_fit": 0,
+      "cpu": 0.109375
+    },
+    {
+      "update": 3688,
+      "train_accuracy": 0.25,
+      "fit_accuracy": 0.25,
+      "train_correct": 64,
+      "fit_correct": 8,
+      "attention_entropy_train": 2.772589,
+      "attention_entropy_fit": 2.772589,
+      "attention_column_hits_fit": 0,
+      "attention_column_total_fit": 24,
+      "abstain_on_unknown_fit": 0,
+      "abstain_on_other_fit": 0,
+      "cpu": 0.09375
+    },
+    {
+      "update": 7376,
+      "train_accuracy": 0.2265625,
+      "fit_accuracy": 0.21875,
+      "train_correct": 58,
+      "fit_correct": 7,
+      "attention_entropy_train": 2.772589,
+      "attention_entropy_fit": 2.772589,
+      "attention_column_hits_fit": 0,
+      "attention_column_total_fit": 24,
+      "abstain_on_unknown_fit": 0,
+      "abstain_on_other_fit": 1,
+      "cpu": 0.09375
+    }
+  ],
+  "trainable_parameters": 1825,
+  "abstain_bias": 0.420637,
+  "batch": 8,
+  "optimizer": {
+    "lr": 0.01,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "weight_decay": 0.0
+  },
+  "control_arms": {
+    "p3_22_selection": "free null slot: train 0.500, fit 0.3125, abstained on 24/24 non-unknown fit cases",
+    "p3_22_bypass": "free null plus scene bypass: train 0.941, fit 0.375"
+  },
+  "training_authority": "owner:chat:2026-11-14#continue",
+  "cost": {
+    "total_cpu": 39.734375,
+    "total_wall": 40.069129,
+    "cap_cpu": 126.775,
+    "cap_wall": 300.0
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "capability_claims": 0
+  },
+  "run_conditions": {
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "scope": "detector-only card; abstention logit is b - logsumexp(scores), everything else identical to P3.22 arm A; U2 body frozen; no capability claim"
+}
