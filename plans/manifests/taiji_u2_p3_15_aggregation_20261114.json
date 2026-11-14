@@ -1,0 +1,36 @@
+{
+  "schema": "taiji-u2-p3-15-contract-v1",
+  "status": "frozen",
+  "card": "22.5.P3.15",
+  "date": "2026-11-14",
+  "parent_bundle": "data/experiments/taiji_u2/p3_10/20261114T1847Z/dose-1844.bin",
+  "parent_update": 1844,
+  "data_root": "data/experiments/taiji_u2/first_a/20261112T074836Z/data.bin",
+  "data_digest": "40813b4cc8ffec0c3ae5639941b373c139422b4ccbaa34790de34a9e1149d214",
+  "criteria": {
+    "ridge_lambda": 1.0,
+    "shuffle_seed": 20261114,
+    "probe_high": 0.6,
+    "probe_low": 0.35,
+    "shuffle_max": 0.35,
+    "protocol": "ridge fit on train64, test on fit32; pooled=mean over 16 rgb patches; patch_preserving=flatten 16x8",
+    "decision": "flat>=high and flat_shuffle<=max -> aggregation_is_the_bottleneck; flat<=low -> representation_is_the_bottleneck; else inconclusive_aggregation",
+    "capability_claims": 0
+  },
+  "criteria_sha256": "8b446dc7c50c324080ecfb7c340c67b7e157e1e4eb13941fa501440c07b149cc",
+  "exits": [
+    "aggregation_is_the_bottleneck",
+    "representation_is_the_bottleneck",
+    "inconclusive_aggregation"
+  ],
+  "cpu_cap": 50.0,
+  "source_pins": {
+    "script": "f149cb847bf4a0d94da89b1f5893af44834299a0236ffc680043e92349300ba2"
+  },
+  "discipline": {
+    "training_runs": 0,
+    "optimizer_calls": 0,
+    "capability_claims": 0
+  },
+  "note": "third and final conditioning probe; criteria frozen before reading"
+}

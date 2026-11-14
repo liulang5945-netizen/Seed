@@ -1,0 +1,50 @@
+{
+  "schema": "taiji-u2-p3-15-aggregation-v1",
+  "date": "2026-11-14",
+  "card": "22.5.P3.15",
+  "phase": "aggregation_attribution",
+  "verdict": "inconclusive_aggregation",
+  "parent_bundle": "data/experiments/taiji_u2/p3_10/20261114T1847Z/dose-1844.bin",
+  "protocol": "ridge fit on train64, test on fit32; features standardized",
+  "pooled": {
+    "correct": 11,
+    "denominator": 32,
+    "accuracy": 0.34375
+  },
+  "patch_preserving": {
+    "correct": 13,
+    "denominator": 32,
+    "accuracy": 0.40625
+  },
+  "pooled_shuffled": {
+    "correct": 7,
+    "denominator": 32,
+    "accuracy": 0.21875
+  },
+  "patch_preserving_shuffled": {
+    "correct": 13,
+    "denominator": 32,
+    "accuracy": 0.40625
+  },
+  "features": {
+    "pooled": 8,
+    "patch_preserving": 128
+  },
+  "discipline": {
+    "optimizer_calls": 0,
+    "checkpoints_written": 0,
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "capability_claims": 0
+  },
+  "run_conditions": {
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "measured": {
+    "cpu_seconds": 0.890625,
+    "wall_seconds": 1.164796
+  },
+  "scope": "attribution only; one bundle, train64 and fit32, no training and no capability claim"
+}

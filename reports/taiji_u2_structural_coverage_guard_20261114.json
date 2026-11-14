@@ -20,7 +20,7 @@
   "failed": [],
   "measured": {
     "cpu_seconds": 0.0,
-    "wall_seconds": 0.011526
+    "wall_seconds": 0.011551
   },
   "real_file_drill": {
     "green_after_restore": true,
