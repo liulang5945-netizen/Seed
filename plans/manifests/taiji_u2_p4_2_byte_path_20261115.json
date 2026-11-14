@@ -186,9 +186,9 @@
   },
   "authorization": {
     "asked": "是否授权执行 22.5.P4.2 两阶段字节路径卡（重建 P4.1 B 臂 + 读取脚手架 7376 步 + 字节头 1844 步 + 纠正/恢复，实测帽 3960 CPU／7920 wall）",
-    "reply": null,
+    "reply": "是，有问题给弹窗，不用中断",
     "scope": "development fit only; no check or final read; no capability claim; parent candidate only",
-    "note": "contract frozen with a measured cap; the run is blocked until training_authority is filled by the owner"
+    "note": "owner authorized the run on 2026-11-15; problems are surfaced in the receipt instead of pausing the run"
   },
   "run_root": "data/experiments/taiji_u2/p4_2/20261116T0000Z",
   "source_pins": {
@@ -198,7 +198,7 @@
     "subject": "01d54b472e6cc99728ca45b94aeb556148498081ce1128cf28f8bed2d8784025",
     "runner": "e0e40a8cdbe78795b65a314a36f5bb383297313aea6d419d3f8748f62feb8c51"
   },
-  "training_authority": null,
+  "training_authority": "owner:chat:2026-11-15#是，有问题给弹窗，不用中断",
   "note": "pre-registration and price frozen; the run needs owner authority; no optimizer step has been taken under this contract",
   "implementation_facts": [
     {

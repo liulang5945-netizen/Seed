@@ -1,6 +1,6 @@
 # 22.5.P4.2 预注册：列通路接进字节路径（2026-11-15）
 
-> 状态：判据与实价已冻结，**未获授权、0 训练、0 optimizer step**。契约 [`taiji_u2_p4_2_byte_path_20261115.json`](../manifests/taiji_u2_p4_2_byte_path_20261115.json)（`criteria_sha256=633a8618…`，帽 **3960 CPU／7920 wall**），实价 [`taiji_u2_p4_2_price_20261115.json`](../../reports/taiji_u2_p4_2_price_20261115.json)，梯度普查 [`taiji_u2_p4_2_census_20261115.json`](../../reports/taiji_u2_p4_2_census_20261115.json)。
+> 状态：判据与实价已冻结；**owner 已于 2026-11-15 授权执行**（`owner:chat:2026-11-15#是，有问题给弹窗，不用中断`），运行中按"有问题如实报、不中断"执行。契约 [`taiji_u2_p4_2_byte_path_20261115.json`](../manifests/taiji_u2_p4_2_byte_path_20261115.json)（`criteria_sha256=633a8618…`，帽 **3960 CPU／7920 wall**），实价 [`taiji_u2_p4_2_price_20261115.json`](../../reports/taiji_u2_p4_2_price_20261115.json)，梯度普查 [`taiji_u2_p4_2_census_20261115.json`](../../reports/taiji_u2_p4_2_census_20261115.json)。
 
 ## 1 一句话
 
