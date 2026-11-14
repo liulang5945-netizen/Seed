@@ -1,0 +1,118 @@
+{
+  "schema": "taiji-u2-p382b-proposal-execution-v1",
+  "date": "2026-11-14",
+  "card": "22.5.P3.8.2b",
+  "status": "frozen_pending_execution",
+  "note": "Execution contract only. No Adam call has been made under this contract. criteria is the single machine-readable source of gates; criteria_sha256 is SHA-256 over its canonical JSON and must be recomputable.",
+  "spec": "plans/reference/SPEC-TAIJI_U2_NATIVE_CREDIT_TRANSFER_20261113.md",
+  "precheck": {
+    "report": "reports/taiji_u2_native_credit_transfer_precheck_20261114.json",
+    "verdict": "precheck_passed_admitted"
+  },
+  "parent": {
+    "path": "data/experiments/taiji_u2/joint_learning/1794554480667378100/joint-query/update-000758.bin",
+    "sha256": "c8f2359b0bef3085bce88a0a0a8ee7eff5f66a0bc614d2bf52e7ef361638b017",
+    "architecture": "native-joint-query",
+    "update": 758,
+    "body_parameters": 25086,
+    "body_tensors": 214,
+    "optimizer_states": 191
+  },
+  "data": {
+    "path": "data/experiments/taiji_u2/paired_task/1794496638577954800/data.bin",
+    "digest": "65041f02e3a3410b307bc6e013d897ef747e7f890b3668db6b5852fdc9fdba1c",
+    "train_episodes": 180,
+    "allowed_partition": "train only",
+    "dev_reads": 0,
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0
+  },
+  "measured_price": {
+    "probe": "scripts/training/task_history_loss_22_5.py::history_loss(model, train, episode, 'actual-self')['loss'].backward() with torch.set_num_threads(1)",
+    "episode_indices": [0, 1, 60],
+    "cpu_seconds": [0.5469, 0.4531, 0.4375],
+    "wall_seconds": [0.609, 0.469, 0.453],
+    "conservative_per_objective_cpu": 0.5469,
+    "grad_none": 23,
+    "grad_present": 191,
+    "first_ended": true
+  },
+  "criteria": {
+    "proposals": {
+      "normal": 4,
+      "fault": 2,
+      "max_real_adam_calls": 6,
+      "fault_position": "after the Adam proposal is computed and before any parameter commit; the call and its cost are retained",
+      "normal_policy": "finite rejection is allowed; no forced parameter movement"
+    },
+    "objective": {
+      "per_proposal_episode_count": 1,
+      "episode_order": "fixed index list [0, 1, 2, 3] for the four normal proposals; the two faults reuse the last normal episode without an additional exposure",
+      "coverage_set_size": 12,
+      "coverage_rule": "12 train episodes cover three audit.position values x the four visible/absent/reverse cells; colour pairs (0,1),(2,3),(4,5) are registered from the request colour word; the coverage set is for class statistics and duty checks, NOT the per-proposal batch",
+      "rejected_alternative": "full 12-episode batch per objective evaluation; measured extrapolation 6 x 9 x 12 x 0.5469 = 354.4 CPU exceeds the 130 CPU cap and is therefore not admitted",
+      "update_target": "J_first = first_ce + J_content, matching the calibrated first-question scope",
+      "content_term": "J_content = -w_y * logsumexp_b(log(omega_b) + log_softmax(W_c h_b + b_c)_y); h_b is the branch_context returned by output(), omega_b = softmax(state['logw']) detached as state, W_c/b_c are the Linear(8,4) head",
+      "class_definition": "classes are the hex-sorted distinct first-answer byte strings over the full 180 train episodes; w_y = N/(K*count[y])",
+      "head": {"module": "torch.nn.Linear", "in_features": 8, "out_features": 4, "parameters": 36, "seed": 2026111311, "runtime_use": false}
+    },
+    "gradient_duty": {
+      "g1": "grad of first_ce",
+      "g2": "grad of (second_ce + blocked)",
+      "g_joint": "grad of history_loss['loss'] = 0.5*(g1+g2)",
+      "check": "per-parameter equality (g1+g2)/2 == g_joint within 1e-9 relative; record every None pattern, direction and scale",
+      "on_failure": "engineering_failure"
+    },
+    "update_rule": {
+      "operator": "taiji.u2_credit_update.accepted_adam_step",
+      "alpha_grid": [1, 0.5, 0.25, 0.125, 0.0625, 0.03125, 0.015625, 0.0078125],
+      "armijo": 0.0001,
+      "tolerance": 1e-06,
+      "direction_rule": "keep descending proposal; otherwise d' = -||d|| g / ||g|| (float64 reduction)",
+      "on_reject": "restore parameters, keep finite Adam moments and the learner clock"
+    },
+    "clocks": {
+      "u": "learner proposal clock, increments on every real Adam call including faults",
+      "v": "committed parameter version, increments only on an accepted commit",
+      "rule": "u and v are stored separately; 0 <= v <= u must hold"
+    },
+    "capsule": {
+      "schema": "taiji-u2-native-learner-capsule-v1",
+      "registry_tensors": 216,
+      "first_nonempty_moment": "immediately after the first real Adam call, save the full capsule and restore it in an independent process before the second call",
+      "restore_points": "one before and one after each accepted commit",
+      "comparison": "body, head, every moment, next objective value, all gradients, RNG and the next proposal must match",
+      "on_failure": "engineering_failure"
+    },
+    "headless": "body-only inference distribution and greedy generation must be unchanged by adding the content head; training label indices stay inside the learner",
+    "budget": {
+      "cpu_cap": 130,
+      "wall_cap": 260,
+      "estimated_cpu": 46.2,
+      "basis": "6 proposals x 9 objective evaluations x 0.5469 CPU + 3 duty backward passes + 3 independent restore pairs + headless generation + startup (2)",
+      "estimated_margin_cpu": 83.8
+    },
+    "decision_rule": {
+      "engineering_transfer_verified": "all 6 calls occur within cap, duty equality holds, every restore matches, headless equivalence holds, u/v and registry stay consistent; signs the ENGINEERING contract only, not a capability and not a training-dose justification",
+      "engineering_failure": "any parent/source/registry mismatch, gradient duty inequality, restore mismatch, headless leakage or non-finite state",
+      "budget_stop": "cpu >= 130 or wall >= 260; keep all incurred cost, no shrink-and-rerun",
+      "not_admitted_for_budget": "measured price makes the frozen required coverage unpayable before any Adam call",
+      "inconclusive": "fewer than 6 calls completed without a named failure, or a finite rejection count leaves the commit path unexercised without an explicit record"
+    }
+  },
+  "criteria_sha256": "12a958cd360cd79ae11ee75f14307c0bcb05a14f4a73f075aaa8063370f98db7",
+  "runner": "scripts/training/verify_native_credit_transfer_22_5.py",
+  "report": "reports/taiji_u2_native_credit_transfer_proposals_20261114.json",
+  "report_sha256": null,
+  "discipline": {
+    "training_updates": 0,
+    "new_parameters_trained": 0,
+    "dev_reads": 0,
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "capability_claims": 0,
+    "criteria_frozen_before_any_adam_call": true
+  }
+}

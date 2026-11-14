@@ -1,0 +1,144 @@
+{
+  "schema": "taiji-u2-native-credit-transfer-proposals-v1",
+  "date": "2026-11-14",
+  "card": "22.5.P3.8.2b",
+  "contract": "taiji_u2_native_credit_transfer_proposals_v2_20261114.json",
+  "criteria_sha256": "c26b78229679a7740bd4d64576ebc767c2bfa7c4e17befd8a4f02e5c709a8541",
+  "parent_sha256": "c8f2359b0bef3085bce88a0a0a8ee7eff5f66a0bc614d2bf52e7ef361638b017",
+  "data_digest": "65041f02e3a3410b307bc6e013d897ef747e7f890b3668db6b5852fdc9fdba1c",
+  "coverage_indices": [
+    0,
+    1,
+    10,
+    11,
+    84,
+    85,
+    94,
+    95,
+    168,
+    169,
+    178,
+    179
+  ],
+  "class_hex": [
+    "e4b8ade997b4",
+    "e58fb3e8beb9",
+    "e5b7a6e8beb9",
+    "e69caae79fa5"
+  ],
+  "class_counts": {
+    "e4b8ade997b4": 30,
+    "e58fb3e8beb9": 30,
+    "e5b7a6e8beb9": 30,
+    "e69caae79fa5": 90
+  },
+  "class_weights": [
+    1.5,
+    1.5,
+    1.5,
+    0.5
+  ],
+  "proposals": [
+    {
+      "call": 1,
+      "kind": "normal",
+      "accepted": true,
+      "scale": 1,
+      "before": 0.28247541189193726,
+      "after": 0.27367615699768066,
+      "fallback": false,
+      "evaluations": 1,
+      "reason": "accepted",
+      "u": 1,
+      "v": 1
+    },
+    {
+      "call": 2,
+      "kind": "normal",
+      "accepted": true,
+      "scale": 1,
+      "before": 2.5557363033294678,
+      "after": 2.4551594257354736,
+      "fallback": false,
+      "evaluations": 1,
+      "reason": "accepted",
+      "u": 2,
+      "v": 2
+    },
+    {
+      "call": 3,
+      "kind": "normal",
+      "accepted": true,
+      "scale": 1,
+      "before": 0.28171825408935547,
+      "after": 0.14991819858551025,
+      "fallback": true,
+      "evaluations": 1,
+      "reason": "accepted",
+      "u": 3,
+      "v": 3
+    },
+    {
+      "call": 4,
+      "kind": "normal",
+      "accepted": true,
+      "scale": 1,
+      "before": 2.6820056438446045,
+      "after": 2.535841941833496,
+      "fallback": false,
+      "evaluations": 1,
+      "reason": "accepted",
+      "u": 4,
+      "v": 4
+    },
+    {
+      "call": 5,
+      "kind": "fault_before_commit",
+      "proposal": "accepted",
+      "before_loss": 0.16135208308696747,
+      "restored_loss": 0.16135208308696747,
+      "loss_restored": true,
+      "parameter_digest_restored": true
+    },
+    {
+      "call": 6,
+      "kind": "fault_before_commit",
+      "proposal": "accepted",
+      "before_loss": 0.16135208308696747,
+      "restored_loss": 0.16135208308696747,
+      "loss_restored": true,
+      "parameter_digest_restored": true
+    }
+  ],
+  "counters": {
+    "real_adam_calls": 6,
+    "proposal_clock_u": 6,
+    "parameter_version_v": 4,
+    "accepted_commits": 4
+  },
+  "restore_checks": [
+    {
+      "point": "first_nonempty_moment",
+      "digest_matches": true
+    }
+  ],
+  "headless": {
+    "log_output_digest": "42db0021c7235a198f46c540e1e3512757ed6094e2b7f5149d10dcfcfcae079d",
+    "body_digest": "a5555d39090c0b88dccb4e94e45bef3aadde5b35564e5c196b6161fe76303fc7",
+    "head_attached_to_runtime": false,
+    "content_label_indices_in_runtime": false
+  },
+  "measured": {
+    "cpu_seconds": 4.0625,
+    "wall_seconds": 10.546
+  },
+  "discipline": {
+    "dev_reads": 0,
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "capability_claims": 0,
+    "criteria_sha_unchanged_after_reading": true
+  },
+  "verdict": "engineering_transfer_verified"
+}

@@ -708,7 +708,7 @@ P3.7.3c/d已按[主体及价格回执](VALIDATION-TAIJI_U2_JOINT_SUBJECT_2026111
 
 [校准结案](CLOSEOUT-TAIJI_U2_LEARNING_CALIBRATION_20261113.md)取得去辅助头后train/dev各179/180的神经首问参照，最低问题组29/30，两输入控制50%。原字节CE及内容监督原Adam结果分别50%/50%、66.11%/63.33%，保留各自固定末点。受验收更新CPU83.34375，阶段审计5.296875核验126文件和原始评分。
 
-该候选为单对象／固定问题／单初始化首问参考，Native父资格未变。[Native迁移规范](SPEC-TAIJI_U2_NATIVE_CREDIT_TRANSFER_20261113.md)将同样的内容反馈、目标验收、u/v双时钟及完整学习恢复在原主体中核验，工程剩130／runner草案600／最终审计60，共790未分配CPU。2026-11-14预检：完整学习包初始保存、独立进程恢复与篡改拒绝已通过（0 Adam、CPU 1.9688、wall 7.188），130 工程帽按 P3.7 实价估算余 102.69 CPU 并准入；首个非空 moment 复验与 4 正常＋2 故障提案仍待执行，见[03 流水](../active/roadmap/03_CURRENT_EXECUTION.md)。
+该候选为单对象／固定问题／单初始化首问参考，Native父资格未变。[Native迁移规范](SPEC-TAIJI_U2_NATIVE_CREDIT_TRANSFER_20261113.md)将同样的内容反馈、目标验收、u/v双时钟及完整学习恢复在原主体中核验，工程剩130／runner草案600／最终审计60，共790未分配CPU。2026-11-14预检：完整学习包初始保存、独立进程恢复与篡改拒绝已通过（0 Adam、CPU 1.9688、wall 7.188），130 工程帽按 P3.7 实价估算余 102.69 CPU 并准入；6 次提案读数已取得（6 Adam、u6/v4、CPU 4.0625）但独立审计判 `inconclusive_coverage_gaps`（恢复覆盖 1/8、原子提交／历史重编码、去头前后对照等 4 项未覆盖），原 `engineering_transfer_verified` 不得引用为工程结案；补齐证据后按同一 v2 合同重判，P3.8.3 未准入，见[03 流水](../active/roadmap/03_CURRENT_EXECUTION.md)。
 
 ## P3.9 有状态神经单位的正式化与首次比较（2026-11-13新增设计卡）
 

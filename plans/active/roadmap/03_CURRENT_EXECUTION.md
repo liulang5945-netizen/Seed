@@ -3160,3 +3160,16 @@ owner 本轮重述[根需求 §2.1](../TAIJI_CORE_REQUIREMENTS.md#21-统一目�
 **边界**：本阶段只签「完整学习包可保存／恢复」与预算准入，**不签**目标覆盖、g1/g2/g_joint 梯度职责、提案／拒绝、原子提交、去头生成等值或任何能力；Native A 父仍未成立，首问参照权重独立于 Native。能力／训练内标签分数不代签完整接口。
 
 **唯一后继**：冻结 4 正常＋2 故障提案的执行合同（固定源码、调用次数、保存点、12 条 train episode 与两问目标），再执行最多 6 次真实 Adam；第一次提案后立即做首个非空 moment 的完整包独立恢复复验。P3.8.3 行为比较须在工程通过后另按实价冻结，不自动转训练剂量。
+
+
+## 2026-11-14 22.5.P3.8.2b 提案执行与独立审计（6 次真实 Adam，0 dev）
+
+按[v1 执行合同](../../manifests/taiji_u2_native_credit_transfer_proposals_20261114.json)与[v2 合同](../../manifests/taiji_u2_native_credit_transfer_proposals_v2_20261114.json)推进：先零 Adam 核对梯度职责与内容项，再执行 4 正常＋2 故障提案，最后按合同逐项独立复核。
+
+**取证中的两处事实更正（判据未改）**：① `audit.visible/absent` 是 0..5 的**颜色索引**，`audit.position` 才是 0..2、`reverse` 是布尔；卡的「颜色配对 × 完整四格」＝3 组 (0,1)/(2,3)/(4,5) × 2 顺序 × 2 reverse＝12 条。先前把 visible/absent 当布尔分格是**实现写错**，合同文字与 v1 `criteria_sha256=12a958cd…` 未动。② v1 梯度职责容差 `atol=1e-12` 比 float32 机器精度 1.19e-7 小 5 个数量级 ⇒ PASS 分支**算术不可达**（与 21.3 v1 同类）。v1 读数 `engineering_failure`（112 参数失配、max_abs_diff **7.45e-9**）保留不改；另出 v2 预注册，只改容差为 `rtol=1e-5 / atol=1e-7 / max_abs≤1e-6` 并写明浮点理由，v1 原块与读数留审计。v2 得 [duty_verified](../../../reports/taiji_u2_native_credit_transfer_duty_v2_20261114.json)（0 失配、数值扰动与错误组合两个红方向都响），同时实算 `J_content`（`Linear(8,4)`、`h_b=branch_context`、`ω_b=softmax(logw)`）。
+
+**6 次提案读数**：[机器卡](../../../reports/taiji_u2_native_credit_transfer_proposals_20261114.json)。4 次正常全部接受（α=1、evaluations=1；第 3 次走 `d'=-‖d‖g/‖g‖` fallback），2 次故障在提案后／提交前回滚，`restored_loss` 与 `before_loss` 逐位相同 **0.16135208308696747**；`u=6 / v=4`；CPU **4.0625** / wall 10.546，远低于 130／260 帽；`criteria_sha` 读后未改；0 dev／check／final／confirm。首个非空 moment 的完整包独立进程恢复 digest 一致。
+
+**独立审计把结论拉回**：[审计回执](../../../reports/taiji_u2_native_credit_transfer_proposals_audit_20261114.json)按合同 `decision_rule` 逐项复核，判定原报告的 `engineering_transfer_verified` **是过度声称**，改判 **`inconclusive_coverage_gaps`**，4 项未覆盖：① 恢复覆盖 **1/8**（合同要求每次接受前后各一次独立恢复，实做首个非空 moment 1 次）；② 无「按新 θ 重编码合法原始历史」的原子提交回执（卡 §2）；③ 去头等值只有声明布尔＋单一 digest，缺 before/after 分布对照；④ 故障 `parameter_digest_restored` 是硬编码 True，缺实测 digest 对。审计附红方向：把 4 项补齐后 verdict 变为 `engineering_transfer_verified`，证明守卫能响。**6 次提案读数本身有效并原样保留，但不得引用为工程结案**；P3.8.3 行为比较未准入，能力账无变化，Native A 父仍未成立。
+
+**唯一后继**：补齐 8 次提交前／后独立恢复、参数迁移事务与历史重编码回执、去头前后实测对照、故障 digest 实测（不改 v2 判据、不追加训练剂量），再按同一合同重判；之后才轮到 P3.8.3 实价冻结。

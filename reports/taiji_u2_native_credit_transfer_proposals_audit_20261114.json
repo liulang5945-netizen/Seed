@@ -1,0 +1,36 @@
+{
+  "schema": "taiji-u2-p382b-proposals-audit-v1",
+  "date": "2026-11-14",
+  "card": "22.5.P3.8.2b",
+  "contract": "taiji_u2_native_credit_transfer_proposals_v2_20261114.json",
+  "criteria_sha256": "c26b78229679a7740bd4d64576ebc767c2bfa7c4e17befd8a4f02e5c709a8541",
+  "receipt_sha256": "2a20bf1692aefee65da95f9f49a744f57bdcd4b68ae18bcde180719c5f064e14",
+  "duty_sha256": "ea157e849b4f8a617773995c55064bcd0c6affe4bcaa68d4271859e37f308bbc",
+  "checks": {
+    "criteria_sha_matches": true,
+    "criteria_unchanged_after_reading": true,
+    "duty_verified_before_proposals": true,
+    "six_real_adam_calls": true,
+    "four_normal_plus_two_fault": true,
+    "clock_consistency": true,
+    "fault_losses_restored": true,
+    "within_budget": true,
+    "data_rights_respected": true,
+    "restore_coverage_complete": false,
+    "atomic_commit_and_history_reencoding_evidenced": false,
+    "headless_equivalence_measured": false,
+    "fault_parameter_digest_measured": false
+  },
+  "uncovered": [
+    "restore coverage 1/8: the contract requires one independent-process restore before and one after each accepted commit; only the first-non-empty-moment restore was recorded",
+    "no per-commit receipt for the parameter-migration transaction or re-encoding of legal original history under the new theta (card section 2)",
+    "headless equivalence is a declared boolean plus a single digest, not a before/after body distribution comparison",
+    "parameter_digest_restored is a hardcoded True; no digest_before/digest_after pair was measured for the fault rollback"
+  ],
+  "required_restores": 8,
+  "actual_restores": 1,
+  "audited_verdict": "inconclusive_coverage_gaps",
+  "original_verdict": "engineering_transfer_verified",
+  "quotation_rule": "The six proposal readings are valid and retained. The original engineering_transfer_verified verdict must NOT be quoted as an engineering closeout: three contract requirements are unevidenced. P3.8.3 behaviour comparison is not admitted.",
+  "note": "Independent read-only re-adjudication. The original receipt is not modified."
+}

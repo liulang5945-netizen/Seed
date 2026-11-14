@@ -1,0 +1,97 @@
+{
+  "schema": "taiji-u2-native-credit-transfer-duty-v2",
+  "date": "2026-11-14",
+  "card": "22.5.P3.8.2b",
+  "phase": "duty_zero_adam",
+  "contract": "plans/manifests/taiji_u2_native_credit_transfer_proposals_v2_20261114.json",
+  "superseded_v1": {
+    "contract": "plans/manifests/taiji_u2_native_credit_transfer_proposals_20261114.json",
+    "reading": "reports/taiji_u2_native_credit_transfer_duty_20261114.json",
+    "verdict": "engineering_failure"
+  },
+  "criteria_sha256": "c26b78229679a7740bd4d64576ebc767c2bfa7c4e17befd8a4f02e5c709a8541",
+  "parent_sha256": "c8f2359b0bef3085bce88a0a0a8ee7eff5f66a0bc614d2bf52e7ef361638b017",
+  "data_digest": "65041f02e3a3410b307bc6e013d897ef747e7f890b3668db6b5852fdc9fdba1c",
+  "classes": {
+    "hex_sorted": [
+      "e4b8ade997b4",
+      "e58fb3e8beb9",
+      "e5b7a6e8beb9",
+      "e69caae79fa5"
+    ],
+    "counts": {
+      "e4b8ade997b4": 30,
+      "e58fb3e8beb9": 30,
+      "e5b7a6e8beb9": 30,
+      "e69caae79fa5": 90
+    },
+    "weights": [
+      1.5,
+      1.5,
+      1.5,
+      0.5
+    ]
+  },
+  "coverage_indices": [
+    0,
+    1,
+    10,
+    11,
+    84,
+    85,
+    94,
+    95,
+    168,
+    169,
+    178,
+    179
+  ],
+  "coverage_cells": "3 colour pairs (0,1)/(2,3)/(4,5) x 2 ordering directions x 2 reverse flags, bound to audit.position 0/1/2",
+  "colour_pair_decoding": "audit.visible and audit.absent are colour indices 0..5; the request colour words are not separately decoded",
+  "content_term": {
+    "context_shape": [
+      2,
+      8
+    ],
+    "omega_shape": [
+      2
+    ],
+    "head": "Linear(8,4) seed 2026111311, 36 parameters",
+    "label_hex": "e5b7a6e8beb9",
+    "label_weight": 1.5,
+    "j_content": 0.03325547277927399,
+    "j_first": 0.28247541189193726,
+    "omega_detached_from_state": true
+  },
+  "gradient_duty": {
+    "parameters": 214,
+    "all_none_rows": 23,
+    "mismatches": [],
+    "max_abs_difference": 7.450580596923828e-09,
+    "tolerance": {
+      "rtol": 1e-05,
+      "atol": 1e-07,
+      "max_abs_difference": 1e-06
+    },
+    "first_ce": 0.24921992421150208,
+    "second_ce": 0.11175816506147385,
+    "blocked": 0.0,
+    "first_ended": true,
+    "selection_credit": "conditional_state_only; no argmax distribution gradient",
+    "red_numeric_perturbation_detected": true,
+    "red_wrong_combination_detected": true
+  },
+  "measured": {
+    "cpu_seconds": 2.6875,
+    "wall_seconds": 3.609
+  },
+  "discipline": {
+    "training_updates": 0,
+    "optimizer_steps": 0,
+    "dev_reads": 0,
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0
+  },
+  "verdict": "duty_verified"
+}
