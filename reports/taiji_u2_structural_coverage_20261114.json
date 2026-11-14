@@ -96,15 +96,18 @@
     "title": "门-剂量一致性与学习曲线校准",
     "phase0": "zero-compute price of 3-seed curve from measured marginal cost",
     "phase0_arithmetic": {
-      "native_cpu_per_update": 1.345703,
-      "updates_to_1844_cpu": 2481.7,
+      "upper_bound_cpu_per_update": 1.345703,
+      "upper_bound_1844_cpu": 2481.7,
       "eval_cpu_each": 96.609375,
-      "single_seed_curve_cpu": 2964.7,
-      "three_seed_curve_cpu": 8894.2,
+      "upper_bound_single_seed_cpu": 2964.7,
+      "upper_bound_three_seed_cpu": 8894.2,
+      "lower_bound_cpu_per_update": 0.0325,
+      "lower_bound_1844_cpu": 60.0,
+      "bracket_note": "40x gap is per-update save_learner serialization in the pilot, not forward/backward",
       "formal_ab_budget_cpu": 18000,
       "affordable": true,
       "reading": "the 256 cap was not budget-driven; it is an uncalibrated design choice",
-      "caveat": "arithmetic from existing readings only; execution pricing must be re-measured"
+      "caveat": "arithmetic from existing readings only; execution pricing must be re-measured at the dose checkpoints"
     },
     "phase1": "single-arm single-seed curve at {0,64,256,768,1844}, full-denominator joint success",
     "exits": ["dose_curve_measured", "gate_dose_infeasible", "budget_cannot_express", "pricing_over_budget"],

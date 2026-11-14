@@ -3250,3 +3250,5 @@ owner 本轮重述[根需求 §2.1](../TAIJI_CORE_REQUIREMENTS.md#21-统一目�
 **Phase 0 算术预演（只用既有读数，不构成定价）**：1844 次 ≈ 2,481.7 CPU、每次 fit32 评估 ≈ 96.6 CPU ⇒ 单 seed 曲线 ≈ 2,964.7 CPU、三 seed ≈ 8,894.2 CPU，正式 A/B 的 18,000 CPU 可支付 ⇒ **256 这个上限不是预算逼出来的**，是未标定的设计选择；Phase 1 须按执行时实测单价重算。
 
 **验收**：守卫 14 项检查全绿、5 项内存红方向全响，并做真实文件篡改（`能力成立 0`→`1`）——2 项检查转红、逐字节恢复后复绿；`measured.cpu_seconds=0.0` 低于 0.0156 s 计时刻度，wall 秒数以机读回执为准。
+
+**设计稿已出**：[P3.10 设计·待准入](../../reference/SPEC-TAIJI_U2_P3_10_DOSE_CURVE_DRAFT_20261114.md)——唯一问题、候选与初态（`initial_v3.bin`，`c58aca6c…`）、剂量点 `{0,64,256,768,1844}`、四出口（`dose_curve_measured`／`gate_dose_infeasible`／`recipe_scoped_flat`／`inconclusive_curve`）与 `[60, 2481.7]` CPU 价格带齐备；**runner 与 manifest 未写、未冻结**，冻结前须清四维打分器、初态 sha、预检定价、是否加配方臂（默认不加）。本稿 0 计算、0 额度。
