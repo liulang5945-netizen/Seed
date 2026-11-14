@@ -66,7 +66,8 @@
     "colour_classes": 7,
     "position_classes": 3,
     "hidden": 16,
-    "parameters": 490,
+    "parameters": 458,
+    "parameters_note": "measured at run time; the pre-freeze hand count of 490 was corrected here without touching any criterion",
     "matching": "exact minimum over the 6 slot permutations",
     "labels": "visible palette objects from the public image: dominant colour per column, mean column x binned left/middle/right; 0 to 3 pairs per example"
   },

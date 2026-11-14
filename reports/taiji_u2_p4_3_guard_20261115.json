@@ -1,0 +1,143 @@
+{
+  "schema": "taiji-u2-p4-3-guard-v1",
+  "card": "22.5.P4.3",
+  "date": "2026-11-15",
+  "contract_sha256": "058cf6bf4852a5877735adf9a358debc6f4c896c43cf80dc141a24e302896c54",
+  "checks": [
+    {
+      "name": "contract_status_frozen",
+      "passed": true,
+      "evidence": "frozen"
+    },
+    {
+      "name": "caps_positive",
+      "passed": true,
+      "evidence": [
+        2000.0,
+        4000.0
+      ]
+    },
+    {
+      "name": "source_pins_match",
+      "passed": true,
+      "evidence": {
+        "runner": "d289f9355c4bb595f4eb19cf2b5598a9c814653f0e52379394069a2efbbd65c9",
+        "p4_2_runner": "c479d90963cf3a21b43700115fc8c94f418b4a396a8526fadb5e8c3b322859ff",
+        "p4_1_runner": "fe722cb41b6149f4bf5a709c546ac5fc5b644e1b8f01da1e870ec1e6a6134877",
+        "support": "33d9301f98859934c1413e25765c55e6bc7b64dfa410d65b03f0e5a198041b4c",
+        "column_pathway": "4afb7c94a0641f6f5eb943339d19f13c8f690ddcf6956bc6787cba5aa4653476",
+        "subject": "01d54b472e6cc99728ca45b94aeb556148498081ce1128cf28f8bed2d8784025"
+      }
+    },
+    {
+      "name": "criteria_sha256_matches",
+      "passed": true,
+      "evidence": "369b127b61e8b2e0dab3397dfe5311bda4432f7311ee663fbe9df3c2605f3471"
+    },
+    {
+      "name": "p4_1_bundle_sha256_matches",
+      "passed": true,
+      "evidence": "f670508850685cb8aa4e9ed385eb2f5997154524e606d1ab7cbfbd5230eb0f2f"
+    },
+    {
+      "name": "data_digest_and_splits",
+      "passed": true,
+      "evidence": [
+        256,
+        32
+      ]
+    },
+    {
+      "name": "visible_pairs_baseline_published",
+      "passed": true,
+      "evidence": [
+        78,
+        7,
+        2
+      ]
+    },
+    {
+      "name": "zero_training_scaffold_baseline",
+      "passed": true,
+      "evidence": {
+        "pair_accuracy": 0.038461538461538464,
+        "set_accuracy": 0.0,
+        "pair_hits": 3,
+        "pair_total": 78,
+        "set_correct": 0,
+        "denominator": 32
+      }
+    },
+    {
+      "name": "cache_replay_equals_body",
+      "passed": true,
+      "evidence": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "name": "training_authority_recorded",
+      "passed": true,
+      "evidence": "owner:chat:2026-11-15#是"
+    },
+    {
+      "name": "parent_not_claimed",
+      "passed": true,
+      "evidence": "not_applicable_no_A_parent"
+    },
+    {
+      "name": "no_sealed_reads",
+      "passed": true,
+      "evidence": "check and final are not read"
+    }
+  ],
+  "run_state": "run_present",
+  "run_checks": [
+    {
+      "name": "run_cost_within_cap",
+      "passed": true,
+      "evidence": [
+        1586.9375,
+        2000.0
+      ]
+    },
+    {
+      "name": "run_no_parent_claim",
+      "passed": true,
+      "evidence": {
+        "check_reads": 0,
+        "final_reads": 0,
+        "confirm_reads": 0,
+        "capability_claims": 0,
+        "accepted_parent": false
+      }
+    }
+  ],
+  "red_directions": [
+    {
+      "name": "tampered_pair_count_fails",
+      "triggered": true
+    },
+    {
+      "name": "parent_claim_fails",
+      "triggered": true
+    },
+    {
+      "name": "pin_tamper_fails",
+      "triggered": true
+    },
+    {
+      "name": "bundle_tamper_detected",
+      "triggered": true
+    }
+  ],
+  "summary": {
+    "checks": 12,
+    "green": 12,
+    "red_defined": 4,
+    "red_triggered": 4,
+    "run_checks": 2
+  }
+}

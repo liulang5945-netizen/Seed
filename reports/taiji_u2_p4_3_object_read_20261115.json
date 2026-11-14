@@ -1,0 +1,117 @@
+{
+  "schema": "taiji-u2-p4-3-object-read-v1",
+  "card": "22.5.P4.3",
+  "date": "2026-11-15",
+  "verdict": "read_partial",
+  "read": {
+    "status": "max_dose",
+    "doses": [
+      {
+        "update": 1844,
+        "train_pair_accuracy": 0.45,
+        "train_set_accuracy": 0.125,
+        "fit_pair_accuracy": 0.358974358974359,
+        "fit_set_accuracy": 0.03125,
+        "checkpoint": "data\\experiments\\taiji_u2\\p4_3\\20261115T1900Z\\read-001844.pt",
+        "checkpoint_sha256": "e3c865ab7b859d097df5c768bf917c48a7d306dcd2c03ae0a929882f6f3627c9"
+      },
+      {
+        "update": 3688,
+        "train_pair_accuracy": 0.6,
+        "train_set_accuracy": 0.15625,
+        "fit_pair_accuracy": 0.4358974358974359,
+        "fit_set_accuracy": 0.0,
+        "checkpoint": "data\\experiments\\taiji_u2\\p4_3\\20261115T1900Z\\read-003688.pt",
+        "checkpoint_sha256": "cf157a3e1f21d78bc25e648ea736aded0b795a56f9a4b9a7bc5d680aabde4794"
+      }
+    ],
+    "trainable_parameters": 192,
+    "scaffold_parameters": 458,
+    "baselines": {
+      "fit_pairs": 78,
+      "fit_examples": 32,
+      "constant_pair_accuracy": 0.08974358974358974,
+      "constant_set_accuracy": 0.0625,
+      "zero_training_pair_accuracy": 0.038461538461538464,
+      "zero_training_set_accuracy": 0.0,
+      "note": "published beside the read gate so neither chance nor a constant predictor can be mistaken for the read learning"
+    }
+  },
+  "byte": {
+    "doses": [],
+    "trainable_parameters": [],
+    "cache_positions": 0,
+    "cache_replay_checks": []
+  },
+  "feedback": {},
+  "recovery": {
+    "equal_in_process": null,
+    "final_sha256": null
+  },
+  "gate_table": {
+    "read_pair": "failed",
+    "read_set": "failed",
+    "full_answer_round_fit": "not_run_read_blind",
+    "correction": "not_run_read_blind",
+    "feedback_gain": "not_run_read_blind",
+    "stability": "not_run_read_blind",
+    "recovery": "not_run_read_blind",
+    "world_paired_95_lower": "not_in_scope_single_seed",
+    "three_seed_direction": "not_in_scope_single_seed",
+    "a_retention": "not_applicable_no_A_parent",
+    "check2": "not_read"
+  },
+  "criteria": {
+    "read_pair_gate": 0.95,
+    "read_set_gate": 0.8,
+    "read_flat": 0.35,
+    "read_early_stop": "stop stage 1 when train and fit pair accuracy are both >=0.95 and fit set accuracy >=0.80; stop at the second dose when fit pair accuracy is <=0.35 at both doses",
+    "read_blind_rule": "if stage 1 is read_still_blind, skip stage 2; the p4.2 card already measured the blind-read to chance byte-head link",
+    "main_gate": 0.8,
+    "correction_gate": 0.8,
+    "feedback_gain_gate": 0.05,
+    "stability_ceiling": 0.1,
+    "response_round": "exact answer bytes plus EOS plus valid UTF-8, greedy, 65-byte cap",
+    "main_denominator": "all 32 fit rounds; no filtering",
+    "correction_protocol": "first pass on fit; for every first-pass error release the correct answer and take 8 Adam updates at the feedback lr; re-ask the same input once",
+    "correction_denominator": "first-pass fit errors",
+    "feedback_joint_rule": "correction >=0.80 and stability losses <= max(1, 10% of first-pass correct) and gain >=0.05",
+    "control_arm": "same trained subject, same feedback exposure, zero parameter updates and zero state writes",
+    "recovery": "save the trained bundle, reload in an independent process, re-ask all 32; outputs must be byte-identical",
+    "a_retention": "not_applicable_no_A_parent",
+    "three_seed": "not_in_scope_single_seed",
+    "check2": "not_read",
+    "accepted_parent": false,
+    "parent_candidate": "read gate plus byte-path main gate plus joint feedback rule plus recovery, on development fit only",
+    "verdicts": [
+      "read_taught_byte_path_carries_answer",
+      "read_taught_byte_path_below_gate",
+      "read_partial",
+      "read_still_blind",
+      "p4_1_bundle_mismatch",
+      "budget_stop",
+      "engineering_failure"
+    ]
+  },
+  "criteria_sha256": "369b127b61e8b2e0dab3397dfe5311bda4432f7311ee663fbe9df3c2605f3471",
+  "data_digest": "1dec5429a1110dc9a23a8f38329e1bce1cb8824e6d2ca89fc96b429487e9addf",
+  "init_bundle_sha256": "f670508850685cb8aa4e9ed385eb2f5997154524e606d1ab7cbfbd5230eb0f2f",
+  "cost": {
+    "total_cpu": 1586.9375,
+    "total_wall": 1593.202039,
+    "cap_cpu": 2000.0,
+    "cap_wall": 4000.0
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "capability_claims": 0,
+    "accepted_parent": false
+  },
+  "run_conditions": {
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "scope": "development fit only; the served output is the subject's byte head; a parent candidate, not an accepted learning parent"
+}
