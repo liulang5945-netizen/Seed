@@ -1,0 +1,177 @@
+{
+  "schema": "taiji-u2-bind2-design-v1",
+  "status": "design_frozen_unimplemented",
+  "card": "22.5.P5.0",
+  "date": "2026-11-15",
+  "design_card": "plans/reference/DESIGN-TAIJI_U2_OBJECT_CENTRIC_BINDING_20261115.md",
+  "candidate": {
+    "identity": "taiji-u2-subject-v5",
+    "name": "U2-BIND2",
+    "binding": "v2",
+    "observation_layout": "column-observation-v1",
+    "seed": 20261110,
+    "encoder": "frozen at the P4.1 arm B weights"
+  },
+  "parent_bundle": {
+    "path": "data/experiments/taiji_u2/p4_2/20261116T0500Z/reconstruct-B-007376.pt",
+    "sha256": "f670508850685cb8aa4e9ed385eb2f5997154524e606d1ab7cbfbd5230eb0f2f",
+    "inheritance": "all existing tensors by name; seven new tensors born at seed 20261110",
+    "child_bundle_must_record": [
+      "parent_bundle_sha256",
+      "inheritance_map_sha256",
+      "new_tensor_names",
+      "born_seed"
+    ]
+  },
+  "graph": {
+    "current_scalars": 22638,
+    "current_tensors": 191,
+    "state_fields": 40,
+    "planned_new_scalars": 480,
+    "planned_new_tensors": 7,
+    "planned_scalars": 23118,
+    "planned_tensors": 198,
+    "design_ceiling_new_scalars": 560,
+    "receipt": "reports/taiji_u2_bind2_graph_20261115.json",
+    "note": "current inventory measured on the worktree; the new inventory must be re-measured at implementation and may not exceed the ceiling without a new card"
+  },
+  "structural_changes": {
+    "per_slot_identity_anchor": "additive query-side vector a_i, shape [3, 8]",
+    "in_binding_iterations": 2,
+    "slot_update": "LayerNorm(z + MLP([z, u, m, log sigma(l)])), shared across slots and iterations",
+    "content": "u_i = sum_n alpha_ni v_n / (s_i + eps), s_i = sum_n alpha_ni, mass_i = s_i / N (mean, so the existing mass/(mass+0.01) dormancy gate is unchanged)",
+    "unchanged": [
+      "encoder at the P4.1 arm B weights",
+      "column-observation-v1 layout",
+      "existing token-to-slot softmax with a null option",
+      "reliability-weighted modality fusion",
+      "outer observe loop of two corrector writes",
+      "read scaffold, labels, byte head, correction protocol"
+    ],
+    "no_auxiliary_penalties": true
+  },
+  "data": {
+    "root": "data/experiments/taiji_u2/p3_19/three_object_volume_20261114.bin",
+    "digest": "1dec5429a1110dc9a23a8f38329e1bce1cb8824e6d2ca89fc96b429487e9addf",
+    "splits": {
+      "train": 256,
+      "fit": 32,
+      "check": "not read",
+      "final": "not read"
+    },
+    "batch": 8,
+    "seed": 20261110,
+    "labels": "the world's exact position for every colour the public image shows; visible subset, 0-3 pairs; 288 validated examples; no mean-column bin",
+    "feedback": "none in stage 1; stage 2 uses eight Adam feedback updates at lr 0.001 with allowance 32 and a zero-update control"
+  },
+  "read_scaffold": {
+    "role": "training-only per-slot head on object_z; never at evaluation",
+    "input": "object_z [branches, 3, 8], branch mean",
+    "parameters": 458,
+    "source": "unchanged from P4.3",
+    "matching": "exact minimum over the 6 slot permutations"
+  },
+  "criteria": {
+    "pilot_dose": 461,
+    "pilot_arms": {
+      "A": "full v2: anchor + two in-binding iterations + u_i content",
+      "B": "one in-binding iteration, anchor kept",
+      "C": "anchor disabled at query time, parameters kept and reported"
+    },
+    "pilot_gate_applies_to": "arm A only; arms B and C are attribution arms and never gate the stop/go",
+    "pilot_gates": {
+      "finite_gradients": true,
+      "checkpoint_reload_byte_identical": true,
+      "slot_mass_min": 0.05,
+      "slot_mass_scene_fraction": 0.5,
+      "slot_content_cosine_max": 0.995,
+      "loss_last50_below_first50": true
+    },
+    "read_pair_gate": 0.95,
+    "read_set_gate": 0.8,
+    "duplicate_rate_max": 0.0625,
+    "count_accuracy_gate": 0.75,
+    "train_set_gate": 0.85,
+    "knockout_gate": 0.6,
+    "knockout_zero_effect_verdict": "read_ignores_slots",
+    "stage1_doses": [
+      1844,
+      3688
+    ],
+    "early_stop": "first dose set < 0.30 and pair < 0.60 -> binding_cannot_form_slots",
+    "stage2_gates": {
+      "main": 0.8,
+      "correction": 0.8,
+      "feedback_gain": 0.05,
+      "stability_ceiling": 0.1,
+      "recovery": "byte identical in an independent process",
+      "control_updates": 0,
+      "a_retention": "not_applicable_no_A_parent",
+      "three_seed": "not_in_scope_single_seed",
+      "check2": "not_read",
+      "accepted_parent": false
+    },
+    "stage2_priced_here": false
+  },
+  "stop_conditions": {
+    "pilot": "any pilot gate fails -> binding_pilot_collapsed, do not run the full dose",
+    "stage1": "read gate fails at the final dose -> binding_partial, close the structure route",
+    "knockout": "zero effect on every scene -> read_ignores_slots, stop even if accuracy passes",
+    "budget": "any segment cap reached -> budget_stop, keep every checkpoint",
+    "engineering": "non-finite gradient, parent bundle mismatch, graph receipt mismatch, cache replay mismatch or cross-identity load -> engineering_failure"
+  },
+  "verdicts": [
+    "binding_forms_object_slots",
+    "binding_partial",
+    "binding_cannot_form_slots",
+    "binding_pilot_collapsed",
+    "read_ignores_slots",
+    "budget_stop",
+    "engineering_failure"
+  ],
+  "budget": {
+    "implementation_cpu": 150.0,
+    "implementation_wall": 300.0,
+    "price_cpu": 40.0,
+    "price_wall": 80.0,
+    "pilot_cpu": 1000.0,
+    "pilot_wall": 2000.0,
+    "stage1_cpu": 2600.0,
+    "stage1_wall": 5200.0,
+    "total_cpu": 3800.0,
+    "total_wall": 7600.0,
+    "rule": "each segment cap may only be lowered after the price measurement; no transfer between segments"
+  },
+  "planned_artifacts": [
+    "plans/reference/DESIGN-TAIJI_U2_OBJECT_CENTRIC_BINDING_20261115.md",
+    "plans/manifests/taiji_u2_bind_2_design_20261115.json",
+    "taiji/u2_subject.py",
+    "reports/taiji_u2_bind2_graph_20261115.json",
+    "scripts/training/run_p5_0_bind2.py",
+    "scripts/training/verify_p5_0_bind2.py",
+    "reports/taiji_u2_bind2_price_20261115.json",
+    "reports/taiji_u2_bind2_pilot_20261115.json",
+    "reports/taiji_u2_bind2_guard_20261115.json"
+  ],
+  "guards": [
+    "v5_schema_only_with_binding_v2",
+    "cross_identity_load_rejected",
+    "parent_bundle_sha256_matches",
+    "inheritance_map_complete",
+    "graph_inventory_matches_receipt",
+    "checkpoint_reload_byte_identical_in_independent_process",
+    "optimizer_state_contains_new_tensors",
+    "state_fields_stay_40",
+    "pilot_three_arms_run",
+    "pilot_gate_enforced",
+    "read_scaffold_parameter_count_matches_458",
+    "knockout_uses_no_gradients",
+    "check_and_final_reads_zero",
+    "budget_cap_enforced",
+    "parent_not_claimed"
+  ],
+  "run_authorized": false,
+  "training_authority": null,
+  "criteria_sha256": "6848715d5c4c2b54a009b00a81119e27a1f01202120d2a37d9f3d03161b9a5d9",
+  "note": "design stage only; zero training, zero optimizer step, zero data read; implementation, pricing and the 461-step pilot require an explicit authorization"
+}
