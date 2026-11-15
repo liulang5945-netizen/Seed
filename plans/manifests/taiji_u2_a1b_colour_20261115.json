@@ -1,0 +1,95 @@
+{
+  "schema": "taiji-u2-a1b-colour-v1",
+  "status": "frozen",
+  "card": "22.5.A.1b",
+  "date": "2026-11-15",
+  "a1_manifest": "plans/manifests/taiji_u2_a1_read_20261115.json",
+  "a1_result": "plans/reference/RESULT-TAIJI_U2_A1_READ_20261115.md",
+  "candidate": {
+    "architecture": "native",
+    "profile": "metadata+request",
+    "parameters": 22742,
+    "tensors": 194,
+    "seed": 20261110,
+    "subject_frozen": true,
+    "encoder_bundle": "data/experiments/taiji_u2/p4_2/20261116T0500Z/reconstruct-B-007376.pt",
+    "encoder_bundle_sha256": "f670508850685cb8aa4e9ed385eb2f5997154524e606d1ab7cbfbd5230eb0f2f",
+    "observation_layout": "column-observation-v1",
+    "head_parameters": 263
+  },
+  "data": {
+    "root": "data/experiments/taiji_u2/first_a/20261112T074836Z/data.bin",
+    "digest": "40813b4cc8ffec0c3ae5639941b373c139422b4ccbaa34790de34a9e1149d214",
+    "train": 64,
+    "fit": 32,
+    "check_final_confirm": "not read"
+  },
+  "optimizer": {
+    "lr": 0.01
+  },
+  "steps": 200,
+  "controls": {
+    "fixed_question": "蓝色圆片现在在哪里？"
+  },
+  "criteria": {
+    "fit_gate": 0.8,
+    "train_gate": 0.9,
+    "distinct_min": 4,
+    "rgb_zero_agreement_max": 0.5,
+    "fixed_question_agreement_max": 0.5,
+    "blind": 0.3,
+    "exits": {
+      "taught": "a_parent_read_taught",
+      "partial": "a_parent_read_partial",
+      "blind": "a_parent_read_blind",
+      "budget": "budget_stop",
+      "engineering": "engineering_failure"
+    },
+    "painted_diagnostic_min": 0.85,
+    "recovery": "checkpoint reload identical",
+    "accepted_parent": false,
+    "check2": "not_read",
+    "three_seed": "not_in_scope_single_seed"
+  },
+  "run_root": "data/experiments/taiji_u2/a1b/20261115T2300Z",
+  "cpu_cap": 173.353,
+  "wall_cap": 346.706,
+  "training_authority": "owner:chat:2026-11-15#授权（A.1b）",
+  "source_pins": {
+    "runner": "c540c20d76cf95ecc75704973ff406d5d01296bbbe30bdcd528f87cb737f6a66",
+    "subject": "a3335d7fc84e54903f16617e452753c04124709b3b83c20a656d7b43b5ef41ad",
+    "p4_1_runner": "fe722cb41b6149f4bf5a709c546ac5fc5b644e1b8f01da1e870ec1e6a6134877",
+    "p4_2_runner": "c479d90963cf3a21b43700115fc8c94f418b4a396a8526fadb5e8c3b322859ff",
+    "support": "33d9301f98859934c1413e25765c55e6bc7b64dfa410d65b03f0e5a198041b4c",
+    "columns": "4afb7c94a0641f6f5eb943339d19f13c8f690ddcf6956bc6787cba5aa4653476",
+    "a1_contract": "a27096444040c1897a41e8cb387b8f32400cc5770defe70717e0d9cd65eff12d"
+  },
+  "artifacts": [
+    "scripts/training/run_p5_4_a1b_colour.py",
+    "scripts/training/verify_p5_4_a1b_colour.py",
+    "reports/taiji_u2_a1b_colour_20261115.json",
+    "reports/taiji_u2_a1b_colour_guard_20261115.json",
+    "plans/reference/RESULT-TAIJI_U2_A1B_COLOUR_20261115.md"
+  ],
+  "guards": [
+    "source_pins_match_worktree",
+    "encoder_bundle_sha256_matches",
+    "candidate_22742_194",
+    "head_263",
+    "data_digest_matches",
+    "steps_200",
+    "fit_train_controls_recovery_gates",
+    "initial_checkpoint_recovery",
+    "check_final_reads_zero",
+    "budget_cap_enforced",
+    "parent_not_claimed"
+  ],
+  "scope": "per-column colour head plus a non-learned query read; no subject training, no byte head, no parent claim",
+  "criteria_sha256": "1d71d4c088154206ba7a825c7d09b49758e10f911fe27bfee870b508f3d1bb5b",
+  "price_measured": {
+    "curve_cpu_estimate": 157.594,
+    "adopted_cap_cpu": 173.353,
+    "report": "reports/taiji_u2_a1b_colour_price_20261115.json",
+    "note": "adopted cap is the price curve times 1.1, below the design ceiling 400"
+  }
+}

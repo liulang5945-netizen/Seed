@@ -1,0 +1,152 @@
+{
+  "schema": "taiji-u2-a1b-colour-v1",
+  "card": "22.5.A.1b",
+  "date": "2026-11-15",
+  "verdict": "a_parent_read_partial",
+  "candidate": {
+    "architecture": "native",
+    "profile": "metadata+request",
+    "parameters": 22742,
+    "tensors": 194,
+    "seed": 20261110,
+    "subject_frozen": true,
+    "encoder_bundle": "data/experiments/taiji_u2/p4_2/20261116T0500Z/reconstruct-B-007376.pt",
+    "encoder_bundle_sha256": "f670508850685cb8aa4e9ed385eb2f5997154524e606d1ab7cbfbd5230eb0f2f",
+    "observation_layout": "column-observation-v1",
+    "head_parameters": 263
+  },
+  "initial_gate": {
+    "initial_checkpoint": "data/experiments/taiji_u2/a1b/20261115T2300Z/initial.pt",
+    "initial_sha256": "5e487b327a4c88e9b0d3494fc9c29d2274e97bf68bc664b56784c50fd077a6bc",
+    "initial_recovery_identical": true,
+    "engineering_step_checkpoint": "data/experiments/taiji_u2/a1b/20261115T2300Z/engineering-step.pt",
+    "engineering_step_sha256": "f4135bc87c866d856089e05bbb3312eb96d146b7273a8b5520f8e8da72c14872",
+    "head_reload_identical": true,
+    "head_parameters": 263
+  },
+  "fit": {
+    "correct": 25,
+    "denominator": 32,
+    "accuracy": 0.78125,
+    "predictions": [
+      0,
+      1,
+      3,
+      3,
+      0,
+      1,
+      2,
+      3,
+      0,
+      1,
+      2,
+      3,
+      0,
+      1,
+      2,
+      3,
+      0,
+      3,
+      2,
+      3,
+      3,
+      3,
+      3,
+      3,
+      0,
+      1,
+      3,
+      3,
+      0,
+      1,
+      3,
+      3
+    ],
+    "distinct_predictions": 4
+  },
+  "train": {
+    "correct": 53,
+    "denominator": 64,
+    "accuracy": 0.828125,
+    "distinct_predictions": 4
+  },
+  "columns_fit": {
+    "overall": 0.908203125,
+    "painted": 0.7384615540504456,
+    "background": 0.9659686088562012,
+    "painted_columns": 130,
+    "background_columns": 382,
+    "background_fraction": 0.74609375
+  },
+  "columns_train": {
+    "overall": 0.9501953125,
+    "painted": 0.7804877758026123,
+    "background": 0.973362922668457,
+    "painted_columns": 123,
+    "background_columns": 901,
+    "background_fraction": 0.8798828125
+  },
+  "controls": {
+    "rgb_zero_agreement": 0.46875,
+    "fixed_question_agreement": 0.46875,
+    "rgb_zero_distinct": 1,
+    "fixed_question_distinct": 4,
+    "fixed_question_text": "蓝色圆片现在在哪里？"
+  },
+  "recovery": {
+    "in_process_digest": "a60ffd746abe07878723a8452e6c848fe79367f1636cc5eb2715d686efbc58ca",
+    "independent_digest": "a60ffd746abe07878723a8452e6c848fe79367f1636cc5eb2715d686efbc58ca",
+    "identical": true
+  },
+  "gates": {
+    "fit": false,
+    "train": false,
+    "distinct": true,
+    "rgb_zero": true,
+    "fixed_question": true,
+    "recovery": true
+  },
+  "loss_first10": 1.5748849272727967,
+  "loss_last10": 0.12830372750759125,
+  "checkpoint": "data/experiments/taiji_u2/a1b/20261115T2300Z/a1b-00200.pt",
+  "checkpoint_sha256": "3ebac8b34ace3e9d784867e0096527cba515bace68199712a6cdc940a458dbc3",
+  "head_parameters": 263,
+  "data_digest": "40813b4cc8ffec0c3ae5639941b373c139422b4ccbaa34790de34a9e1149d214",
+  "encoder_bundle_sha256": "f670508850685cb8aa4e9ed385eb2f5997154524e606d1ab7cbfbd5230eb0f2f",
+  "criteria": {
+    "fit_gate": 0.8,
+    "train_gate": 0.9,
+    "distinct_min": 4,
+    "rgb_zero_agreement_max": 0.5,
+    "fixed_question_agreement_max": 0.5,
+    "blind": 0.3,
+    "exits": {
+      "taught": "a_parent_read_taught",
+      "partial": "a_parent_read_partial",
+      "blind": "a_parent_read_blind",
+      "budget": "budget_stop",
+      "engineering": "engineering_failure"
+    },
+    "painted_diagnostic_min": 0.85,
+    "recovery": "checkpoint reload identical",
+    "accepted_parent": false,
+    "check2": "not_read",
+    "three_seed": "not_in_scope_single_seed"
+  },
+  "cost": {
+    "cpu": 4.203125,
+    "wall": 17.538056
+  },
+  "discipline": {
+    "training": 0,
+    "check_reads": 0,
+    "final_reads": 0,
+    "capability_claims": 0,
+    "accepted_parent": false
+  },
+  "run_conditions": {
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "scope": "per-column colour head plus a non-learned query read; no subject training, no byte head, no parent claim"
+}

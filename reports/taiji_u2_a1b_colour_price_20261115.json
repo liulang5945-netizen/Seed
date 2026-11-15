@@ -1,0 +1,39 @@
+{
+  "schema": "taiji-u2-a1b-colour-price-v1",
+  "card": "22.5.A.1b",
+  "date": "2026-11-15",
+  "head_parameters": 263,
+  "per_step_cpu": 0.76875,
+  "steps": 200,
+  "zero_fit": {
+    "correct": 9,
+    "denominator": 32,
+    "accuracy": 0.28125
+  },
+  "zero_columns": {
+    "overall": 0.75,
+    "painted": 0.023076923564076424,
+    "background": 0.9973822236061096,
+    "painted_columns": 130,
+    "background_columns": 382,
+    "background_fraction": 0.74609375
+  },
+  "curve_cpu_estimate": 157.594,
+  "adopted_cap_cpu": 173.353,
+  "cap_wall": 346.706,
+  "pricing_over_budget": false,
+  "cost": {
+    "cpu": 3.84375,
+    "wall": 4.862386
+  },
+  "run_conditions": {
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "discipline": {
+    "training": 0,
+    "subject_optimizer_steps": 0,
+    "head_updates": 5,
+    "capability_claims": 0
+  }
+}
