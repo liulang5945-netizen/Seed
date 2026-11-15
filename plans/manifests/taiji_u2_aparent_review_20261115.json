@@ -1,0 +1,101 @@
+{
+  "schema": "taiji-u2-aparent-review-v1",
+  "status": "review_frozen",
+  "card": "22.5.A.0",
+  "date": "2026-11-15",
+  "review_card": "plans/reference/REVIEW-TAIJI_U2_APARENT_20261115.md",
+  "decision": "route_2_a_parent_absent",
+  "gaps": {
+    "G1": "absent: no accepted learning parent",
+    "G2": "blocked: check2 never executed under its own protocol",
+    "G3": "unmeasured: main, correction, gain, stability, A retention all lack readings",
+    "entry": "22.6 stays at the fixture layer"
+  },
+  "evidence": {
+    "p3_10": "fit 0.25 constant; zero/fixed-question agreement 1.0",
+    "p3_11": "pooled observation embedding cross-scene std 6.0e-4",
+    "p3_12": "raw-pixel linear probe 0.344, shuffled 0.406",
+    "p4_1": "column colour supervision fit 0.906; encoder can carry colour",
+    "p4_2": "3-object set read scaffold 0.3125/0.34375; byte head 0.25",
+    "p4_3_p4_4": "object set pair 0.436 to 0.218, set 0",
+    "p5_1_p5_2": "slot differentiation at 461 but set 1/32 at 1844"
+  },
+  "path_choice": {
+    "chosen": "A: P4.1 column encoder asset plus a single-query four-class read, then the byte head",
+    "fallback": "B: original patch observation plus an unfrozen encoder and a four-class read",
+    "rejected": "C: raw pixels with a new encoder in a new identity",
+    "boundary": "does not reopen the closed 3-slot/set/binding-v2 path; only the P4.1 encoder weights and column layout are inherited",
+    "reason": "the A task needs one requested colour position, not a three-object set; the closed branch tested the harder set problem"
+  },
+  "a1_card": {
+    "card": "22.5.A.1",
+    "candidate": {
+      "identity": "taiji-u2-subject-v4",
+      "profile": "metadata plus request",
+      "encoder_init": "P4.1 arm B bundle",
+      "encoder_bundle": "data/experiments/taiji_u2/p4_2/20261116T0500Z/reconstruct-B-007376.pt",
+      "encoder_bundle_sha256": "f670508850685cb8aa4e9ed385eb2f5997154524e606d1ab7cbfbd5230eb0f2f",
+      "observation_layout": "column-observation-v1",
+      "new_subject_parameters": 0,
+      "read_head": "training-only four-class head; discarded at evaluation"
+    },
+    "data": {
+      "root": "data/experiments/taiji_u2/first_a/20261112T074836Z/data.bin",
+      "digest": "40813b4cc8ffec0c3ae5639941b373c139422b4ccbaa34790de34a9e1149d214",
+      "train": 64,
+      "fit": 32,
+      "check_final_confirm": "not read",
+      "order_and_lr": "same as P3.10"
+    },
+    "stage1": {
+      "dose": 1844,
+      "loss": "four-class cross entropy",
+      "encoder_frozen": false,
+      "criteria": {
+        "fit_gate": 0.8,
+        "train_gate": 0.9,
+        "distinct_labels_min": 3,
+        "rgb_zero_agreement_max": 0.5,
+        "fixed_question_agreement_max": 0.5,
+        "recovery": "checkpoint reload byte identical"
+      },
+      "exits": {
+        "fit_below_0_30": "a_parent_read_blind",
+        "fit_0_30_to_0_80": "a_parent_read_partial",
+        "fit_at_least_0_80": "enter stage 2"
+      }
+    },
+    "stage2": {
+      "subject_frozen": true,
+      "trainable": [
+        "joint_readout",
+        "byte_head",
+        "copy_gate"
+      ],
+      "criteria": {
+        "main": 0.8,
+        "correction": 0.8,
+        "feedback_gain": 0.05,
+        "stability_ceiling": 0.1,
+        "recovery": "byte identical in an independent process",
+        "control_updates": 0,
+        "a_retention": "not_applicable_no_A_parent",
+        "three_seed": "not_in_scope_single_seed",
+        "check2": "not_read",
+        "accepted_parent": false
+      }
+    },
+    "budget": {
+      "price_first": true,
+      "stage1_cpu_estimate": 600.0,
+      "stage2_cpu_estimate": 30.0,
+      "design_cpu_cap": 1200.0,
+      "design_wall_cap": 2400.0,
+      "rule": "the measured cap may only go down"
+    },
+    "scope": "parent candidate only; no accepted parent, no 22.6 unlock, no capability claim"
+  },
+  "run_authorized": false,
+  "training_authority": null,
+  "criteria_sha256": "103da7b716af079f6e987c69023638ffb7d52bbc63d29c71a4ae3960698f085c"
+}
