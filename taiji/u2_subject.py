@@ -66,6 +66,7 @@ class U2Config:
     base_units: int | None = None
     group_units: tuple[int, ...] | None = None
     separate_requests: bool = False
+    binding: str = "v1"
 
     def __post_init__(self) -> None:
         if (
@@ -94,6 +95,8 @@ class U2Config:
             raise ValueError("Invalid metadata graph flag")
         if type(self.separate_requests) is not bool:
             raise ValueError("Invalid native request profile flag")
+        if self.binding not in {"v1", "v2"}:
+            raise ValueError("Invalid binding version")
         if self.group_units is None:
             if self.base_units is not None:
                 raise ValueError("A base width requires actual group widths")
@@ -430,6 +433,8 @@ class _WorldKernel(nn.Module):
     def binding(self, state: Any, tokens: Any, coordinates: Any) -> Any:
         if not tokens:
             return None
+        if self.c.binding == "v2":
+            return self._binding_v2(state, tokens, coordinates)
         c = self.c
         z = self.object_z(state)
         reliability = torch.stack(
@@ -460,6 +465,66 @@ class _WorldKernel(nn.Module):
         content = torch.einsum("m,mbid->bid", reliability, torch.stack(contents))
         spatial_mass = torch.einsum("m,mbi->bi", reliability, torch.stack(spatial))
         return content / (mass[..., None] + 0.01), mass, spatial_mass
+
+    def _binding_v2(self, state: Any, tokens: Any, coordinates: Any) -> Any:
+        """Object-centric binding: per-slot identity anchor and in-binding refinement.
+
+        The token-to-slot softmax already exists in v1. What v1 lacks is (a) any
+        slot-specific signal beyond the random initial state and (b) refinement
+        that happens inside the binding rather than through the shared corrector,
+        which writes all slots from near-identical inputs. ``_binding_steps`` and
+        ``_binding_anchor`` exist only for the pre-registered pilot ablation arms;
+        the candidate is the default two steps with the anchor enabled.
+        """
+        c = self.c
+        steps = int(getattr(self, "_binding_steps", 2))
+        if steps < 1:
+            raise ValueError("binding steps must be positive")
+        anchor = self.slot_anchor if bool(getattr(self, "_binding_anchor", True)) else 0.0
+        z = self.object_z(state)
+        prior = functional.logsigmoid(state["l"])
+        reliability = torch.stack(
+            [self.reliability[m](value.mean(0)).squeeze() for m, value in tokens.items()]
+        ).softmax(0)
+        masses, contents, spatial = [], [], []
+        for m, value in tokens.items():
+            zt = z
+            mean = None
+            content = None
+            for step in range(steps):
+                query = self.bind_query(zt + anchor)
+                score = torch.einsum("bmd,nd->bnm", query, self.bind_key[m](value)) / math.sqrt(c.d)
+                score = score + prior.transpose(-1, -2)
+                if m == "rgb":
+                    distance = (
+                        (coordinates[m][None, :, None, :2] - state["p"][:, None]).square().sum(-1)
+                    )
+                    score = score - distance / (0.01 + state["s"][..., :2].mean(-1)[:, None])
+                null = self.null_score[m](value)[None].expand(c.branches, -1, -1)
+                assignment = torch.cat([score, null], -1).softmax(-1)[..., :-1]
+                total = assignment.sum(1)
+                mean = total / value.shape[0]
+                content = torch.einsum(
+                    "bnm,nd->bmd", assignment, bounded(self.bind_value[m](value))
+                ) / (total[..., None] + 0.01)
+                if step + 1 < steps:
+                    zt = self.slot_norm(
+                        zt
+                        + self.slot_update["last"](
+                            functional.silu(
+                                self.slot_update["first"](
+                                    torch.cat([zt, content, mean[..., None], prior], -1)
+                                )
+                            )
+                        )
+                    )
+            masses.append(mean)
+            contents.append(content)
+            spatial.append(mean if m == "rgb" else torch.zeros_like(mean))
+        mass = torch.einsum("m,mbi->bi", reliability, torch.stack(masses))
+        content = torch.einsum("m,mbid->bid", reliability, torch.stack(contents))
+        spatial_mass = torch.einsum("m,mbi->bi", reliability, torch.stack(spatial))
+        return content, mass, spatial_mass
 
     def decode(self, state: Any, goal: Any, coordinates: Any) -> Any:
         c = self.c
@@ -558,6 +623,17 @@ class U2Subject(_WorldKernel):
             from .u2_group_structure import install_extensions
 
             install_extensions(self)
+            if config.binding == "v2":
+                # Added after every v1 tensor so the v1 initialization stream is
+                # unchanged; these seven tensors are the only new parameters.
+                self.slot_anchor = nn.Parameter(torch.randn(config.objects, d) * 0.1)
+                self.slot_update = nn.ModuleDict(
+                    {"first": nn.Linear(2 * d + 2, 16), "last": nn.Linear(16, d)}
+                )
+                self.slot_norm = nn.LayerNorm(d)
+                for layer in (self.slot_update["first"], self.slot_update["last"]):
+                    nn.init.normal_(layer.weight, std=0.3 / math.sqrt(layer.weight[0].numel()))
+                    nn.init.constant_(layer.bias, 0.01)
         self.generation = 0
         self.parameter_revision = 0
         widths = config.group_units or (config.units,) * config.groups
@@ -1716,12 +1792,16 @@ class U2Subject(_WorldKernel):
             self.validate_pending_receipt(state["pending"])
         return {
             "schema": (
-                "taiji-u2-subject-v4"
-                if self.c.separate_requests
+                "taiji-u2-subject-v5"
+                if self.c.binding == "v2"
                 else (
-                    "taiji-u2-subject-v3"
-                    if self.c.record_metadata or self.c.group_units is not None
-                    else "taiji-u2-subject-v2"
+                    "taiji-u2-subject-v4"
+                    if self.c.separate_requests
+                    else (
+                        "taiji-u2-subject-v3"
+                        if self.c.record_metadata or self.c.group_units is not None
+                        else "taiji-u2-subject-v2"
+                    )
                 )
             ),
             "credit_contract": {
@@ -1743,6 +1823,7 @@ class U2Subject(_WorldKernel):
             "taiji-u2-subject-v2",
             "taiji-u2-subject-v3",
             "taiji-u2-subject-v4",
+            "taiji-u2-subject-v5",
         }:
             raise ValueError("unsupported bundle schema")
         if bundle["schema"] == "taiji-u2-subject-v1" and bundle["state"].get("pending") is not None:
@@ -1751,14 +1832,21 @@ class U2Subject(_WorldKernel):
             "taiji-u2-subject-v2",
             "taiji-u2-subject-v3",
             "taiji-u2-subject-v4",
+            "taiji-u2-subject-v5",
         } and bundle.get("credit_contract") != {
             "critic": "behavior_features_under_frozen_Psi",
             "body_graph": "values_only_requires_window_replay",
         }:
             raise ValueError("bundle credit contract differs from supported recovery scope")
         model = cls(U2Config(**bundle["config"]))
-        if (bundle["schema"] == "taiji-u2-subject-v4") != model.c.separate_requests:
-            raise ValueError("request_profile_schema_mismatch")
+        if bundle["schema"] == "taiji-u2-subject-v5":
+            if model.c.binding != "v2":
+                raise ValueError("binding_profile_schema_mismatch")
+        else:
+            if model.c.binding != "v1":
+                raise ValueError("binding_profile_schema_mismatch")
+            if (bundle["schema"] == "taiji-u2-subject-v4") != model.c.separate_requests:
+                raise ValueError("request_profile_schema_mismatch")
         first = next(iter(bundle["parameters"].values()))
         model = model.to(dtype=first.dtype, device=first.device)
         model.load_state_dict(bundle["parameters"])

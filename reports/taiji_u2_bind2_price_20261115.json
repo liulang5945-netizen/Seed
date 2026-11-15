@@ -1,0 +1,34 @@
+{
+  "schema": "taiji-u2-bind2-price-v1",
+  "card": "22.5.P5.1",
+  "date": "2026-11-15",
+  "label_cache_cpu": 3.078125,
+  "step_cpu_samples": [
+    0.46875,
+    0.4375,
+    0.46875,
+    0.453125,
+    0.46875
+  ],
+  "step_cpu_median": 0.46875,
+  "fit_eval_cpu": 0.71875,
+  "pilot_estimate_cpu": 670.4375,
+  "stage1_estimate_cpu": 1790.1875,
+  "pilot_cap_cpu": 1000.0,
+  "stage1_design_cap_cpu": 2600.0,
+  "pricing_over_budget": false,
+  "cost": {
+    "cpu": 10.625,
+    "wall": 11.825033
+  },
+  "run_conditions": {
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "discipline": {
+    "training": 0,
+    "optimizer_step": 0,
+    "check_final_reads": 0,
+    "capability_claims": 0
+  }
+}

@@ -1,0 +1,117 @@
+{
+  "schema": "taiji-u2-bind2-pilot-v1",
+  "status": "frozen",
+  "card": "22.5.P5.1",
+  "date": "2026-11-15",
+  "design_manifest": "plans/manifests/taiji_u2_bind_2_design_20261115.json",
+  "design_criteria_sha256": "6848715d5c4c2b54a009b00a81119e27a1f01202120d2a37d9f3d03161b9a5d9",
+  "candidate": {
+    "identity": "taiji-u2-subject-v5",
+    "binding": "v2",
+    "seed": 20261110,
+    "encoder": "frozen at the P4.1 arm B weights"
+  },
+  "p4_1_bundle": "data/experiments/taiji_u2/p4_2/20261116T0500Z/reconstruct-B-007376.pt",
+  "p4_1_bundle_sha256": "f670508850685cb8aa4e9ed385eb2f5997154524e606d1ab7cbfbd5230eb0f2f",
+  "data_root": "data/experiments/taiji_u2/p3_19/three_object_volume_20261114.bin",
+  "data_digest": "1dec5429a1110dc9a23a8f38329e1bce1cb8824e6d2ca89fc96b429487e9addf",
+  "batch": 8,
+  "optimizer": {
+    "lr": 0.01,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "weight_decay": 0.0
+  },
+  "dose": 461,
+  "arms": [
+    {
+      "name": "A",
+      "steps": 2,
+      "anchor": true,
+      "role": "candidate; the only gating arm"
+    },
+    {
+      "name": "B",
+      "steps": 1,
+      "anchor": true,
+      "role": "attribution: no in-binding refinement"
+    },
+    {
+      "name": "C",
+      "steps": 2,
+      "anchor": false,
+      "role": "attribution: no identity anchor"
+    }
+  ],
+  "criteria": {
+    "pilot_gate_applies_to": "arm A only",
+    "finite_new_tensor_grads": true,
+    "checkpoint_reload_identical": true,
+    "loss_decreases": true,
+    "slot_mass_min": 0.05,
+    "slot_mass_scene_fraction": 0.5,
+    "slot_content_cosine_max": 0.995,
+    "read_scaffold_parameters": 458,
+    "read_pair_gate": 0.95,
+    "read_set_gate": 0.8,
+    "duplicate_rate_max": 0.0625,
+    "count_accuracy_gate": 0.75,
+    "train_set_gate": 0.85,
+    "stage1_doses": [
+      1844,
+      3688
+    ],
+    "stage1_gate": "pair >= 0.95, set >= 0.80, duplicate <= 2/32, count >= 0.75, train set >= 0.85",
+    "stage2": {
+      "main": 0.8,
+      "correction": 0.8,
+      "feedback_gain": 0.05,
+      "stability_ceiling": 0.1,
+      "a_retention": "not_applicable_no_A_parent",
+      "accepted_parent": false
+    }
+  },
+  "run_root": "data/experiments/taiji_u2/p5_0/20261115T1700Z",
+  "cpu_cap": 1000.0,
+  "wall_cap": 2000.0,
+  "stage1_cpu_cap": 2600.0,
+  "stage1_wall_cap": 5200.0,
+  "training_authority": "owner:chat:2026-11-15#授权",
+  "source_pins": {
+    "runner": "9ccbbce7902d4115cd14fa5e9a7a3ee354407a74be33e68f9a694e57c324a0b9",
+    "subject": "a3335d7fc84e54903f16617e452753c04124709b3b83c20a656d7b43b5ef41ad",
+    "p4_2_runner": "c479d90963cf3a21b43700115fc8c94f418b4a396a8526fadb5e8c3b322859ff",
+    "p4_3_runner": "d289f9355c4bb595f4eb19cf2b5598a9c814653f0e52379394069a2efbbd65c9",
+    "p4_4_runner": "5463e570b8cd9ce6eefd727fe8ff747b1060848071bc46da2bccd549fc7172c1",
+    "support": "33d9301f98859934c1413e25765c55e6bc7b64dfa410d65b03f0e5a198041b4c",
+    "column_pathway": "4afb7c94a0641f6f5eb943339d19f13c8f690ddcf6956bc6787cba5aa4653476",
+    "design_manifest": "23f6fe37d950c3aee2c8248549986f1ffb9f59fa9d8fb6e906962426e0ec8112"
+  },
+  "artifacts": [
+    "scripts/training/run_p5_0_bind2.py",
+    "scripts/training/verify_p5_0_bind2.py",
+    "reports/taiji_u2_bind2_price_20261115.json",
+    "reports/taiji_u2_bind2_pilot_20261115.json",
+    "reports/taiji_u2_bind2_guard_20261115.json"
+  ],
+  "guards": [
+    "source_pins_match_worktree",
+    "parent_bundle_sha256_matches",
+    "shared_v1_tensors_bit_identical",
+    "graph_is_23118_scalars_198_tensors_40_fields",
+    "v5_schema_only_with_binding_v2",
+    "cross_identity_load_rejected",
+    "initial_checkpoint_reload_identical_in_independent_process",
+    "engineering_step_optimizer_contains_seven_new_tensors",
+    "pilot_is_461_steps_three_arms",
+    "pilot_gate_applies_to_arm_a_only",
+    "check_and_final_reads_zero",
+    "budget_cap_enforced",
+    "parent_not_claimed"
+  ],
+  "scope": "pilot only: liveness, checkpoint recovery and slot-mass diagnostics; no capability or parent claim",
+  "criteria_sha256": "426cd9a096734b90a7546d118667a5f0d9778c826c2416c83515ae087469ab55"
+}

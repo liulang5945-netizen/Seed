@@ -1,0 +1,70 @@
+{
+  "schema": "taiji-u2-bind2-guard-v1",
+  "card": "22.5.P5.1",
+  "date": "2026-11-15",
+  "checks": {
+    "source_pins_match_worktree": true,
+    "parent_bundle_sha256_matches": true,
+    "graph_is_23118_198_40": true,
+    "shared_v1_tensors_bit_identical": true,
+    "new_tensor_set": true,
+    "state_fields_stay_40": true,
+    "read_scaffold_458": true,
+    "report_verdict_allowed": true,
+    "three_arms": true,
+    "contract_dose_461": true,
+    "arms_at_contract_dose": true,
+    "arm_a_is_candidate": true,
+    "gates_only_arm_a": true,
+    "passed_means_all_gates": true,
+    "collapsed_means_one_gate": true,
+    "zero_check_final_reads": true,
+    "zero_capability_claims": true,
+    "parent_not_claimed": true,
+    "budget_within_caps": true,
+    "checkpoints_ok": true
+  },
+  "red_directions": {
+    "tampered_weight_changes_digest": true,
+    "graph_mismatch_detected": true,
+    "parent_claim_detected": true,
+    "missing_authority_detected": true,
+    "v5_schema_carries_new_tensors": true
+  },
+  "all_checks_green": true,
+  "all_red_directions_respond": true,
+  "checkpoint_checks": {
+    "arms": {
+      "A": {
+        "exists": true,
+        "sha256_matches": true,
+        "recovery_matches": true,
+        "new_tensors_present": true
+      },
+      "B": {
+        "exists": true,
+        "sha256_matches": true,
+        "recovery_matches": true,
+        "new_tensors_present": true
+      },
+      "C": {
+        "exists": true,
+        "sha256_matches": true,
+        "recovery_matches": true,
+        "new_tensors_present": true
+      }
+    },
+    "all_ok": true
+  },
+  "report_verdict": "pilot_passed",
+  "run_conditions": {
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "discipline": {
+    "training": 0,
+    "optimizer_step": 0,
+    "check_final_reads": 0,
+    "capability_claims": 0
+  }
+}

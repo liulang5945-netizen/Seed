@@ -1,0 +1,508 @@
+{
+  "schema": "taiji-u2-bind2-pilot-v1",
+  "card": "22.5.P5.1",
+  "date": "2026-11-15",
+  "status": "pilot_complete",
+  "verdict": "pilot_passed",
+  "candidate": {
+    "identity": "taiji-u2-subject-v5",
+    "binding": "v2",
+    "seed": 20261110,
+    "encoder": "frozen at the P4.1 arm B weights"
+  },
+  "graph": {
+    "v1_scalars": 22638,
+    "v1_tensors": 191,
+    "v2_scalars": 23118,
+    "v2_tensors": 198,
+    "state_fields": 40,
+    "new_tensors": [
+      "slot_anchor",
+      "slot_norm.bias",
+      "slot_norm.weight",
+      "slot_update.first.bias",
+      "slot_update.first.weight",
+      "slot_update.last.bias",
+      "slot_update.last.weight"
+    ],
+    "shared_bit_identical": true,
+    "shared_parameter_digest": "990bad8f710b06ecd45ba6e3143661c8a0bbe5ea745cd35276954f60a97bf46a"
+  },
+  "inheritance": {
+    "parent_bundle": "data/experiments/taiji_u2/p4_2/20261116T0500Z/reconstruct-B-007376.pt",
+    "parent_bundle_sha256": "f670508850685cb8aa4e9ed385eb2f5997154524e606d1ab7cbfbd5230eb0f2f",
+    "encoder_sha256": "ddd89fab4f4d03f087866ad2ed54b5764e6693f7f435ae7f2f2435f772f9142b",
+    "shared_v1_tensors_reproduced": true
+  },
+  "initial_gate": {
+    "initial_checkpoint": "data/experiments/taiji_u2/p5_0/20261115T1700Z/initial.pt",
+    "initial_sha256": "493e23a78d5cf294c88b41b399cc237b8a632aee1add5bbe73a093e8cee6ed52",
+    "initial_recovery_identical": true,
+    "engineering_step_checkpoint": "data/experiments/taiji_u2/p5_0/20261115T1700Z/engineering-step.pt",
+    "engineering_step_sha256": "22472781c66dafba2a322d715a9d02230e81a689cf365101e91f1f4797dff173",
+    "engineering_model_reload_identical": true,
+    "engineering_optimizer_state_entries": 146,
+    "new_tensors_in_optimizer": [
+      "slot_anchor",
+      "slot_norm.bias",
+      "slot_norm.weight",
+      "slot_update.first.bias",
+      "slot_update.first.weight",
+      "slot_update.last.bias",
+      "slot_update.last.weight"
+    ]
+  },
+  "arms": [
+    {
+      "name": "A",
+      "steps": 2,
+      "anchor": true,
+      "update": 461,
+      "trainable_parameters": 199,
+      "loss_first50": 1.4632226610183716,
+      "loss_last50": 1.159377418756485,
+      "train": {
+        "pair_accuracy": 0.2125,
+        "set_accuracy": 0.03125,
+        "pair_hits": 17,
+        "pair_total": 80,
+        "set_correct": 1,
+        "denominator": 32,
+        "duplicate_scenes": 2,
+        "duplicate_rate": 0.0625,
+        "count_accuracy": 0.09375
+      },
+      "fit": {
+        "pair_accuracy": 0.16666666666666666,
+        "set_accuracy": 0.0,
+        "pair_hits": 13,
+        "pair_total": 78,
+        "set_correct": 0,
+        "denominator": 32,
+        "duplicate_scenes": 7,
+        "duplicate_rate": 0.21875,
+        "count_accuracy": 0.125
+      },
+      "binding": {
+        "scenes": 32,
+        "three_object_scenes": 16,
+        "scene_fraction_alive": 1.0,
+        "mean_pairwise_cosine": 0.19911278784275055,
+        "max_pairwise_cosine": 0.9996939897537231,
+        "mean_slot_mass": [
+          0.843173,
+          0.125748,
+          0.001261
+        ],
+        "scenes_detail": [
+          {
+            "id": "fit-0",
+            "mass": [
+              0.836685,
+              0.149143,
+              1.9e-05
+            ],
+            "alive": 2
+          },
+          {
+            "id": "fit-2",
+            "mass": [
+              0.863758,
+              0.087457,
+              0.003831
+            ],
+            "alive": 2
+          },
+          {
+            "id": "fit-4",
+            "mass": [
+              0.81691,
+              0.148054,
+              5.5e-05
+            ],
+            "alive": 2
+          },
+          {
+            "id": "fit-7",
+            "mass": [
+              0.834414,
+              0.118293,
+              0.000808
+            ],
+            "alive": 2
+          },
+          {
+            "id": "fit-10",
+            "mass": [
+              0.841938,
+              0.118265,
+              0.001562
+            ],
+            "alive": 2
+          },
+          {
+            "id": "fit-15",
+            "mass": [
+              0.8458,
+              0.12858,
+              0.004599
+            ],
+            "alive": 2
+          },
+          {
+            "id": "fit-16",
+            "mass": [
+              0.855931,
+              0.11819,
+              0.000864
+            ],
+            "alive": 2
+          },
+          {
+            "id": "fit-21",
+            "mass": [
+              0.84294,
+              0.130245,
+              0.003364
+            ],
+            "alive": 2
+          }
+        ]
+      },
+      "new_tensor_grads": {
+        "slot_anchor": true,
+        "slot_norm.bias": true,
+        "slot_norm.weight": true,
+        "slot_update.first.bias": true,
+        "slot_update.first.weight": true,
+        "slot_update.last.bias": true,
+        "slot_update.last.weight": true
+      },
+      "checkpoint": "data/experiments/taiji_u2/p5_0/20261115T1700Z/arm-A-000461.pt",
+      "checkpoint_sha256": "55625f92ebcb2131cbcf2a37256b0035dad0a0f20a215d766af6824ddc5798a5",
+      "recovery": {
+        "in_process_digest": "8f8262566241490f16cf0203fc2a9a514e78ca0755475ab6d37e1d1ae2856ed5",
+        "independent_digest": "8f8262566241490f16cf0203fc2a9a514e78ca0755475ab6d37e1d1ae2856ed5",
+        "identical": true
+      }
+    },
+    {
+      "name": "B",
+      "steps": 1,
+      "anchor": true,
+      "update": 461,
+      "trainable_parameters": 199,
+      "loss_first50": 1.4458103346824647,
+      "loss_last50": 1.2549077844619752,
+      "train": {
+        "pair_accuracy": 0.175,
+        "set_accuracy": 0.0,
+        "pair_hits": 14,
+        "pair_total": 80,
+        "set_correct": 0,
+        "denominator": 32,
+        "duplicate_scenes": 16,
+        "duplicate_rate": 0.5,
+        "count_accuracy": 0.15625
+      },
+      "fit": {
+        "pair_accuracy": 0.08974358974358974,
+        "set_accuracy": 0.0,
+        "pair_hits": 7,
+        "pair_total": 78,
+        "set_correct": 0,
+        "denominator": 32,
+        "duplicate_scenes": 8,
+        "duplicate_rate": 0.25,
+        "count_accuracy": 0.09375
+      },
+      "binding": {
+        "scenes": 32,
+        "three_object_scenes": 16,
+        "scene_fraction_alive": 1.0,
+        "mean_pairwise_cosine": 0.19706352055072784,
+        "max_pairwise_cosine": 0.8561663031578064,
+        "mean_slot_mass": [
+          0.790819,
+          0.053969,
+          0.074235
+        ],
+        "scenes_detail": [
+          {
+            "id": "fit-0",
+            "mass": [
+              0.796452,
+              0.053136,
+              0.074151
+            ],
+            "alive": 3
+          },
+          {
+            "id": "fit-2",
+            "mass": [
+              0.781154,
+              0.057603,
+              0.074569
+            ],
+            "alive": 3
+          },
+          {
+            "id": "fit-4",
+            "mass": [
+              0.797144,
+              0.052458,
+              0.073803
+            ],
+            "alive": 3
+          },
+          {
+            "id": "fit-7",
+            "mass": [
+              0.785884,
+              0.054328,
+              0.074266
+            ],
+            "alive": 3
+          },
+          {
+            "id": "fit-10",
+            "mass": [
+              0.788825,
+              0.054016,
+              0.074117
+            ],
+            "alive": 3
+          },
+          {
+            "id": "fit-15",
+            "mass": [
+              0.780856,
+              0.056402,
+              0.074233
+            ],
+            "alive": 3
+          },
+          {
+            "id": "fit-16",
+            "mass": [
+              0.795459,
+              0.053185,
+              0.074231
+            ],
+            "alive": 3
+          },
+          {
+            "id": "fit-21",
+            "mass": [
+              0.789304,
+              0.054902,
+              0.074338
+            ],
+            "alive": 3
+          }
+        ]
+      },
+      "new_tensor_grads": {
+        "slot_anchor": true,
+        "slot_norm.bias": null,
+        "slot_norm.weight": null,
+        "slot_update.first.bias": null,
+        "slot_update.first.weight": null,
+        "slot_update.last.bias": null,
+        "slot_update.last.weight": null
+      },
+      "checkpoint": "data/experiments/taiji_u2/p5_0/20261115T1700Z/arm-B-000461.pt",
+      "checkpoint_sha256": "2768b7481e5b38f533ab47fa3f8e196dfda2865fa8e8836789899b484c1ae9d9",
+      "recovery": {
+        "in_process_digest": "980d742bcd4b74f60a63ec75fd75689a51f48c1ff212c9c98d5b9b2be625c37e",
+        "independent_digest": "980d742bcd4b74f60a63ec75fd75689a51f48c1ff212c9c98d5b9b2be625c37e",
+        "identical": true
+      }
+    },
+    {
+      "name": "C",
+      "steps": 2,
+      "anchor": false,
+      "update": 461,
+      "trainable_parameters": 199,
+      "loss_first50": 1.4676047301292419,
+      "loss_last50": 1.270720932483673,
+      "train": {
+        "pair_accuracy": 0.1,
+        "set_accuracy": 0.0,
+        "pair_hits": 8,
+        "pair_total": 80,
+        "set_correct": 0,
+        "denominator": 32,
+        "duplicate_scenes": 0,
+        "duplicate_rate": 0.0,
+        "count_accuracy": 0.34375
+      },
+      "fit": {
+        "pair_accuracy": 0.11538461538461539,
+        "set_accuracy": 0.0,
+        "pair_hits": 9,
+        "pair_total": 78,
+        "set_correct": 0,
+        "denominator": 32,
+        "duplicate_scenes": 0,
+        "duplicate_rate": 0.0,
+        "count_accuracy": 0.3125
+      },
+      "binding": {
+        "scenes": 32,
+        "three_object_scenes": 16,
+        "scene_fraction_alive": 1.0,
+        "mean_pairwise_cosine": 0.7067487239837646,
+        "max_pairwise_cosine": 0.998553991317749,
+        "mean_slot_mass": [
+          0.279199,
+          0.209406,
+          0.055961
+        ],
+        "scenes_detail": [
+          {
+            "id": "fit-0",
+            "mass": [
+              0.278011,
+              0.217341,
+              0.047993
+            ],
+            "alive": 2
+          },
+          {
+            "id": "fit-2",
+            "mass": [
+              0.278613,
+              0.214574,
+              0.044382
+            ],
+            "alive": 2
+          },
+          {
+            "id": "fit-4",
+            "mass": [
+              0.279029,
+              0.202045,
+              0.053645
+            ],
+            "alive": 3
+          },
+          {
+            "id": "fit-7",
+            "mass": [
+              0.275889,
+              0.222101,
+              0.044271
+            ],
+            "alive": 2
+          },
+          {
+            "id": "fit-10",
+            "mass": [
+              0.281156,
+              0.206142,
+              0.045516
+            ],
+            "alive": 2
+          },
+          {
+            "id": "fit-15",
+            "mass": [
+              0.283631,
+              0.2066,
+              0.044047
+            ],
+            "alive": 2
+          },
+          {
+            "id": "fit-16",
+            "mass": [
+              0.276097,
+              0.215994,
+              0.060913
+            ],
+            "alive": 3
+          },
+          {
+            "id": "fit-21",
+            "mass": [
+              0.281816,
+              0.197993,
+              0.045736
+            ],
+            "alive": 2
+          }
+        ]
+      },
+      "new_tensor_grads": {
+        "slot_anchor": null,
+        "slot_norm.bias": true,
+        "slot_norm.weight": true,
+        "slot_update.first.bias": true,
+        "slot_update.first.weight": true,
+        "slot_update.last.bias": true,
+        "slot_update.last.weight": true
+      },
+      "checkpoint": "data/experiments/taiji_u2/p5_0/20261115T1700Z/arm-C-000461.pt",
+      "checkpoint_sha256": "7719712e13580d36f4b9ad908fdf1ed1f7e5f04fac639107289e401f02726603",
+      "recovery": {
+        "in_process_digest": "74c1c8f17ce9ed85b10b0326f7623685ceda9f7a2abba18bd94242ac83027763",
+        "independent_digest": "74c1c8f17ce9ed85b10b0326f7623685ceda9f7a2abba18bd94242ac83027763",
+        "identical": true
+      }
+    }
+  ],
+  "pilot_gates": {
+    "finite_new_tensor_grads": true,
+    "checkpoint_reload_identical": true,
+    "loss_decreases": true,
+    "two_slots_alive": true,
+    "content_not_identical": true
+  },
+  "criteria": {
+    "pilot_gate_applies_to": "arm A only",
+    "finite_new_tensor_grads": true,
+    "checkpoint_reload_identical": true,
+    "loss_decreases": true,
+    "slot_mass_min": 0.05,
+    "slot_mass_scene_fraction": 0.5,
+    "slot_content_cosine_max": 0.995,
+    "read_scaffold_parameters": 458,
+    "read_pair_gate": 0.95,
+    "read_set_gate": 0.8,
+    "duplicate_rate_max": 0.0625,
+    "count_accuracy_gate": 0.75,
+    "train_set_gate": 0.85,
+    "stage1_doses": [
+      1844,
+      3688
+    ],
+    "stage1_gate": "pair >= 0.95, set >= 0.80, duplicate <= 2/32, count >= 0.75, train set >= 0.85",
+    "stage2": {
+      "main": 0.8,
+      "correction": 0.8,
+      "feedback_gain": 0.05,
+      "stability_ceiling": 0.1,
+      "a_retention": "not_applicable_no_A_parent",
+      "accepted_parent": false
+    }
+  },
+  "data_digest": "1dec5429a1110dc9a23a8f38329e1bce1cb8824e6d2ca89fc96b429487e9addf",
+  "parent_bundle_sha256": "f670508850685cb8aa4e9ed385eb2f5997154524e606d1ab7cbfbd5230eb0f2f",
+  "cost": {
+    "cpu": 631.09375,
+    "wall": 675.983548
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "capability_claims": 0,
+    "accepted_parent": false
+  },
+  "run_conditions": {
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "scope": "pilot only: liveness, checkpoint recovery and slot-mass diagnostics"
+}
