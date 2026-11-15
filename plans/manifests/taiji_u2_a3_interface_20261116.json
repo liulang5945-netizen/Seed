@@ -1,0 +1,146 @@
+{
+  "schema": "taiji-u2-a3-interface-v1",
+  "status": "frozen",
+  "card": "22.5.A.3",
+  "date": "2026-11-16",
+  "a2_contract": "plans/manifests/taiji_u2_a2_byte_20261115.json",
+  "a2_result": "plans/reference/RESULT-TAIJI_U2_A2_BYTE_20261115.md",
+  "candidate": {
+    "architecture": "native",
+    "profile": "metadata+request",
+    "parameters": 22742,
+    "tensors": 194,
+    "seed": 20261110,
+    "subject_frozen": true,
+    "encoder_bundle": "data/experiments/taiji_u2/p4_2/20261116T0500Z/reconstruct-B-007376.pt",
+    "encoder_bundle_sha256": "f670508850685cb8aa4e9ed385eb2f5997154524e606d1ab7cbfbd5230eb0f2f",
+    "a1b_checkpoint": "data/experiments/taiji_u2/a1b/20261115T2300Z/a1b-00200.pt",
+    "a1b_checkpoint_sha256": "3ebac8b34ace3e9d784867e0096527cba515bace68199712a6cdc940a458dbc3",
+    "read_head_parameters": 263,
+    "prior": [
+      0.0234375,
+      0.0302734375,
+      0.015625,
+      0.0146484375,
+      0.0146484375,
+      0.021484375,
+      0.8798828125
+    ]
+  },
+  "data": {
+    "root": "data/experiments/taiji_u2/first_a/20261112T074836Z/data.bin",
+    "digest": "40813b4cc8ffec0c3ae5639941b373c139422b4ccbaa34790de34a9e1149d214",
+    "train": 64,
+    "fit": 32,
+    "check_final_confirm": "not read"
+  },
+  "question": "Which interface can carry the frozen read's evidence into the byte path when the answer class is not handed over as a code?",
+  "options": {
+    "A": "fixed evidence projection: corrected per-column logits -> fixed projection -> joint_readout",
+    "B": "trainable read adapter: corrected per-column logits -> learned adapter -> joint_readout",
+    "C": "read-as-teacher distillation: the body's own x must carry the read class, then the byte head is trained on the real context"
+  },
+  "measurements": [
+    "read class decodable from the body's own x at prefix 0 (48 dims, both branches), train64 -> fit32",
+    "read class decodable from x pooled over all prefixes",
+    "read class decodable per prefix position 0..6",
+    "read class decodable from the 128-dim column tokens as the reference ceiling",
+    "per-column palette colour decodable from x at prefix 0 (secondary)",
+    "label-shuffle null for the primary probe"
+  ],
+  "criteria": {
+    "decision": {
+      "decodable_min": 0.8,
+      "partial_min": 0.4,
+      "null_max": 0.35,
+      "shuffles": 5,
+      "primary": "x at prefix position 0, 48 dims, trained on train64 and tested on fit32",
+      "reference": "16x8 column tokens flattened to 128 dims, same split",
+      "probe": "standardized closed-form linear ridge and RBF kernel ridge; no iterative training",
+      "label": "frozen calibrated read class (left/middle/right/unknown)",
+      "rule": "null_max > 0.35 -> probe_unreliable; max(linear, rbf) >= 0.80 -> interface_decodable; >= 0.40 -> interface_partially_decodable; else interface_not_decodable"
+    },
+    "verdicts": [
+      "interface_decodable",
+      "interface_partially_decodable",
+      "interface_not_decodable",
+      "probe_unreliable",
+      "budget_stop",
+      "engineering_failure"
+    ],
+    "no_check_final": true,
+    "check2": "not_read",
+    "accepted_parent": false,
+    "three_seed": "not_in_scope_single_seed"
+  },
+  "cpu_cap": 60.0,
+  "wall_cap": 120.0,
+  "training_authority": null,
+  "source_pins": {
+    "runner": "707be1106d7a2ae9fac7ad35e127e161fd84fbb28e8465405d0dd0b8843dc7b7",
+    "subject": "a3335d7fc84e54903f16617e452753c04124709b3b83c20a656d7b43b5ef41ad",
+    "p4_1_runner": "fe722cb41b6149f4bf5a709c546ac5fc5b644e1b8f01da1e870ec1e6a6134877",
+    "p4_2_runner": "c479d90963cf3a21b43700115fc8c94f418b4a396a8526fadb5e8c3b322859ff",
+    "support": "33d9301f98859934c1413e25765c55e6bc7b64dfa410d65b03f0e5a198041b4c",
+    "columns": "4afb7c94a0641f6f5eb943339d19f13c8f690ddcf6956bc6787cba5aa4653476",
+    "a2_runner": "c26f4a545ffb5d12f579cb7e69c57eabca6cd7c427e479fb3a55e4621f0fd981",
+    "a2_contract": "1e1543481dbe9131d699ec18f59224b2cfddcf268f7d8fe761f836e12be22f32"
+  },
+  "artifacts": [
+    "scripts/training/review_a3_interface_20261116.py",
+    "scripts/training/verify_a3_interface_20261116.py",
+    "reports/taiji_u2_a3_interface_20261116.json",
+    "reports/taiji_u2_a3_interface_guard_20261116.json",
+    "plans/reference/REVIEW-TAIJI_U2_A3_INTERFACE_20261116.md"
+  ],
+  "guards": [
+    "source_pins_match_worktree",
+    "encoder_bundle_sha256_matches",
+    "a1b_checkpoint_sha256_matches",
+    "candidate_22742_194",
+    "data_digest_matches",
+    "read_fit_32_of_32_and_train_61_of_64",
+    "subject_state_unchanged",
+    "subject_optimizer_steps_zero",
+    "checkpoints_written_zero",
+    "decision_matches_rule",
+    "null_below_bound",
+    "recomputed_probes_match_report",
+    "parent_not_claimed",
+    "budget_within_caps"
+  ],
+  "scope": "zero-training interface review with closed-form probes only; no subject update, no checkpoint, no capability or parent claim",
+  "criteria_sha256": "2d3eefc59454463dad9cb378130d44c5efeb2182072bc065a468323e30832a49",
+  "execution": {
+    "verdict": "interface_partially_decodable",
+    "report": "reports/taiji_u2_a3_interface_20261116.json",
+    "guard": "reports/taiji_u2_a3_interface_guard_20261116.json",
+    "primary": {
+      "linear_fit": 0.4375,
+      "rbf_fit": 0.34375,
+      "null_max": 0.34375
+    },
+    "reference_tokens": 0.375,
+    "painted_colour_prefix0": 0.015384615398943424,
+    "cost": {
+      "cpu": 4.46875,
+      "wall": 4.528746
+    },
+    "guard_checks": "20/20 green, 4/4 red directions"
+  },
+  "review_facts": [
+    {
+      "fact": "prefix-0 class probe 14/32 = 0.4375 against a shuffle null of 0.34375 and a column-token reference of 0.375",
+      "implication": "the 0.40 partial branch is a coarse-threshold false positive; the decision point is at chance"
+    },
+    {
+      "fact": "prefixes 1-6 rise to 0.81-1.0 because the emission cache is teacher-forced with the target bytes",
+      "implication": "later-prefix decodability is target-prefix leakage, not a scene read"
+    },
+    {
+      "fact": "the painted-column colour probe from x at prefix 0 is 0.0154 (background 0.963)",
+      "implication": "the body's x does not carry the requested colour columns at decision time"
+    }
+  ],
+  "criteria_flaw": "the review rule accepted max(linear, rbf) >= 0.40 without a minimum margin over the null or the reference; the next review must require an effect of at least 0.20 over the shuffle null, a painted-colour probe of at least 0.50 at prefix 0, and prefix 0 only"
+}

@@ -1,0 +1,150 @@
+{
+  "schema": "taiji-u2-a3-interface-v1",
+  "card": "22.5.A.3",
+  "date": "2026-11-16",
+  "verdict": "interface_partially_decodable",
+  "candidate": {
+    "architecture": "native",
+    "profile": "metadata+request",
+    "parameters": 22742,
+    "tensors": 194,
+    "seed": 20261110,
+    "subject_frozen": true,
+    "encoder_bundle": "data/experiments/taiji_u2/p4_2/20261116T0500Z/reconstruct-B-007376.pt",
+    "encoder_bundle_sha256": "f670508850685cb8aa4e9ed385eb2f5997154524e606d1ab7cbfbd5230eb0f2f",
+    "a1b_checkpoint": "data/experiments/taiji_u2/a1b/20261115T2300Z/a1b-00200.pt",
+    "a1b_checkpoint_sha256": "3ebac8b34ace3e9d784867e0096527cba515bace68199712a6cdc940a458dbc3",
+    "read_head_parameters": 263,
+    "prior": [
+      0.0234375,
+      0.0302734375,
+      0.015625,
+      0.0146484375,
+      0.0146484375,
+      0.021484375,
+      0.8798828125
+    ]
+  },
+  "data_digest": "40813b4cc8ffec0c3ae5639941b373c139422b4ccbaa34790de34a9e1149d214",
+  "read": {
+    "fit": {
+      "correct": 32,
+      "denominator": 32,
+      "accuracy": 1.0
+    },
+    "train": {
+      "correct": 61,
+      "denominator": 64,
+      "accuracy": 0.953125
+    }
+  },
+  "features": {
+    "x_at_prefix0": 48,
+    "x_mean_over_prefixes": 48,
+    "column_tokens": 128,
+    "train": 64,
+    "fit": 32
+  },
+  "primary": {
+    "linear_train": 0.5625,
+    "linear_fit": 0.4375,
+    "rbf_train": 0.96875,
+    "rbf_fit": 0.34375,
+    "best_fit": 0.4375,
+    "null_max": 0.34375,
+    "null_mean": 0.2875
+  },
+  "mean_pooled": {
+    "linear_train": 0.953125,
+    "linear_fit": 1.0,
+    "rbf_train": 0.96875,
+    "rbf_fit": 0.9375,
+    "best_fit": 1.0,
+    "null_max": 0.34375,
+    "null_mean": 0.29375
+  },
+  "reference_tokens": {
+    "linear_train": 1.0,
+    "linear_fit": 0.375,
+    "rbf_train": 1.0,
+    "rbf_fit": 0.375,
+    "best_fit": 0.375,
+    "null_max": 0.375,
+    "null_mean": 0.3
+  },
+  "by_position": {
+    "0": {
+      "linear_fit": 0.4375,
+      "rbf_fit": 0.34375,
+      "best_fit": 0.4375
+    },
+    "1": {
+      "linear_fit": 0.78125,
+      "rbf_fit": 0.8125,
+      "best_fit": 0.8125
+    },
+    "2": {
+      "linear_fit": 1.0,
+      "rbf_fit": 0.96875,
+      "best_fit": 1.0
+    },
+    "3": {
+      "linear_fit": 1.0,
+      "rbf_fit": 0.875,
+      "best_fit": 1.0
+    },
+    "4": {
+      "linear_fit": 1.0,
+      "rbf_fit": 0.96875,
+      "best_fit": 1.0
+    },
+    "5": {
+      "linear_fit": 1.0,
+      "rbf_fit": 0.90625,
+      "best_fit": 1.0
+    },
+    "6": {
+      "linear_fit": 1.0,
+      "rbf_fit": 0.9375,
+      "best_fit": 1.0
+    }
+  },
+  "column_colours_from_x": {
+    "overall": 0.72265625,
+    "painted": 0.015384615398943424,
+    "background": 0.963350772857666,
+    "painted_columns": 130
+  },
+  "decision_rule": {
+    "decodable_min": 0.8,
+    "partial_min": 0.4,
+    "null_max": 0.35,
+    "shuffles": 5,
+    "primary": "x at prefix position 0, 48 dims, trained on train64 and tested on fit32",
+    "reference": "16x8 column tokens flattened to 128 dims, same split",
+    "probe": "standardized closed-form linear ridge and RBF kernel ridge; no iterative training",
+    "label": "frozen calibrated read class (left/middle/right/unknown)",
+    "rule": "null_max > 0.35 -> probe_unreliable; max(linear, rbf) >= 0.80 -> interface_decodable; >= 0.40 -> interface_partially_decodable; else interface_not_decodable"
+  },
+  "subject_state_unchanged": true,
+  "cost": {
+    "cpu": 4.46875,
+    "wall": 4.528746,
+    "cap_cpu": 60.0,
+    "cap_wall": 120.0
+  },
+  "discipline": {
+    "subject_optimizer_steps": 0,
+    "iterative_probe_training": 0,
+    "probe_fits": "closed-form linear ridge and RBF kernel ridge only",
+    "checkpoints_written": 0,
+    "capability_claims": 0,
+    "accepted_parent": false,
+    "check_final_reads": 0
+  },
+  "run_conditions": {
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "scope": "zero-training interface review: closed-form probes only; no subject update, no checkpoint, no capability or parent claim"
+}

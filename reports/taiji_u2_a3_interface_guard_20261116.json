@@ -1,0 +1,53 @@
+{
+  "schema": "taiji-u2-a3-interface-guard-v1",
+  "card": "22.5.A.3",
+  "date": "2026-11-16",
+  "checks": {
+    "source_pins_match_worktree": true,
+    "encoder_bundle_sha256_matches": true,
+    "a1b_checkpoint_sha256_matches": true,
+    "candidate_22742_194": true,
+    "data_digest_matches": true,
+    "read_fit_32_of_32_and_train_61_of_64": true,
+    "subject_state_unchanged": true,
+    "subject_optimizer_steps_zero": true,
+    "iterative_probe_training_zero": true,
+    "checkpoints_written_zero": true,
+    "criteria_sha256_matches": true,
+    "decision_matches_rule": true,
+    "null_below_bound": true,
+    "primary_recomputed_matches": true,
+    "reference_recomputed_matches": true,
+    "later_prefix_leak_present": true,
+    "report_verdict_allowed": true,
+    "parent_not_claimed": true,
+    "check_final_reads_zero": true,
+    "budget_within_caps": true
+  },
+  "red_directions": {
+    "shuffled_labels_drop": true,
+    "noisy_x_drops": true,
+    "bad_verdict_detected": true,
+    "parent_claim_detected": true
+  },
+  "all_checks_green": true,
+  "all_red_directions_respond": true,
+  "report_verdict": "interface_partially_decodable",
+  "primary": {
+    "linear_fit": 0.4375,
+    "rbf_fit": 0.34375,
+    "best_fit": 0.4375,
+    "null_max": 0.34375
+  },
+  "reference_tokens": 0.375,
+  "run_conditions": {
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "discipline": {
+    "subject_optimizer_steps": 0,
+    "iterative_probe_training": 0,
+    "checkpoints_written": 0,
+    "capability_claims": 0
+  }
+}
