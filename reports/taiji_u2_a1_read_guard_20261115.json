@@ -1,0 +1,43 @@
+{
+  "schema": "taiji-u2-a1-read-guard-v1",
+  "card": "22.5.A.1",
+  "date": "2026-11-15",
+  "checks": {
+    "source_pins_match_worktree": true,
+    "encoder_bundle_sha256_matches": true,
+    "candidate_22742_194": true,
+    "head_468": true,
+    "data_digest_matches": true,
+    "dose_1844": true,
+    "report_verdict_allowed": true,
+    "gate_table_matches_verdict": true,
+    "checkpoint_sha256_matches": true,
+    "recovery_digest_matches": true,
+    "initial_gate_ok": true,
+    "zero_check_final_reads": true,
+    "zero_capability_claims": true,
+    "parent_not_claimed": true,
+    "budget_within_caps": true
+  },
+  "red_directions": {
+    "tampered_weight_changes_digest": true,
+    "bad_verdict_detected": true,
+    "parent_claim_detected": true,
+    "head_param_tamper_detected": true
+  },
+  "all_checks_green": true,
+  "all_red_directions_respond": true,
+  "report_verdict": "a_parent_read_partial",
+  "fit": 0.4375,
+  "train": 0.34375,
+  "run_conditions": {
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "discipline": {
+    "training": 0,
+    "optimizer_step": 0,
+    "check_final_reads": 0,
+    "capability_claims": 0
+  }
+}

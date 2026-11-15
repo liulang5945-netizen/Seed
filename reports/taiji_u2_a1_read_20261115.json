@@ -1,0 +1,135 @@
+{
+  "schema": "taiji-u2-a1-read-v1",
+  "card": "22.5.A.1",
+  "date": "2026-11-15",
+  "status": "stage1_complete",
+  "verdict": "a_parent_read_partial",
+  "candidate": {
+    "architecture": "native",
+    "profile": "metadata+request",
+    "parameters": 22742,
+    "tensors": 194,
+    "seed": 20261110,
+    "encoder_bundle": "data/experiments/taiji_u2/p4_2/20261116T0500Z/reconstruct-B-007376.pt",
+    "encoder_bundle_sha256": "f670508850685cb8aa4e9ed385eb2f5997154524e606d1ab7cbfbd5230eb0f2f",
+    "observation_layout": "column-observation-v1",
+    "read_head_parameters": 468
+  },
+  "initial_gate": {
+    "initial_checkpoint": "data/experiments/taiji_u2/a1/20261115T2100Z/initial.pt",
+    "initial_sha256": "e963c0cf7a8245066d4c2fd54d0b281863e8d1011874aabb64221af729d6c2a7",
+    "initial_recovery_identical": true,
+    "engineering_step_checkpoint": "data/experiments/taiji_u2/a1/20261115T2100Z/engineering-step.pt",
+    "engineering_step_sha256": "f382493f7b4b044ebc6bd48ac7f7d9fed25619ae53326190011a079f52019fbb",
+    "model_reload_identical": true,
+    "head_reload_identical": true,
+    "optimizer_state_entries": 143,
+    "head_parameters": 468
+  },
+  "fit": {
+    "correct": 14,
+    "denominator": 32,
+    "accuracy": 0.4375,
+    "distinct_predictions": 2,
+    "predictions": [
+      0,
+      0,
+      0,
+      2,
+      0,
+      0,
+      2,
+      2,
+      0,
+      2,
+      2,
+      0,
+      0,
+      0,
+      2,
+      2,
+      0,
+      0,
+      2,
+      2,
+      2,
+      0,
+      2,
+      2,
+      0,
+      2,
+      2,
+      0,
+      0,
+      0,
+      2,
+      0
+    ]
+  },
+  "train": {
+    "correct": 22,
+    "denominator": 64,
+    "accuracy": 0.34375,
+    "distinct_predictions": 2
+  },
+  "controls": {
+    "rgb_zero_agreement": 0.46875,
+    "fixed_question_agreement": 0.46875,
+    "fixed_question_text": "蓝色圆片现在在哪里？",
+    "rgb_zero_distinct": 2,
+    "fixed_question_distinct": 1
+  },
+  "recovery": {
+    "in_process_digest": "981829d3f331a30a1250e132e285867c1fdfd3fc30fecde3fe67de3eae434b2b",
+    "independent_digest": "981829d3f331a30a1250e132e285867c1fdfd3fc30fecde3fe67de3eae434b2b",
+    "identical": true
+  },
+  "gates": {
+    "fit": false,
+    "train": false,
+    "distinct": false,
+    "rgb_zero": true,
+    "fixed_question": true,
+    "recovery": true
+  },
+  "loss_first50": 1.3888390517234803,
+  "loss_last50": 1.3041005158424377,
+  "checkpoint": "data/experiments/taiji_u2/a1/20261115T2100Z/a1-001844.pt",
+  "checkpoint_sha256": "f6ad7fe7a5190989172d6111cd519bd2f06f08e44154992194845c6039977901",
+  "data_digest": "40813b4cc8ffec0c3ae5639941b373c139422b4ccbaa34790de34a9e1149d214",
+  "encoder_bundle_sha256": "f670508850685cb8aa4e9ed385eb2f5997154524e606d1ab7cbfbd5230eb0f2f",
+  "criteria": {
+    "fit_gate": 0.8,
+    "train_gate": 0.9,
+    "distinct_min": 3,
+    "rgb_zero_agreement_max": 0.5,
+    "fixed_question_agreement_max": 0.5,
+    "blind": 0.3,
+    "exits": {
+      "taught": "a_parent_read_taught",
+      "partial": "a_parent_read_partial",
+      "blind": "a_parent_read_blind",
+      "budget": "budget_stop",
+      "engineering": "engineering_failure"
+    },
+    "recovery": "checkpoint reload byte identical",
+    "accepted_parent": false,
+    "check2": "not_read",
+    "three_seed": "not_in_scope_single_seed"
+  },
+  "cost": {
+    "cpu": 228.203125,
+    "wall": 251.701714
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "capability_claims": 0,
+    "accepted_parent": false
+  },
+  "run_conditions": {
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "scope": "stage 1 only: single-query four-class read; no byte head, no parent claim"
+}

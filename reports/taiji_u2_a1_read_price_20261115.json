@@ -1,0 +1,49 @@
+{
+  "schema": "taiji-u2-a1-read-price-v1",
+  "card": "22.5.A.1",
+  "date": "2026-11-15",
+  "candidate": {
+    "architecture": "native",
+    "profile": "metadata+request",
+    "parameters": 22742,
+    "tensors": 194,
+    "seed": 20261110,
+    "encoder_bundle": "data/experiments/taiji_u2/p4_2/20261116T0500Z/reconstruct-B-007376.pt",
+    "encoder_bundle_sha256": "f670508850685cb8aa4e9ed385eb2f5997154524e606d1ab7cbfbd5230eb0f2f",
+    "observation_layout": "column-observation-v1",
+    "read_head_parameters": 468
+  },
+  "head_parameters": 468,
+  "per_update_cpu_samples": [
+    0.125,
+    0.125,
+    0.109375,
+    0.125,
+    0.109375
+  ],
+  "per_update_cpu_median": 0.125,
+  "eval_cpu": 0.703125,
+  "zero_fit": {
+    "correct": 8,
+    "denominator": 32,
+    "accuracy": 0.25,
+    "distinct_predictions": 1
+  },
+  "curve_cpu_estimate": 235.422,
+  "adopted_cap_cpu": 258.964,
+  "cap_wall": 517.928,
+  "pricing_over_budget": false,
+  "cost": {
+    "cpu": 4.9375,
+    "wall": 5.859705
+  },
+  "run_conditions": {
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "discipline": {
+    "checkpoints_written": 0,
+    "optimizer_calls": 5,
+    "capability_claims": 0
+  }
+}
