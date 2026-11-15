@@ -122,6 +122,8 @@ def main() -> int:
         "trainable_set_equals_declared": report["trainable"]["names"]
         == sorted(contract["emission_parameters"])
         and report["trainable"]["scalars"] == contract["emission_scalar_count"],
+        "copy_gate_inert_disclosed": report["gradient_census"]["copy_gate_inert"] is True
+        and report["gradient_census"]["valid_records_total"] == 0,
         "cache_replay_matches_body": all(
             check["equal"] for check in report["cache"]["replay_checks"]
         )
