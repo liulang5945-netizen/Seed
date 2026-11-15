@@ -75,7 +75,8 @@ def main() -> int:
     recomputed = a2.round_rows(model, data["fit"], codes)
     tampered = copy.deepcopy(model)
     with torch.no_grad():
-        tampered.byte_head.weight.add_(1e-3)
+        tampered.byte_head.weight.zero_()
+        tampered.byte_head.bias.zero_()
     tampered_rows = a2.round_rows(tampered, data["fit"][:4], codes)
     report_rows = report["final_rows"][:4]
     pins = contract["source_pins"]

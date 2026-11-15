@@ -1,0 +1,483 @@
+{
+  "schema": "taiji-u2-a2-byte-v1",
+  "card": "22.5.A.2",
+  "date": "2026-11-15",
+  "verdict": "byte_expression_confirmed_feedback_unmeasured",
+  "candidate": {
+    "architecture": "native",
+    "profile": "metadata+request",
+    "parameters": 22742,
+    "tensors": 194,
+    "seed": 20261110,
+    "subject_frozen": true,
+    "encoder_bundle": "data/experiments/taiji_u2/p4_2/20261116T0500Z/reconstruct-B-007376.pt",
+    "encoder_bundle_sha256": "f670508850685cb8aa4e9ed385eb2f5997154524e606d1ab7cbfbd5230eb0f2f",
+    "a1b_checkpoint": "data/experiments/taiji_u2/a1b/20261115T2300Z/a1b-00200.pt",
+    "a1b_checkpoint_sha256": "3ebac8b34ace3e9d784867e0096527cba515bace68199712a6cdc940a458dbc3",
+    "read_head_parameters": 263,
+    "prior": [
+      0.0234375,
+      0.0302734375,
+      0.015625,
+      0.0146484375,
+      0.0146484375,
+      0.021484375,
+      0.8798828125
+    ]
+  },
+  "data_digest": "40813b4cc8ffec0c3ae5639941b373c139422b4ccbaa34790de34a9e1149d214",
+  "read": {
+    "interface": "read-code-v1",
+    "prior": [
+      0.0234375,
+      0.03027344,
+      0.015625,
+      0.01464844,
+      0.01464844,
+      0.02148438,
+      0.87988281
+    ],
+    "fit": {
+      "correct": 32,
+      "denominator": 32,
+      "accuracy": 1.0
+    },
+    "train": {
+      "correct": 61,
+      "denominator": 64,
+      "accuracy": 0.953125
+    },
+    "code_width": 24
+  },
+  "initial_gate": {
+    "initial_checkpoint": "data/experiments/taiji_u2/a2/20261115T2340Z/initial.pt",
+    "initial_sha256": "6ad1c7b659b5fddcfd741c80f3a8bd342e585ecc0a2d0761a24ad202d02ddb5a",
+    "initial_reload_identical": true,
+    "engineering_step_checkpoint": "data/experiments/taiji_u2/a2/20261115T2340Z/engineering-step.pt",
+    "engineering_step_sha256": "4212740c91bd51e4bbff4e0bf966280e61cff5b228aae64942158a28edac0884",
+    "engineering_step_reload_identical": true,
+    "engineering_probe_updates": 1
+  },
+  "cache": {
+    "positions": 448,
+    "replay_checks": [
+      {
+        "example": "train-0",
+        "position": 0,
+        "body_log_probability": -5.192397117614746,
+        "replayed": -5.192397117614746,
+        "equal": true
+      },
+      {
+        "example": "train-21",
+        "position": 2,
+        "body_log_probability": -4.387009620666504,
+        "replayed": -4.387009620666504,
+        "equal": true
+      },
+      {
+        "example": "train-42",
+        "position": 4,
+        "body_log_probability": -4.071468353271484,
+        "replayed": -4.071468353271484,
+        "equal": true
+      }
+    ]
+  },
+  "trainable": {
+    "names": [
+      "byte_head.bias",
+      "byte_head.weight",
+      "copy_gate.bias",
+      "copy_gate.weight",
+      "joint_readout.first.bias",
+      "joint_readout.first.weight",
+      "joint_readout.last.bias",
+      "joint_readout.last.weight"
+    ],
+    "scalars": 3919
+  },
+  "gradient_census": {
+    "positions": 448,
+    "positions_with_records": 0,
+    "valid_records_total": 0,
+    "alpha_last_zero_all": true,
+    "gradient_abs_sum": {
+      "joint_readout.first.weight": 0.189361423254,
+      "joint_readout.first.bias": 0.189361438155,
+      "joint_readout.last.weight": 0.460159868002,
+      "joint_readout.last.bias": 0.556527197361,
+      "byte_head.weight": 0.356049239635,
+      "byte_head.bias": 1.988815188408,
+      "copy_gate.weight": 0.0,
+      "copy_gate.bias": 0.0
+    },
+    "copy_gate_inert": true,
+    "protocol": "one backward on a fixed batch; optimizer_step_calls = 0"
+  },
+  "doses": [
+    {
+      "update": 200,
+      "train_correct": 61,
+      "train_accuracy": 0.953125,
+      "fit_correct": 32,
+      "fit_accuracy": 1.0,
+      "checkpoint": "data/experiments/taiji_u2/a2/20261115T2340Z/a2-00200.pt",
+      "checkpoint_sha256": "b34366ed48c6936a2ad7b4d04a0df908768f71b348aa9e8585b3779657e36623"
+    },
+    {
+      "update": 400,
+      "train_correct": 61,
+      "train_accuracy": 0.953125,
+      "fit_correct": 32,
+      "fit_accuracy": 1.0,
+      "checkpoint": "data/experiments/taiji_u2/a2/20261115T2340Z/a2-00400.pt",
+      "checkpoint_sha256": "3791e052c99d16f30c56afca5c324f4d330a475a84ce7eee71aa55982947478f"
+    },
+    {
+      "update": 600,
+      "train_correct": 61,
+      "train_accuracy": 0.953125,
+      "fit_correct": 32,
+      "fit_accuracy": 1.0,
+      "checkpoint": "data/experiments/taiji_u2/a2/20261115T2340Z/a2-00600.pt",
+      "checkpoint_sha256": "8a993fc4f5dfd451431a2dd3022fbab963231a662202b2cd777bee2c49370f14"
+    }
+  ],
+  "loss_first10": 4.407785415649414,
+  "loss_last10": 0.16690099611878395,
+  "feedback": {
+    "first_pass_correct": 32,
+    "first_pass_errors": 0,
+    "control_second_pass": 1.0,
+    "learned_second_pass": 1.0,
+    "correction_rate": null,
+    "feedback_gain": null,
+    "feedback_updates": 0,
+    "control_updates": 0,
+    "control_state_unchanged": true,
+    "stability_losses": 0,
+    "learned_checkpoint": "data/experiments/taiji_u2/a2/20261115T2340Z/feedback-learned.pt",
+    "learned_sha256": "b7636f06b5e94d37465ce4409fe9d9049cb1e0a0338deaea8938670c327cea6a"
+  },
+  "final_rows": [
+    {
+      "id": "fit-0",
+      "target": "左边",
+      "output_hex": "e5b7a6e8beb9",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": true
+    },
+    {
+      "id": "fit-1",
+      "target": "中间",
+      "output_hex": "e4b8ade997b4",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": true
+    },
+    {
+      "id": "fit-2",
+      "target": "右边",
+      "output_hex": "e58fb3e8beb9",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": true
+    },
+    {
+      "id": "fit-3",
+      "target": "未知",
+      "output_hex": "e69caae79fa5",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": true
+    },
+    {
+      "id": "fit-4",
+      "target": "左边",
+      "output_hex": "e5b7a6e8beb9",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": true
+    },
+    {
+      "id": "fit-5",
+      "target": "中间",
+      "output_hex": "e4b8ade997b4",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": true
+    },
+    {
+      "id": "fit-6",
+      "target": "右边",
+      "output_hex": "e58fb3e8beb9",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": true
+    },
+    {
+      "id": "fit-7",
+      "target": "未知",
+      "output_hex": "e69caae79fa5",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": true
+    },
+    {
+      "id": "fit-8",
+      "target": "左边",
+      "output_hex": "e5b7a6e8beb9",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": true
+    },
+    {
+      "id": "fit-9",
+      "target": "中间",
+      "output_hex": "e4b8ade997b4",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": true
+    },
+    {
+      "id": "fit-10",
+      "target": "右边",
+      "output_hex": "e58fb3e8beb9",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": true
+    },
+    {
+      "id": "fit-11",
+      "target": "未知",
+      "output_hex": "e69caae79fa5",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": true
+    },
+    {
+      "id": "fit-12",
+      "target": "左边",
+      "output_hex": "e5b7a6e8beb9",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": true
+    },
+    {
+      "id": "fit-13",
+      "target": "中间",
+      "output_hex": "e4b8ade997b4",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": true
+    },
+    {
+      "id": "fit-14",
+      "target": "右边",
+      "output_hex": "e58fb3e8beb9",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": true
+    },
+    {
+      "id": "fit-15",
+      "target": "未知",
+      "output_hex": "e69caae79fa5",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": true
+    },
+    {
+      "id": "fit-16",
+      "target": "左边",
+      "output_hex": "e5b7a6e8beb9",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": true
+    },
+    {
+      "id": "fit-17",
+      "target": "中间",
+      "output_hex": "e4b8ade997b4",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": true
+    },
+    {
+      "id": "fit-18",
+      "target": "右边",
+      "output_hex": "e58fb3e8beb9",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": true
+    },
+    {
+      "id": "fit-19",
+      "target": "未知",
+      "output_hex": "e69caae79fa5",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": true
+    },
+    {
+      "id": "fit-20",
+      "target": "左边",
+      "output_hex": "e5b7a6e8beb9",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": true
+    },
+    {
+      "id": "fit-21",
+      "target": "中间",
+      "output_hex": "e4b8ade997b4",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": true
+    },
+    {
+      "id": "fit-22",
+      "target": "右边",
+      "output_hex": "e58fb3e8beb9",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": true
+    },
+    {
+      "id": "fit-23",
+      "target": "未知",
+      "output_hex": "e69caae79fa5",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": true
+    },
+    {
+      "id": "fit-24",
+      "target": "左边",
+      "output_hex": "e5b7a6e8beb9",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": true
+    },
+    {
+      "id": "fit-25",
+      "target": "中间",
+      "output_hex": "e4b8ade997b4",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": true
+    },
+    {
+      "id": "fit-26",
+      "target": "右边",
+      "output_hex": "e58fb3e8beb9",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": true
+    },
+    {
+      "id": "fit-27",
+      "target": "未知",
+      "output_hex": "e69caae79fa5",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": true
+    },
+    {
+      "id": "fit-28",
+      "target": "左边",
+      "output_hex": "e5b7a6e8beb9",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": true
+    },
+    {
+      "id": "fit-29",
+      "target": "中间",
+      "output_hex": "e4b8ade997b4",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": true
+    },
+    {
+      "id": "fit-30",
+      "target": "右边",
+      "output_hex": "e58fb3e8beb9",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": true
+    },
+    {
+      "id": "fit-31",
+      "target": "未知",
+      "output_hex": "e69caae79fa5",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": true
+    }
+  ],
+  "recovery": {
+    "in_process_digest": "b6503a20b821e03a0fb766727252c85ca0295c290f9e38be2cb76a4de35a1016",
+    "independent_digest": "b6503a20b821e03a0fb766727252c85ca0295c290f9e38be2cb76a4de35a1016",
+    "rows_equal": true,
+    "final_sha256": "f89aa4713ba60bc3e4fae591d5829d99f808d5d30712f0a762561a1380889558"
+  },
+  "gate_table": {
+    "main_full_answer_fit": "passed",
+    "correction": "not_identifiable_by_design",
+    "feedback_gain": "not_identifiable_by_design",
+    "stability": "passed",
+    "recovery": "passed",
+    "control_zero_updates": "passed",
+    "a_retention": "not_applicable_no_A_parent",
+    "three_seed": "not_in_scope_single_seed",
+    "check2": "not_read"
+  },
+  "criteria": {
+    "response_round": "exact answer bytes plus EOS plus valid UTF-8, greedy, 65-byte cap",
+    "main_denominator": "all 32 fit rounds; a failed, extra-byte or invalid round is counted, never filtered",
+    "main_gate": 0.8,
+    "correction_gate": 0.8,
+    "feedback_gain_gate": 0.05,
+    "stability_rule": "first-round correct rounds that become wrong <= max(1, 0.10 * first-round correct)",
+    "correction_protocol": "first pass on fit; for every first-pass error release the correct answer and take 8 Adam updates at the feedback lr; re-ask all 32 once",
+    "correction_denominator": "first-pass fit errors",
+    "control_arm": "same trained subject, same re-ask, zero parameter updates and zero state writes; state digest before == after",
+    "feedback_gain": "learned second-pass fit accuracy minus control second-pass fit accuracy",
+    "not_identifiable_rule": "if first-pass fit errors < 4, correction and feedback gain are recorded as not_identifiable_by_design",
+    "recovery": "save the trained bundle, reload in an independent process, re-ask all 32; outputs must be byte-identical",
+    "read_accuracy": "recorded, not gated: the frozen calibrated read gives fit 32/32 and train 61/64",
+    "verdicts": [
+      "byte_expression_confirmed",
+      "byte_expression_confirmed_feedback_unmeasured",
+      "byte_expression_partial",
+      "byte_expression_below_gate",
+      "budget_stop",
+      "engineering_failure"
+    ],
+    "a_retention": "not_applicable_no_A_parent",
+    "three_seed": "not_in_scope_single_seed",
+    "check2": "not_read",
+    "accepted_parent": false
+  },
+  "cost": {
+    "cpu": 25.375,
+    "wall": 31.411943,
+    "cap_cpu": 22.873,
+    "cap_wall": 45.746
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "capability_claims": 0,
+    "accepted_parent": false
+  },
+  "run_conditions": {
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "scope": "expression positive control only: the read is a frozen four-way class injected as a fixed code; no content-conditioned binding claim and no parent claim"
+}

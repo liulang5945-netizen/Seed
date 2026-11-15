@@ -1,6 +1,6 @@
 {
   "schema": "taiji-u2-a2-byte-v1",
-  "status": "price_frozen_authorization_pending",
+  "status": "frozen",
   "card": "22.5.A.2",
   "date": "2026-11-15",
   "a1b_contract": "plans/manifests/taiji_u2_a1b_colour_20261115.json",
@@ -122,7 +122,7 @@
   "run_root": "data/experiments/taiji_u2/a2/20261115T2340Z",
   "cpu_cap": 22.873,
   "wall_cap": 45.746,
-  "training_authority": null,
+  "training_authority": "owner:chat:2026-11-15#授权执行（A.2 正式比较）",
   "source_pins": {
     "runner": "c26f4a545ffb5d12f579cb7e69c57eabca6cd7c427e479fb3a55e4621f0fd981",
     "subject": "a3335d7fc84e54903f16617e452753c04124709b3b83c20a656d7b43b5ef41ad",
@@ -175,8 +175,10 @@
   },
   "smoke_report": "reports/taiji_u2_a2_byte_smoke_20261115.json",
   "authorization": {
-    "state": "not_requested",
-    "note": "implementation, zero-update smoke and price are complete; formal training is not authorized and run mode refuses while status is not frozen"
+    "state": "authorized",
+    "asked": "是否授权执行 22.5.A.2 正式比较（600 更新，实测帽 22.873 CPU／45.746 wall）",
+    "reply": "授权执行（推荐）",
+    "scope": "development fit only; no check/final/confirm read; no capability or parent claim"
   },
   "source_pin_note": "post-price edits only: added the data_digest report field and the zero-step gradient census, merged a nested finite-check guard, removed an unused import and ran black at line-length 100; the smoke/price code path and all measured unit costs are unchanged",
   "implementation_facts": [
@@ -186,5 +188,23 @@
       "implication": "the copy term is absent and gamma cancels, so copy_gate receives exactly zero gradient and stays at its initial value; A.2 is a generator-path expression test",
       "disclosure": "the zero-step gradient census is written into the run report; no gamma or copy-gate reading may be used as a mechanism claim"
     }
-  ]
+  ],
+  "execution": {
+    "verdict": "byte_expression_confirmed_feedback_unmeasured",
+    "fit_accuracy": 1.0,
+    "report": "reports/taiji_u2_a2_byte_20261115.json",
+    "guard": "reports/taiji_u2_a2_byte_guard_20261115.json",
+    "recovery": "independent process rows byte-identical",
+    "budget_gate": "failed",
+    "budget": {
+      "cap_cpu": 22.873,
+      "actual_cpu": 25.375,
+      "overrun_cpu": 2.502,
+      "ratio": 1.1094,
+      "cap_wall": 45.746,
+      "actual_wall": 31.411943
+    },
+    "pricing_gap": "the price measured a five-update slope plus a fit/train evaluation, but the full pipeline also pays the initial gate, the gradient census, the final 32 rounds and the sustained 600-update cost; the independent recovery process runs outside the parent CPU counter",
+    "rule": "no cap change, no rerun of the same configuration; the capability reading is kept for attribution and the budget gate stays red"
+  }
 }

@@ -1,10 +1,10 @@
 # 从这里开始
 
-> 文档状态：[主线] — 2026-11-15 A.1b-cal 零训练先验校正把读级 fit 抬到 **32/32**（train 61/64、交叉半最低 0.844，后验），队首为 `22.5.A.2` 阶段 2 字节头（**已实现、零更新 smoke 与定价完成；训练未授权**）。唯一主线沿N推进，状态与调度权归[MASTER-PLAN](MASTER-PLAN.md)。
+> 文档状态：[主线] — 2026-11-15 `22.5.A.2` 已按 owner 授权跑完：fit **32/32**、三剂量点一致、恢复逐字节一致，但 **CPU 越帽 +10.9%**，判 `byte_expression_confirmed_feedback_unmeasured`（反馈 0 错例不可识别）；当前队首为 **`22.5.A.3` 零训练接口复核（待 owner 裁定）**，A 父仍不存在。唯一主线沿N推进，状态与调度权归[MASTER-PLAN](MASTER-PLAN.md)。
 
 **队首（唯一）**：`22.5.A.1b-cal` 零训练先验校正判 **`a_parent_read_calibrated_post_hoc`**。原始 A.1b：fit 25/32＝0.78125、train 53/64＝0.828125；加 `logits − log(train64 逐列先验)` 后：fit **32/32＝1.0**、train **61/64＝0.953125**；painted 加权 29/32＝0.90625／59/64＝0.921875；交叉半 even→odd 32/32、odd→even **27/32＝0.84375**。先验 `[0.0234,0.0303,0.0156,0.0146,0.0146,0.0215,0.8799]`（背景 88.0%）。**0 梯度步、0 新参数、先验只用 train64 列标签、不用 fit 标签**；7 个“未知”错全部消失。**后验警告**：fit 在发现校正前已看过，32/32 不是独立预注册确认；独立证据是 train 交叉半最低 0.844。A 父仍不存在。**唯一后继：`22.5.A.2` 阶段 2——冻结校正后的读，只训字节头（`joint_readout`／`byte_head`／`copy_gate`）；门：全 32 fit 精确应答 ≥0.80、纠正 ≥0.80、增益 ≥0.05、稳定、恢复逐字节一致、对照 0 更新；A 保持 `not_applicable_no_A_parent`、单 seed、check② 未读、`accepted_parent=false`；设计帽 ≤600 CPU／1,200 wall，先定价；不训练主体、不新增主体参数、不放行 22.6。** 结果见[校正结果卡](reference/RESULT-TAIJI_U2_A1B_CAL_20261115.md)。
 
-**2026-11-15 A.2 准备完成（0 正式训练、未授权）**：read-code-v1 把冻结的四类读以 24 维定长码注入 `joint_readout`，只训 `joint_readout`／`byte_head`／`copy_gate` 共 8 张量／3,919 标量。零更新 smoke 通过：读 fit 32/32、train 61/64，缓存 448 位置，3 项回放逐位一致，未训练 fit 0/8。实测定价曲线 **20.794 CPU**，采用帽 **22.873 CPU／45.746 wall**（曲线 ×1.1，设计帽 600／1,200 未动）。开跑前零步 census 发现 448 个位置**全无有效记录**，`copy_gate` 梯度恰为 0（结构性惰性），所以 A.2 实际只检验生成通路；`gamma` 不得写成机制证据。契约 `price_frozen_authorization_pending`、`training_authority=null`，`run` 模式拒绝开跑；不申请放行、不写账本。见[预注册](reference/PREREG-TAIJI_U2_A2_BYTE_20261115.md)、[smoke](../../reports/taiji_u2_a2_byte_smoke_20261115.json)、[定价](../../reports/taiji_u2_a2_byte_price_20261115.json)。
+**2026-11-15 A.2 正式比较（已跑完，预算门红）**：owner 授权执行 600 更新。read-code-v1 把冻结四类读以 24 维定长码注入 `joint_readout`；实际生效 6 张量（`copy_gate` 因 448 个位置全无有效记录而结构性惰性，零梯度）。读数：**fit 32/32＝1.0（200/400/600 三点一致）**、train 61/64（3 个错例与读同源）；损失 4.408→0.167；首轮 0 错例 ⇒ 纠正率/增益 `not_identifiable_by_design`；对照 1.0 不变；独立进程恢复 32 条逐字节一致（`b6503a20…`）。成本 **25.375 CPU／31.412 wall**，超采用帽 22.873 CPU 的 **+10.9%**；守卫 22/23 绿，`budget_within_caps` 红，4/4 红方向全响。判定 **`byte_expression_confirmed_feedback_unmeasured`**，但**预算门失败**：不改帽、不重跑同一配置，读数只作归因，不签能力、不签 A 父、不放行 22.6。见[结果卡](reference/RESULT-TAIJI_U2_A2_BYTE_20261115.md)。**唯一后继**：`22.5.A.3` 零训练接口复核（三条把读证据接进字节通路的方案比较，待 owner 裁定立项）。
 
 ## 1. 长期目标与当前主计算图
 

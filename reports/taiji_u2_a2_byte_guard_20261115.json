@@ -1,0 +1,50 @@
+{
+  "schema": "taiji-u2-a2-byte-guard-v1",
+  "card": "22.5.A.2",
+  "date": "2026-11-15",
+  "checks": {
+    "source_pins_match_worktree": true,
+    "encoder_bundle_sha256_matches": true,
+    "a1b_checkpoint_sha256_matches": true,
+    "candidate_22742_194": true,
+    "head_263": true,
+    "criteria_sha256_matches": true,
+    "prior_recomputed_from_train64": true,
+    "read_fit_32_of_32_and_train_61_of_64": true,
+    "data_digest_matches": true,
+    "trainable_set_equals_declared": true,
+    "copy_gate_inert_disclosed": true,
+    "cache_replay_matches_body": true,
+    "main_denominator_equals_32": true,
+    "correction_denominator_equals_errors": true,
+    "stability_losses_within_bound": true,
+    "control_updates_zero_and_state_unchanged": true,
+    "recovery_rows_byte_identical": true,
+    "verdict_branch_matches_gate_table": true,
+    "report_verdict_allowed": true,
+    "parent_not_claimed": true,
+    "check_final_reads_zero": true,
+    "budget_within_caps": false,
+    "final_checkpoint_sha_matches": true
+  },
+  "red_directions": {
+    "tampered_byte_head_changes_rows": true,
+    "bad_verdict_detected": true,
+    "parent_claim_detected": true,
+    "control_update_tamper_detected": true
+  },
+  "all_checks_green": false,
+  "all_red_directions_respond": true,
+  "report_verdict": "byte_expression_confirmed_feedback_unmeasured",
+  "fit": 1.0,
+  "run_conditions": {
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "discipline": {
+    "training": 0,
+    "optimizer_steps": 0,
+    "check_final_reads": 0,
+    "capability_claims": 0
+  }
+}
