@@ -40,6 +40,16 @@ joint_readout.first.bias, joint_readout.first.weight,
 joint_readout.last.bias, joint_readout.last.weight
 ```
 
+### 4.1 读数解读注意（开跑前的结构事实）
+
+本任务的 448 个缓存位置**全部没有可用记录**：`valid` 形状 `(0,0)`、`valid_records_total=0`、`alpha[:, -1]=0`（最后一路路由质量为 1、`q=1`）。在这组条件下：
+
+- 复制项不存在，`log_gen = log(gamma + (1-gamma)·q) + log_generator = log_generator`，**gamma 被消掉**；
+- `copy_gate` 的梯度**恰好为 0**（零步 census 逐张量记录见运行报告），它会停在初始值；
+- 因此 A.2 实际检验的是 **`joint_readout` + `byte_head` 的生成通路**能否写出答案，`copy_gate` 只是声明在可训集合里、结构上不起作用。
+
+不得把 gamma、1−gamma 或“复制门被训练”写成机制证据；报告必须带零步梯度 census 与 `copy_gate_inert=true`。
+
 ## 5 数据与剂量
 
 - 数据：`first_a/20261112T074836Z/data.bin`（digest `40813b4c…`），train 64、fit 32；**check／final／confirm 不读**。

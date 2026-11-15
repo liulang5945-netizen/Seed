@@ -104,8 +104,8 @@
   ],
   "untrained_fit_accuracy": 0.0,
   "cost": {
-    "cpu": 6.078125,
-    "wall": 6.083143
+    "cpu": 5.421875,
+    "wall": 5.45767
   },
   "discipline": {
     "optimizer_updates": 0,

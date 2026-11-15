@@ -295,6 +295,33 @@ def emission_loss(model, items: list[dict], *, use_code: bool) -> torch.Tensor:
     return torch.stack(terms).mean()
 
 
+def gradient_census(model, positions: list[dict], contract: dict) -> dict:
+    """One backward on a fixed batch: no optimizer step, no parameter change."""
+    stride = max(1, len(positions) // int(contract["batch"]))
+    batch = [positions[offset * stride] for offset in range(int(contract["batch"]))]
+    model.zero_grad(set_to_none=True)
+    emission_loss(model, batch, use_code=True).backward()
+    sums = {
+        name: round(0.0 if parameter.grad is None else float(parameter.grad.abs().sum()), 12)
+        for name, parameter in model.named_parameters()
+        if parameter.requires_grad
+    }
+    model.zero_grad(set_to_none=True)
+    records = [int(item["valid"].sum()) for item in positions]
+    return {
+        "positions": len(positions),
+        "positions_with_records": sum(1 for value in records if value > 0),
+        "valid_records_total": sum(records),
+        "alpha_last_zero_all": bool(
+            torch.stack([item["alpha"][:, -1] for item in positions]).eq(0).all()
+        ),
+        "gradient_abs_sum": sums,
+        "copy_gate_inert": sums.get("copy_gate.weight", 0.0) == 0.0
+        and sums.get("copy_gate.bias", 0.0) == 0.0,
+        "protocol": "one backward on a fixed batch; optimizer_step_calls = 0",
+    }
+
+
 def replay_checks(model, positions: list[dict], data: dict) -> list[dict]:
     checks = []
     stride = max(1, len(positions) // 3)
@@ -643,6 +670,7 @@ def run(contract: dict) -> int:
     positions = cache_positions(model, data["train"], codes)
     checks = replay_checks(model, positions, data)
     names = set_trainable(model, contract)
+    census = gradient_census(model, positions, contract)
     initial = initial_gate(model, contract, positions, root)
     optimizer = optimizer_for(
         [p for p in model.parameters() if p.requires_grad], contract["optimizer"]
@@ -811,6 +839,7 @@ def run(contract: dict) -> int:
         "initial_gate": initial,
         "cache": {"positions": len(positions), "replay_checks": checks},
         "trainable": {"names": sorted(names), "scalars": int(contract["emission_scalar_count"])},
+        "gradient_census": census,
         "doses": rows,
         "loss_first10": statistics.fmean(losses[:10]),
         "loss_last10": statistics.fmean(losses[-10:]),

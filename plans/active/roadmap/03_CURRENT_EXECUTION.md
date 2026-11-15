@@ -3695,4 +3695,6 @@ goal continue 下做的 0 训练分析（未训练、未改门）。[校正结�
 
 **契约**（[manifest](../../manifests/taiji_u2_a2_byte_20261115.json)，`criteria_sha256=9b12d593…`）状态 `price_frozen_authorization_pending`、`training_authority=null`，`run` 模式拒绝开跑。门与出口见[预注册](../../reference/PREREG-TAIJI_U2_A2_BYTE_20261115.md)：主门全 32 fit 精确应答 ≥0.80、纠正 ≥0.80、增益 ≥0.05、稳定 ≤max(1,10%)、恢复逐字节一致、对照 0 更新；错例 <4 时反馈两项记 `not_identifiable_by_design`。
 
+**开跑前结构事实（0 梯度步、0 参数变化）**：448 个缓存位置全部零有效记录（`valid` 形状 `(0,0)`、`alpha[:,-1]=0`、`q=1`），复制项缺失使 `gamma` 消掉；零步梯度 census 实测 `copy_gate` 两项梯度恰为 0，`joint_readout`／`byte_head` 六项非零，参数摘要前后逐位一致。因此 A.2 实际检验的是 `joint_readout`＋`byte_head` 的**生成通路表达**，`copy_gate` 只是声明在可训集合里、结构上惰性；不得把 `gamma`／`1−gamma`／“复制门被训练”写成机制证据，运行报告必须带 `copy_gate_inert=true`。
+
 **唯一的下一步**：等待授权输入后再启动 600 更新正式比较；在此之前不申请放行、不跑训练、不写账本。

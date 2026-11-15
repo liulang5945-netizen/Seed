@@ -124,7 +124,7 @@
   "wall_cap": 45.746,
   "training_authority": null,
   "source_pins": {
-    "runner": "794d8389c504772059eff5457ab12b01f248ff1ef549296b68c15b614de9bad3",
+    "runner": "c26f4a545ffb5d12f579cb7e69c57eabca6cd7c427e479fb3a55e4621f0fd981",
     "subject": "a3335d7fc84e54903f16617e452753c04124709b3b83c20a656d7b43b5ef41ad",
     "p4_1_runner": "fe722cb41b6149f4bf5a709c546ac5fc5b644e1b8f01da1e870ec1e6a6134877",
     "p4_2_runner": "c479d90963cf3a21b43700115fc8c94f418b4a396a8526fadb5e8c3b322859ff",
@@ -178,5 +178,13 @@
     "state": "not_requested",
     "note": "implementation, zero-update smoke and price are complete; formal training is not authorized and run mode refuses while status is not frozen"
   },
-  "source_pin_note": "post-price edits only: added the data_digest report field, merged a nested gradient finite-check guard, removed an unused import and ran black at line-length 100; the smoke/price code path and all measured unit costs are unchanged"
+  "source_pin_note": "post-price edits only: added the data_digest report field and the zero-step gradient census, merged a nested finite-check guard, removed an unused import and ran black at line-length 100; the smoke/price code path and all measured unit costs are unchanged",
+  "implementation_facts": [
+    {
+      "when": "pre-run plumbing, 0 optimizer steps",
+      "fact": "all 448 cached positions carry zero valid records (valid shape (0,0)); alpha[:, -1] = 0 so the last routing mass is 1 and q = 1",
+      "implication": "the copy term is absent and gamma cancels, so copy_gate receives exactly zero gradient and stays at its initial value; A.2 is a generator-path expression test",
+      "disclosure": "the zero-step gradient census is written into the run report; no gamma or copy-gate reading may be used as a mechanism claim"
+    }
+  ]
 }
