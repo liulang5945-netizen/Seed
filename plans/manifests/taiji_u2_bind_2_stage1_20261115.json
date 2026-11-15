@@ -1,0 +1,90 @@
+{
+  "schema": "taiji-u2-bind2-stage1-v1",
+  "status": "frozen",
+  "card": "22.5.P5.2",
+  "date": "2026-11-15",
+  "design_manifest": "plans/manifests/taiji_u2_bind_2_design_20261115.json",
+  "pilot_manifest": "plans/manifests/taiji_u2_bind_2_pilot_20261115.json",
+  "pilot_criteria_sha256": "426cd9a096734b90a7546d118667a5f0d9778c826c2416c83515ae087469ab55",
+  "candidate": {
+    "identity": "taiji-u2-subject-v5",
+    "binding": "v2",
+    "seed": 20261110,
+    "encoder": "frozen at the P4.1 arm B weights",
+    "arm": "A: identity anchor + two in-binding steps"
+  },
+  "p4_1_bundle": "data/experiments/taiji_u2/p4_2/20261116T0500Z/reconstruct-B-007376.pt",
+  "p4_1_bundle_sha256": "f670508850685cb8aa4e9ed385eb2f5997154524e606d1ab7cbfbd5230eb0f2f",
+  "data_root": "data/experiments/taiji_u2/p3_19/three_object_volume_20261114.bin",
+  "data_digest": "1dec5429a1110dc9a23a8f38329e1bce1cb8824e6d2ca89fc96b429487e9addf",
+  "batch": 8,
+  "optimizer": {
+    "lr": 0.01,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "weight_decay": 0.0
+  },
+  "dose_points": [
+    1844,
+    3688
+  ],
+  "criteria": {
+    "read_pair_gate": 0.95,
+    "read_set_gate": 0.8,
+    "duplicate_rate_max": 0.0625,
+    "count_accuracy_gate": 0.75,
+    "train_set_gate": 0.85,
+    "knockout_gate": 0.6,
+    "knockout_definition": "scene counts when the unperturbed prediction equals the three-pair truth and some single-slot knockout drops exactly that slot's pair while keeping the other two; replacement is the scene-level slot mean",
+    "knockout_zero_effect_verdict": "read_ignores_slots",
+    "early_stop_set": 0.3,
+    "early_stop_pair": 0.6,
+    "early_stop": "first dose set < 0.30 and pair < 0.60 -> binding_cannot_form_slots",
+    "recovery": "final checkpoint reloaded in an independent process; digest identical",
+    "a_retention": "not_applicable_no_A_parent",
+    "three_seed": "not_in_scope_single_seed",
+    "check2": "not_read",
+    "accepted_parent": false
+  },
+  "run_root": "data/experiments/taiji_u2/p5_2/20261115T1900Z",
+  "cpu_cap": 2600.0,
+  "wall_cap": 5200.0,
+  "training_authority": "owner:chat:2026-11-15#授权（阶段 1 全剂量）",
+  "source_pins": {
+    "runner": "3df14b5fbb86456415e5edf0cf0f21ddfd869e400cb53c8c7c21aba04f455d96",
+    "subject": "a3335d7fc84e54903f16617e452753c04124709b3b83c20a656d7b43b5ef41ad",
+    "pilot_runner": "9ccbbce7902d4115cd14fa5e9a7a3ee354407a74be33e68f9a694e57c324a0b9",
+    "p4_2_runner": "c479d90963cf3a21b43700115fc8c94f418b4a396a8526fadb5e8c3b322859ff",
+    "p4_3_runner": "d289f9355c4bb595f4eb19cf2b5598a9c814653f0e52379394069a2efbbd65c9",
+    "p4_4_runner": "5463e570b8cd9ce6eefd727fe8ff747b1060848071bc46da2bccd549fc7172c1",
+    "support": "33d9301f98859934c1413e25765c55e6bc7b64dfa410d65b03f0e5a198041b4c",
+    "column_pathway": "4afb7c94a0641f6f5eb943339d19f13c8f690ddcf6956bc6787cba5aa4653476",
+    "design_manifest": "23f6fe37d950c3aee2c8248549986f1ffb9f59fa9d8fb6e906962426e0ec8112"
+  },
+  "artifacts": [
+    "scripts/training/run_p5_2_bind2_stage1.py",
+    "scripts/training/verify_p5_2_bind2_stage1.py",
+    "reports/taiji_u2_bind2_stage1_20261115.json",
+    "reports/taiji_u2_bind2_stage1_guard_20261115.json",
+    "plans/reference/RESULT-TAIJI_U2_P5_2_BIND2_STAGE1_20261115.md"
+  ],
+  "guards": [
+    "source_pins_match_worktree",
+    "parent_bundle_sha256_matches",
+    "pilot_criteria_sha256_matches",
+    "dose_points_are_1844_and_3688",
+    "arm_a_only",
+    "checkpoints_saved_and_read_back",
+    "final_recovery_identical_in_independent_process",
+    "knockout_runs_without_gradients",
+    "gate_table_matches_verdict",
+    "check_and_final_reads_zero",
+    "budget_cap_enforced",
+    "parent_not_claimed"
+  ],
+  "scope": "stage 1 only: object-set formation with the read scaffold; no byte path, no capability or parent claim",
+  "criteria_sha256": "ad80192f7de2f311d0d5196b43584e518386baf166ea033f691a2a82c7a18996"
+}

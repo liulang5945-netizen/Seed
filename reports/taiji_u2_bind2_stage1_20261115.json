@@ -1,0 +1,81 @@
+{
+  "schema": "taiji-u2-bind2-stage1-v1",
+  "card": "22.5.P5.2",
+  "date": "2026-11-15",
+  "status": "binding_cannot_form_slots",
+  "verdict": "binding_cannot_form_slots",
+  "candidate": {
+    "identity": "taiji-u2-subject-v5",
+    "binding": "v2",
+    "seed": 20261110,
+    "encoder": "frozen at the P4.1 arm B weights",
+    "arm": "A: identity anchor + two in-binding steps"
+  },
+  "doses": [
+    {
+      "update": 1844,
+      "train": {
+        "pair_accuracy": 0.375,
+        "set_accuracy": 0.03125,
+        "pair_hits": 30,
+        "pair_total": 80,
+        "set_correct": 1,
+        "denominator": 32,
+        "duplicate_scenes": 5,
+        "duplicate_rate": 0.15625,
+        "count_accuracy": 0.3125
+      },
+      "fit": {
+        "pair_accuracy": 0.32051282051282054,
+        "set_accuracy": 0.03125,
+        "pair_hits": 25,
+        "pair_total": 78,
+        "set_correct": 1,
+        "denominator": 32,
+        "duplicate_scenes": 10,
+        "duplicate_rate": 0.3125,
+        "count_accuracy": 0.4375
+      },
+      "checkpoint": "data/experiments/taiji_u2/p5_2/20261115T1900Z/stage1-001844.pt",
+      "checkpoint_sha256": "d4a04e7fc7a8dda532c5a2e74e4cdb68f9f3f10ed05e782a963f1210099d1139"
+    }
+  ],
+  "knockout": {},
+  "recovery": {},
+  "trainable_parameters": 199,
+  "data_digest": "1dec5429a1110dc9a23a8f38329e1bce1cb8824e6d2ca89fc96b429487e9addf",
+  "parent_bundle_sha256": "f670508850685cb8aa4e9ed385eb2f5997154524e606d1ab7cbfbd5230eb0f2f",
+  "criteria": {
+    "read_pair_gate": 0.95,
+    "read_set_gate": 0.8,
+    "duplicate_rate_max": 0.0625,
+    "count_accuracy_gate": 0.75,
+    "train_set_gate": 0.85,
+    "knockout_gate": 0.6,
+    "knockout_definition": "scene counts when the unperturbed prediction equals the three-pair truth and some single-slot knockout drops exactly that slot's pair while keeping the other two; replacement is the scene-level slot mean",
+    "knockout_zero_effect_verdict": "read_ignores_slots",
+    "early_stop_set": 0.3,
+    "early_stop_pair": 0.6,
+    "early_stop": "first dose set < 0.30 and pair < 0.60 -> binding_cannot_form_slots",
+    "recovery": "final checkpoint reloaded in an independent process; digest identical",
+    "a_retention": "not_applicable_no_A_parent",
+    "three_seed": "not_in_scope_single_seed",
+    "check2": "not_read",
+    "accepted_parent": false
+  },
+  "cost": {
+    "cpu": 850.125,
+    "wall": 852.807702
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "capability_claims": 0,
+    "accepted_parent": false
+  },
+  "run_conditions": {
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "scope": "stage 1 only: object-set formation with the read scaffold"
+}

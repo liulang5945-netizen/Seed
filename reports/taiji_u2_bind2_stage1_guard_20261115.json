@@ -1,0 +1,57 @@
+{
+  "schema": "taiji-u2-bind2-stage1-guard-v1",
+  "card": "22.5.P5.2",
+  "date": "2026-11-15",
+  "checks": {
+    "source_pins_match_worktree": true,
+    "parent_bundle_sha256_matches": true,
+    "pilot_criteria_sha256_matches": true,
+    "dose_points_are_1844_and_3688": true,
+    "read_scaffold_458": true,
+    "report_verdict_allowed": true,
+    "report_doses_match_contract": true,
+    "gate_table_matches_verdict": true,
+    "zero_check_final_reads": true,
+    "zero_capability_claims": true,
+    "parent_not_claimed": true,
+    "budget_within_caps": true,
+    "arm_a_only": true,
+    "trainable_parameters_199": true,
+    "checkpoints_ok": true,
+    "final_digest_matches_report": true,
+    "independent_matches": true
+  },
+  "red_directions": {
+    "tampered_weight_changes_digest": true,
+    "bad_verdict_detected": true,
+    "parent_claim_detected": true,
+    "dose_tamper_detected": true,
+    "pilot_hash_tamper_detected": true
+  },
+  "all_checks_green": true,
+  "all_red_directions_respond": true,
+  "checkpoint_checks": {
+    "doses": {
+      "1844": {
+        "exists": true,
+        "sha256_matches": true,
+        "update_matches": true,
+        "digest": "579b0cc19d763e0df8283234242fe6d52cf07be21e08c1ecf3e0010c17379abd"
+      }
+    },
+    "all_ok": true,
+    "final_digest_matches_report": true,
+    "independent_matches": true
+  },
+  "report_verdict": "binding_cannot_form_slots",
+  "run_conditions": {
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "discipline": {
+    "training": 0,
+    "optimizer_step": 0,
+    "check_final_reads": 0,
+    "capability_claims": 0
+  }
+}
