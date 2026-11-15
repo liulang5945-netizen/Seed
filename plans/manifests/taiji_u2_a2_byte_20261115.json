@@ -1,0 +1,182 @@
+{
+  "schema": "taiji-u2-a2-byte-v1",
+  "status": "price_frozen_authorization_pending",
+  "card": "22.5.A.2",
+  "date": "2026-11-15",
+  "a1b_contract": "plans/manifests/taiji_u2_a1b_colour_20261115.json",
+  "a1b_result": "plans/reference/RESULT-TAIJI_U2_A1B_COLOUR_20261115.md",
+  "cal_result": "plans/reference/RESULT-TAIJI_U2_A1B_CAL_20261115.md",
+  "candidate": {
+    "architecture": "native",
+    "profile": "metadata+request",
+    "parameters": 22742,
+    "tensors": 194,
+    "seed": 20261110,
+    "subject_frozen": true,
+    "encoder_bundle": "data/experiments/taiji_u2/p4_2/20261116T0500Z/reconstruct-B-007376.pt",
+    "encoder_bundle_sha256": "f670508850685cb8aa4e9ed385eb2f5997154524e606d1ab7cbfbd5230eb0f2f",
+    "a1b_checkpoint": "data/experiments/taiji_u2/a1b/20261115T2300Z/a1b-00200.pt",
+    "a1b_checkpoint_sha256": "3ebac8b34ace3e9d784867e0096527cba515bace68199712a6cdc940a458dbc3",
+    "read_head_parameters": 263,
+    "prior": [
+      0.0234375,
+      0.0302734375,
+      0.015625,
+      0.0146484375,
+      0.0146484375,
+      0.021484375,
+      0.8798828125
+    ]
+  },
+  "data": {
+    "root": "data/experiments/taiji_u2/first_a/20261112T074836Z/data.bin",
+    "digest": "40813b4cc8ffec0c3ae5639941b373c139422b4ccbaa34790de34a9e1149d214",
+    "train": 64,
+    "fit": 32,
+    "check_final_confirm": "not read"
+  },
+  "read_code": {
+    "interface": "read-code-v1",
+    "width": 24,
+    "class_order": [
+      "左边",
+      "中间",
+      "右边",
+      "未知"
+    ],
+    "rule": "zeros(24); code[class] = 1.0; both branches receive the same code at joint_readout",
+    "injection": "forward hook on joint_readout replaces its output with joint_readout(code); training, evaluation and feedback use the same path",
+    "read_rule": "logits - log(train64 per-column class prior), argmax per column, keep the columns of the requested colour, average their x, bin to left/middle/right/unknown",
+    "prior_source": "train64 column labels only; fit labels are never used in the prior",
+    "limitation": "the code carries the read's four-way answer, not the scene's pixels; a pass measures byte expression, not content-conditioned binding"
+  },
+  "emission_parameters": [
+    "byte_head.bias",
+    "byte_head.weight",
+    "copy_gate.bias",
+    "copy_gate.weight",
+    "joint_readout.first.bias",
+    "joint_readout.first.weight",
+    "joint_readout.last.bias",
+    "joint_readout.last.weight"
+  ],
+  "emission_scalar_count": 3919,
+  "optimizer": {
+    "lr": 0.01,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "weight_decay": 0.0
+  },
+  "feedback_optimizer": {
+    "lr": 0.001,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "weight_decay": 0.0
+  },
+  "feedback_updates": 8,
+  "feedback_errors_allowance": 32,
+  "steps": 600,
+  "batch": 8,
+  "dose_points": [
+    200,
+    400,
+    600
+  ],
+  "criteria": {
+    "response_round": "exact answer bytes plus EOS plus valid UTF-8, greedy, 65-byte cap",
+    "main_denominator": "all 32 fit rounds; a failed, extra-byte or invalid round is counted, never filtered",
+    "main_gate": 0.8,
+    "correction_gate": 0.8,
+    "feedback_gain_gate": 0.05,
+    "stability_rule": "first-round correct rounds that become wrong <= max(1, 0.10 * first-round correct)",
+    "correction_protocol": "first pass on fit; for every first-pass error release the correct answer and take 8 Adam updates at the feedback lr; re-ask all 32 once",
+    "correction_denominator": "first-pass fit errors",
+    "control_arm": "same trained subject, same re-ask, zero parameter updates and zero state writes; state digest before == after",
+    "feedback_gain": "learned second-pass fit accuracy minus control second-pass fit accuracy",
+    "not_identifiable_rule": "if first-pass fit errors < 4, correction and feedback gain are recorded as not_identifiable_by_design",
+    "recovery": "save the trained bundle, reload in an independent process, re-ask all 32; outputs must be byte-identical",
+    "read_accuracy": "recorded, not gated: the frozen calibrated read gives fit 32/32 and train 61/64",
+    "verdicts": [
+      "byte_expression_confirmed",
+      "byte_expression_confirmed_feedback_unmeasured",
+      "byte_expression_partial",
+      "byte_expression_below_gate",
+      "budget_stop",
+      "engineering_failure"
+    ],
+    "a_retention": "not_applicable_no_A_parent",
+    "three_seed": "not_in_scope_single_seed",
+    "check2": "not_read",
+    "accepted_parent": false
+  },
+  "design_cap": {
+    "cpu": 600.0,
+    "wall": 1200.0
+  },
+  "run_root": "data/experiments/taiji_u2/a2/20261115T2340Z",
+  "cpu_cap": 22.873,
+  "wall_cap": 45.746,
+  "training_authority": null,
+  "source_pins": {
+    "runner": "794d8389c504772059eff5457ab12b01f248ff1ef549296b68c15b614de9bad3",
+    "subject": "a3335d7fc84e54903f16617e452753c04124709b3b83c20a656d7b43b5ef41ad",
+    "p4_1_runner": "fe722cb41b6149f4bf5a709c546ac5fc5b644e1b8f01da1e870ec1e6a6134877",
+    "p4_2_runner": "c479d90963cf3a21b43700115fc8c94f418b4a396a8526fadb5e8c3b322859ff",
+    "support": "33d9301f98859934c1413e25765c55e6bc7b64dfa410d65b03f0e5a198041b4c",
+    "columns": "4afb7c94a0641f6f5eb943339d19f13c8f690ddcf6956bc6787cba5aa4653476",
+    "a1b_runner": "c540c20d76cf95ecc75704973ff406d5d01296bbbe30bdcd528f87cb737f6a66",
+    "a1b_contract": "626e1203a28fcde805b56cc23817badaf61b84c7df49ccd668c9e6c7f7fa75b2"
+  },
+  "artifacts": [
+    "scripts/training/run_a2_byte_20261115.py",
+    "scripts/training/verify_a2_byte_20261115.py",
+    "reports/taiji_u2_a2_byte_smoke_20261115.json",
+    "reports/taiji_u2_a2_byte_price_20261115.json",
+    "reports/taiji_u2_a2_byte_20261115.json",
+    "reports/taiji_u2_a2_byte_guard_20261115.json",
+    "plans/reference/PREREG-TAIJI_U2_A2_BYTE_20261115.md",
+    "plans/reference/RESULT-TAIJI_U2_A2_BYTE_20261115.md"
+  ],
+  "guards": [
+    "source_pins_match_worktree",
+    "encoder_bundle_sha256_matches",
+    "a1b_checkpoint_sha256_matches",
+    "candidate_22742_194",
+    "head_263",
+    "prior_recomputed_from_train64",
+    "read_fit_32_of_32_and_train_61_of_64",
+    "data_digest_matches",
+    "trainable_set_equals_declared_emission_parameters",
+    "cache_replay_matches_body_log_probability",
+    "main_denominator_equals_32_with_no_filtering",
+    "correction_denominator_equals_first_pass_errors",
+    "stability_losses_within_bound",
+    "control_updates_equal_zero_and_state_unchanged",
+    "recovery_outputs_byte_identical_in_independent_process",
+    "verdict_branch_matches_gate_table",
+    "parent_not_claimed",
+    "check_final_reads_zero",
+    "budget_cap_enforced"
+  ],
+  "scope": "expression positive control only: the frozen four-way read enters the byte path as a fixed code; no subject-wide training, no content-conditioned binding claim, no parent claim",
+  "criteria_sha256": "9b12d59305130ba9d7a6da2ffabf1ab8b31cc94788ee1fe00785439abf23fb51",
+  "price_measured": {
+    "curve_cpu_estimate": 20.794,
+    "adopted_cap_cpu": 22.873,
+    "adopted_cap_wall": 45.746,
+    "report": "reports/taiji_u2_a2_byte_price_20261115.json",
+    "note": "adopted cap is the price curve times 1.1, far below the design ceiling 600; price used 5 in-memory engineering updates and wrote no checkpoint"
+  },
+  "smoke_report": "reports/taiji_u2_a2_byte_smoke_20261115.json",
+  "authorization": {
+    "state": "not_requested",
+    "note": "implementation, zero-update smoke and price are complete; formal training is not authorized and run mode refuses while status is not frozen"
+  },
+  "source_pin_note": "post-price edits only: added the data_digest report field, merged a nested gradient finite-check guard, removed an unused import and ran black at line-length 100; the smoke/price code path and all measured unit costs are unchanged"
+}

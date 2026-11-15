@@ -1,0 +1,119 @@
+{
+  "schema": "taiji-u2-a2-byte-smoke-v1",
+  "card": "22.5.A.2",
+  "date": "2026-11-15",
+  "read_fit": {
+    "correct": 32,
+    "denominator": 32,
+    "accuracy": 1.0
+  },
+  "read_train": {
+    "correct": 61,
+    "denominator": 64,
+    "accuracy": 0.953125
+  },
+  "cache_positions": 448,
+  "cache_replay_checks": [
+    {
+      "example": "train-0",
+      "position": 0,
+      "body_log_probability": -5.192397117614746,
+      "replayed": -5.192397117614746,
+      "equal": true
+    },
+    {
+      "example": "train-21",
+      "position": 2,
+      "body_log_probability": -4.387009620666504,
+      "replayed": -4.387009620666504,
+      "equal": true
+    },
+    {
+      "example": "train-42",
+      "position": 4,
+      "body_log_probability": -4.071468353271484,
+      "replayed": -4.071468353271484,
+      "equal": true
+    }
+  ],
+  "untrained_fit_rows": [
+    {
+      "id": "fit-0",
+      "target": "左边",
+      "output_hex": "5d581f11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": false
+    },
+    {
+      "id": "fit-1",
+      "target": "中间",
+      "output_hex": "db98c5a4606060606060606060606060606060606060606060606060606060606060606060606060606060606060606060606060606060606060606060606060",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": false
+    },
+    {
+      "id": "fit-2",
+      "target": "右边",
+      "output_hex": "db98c5a4606060606060606060606060606060606060606060606060606060606060606060606060606060606060606060606060606060606060606060606060",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": false
+    },
+    {
+      "id": "fit-3",
+      "target": "未知",
+      "output_hex": "cf851111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": false
+    },
+    {
+      "id": "fit-4",
+      "target": "左边",
+      "output_hex": "5d581f11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": false
+    },
+    {
+      "id": "fit-5",
+      "target": "中间",
+      "output_hex": "db98c5a4606060606060606060606060606060606060606060606060606060606060606060606060606060606060606060606060606060606060606060606060",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": false
+    },
+    {
+      "id": "fit-6",
+      "target": "右边",
+      "output_hex": "db98c5a4606060606060606060606060606060606060606060606060606060606060606060606060606060606060606060606060606060606060606060606060",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": false
+    },
+    {
+      "id": "fit-7",
+      "target": "未知",
+      "output_hex": "cf851111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
+      "eos": true,
+      "valid_utf8": true,
+      "correct": false
+    }
+  ],
+  "untrained_fit_accuracy": 0.0,
+  "cost": {
+    "cpu": 6.078125,
+    "wall": 6.083143
+  },
+  "discipline": {
+    "optimizer_updates": 0,
+    "checkpoints_written": 0,
+    "capability_claims": 0
+  },
+  "run_conditions": {
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  }
+}

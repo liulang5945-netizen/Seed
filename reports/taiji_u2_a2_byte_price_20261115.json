@@ -1,0 +1,94 @@
+{
+  "schema": "taiji-u2-a2-byte-price-v1",
+  "card": "22.5.A.2",
+  "date": "2026-11-15",
+  "prior": [
+    0.0234375,
+    0.03027344,
+    0.015625,
+    0.01464844,
+    0.01464844,
+    0.02148438,
+    0.87988281
+  ],
+  "read_fit": {
+    "correct": 32,
+    "denominator": 32,
+    "accuracy": 1.0
+  },
+  "read_train": {
+    "correct": 61,
+    "denominator": 64,
+    "accuracy": 0.953125
+  },
+  "read_code_width": 24,
+  "trainable_names": [
+    "byte_head.bias",
+    "byte_head.weight",
+    "copy_gate.bias",
+    "copy_gate.weight",
+    "joint_readout.first.bias",
+    "joint_readout.first.weight",
+    "joint_readout.last.bias",
+    "joint_readout.last.weight"
+  ],
+  "trainable_scalars": 3919,
+  "cache_positions": 448,
+  "cache_replay_checks": [
+    {
+      "example": "train-0",
+      "position": 0,
+      "body_log_probability": -5.192397117614746,
+      "replayed": -5.192397117614746,
+      "equal": true
+    },
+    {
+      "example": "train-21",
+      "position": 2,
+      "body_log_probability": -4.387009620666504,
+      "replayed": -4.387009620666504,
+      "equal": true
+    },
+    {
+      "example": "train-42",
+      "position": 4,
+      "body_log_probability": -4.071468353271484,
+      "replayed": -4.071468353271484,
+      "equal": true
+    }
+  ],
+  "per_unit_cpu": {
+    "build_and_read": 0.171875,
+    "cache_positions": 2.09375,
+    "per_update": 0.009375,
+    "fit_and_train_evaluate": 2.484375
+  },
+  "probe": {
+    "engineering_updates": 5,
+    "fit_rows": 32,
+    "train_rows": 64,
+    "fit_accuracy": 0.0,
+    "train_accuracy": 0.0
+  },
+  "estimate_cpu": 20.794,
+  "adopted_cap_cpu": 22.873,
+  "cap_wall": 45.746,
+  "design_cap_cpu": 600.0,
+  "design_cap_wall": 1200.0,
+  "pricing_over_budget": false,
+  "cost": {
+    "cpu": 7.140625,
+    "wall": 7.319257
+  },
+  "discipline": {
+    "formal_training_updates": 0,
+    "price_engineering_updates": 5,
+    "checkpoints_written": 0,
+    "capability_claims": 0,
+    "check_final_reads": 0
+  },
+  "run_conditions": {
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  }
+}

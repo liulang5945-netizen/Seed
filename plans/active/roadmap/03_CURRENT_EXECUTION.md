@@ -3682,3 +3682,17 @@ goal continue 下做的 0 训练分析（未训练、未改门）。[校正结�
 **后验警告**：fit 在发现校正前已看过，32/32 不是独立预注册确认；独立证据是 train 交叉半最低 0.844。守卫 11 项绿、4 项红方向全响；0 check/final、0 能力／父声称。
 
 **唯一的下一步**：`22.5.A.2` 阶段 2——冻结校正后的读，只训字节头（`joint_readout`／`byte_head`／`copy_gate`）；门：全 32 fit 精确应答 ≥0.80、纠正 ≥0.80、增益 ≥0.05、稳定、恢复逐字节一致、对照 0 更新；A 保持 `not_applicable_no_A_parent`、单 seed、check② 未读、`accepted_parent=false`；设计帽 ≤600 CPU／1,200 wall，先定价；不训练主体、不新增主体参数、不放行 22.6。**当前未实现、未训练、未授权。**
+
+## 2026-11-15 22.5.A.2 实现、零更新 smoke 与定价（`price_frozen_authorization_pending`，未训练）
+
+按 A.1b-cal 的唯一后继实现阶段 2。**0 正式训练、0 checkpoint、0 check/final/confirm 读取、不写账本、未申请放行。**
+
+**接口 read-code-v1**：冻结的四类读（P4.1 B 主体 + A.1b 263 参数颜色头 + train64 先验校正）→ `zeros(24); code[class]=1` → 前向钩子把 `joint_readout(x)` 换成 `joint_readout(code)`；训练/评测/反馈同一路径。只训 8 张量／3,919 标量，主体其余参数冻结；无新参数编码读。
+
+**零更新 smoke**（[报告](../../../reports/taiji_u2_a2_byte_smoke_20261115.json)）：读 fit 32/32、train 61/64（与 A.1b-cal 逐值一致）；缓存 448 位置；3 项回放 `body_log_probability` 与缓存重算差 0（≤1e-6）；未训练 fit 0/8（复制通路反复输出 64 字节，符合作答前状态）。成本 4.219 CPU／4.228 wall。
+
+**定价**（[报告](../../../reports/taiji_u2_a2_byte_price_20261115.json)）：5 次内存工程更新，曲线 20.794 CPU；采用帽 **22.873 CPU／45.746 wall**（×1.1，设计帽 600／1,200 未动）；定价自身 7.141 CPU、0 checkpoint、0 正式更新。分段单价：缓存 2.094、每更新 0.009375、fit+train 评估 2.484、构建+读 0.172。
+
+**契约**（[manifest](../../manifests/taiji_u2_a2_byte_20261115.json)，`criteria_sha256=9b12d593…`）状态 `price_frozen_authorization_pending`、`training_authority=null`，`run` 模式拒绝开跑。门与出口见[预注册](../../reference/PREREG-TAIJI_U2_A2_BYTE_20261115.md)：主门全 32 fit 精确应答 ≥0.80、纠正 ≥0.80、增益 ≥0.05、稳定 ≤max(1,10%)、恢复逐字节一致、对照 0 更新；错例 <4 时反馈两项记 `not_identifiable_by_design`。
+
+**唯一的下一步**：等待授权输入后再启动 600 更新正式比较；在此之前不申请放行、不跑训练、不写账本。
