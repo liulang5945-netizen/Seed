@@ -1,0 +1,108 @@
+{
+  "schema": "taiji-u2-a1b-cal-v1",
+  "card": "22.5.A.1b-cal",
+  "date": "2026-11-15",
+  "status": "post_hoc_zero_training",
+  "verdict": "a_parent_read_calibrated_post_hoc",
+  "a1b_checkpoint": "data/experiments/taiji_u2/a1b/20261115T2300Z/a1b-00200.pt",
+  "a1b_checkpoint_sha256": "3ebac8b34ace3e9d784867e0096527cba515bace68199712a6cdc940a458dbc3",
+  "prior_source": "train64_column_labels",
+  "fit_labels_used_in_prior": false,
+  "prior": [
+    0.0234375,
+    0.03027344,
+    0.015625,
+    0.01464844,
+    0.01464844,
+    0.02148438,
+    0.87988281
+  ],
+  "fit_prior_for_red_direction": [
+    0.05859375,
+    0.05078125,
+    0.0625,
+    0.02539062,
+    0.04101562,
+    0.015625,
+    0.74609375
+  ],
+  "rows": {
+    "none": {
+      "fit": {
+        "correct": 25,
+        "denominator": 32,
+        "accuracy": 0.78125
+      },
+      "train": {
+        "correct": 53,
+        "denominator": 64,
+        "accuracy": 0.828125
+      }
+    },
+    "train_prior": {
+      "fit": {
+        "correct": 32,
+        "denominator": 32,
+        "accuracy": 1.0
+      },
+      "train": {
+        "correct": 61,
+        "denominator": 64,
+        "accuracy": 0.953125
+      }
+    },
+    "painted_boost": {
+      "fit": {
+        "correct": 29,
+        "denominator": 32,
+        "accuracy": 0.90625
+      },
+      "train": {
+        "correct": 59,
+        "denominator": 64,
+        "accuracy": 0.921875
+      }
+    }
+  },
+  "cross_split": {
+    "prior_even_on_odd": {
+      "correct": 32,
+      "denominator": 32,
+      "accuracy": 1.0
+    },
+    "prior_odd_on_even": {
+      "correct": 27,
+      "denominator": 32,
+      "accuracy": 0.84375
+    }
+  },
+  "caveats": {
+    "post_hoc": true,
+    "fit_was_seen_before_this_correction": true,
+    "cross_split_min": 0.84375,
+    "check2": "not_read",
+    "accepted_parent": false,
+    "clean_confirmation": "requires a pre-registered frozen card or a held-out split"
+  },
+  "cost": {
+    "cpu": 0.0,
+    "wall": 0.0
+  },
+  "discipline": {
+    "training": 0,
+    "optimizer_steps": 0,
+    "check_reads": 0,
+    "final_reads": 0,
+    "capability_claims": 0,
+    "accepted_parent": false
+  },
+  "run_conditions": {
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "source_pins": {
+    "runner": "222d8c0ce1de555201cbd0476086322052f444f05b5b57c45db807c40fe74f51",
+    "a1b_runner": "c540c20d76cf95ecc75704973ff406d5d01296bbbe30bdcd528f87cb737f6a66",
+    "a1b_contract": "626e1203a28fcde805b56cc23817badaf61b84c7df49ccd668c9e6c7f7fa75b2"
+  }
+}

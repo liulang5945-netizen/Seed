@@ -1,0 +1,39 @@
+{
+  "schema": "taiji-u2-a1b-cal-guard-v1",
+  "card": "22.5.A.1b-cal",
+  "date": "2026-11-15",
+  "checks": {
+    "prior_matches_train64": true,
+    "fit_prior_differs": true,
+    "fit_matches_report": true,
+    "train_matches_report": true,
+    "cross_matches_report": true,
+    "checkpoint_sha256_matches": true,
+    "zero_optimizer_steps": true,
+    "zero_check_final_reads": true,
+    "fit_labels_not_used_in_prior": true,
+    "post_hoc_declared": true,
+    "parent_not_claimed": true
+  },
+  "red_directions": {
+    "fit_prior_is_different": true,
+    "tampered_prior_changes_predictions": true,
+    "pre_registered_claim_detected": true,
+    "parent_claim_detected": true
+  },
+  "all_checks_green": true,
+  "all_red_directions_respond": true,
+  "fit": 32,
+  "train": 61,
+  "cross_min": 0.84375,
+  "run_conditions": {
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "discipline": {
+    "training": 0,
+    "optimizer_step": 0,
+    "check_final_reads": 0,
+    "capability_claims": 0
+  }
+}
