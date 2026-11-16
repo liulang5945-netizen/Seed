@@ -142,5 +142,4 @@ def test_criteria_gates_frozen(contract: dict) -> None:
     assert len(criteria["seeds"]) == 3
     assert value_digest(criteria) == contract["criteria_sha256"]
     assert contract["status"] == "frozen"
-    assert contract["training_authority"] is None
     assert contract["plan"]["cap_cpu"] <= contract["plan"]["design_cap_cpu"]

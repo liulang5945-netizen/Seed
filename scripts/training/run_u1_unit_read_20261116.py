@@ -377,6 +377,9 @@ def gradient_coverage(graph: Any, item: dict[str, Any]) -> dict[str, Any]:
 
 
 def build_graph(seed: int, dtype: str = "float64") -> Any:
+    # The readout Linear uses global torch RNG for its default init, so seed the
+    # global RNG to make the WHOLE graph (and its capsule) deterministic from seed.
+    torch.manual_seed(seed)
     return build_route("B", UnitGraphSpec(dtype=dtype, seed=seed))
 
 

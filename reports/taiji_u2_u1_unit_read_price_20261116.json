@@ -5,8 +5,8 @@
   "verdict": "price_measured_within_design",
   "samples": {
     "forward_backward": [
-      0.0,
       0.01562,
+      0.0,
       0.0
     ],
     "adam_step": [
@@ -35,7 +35,7 @@
     "check_reads": 0
   },
   "cost": {
-    "cpu": 1.6719,
-    "wall": 2.0
+    "cpu": 1.2812,
+    "wall": 1.625
   }
 }

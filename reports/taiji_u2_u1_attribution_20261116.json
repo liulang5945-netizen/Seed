@@ -1,0 +1,65 @@
+{
+  "schema": "taiji-u2-u1-attribution-v1",
+  "card": "22.5.U.1",
+  "phase": "attribution",
+  "seed": 2026111602,
+  "start_gradient_credit": {
+    "rgb_encoder": 0.0024946036254902097,
+    "question_encoder": 0.0434807436724313,
+    "readout_weight": 0.04269500262113016,
+    "units_r": 0.058001762154064135,
+    "units_p": 0.06523228705925052,
+    "query": 0.07344812853965879
+  },
+  "dose_response": [
+    {
+      "updates": 384,
+      "fit_accuracy": 0.3125,
+      "train_accuracy": 0.375,
+      "fit_distinct": 2,
+      "fit_pred_distribution": {
+        "3": 17,
+        "2": 15
+      }
+    },
+    {
+      "updates": 768,
+      "fit_accuracy": 0.34375,
+      "train_accuracy": 0.375,
+      "fit_distinct": 2,
+      "fit_pred_distribution": {
+        "3": 18,
+        "2": 14
+      }
+    },
+    {
+      "updates": 1536,
+      "fit_accuracy": 0.1875,
+      "train_accuracy": 0.40625,
+      "fit_distinct": 2,
+      "fit_pred_distribution": {
+        "0": 26,
+        "3": 6
+      }
+    },
+    {
+      "updates": 3000,
+      "fit_accuracy": 0.21875,
+      "train_accuracy": 0.5,
+      "fit_distinct": 2,
+      "fit_pred_distribution": {
+        "0": 31,
+        "3": 1
+      }
+    }
+  ],
+  "discipline": {
+    "frozen_gate_changed": false,
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0
+  },
+  "cost": {
+    "cpu": 11.2656
+  }
+}

@@ -1,0 +1,141 @@
+{
+  "schema": "taiji-u2-u1-recover-v1",
+  "card": "22.5.U.1",
+  "phase": "recover",
+  "criteria_sha256": "b58f40d9c50ea6e5f112d207c09f4ea1d05d08fe06896edece0d731a8875a992",
+  "verdict": "recovery_verified",
+  "checks": {
+    "seed2026111601_initial_restore": true,
+    "seed2026111601_final_restore": true,
+    "seed2026111601_final_next_gradient": true,
+    "seed2026111601_tamper_rejected": true,
+    "seed2026111602_initial_restore": true,
+    "seed2026111602_final_restore": true,
+    "seed2026111602_final_next_gradient": true,
+    "seed2026111602_tamper_rejected": true,
+    "seed2026111603_initial_restore": true,
+    "seed2026111603_final_restore": true,
+    "seed2026111603_final_next_gradient": true,
+    "seed2026111603_tamper_rejected": true
+  },
+  "uncovered": [],
+  "receipts": [
+    {
+      "pid": 33024,
+      "summary": {
+        "route": "B",
+        "units": 12,
+        "edges": 12,
+        "tensors": 19,
+        "proposal_clock": 0,
+        "parameter_version": 0,
+        "digest": "ca74f68feffc71bf3bf50f162d2413d47908d0ea319ba092f864d5e2431b3193"
+      },
+      "capsule_digest": "a6e0d1b2bcab0e9618dec0ec12ac55f90c544fd0a0c01ced91330933de933bc4",
+      "next_loss": 5.162433124123894e-05,
+      "next_gradient_digest": "9d7b6ce104cfa6ae8b2dff97734056f3fd91ef32b4b0f388bc7aa0686481ad5c",
+      "digest_matches": true,
+      "tag": "seed2026111601_initial",
+      "pid_differs": true
+    },
+    {
+      "pid": 34948,
+      "summary": {
+        "route": "B",
+        "units": 12,
+        "edges": 12,
+        "tensors": 19,
+        "proposal_clock": 384,
+        "parameter_version": 384,
+        "digest": "9ef4b97213957f826655f217737a91063681fec52f8aa1d51a737df82dc7226a"
+      },
+      "capsule_digest": "aa813a9320df60ae02cba8fb4fcb88f58f76fb50bde49ff75863cea3d5f3d031",
+      "next_loss": 0.009392421008928354,
+      "next_gradient_digest": "960c3266320a05d3b5641511f4f7e883f3e4c96106328288d0c28aba2f228ea1",
+      "digest_matches": true,
+      "tag": "seed2026111601_final",
+      "pid_differs": true
+    },
+    {
+      "pid": 37524,
+      "summary": {
+        "route": "B",
+        "units": 12,
+        "edges": 12,
+        "tensors": 19,
+        "proposal_clock": 0,
+        "parameter_version": 0,
+        "digest": "57b4e907a36b700b53a0b0ceb5a6dc6defa77dfd985d76463fbc0ac275b3c08e"
+      },
+      "capsule_digest": "f922e874e51bfb1384ea7fe962b73b70b0be2c30bc468dade7ece7c79c2ecc34",
+      "next_loss": 2.5688274305315565e-05,
+      "next_gradient_digest": "41e6464d7558228689ee485b9bd9ea00f2102ce704328598a7eb0660e5198722",
+      "digest_matches": true,
+      "tag": "seed2026111602_initial",
+      "pid_differs": true
+    },
+    {
+      "pid": 28700,
+      "summary": {
+        "route": "B",
+        "units": 12,
+        "edges": 12,
+        "tensors": 19,
+        "proposal_clock": 384,
+        "parameter_version": 384,
+        "digest": "61cd73abad184727b92a6ab68f240d5904be5da02b2ba80edd3bebad9e785cf5"
+      },
+      "capsule_digest": "559f58863b0499029ce31686e8283bb84d46d689fc17dfcac1d32f7259c27273",
+      "next_loss": 0.3074210761435052,
+      "next_gradient_digest": "9c4376d6638f8fd68216efb6f478f66a0df1336a9991465cda92f99e828e45e0",
+      "digest_matches": true,
+      "tag": "seed2026111602_final",
+      "pid_differs": true
+    },
+    {
+      "pid": 32192,
+      "summary": {
+        "route": "B",
+        "units": 12,
+        "edges": 12,
+        "tensors": 19,
+        "proposal_clock": 0,
+        "parameter_version": 0,
+        "digest": "a613b1a9156196b411f6dbe6270e3a15e3a9b43be8795211aa5764e455074ad4"
+      },
+      "capsule_digest": "b44fb6acee218e156cf0248b18d1c963f59c0a626bad670d3f1179184fb930f1",
+      "next_loss": 7.365452162873895e-05,
+      "next_gradient_digest": "e45e955ece20246b4b0e0a8957ac31860b753f02b0ed4f1c03808b3c301e3af0",
+      "digest_matches": true,
+      "tag": "seed2026111603_initial",
+      "pid_differs": true
+    },
+    {
+      "pid": 24464,
+      "summary": {
+        "route": "B",
+        "units": 12,
+        "edges": 12,
+        "tensors": 19,
+        "proposal_clock": 384,
+        "parameter_version": 384,
+        "digest": "7f6a1d7bbe7933de4abf6126484358acc2c042d478f89330693acda34133aa64"
+      },
+      "capsule_digest": "2ff4d9ff6d58669c6eadfdae109f389fcf632b63949339b8d48ec579422ca016",
+      "next_loss": 0.15554524690250277,
+      "next_gradient_digest": "f838424052bb22e90c29b62320d6b83d2039792f7ba794e195f05c3ee53c5c61",
+      "digest_matches": true,
+      "tag": "seed2026111603_final",
+      "pid_differs": true
+    }
+  ],
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0
+  },
+  "cost": {
+    "cpu": 0.1875,
+    "wall": 18.906
+  }
+}

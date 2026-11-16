@@ -3,7 +3,7 @@
   "card": "22.5.U.1",
   "date": "2026-11-16",
   "status": "frozen",
-  "training_authority": null,
+  "training_authority": "owner 2026-11-16 授权按 read_3seed 实价帽 18.0 CPU/36.0 wall 执行（3 seed x 384 更新，零封存读取）",
   "identity": "taiji-u2-unit-core-b-v1",
   "core_version": "unit-core-b-v1",
   "revision_limit": 2,
@@ -52,7 +52,7 @@
     "per_eval_cpu": 0.0
   },
   "source_pins": {
-    "runner": "d587f5881a5d4dfdf5c92bee46776e4d8be8a3bae91964caaae23201a43d535d",
+    "runner": "ab6def65ca694148da930bc8e3a2aab7019d82a91d1ce6600c2b6a4d7ea09948",
     "unit_input": "4a97e0d1eb3b0be4af65e0bc7a5d9f84767f51f2bd24f60e74b1914eefc1ae6b",
     "neural_units": "6a8bfc15f44b39cc22cd1570bf43cedaf44e018628572efb528f2a829a5deca9",
     "support": "33d9301f98859934c1413e25765c55e6bc7b64dfa410d65b03f0e5a198041b4c",
@@ -65,9 +65,25 @@
     "seed2026111603": "data/experiments/taiji_u2/u1_unit_read_20261116/seed2026111603_initial.bin"
   },
   "start_bundle_sha256": {
-    "seed2026111601": "9f9eeb3679c8fa14a32d1731fe883cdb79eecfcc8362f70e8e7caa1990832ffc",
-    "seed2026111602": "62874dc5bc405066d0a670b046964ef62a079abc16605dbcd12a680e35f65d06",
-    "seed2026111603": "948d98fedb1890d1348de77d28e908541855e1d0a988c42e491758f5404ae423"
+    "seed2026111601": "33ad462b02cba351d6ae738aa95d8d6e6be5cfba71747344cbd080a7d223be64",
+    "seed2026111602": "5f0dc89e26b47c69c0a41a2851f0418cf57de759d2992486bb2b1005f7593d16",
+    "seed2026111603": "8055604c10705ca78d6ad4ba84c2c81ba8693fd24850172c4a83c47b9fe45a0f"
   },
-  "result": null
+  "result": {
+    "verdict": "read_prerequisite_failed",
+    "date": "2026-11-16",
+    "fit_accuracy": [0.21875, 0.3125, 0.40625],
+    "train_accuracy": [0.40625, 0.375, 0.359375],
+    "fit_distinct": [2, 2, 2],
+    "cpu_seconds": 6.375,
+    "cap_cpu": 18.0,
+    "recover": "12/12",
+    "verify": "12/12",
+    "attribution": "not dose (8x dose -> train 0.5/fit 0.22, class collapse); RGB encoder gradient credit 0.0025 vs query 0.073 (~30x starvation); mean-pool readout over T washes out column-position binding; encoding faithful 96/96 oracle",
+    "result_card": "plans/reference/RESULT-TAIJI_U2_U1_UNIT_READ_20261116.md",
+    "run_report": "reports/taiji_u2_u1_unit_read_run_20261116.json",
+    "attribution_report": "reports/taiji_u2_u1_attribution_20261116.json",
+    "capability_scope": "read prerequisite failed; no parent/capability/check2/22.6 claim",
+    "decision_node": "U.1 revision 1 (position-aware readout) vs closeout; owner adjudication; revision limit 2, used 0"
+  }
 }

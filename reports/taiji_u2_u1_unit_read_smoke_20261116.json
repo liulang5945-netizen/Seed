@@ -60,14 +60,14 @@
         "h_perturb_bit_identical": true,
         "rgb_zero_agreement": 1.0,
         "fixed_question_agreement": 1.0,
-        "max_abs_without_edges": 0.004194962511568334,
-        "max_abs_permute_source": 0.00449809081741681,
-        "max_abs_history": 0.0036723835390927023
+        "max_abs_without_edges": 0.0029906129609534185,
+        "max_abs_permute_source": 0.01750853453402726,
+        "max_abs_history": 0.0013166339686915048
       },
       "neutral_birth": {
         "neutral_birth_exact": true,
         "neutral_birth_max_abs": 0.0,
-        "new_unit_r_gradient_after_credit": 0.02539126325490645,
+        "new_unit_r_gradient_after_credit": 0.03586386186608167,
         "new_unit_r_credit_path_wired": true,
         "generation": 1
       },
@@ -101,16 +101,16 @@
         "history_changes_readout": true,
         "cut_h_bit_identical": true,
         "h_perturb_bit_identical": true,
-        "rgb_zero_agreement": 1.0,
+        "rgb_zero_agreement": 0.0,
         "fixed_question_agreement": 1.0,
-        "max_abs_without_edges": 0.006230102101682876,
-        "max_abs_permute_source": 0.010517606512379785,
-        "max_abs_history": 0.001447515733327933
+        "max_abs_without_edges": 0.00470803542057284,
+        "max_abs_permute_source": 0.009414078306216933,
+        "max_abs_history": 0.0006741013659615248
       },
       "neutral_birth": {
         "neutral_birth_exact": true,
         "neutral_birth_max_abs": 0.0,
-        "new_unit_r_gradient_after_credit": 0.0055847312320399115,
+        "new_unit_r_gradient_after_credit": 0.0033032939012540025,
         "new_unit_r_credit_path_wired": true,
         "generation": 1
       },
@@ -146,14 +146,14 @@
         "h_perturb_bit_identical": true,
         "rgb_zero_agreement": 1.0,
         "fixed_question_agreement": 1.0,
-        "max_abs_without_edges": 0.003174651835148477,
-        "max_abs_permute_source": 0.007975261416075323,
-        "max_abs_history": 0.0019081789324317108
+        "max_abs_without_edges": 0.004100140099270268,
+        "max_abs_permute_source": 0.010162339638964254,
+        "max_abs_history": 0.0018814491542313398
       },
       "neutral_birth": {
         "neutral_birth_exact": true,
         "neutral_birth_max_abs": 0.0,
-        "new_unit_r_gradient_after_credit": 0.007983967097765152,
+        "new_unit_r_gradient_after_credit": 0.0005409585443009529,
         "new_unit_r_credit_path_wired": true,
         "generation": 1
       },
@@ -183,7 +183,7 @@
     "confirm_reads": 0
   },
   "cost": {
-    "cpu": 0.2188,
-    "wall": 0.234
+    "cpu": 0.1719,
+    "wall": 0.172
   }
 }
