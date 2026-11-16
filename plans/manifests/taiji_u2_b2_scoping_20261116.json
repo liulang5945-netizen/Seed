@@ -1,0 +1,295 @@
+{
+  "schema": "taiji-u2-b2-scoping-v1",
+  "status": "frozen",
+  "card": "22.5.B.2",
+  "date": "2026-11-16",
+  "scope": "second structural card of the B line: the B.1 adapter delta gated on record presence (correction=v2, identity taiji-u2-subject-v7); retention earned on record-present distractor rounds, record-free check declared structural monitor",
+  "lineage": {
+    "parent_line": "22.5.B.1 (closed negative, D-20261116-09)",
+    "parent_bundles": "A.5 pre-feedback bundles, one per seed, byte-identical (same start as B.1)",
+    "inherited": {
+      "tensors": 194,
+      "scalars": 22742,
+      "rule": "bit-exact load_state_dict"
+    },
+    "born": {
+      "tensors": [
+        "correction_adapter.first.weight",
+        "correction_adapter.first.bias",
+        "correction_adapter.last.weight",
+        "correction_adapter.last.bias"
+      ],
+      "scalars": 408,
+      "init": "same as B.1: first layer from the seeded stream continuation, last layer zero => neutral at birth"
+    },
+    "identity": "taiji-u2-subject-v7",
+    "state_fields": 42,
+    "structural_delta_vs_b1": "presence gate only (valid.any() multiplier); no new parameters"
+  },
+  "candidate": {
+    "architecture": "native",
+    "profile": "metadata+request+correction-v2",
+    "seed": 20261110,
+    "parameters": 23150,
+    "tensors": 198,
+    "subject_frozen": true,
+    "encoder_bundle": "data/experiments/taiji_u2/p4_2/20261116T0500Z/reconstruct-B-007376.pt",
+    "encoder_bundle_sha256": "f670508850685cb8aa4e9ed385eb2f5997154524e606d1ab7cbfbd5230eb0f2f",
+    "a1b_checkpoint": "data/experiments/taiji_u2/a1b/20261115T2300Z/a1b-00200.pt",
+    "a1b_checkpoint_sha256": "3ebac8b34ace3e9d784867e0096527cba515bace68199712a6cdc940a458dbc3",
+    "read_head_parameters": 263,
+    "prior": [
+      0.0234375,
+      0.0302734375,
+      0.015625,
+      0.0146484375,
+      0.0146484375,
+      0.021484375,
+      0.8798828125
+    ],
+    "correction": "v2",
+    "identity": "taiji-u2-subject-v7"
+  },
+  "data_root": "data/experiments/taiji_u2/first_a/20261112T074836Z/data.bin",
+  "data_digest": "40813b4cc8ffec0c3ae5639941b373c139422b4ccbaa34790de34a9e1149d214",
+  "read_code": {
+    "interface": "read-code-v1",
+    "width": 24,
+    "class_order": [
+      "左边",
+      "中间",
+      "右边",
+      "未知"
+    ],
+    "rule": "zeros(24); code[class] = 1.0; both branches receive the same code at joint_readout",
+    "injection": "forward hook on joint_readout replaces its output with joint_readout(code); training, evaluation and feedback use the same path",
+    "limitation": "the code carries the read's four-way answer, not the scene's pixels; a pass measures byte expression, not content-conditioned binding"
+  },
+  "emission_parameters": [
+    "byte_head.bias",
+    "byte_head.weight",
+    "copy_gate.bias",
+    "copy_gate.weight",
+    "joint_readout.first.bias",
+    "joint_readout.first.weight",
+    "joint_readout.last.bias",
+    "joint_readout.last.weight"
+  ],
+  "record_parameters": [
+    "coverage_logit",
+    "record_goal_query.weight",
+    "record_key.weight",
+    "record_metadata.bias",
+    "record_metadata.weight",
+    "record_null.bias",
+    "record_null.weight",
+    "record_null_value",
+    "record_output.bias",
+    "record_output.weight",
+    "record_position_key.weight",
+    "record_position_query.bias",
+    "record_position_query.weight",
+    "record_provenance.weight",
+    "record_query.bias",
+    "record_query.weight",
+    "record_value.bias",
+    "record_value.weight"
+  ],
+  "adapter_parameters": [
+    "correction_adapter.first.bias",
+    "correction_adapter.first.weight",
+    "correction_adapter.last.bias",
+    "correction_adapter.last.weight"
+  ],
+  "emission_scalar_count": 3919,
+  "record_scalar_count": 762,
+  "adapter_scalar_count": 408,
+  "trainable_tensor_count": 22,
+  "trainable_scalar_count": 1170,
+  "feedback_optimizer": {
+    "lr": 0.001,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "weight_decay": 0.0
+  },
+  "start_bundles": {
+    "20261110": "data/experiments/taiji_u2/a5/20261116T0520Z/seed-20261110/bundle-pre-feedback.pt",
+    "20261111": "data/experiments/taiji_u2/a5/20261116T0520Z/seed-20261111/bundle-pre-feedback.pt",
+    "20261112": "data/experiments/taiji_u2/a5/20261116T0520Z/seed-20261112/bundle-pre-feedback.pt"
+  },
+  "start_bundle_sha256": {
+    "20261110": "de5452f6b7716cb44f48221aafca5e5e5f132fcdeaa46c3196d8929d0c815465",
+    "20261111": "db04cb9b889d3ee61c0bb86342f961409f33b3c30cabffa24eacc6d8ecea9627",
+    "20261112": "3dbc1ba54713e59808de730251485fdddd125500223c4a9a70564b50974b783a"
+  },
+  "run_root": "data/experiments/taiji_u2/b2/20261116T1400Z",
+  "plan": {
+    "option": "scoping_3seed",
+    "seeds": [
+      20261110,
+      20261111,
+      20261112
+    ],
+    "k": 8,
+    "errors_per_seed": 24,
+    "updates_total": 576,
+    "distractor_rounds_per_seed": 32,
+    "diagnostic_reasks": false,
+    "control_exposure_episodes": 3,
+    "bootstrap_resamples": 2000,
+    "bootstrap_seed": 20261116,
+    "contingency": 0.15,
+    "design_cap_cpu": 600.0,
+    "design_cap_wall": 1200.0,
+    "cap_cpu": 493.027,
+    "cap_wall": 986.054
+  },
+  "task_b": {
+    "definition": "fact revision: the environment legally releases a record stating the queried entity's new position; the answer target is that new position; the first pass only sees the read and is wrong by construction",
+    "templates": [
+      "{entity}现在在{label}。",
+      "现在在{label}的是{entity}。",
+      "{label}就是{entity}此刻的位置。",
+      "据最新观测，{entity}的位置是{label}。"
+    ],
+    "template_offsets": [
+      21,
+      9,
+      0,
+      42
+    ],
+    "template_rule": "the answer word must land at a different byte offset in each template; with a single template every record puts the answer at byte 21, and 'copy bytes 21..27' would pass the gate without reading the fact",
+    "counter_fact_arm": "a second arm releases a record whose answer contradicts the truth; a subject that reads the record must answer differently, a fixed-offset copier cannot",
+    "measured_headroom": {
+      "denominator": 24,
+      "first_pass_correct": 0,
+      "with_record_correct_frozen": 0,
+      "note": "the gain is not zero by construction; an update has something to buy"
+    },
+    "measured_content_sensitivity": {
+      "max_abs_delta_at_first_position": 0.4717979431,
+      "position_argmax_by_word": [
+        26,
+        24,
+        26
+      ],
+      "note": "the channel reacts to the answer word (delta 0.47) but the copy position does not yet point at it (entropy 3.40 over thirty positions), so there is real work for an update to do"
+    },
+    "measured_protocol_limits": {
+      "unseen_query": "routing is numerically but not operationally query-sensitive: a paraphrase moves route mass by 1e-6, so an unseen-query gate cannot rest on routing; the unseen query is therefore measured by changing the request wording and the template, and by scoring only rounds whose wording was never released",
+      "cross_session": "records, released ids and fast memory all survive a save/reload boundary and routing after reload equals routing before (0.527698 / 0.472302)",
+      "multi_fact": "with two records released the route is query-blind (0.345389 against 0.345390), so task B is single-fact per episode by design"
+    },
+    "measured_gate_structure": {
+      "gates_see_the_record": false,
+      "max_gamma_delta": 0.0,
+      "max_lambda_delta": 0.0,
+      "a_task_invariant_without_a_record": true,
+      "note": "the copy gate is a function of the read code only, so it cannot switch on the presence of a record; the switch has to come from the record route and the copy position, which are the parameters this card trains"
+    }
+  },
+  "criteria": {
+    "question": "does gating the correction delta on record presence let correction and retention hold at once, with retention earned on record-present distractor rounds",
+    "response_round": "exact answer bytes plus EOS plus valid UTF-8, greedy, 65-byte cap",
+    "denominator": "the 24 first-pass fit errors per seed, same subject, same template assignment",
+    "main_gate": 0.8,
+    "correction_gate": 0.8,
+    "zero_band": 0.05,
+    "feedback_gain_gate": 0.05,
+    "retention_gate": 0.02,
+    "retention_arm": "distractor A: the 32 fit questions re-asked with a legally released record about a DIFFERENT entity; correct answer stays the frozen truth; damage = pre-feedback distractor accuracy - post-feedback distractor accuracy, baseline measured per seed at start (adapter zero at birth => baseline equals v4-with-record)",
+    "retention_is_not_tautological": "the presence gate opens on distractor rounds (a record is present), the trained adapter is live there and can damage them; the record-free A check is EXACTLY zero by construction (gate closed) and is declared monitor-only, never citable as earned retention (the A.5 trap)",
+    "distractor_rule": "other entity = next fit example's entity (skip one if equal, must differ); label = queried example's revised position, or 左边 for unknown targets; template = index % 4; single record, legally released; distractors are NEVER trained on",
+    "gate_structure": "correction=v2 multiplies the adapter delta by valid.any() (the copy branch's presence signal); smoke must prove: perturbation cannot move record-free A (closed exact), perturbation moves record-present B (open), knockout restores v4 even with records, returned context equals base+ungated-adapter with a record and base without",
+    "bootstrap": "world-paired per example (learned - control), 2000 resamples, seed 20261116, 95% lower bound > 0",
+    "stability": "first-pass correct to second-pass wrong <= max(1, 0.10 * first-pass correct)",
+    "seeds": [
+      20261110,
+      20261111,
+      20261112
+    ],
+    "seed_rule": "a positive exit requires correction >= gate, distractor damage <= gate and gain >= gate on all three seeds",
+    "protocol": "B.1 lean unchanged: one error released at a time, k=8 updates per error, no rollback, no diagnostic re-asks, final full pass for the gate; control exposure 3 episodes",
+    "rollback": "none",
+    "counterfactual_arm": "the counter record (third position, same entity) must be followed at >= 0.8 on every seed that reaches the correction gate",
+    "knockout_arm": "with the correction verification cut: B accuracy <= first pass + 0.05 and A digest == baseline digest",
+    "control_arm": "zero-update control: 3 legally released exposure episodes, parameters bit-identical, second pass over all 24 == first pass",
+    "path_purity": "all 176 non-trainable base tensors bit-identical to the start bundle; the 8 emission tensors (3919 scalars) stay frozen throughout",
+    "recovery": "independent process reloads the post-feedback bundle; 32 A + 24 B + 32 distractor rounds byte-identical",
+    "not_identifiable": "first-pass errors < 4 => not_identifiable_by_design",
+    "teacher_forcing": "forbidden at evaluation; record_loss uses teacher forcing for the loss only (declared, as in A.5/A.6/B.1)",
+    "start_state": "A.5 pre-feedback bundle per seed, byte-identical (same start as B.1, NOT B.1 post-feedback); v7 inherits 194 tensors, 4 adapter tensors born zero-neutral",
+    "structural_variable": "exactly one over B.1: the presence gate on the adapter delta; trainable set, data, protocol, thresholds otherwise identical",
+    "accepted_parent": false,
+    "capability_claims": 0,
+    "check2": "not_read",
+    "unlock_22_6": false
+  },
+  "criteria_sha256": "75daaf6f415b773f09b65f825eb07696e3acd7aa0f742c7dee43e107eb72f66b",
+  "criteria_canonicalization": "json.dumps(criteria, sort_keys=True, ensure_ascii=False, separators=(',',':')) utf-8 sha256",
+  "training_authority": null,
+  "authorization": {
+    "asked": null,
+    "reply": null,
+    "reply_date": null,
+    "scope": null
+  },
+  "source_pins": {
+    "runner": "2ce7a5dabde66a1d8ce526b4b82f930f368db1f922b21b38bde44b70bc7323d4",
+    "b1_runner": "549541796290824770b836938e7331a08553cbff7258a17eb05a275dde50fc83",
+    "a5_runner": "3e4db0ccf8346b77c132a2cc428c100dc00e94700368f0b857af2a308c9cf231",
+    "a2_runner": "c26f4a545ffb5d12f579cb7e69c57eabca6cd7c427e479fb3a55e4621f0fd981",
+    "subject": "b7ae83db6fbb6b086541d6ca41a235cb855e60415377009af14ced03cddd99ff",
+    "events": "b89d5424a76263efab7a5c944dbc820b34fdef4ed12b10afc0b651193a34c944",
+    "support": "33d9301f98859934c1413e25765c55e6bc7b64dfa410d65b03f0e5a198041b4c",
+    "columns": "852c54e60c97efb23f83072659a363f890c58a4929354467ce4b71a028bc8443"
+  },
+  "exits": [
+    "scoping_earns_joint_gate",
+    "correction_partial_under_scoping",
+    "correction_absent_under_scoping",
+    "retention_broken_under_scoping",
+    "knockout_failed",
+    "counterfactual_failed",
+    "not_identifiable_by_design",
+    "budget_stop",
+    "engineering_failure",
+    "pricing_over_budget"
+  ],
+  "limitations": [
+    "the read-code hook still cuts the fast path (A.2); the main term rides the injected calibrated read (A.1b-cal, post hoc; independent cross-half minimum 0.844)",
+    "presence scoping is not relevance scoping: distractor rounds are out-of-distribution for an adapter trained only on B-relevant records; failing them is a named, informative exit (relevance conditioning or retrieval would be the successor)",
+    "a positive result signs mechanism reachability under this configuration, not a parent and not a general learning capability",
+    "seeds only vary the cache-position consumption order (weak repetition, as in A.5/B.1)",
+    "k=8 is inherited from A.6/B.1; the dose curve is not re-measured"
+  ],
+  "note": "criteria frozen before any formal training; smoke and price are pre-authorization stages. caps filled from the measured price before the authorization ask; the criteria digest does not cover caps. smoke passed on all three seeds (0 optimizer steps); price measured on a discarded model (8 pricing steps); scoping_3seed cap 493.027 CPU / 986.054 wall, over_design_cap=False. Training not authorized.",
+  "unit_cpu_measured": {
+    "record_update": 0.40625,
+    "b_round": 0.21875,
+    "a_round": 0.046875
+  },
+  "price_options": [
+    {
+      "name": "scoping_3seed",
+      "seeds": 3,
+      "k": 8,
+      "updates": 576,
+      "distractor_rounds": 96,
+      "estimate_cpu": 428.719,
+      "cap_cpu": 493.027,
+      "cap_wall": 986.054,
+      "over_design_cap": false
+    }
+  ],
+  "price_report": "reports/taiji_u2_b2_scoping_price_20261116.json",
+  "smoke_report": "reports/taiji_u2_b2_scoping_smoke_20261116.json",
+  "wiring_cost": {
+    "smoke_cpu": 177.125,
+    "price_cpu": 6.953125,
+    "note": "pre-authorization wiring and pricing, accounted separately from the formal cap"
+  }
+}

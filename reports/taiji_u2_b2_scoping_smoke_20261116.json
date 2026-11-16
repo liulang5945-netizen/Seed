@@ -1,0 +1,95 @@
+{
+  "schema": "taiji-u2-b2-scoping-smoke-v1",
+  "card": "22.5.B.2",
+  "date": "2026-11-16",
+  "seeds": [
+    {
+      "seed": 20261110,
+      "inheritance": {
+        "a_digest_equal": true,
+        "b_digest_equal": true,
+        "base_tensors_bit_exact": true
+      },
+      "gate_closed_under_perturbation": true,
+      "gate_open_under_perturbation": true,
+      "distractor_birth_neutral": true,
+      "distractor_birth_accuracy": 1.0,
+      "knockout_restores_v4_with_records": true,
+      "gradient_probe": {
+        "adapter_grad_abs_sum_open": 4.021798133850098,
+        "parameters_unchanged": true,
+        "optimizer_steps": 0
+      },
+      "gate_structure": {
+        "closed_exact_zero": true,
+        "open_equals_ungated": true
+      },
+      "legal_release": [
+        "a5-fact"
+      ],
+      "first_pass_correct": 0,
+      "a_baseline_correct": 32
+    },
+    {
+      "seed": 20261111,
+      "inheritance": {
+        "a_digest_equal": true,
+        "b_digest_equal": true,
+        "base_tensors_bit_exact": true
+      },
+      "gate_closed_under_perturbation": true,
+      "gate_open_under_perturbation": true,
+      "distractor_birth_neutral": true,
+      "distractor_birth_accuracy": 1.0,
+      "knockout_restores_v4_with_records": true,
+      "gradient_probe": {
+        "adapter_grad_abs_sum_open": 7.5381669998168945,
+        "parameters_unchanged": true,
+        "optimizer_steps": 0
+      },
+      "gate_structure": {
+        "closed_exact_zero": true,
+        "open_equals_ungated": true
+      },
+      "legal_release": [
+        "a5-fact"
+      ],
+      "first_pass_correct": 0,
+      "a_baseline_correct": 32
+    },
+    {
+      "seed": 20261112,
+      "inheritance": {
+        "a_digest_equal": true,
+        "b_digest_equal": true,
+        "base_tensors_bit_exact": true
+      },
+      "gate_closed_under_perturbation": true,
+      "gate_open_under_perturbation": true,
+      "distractor_birth_neutral": true,
+      "distractor_birth_accuracy": 1.0,
+      "knockout_restores_v4_with_records": true,
+      "gradient_probe": {
+        "adapter_grad_abs_sum_open": 7.60453987121582,
+        "parameters_unchanged": true,
+        "optimizer_steps": 0
+      },
+      "gate_structure": {
+        "closed_exact_zero": true,
+        "open_equals_ungated": true
+      },
+      "legal_release": [
+        "a5-fact"
+      ],
+      "first_pass_correct": 0,
+      "a_baseline_correct": 32
+    }
+  ],
+  "skipped_unknown": 8,
+  "distractor_denominator": 32,
+  "optimizer_steps": 0,
+  "cost": {
+    "cpu": 177.125,
+    "wall": 179.607337
+  }
+}

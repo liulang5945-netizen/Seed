@@ -1,0 +1,29 @@
+{
+  "schema": "taiji-u2-b2-scoping-price-v1",
+  "card": "22.5.B.2",
+  "date": "2026-11-16",
+  "unit_cpu_measured": {
+    "record_update": 0.40625,
+    "b_round": 0.21875,
+    "a_round": 0.046875
+  },
+  "pricing_optimizer_steps": 8,
+  "pricing_model_discarded": true,
+  "options": [
+    {
+      "name": "scoping_3seed",
+      "seeds": 3,
+      "k": 8,
+      "updates": 576,
+      "distractor_rounds": 96,
+      "estimate_cpu": 428.719,
+      "cap_cpu": 493.027,
+      "cap_wall": 986.054,
+      "over_design_cap": false
+    }
+  ],
+  "cost": {
+    "cpu": 6.953125,
+    "wall": 7.714756
+  }
+}

@@ -51,9 +51,11 @@ def test_correction_fork_inherits_all_and_births_exactly_four():
 
 def test_config_rejects_invalid_correction_profiles():
     with pytest.raises(ValueError, match="correction"):
-        U2Config(correction="v2")
+        U2Config(correction="v3")
     with pytest.raises(ValueError, match="binding v2"):
         U2Config(binding="v2", correction="v1")
+    with pytest.raises(ValueError, match="binding v2"):
+        U2Config(binding="v2", correction="v2")
 
 
 def test_double_fork_is_refused():

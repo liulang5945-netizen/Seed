@@ -235,7 +235,7 @@
     "runner": "549541796290824770b836938e7331a08553cbff7258a17eb05a275dde50fc83",
     "a5_runner": "3e4db0ccf8346b77c132a2cc428c100dc00e94700368f0b857af2a308c9cf231",
     "a2_runner": "c26f4a545ffb5d12f579cb7e69c57eabca6cd7c427e479fb3a55e4621f0fd981",
-    "subject": "d5733cb7bac4f4c5ad2b7f58fdf0513854910c9ff05f750a5107e15cdf99c0da",
+    "subject": "b7ae83db6fbb6b086541d6ca41a235cb855e60415377009af14ced03cddd99ff",
     "events": "b89d5424a76263efab7a5c944dbc820b34fdef4ed12b10afc0b651193a34c944",
     "support": "33d9301f98859934c1413e25765c55e6bc7b64dfa410d65b03f0e5a198041b4c",
     "columns": "852c54e60c97efb23f83072659a363f890c58a4929354467ce4b71a028bc8443"
@@ -259,7 +259,7 @@
     "seeds only vary the cache-position consumption order (weak repetition, as in A.5)",
     "k=8 is the only dose that produced correction in A.6; B.1 does not re-measure the dose curve"
   ],
-  "note": "criteria frozen before any formal training (amendment v2: control exposure parametrized to >=3 episodes for the lean option, still before any formal reading; criteria_sha256 recomputed). The pricing gate rejected full_3seed on the final measurement (cap 626.175 > design cap 600); lean_3seed selected at cap 562.943 CPU / 1125.886 wall, within the 600/1200 design cap. The design cap was not raised. smoke passed on all three seeds (0 optimizer steps); price measured on a discarded model (8 pricing steps). Training not authorized.",
+  "note": "criteria frozen before any formal training (amendment v2: control exposure parametrized to >=3 episodes for the lean option, still before any formal reading; criteria_sha256 recomputed). The pricing gate rejected full_3seed on the final measurement (cap 626.175 > design cap 600); lean_3seed selected at cap 562.943 CPU / 1125.886 wall, within the 600/1200 design cap. The design cap was not raised. smoke passed on all three seeds (0 optimizer steps); price measured on a discarded model (8 pricing steps). Training not authorized. subject pin refreshed after the v7 (B.2) extension: the v1 computation path is unchanged, b1 contract tests 9/9 green on the extended file, and B.1 verify was rerun after the refresh (16/16) to prove the published readings reproduce bit-exactly. old pin d5733cb7bac4f4c5, new pin b7ae83db6fbb6b08.",
   "unit_cpu_measured": {
     "record_update": 0.507812,
     "b_round": 0.265625,
