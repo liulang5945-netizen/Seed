@@ -1,0 +1,75 @@
+{
+  "schema": "taiji-u2-b1-separation-verify-v1",
+  "card": "22.5.B.1",
+  "date": "2026-11-16",
+  "checks": [
+    {
+      "check": "purity_seed_20261110",
+      "ok": true
+    },
+    {
+      "check": "a_digest_seed_20261110",
+      "ok": true
+    },
+    {
+      "check": "b_digest_seed_20261110",
+      "ok": true
+    },
+    {
+      "check": "knockout_seed_20261110",
+      "ok": true
+    },
+    {
+      "check": "recovery_seed_20261110",
+      "ok": true
+    },
+    {
+      "check": "purity_seed_20261111",
+      "ok": true
+    },
+    {
+      "check": "a_digest_seed_20261111",
+      "ok": true
+    },
+    {
+      "check": "b_digest_seed_20261111",
+      "ok": true
+    },
+    {
+      "check": "knockout_seed_20261111",
+      "ok": true
+    },
+    {
+      "check": "recovery_seed_20261111",
+      "ok": true
+    },
+    {
+      "check": "purity_seed_20261112",
+      "ok": true
+    },
+    {
+      "check": "a_digest_seed_20261112",
+      "ok": true
+    },
+    {
+      "check": "b_digest_seed_20261112",
+      "ok": true
+    },
+    {
+      "check": "knockout_seed_20261112",
+      "ok": true
+    },
+    {
+      "check": "recovery_seed_20261112",
+      "ok": true
+    },
+    {
+      "check": "rates_match_report",
+      "ok": true
+    }
+  ],
+  "all_ok": true,
+  "cost": {
+    "cpu": 36.140625
+  }
+}

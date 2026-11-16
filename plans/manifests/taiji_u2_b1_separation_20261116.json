@@ -224,12 +224,12 @@
   },
   "criteria_sha256": "b9a3842f1d42f58e756fcc37aed27a74ae5119d6654e7f583cd5f846667c4bf4",
   "criteria_canonicalization": "json.dumps(criteria, sort_keys=True, ensure_ascii=False, separators=(',',':')) utf-8 sha256",
-  "training_authority": null,
+  "training_authority": "owner replied 授权执行 on 2026-11-16 to lean_3seed (cap 562.943 CPU / 1125.886 wall)",
   "authorization": {
-    "asked": null,
-    "reply": null,
-    "reply_date": null,
-    "scope": null
+    "asked": "是否授权按 lean_3seed 实价执行 22.5.B.1（帽 562.943 CPU／1125.886 wall，576 更新，3 seed，无诊断重问、控制曝光 3 例）",
+    "reply": "授权执行",
+    "reply_date": "2026-11-16",
+    "scope": "three seeds, k=8, 576 updates, lean option, cap 562.943 CPU / 1125.886 wall"
   },
   "source_pins": {
     "runner": "549541796290824770b836938e7331a08553cbff7258a17eb05a275dde50fc83",
@@ -295,5 +295,28 @@
     "smoke_cpu": 81.140625,
     "price_cpu": 8.15625,
     "note": "pre-authorization wiring and pricing, accounted separately from the formal cap. Earlier smoke/price pairs were superseded by runner edits and rerun; the final archived pair was produced by the pinned runner except for one run-mode-only edit afterwards (control exposure parametrization), which does not touch the smoke or price code paths."
+  },
+  "result": {
+    "verdict": "retention_broken_under_separation",
+    "date": "2026-11-16",
+    "correction_rates": [
+      0.0,
+      0.0,
+      0.08333333333333333
+    ],
+    "damages": [
+      0.5,
+      0.0,
+      0.5
+    ],
+    "lower_bound_95": 0.0,
+    "cost_cpu": 399.46875,
+    "cost_wall": 448.445061,
+    "run_report": "reports/taiji_u2_b1_separation_run_20261116.json",
+    "verify_report": "reports/taiji_u2_b1_separation_verify_20261116.json",
+    "attribution_report": "reports/taiji_u2_b1_attribution_20261116.json",
+    "result_card": "plans/reference/RESULT-TAIJI_U2_B1_SEPARATION_20261116.md",
+    "verify": "16/16 green; red drill tampered report -> rc1, byte-exact restore -> rc0",
+    "note": "purity 176/176 all seeds; knockout restores baseline digest; recovery byte-exact; attribution: record-blind global context shift (record-input contribution 1-3%, A/B conditioning ~1% on damaged seeds), presence signal exists but unused; damage by whole classes (2 classes x 8 per damaged seed)"
   }
 }

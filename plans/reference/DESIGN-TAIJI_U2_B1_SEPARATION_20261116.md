@@ -1,6 +1,6 @@
 # 22.5.B.1 设计卡：把纠正的更新路径与 emission 参数分离
 
-> 卡号：`22.5.B.1`｜日期：2026-11-16｜状态：**已设计、已定价、smoke 全过，训练未授权**。
+> 卡号：`22.5.B.1`｜日期：2026-11-16｜状态：**已结案（负，有定位）**——见[结果卡](RESULT-TAIJI_U2_B1_SEPARATION_20261116.md)（D-20261116-09，`retention_broken_under_separation`）；本卡保留冻结时的设计原文。
 > 契约 [`taiji_u2_b1_separation_20261116.json`](../manifests/taiji_u2_b1_separation_20261116.json)（`criteria_sha256=b9a3842f…`，修订 v2：控制臂曝光按方案参数化，仍先于任何正式读数）；[smoke 回执](../../reports/taiji_u2_b1_separation_smoke_20261116.json)、[定价回执](../../reports/taiji_u2_b1_separation_price_20261116.json)。
 > 前置：[A 线收束卡](CLOSEOUT-TAIJI_U2_A_LINE_20261116.md)（D-20261116-07）——联合父门不可达的卡点是**纠正与保持不能同时成立**，因为 B 的更新直接落在 A 也在用的 `byte_head`／`joint_readout` 上。owner 已裁决**立项 B 线**（D-20261116-08）。
 

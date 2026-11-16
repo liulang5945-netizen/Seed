@@ -1,0 +1,71 @@
+{
+  "schema": "taiji-u2-b1-attribution-v1",
+  "card": "22.5.B.1",
+  "date": "2026-11-16",
+  "optimizer_steps": 0,
+  "seeds": [
+    {
+      "seed": 20261110,
+      "damage": 0.5,
+      "correction_rate": 0.0,
+      "a_record_input_contribution_ratio_mean": 0.012394,
+      "presence_separability_ratio_mean": 2.624274,
+      "ab_conditioning_ratio_mean": 0.009935,
+      "record_readout_norm_a_mean": 0.242277,
+      "record_readout_norm_b_mean": 0.4972,
+      "adapter_delta_norm_a_mean": 4.377321,
+      "adapter_delta_norm_b_mean": 4.931519,
+      "broken_a_by_class": {
+        "中间": 8,
+        "右边": 8
+      },
+      "adapter_weight_norms": {
+        "first_weight": 2.892776,
+        "last_weight": 1.372586,
+        "last_bias": 0.196627
+      }
+    },
+    {
+      "seed": 20261111,
+      "damage": 0.0,
+      "correction_rate": 0.0,
+      "a_record_input_contribution_ratio_mean": 0.033756,
+      "presence_separability_ratio_mean": 18.207545,
+      "ab_conditioning_ratio_mean": 0.467486,
+      "record_readout_norm_a_mean": 0.202427,
+      "record_readout_norm_b_mean": 3.508115,
+      "adapter_delta_norm_a_mean": 4.015428,
+      "adapter_delta_norm_b_mean": 4.757237,
+      "broken_a_by_class": {},
+      "adapter_weight_norms": {
+        "first_weight": 3.240138,
+        "last_weight": 1.264888,
+        "last_bias": 0.258851
+      }
+    },
+    {
+      "seed": 20261112,
+      "damage": 0.5,
+      "correction_rate": 0.08333333333333333,
+      "a_record_input_contribution_ratio_mean": 0.035821,
+      "presence_separability_ratio_mean": 1.269457,
+      "ab_conditioning_ratio_mean": 0.014543,
+      "record_readout_norm_a_mean": 0.806152,
+      "record_readout_norm_b_mean": 1.82811,
+      "adapter_delta_norm_a_mean": 5.508131,
+      "adapter_delta_norm_b_mean": 6.342694,
+      "broken_a_by_class": {
+        "左边": 8,
+        "中间": 8
+      },
+      "adapter_weight_norms": {
+        "first_weight": 3.170279,
+        "last_weight": 1.454619,
+        "last_bias": 0.124979
+      }
+    }
+  ],
+  "cost": {
+    "cpu": 4.96875
+  }
+}
