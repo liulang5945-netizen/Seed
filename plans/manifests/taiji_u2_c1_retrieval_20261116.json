@@ -146,12 +146,12 @@
   },
   "criteria_sha256": "cdff0e195be9b71dcfc96b863c26add4bd3ad233cc763beafb0858b5ebdef48f",
   "criteria_canonicalization": "json.dumps(criteria, sort_keys=True, ensure_ascii=False, separators=(',',':')) utf-8 sha256",
-  "training_authority": null,
+  "training_authority": "owner replied 授权执行 on 2026-11-16 to representation_3seed (cap 461.437 CPU / 922.874 wall)",
   "authorization": {
-    "asked": null,
-    "reply": null,
-    "reply_date": null,
-    "scope": null
+    "asked": "是否授权按 representation_3seed 实价执行 22.5.C.1（帽 461.437 CPU／922.874 wall，1152 更新，3 seed）",
+    "reply": "授权执行",
+    "reply_date": "2026-11-16",
+    "scope": "three seeds, 384 updates each (1152 total), cap 461.437 CPU / 922.874 wall"
   },
   "source_pins": {
     "runner": "75533db95606f9e7232827101ce1ca2285a55883d4bdbdacc79aa0aa56b0bdc6",
@@ -198,5 +198,26 @@
   "wiring_cost": {
     "smoke_cpu": 30.15625,
     "price_cpu": 3.484375
+  },
+  "result": {
+    "verdict": "both_failed",
+    "date": "2026-11-16",
+    "decode_fit_accuracies": [
+      0.3333333333333333,
+      0.3333333333333333,
+      0.3333333333333333
+    ],
+    "selectivity_fit_accuracies": [
+      0.78125,
+      0.78125,
+      0.78125
+    ],
+    "cost_cpu": 292.796875,
+    "cost_wall": 325.619689,
+    "run_report": "reports/taiji_u2_c1_retrieval_run_20261116.json",
+    "verify_report": "reports/taiji_u2_c1_retrieval_verify_20261116.json",
+    "result_card": "plans/reference/RESULT-TAIJI_U2_C1_RETRIEVAL_20261116.md",
+    "verify": "13/13 green; red drill tampered decode -> rc1, byte-exact restore -> rc0",
+    "attribution": "decode head trained (last norm 0.914) and record_output grew 0->1.546, but read is record-invariant (cross-record std 0.026 vs norm 5.73, ~0.5%); position attention near-uniform averages the whole record into a constant, erasing the label signal; decode logits std 0.000253, argmax fixed class => 0.333. Selectivity trainable 0.719->0.781 but far from 0.95. Located gap: position attention not focused on the label/query position."
   }
 }

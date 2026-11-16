@@ -1,6 +1,6 @@
 # 22.5.C.1 设计卡：把记录通道训成可解码、查询可区分的值（检索表示基础）
 
-> 卡号：`22.5.C.1`｜日期：2026-11-16｜状态：**已设计、已定价、smoke 全过，训练未授权**。
+> 卡号：`22.5.C.1`｜日期：2026-11-16｜状态：**已结案（负，有定位）**——见[结果卡](RESULT-TAIJI_U2_C1_RETRIEVAL_20261116.md)（D-20261116-14，`both_failed`）；本卡保留冻结时的设计原文。
 > 契约 [`taiji_u2_c1_retrieval_20261116.json`](../manifests/taiji_u2_c1_retrieval_20261116.json)（`criteria_sha256=cdff0e19…`）；[smoke 回执](../../reports/taiji_u2_c1_retrieval_smoke_20261116.json)、[定价回执](../../reports/taiji_u2_c1_retrieval_price_20261116.json)。
 > 前置：[B 线收束卡](CLOSEOUT-TAIJI_U2_B_LINE_20261116.md)（D-20261116-11）、[C 线立项](DECISION-LEDGER_20261109.md)（D-20261116-12）、[接地探针](../../reports/taiji_u2_c1_feasibility_20261116.json)。
 

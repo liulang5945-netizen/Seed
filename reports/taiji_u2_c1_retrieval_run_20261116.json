@@ -1,0 +1,36 @@
+{
+  "schema": "taiji-u2-c1-retrieval-run-v1",
+  "card": "22.5.C.1",
+  "date": "2026-11-16",
+  "verdict": "both_failed",
+  "seeds": [
+    20261110,
+    20261111,
+    20261112
+  ],
+  "decode_fit_accuracies": [
+    0.3333333333333333,
+    0.3333333333333333,
+    0.3333333333333333
+  ],
+  "selectivity_fit_accuracies": [
+    0.78125,
+    0.78125,
+    0.78125
+  ],
+  "birth_decode_accuracies": [
+    0.3333333333333333,
+    0.3333333333333333,
+    0.3333333333333333
+  ],
+  "purity_ok": true,
+  "answer_ok": true,
+  "recovery_ok": true,
+  "accepted_parent": false,
+  "capability_claims": 0,
+  "check2": "not_read",
+  "cost": {
+    "cpu": 292.796875,
+    "wall": 325.619689
+  }
+}
