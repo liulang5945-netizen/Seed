@@ -1,0 +1,202 @@
+{
+  "schema": "taiji-u2-c1-retrieval-v1",
+  "status": "frozen",
+  "card": "22.5.C.1",
+  "date": "2026-11-16",
+  "scope": "retrieval line foundation: train the v4 record channel to carry query-selective content, measured by a runner-level decode head; emission frozen, answer path unchanged",
+  "lineage": {
+    "parent_line": "22.5.B (closed, D-20261116-11); retrieval line opened D-20261116-12",
+    "parent_bundles": "A.5 pre-feedback bundles per seed, byte-identical",
+    "subject_identity": "taiji-u2-subject-v4 (unchanged; no new subject tensors)",
+    "trainable_subject": "record channel 18 tensors / 762 scalars",
+    "scaffold": "decode_head MLP(d->2d->4), runner-level, zero-init last layer",
+    "grounding_probe": "reports/taiji_u2_c1_feasibility_20261116.json"
+  },
+  "candidate": {
+    "architecture": "native",
+    "profile": "metadata+request",
+    "seed": 20261110,
+    "parameters": 22742,
+    "tensors": 194,
+    "subject_frozen": true,
+    "encoder_bundle": "data/experiments/taiji_u2/p4_2/20261116T0500Z/reconstruct-B-007376.pt",
+    "encoder_bundle_sha256": "f670508850685cb8aa4e9ed385eb2f5997154524e606d1ab7cbfbd5230eb0f2f",
+    "a1b_checkpoint": "data/experiments/taiji_u2/a1b/20261115T2300Z/a1b-00200.pt",
+    "a1b_checkpoint_sha256": "3ebac8b34ace3e9d784867e0096527cba515bace68199712a6cdc940a458dbc3",
+    "read_head_parameters": 263,
+    "prior": [
+      0.0234375,
+      0.0302734375,
+      0.015625,
+      0.0146484375,
+      0.0146484375,
+      0.021484375,
+      0.8798828125
+    ],
+    "correction": "v1",
+    "identity": "taiji-u2-subject-v6"
+  },
+  "data_root": "data/experiments/taiji_u2/first_a/20261112T074836Z/data.bin",
+  "data_digest": "40813b4cc8ffec0c3ae5639941b373c139422b4ccbaa34790de34a9e1149d214",
+  "read_code": {
+    "interface": "read-code-v1",
+    "width": 24,
+    "class_order": [
+      "左边",
+      "中间",
+      "右边",
+      "未知"
+    ],
+    "rule": "zeros(24); code[class] = 1.0; both branches receive the same code at joint_readout",
+    "injection": "forward hook on joint_readout replaces its output with joint_readout(code); training, evaluation and feedback use the same path",
+    "limitation": "the code carries the read's four-way answer, not the scene's pixels; a pass measures byte expression, not content-conditioned binding"
+  },
+  "record_template": "{entity}现在在{label}。",
+  "emission_parameters": [
+    "byte_head.bias",
+    "byte_head.weight",
+    "copy_gate.bias",
+    "copy_gate.weight",
+    "joint_readout.first.bias",
+    "joint_readout.first.weight",
+    "joint_readout.last.bias",
+    "joint_readout.last.weight"
+  ],
+  "record_parameters": [
+    "coverage_logit",
+    "record_goal_query.weight",
+    "record_key.weight",
+    "record_metadata.bias",
+    "record_metadata.weight",
+    "record_null.bias",
+    "record_null.weight",
+    "record_null_value",
+    "record_output.bias",
+    "record_output.weight",
+    "record_position_key.weight",
+    "record_position_query.bias",
+    "record_position_query.weight",
+    "record_provenance.weight",
+    "record_query.bias",
+    "record_query.weight",
+    "record_value.bias",
+    "record_value.weight"
+  ],
+  "emission_scalar_count": 3919,
+  "record_scalar_count": 762,
+  "feedback_optimizer": {
+    "lr": 0.001,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "weight_decay": 0.0
+  },
+  "start_bundles": {
+    "20261110": "data/experiments/taiji_u2/a5/20261116T0520Z/seed-20261110/bundle-pre-feedback.pt",
+    "20261111": "data/experiments/taiji_u2/a5/20261116T0520Z/seed-20261111/bundle-pre-feedback.pt",
+    "20261112": "data/experiments/taiji_u2/a5/20261116T0520Z/seed-20261112/bundle-pre-feedback.pt"
+  },
+  "start_bundle_sha256": {
+    "20261110": "de5452f6b7716cb44f48221aafca5e5e5f132fcdeaa46c3196d8929d0c815465",
+    "20261111": "db04cb9b889d3ee61c0bb86342f961409f33b3c30cabffa24eacc6d8ecea9627",
+    "20261112": "3dbc1ba54713e59808de730251485fdddd125500223c4a9a70564b50974b783a"
+  },
+  "run_root": "data/experiments/taiji_u2/c1/20261116T1600Z",
+  "plan": {
+    "option": "representation_3seed",
+    "seeds": [
+      20261110,
+      20261111,
+      20261112
+    ],
+    "updates_per_seed": 384,
+    "selectivity_margin": 0.5,
+    "contingency": 0.15,
+    "design_cap_cpu": 600.0,
+    "design_cap_wall": 1200.0,
+    "cap_cpu": 461.437,
+    "cap_wall": 922.874
+  },
+  "criteria": {
+    "question": "can the existing record channel be trained so the value readout decodes the stated label AND routing distinguishes matching from distractor entities",
+    "decode_gate": 0.95,
+    "selectivity_gate": 0.95,
+    "decode_denominator": "96 fit record-decode examples (32 fit entities x 3 position labels), label argmax exact",
+    "selectivity_denominator": "32 fit pairs, route(matching entity) > route(different entity)",
+    "birth_decode": "zero-initialized decode head => zero logits, fit decode at the fixed-class argmax chance (0.333 for 3 position labels), proving no content before training; monitor",
+    "answer_path": "decode head is a runner-level scaffold, never in output(); A fit 32 digest bit-identical to start; structural monitor, not a capability claim",
+    "path_purity": "emission 8 tensors and all non-record base tensors bit-identical to start; only the 18 record-channel tensors train",
+    "recovery": "independent process reloads record channel + decode head; fit decode and selectivity digests reproduce",
+    "seeds": [
+      20261110,
+      20261111,
+      20261112
+    ],
+    "seed_rule": "representation earned requires decode >= gate and selectivity >= gate on all three seeds",
+    "objectives": "content decode CE(decode_head(read), stated label) + selectivity margin max(0, margin - (route_match - route_distractor)); combined per update",
+    "data": "record-decode dataset from existing train64/fit32 entities via frozen template; train trains, fit held-out; no project corpus / Task1 / sealed reads",
+    "scaffold": "decode_head MLP(d->2d->4) is runner-level, not subject structure; no new subject identity or tensors",
+    "accepted_parent": false,
+    "capability_claims": 0,
+    "check2": "not_read",
+    "unlock_22_6": false,
+    "scope_note": "representation foundation only; emission not wired; C.2 (joint gate via trained readout) is a separate card"
+  },
+  "criteria_sha256": "cdff0e195be9b71dcfc96b863c26add4bd3ad233cc763beafb0858b5ebdef48f",
+  "criteria_canonicalization": "json.dumps(criteria, sort_keys=True, ensure_ascii=False, separators=(',',':')) utf-8 sha256",
+  "training_authority": null,
+  "authorization": {
+    "asked": null,
+    "reply": null,
+    "reply_date": null,
+    "scope": null
+  },
+  "source_pins": {
+    "runner": "75533db95606f9e7232827101ce1ca2285a55883d4bdbdacc79aa0aa56b0bdc6",
+    "b1_runner": "549541796290824770b836938e7331a08553cbff7258a17eb05a275dde50fc83",
+    "a5_runner": "3e4db0ccf8346b77c132a2cc428c100dc00e94700368f0b857af2a308c9cf231",
+    "a2_runner": "c26f4a545ffb5d12f579cb7e69c57eabca6cd7c427e479fb3a55e4621f0fd981",
+    "subject": "b7ae83db6fbb6b086541d6ca41a235cb855e60415377009af14ced03cddd99ff",
+    "events": "b89d5424a76263efab7a5c944dbc820b34fdef4ed12b10afc0b651193a34c944",
+    "support": "33d9301f98859934c1413e25765c55e6bc7b64dfa410d65b03f0e5a198041b4c",
+    "columns": "852c54e60c97efb23f83072659a363f890c58a4929354467ce4b71a028bc8443"
+  },
+  "exits": [
+    "retrieval_representation_earned",
+    "content_decode_failed",
+    "selectivity_failed",
+    "both_failed",
+    "budget_stop",
+    "engineering_failure",
+    "pricing_over_budget"
+  ],
+  "limitations": [
+    "decode_head is a scaffold, not in output(); decode accuracy is NOT 'the subject reads records to answer' - that is C.2",
+    "the read-code hook still cuts fast (A.2); representation is measured on the record channel independently",
+    "seeds only vary cache-position consumption order (weak repetition)",
+    "a positive result signs representation only; the joint gate is untested until C.2"
+  ],
+  "note": "criteria frozen before any formal training; smoke and price are pre-authorization stages; caps filled from measured price before the authorization ask; criteria digest does not cover caps. smoke passed (0 optimizer steps); price measured on a discarded model (8 steps); representation_3seed cap 461.437 CPU / 922.874 wall, over_design_cap=False. Training not authorized.",
+  "unit_cpu_measured": 0.234375,
+  "price_options": [
+    {
+      "name": "representation_3seed",
+      "seeds": 3,
+      "updates_per_seed": 384,
+      "updates_total": 1152,
+      "unit_cpu_measured": 0.234375,
+      "estimate_cpu": 401.25,
+      "cap_cpu": 461.437,
+      "cap_wall": 922.874,
+      "over_design_cap": false
+    }
+  ],
+  "price_report": "reports/taiji_u2_c1_retrieval_price_20261116.json",
+  "smoke_report": "reports/taiji_u2_c1_retrieval_smoke_20261116.json",
+  "wiring_cost": {
+    "smoke_cpu": 30.15625,
+    "price_cpu": 3.484375
+  }
+}

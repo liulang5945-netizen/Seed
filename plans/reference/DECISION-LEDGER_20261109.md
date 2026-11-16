@@ -10,6 +10,7 @@
 
 | 编号 | 类型 | 一句话 | 提交 |
 |---|---|---|---|
+| D-20261116-13 | 设计冻结（检索表示基础） | `22.5.C.1` 设计/定价冻结：训练 v4 record 通道携带查询选择性内容（解码 CE＋路由 margin），decode_head 脚手架不进 output、emission 冻结；表示门解码≥0.95＋选择性≥0.95（3 seed）；representation_3seed 帽 461.437/922.874，训练未授权 | 见本文件 Git 历史 |
 | D-20261116-12 | 方向取舍（检索线 C 立项） | owner 裁决立项真正检索线（新范围：可寻址记录值＋训练读出通路＋查询匹配定域）；B 线收束后卡点收敛到记录表示/读出，C 直接打共同根；首步零训练设计＋定价，先接地探针核验路由查询选择性 | 见本文件 Git 历史 |
 | D-20261116-11 | 训练卡结案（informative 负结果）＋B 线收束 | `22.5.B.2` 判 `retention_broken_under_scoping`：纠正 0/0/2、distractor 损伤 0.5/0.0/0.25、反事实 0；**B.2 反馈后参数 ≡ B.1 逐位**（训练期门 ≡1，presence 门控学习期空操作）；adapter 范围 2 次修订用满按 §5 收束；379.91 CPU 帽内；后继＝检索线 owner 裁决 | 见本文件 Git 历史 |
 | D-20261116-10 | 方向取舍（B.2 立项）＋设计冻结 | owner 裁决立项功能定域；`22.5.B.2` 设计/定价冻结：adapter delta × presence（v7，无新参数），保持改在 32 带无关记录 distractor 回合上挣（可失败），无记录 A 降结构监视；scoping_3seed 帽 493.027/986.054，训练未授权 | 见本文件 Git 历史 |
@@ -4173,3 +4174,17 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **4. 首步**：零训练设计＋定价卡。设计前先做零训练接地探针：核验现有 record 通路的**路由查询选择性**（匹配实体记录 vs distractor 的 route_score 是否可分）与值读出通路结构——B.1/A.5 已示多记录路由查询盲，检索门控不能凭空假设查询选择性，须实测接地。探针后出 C.1 设计卡＋冻结契约＋定价，训练另行授权。
 
 **5. 状态**：0 训练、0 能力声称、0 A 父；check② 不读、22.6 不解锁。
+
+### D-20261116-13 `22.5.C.1` 检索表示基础卡设计/定价冻结
+
+**1. 编号／时间／类型**：D-20261116-13｜2026-11-16｜设计冻结（新训练窗口准备，未开跑）。
+
+**2. 接地**：零训练探针（`probe_c1_feasibility_20261116.py`，1.98 CPU）实测 start bundle 的 record 通道：路由查询盲（match−distractor route 均值 −0.0009、8/24 高于机会 12）、位置注意力近均匀（答案 mass 0.157、熵 3.66）、值读出 read 范数 0（record_output 起点零）、值向量标签间余弦 0.834（类内 0.994，弱可分）。设计后果：relevance 门不能复用查询盲路由（C.2 须训路由选择性，C.1 先训）；值通路须内容训练。
+
+**3. 设计冻结**：[设计卡](DESIGN-TAIJI_U2_C1_RETRIEVAL_20261116.md)、[契约](../manifests/taiji_u2_c1_retrieval_20261116.json)（`criteria_sha256=cdff0e19…`）。训练 v4 record 通道 18 张量/762（主体既有参数，**不新增主体身份/张量**）；两目标＝内容解码 CE(decode_head(read), 所述标签)＋路由选择性 margin max(0, 0.5−(route_match−route_distractor))。decode_head MLP(d→2d→4) 为 runner 级脚手架（零初始化末层、不进 output()⇒应答逐位不变，结构监视）；emission 8/3,919 与其余基张量冻结＋纯度（176）。数据：train64/fit32 实体×3 标签×模板 "{entity}现在在{label}。" 构造解码集 train 192/fit 96＋32 选择性对（distractor 不同实体），digest 冻结、不读封存。表示门 fit 解码≥0.95＋选择性≥0.95（高于父门 0.80，C.2 前提留余量），3 seed 同向；出生解码 0.333（定类机会）/选择性 0.719 监视；恢复独立进程逐位。出口 retrieval_representation_earned＞content_decode_failed/selectivity_failed/both_failed＞engineering_failure/budget_stop/pricing_over_budget。
+
+**4. 零训练证据**：smoke 3 seed 全过——出生解码/选择性、梯度路（零初始化末层首步阻塞 record 梯度为声明性质，微扰 +0.1 证路径后还原；record/head 梯度>0、emission 无梯度、参数不变）、应答路径逐位不变、纯度；**0 优化器步**，30.16 CPU。定价 8 步于丢弃模型：组合更新单价 0.234375，3.48 CPU；`representation_3seed`（384/seed×3＝1152 更新）估计 401.25、帽 **461.437 CPU／922.874 wall**（设计帽 600/1200 内）。契约测试 `test_c1_retrieval.py` 4 项（decode_head 零初始化/数据分母与 distractor 区分/可训集 emission 冻结/纯度查漂移）；mypy 0。
+
+**5. 能签／不能签**：能签表示能力（record 通道可训到内容可解码＋查询可区分）＋纯度/恢复/出生中性。不能签父/能力（联合门未测）/check②/22.6；解码准确率不得引为"主体会读记录作答"（decode_head 脚手架未接 emission）；C.2（接 emission 做联合门）另行设计授权。
+
+**6. 状态**：0 正式优化器调用、0 训练步、0 checkpoint、0 能力声称、0 A 父。唯一后继＝owner 是非题：是否授权按 `representation_3seed` 实价执行（帽 461.437／922.874，1152 更新，3 seed）。

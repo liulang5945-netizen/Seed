@@ -1,0 +1,72 @@
+{
+  "schema": "taiji-u2-c1-retrieval-smoke-v1",
+  "card": "22.5.C.1",
+  "date": "2026-11-16",
+  "seeds": [
+    {
+      "seed": 20261110,
+      "birth_decode_accuracy": 0.3333333333333333,
+      "birth_selectivity_accuracy": 0.71875,
+      "gradient_probe": {
+        "record_output_grad_abs_sum": 1.2252256098577163e-08,
+        "head_last_grad_abs_sum": 4.810024261474609,
+        "emission_grads_present": [],
+        "parameters_unchanged": true,
+        "optimizer_steps": 0
+      },
+      "answer_path_bit_identical": true,
+      "purity": {
+        "checked": 176,
+        "drifted": [],
+        "pure": true
+      },
+      "decode_fit_denominator": 96,
+      "selectivity_denominator": 32
+    },
+    {
+      "seed": 20261111,
+      "birth_decode_accuracy": 0.3333333333333333,
+      "birth_selectivity_accuracy": 0.71875,
+      "gradient_probe": {
+        "record_output_grad_abs_sum": 1.2680728467273639e-08,
+        "head_last_grad_abs_sum": 4.0942487716674805,
+        "emission_grads_present": [],
+        "parameters_unchanged": true,
+        "optimizer_steps": 0
+      },
+      "answer_path_bit_identical": true,
+      "purity": {
+        "checked": 176,
+        "drifted": [],
+        "pure": true
+      },
+      "decode_fit_denominator": 96,
+      "selectivity_denominator": 32
+    },
+    {
+      "seed": 20261112,
+      "birth_decode_accuracy": 0.3333333333333333,
+      "birth_selectivity_accuracy": 0.71875,
+      "gradient_probe": {
+        "record_output_grad_abs_sum": 1.2489822509564874e-08,
+        "head_last_grad_abs_sum": 4.146015167236328,
+        "emission_grads_present": [],
+        "parameters_unchanged": true,
+        "optimizer_steps": 0
+      },
+      "answer_path_bit_identical": true,
+      "purity": {
+        "checked": 176,
+        "drifted": [],
+        "pure": true
+      },
+      "decode_fit_denominator": 96,
+      "selectivity_denominator": 32
+    }
+  ],
+  "optimizer_steps": 0,
+  "cost": {
+    "cpu": 30.15625,
+    "wall": 30.817895
+  }
+}
