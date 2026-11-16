@@ -1,0 +1,189 @@
+{
+  "schema": "taiji-u2-u1-smoke-v1",
+  "card": "22.5.U.1",
+  "phase": "smoke",
+  "criteria_sha256": "b58f40d9c50ea6e5f112d207c09f4ea1d05d08fe06896edece0d731a8875a992",
+  "verdict": "smoke_passed",
+  "checks": {
+    "encoding_oracle_consistent": true,
+    "seed2026111601_B_is_not_H_plus_head": true,
+    "seed2026111601_B_path_direct_units": true,
+    "seed2026111601_without_edges_changes_readout": true,
+    "seed2026111601_permute_source_changes_readout": true,
+    "seed2026111601_history_changes_readout": true,
+    "seed2026111601_cut_h_bit_identical": true,
+    "seed2026111601_h_perturb_bit_identical": true,
+    "seed2026111601_neutral_birth_exact": true,
+    "seed2026111601_new_unit_r_credit_path_wired": true,
+    "seed2026111601_all_parameters_have_gradient": true,
+    "seed2026111601_named_nonzero": true,
+    "seed2026111602_B_is_not_H_plus_head": true,
+    "seed2026111602_B_path_direct_units": true,
+    "seed2026111602_without_edges_changes_readout": true,
+    "seed2026111602_permute_source_changes_readout": true,
+    "seed2026111602_history_changes_readout": true,
+    "seed2026111602_cut_h_bit_identical": true,
+    "seed2026111602_h_perturb_bit_identical": true,
+    "seed2026111602_neutral_birth_exact": true,
+    "seed2026111602_new_unit_r_credit_path_wired": true,
+    "seed2026111602_all_parameters_have_gradient": true,
+    "seed2026111602_named_nonzero": true,
+    "seed2026111603_B_is_not_H_plus_head": true,
+    "seed2026111603_B_path_direct_units": true,
+    "seed2026111603_without_edges_changes_readout": true,
+    "seed2026111603_permute_source_changes_readout": true,
+    "seed2026111603_history_changes_readout": true,
+    "seed2026111603_cut_h_bit_identical": true,
+    "seed2026111603_h_perturb_bit_identical": true,
+    "seed2026111603_neutral_birth_exact": true,
+    "seed2026111603_new_unit_r_credit_path_wired": true,
+    "seed2026111603_all_parameters_have_gradient": true,
+    "seed2026111603_named_nonzero": true
+  },
+  "uncovered": [],
+  "encoding_oracle": {
+    "ok": 96,
+    "total": 96
+  },
+  "seeds": [
+    {
+      "seed": 2026111601,
+      "identity": {
+        "B_is_not_H_plus_head": true,
+        "B_path_direct_units": true
+      },
+      "interventions": {
+        "without_edges_changes_readout": true,
+        "permute_source_changes_readout": true,
+        "history_changes_readout": true,
+        "cut_h_bit_identical": true,
+        "h_perturb_bit_identical": true,
+        "rgb_zero_agreement": 1.0,
+        "fixed_question_agreement": 1.0,
+        "max_abs_without_edges": 0.004194962511568334,
+        "max_abs_permute_source": 0.00449809081741681,
+        "max_abs_history": 0.0036723835390927023
+      },
+      "neutral_birth": {
+        "neutral_birth_exact": true,
+        "neutral_birth_max_abs": 0.0,
+        "new_unit_r_gradient_after_credit": 0.02539126325490645,
+        "new_unit_r_credit_path_wired": true,
+        "generation": 1
+      },
+      "gradient_coverage": {
+        "all": true,
+        "named_nonzero": true
+      },
+      "checks": {
+        "B_is_not_H_plus_head": true,
+        "B_path_direct_units": true,
+        "without_edges_changes_readout": true,
+        "permute_source_changes_readout": true,
+        "history_changes_readout": true,
+        "cut_h_bit_identical": true,
+        "h_perturb_bit_identical": true,
+        "neutral_birth_exact": true,
+        "new_unit_r_credit_path_wired": true,
+        "all_parameters_have_gradient": true,
+        "named_nonzero": true
+      }
+    },
+    {
+      "seed": 2026111602,
+      "identity": {
+        "B_is_not_H_plus_head": true,
+        "B_path_direct_units": true
+      },
+      "interventions": {
+        "without_edges_changes_readout": true,
+        "permute_source_changes_readout": true,
+        "history_changes_readout": true,
+        "cut_h_bit_identical": true,
+        "h_perturb_bit_identical": true,
+        "rgb_zero_agreement": 1.0,
+        "fixed_question_agreement": 1.0,
+        "max_abs_without_edges": 0.006230102101682876,
+        "max_abs_permute_source": 0.010517606512379785,
+        "max_abs_history": 0.001447515733327933
+      },
+      "neutral_birth": {
+        "neutral_birth_exact": true,
+        "neutral_birth_max_abs": 0.0,
+        "new_unit_r_gradient_after_credit": 0.0055847312320399115,
+        "new_unit_r_credit_path_wired": true,
+        "generation": 1
+      },
+      "gradient_coverage": {
+        "all": true,
+        "named_nonzero": true
+      },
+      "checks": {
+        "B_is_not_H_plus_head": true,
+        "B_path_direct_units": true,
+        "without_edges_changes_readout": true,
+        "permute_source_changes_readout": true,
+        "history_changes_readout": true,
+        "cut_h_bit_identical": true,
+        "h_perturb_bit_identical": true,
+        "neutral_birth_exact": true,
+        "new_unit_r_credit_path_wired": true,
+        "all_parameters_have_gradient": true,
+        "named_nonzero": true
+      }
+    },
+    {
+      "seed": 2026111603,
+      "identity": {
+        "B_is_not_H_plus_head": true,
+        "B_path_direct_units": true
+      },
+      "interventions": {
+        "without_edges_changes_readout": true,
+        "permute_source_changes_readout": true,
+        "history_changes_readout": true,
+        "cut_h_bit_identical": true,
+        "h_perturb_bit_identical": true,
+        "rgb_zero_agreement": 1.0,
+        "fixed_question_agreement": 1.0,
+        "max_abs_without_edges": 0.003174651835148477,
+        "max_abs_permute_source": 0.007975261416075323,
+        "max_abs_history": 0.0019081789324317108
+      },
+      "neutral_birth": {
+        "neutral_birth_exact": true,
+        "neutral_birth_max_abs": 0.0,
+        "new_unit_r_gradient_after_credit": 0.007983967097765152,
+        "new_unit_r_credit_path_wired": true,
+        "generation": 1
+      },
+      "gradient_coverage": {
+        "all": true,
+        "named_nonzero": true
+      },
+      "checks": {
+        "B_is_not_H_plus_head": true,
+        "B_path_direct_units": true,
+        "without_edges_changes_readout": true,
+        "permute_source_changes_readout": true,
+        "history_changes_readout": true,
+        "cut_h_bit_identical": true,
+        "h_perturb_bit_identical": true,
+        "neutral_birth_exact": true,
+        "new_unit_r_credit_path_wired": true,
+        "all_parameters_have_gradient": true,
+        "named_nonzero": true
+      }
+    }
+  ],
+  "discipline": {
+    "optimizer_steps": 0,
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0
+  },
+  "cost": {
+    "cpu": 0.2188,
+    "wall": 0.234
+  }
+}

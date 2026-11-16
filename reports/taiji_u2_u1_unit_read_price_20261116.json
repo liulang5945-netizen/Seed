@@ -1,0 +1,41 @@
+{
+  "schema": "taiji-u2-u1-price-v1",
+  "card": "22.5.U.1",
+  "phase": "price",
+  "verdict": "price_measured_within_design",
+  "samples": {
+    "forward_backward": [
+      0.0,
+      0.01562,
+      0.0
+    ],
+    "adam_step": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "evaluation": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "per_update_cpu": 0.01562,
+  "per_eval_cpu": 0.0,
+  "seeds": 3,
+  "updates_per_seed": 384,
+  "fixed_evals_per_seed": 13,
+  "cap_cpu": 18.0,
+  "cap_wall": 36.0,
+  "design_cap_cpu": 600.0,
+  "low_tick_limit": "process_time resolution ~0.0156s; low-CPU readings carry this limit (P3.9)",
+  "discipline": {
+    "optimizer_steps": 3,
+    "project_task_data_reads": 1,
+    "check_reads": 0
+  },
+  "cost": {
+    "cpu": 1.6719,
+    "wall": 2.0
+  }
+}
