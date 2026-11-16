@@ -3,7 +3,7 @@
   "card": "22.5.U.1r1",
   "date": "2026-11-16",
   "status": "frozen",
-  "training_authority": null,
+  "training_authority": "owner 2026-11-16 授权按 read_3seed 实价帽 18.0 CPU/36.0 wall 执行（3 seed x 384 更新，零封存读取；本次授权用完即止，不外推到下一卡）",
   "identity": "taiji-u2-unit-core-b-v1",
   "core_version": "unit-core-b-v1",
   "revision": 1,
@@ -75,5 +75,66 @@
     "seed2026111602": "dab24770b71bca492151e4d8b3a775b450adf38780bc804ecf3f24f97a58f80d",
     "seed2026111603": "b66f099829d8f46265189e021218d439573c2686aca742d0e93c1afd6b5595b3"
   },
-  "result": null
+  "result": {
+    "verdict": "read_prerequisite_failed",
+    "date": "2026-11-16",
+    "reasons": [
+      "one_or_more_seeds_below_gate"
+    ],
+    "seed_pass": [
+      false,
+      false,
+      false
+    ],
+    "fit_accuracy": [
+      0.1875,
+      0.25,
+      0.15625
+    ],
+    "train_accuracy": [
+      0.3125,
+      0.40625,
+      0.3125
+    ],
+    "fit_distinct": [
+      2,
+      3,
+      2
+    ],
+    "train_distinct": [
+      2,
+      3,
+      3
+    ],
+    "best_fit_accuracy": 0.25,
+    "best_train_accuracy": 0.40625,
+    "seeds_meeting_fit_gate": 0,
+    "seeds_meeting_train_gate": 0,
+    "seeds_meeting_distinct_min": 1,
+    "seeds_meeting_both_controls_strictly_below_max": 0,
+    "seeds_with_fit_worse_than_before": 3,
+    "cpu_seconds": 6.1094,
+    "wall_seconds": 6.515,
+    "cap_cpu": 18.0,
+    "cap_wall": 36.0,
+    "budget_stopped": false,
+    "recover": "12/12",
+    "verify": "12/12",
+    "criteria_sha256_all_match": true,
+    "mechanism_classification": "question_modulates_but_logits_flat",
+    "mechanism_probe_cpu_seconds": 0.4531,
+    "attribution": "attention never focused: trained entropy 0.999266-0.99999 of ln16 ceiling, effective columns >=15.967507/16, trained logit range 0.025293-0.203172 nats; W_q norm relative change <=0.109499 (one seed shrank); task-loss credit to W_q is 1/228.4103-1/11.0712 of position_head; forcing W_q norm x171.9652-207.6915 gives logit range 2.70737-5.531337 and effective columns 9.762043-13.29281 => column keys discriminative, instrument has range; question channel has 6 distinct vectors and trained attention 32 distinct => not a constant-question fixture; uniform attention makes the readout the same column-mean statistic as U.1 (algebraic identity), and zeroing W_q on the same trained weights is never worse (3/3) and strictly better on one seed (+0.0625)",
+    "untested": "value-side decodability under correct focus; dose response not re-measured on this card (U.1 same-face 8x reading cited)",
+    "input_artifacts": "regenerable_exact",
+    "result_card": "plans/reference/RESULT-TAIJI_U2_U1R1_POSITION_20261116.md",
+    "run_report": "reports/taiji_u2_u1r1_position_run_20261116.json",
+    "recover_report": "reports/taiji_u2_u1r1_position_recover_20261116.json",
+    "verify_report": "reports/taiji_u2_u1r1_position_verify_20261116.json",
+    "mechanism_report": "reports/taiji_u2_u1r1_attention_collapse_20261116.json",
+    "closeout_report": "reports/taiji_u2_u1r1_closeout_20261116.json",
+    "rebuild_report": "reports/taiji_u2_u1r1_rebuild_20261116.json",
+    "capability_scope": "read prerequisite failed; no parent/capability/check2/22.6 claim; four interventions 1.0 and cut_h bit-identity prove mechanism wiring only",
+    "revision_accounting": "revision limit 2, used 1, remaining 1",
+    "decision_node": "revision 2 (learnable temperature / remove 1/sqrt(H) damping + larger W_q init) vs revision 2 variant (explicit attention supervision) vs close out core-B read path; owner adjudication; zero training before ruling"
+  }
 }

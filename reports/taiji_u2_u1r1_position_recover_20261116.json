@@ -1,0 +1,141 @@
+{
+  "schema": "taiji-u2-u1r1-recover-v1",
+  "card": "22.5.U.1r1",
+  "phase": "recover",
+  "criteria_sha256": "f11879d3f7bd6af91f2f05d92b69aca7260535ab6b5e37a1d47289e3388bcd50",
+  "verdict": "recovery_verified",
+  "checks": {
+    "seed2026111601_initial_restore": true,
+    "seed2026111601_final_restore": true,
+    "seed2026111601_final_next_gradient": true,
+    "seed2026111601_tamper_rejected": true,
+    "seed2026111602_initial_restore": true,
+    "seed2026111602_final_restore": true,
+    "seed2026111602_final_next_gradient": true,
+    "seed2026111602_tamper_rejected": true,
+    "seed2026111603_initial_restore": true,
+    "seed2026111603_final_restore": true,
+    "seed2026111603_final_next_gradient": true,
+    "seed2026111603_tamper_rejected": true
+  },
+  "uncovered": [],
+  "receipts": [
+    {
+      "pid": 28332,
+      "summary": {
+        "route": "B_position",
+        "units": 12,
+        "edges": 12,
+        "tensors": 19,
+        "proposal_clock": 0,
+        "parameter_version": 0,
+        "digest": "42236f2998c8b68c11fcc5b8ab23ee661409a5f8f09d587eb26ab136b313e7ef"
+      },
+      "capsule_digest": "841f5f9a83f8850de3ac897ec74b72ff6a72818a096531fe5d06702c8263c207",
+      "next_loss": 0.0004608088505982631,
+      "next_gradient_digest": "0fc41cef6cabf1c6491e787787cd17ed13685fee6f94f1207c8e3f925bfd16f7",
+      "digest_matches": true,
+      "tag": "seed2026111601_initial",
+      "pid_differs": true
+    },
+    {
+      "pid": 40192,
+      "summary": {
+        "route": "B_position",
+        "units": 12,
+        "edges": 12,
+        "tensors": 19,
+        "proposal_clock": 384,
+        "parameter_version": 384,
+        "digest": "acaff07df440439e8634af81565afefbd7a2700e065ab721a67825dbec071f65"
+      },
+      "capsule_digest": "62ae31d874fe4ee52fd7bf8d6ea9d3f3e26b589efcf7a001ba8efbf768fe7ed8",
+      "next_loss": 0.008985876735820401,
+      "next_gradient_digest": "1f55d6e80f8aacf21700eae68043ddfa80dd3a2039f583fab84c6c3aac062d4e",
+      "digest_matches": true,
+      "tag": "seed2026111601_final",
+      "pid_differs": true
+    },
+    {
+      "pid": 26580,
+      "summary": {
+        "route": "B_position",
+        "units": 12,
+        "edges": 12,
+        "tensors": 19,
+        "proposal_clock": 0,
+        "parameter_version": 0,
+        "digest": "6940c6acda3b0709cd0aade874a4f7c7b4d2aa94753f6b8adc217351a3ff0bcf"
+      },
+      "capsule_digest": "3c05bf972df763a0fb03e55f5907b3c7e6175004c6c399f78588993cdb1a72d2",
+      "next_loss": 0.00030880536321593226,
+      "next_gradient_digest": "c23a8f0e7377fc9ae6efff48ae965947826b627b8160e4f0e0dd27aeb2067cb3",
+      "digest_matches": true,
+      "tag": "seed2026111602_initial",
+      "pid_differs": true
+    },
+    {
+      "pid": 24808,
+      "summary": {
+        "route": "B_position",
+        "units": 12,
+        "edges": 12,
+        "tensors": 19,
+        "proposal_clock": 384,
+        "parameter_version": 384,
+        "digest": "a6e2757405d458fd3e1356a069838552e553b091e433612aae2b637085778383"
+      },
+      "capsule_digest": "234f88556fda33f3b514849c36b7ed41157cb98374aa9345f82e582e3f8a3d4d",
+      "next_loss": 0.016488057746273706,
+      "next_gradient_digest": "6369d533981ae3776eef2ec11f6302aee118feaad37e231e376928e4d62e7f85",
+      "digest_matches": true,
+      "tag": "seed2026111602_final",
+      "pid_differs": true
+    },
+    {
+      "pid": 17976,
+      "summary": {
+        "route": "B_position",
+        "units": 12,
+        "edges": 12,
+        "tensors": 19,
+        "proposal_clock": 0,
+        "parameter_version": 0,
+        "digest": "a41a8a65158d6e69dd52a0945d0a6fce5a7f9de05eab73a2d69d6e07c2e53af4"
+      },
+      "capsule_digest": "d2f5547272ba6831d38a94f611c1f5abaa441db586ab0b9edb2879911a409bd8",
+      "next_loss": 0.0005220351460245277,
+      "next_gradient_digest": "6ecf713f9a63fc7c8d62b0952a87f83853ee1c77422f4768ffe8856ec7dbe9f1",
+      "digest_matches": true,
+      "tag": "seed2026111603_initial",
+      "pid_differs": true
+    },
+    {
+      "pid": 22016,
+      "summary": {
+        "route": "B_position",
+        "units": 12,
+        "edges": 12,
+        "tensors": 19,
+        "proposal_clock": 384,
+        "parameter_version": 384,
+        "digest": "0f31463e895ba7fe799bb17dc0d990af2bdb6091489122c449b7f9817f4e9eca"
+      },
+      "capsule_digest": "9765645f54ae90aada81d3cddbe5621cfe89c9122d3f1a089b93579a4a5d4e32",
+      "next_loss": 0.0028581775569952164,
+      "next_gradient_digest": "f84354a2a069eb53400f5a90b8aeec7a97123145868c44efa865fded4402ce39",
+      "digest_matches": true,
+      "tag": "seed2026111603_final",
+      "pid_differs": true
+    }
+  ],
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0
+  },
+  "cost": {
+    "cpu": 0.1719,
+    "wall": 17.969
+  }
+}

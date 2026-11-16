@@ -1,0 +1,343 @@
+{
+  "schema": "taiji-u2-u1r1-attention-collapse-v1",
+  "card": "22.5.U.1r1",
+  "phase": "mechanism_probe",
+  "anchored_run_report": "reports/taiji_u2_u1r1_position_run_20261116.json",
+  "run_verdict": "read_prerequisite_failed",
+  "criteria_sha256": "f11879d3f7bd6af91f2f05d92b69aca7260535ab6b5e37a1d47289e3388bcd50",
+  "columns_T": 16,
+  "uniform_entropy_ceiling": 2.772589,
+  "thresholds": {
+    "uniform_ratio": 0.999,
+    "forced_sharp_ratio": 0.98,
+    "forced_scale": 32.0
+  },
+  "seeds": [
+    {
+      "seed": 2026111601,
+      "arms": {
+        "init": {
+          "entropy_mean": 2.772584,
+          "entropy_min": 2.772571,
+          "entropy_max": 2.772588,
+          "entropy_fraction_of_uniform_ceiling": 0.999998,
+          "effective_columns_mean": 15.999929,
+          "max_attention_mean": 0.062859,
+          "max_attention_max": 0.063436,
+          "logit_range_mean": 0.01113,
+          "attention_distinct": 32,
+          "attention_pairwise_l1_mean": 0.00290944,
+          "fit_accuracy": 0.25,
+          "fit_distinct": 1,
+          "denominator": 32
+        },
+        "trained": {
+          "entropy_mean": 2.770554,
+          "entropy_min": 2.764674,
+          "entropy_max": 2.772463,
+          "entropy_fraction_of_uniform_ceiling": 0.999266,
+          "effective_columns_mean": 15.967507,
+          "max_attention_mean": 0.071741,
+          "max_attention_max": 0.082762,
+          "logit_range_mean": 0.203172,
+          "attention_distinct": 32,
+          "attention_pairwise_l1_mean": 0.059965832,
+          "fit_accuracy": 0.1875,
+          "fit_distinct": 2,
+          "denominator": 32
+        },
+        "trained_zero_query": {
+          "entropy_mean": 2.772589,
+          "entropy_min": 2.772589,
+          "entropy_max": 2.772589,
+          "entropy_fraction_of_uniform_ceiling": 1.0,
+          "effective_columns_mean": 16.0,
+          "max_attention_mean": 0.0625,
+          "max_attention_max": 0.0625,
+          "logit_range_mean": 0.0,
+          "attention_distinct": 1,
+          "attention_pairwise_l1_mean": 0.0,
+          "fit_accuracy": 0.1875,
+          "fit_distinct": 2,
+          "denominator": 32
+        },
+        "trained_forced_query": {
+          "entropy_mean": 2.062533,
+          "entropy_min": 0.000701,
+          "entropy_max": 2.734268,
+          "entropy_fraction_of_uniform_ceiling": 0.743902,
+          "effective_columns_mean": 9.762043,
+          "max_attention_mean": 0.331784,
+          "max_attention_max": 0.999945,
+          "logit_range_mean": 5.531337,
+          "attention_distinct": 32,
+          "attention_pairwise_l1_mean": 1.154862265,
+          "fit_accuracy": 0.1875,
+          "fit_distinct": 2,
+          "denominator": 32
+        }
+      },
+      "question_distinct": 6,
+      "question_nonzero_entries_mean": 3.0,
+      "question_l2_mean": 1.732051,
+      "w_q_frobenius_init": 1.416122134,
+      "w_q_frobenius_trained": 1.571185793,
+      "w_q_frobenius_forced": 270.189351292,
+      "task_credit": {
+        "loss": 1.232409,
+        "credit": {
+          "input_projection": 2.241412851329129,
+          "state_mix": 0.27044896807452384,
+          "W_q": 0.08489374325907187,
+          "units.r": 1.2891868974666336,
+          "units.p": 0.85057454195988,
+          "units.c": 0.021056166726454238,
+          "units.eta": 0.10014648313230698,
+          "units.b": 0.10521482187521569,
+          "units.w": 0.14365517886829082,
+          "input_encoders.rgb.weight": 0.9333985091576285,
+          "input_encoders.audio.weight": 0.0,
+          "input_encoders.proprio.weight": 0.0,
+          "input_encoders.question.weight": 0.4281403966285442,
+          "input_encoders.goal.weight": 0.06376521845784547,
+          "input_encoders.feedback.weight": 0.0,
+          "position_head.weight": 0.939875551123837
+        },
+        "parameters_with_gradient": 16,
+        "parameters_total": 16
+      },
+      "controls": {
+        "capsule_digest_matches_run": true,
+        "trained_entropy_matches_run": true,
+        "zero_query_is_uniform": true,
+        "forced_query_took_effect": true
+      }
+    },
+    {
+      "seed": 2026111602,
+      "arms": {
+        "init": {
+          "entropy_mean": 2.772585,
+          "entropy_min": 2.772556,
+          "entropy_max": 2.772589,
+          "entropy_fraction_of_uniform_ceiling": 0.999999,
+          "effective_columns_mean": 15.999939,
+          "max_attention_mean": 0.062806,
+          "max_attention_max": 0.063869,
+          "logit_range_mean": 0.007407,
+          "attention_distinct": 32,
+          "attention_pairwise_l1_mean": 0.002269489,
+          "fit_accuracy": 0.3125,
+          "fit_distinct": 2,
+          "denominator": 32
+        },
+        "trained": {
+          "entropy_mean": 2.772475,
+          "entropy_min": 2.772021,
+          "entropy_max": 2.772577,
+          "entropy_fraction_of_uniform_ceiling": 0.999959,
+          "effective_columns_mean": 15.998174,
+          "max_attention_mean": 0.064552,
+          "max_attention_max": 0.068381,
+          "logit_range_mean": 0.044151,
+          "attention_distinct": 32,
+          "attention_pairwise_l1_mean": 0.013487545,
+          "fit_accuracy": 0.25,
+          "fit_distinct": 3,
+          "denominator": 32
+        },
+        "trained_zero_query": {
+          "entropy_mean": 2.772589,
+          "entropy_min": 2.772589,
+          "entropy_max": 2.772589,
+          "entropy_fraction_of_uniform_ceiling": 1.0,
+          "effective_columns_mean": 16.0,
+          "max_attention_mean": 0.0625,
+          "max_attention_max": 0.0625,
+          "logit_range_mean": 0.0,
+          "attention_distinct": 1,
+          "attention_pairwise_l1_mean": 0.0,
+          "fit_accuracy": 0.3125,
+          "fit_distinct": 3,
+          "denominator": 32
+        },
+        "trained_forced_query": {
+          "entropy_mean": 2.432329,
+          "entropy_min": 1.052763,
+          "entropy_max": 2.756778,
+          "entropy_fraction_of_uniform_ceiling": 0.877277,
+          "effective_columns_mean": 11.869166,
+          "max_attention_mean": 0.191778,
+          "max_attention_max": 0.78115,
+          "logit_range_mean": 4.480532,
+          "attention_distinct": 32,
+          "attention_pairwise_l1_mean": 0.833148465,
+          "fit_accuracy": 0.21875,
+          "fit_distinct": 3,
+          "denominator": 32
+        }
+      },
+      "question_distinct": 6,
+      "question_nonzero_entries_mean": 3.0,
+      "question_l2_mean": 1.732051,
+      "w_q_frobenius_init": 1.485104594,
+      "w_q_frobenius_trained": 1.530940293,
+      "w_q_frobenius_forced": 265.943361076,
+      "task_credit": {
+        "loss": 1.310483,
+        "credit": {
+          "input_projection": 1.0676926975747467,
+          "state_mix": 0.10627702805034252,
+          "W_q": 0.017546232432851264,
+          "units.r": 0.7054061219508785,
+          "units.p": 1.409855801215491,
+          "units.c": 0.003381074383355677,
+          "units.eta": 0.06605022761362378,
+          "units.b": 0.04459636631162775,
+          "units.w": 0.07872976751667746,
+          "input_encoders.rgb.weight": 0.2919750872942608,
+          "input_encoders.audio.weight": 0.0,
+          "input_encoders.proprio.weight": 0.0,
+          "input_encoders.question.weight": 0.18941872480068028,
+          "input_encoders.goal.weight": 0.0736505527919971,
+          "input_encoders.feedback.weight": 0.0,
+          "position_head.weight": 1.2087392946873525
+        },
+        "parameters_with_gradient": 16,
+        "parameters_total": 16
+      },
+      "controls": {
+        "capsule_digest_matches_run": true,
+        "trained_entropy_matches_run": true,
+        "zero_query_is_uniform": true,
+        "forced_query_took_effect": true
+      }
+    },
+    {
+      "seed": 2026111603,
+      "arms": {
+        "init": {
+          "entropy_mean": 2.772512,
+          "entropy_min": 2.772378,
+          "entropy_max": 2.77256,
+          "entropy_fraction_of_uniform_ceiling": 0.999972,
+          "effective_columns_mean": 15.99878,
+          "max_attention_mean": 0.063719,
+          "max_attention_max": 0.064399,
+          "logit_range_mean": 0.041441,
+          "attention_distinct": 32,
+          "attention_pairwise_l1_mean": 0.007979073,
+          "fit_accuracy": 0.28125,
+          "fit_distinct": 2,
+          "denominator": 32
+        },
+        "trained": {
+          "entropy_mean": 2.77256,
+          "entropy_min": 2.772485,
+          "entropy_max": 2.772584,
+          "entropy_fraction_of_uniform_ceiling": 0.99999,
+          "effective_columns_mean": 15.999541,
+          "max_attention_mean": 0.063086,
+          "max_attention_max": 0.06354,
+          "logit_range_mean": 0.025293,
+          "attention_distinct": 32,
+          "attention_pairwise_l1_mean": 0.006446001,
+          "fit_accuracy": 0.15625,
+          "fit_distinct": 2,
+          "denominator": 32
+        },
+        "trained_zero_query": {
+          "entropy_mean": 2.772589,
+          "entropy_min": 2.772589,
+          "entropy_max": 2.772589,
+          "entropy_fraction_of_uniform_ceiling": 1.0,
+          "effective_columns_mean": 16.0,
+          "max_attention_mean": 0.0625,
+          "max_attention_max": 0.0625,
+          "logit_range_mean": 0.0,
+          "attention_distinct": 1,
+          "attention_pairwise_l1_mean": 0.0,
+          "fit_accuracy": 0.15625,
+          "fit_distinct": 2,
+          "denominator": 32
+        },
+        "trained_forced_query": {
+          "entropy_mean": 2.580721,
+          "entropy_min": 2.283346,
+          "entropy_max": 2.756008,
+          "entropy_fraction_of_uniform_ceiling": 0.930798,
+          "effective_columns_mean": 13.29281,
+          "max_attention_mean": 0.152203,
+          "max_attention_max": 0.272362,
+          "logit_range_mean": 2.70737,
+          "attention_distinct": 32,
+          "attention_pairwise_l1_mean": 0.584032198,
+          "fit_accuracy": 0.25,
+          "fit_distinct": 3,
+          "denominator": 32
+        }
+      },
+      "question_distinct": 6,
+      "question_nonzero_entries_mean": 3.0,
+      "question_l2_mean": 1.732051,
+      "w_q_frobenius_init": 1.391645346,
+      "w_q_frobenius_trained": 1.313652149,
+      "w_q_frobenius_forced": 272.834435935,
+      "task_credit": {
+        "loss": 1.303303,
+        "credit": {
+          "input_projection": 1.221429535623664,
+          "state_mix": 0.14072077952807105,
+          "W_q": 0.003121509559520705,
+          "units.r": 0.675106965183623,
+          "units.p": 0.746578905470392,
+          "units.c": 0.005511379615956465,
+          "units.eta": 0.07420156893290113,
+          "units.b": 0.04671219598683941,
+          "units.w": 0.06754676568036908,
+          "input_encoders.rgb.weight": 0.1398503192941964,
+          "input_encoders.audio.weight": 0.0,
+          "input_encoders.proprio.weight": 0.0,
+          "input_encoders.question.weight": 0.6100345684269133,
+          "input_encoders.goal.weight": 0.03618918747553353,
+          "input_encoders.feedback.weight": 0.0,
+          "position_head.weight": 0.7129849711010421
+        },
+        "parameters_with_gradient": 16,
+        "parameters_total": 16
+      },
+      "controls": {
+        "capsule_digest_matches_run": true,
+        "trained_entropy_matches_run": true,
+        "zero_query_is_uniform": true,
+        "forced_query_took_effect": true
+      }
+    }
+  ],
+  "classification": "question_modulates_but_logits_flat",
+  "capability_scope": "mechanism localization for the U.1r1 negative; no capability claim",
+  "discipline": {
+    "optimizer_steps": 0,
+    "training_updates": 0,
+    "data_file_reads": 1,
+    "partitions_evaluated": [
+      "fit"
+    ],
+    "backward_passes": 3,
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "sealed_partitions_read": [],
+    "capability_claims": 0
+  },
+  "budget": {
+    "cap_cpu": 90.0,
+    "cap_wall": 180.0,
+    "reserve": 10.0,
+    "budget_stopped": false
+  },
+  "cost": {
+    "cpu": 0.4531,
+    "wall": 0.453
+  }
+}
