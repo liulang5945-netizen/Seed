@@ -1,0 +1,94 @@
+{
+  "schema": "taiji-u2-b1-separation-smoke-v1",
+  "card": "22.5.B.1",
+  "date": "2026-11-16",
+  "seeds": [
+    {
+      "seed": 20261110,
+      "inheritance": {
+        "a_digest_equal": true,
+        "b_digest_equal": true,
+        "base_tensors_bit_exact": true
+      },
+      "birth_neutral": true,
+      "knockout_restores_v4": true,
+      "retention_failable_liveness": {
+        "numerical_context_delta_at_0.05": 0.19141817092895508,
+        "behavioral_digest_change_at_2.0": true
+      },
+      "gradient_probe": {
+        "adapter_last_weight_grad_abs_sum": 4.021798133850098,
+        "record_output_weight_grad_abs_sum": 8.913363126339391e-05,
+        "emission_grads_present": [],
+        "finite": true,
+        "parameters_unchanged": true,
+        "optimizer_steps": 0
+      },
+      "legal_release": [
+        "a5-fact"
+      ],
+      "first_pass_correct": 0,
+      "a_baseline_correct": 32
+    },
+    {
+      "seed": 20261111,
+      "inheritance": {
+        "a_digest_equal": true,
+        "b_digest_equal": true,
+        "base_tensors_bit_exact": true
+      },
+      "birth_neutral": true,
+      "knockout_restores_v4": true,
+      "retention_failable_liveness": {
+        "numerical_context_delta_at_0.05": 0.00286102294921875,
+        "behavioral_digest_change_at_2.0": true
+      },
+      "gradient_probe": {
+        "adapter_last_weight_grad_abs_sum": 7.5381669998168945,
+        "record_output_weight_grad_abs_sum": 5.567537300521508e-05,
+        "emission_grads_present": [],
+        "finite": true,
+        "parameters_unchanged": true,
+        "optimizer_steps": 0
+      },
+      "legal_release": [
+        "a5-fact"
+      ],
+      "first_pass_correct": 0,
+      "a_baseline_correct": 32
+    },
+    {
+      "seed": 20261112,
+      "inheritance": {
+        "a_digest_equal": true,
+        "b_digest_equal": true,
+        "base_tensors_bit_exact": true
+      },
+      "birth_neutral": true,
+      "knockout_restores_v4": true,
+      "retention_failable_liveness": {
+        "numerical_context_delta_at_0.05": 0.0552058219909668,
+        "behavioral_digest_change_at_2.0": true
+      },
+      "gradient_probe": {
+        "adapter_last_weight_grad_abs_sum": 7.60453987121582,
+        "record_output_weight_grad_abs_sum": 6.451310036936775e-05,
+        "emission_grads_present": [],
+        "finite": true,
+        "parameters_unchanged": true,
+        "optimizer_steps": 0
+      },
+      "legal_release": [
+        "a5-fact"
+      ],
+      "first_pass_correct": 0,
+      "a_baseline_correct": 32
+    }
+  ],
+  "skipped_unknown": 8,
+  "optimizer_steps": 0,
+  "cost": {
+    "cpu": 81.140625,
+    "wall": 82.123269
+  }
+}

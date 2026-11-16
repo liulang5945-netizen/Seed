@@ -1,0 +1,40 @@
+{
+  "schema": "taiji-u2-b1-separation-price-v1",
+  "card": "22.5.B.1",
+  "date": "2026-11-16",
+  "unit_cpu_measured": {
+    "record_update": 0.507812,
+    "b_round": 0.265625,
+    "a_round": 0.0625
+  },
+  "pricing_optimizer_steps": 8,
+  "pricing_model_discarded": true,
+  "options": [
+    {
+      "name": "full_3seed",
+      "seeds": 3,
+      "k": 8,
+      "updates": 576,
+      "diagnostic_reasks": true,
+      "estimate_cpu": 544.5,
+      "cap_cpu": 626.175,
+      "cap_wall": 1252.35,
+      "over_design_cap": true
+    },
+    {
+      "name": "lean_3seed",
+      "seeds": 3,
+      "k": 8,
+      "updates": 576,
+      "diagnostic_reasks": false,
+      "estimate_cpu": 489.515,
+      "cap_cpu": 562.943,
+      "cap_wall": 1125.886,
+      "over_design_cap": false
+    }
+  ],
+  "cost": {
+    "cpu": 8.15625,
+    "wall": 8.576938
+  }
+}
