@@ -69,7 +69,7 @@ def column_tokens(subject, observations, coordinates) -> torch.Tensor:
     patches = observations["rgb"]
     values = column_values(patches)
     frame = column_coordinates(coordinates["rgb"])
-    return bounded(  # type: ignore[return-value]
+    return bounded(  # type: ignore[no-any-return]
         subject.encoder["rgb"](values) + subject.metadata(frame) + subject.modality[0]
     )
 

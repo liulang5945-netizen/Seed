@@ -9,7 +9,7 @@ A body-only export covers inference recovery, not learning continuation.
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 from .u2_history import atomic_load, atomic_save, value_digest
 
@@ -134,7 +134,7 @@ def save_capsule(destination: str | Path, capsule: dict[str, Any]) -> Path:
 def load_capsule(source: str | Path) -> dict[str, Any]:
     capsule = atomic_load(source)
     validate_capsule(capsule)
-    return capsule
+    return cast(dict[str, Any], capsule)
 
 
 def headless_runtime(capsule: dict[str, Any]) -> dict[str, Any]:

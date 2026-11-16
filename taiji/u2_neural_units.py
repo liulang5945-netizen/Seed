@@ -12,7 +12,7 @@ from __future__ import annotations
 import copy
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import torch
 from torch import nn
@@ -53,7 +53,7 @@ class UnitGraphSpec:
 
     @property
     def torch_dtype(self) -> torch.dtype:
-        return getattr(torch, self.dtype)
+        return cast(torch.dtype, getattr(torch, self.dtype))
 
 
 def make_identities(spec: UnitGraphSpec) -> dict[str, Any]:
@@ -72,7 +72,7 @@ def make_identities(spec: UnitGraphSpec) -> dict[str, Any]:
                 "state_source_version": 0,
             }
         )
-    edges = []
+    edges: list[dict[str, Any]] = []
     for group in range(spec.groups):
         first = group * spec.units_per_group
         for offset in range(spec.units_per_group):
@@ -102,6 +102,10 @@ def _identity_index(identities: dict[str, Any]) -> dict[str, int]:
 
 class NeuralUnits(nn.Module):
     """Synchronous z/a recurrence with explicit unit and edge registries."""
+
+    edge_mask: torch.Tensor
+    group_index: torch.Tensor
+    group_mask: torch.Tensor
 
     def __init__(self, spec: UnitGraphSpec, identities: dict[str, Any] | None = None) -> None:
         super().__init__()
@@ -281,7 +285,7 @@ class _BaseGraph(nn.Module):
         )
         with torch.no_grad():
             for layer in self.input_encoders.values():
-                layer.weight.copy_(torch.eye(spec.input_dim, dtype=dtype))
+                cast(nn.Linear, layer).weight.copy_(torch.eye(spec.input_dim, dtype=dtype))
 
     def encode_legal_inputs(self, channels: dict[str, torch.Tensor]) -> torch.Tensor:
         """Named legal inputs -> [T,G,D]; missing names fail closed."""
@@ -472,7 +476,7 @@ def build_capsule(
     identity: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     state_dict = {key: value.detach().clone() for key, value in graph.state_dict().items()}
-    payload = {
+    payload: dict[str, Any] = {
         "runtime": {
             "route": graph.route,
             "spec": {
@@ -536,7 +540,7 @@ def save_capsule(destination: str | Path, capsule: dict[str, Any]) -> Path:
 def load_capsule(source: str | Path) -> dict[str, Any]:
     capsule = atomic_load(source)
     validate_capsule(capsule)
-    return capsule
+    return cast(dict[str, Any], capsule)
 
 
 def apply_capsule(graph: _BaseGraph, capsule: dict[str, Any]) -> None:

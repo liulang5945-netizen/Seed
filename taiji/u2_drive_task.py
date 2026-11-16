@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+from typing import cast
 
 SCHEMA = "taiji-u2-drive-task-v1"
 SESSIONS = 3
@@ -132,7 +133,7 @@ def build_schedule(seed: int, *, sessions: int = SESSIONS) -> dict:
                     "to": "position_cue",
                     "affects": list(FEEDBACK_AFFECTS),
                 },
-                "deadline_tick": max(o["deadline_tick"] for o in opportunities),
+                "deadline_tick": max(cast(int, o["deadline_tick"]) for o in opportunities),
                 "help": {
                     "bytes": HELP_BYTES_PER_SESSION,
                     "removed_arm": True,
@@ -185,7 +186,7 @@ def value_of(opportunity: dict, operation: str, tick: int) -> int:
     if tick < 0 or tick > opportunity["deadline_tick"]:
         return 0
     if tick < opportunity["reveal_tick"]:
-        return opportunity["value_guess"]
+        return int(opportunity["value_guess"])
     start, end = opportunity["window"]
     return opportunity["value_full"] if start <= tick <= end else 0
 

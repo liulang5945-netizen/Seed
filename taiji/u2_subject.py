@@ -67,6 +67,7 @@ class U2Config:
     group_units: tuple[int, ...] | None = None
     separate_requests: bool = False
     binding: str = "v1"
+    correction: str = "off"
 
     def __post_init__(self) -> None:
         if (
@@ -97,6 +98,10 @@ class U2Config:
             raise ValueError("Invalid native request profile flag")
         if self.binding not in {"v1", "v2"}:
             raise ValueError("Invalid binding version")
+        if self.correction not in {"off", "v1"}:
+            raise ValueError("Invalid correction adapter version")
+        if self.correction == "v1" and self.binding == "v2":
+            raise ValueError("Correction adapter is not defined for binding v2")
         if self.group_units is None:
             if self.base_units is not None:
                 raise ValueError("A base width requires actual group widths")
@@ -206,6 +211,11 @@ def clone_tree(value: Any, *, detach: Any = False) -> Any:
 
 
 class _WorldKernel(nn.Module):
+    # Assigned by U2Subject.__init__ only under binding v2; declared here so
+    # the refinement loop type-checks against the real module types.
+    slot_update: nn.ModuleDict
+    slot_norm: nn.LayerNorm
+
     def __init__(self, profile: Any = DEFAULT_CONFIG) -> None:
         super().__init__()
         self.c: U2Config = profile
@@ -508,16 +518,17 @@ class _WorldKernel(nn.Module):
                     "bnm,nd->bmd", assignment, bounded(self.bind_value[m](value))
                 ) / (total[..., None] + 0.01)
                 if step + 1 < steps:
+                    slot_first = cast(nn.Linear, self.slot_update["first"])
+                    slot_last = cast(nn.Linear, self.slot_update["last"])
                     zt = self.slot_norm(
                         zt
-                        + self.slot_update["last"](
+                        + slot_last(
                             functional.silu(
-                                self.slot_update["first"](
-                                    torch.cat([zt, content, mean[..., None], prior], -1)
-                                )
+                                slot_first(torch.cat([zt, content, mean[..., None], prior], -1))
                             )
                         )
                     )
+            assert mean is not None and content is not None
             masses.append(mean)
             contents.append(content)
             spatial.append(mean if m == "rgb" else torch.zeros_like(mean))
@@ -627,13 +638,24 @@ class U2Subject(_WorldKernel):
                 # Added after every v1 tensor so the v1 initialization stream is
                 # unchanged; these seven tensors are the only new parameters.
                 self.slot_anchor = nn.Parameter(torch.randn(config.objects, d) * 0.1)
-                self.slot_update = nn.ModuleDict(
-                    {"first": nn.Linear(2 * d + 2, 16), "last": nn.Linear(16, d)}
-                )
+                slot_first = nn.Linear(2 * d + 2, 16)
+                slot_last = nn.Linear(16, d)
+                self.slot_update = nn.ModuleDict({"first": slot_first, "last": slot_last})
                 self.slot_norm = nn.LayerNorm(d)
-                for layer in (self.slot_update["first"], self.slot_update["last"]):
+                for layer in (slot_first, slot_last):
                     nn.init.normal_(layer.weight, std=0.3 / math.sqrt(layer.weight[0].numel()))
                     nn.init.constant_(layer.bias, 0.01)
+            if config.correction == "v1":
+                # Born after every inherited tensor so the v1 initialization
+                # stream is unchanged.  The zero-initialized last layer makes
+                # the adapter exactly neutral at birth: a v6 candidate with
+                # inherited weights reproduces its v4 parent bit for bit.
+                # The adapter stays live on record-free episodes (no presence
+                # gate), so feedback learning can damage the old ability and
+                # the retention gate remains failable.
+                self.correction_adapter = MLP(2 * d, d, d)
+                nn.init.zeros_(self.correction_adapter.last.weight)
+                nn.init.zeros_(self.correction_adapter.last.bias)
         self.generation = 0
         self.parameter_revision = 0
         widths = config.group_units or (config.units,) * config.groups
@@ -665,6 +687,18 @@ class U2Subject(_WorldKernel):
         if self.c.separate_requests:
             raise ValueError("Native requests are already enabled")
         return self._fork_candidate(separate_requests=True)
+
+    def correction_candidate(self) -> U2Subject:
+        """Fork the graph with a dedicated correction adapter (B line).
+
+        The four adapter tensors are born; every inherited tensor keeps its
+        exact value.  Emission parameters are not rewritten by feedback in
+        this profile's intended use — the runner freezes them and trains only
+        the adapter plus the record channel.
+        """
+        if self.c.correction != "off":
+            raise ValueError("Correction adapter is already enabled")
+        return self._fork_candidate(correction="v1")
 
     def _fork_candidate(self, **options) -> U2Subject:
         model = U2Subject(replace(self.c, **options)).to(
@@ -1202,6 +1236,16 @@ class U2Subject(_WorldKernel):
         record = record[:, 0]
         alpha = alpha[:, 0]
         beta = beta[:, 0]
+        if self.c.correction == "v1" and "correction" not in getattr(
+            self, "_verification_cuts", ()
+        ):
+            # Dedicated plasticity target: feedback writes here, not into the
+            # emission parameters.  The record value readout (dead in the v4
+            # output path) becomes a causal input; the adapter also sees the
+            # readout context, so it is active on record-free A episodes and
+            # retention can fail.  Knockout ("correction" cut) restores the
+            # exact v4 computation.
+            context = context + self.correction_adapter(torch.cat([record, context], -1))
         previous_value = self.previous_embedding(previous)[None].expand(self.c.branches, -1)
         branch_logits = self.byte_head(torch.cat([context, previous_value], -1)).log_softmax(-1)
         gate_input = torch.cat(
@@ -1792,15 +1836,19 @@ class U2Subject(_WorldKernel):
             self.validate_pending_receipt(state["pending"])
         return {
             "schema": (
-                "taiji-u2-subject-v5"
-                if self.c.binding == "v2"
+                "taiji-u2-subject-v6"
+                if self.c.correction == "v1"
                 else (
-                    "taiji-u2-subject-v4"
-                    if self.c.separate_requests
+                    "taiji-u2-subject-v5"
+                    if self.c.binding == "v2"
                     else (
-                        "taiji-u2-subject-v3"
-                        if self.c.record_metadata or self.c.group_units is not None
-                        else "taiji-u2-subject-v2"
+                        "taiji-u2-subject-v4"
+                        if self.c.separate_requests
+                        else (
+                            "taiji-u2-subject-v3"
+                            if self.c.record_metadata or self.c.group_units is not None
+                            else "taiji-u2-subject-v2"
+                        )
                     )
                 )
             ),
@@ -1824,6 +1872,7 @@ class U2Subject(_WorldKernel):
             "taiji-u2-subject-v3",
             "taiji-u2-subject-v4",
             "taiji-u2-subject-v5",
+            "taiji-u2-subject-v6",
         }:
             raise ValueError("unsupported bundle schema")
         if bundle["schema"] == "taiji-u2-subject-v1" and bundle["state"].get("pending") is not None:
@@ -1833,17 +1882,21 @@ class U2Subject(_WorldKernel):
             "taiji-u2-subject-v3",
             "taiji-u2-subject-v4",
             "taiji-u2-subject-v5",
+            "taiji-u2-subject-v6",
         } and bundle.get("credit_contract") != {
             "critic": "behavior_features_under_frozen_Psi",
             "body_graph": "values_only_requires_window_replay",
         }:
             raise ValueError("bundle credit contract differs from supported recovery scope")
         model = cls(U2Config(**bundle["config"]))
-        if bundle["schema"] == "taiji-u2-subject-v5":
-            if model.c.binding != "v2":
+        if bundle["schema"] == "taiji-u2-subject-v6":
+            if model.c.correction != "v1" or model.c.binding != "v1":
+                raise ValueError("correction_profile_schema_mismatch")
+        elif bundle["schema"] == "taiji-u2-subject-v5":
+            if model.c.binding != "v2" or model.c.correction != "off":
                 raise ValueError("binding_profile_schema_mismatch")
         else:
-            if model.c.binding != "v1":
+            if model.c.binding != "v1" or model.c.correction != "off":
                 raise ValueError("binding_profile_schema_mismatch")
             if (bundle["schema"] == "taiji-u2-subject-v4") != model.c.separate_requests:
                 raise ValueError("request_profile_schema_mismatch")

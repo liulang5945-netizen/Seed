@@ -43,7 +43,7 @@ from __future__ import annotations
 import math
 from collections.abc import Iterator
 from contextlib import contextmanager
-from typing import Any
+from typing import Any, cast
 
 import torch
 from torch import nn
@@ -112,7 +112,7 @@ class ColumnRead(nn.Module):
 
 def request_query(model: Any, example: dict) -> torch.Tensor:
     """The body's own request embedding, averaged over its units."""
-    return model.text_units(example["public"]["request"]).mean(0)
+    return cast(torch.Tensor, model.text_units(example["public"]["request"]).mean(0))
 
 
 def read_for_example(model: Any, read: ColumnRead, example: dict) -> dict[str, torch.Tensor]:
@@ -120,12 +120,12 @@ def read_for_example(model: Any, read: ColumnRead, example: dict) -> dict[str, t
     tokens = column_tokens(
         model, example["public"]["observations"], example["public"]["coordinates"]
     )
-    return read(tokens, request_query(model, example))
+    return cast(dict[str, torch.Tensor], read(tokens, request_query(model, example)))
 
 
 def read_delta(read: ColumnRead, features: torch.Tensor) -> torch.Tensor:
     """The read's contribution to the joint readout input (eight dims)."""
-    return read.out(features)
+    return cast(torch.Tensor, read.out(features))
 
 
 def patch_source(source: torch.Tensor, delta: torch.Tensor) -> torch.Tensor:
