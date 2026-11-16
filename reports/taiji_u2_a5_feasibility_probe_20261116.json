@@ -1,0 +1,167 @@
+{
+  "schema": "taiji-u2-a5-feasibility-probe-v1",
+  "card": "22.5.A.5",
+  "date": "2026-11-16",
+  "verdict": "probe_complete",
+  "findings": {
+    "F1_environment_result_channel": {
+      "contract_gate_accepts": [
+        {
+          "kind": "online_correction",
+          "phase": "online",
+          "accepted": true
+        },
+        {
+          "kind": "help_reply",
+          "phase": "online",
+          "accepted": true
+        },
+        {
+          "kind": "observation",
+          "phase": "online",
+          "accepted": true
+        },
+        {
+          "kind": "train_label",
+          "phase": "development",
+          "accepted": true
+        },
+        {
+          "kind": "score_only",
+          "phase": "scoring",
+          "accepted": true
+        }
+      ],
+      "contract_gate_refuses": [
+        {
+          "kind": "score_only",
+          "phase": "development",
+          "accepted": false,
+          "reason": "feedback channel/split mismatch"
+        },
+        {
+          "kind": "online_correction",
+          "phase": "online",
+          "accepted": false,
+          "reason": "feedback arrived before prediction submission"
+        },
+        {
+          "kind": "train_label",
+          "phase": "online",
+          "accepted": false,
+          "reason": "feedback channel/split mismatch"
+        },
+        {
+          "kind": "train_label",
+          "phase": "development",
+          "accepted": false,
+          "reason": "training label outside development rights"
+        }
+      ],
+      "gate_called_by_production_code": false,
+      "gate_note": "allow_feedback exists in the task contract and is called only by its own self-check script; no runtime or training path calls it",
+      "byte_pipeline_records_present": 0,
+      "byte_pipeline_feedback_record_ids": [],
+      "byte_pipeline_feedback_record_ids_note": "the byte pipeline builds its packet without feedback_record_ids and never sets a record, so the released-record path is dark in this world",
+      "records_when_set_before_utterance": 1,
+      "record_cursor_records": 1,
+      "record_legal": true,
+      "set_records_after_utterance_refused": "record changes require an utterance boundary"
+    },
+    "F2_fact_to_byte_routes": {
+      "target_logprob_baseline": -30.682130098342896,
+      "target_logprob_with_read_code_hook": -30.680328369140625,
+      "deltas": {
+        "fast_memory_perturbed": 0.00021457672119140625,
+        "fast_memory_perturbed_under_read_code_hook": 0.0,
+        "record_added": 16.552401781082153,
+        "record_added_under_read_code_hook": 16.531536638736725
+      },
+      "live": {
+        "alpha_route_shape": [
+          2,
+          1,
+          2
+        ],
+        "alpha_route_row": [
+          -0.643157,
+          -0.745768
+        ],
+        "record_bytes_valid": 18,
+        "copy_gate_gradient_without_record": 0.0,
+        "copy_gate_gradient_with_record": null,
+        "copy_branch_present_with_record": true
+      }
+    },
+    "F3_correction_protocol": {
+      "degraded_first_pass_accuracy": 0.0,
+      "degraded_first_pass_errors": 32,
+      "protocol_accumulate_a4": {
+        "mode": "accumulate",
+        "updates": 256,
+        "second_pass_accuracy": 0.25,
+        "second_pass_errors": 24,
+        "gain_over_control": 0.25
+      },
+      "protocol_one_at_a_time": {
+        "mode": "one_at_a_time",
+        "updates": 32,
+        "second_pass_accuracy": 0.0,
+        "second_pass_errors": 32,
+        "gain_over_control": 0.0
+      },
+      "frozen_control_accuracy": 0.0,
+      "frozen_control_updates": 0
+    },
+    "F4_unit_costs": {
+      "units": {
+        "byte_round_per_example_untrained": 0.224609,
+        "byte_round_per_example_trained": 0.03125,
+        "byte_round_per_example": 0.224609,
+        "train_step_proxy_per_batch": 0.015625,
+        "single_error_correction_per_error": 0.046875,
+        "prepare_per_example": 0.009766
+      },
+      "train_step_samples": [
+        0.0,
+        0.015625,
+        0.0,
+        0.015625,
+        0.0,
+        0.015625,
+        0.015625,
+        0.0,
+        0.015625,
+        0.0,
+        0.015625,
+        0.0,
+        0.015625,
+        0.015625,
+        0.0,
+        0.015625,
+        0.0,
+        0.015625,
+        0.0,
+        0.015625
+      ],
+      "clock_granularity_note": "a single update step is below the Windows clock granularity, so the step cost is measured over repeated steps and divided, not over one step"
+    }
+  },
+  "discipline": {
+    "optimizer_calls": 0,
+    "optimizer_steps": 0,
+    "training_updates": 0,
+    "checkpoints_written": 0,
+    "bundles_written": 0,
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "capability_claims": 0,
+    "accepted_parent": false
+  },
+  "measured": {
+    "cpu_seconds": 27.046875,
+    "wall_seconds": 27.554694
+  },
+  "scope": "zero-training feasibility probe: no optimizer, no optimizer step, no checkpoint, no bundle, no capability claim"
+}

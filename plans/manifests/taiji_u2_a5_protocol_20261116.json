@@ -1,0 +1,148 @@
+{
+  "schema": "taiji-u2-a5-protocol-v1",
+  "status": "design_priced",
+  "card": "22.5.A.5",
+  "date": "2026-11-16",
+  "scope": "protocol card for the 22.5.1 parent gate on the strongest configuration; zero-training probe and pricing complete, no training authorized",
+  "candidate": {
+    "architecture": "native",
+    "profile": "metadata+request",
+    "seed": 20261110,
+    "parameters": 22742,
+    "tensors": 194,
+    "subject_frozen": true,
+    "encoder_bundle": "data/experiments/taiji_u2/p4_2/20261116T0500Z/reconstruct-B-007376.pt",
+    "encoder_bundle_sha256": "f670508850685cb8aa4e9ed385eb2f5997154524e606d1ab7cbfbd5230eb0f2f",
+    "a1b_checkpoint": "data/experiments/taiji_u2/a1b/20261115T2300Z/a1b-00200.pt",
+    "a1b_checkpoint_sha256": "3ebac8b34ace3e9d784867e0096527cba515bace68199712a6cdc940a458dbc3",
+    "read_head_parameters": 263,
+    "prior": [
+      0.0234375,
+      0.0302734375,
+      0.015625,
+      0.0146484375,
+      0.0146484375,
+      0.021484375,
+      0.8798828125
+    ]
+  },
+  "data_root": "data/experiments/taiji_u2/first_a/20261112T074836Z/data.bin",
+  "data_digest": "40813b4cc8ffec0c3ae5639941b373c139422b4ccbaa34790de34a9e1149d214",
+  "data": {
+    "train": 64,
+    "fit": 32,
+    "check_final_confirm": "not read"
+  },
+  "read_code": {
+    "interface": "read-code-v1",
+    "width": 24,
+    "class_order": [
+      "左边",
+      "中间",
+      "右边",
+      "未知"
+    ],
+    "rule": "zeros(24); code[class] = 1.0; both branches receive the same code at joint_readout",
+    "injection": "forward hook on joint_readout replaces its output with joint_readout(code); training, evaluation and feedback use the same path",
+    "limitation": "the code carries the read's four-way answer, not the scene's pixels; a pass measures byte expression, not content-conditioned binding"
+  },
+  "emission_parameters": [
+    "byte_head.bias",
+    "byte_head.weight",
+    "copy_gate.bias",
+    "copy_gate.weight",
+    "joint_readout.first.bias",
+    "joint_readout.first.weight",
+    "joint_readout.last.bias",
+    "joint_readout.last.weight"
+  ],
+  "emission_scalar_count": 3919,
+  "optimizer": {
+    "lr": 0.01,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "weight_decay": 0.0
+  },
+  "feedback_optimizer": {
+    "lr": 0.001,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "weight_decay": 0.0
+  },
+  "feedback_updates": 1,
+  "feedback_updates_a4": 8,
+  "batch": 8,
+  "steps": 600,
+  "dose_points": [
+    200,
+    400,
+    600
+  ],
+  "criteria": {
+    "response_round": "exact answer bytes plus EOS plus valid UTF-8, greedy, 65-byte cap",
+    "main_denominator": "all 32 fit rounds; a failed, extra-byte or invalid round is counted, never filtered",
+    "main_gate": 0.8,
+    "correction_gate": 0.8,
+    "feedback_gain_gate": 0.05,
+    "stability_rule": "first-round correct rounds that become wrong <= max(1, 0.10 * first-round correct)",
+    "correction_protocol": "one first-pass error released at a time; the released error is re-asked immediately and the next error is only released after it is answered; no error accumulates updates across the round",
+    "feedback_carrier": "released record (environment result)",
+    "teacher_forcing_forbidden": true,
+    "correction_denominator": "first-pass fit errors",
+    "control_arm": "same subject, same feedback exposure, zero parameter updates and zero state writes; state digest before == after",
+    "feedback_gain": "learned second-pass fit accuracy minus control second-pass fit accuracy",
+    "not_identifiable_rule": "if first-pass fit errors < 4, correction and feedback gain are recorded as not_identifiable_by_design",
+    "recovery": "save the trained bundle, reload in an independent process, re-ask all 32; outputs must be byte-identical",
+    "seed_rule": "three seeds, same direction; the world-paired 95 percent lower bound must exceed zero",
+    "world_pairing": "each first_A example is an independent world, identified by its own audit.world_digest; the pairing unit is the example, and the bootstrap resamples examples, not rows",
+    "a_retention": "not_applicable_no_A_parent",
+    "three_seed": "in_scope",
+    "check2": "not_read",
+    "accepted_parent": false
+  },
+  "plan": {
+    "seeds": [
+      20261110,
+      20261111,
+      20261112
+    ],
+    "updates_per_seed": 600,
+    "dose_points": 3,
+    "contingency": 0.15,
+    "design_cap_cpu": 600.0,
+    "feedback_error_allowance": 32,
+    "bootstrap_resamples": 2000,
+    "bootstrap_seed": 20261116
+  },
+  "training_authority": null,
+  "authorization": {
+    "asked": "是否立项 22.5.A.5 协议卡并授权按实价执行",
+    "reply": null,
+    "scope": null
+  },
+  "source_pins": {
+    "probe": "165b39fa588620d7f4404f1cf0edc17fdaaae11327d81300b62a0e9b48bf88e4",
+    "price": "729a52e5d84b728549c7a4ded419d3ada6aeb51e903cd13892dd42209211dab5",
+    "subject": "a3335d7fc84e54903f16617e452753c04124709b3b83c20a656d7b43b5ef41ad",
+    "events": "b89d5424a76263efab7a5c944dbc820b34fdef4ed12b10afc0b651193a34c944",
+    "contract_module": "957d9d4163eb960dbef5939e721ce1a69dd13311148944901aafb700022bed84",
+    "a2_runner": "c26f4a545ffb5d12f579cb7e69c57eabca6cd7c427e479fb3a55e4621f0fd981",
+    "support": "33d9301f98859934c1413e25765c55e6bc7b64dfa410d65b03f0e5a198041b4c",
+    "columns": "4afb7c94a0641f6f5eb943339d19f13c8f690ddcf6956bc6787cba5aa4653476",
+    "guard": "80b53184ae2ef77b6adcb54549257fd6e8ba0b1f43c11d393fd70ede1e7ac089"
+  },
+  "exits": [
+    "probe_complete",
+    "protocol_priced",
+    "pricing_over_budget",
+    "engineering_failure"
+  ],
+  "criteria_sha256": "547dfa6bb354f9e945815effc5fd37b4898fcf0a66d05d50c1d9f1cd6596a03d",
+  "note": "probe stage: the manifest exists so the zero-training feasibility probe can run against frozen candidate identities; criteria and pins are frozen before any training reading"
+}
