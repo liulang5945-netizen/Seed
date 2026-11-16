@@ -1,0 +1,60 @@
+{
+  "schema": "taiji-u2-c2-position-run-v1",
+  "card": "22.5.C.2",
+  "date": "2026-11-16",
+  "verdict": "both_failed",
+  "seeds": [
+    20261110,
+    20261111,
+    20261112
+  ],
+  "decode_fit_accuracies": [
+    0.3333333333333333,
+    0.3333333333333333,
+    0.3333333333333333
+  ],
+  "selectivity_fit_accuracies": [
+    0.78125,
+    0.78125,
+    0.78125
+  ],
+  "final_diagnostics": [
+    {
+      "answer_mass_mean": 0.959931,
+      "read_std_over_norm": 0.017364
+    },
+    {
+      "answer_mass_mean": 0.951402,
+      "read_std_over_norm": 0.012451
+    },
+    {
+      "answer_mass_mean": 0.945006,
+      "read_std_over_norm": 0.014086
+    }
+  ],
+  "birth_diagnostics": [
+    {
+      "answer_mass_mean": 0.199298,
+      "read_std_over_norm": 0.0
+    },
+    {
+      "answer_mass_mean": 0.199298,
+      "read_std_over_norm": 0.0
+    },
+    {
+      "answer_mass_mean": 0.199298,
+      "read_std_over_norm": 0.0
+    }
+  ],
+  "purity_ok": true,
+  "answer_ok": true,
+  "recovery_ok": true,
+  "precommitment": "if representation not earned, global closeout of the byte-world joint-gate effort (MAINLINE section 5)",
+  "accepted_parent": false,
+  "capability_claims": 0,
+  "check2": "not_read",
+  "cost": {
+    "cpu": 299.9375,
+    "wall": 330.969098
+  }
+}

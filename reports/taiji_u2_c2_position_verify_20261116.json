@@ -1,0 +1,63 @@
+{
+  "schema": "taiji-u2-c2-position-verify-v1",
+  "card": "22.5.C.2",
+  "date": "2026-11-16",
+  "checks": [
+    {
+      "check": "purity_seed_20261110",
+      "ok": true
+    },
+    {
+      "check": "decode_digest_seed_20261110",
+      "ok": true
+    },
+    {
+      "check": "selectivity_digest_seed_20261110",
+      "ok": true
+    },
+    {
+      "check": "recovery_seed_20261110",
+      "ok": true
+    },
+    {
+      "check": "purity_seed_20261111",
+      "ok": true
+    },
+    {
+      "check": "decode_digest_seed_20261111",
+      "ok": true
+    },
+    {
+      "check": "selectivity_digest_seed_20261111",
+      "ok": true
+    },
+    {
+      "check": "recovery_seed_20261111",
+      "ok": true
+    },
+    {
+      "check": "purity_seed_20261112",
+      "ok": true
+    },
+    {
+      "check": "decode_digest_seed_20261112",
+      "ok": true
+    },
+    {
+      "check": "selectivity_digest_seed_20261112",
+      "ok": true
+    },
+    {
+      "check": "recovery_seed_20261112",
+      "ok": true
+    },
+    {
+      "check": "decode_match_report",
+      "ok": true
+    }
+  ],
+  "all_ok": true,
+  "cost": {
+    "cpu": 14.421875
+  }
+}

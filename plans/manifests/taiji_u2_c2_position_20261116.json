@@ -151,12 +151,12 @@
   },
   "criteria_sha256": "6841fd1a4111ca93e2d9b76ff5a1cc77e12f6c10177ad11e0d4d9f594b20cb11",
   "criteria_canonicalization": "json.dumps(criteria, sort_keys=True, ensure_ascii=False, separators=(',',':')) utf-8 sha256",
-  "training_authority": null,
+  "training_authority": "owner replied 授权执行 on 2026-11-16 to position_3seed (cap 373.895 CPU / 747.79 wall); final C-line revision, pre-committed global closeout if negative",
   "authorization": {
-    "asked": null,
-    "reply": null,
-    "reply_date": null,
-    "scope": null
+    "asked": "是否授权按 position_3seed 实价执行 22.5.C.2（帽 373.895 CPU／747.79 wall，1152 更新，3 seed，C 线最后修订）",
+    "reply": "授权执行",
+    "reply_date": "2026-11-16",
+    "scope": "three seeds, 384 updates each (1152 total), cap 373.895 CPU / 747.79 wall; negative triggers global closeout"
   },
   "source_pins": {
     "runner": "b392e157e7bd52bc620a987dee00cf5d756128ce41162c72c83a1877d2f89075",
@@ -205,5 +205,42 @@
   "wiring_cost": {
     "smoke_cpu": 31.1875,
     "price_cpu": 2.875
+  },
+  "result": {
+    "verdict": "both_failed",
+    "date": "2026-11-16",
+    "decode_fit_accuracies": [
+      0.3333333333333333,
+      0.3333333333333333,
+      0.3333333333333333
+    ],
+    "selectivity_fit_accuracies": [
+      0.78125,
+      0.78125,
+      0.78125
+    ],
+    "final_diagnostics": [
+      {
+        "answer_mass_mean": 0.959931,
+        "read_std_over_norm": 0.017364
+      },
+      {
+        "answer_mass_mean": 0.951402,
+        "read_std_over_norm": 0.012451
+      },
+      {
+        "answer_mass_mean": 0.945006,
+        "read_std_over_norm": 0.014086
+      }
+    ],
+    "cost_cpu": 299.9375,
+    "cost_wall": 330.969098,
+    "run_report": "reports/taiji_u2_c2_position_run_20261116.json",
+    "verify_report": "reports/taiji_u2_c2_position_verify_20261116.json",
+    "result_card": "plans/reference/RESULT-TAIJI_U2_C2_POSITION_20261116.md",
+    "global_closeout": "plans/reference/CLOSEOUT-TAIJI_U2_BYTE_WORLD_JOINT_GATE_20261116.md",
+    "verify": "13/13 green; red drill tampered decode -> rc1, byte-exact restore -> rc0",
+    "attribution": "position-focus loss succeeded mechanically (answer mass 0.199->0.96) but decode stayed at chance 0.333 and read separability only 0.005->0.017; attention focusing on label bytes is insufficient for decodable content - the value-encoding chain (record_value/record_output) is a deeper independent gap. Triggers pre-committed global closeout.",
+    "precommitment_triggered": true
   }
 }

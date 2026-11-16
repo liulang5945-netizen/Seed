@@ -1,6 +1,6 @@
 # 22.5.C.2 设计卡：位置定向检索（C 线最后修订，预承诺收束）
 
-> 卡号：`22.5.C.2`｜日期：2026-11-16｜状态：**已设计、已定价、smoke 全过，训练未授权**。
+> 卡号：`22.5.C.2`｜日期：2026-11-16｜状态：**已结案（负，有定位）⇒ 触发预承诺全局收束**——见[结果卡](RESULT-TAIJI_U2_C2_POSITION_20261116.md)（D-20261116-16，`both_failed`）与[全局收束卡](CLOSEOUT-TAIJI_U2_BYTE_WORLD_JOINT_GATE_20261116.md)；本卡保留冻结时的设计原文。
 > 契约 [`taiji_u2_c2_position_20261116.json`](../manifests/taiji_u2_c2_position_20261116.json)（`criteria_sha256=6841fd1a…`）；[smoke 回执](../../reports/taiji_u2_c2_position_smoke_20261116.json)、[定价回执](../../reports/taiji_u2_c2_position_price_20261116.json)。
 > 前置：[C.1 结果卡](RESULT-TAIJI_U2_C1_RETRIEVAL_20261116.md)（D-20261116-14，`both_failed`，缺口＝位置注意力不聚焦）、owner 裁决（D-20261116-15）。
 > **预承诺（owner 裁决时确立）**：C.2 是 C 线第 2 次、**最后一次**架构修订；若表示门仍未过，按 MAINLINE §5 **全局收束**字节世界联合父门 effort，不再局部追加。
