@@ -28,6 +28,14 @@ The read enters the subject at the joint readout, additively, through a
 zero-initialised projection. At initialisation the byte path is therefore
 bit-identical to the body without the read, so nothing regresses before training
 starts, and the first step is a true starting point rather than a perturbation.
+
+It enters on the **input** side of the readout, not the output side. That is the
+second version of this design and the reason is measurement: a reader probes the
+decision point, which is the readout's *input*, and A.3 measured that this input
+does not carry a scene read (0.4375 against a shuffle null of 0.34375, painted
+colour probe 0.0154). A read added to the output would leave that probe exactly
+where it was, so the card's own gate could never be met. The delta lands on the
+last eight of the twenty-four input values, which is the body's own fast slice.
 """
 
 from __future__ import annotations
@@ -49,6 +57,7 @@ COLUMNS = 16
 CLASSES = ("左边", "中间", "右边", "未知")
 FEATURES = 11  # position, strength, entropy, pooled content (8)
 INJECT = FEATURES + 4  # the class distribution joins the injected vector
+READOUT_WIDTH = 24  # 3 * d: the joint readout input of the registered body
 
 
 def column_positions() -> torch.Tensor:
@@ -114,9 +123,23 @@ def read_for_example(model: Any, read: ColumnRead, example: dict) -> dict[str, t
     return read(tokens, request_query(model, example))
 
 
+def read_delta(read: ColumnRead, features: torch.Tensor) -> torch.Tensor:
+    """The read's contribution to the joint readout input (eight dims)."""
+    return read.out(features)
+
+
+def patch_source(source: torch.Tensor, delta: torch.Tensor) -> torch.Tensor:
+    """Add the read delta to the fast slice of a joint readout input."""
+    if source.shape[-1] != READOUT_WIDTH:
+        raise ValueError(f"unexpected_joint_readout_width_{source.shape[-1]}")
+    patched = source.clone()
+    patched[..., -8:] = patched[..., -8:] + delta.to(source.dtype)
+    return patched
+
+
 @contextmanager
 def inject_read(model: Any, read: ColumnRead, provider) -> Iterator[None]:
-    """Add the read to the joint readout output for the duration of the block.
+    """Add the read to the joint readout input for the duration of the block.
 
     ``provider`` is called with no arguments and must return the injection vector
     of the example currently being answered - the eleven features plus the four
@@ -124,13 +147,14 @@ def inject_read(model: Any, read: ColumnRead, provider) -> Iterator[None]:
     per-example read is the cheap way to use it.
     """
 
-    def inject(module, inputs, output):  # noqa: ANN001 - torch hook signature
+    def pre(module, inputs):  # noqa: ANN001 - torch hook signature
+        source = inputs[0]
         features = provider()
         if features is None:
-            return output
-        return output + read.out(features.to(output.dtype))
+            return None
+        return (patch_source(source, read_delta(read, features)),) + tuple(inputs[1:])
 
-    handle = model.joint_readout.register_forward_hook(inject)
+    handle = model.joint_readout.register_forward_pre_hook(pre)
     try:
         yield
     finally:

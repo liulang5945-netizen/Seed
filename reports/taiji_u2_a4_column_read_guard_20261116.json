@@ -3,8 +3,8 @@
   "card": "22.5.A.4",
   "verdict": "guard_passed",
   "checks": {
-    "contract_is_design_priced": true,
-    "training_not_authorised": true,
+    "contract_state_is_recorded": true,
+    "authority_state_is_consistent": true,
     "criteria_sha256_matches": true,
     "script_pin_live": true,
     "read_module_pin_live": true,
@@ -45,6 +45,6 @@
   },
   "measured": {
     "cpu_seconds": 0.0,
-    "wall_seconds": 0.006721
+    "wall_seconds": 0.001671
   }
 }

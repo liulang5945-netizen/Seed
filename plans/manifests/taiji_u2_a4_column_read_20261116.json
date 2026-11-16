@@ -1,6 +1,6 @@
 {
   "schema": "taiji-u2-a4-column-read-contract-v1",
-  "status": "design_priced",
+  "status": "frozen",
   "card": "22.5.A.4",
   "date": "2026-11-16",
   "scope": "design and pricing only; no training, no optimizer, no checkpoint, no capability claim",
@@ -10,7 +10,11 @@
     "width": 8,
     "read_identity": "column-read-v1",
     "body": "the registered candidate, unchanged: 22742 scalars / 194 tensors",
-    "read_scalars_expected": 476
+    "read_scalars_expected": 476,
+    "encoder_bundle": "data/experiments/taiji_u2/p4_2/20261116T0500Z/reconstruct-B-007376.pt",
+    "encoder_bundle_sha256": "f670508850685cb8aa4e9ed385eb2f5997154524e606d1ab7cbfbd5230eb0f2f",
+    "parameters": 22742,
+    "tensors": 194
   },
   "data_root": "data/experiments/taiji_u2/first_a/20261112T074836Z/data.bin",
   "data_digest": "40813b4cc8ffec0c3ae5639941b373c139422b4ccbaa34790de34a9e1149d214",
@@ -37,7 +41,8 @@
       "feedback_gain": 0.05,
       "old_ability_drop": 0.02,
       "recovery": "byte-identical across an independent process",
-      "correction_identifiability": "a first pass at 32/32 leaves nothing to correct, so the correction gate is measured on a declared degraded first pass: the A.1b uncalibrated read (fit 25/32); this is declared before any reading"
+      "correction_identifiability": "a first pass at 32/32 leaves nothing to correct, so the correction gate is measured on a declared degraded first pass: the A.1b uncalibrated read (fit 25/32); this is declared before any reading",
+      "a_retention": "not_applicable_no_A_parent"
     },
     "seed_rule": "three seeds, same direction; the world-paired 95 percent lower bound must exceed zero",
     "scope_limit": "this card can at most sign read_in_body_confirmed; the 22.5.1 parent claim needs the full protocol including real feedback rounds and the retention control, and is not signed here",
@@ -47,32 +52,43 @@
       "byte_gate_failed_with_read_passed",
       "inconclusive_a4",
       "budget_stop",
-      "engineering_failure"
+      "engineering_failure",
+      "premise_below_floor_read_outcomes_passed"
     ],
     "capability_claims": 0
   },
   "plan": {
-    "seeds": 3,
+    "seeds": [
+      20261110,
+      20261111,
+      20261112
+    ],
     "updates_per_seed": 600,
     "dose_points": 3,
     "contingency": 0.15,
     "design_cap_cpu": 600.0,
     "note": "the contingency replaces A.2's implicit 10.9 percent overrun with a declared one; every fixed phase is priced separately this time"
   },
-  "training_authority": null,
-  "authorization": null,
+  "training_authority": "owner:chat:2026-11-16#是",
+  "authorization": {
+    "asked": "是否立项 22.5.A.4 并授权按实价执行（帽 443.63 CPU／约 890 wall，3 seed × 600 更新）",
+    "reply": "是",
+    "scope": "three seeds, 600 updates each, cap 443.627 CPU",
+    "note": "the owner approved the priced design and cap from the A.4 spec card"
+  },
   "source_pins": {
     "script": "scripts/training/price_a4_column_read_20261116.py",
     "script_sha256": "c62628b13398a776b39a9b0644aa3511d25869c2ff73afbd17cf6ca609031fe0",
     "read_module": "taiji/u2_column_read.py",
-    "read_module_sha256": "86ad24b8c92459b4d475fbb35480f636f6e54378ce74fd120b15102783b3e08f"
+    "read_module_sha256": "c01105e84c1cb0f747e5e997faa07188b309cf5aca350216dcf97fa810d180e1",
+    "runner_sha256": "2c58e8908d2d74f6a142c795d5a6dc8d92d1c97992864bef5fa6b463edd98c6b"
   },
   "exits": [
     "price_measured",
     "pricing_over_budget"
   ],
   "note": "training remains unauthorized; the owner must approve the design and the priced cap before any optimizer call",
-  "criteria_sha256": "6b59d3e0aea82506340e8210763f1814ca605667b1aa3361cfac5a6dddbdca59",
+  "criteria_sha256": "73c8d123b16bbc476ae4b4403d5236af38eddcabfabf428e18e3da4b4cbe1663",
   "amendment_pre_execution": {
     "what": "the first design injected only the eleven features, which left the four-class head outside the gradient path of the byte loss: it could never be trained, and any read accuracy measured on it would have been an accident. A contract test caught it. The class probabilities are now injected as well (fifteen values), so the byte loss earns the class. The scalar count moves from the expected 444 to the measured 476.",
     "change": "the injection vector now carries the class distribution; the zero-initialised residual keeps the first step byte-identical, which also means the head gradient is exactly zero on step one and non-zero from step two on (declared property, asserted by the contract tests)",
@@ -83,6 +99,60 @@
       "gates",
       "scope_limit"
     ],
-    "final_note": "the last re-pin follows an import-style fix (UP035) with no behavioural change; the measured price is unaffected"
-  }
+    "final_note": "the last re-pin follows an import-style fix (UP035) with no behavioural change; the measured price is unaffected",
+    "injection_side": "the read is injected on the input side of the joint readout, not the output side: the decision point is the readout input, and A.3 measured that it carries no scene read. A read added to the output would have left the card own gate unmeasurable.",
+    "correction_protocol": "the degraded first pass is the trained subject with the read switched off (its projection zeroed), not the A.1b uncalibrated read: the A.1b head is an external frozen head, so that variant would measure the pipeline rather than the in-body read this card is about. The correction denominator is the degraded pass own errors.",
+    "colour_probe_instrument": "the painted-column colour probe is measured on the column tokens (the read inputs) with A.3 own instrument; the manifest wording did not say which representation feeds it.",
+    "retention": "a_retention is not_applicable_no_A_parent, as in A.2: there is no A parent to retain, and the byte path without the read has no measured ability to drop.",
+    "feedback_meaning": "the feedback in this card is the byte supervision (the released correct answer bytes), not an environment outcome; the parent claim therefore stays out of scope.",
+    "read_class_supervision": "the byte loss alone cannot teach the read class: the class reaches the loss only through the residual projection, so its gradient is second order, and in a trial it fell from 3.9e-5 at step 20 to exactly zero from step 50 while the read accuracy stayed at 0.25. The class head is therefore trained by an auxiliary cross entropy on the public target word (the same answer the byte path is given, in a directly usable form, exactly as P4.1 arm B supervised column colour). The gates are unchanged.",
+    "verdict_branch": "the ladder gains one branch that separates a failed premise from failed outcomes: the painted-column colour number is a premise about the read inputs and cannot move because the encoder is frozen, while the read class accuracy and the prefix-0 margin are the outcomes training can move. No threshold was changed; the branch only names which of the two failed.",
+    "engineering_failure_v1": "the first execution failed after the training loop with a backward through the graph a second time: the feedback phase computed the read once per released example and reused that graph for eight updates. The read is now recomputed inside every feedback update. The failure report is retained as reports/taiji_u2_a4_column_read_run_20261116_engineering_failure_v1.json.",
+    "engineering_failure_v2": "the second execution reached the bundle save and failed on a relative path that could not be relativised against the repository root; the path is now resolved before the relative form is written.",
+    "engineering_failure_v3": "the third execution trained all three seeds and wrote their bundles, then failed while assembling the report on a scope key that lives under the criteria block.",
+    "criteria_hash_note": "the criteria hash is recomputed after the recorded amendments (a_retention wording, the named premise branch and the added exit); no threshold was changed by any amendment.",
+    "lint_closure_binding": "three closures were bound to their loop variables by default argument after the run; the behaviour is unchanged and the readings were not re-taken."
+  },
+  "emission_parameters": [
+    "byte_head.bias",
+    "byte_head.weight",
+    "copy_gate.bias",
+    "copy_gate.weight",
+    "joint_readout.first.bias",
+    "joint_readout.first.weight",
+    "joint_readout.last.bias",
+    "joint_readout.last.weight"
+  ],
+  "emission_scalar_count": 3919,
+  "trainable_scalar_count": 4395,
+  "optimizer": {
+    "lr": 0.01,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "weight_decay": 0.0
+  },
+  "feedback_optimizer": {
+    "lr": 0.001,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "weight_decay": 0.0
+  },
+  "feedback_updates": 8,
+  "steps": 600,
+  "batch": 8,
+  "dose_points": [
+    200,
+    400,
+    600
+  ],
+  "cpu_cap": 443.627,
+  "wall_cap": 890.0,
+  "aux_read_weight": 1.0,
+  "run_root": "data/experiments/taiji_u2/a4/20261116T0315Z"
 }

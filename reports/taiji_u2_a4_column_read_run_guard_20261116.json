@@ -1,0 +1,106 @@
+{
+  "schema": "taiji-u2-a4-column-read-run-guard-v1",
+  "card": "22.5.A.4",
+  "verdict": "guard_passed",
+  "checks": {
+    "contract_frozen": true,
+    "authority_recorded": true,
+    "criteria_sha256_matches": true,
+    "runner_pin_live": true,
+    "read_module_pin_live": true,
+    "seed_count_matches_plan": true,
+    "recompute_matches_every_seed": true,
+    "post_feedback_bundle_matches_the_reported_loss": true,
+    "verdict_matches_ladder": true,
+    "every_seed_recomputed": true,
+    "no_parent_claim": true,
+    "no_sealed_reads": true,
+    "cost_within_cap": true,
+    "trainable_count_declared": true,
+    "read_weight_declared": true,
+    "premise_and_outcomes_separated": true
+  },
+  "drills": {
+    "inflate_the_fit": true,
+    "inflate_the_read": true,
+    "claim_the_unlock": true,
+    "claim_a_parent": true,
+    "inject_capability_claim": true,
+    "escape_the_cap": true,
+    "inflate_the_margin": true
+  },
+  "failed": [],
+  "drills_not_firing": [],
+  "recomputed": {
+    "20261110": {
+      "bundle": {
+        "fit_accuracy": 0.40625,
+        "fit_correct": 13,
+        "fit_denominator": 32,
+        "read_accuracy_fit": 0.5625,
+        "prefix_best_fit": 0.40625,
+        "prefix_null_max": 0.34375,
+        "prefix_margin": 0.0625,
+        "painted": 0.3384615480899811
+      },
+      "bundle_after_feedback": {
+        "fit_accuracy": 0.0,
+        "fit_correct": 0,
+        "fit_denominator": 32,
+        "read_accuracy_fit": 0.3125,
+        "prefix_best_fit": 0.40625,
+        "prefix_null_max": 0.34375,
+        "prefix_margin": 0.0625,
+        "painted": 0.3384615480899811
+      }
+    },
+    "20261111": {
+      "bundle": {
+        "fit_accuracy": 0.4375,
+        "fit_correct": 14,
+        "fit_denominator": 32,
+        "read_accuracy_fit": 0.46875,
+        "prefix_best_fit": 0.40625,
+        "prefix_null_max": 0.34375,
+        "prefix_margin": 0.0625,
+        "painted": 0.3384615480899811
+      },
+      "bundle_after_feedback": {
+        "fit_accuracy": 0.0,
+        "fit_correct": 0,
+        "fit_denominator": 32,
+        "read_accuracy_fit": 0.375,
+        "prefix_best_fit": 0.40625,
+        "prefix_null_max": 0.34375,
+        "prefix_margin": 0.0625,
+        "painted": 0.3384615480899811
+      }
+    },
+    "20261112": {
+      "bundle": {
+        "fit_accuracy": 0.25,
+        "fit_correct": 8,
+        "fit_denominator": 32,
+        "read_accuracy_fit": 0.375,
+        "prefix_best_fit": 0.40625,
+        "prefix_null_max": 0.34375,
+        "prefix_margin": 0.0625,
+        "painted": 0.3384615480899811
+      },
+      "bundle_after_feedback": {
+        "fit_accuracy": 0.0,
+        "fit_correct": 0,
+        "fit_denominator": 32,
+        "read_accuracy_fit": 0.375,
+        "prefix_best_fit": 0.40625,
+        "prefix_null_max": 0.34375,
+        "prefix_margin": 0.0625,
+        "painted": 0.3384615480899811
+      }
+    }
+  },
+  "measured": {
+    "cpu_seconds": 37.625,
+    "wall_seconds": 37.790084
+  }
+}

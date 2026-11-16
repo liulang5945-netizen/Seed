@@ -62,8 +62,15 @@ def recompute_cap(report: dict) -> dict:
 
 def evaluate(contract: dict, report: dict) -> dict[str, bool]:
     checks: dict[str, bool] = {}
-    checks["contract_is_design_priced"] = contract["status"] == "design_priced"
-    checks["training_not_authorised"] = contract["training_authority"] is None
+    # The price receipt is the pricing stage's artifact; the contract may since
+    # have been frozen for training. What must hold is that the state is recorded
+    # and that an authority, if the card is frozen, exists and is named.
+    checks["contract_state_is_recorded"] = contract["status"] in {"design_priced", "frozen"}
+    checks["authority_state_is_consistent"] = (
+        contract["training_authority"] is None
+        if contract["status"] == "design_priced"
+        else bool(contract["training_authority"])
+    )
     criteria = json.dumps(
         contract["criteria"], sort_keys=True, ensure_ascii=False, separators=(",", ":")
     )

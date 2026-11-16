@@ -11,6 +11,7 @@ from taiji.u2_column_read import (
     FEATURES,
     IDENTITY,
     INJECT,
+    READOUT_WIDTH,
     ColumnRead,
     column_positions,
     inject_read,
@@ -23,8 +24,8 @@ class _Stub(nn.Module):
 
     def __init__(self) -> None:
         super().__init__()
-        # The read projects into an 8-dim context, like the body's joint readout.
-        self.joint_readout = nn.Linear(4, 8)
+        # The read enters the input of the joint readout: 3 * d = 24 values.
+        self.joint_readout = nn.Linear(READOUT_WIDTH, 8)
 
     def forward(self, value: torch.Tensor) -> torch.Tensor:
         return self.joint_readout(value)
@@ -56,7 +57,7 @@ def test_injection_is_a_no_op_at_initialisation() -> None:
     """Zero-initialised output projection: the body must not move before training."""
     stub = _Stub()
     read = ColumnRead(8)
-    value = torch.randn(3, 4)
+    value = torch.randn(3, READOUT_WIDTH)
     before = stub(value)
     with inject_read(stub, read, lambda: torch.zeros(INJECT)):
         after = stub(value)
@@ -86,6 +87,35 @@ def test_features_carry_position_strength_and_entropy() -> None:
     assert float(out["entropy"]) >= 0.0
 
 
+def test_decision_point_carries_the_read() -> None:
+    """A forward hook must see the read inside the readout's input.
+
+    The read has to reach the decision point, because that is what a reader
+    probes; a read added to the output would leave the probe untouched.
+    """
+    stub = _Stub()
+    read = ColumnRead(8)
+    with torch.no_grad():
+        read.out.weight.normal_(0.0, 0.1)
+    out = read(torch.randn(COLUMNS, 8), torch.randn(8))
+    captured: list[torch.Tensor] = []
+
+    def capture(module, inputs, result):  # noqa: ANN001 - torch hook signature
+        captured.append(inputs[0].detach().clone())
+        return None
+
+    handle = stub.joint_readout.register_forward_hook(capture)
+    try:
+        with inject_read(stub, read, lambda: out["injection"]):
+            value = torch.randn(3, READOUT_WIDTH)
+            stub(value)
+    finally:
+        handle.remove()
+    assert captured
+    delta = (captured[0][..., -8:] - value[..., -8:]).abs().sum()
+    assert float(delta) > 0.0
+
+
 def test_class_head_is_on_the_byte_path() -> None:
     """The four class probabilities are injected, so the byte loss trains the head.
 
@@ -96,7 +126,7 @@ def test_class_head_is_on_the_byte_path() -> None:
     read = ColumnRead(8)
     out = read(torch.randn(COLUMNS, 8), torch.randn(8))
     with inject_read(stub, read, lambda: out["injection"]):
-        stub(torch.randn(3, 4)).sum().backward()
+        stub(torch.randn(3, READOUT_WIDTH)).sum().backward()
     assert read.head[0].weight.grad is not None
     # Zero-initialised residual: on the first step only the projection can move.
     assert float(read.head[0].weight.grad.abs().sum()) == 0.0
@@ -111,5 +141,5 @@ def test_head_trains_once_the_residual_is_live() -> None:
         read.out.weight.normal_(0.0, 0.1)
     out = read(torch.randn(COLUMNS, 8), torch.randn(8))
     with inject_read(stub, read, lambda: out["injection"]):
-        stub(torch.randn(3, 4)).sum().backward()
+        stub(torch.randn(3, READOUT_WIDTH)).sum().backward()
     assert float(read.head[0].weight.grad.abs().sum()) > 0.0

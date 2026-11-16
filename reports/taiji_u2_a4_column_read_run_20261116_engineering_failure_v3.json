@@ -1,0 +1,6 @@
+{
+  "schema": "taiji-u2-a4-column-read-run-v1",
+  "card": "22.5.A.4",
+  "verdict": "engineering_failure",
+  "error": "KeyError: 'scope_limit'"
+}

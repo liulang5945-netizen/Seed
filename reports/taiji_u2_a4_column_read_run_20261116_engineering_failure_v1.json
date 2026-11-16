@@ -1,0 +1,6 @@
+{
+  "schema": "taiji-u2-a4-column-read-run-v1",
+  "card": "22.5.A.4",
+  "verdict": "engineering_failure",
+  "error": "RuntimeError: Trying to backward through the graph a second time (or directly access saved tensors after they have already been freed). Saved intermediate values of the graph are freed when you call .backward() or autograd.grad(). Specify retain_graph=True if you need to backward through the graph a second time or if you need to access saved tensors after calling backward."
+}

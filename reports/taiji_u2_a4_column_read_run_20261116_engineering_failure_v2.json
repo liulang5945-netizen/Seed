@@ -1,0 +1,6 @@
+{
+  "schema": "taiji-u2-a4-column-read-run-v1",
+  "card": "22.5.A.4",
+  "verdict": "engineering_failure",
+  "error": "ValueError: 'data\\\\experiments\\\\taiji_u2\\\\a4\\\\20261116T0315Z\\\\seed-20261110\\\\bundle.pt' is not in the subpath of 'E:\\\\Seed'"
+}
