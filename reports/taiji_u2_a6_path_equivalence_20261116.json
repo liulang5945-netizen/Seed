@@ -1,0 +1,32 @@
+{
+  "schema": "taiji-u2-a6-path-equivalence-v1",
+  "card": "22.5.A.6",
+  "date": "2026-11-16",
+  "verdict": "paths_equivalent_at_one_update",
+  "same_start_bundle": "data/experiments/taiji_u2/a5/20261116T0520Z/seed-20261110/bundle-pre-feedback.pt",
+  "a5_path": {
+    "updates": 1,
+    "parameter_abs_sum": 1563.42374644,
+    "correct": 0,
+    "output_hex": "e5b7a6e8beb9",
+    "a_fit_digest": "b6503a20b821e03a0fb766727252c85ca0295c290f9e38be2cb76a4de35a1016"
+  },
+  "a6_path": {
+    "updates": 1,
+    "parameter_abs_sum": 1563.42374644,
+    "correct": 0,
+    "a_fit_digest": "b6503a20b821e03a0fb766727252c85ca0295c290f9e38be2cb76a4de35a1016"
+  },
+  "parameter_abs_delta": 0.0,
+  "conclusion": "the two update paths agree at one update on the same start bundle and error, so the 0.333 against 0.0 discrepancy is not an implementation difference at this level; what remains open is the k=8 point itself (a threshold between 96 and 192 updates)",
+  "limits": "one error, one update: equivalence here does not prove equivalence over 192 updates, and the k=8 arm still has not been measured",
+  "discipline": {
+    "optimizer_updates": 2,
+    "checkpoints_written": 0,
+    "capability_claims": 0,
+    "accepted_parent": false
+  },
+  "cost": {
+    "cpu": 5.734375
+  }
+}
