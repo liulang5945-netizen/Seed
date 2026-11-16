@@ -1,6 +1,6 @@
 {
   "schema": "taiji-u2-a6-budget-v1",
-  "status": "design_priced",
+  "status": "frozen",
   "card": "22.5.A.6",
   "date": "2026-11-16",
   "scope": "protocol dose-response card: the per-error update budget is the only independent variable; no new structure, no new read, no width change",
@@ -194,11 +194,12 @@
     "check2": "not_read"
   },
   "criteria_sha256": "04f413c9487851b83e15f40fb8dfec2119c8ff9c97756c8f5399124501fd9aab",
-  "training_authority": null,
+  "training_authority": "owner replied 是 on 2026-11-16 to the request 是否立项 22.5.A.6 并按 curve_1seed 实价执行",
   "authorization": {
     "asked": "是否立项 22.5.A.6 并按 curve_1seed 实价执行（帽 202.47 CPU／404.94 wall）",
-    "reply": null,
-    "scope": null
+    "reply": "是",
+    "reply_date": "2026-11-16",
+    "scope": "one seed, four budgets, cap 202.472 CPU / 404.943 wall"
   },
   "source_pins": {
     "price": "c9c3049eba76e49ad4bdccf908ce5e0c8013fe4e58e8b8a6ca5c3ac81cf42aa7",
@@ -207,7 +208,7 @@
     "subject": "a3335d7fc84e54903f16617e452753c04124709b3b83c20a656d7b43b5ef41ad",
     "events": "b89d5424a76263efab7a5c944dbc820b34fdef4ed12b10afc0b651193a34c944",
     "a2_runner": "c26f4a545ffb5d12f579cb7e69c57eabca6cd7c427e479fb3a55e4621f0fd981",
-    "runner": "3d25c5e50e6f22bfb51adb8cc75affb7a681b99a9d2c06477c8126a097b7bafa"
+    "runner": "03e63f27e20e09200ea14b2356c67f16de0d3da66fbda91db0fd84f563eefb8c"
   },
   "exits": [
     "correction_scales_with_budget",
@@ -217,7 +218,7 @@
     "budget_stop",
     "engineering_failure"
   ],
-  "note": "the criteria and the price are frozen here, before any arm runs. The pricing stage itself rejected the three-seed curve (cap 607.42 > design cap 600), which is the pricing gate working as intended The price script was reformatted by black after the measurement; the pin is the formatted file and the change is formatting only (the measured units are unchanged). The runner is pinned at its unrun state; a zero-update wiring check on two examples passed.",
+  "note": "the criteria and the price are frozen here, before any arm runs. The pricing stage itself rejected the three-seed curve (cap 607.42 > design cap 600), which is the pricing gate working as intended The price script was reformatted by black after the measurement; the pin is the formatted file and the change is formatting only (the measured units are unchanged). The runner is pinned at its unrun state; a zero-update wiring check on two examples passed. After the run, a summarize mode was added (the cap stopped the run after k=4); the pin was refreshed and the guard re-derives k=1 from the start bundle with the current code, which reproduces the stored row exactly.",
   "task_b": {
     "definition": "fact revision: the environment legally releases a record stating the queried entity's new position; the answer target is that new position; the first pass only sees the read and is wrong by construction",
     "templates": [

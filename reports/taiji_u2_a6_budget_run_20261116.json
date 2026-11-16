@@ -1,0 +1,117 @@
+{
+  "schema": "taiji-u2-a6-budget-run-v1",
+  "card": "22.5.A.6",
+  "date": "2026-11-16",
+  "verdict": "retention_broken_by_budget",
+  "seed": 20261110,
+  "denominator": {
+    "task_b_examples": 24,
+    "first_pass_errors": 24,
+    "skipped_unknown": 8
+  },
+  "first_pass_accuracy": 0.0,
+  "baseline_a_fit": 1.0,
+  "arms": [
+    {
+      "budget": 1,
+      "updates": 24,
+      "second_pass_accuracy": 0.0,
+      "a_fit_accuracy": 1.0,
+      "a_fit_digest": "b6503a20b821e03a0fb766727252c85ca0295c290f9e38be2cb76a4de35a1016",
+      "correct": 0,
+      "parameter_abs_sum": 1577.33367253,
+      "damage": 0.0,
+      "arm_cpu": 18.09375
+    },
+    {
+      "budget": 2,
+      "updates": 48,
+      "second_pass_accuracy": 0.0,
+      "a_fit_accuracy": 0.75,
+      "a_fit_digest": "e74eb071cf7cc11babbf252aa1630d6e3d231e762ea9503c3f0c60ec07e79105",
+      "correct": 0,
+      "parameter_abs_sum": 1592.72939208,
+      "damage": 0.25,
+      "arm_cpu": 45.59375
+    },
+    {
+      "budget": 4,
+      "updates": 96,
+      "second_pass_accuracy": 0.0,
+      "a_fit_accuracy": 0.5,
+      "a_fit_digest": "7299b612396cb559d7804733985c1c74e42507f41e7b2b9c627e52c7f9cb64ad",
+      "correct": 0,
+      "parameter_abs_sum": 1620.29229245,
+      "damage": 0.5,
+      "arm_cpu": 67.328125
+    }
+  ],
+  "rates": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "monotone": true,
+  "endpoint_gain": 0.0,
+  "retention_broken_at": [
+    2,
+    4
+  ],
+  "budgets_declared": [
+    1,
+    2,
+    4,
+    8
+  ],
+  "budgets_measured": [
+    1,
+    2,
+    4
+  ],
+  "budgets_not_measured": [
+    8
+  ],
+  "stop_reason": "the run hit its cap after arm k=4 and k=8 was not measured. The retention rule has priority over the three correction branches, so the verdict does not depend on it, but the curve is reported with the gap rather than filled in",
+  "criteria": {
+    "question": "budget or ceiling: does the correction rate move with the per-error update budget",
+    "response_round": "exact answer bytes plus EOS plus valid UTF-8, greedy, 65-byte cap",
+    "denominator": "the 24 first-pass fit errors of the same subject, same template assignment",
+    "correction_gate": 0.8,
+    "zero_band": 0.05,
+    "scaling_rule": "the correction rate is non-decreasing in k and correction(8) - correction(1) >= 2/24",
+    "retention_gate": 0.02,
+    "retention_is_not_tautological": "the B updates touch byte_head and joint_readout, which the A task also uses, so the retention check can fail here; this is the opposite of the A.5 situation",
+    "budgets": [
+      1,
+      2,
+      4,
+      8
+    ],
+    "rollback": "none; the budget is the independent variable and rollback would erase it",
+    "re_ask": "once per arm, after every error has consumed its budget",
+    "seeds": [
+      20261110
+    ],
+    "seed_note": "the curve runs on the primary seed only; A.5 measured the three seeds to be numerically identical, so a three-seed curve would buy nothing at three times the price. A positive point must be replicated at that k in a follow-up card, not extrapolated",
+    "start_state": "A.5 pre-feedback bundle per seed, byte-identical",
+    "accepted_parent": false,
+    "capability_claims": 0,
+    "check2": "not_read"
+  },
+  "cost": {
+    "arm_cpu_sum": 131.015625,
+    "cap_cpu": 202.472,
+    "cap_wall": 404.943
+  },
+  "discipline": {
+    "capability_claims": 0,
+    "accepted_parent": false,
+    "check_reads": 0,
+    "confirm_reads": 0
+  },
+  "run_conditions": {
+    "threads": 12,
+    "torch": "2.13.0+cpu"
+  },
+  "scope": "dose response of the correction rate in the per-error update budget; one seed; no parent claim and no capability claim"
+}

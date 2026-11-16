@@ -173,12 +173,23 @@ def run(contract: dict) -> int:
     arms = []
     for budget in [int(value) for value in contract["plan"]["budgets"]]:
         spend()
-        entry = arm(contract, seed, budget, codes, errors, error_templates, data, spend)
-        entry["damage"] = round(baseline_a - entry["a_fit_accuracy"], 10)
+        path = root / f"arm-k{budget}.json"
+        if path.exists():
+            # An arm is a complete unit: its file is written only after the arm
+            # has consumed its whole budget, so a stopped run resumes at the next
+            # budget instead of paying for the finished arms again.
+            entry = json.loads(path.read_text(encoding="utf-8"))
+        else:
+            started = time.process_time()
+            entry = arm(contract, seed, budget, codes, errors, error_templates, data, spend)
+            entry["damage"] = round(baseline_a - entry["a_fit_accuracy"], 10)
+            entry["arm_cpu"] = round(time.process_time() - started, 6)
+            path.write_text(
+                json.dumps(entry, ensure_ascii=False, indent=2) + "\n",
+                encoding="utf-8",
+                newline="\n",
+            )
         arms.append(entry)
-        (root / f"arm-k{budget}.json").write_text(
-            json.dumps(entry, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n"
-        )
 
     rates = [entry["second_pass_accuracy"] for entry in arms]
     budgets = [entry["budget"] for entry in arms]
@@ -254,11 +265,121 @@ def run(contract: dict) -> int:
     return 0
 
 
+def summarize(contract: dict) -> int:
+    """Build the report from the arms that finished, without starting another.
+
+    A stop is a real outcome: the remaining budgets are recorded as not measured
+    rather than filled in, and the verdict is computed only from what ran.
+    """
+    data = atomic_load(ROOT / contract["data_root"])
+    items, skipped = a5.task_b_examples(data, contract)
+    seed = int(contract["plan"]["seeds"][0])
+    start = load_start(contract, seed)
+    head = a2.load_head(contract)
+    prior = a2.prior_of(data)
+    codes = a2.code_by_id(start, head, prior, data["train"] + data["fit"], contract)
+    template_of = lambda index: index % len(contract["task_b"]["templates"])  # noqa: E731
+    first = a5.b_pass(start, items, codes, template_of)
+    baseline_a = a5.accuracy(
+        [a5.a_round(start, example, codes[example["id"]]) for example in data["fit"]]
+    )
+    root = ROOT / contract["run_root"]
+    declared = [int(value) for value in contract["plan"]["budgets"]]
+    arms = []
+    for budget in declared:
+        path = root / f"arm-k{budget}.json"
+        if path.exists():
+            arms.append(json.loads(path.read_text(encoding="utf-8")))
+    if not arms:
+        print(json.dumps({"verdict": "no_arms_measured"}))
+        return 2
+    measured = [entry["budget"] for entry in arms]
+    rates = [entry["second_pass_accuracy"] for entry in arms]
+    monotone = all(
+        later >= earlier - 1e-12 for earlier, later in zip(rates, rates[1:], strict=False)
+    )
+    endpoint = rates[-1] - rates[0]
+    gate = float(contract["criteria"]["correction_gate"])
+    zero_band = float(contract["criteria"]["zero_band"])
+    retention_gate = float(contract["criteria"]["retention_gate"])
+    broken = [entry["budget"] for entry in arms if entry["damage"] > retention_gate]
+    if broken:
+        verdict = "retention_broken_by_budget"
+    elif max(rates) >= gate and monotone and endpoint >= 2 / len(items):
+        verdict = "correction_scales_with_budget"
+    elif max(rates) <= zero_band:
+        verdict = "correction_zero_at_every_budget"
+    else:
+        verdict = "correction_plateaus_below_gate"
+    payload = {
+        "schema": "taiji-u2-a6-budget-run-v1",
+        "card": "22.5.A.6",
+        "date": "2026-11-16",
+        "verdict": verdict,
+        "seed": seed,
+        "denominator": {
+            "task_b_examples": len(items),
+            "first_pass_errors": len([row for row in first if not row["correct"]]),
+            "skipped_unknown": len(skipped),
+        },
+        "first_pass_accuracy": a5.accuracy(first),
+        "baseline_a_fit": baseline_a,
+        "arms": arms,
+        "rates": rates,
+        "monotone": monotone,
+        "endpoint_gain": round(endpoint, 10),
+        "retention_broken_at": broken,
+        "budgets_declared": declared,
+        "budgets_measured": measured,
+        "budgets_not_measured": [value for value in declared if value not in measured],
+        "stop_reason": (
+            "the run hit its cap after arm k=4 and k=8 was not measured. The retention rule has "
+            "priority over the three correction branches, so the verdict does not depend on it, "
+            "but the curve is reported with the gap rather than filled in"
+        ),
+        "criteria": contract["criteria"],
+        "cost": {
+            "arm_cpu_sum": round(sum(entry.get("arm_cpu", 0.0) for entry in arms), 6),
+            "cap_cpu": contract["plan"]["cap_cpu"],
+            "cap_wall": contract["plan"]["cap_wall"],
+        },
+        "discipline": {
+            "capability_claims": 0,
+            "accepted_parent": False,
+            "check_reads": 0,
+            "confirm_reads": 0,
+        },
+        "run_conditions": {"threads": torch.get_num_threads(), "torch": torch.__version__},
+        "scope": (
+            "dose response of the correction rate in the per-error update budget; one seed; "
+            "no parent claim and no capability claim"
+        ),
+    }
+    RUN_REPORT.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n"
+    )
+    print(
+        json.dumps(
+            {
+                "verdict": verdict,
+                "rates": rates,
+                "budgets": measured,
+                "damage": [round(entry["damage"], 4) for entry in arms],
+                "missing": payload["budgets_not_measured"],
+            },
+            ensure_ascii=False,
+        )
+    )
+    return 0
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--mode", choices=("run",), default="run")
+    parser.add_argument("--mode", choices=("run", "summarize"), default="run")
     args = parser.parse_args()
     contract = json.loads(CONTRACT.read_text(encoding="utf-8"))
+    if args.mode == "summarize":
+        return summarize(contract)
     try:
         guards(contract, args.mode)
     except ValueError as error:

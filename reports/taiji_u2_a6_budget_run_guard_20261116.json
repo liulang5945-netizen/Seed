@@ -1,0 +1,53 @@
+{
+  "schema": "taiji-u2-a6-budget-run-guard-v1",
+  "card": "22.5.A.6",
+  "date": "2026-11-16",
+  "verdict": "guard_passed",
+  "checks": {
+    "criteria_unchanged": true,
+    "runner_pin_matches": true,
+    "baseline_first_pass_is_zero": true,
+    "baseline_a_fit_is_one": true,
+    "budgets_measured_are_declared": true,
+    "stopped_budgets_are_reported": true,
+    "updates_match_budget_k1": true,
+    "damage_is_a_difference_k1": true,
+    "correct_matches_rate_k1": true,
+    "updates_match_budget_k2": true,
+    "damage_is_a_difference_k2": true,
+    "correct_matches_rate_k2": true,
+    "updates_match_budget_k4": true,
+    "damage_is_a_difference_k4": true,
+    "correct_matches_rate_k4": true,
+    "verdict_matches_frozen_order": true,
+    "retention_list_matches_gate": true,
+    "discipline_zero": true,
+    "start_bundle_reproduces_baseline": true,
+    "spot_arm_reproduces": true
+  },
+  "drills": {
+    "hide_the_retention_damage": true,
+    "drop_the_retention_exit": true,
+    "undercharge_the_budget": true,
+    "claim_the_arm_learned": true,
+    "hide_the_missing_budget": true,
+    "claim_the_first_pass_was_right": true
+  },
+  "baseline_rederived": {
+    "first_pass_accuracy": 0.0,
+    "a_fit_accuracy": 1.0
+  },
+  "spot_arm": {
+    "budget": 1,
+    "correct": 0,
+    "second_pass_accuracy": 0.0,
+    "a_fit_accuracy": 1.0,
+    "a_fit_digest_matches": "b6503a20b821e03a0fb766727252c85ca0295c290f9e38be2cb76a4de35a1016"
+  },
+  "limitation": "only the k=1 arm is re-derived from the start bundle. k=2 and k=4 are checked arithmetically but not re-run, because re-running them costs more than the card has left. Their rows are therefore trusted as written and flagged as such",
+  "published_verdict": "retention_broken_by_budget",
+  "measured": {
+    "cpu_seconds": 24.28125,
+    "wall_seconds": 24.902019
+  }
+}
