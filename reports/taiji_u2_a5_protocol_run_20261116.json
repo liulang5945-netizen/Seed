@@ -1,0 +1,1490 @@
+{
+  "schema": "taiji-u2-a5-protocol-run-v1",
+  "card": "22.5.A.5",
+  "date": "2026-11-16",
+  "verdict": "correction_protocol_suppressed_learning",
+  "seeds": [
+    {
+      "seed": 20261110,
+      "doses": [
+        {
+          "update": 200,
+          "fit_correct": 16,
+          "fit_accuracy": 0.5,
+          "train_correct": null,
+          "train_accuracy": null,
+          "fit_rounds": 32
+        },
+        {
+          "update": 400,
+          "fit_correct": 32,
+          "fit_accuracy": 1.0,
+          "train_correct": null,
+          "train_accuracy": null,
+          "fit_rounds": 32
+        },
+        {
+          "update": 600,
+          "fit_correct": 32,
+          "fit_accuracy": 1.0,
+          "train_correct": 61,
+          "train_accuracy": 0.953125,
+          "fit_rounds": 96
+        }
+      ],
+      "final": {
+        "update": 600,
+        "fit_correct": 32,
+        "fit_accuracy": 1.0,
+        "train_correct": 61,
+        "train_accuracy": 0.953125,
+        "fit_rounds": 96
+      },
+      "first_pass": {
+        "correct": 0,
+        "denominator": 24,
+        "accuracy": 0.0,
+        "error_ids": [
+          "fit-0",
+          "fit-1",
+          "fit-2",
+          "fit-4",
+          "fit-5",
+          "fit-6",
+          "fit-8",
+          "fit-9",
+          "fit-10",
+          "fit-12",
+          "fit-13",
+          "fit-14",
+          "fit-16",
+          "fit-17",
+          "fit-18",
+          "fit-20",
+          "fit-21",
+          "fit-22",
+          "fit-24",
+          "fit-25",
+          "fit-26",
+          "fit-28",
+          "fit-29",
+          "fit-30"
+        ]
+      },
+      "feedback": {
+        "releases": 24,
+        "updates": 24,
+        "rollbacks": 24,
+        "corrected": 0,
+        "correction_rate": 0.0,
+        "trace": [
+          {
+            "id": "fit-0",
+            "template": 0,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-1",
+            "template": 1,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-2",
+            "template": 2,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-4",
+            "template": 3,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-5",
+            "template": 0,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-6",
+            "template": 1,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-8",
+            "template": 2,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-9",
+            "template": 3,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-10",
+            "template": 0,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-12",
+            "template": 1,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-13",
+            "template": 2,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-14",
+            "template": 3,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-16",
+            "template": 0,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-17",
+            "template": 1,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-18",
+            "template": 2,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-20",
+            "template": 3,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-21",
+            "template": 0,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-22",
+            "template": 1,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-24",
+            "template": 2,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-25",
+            "template": 3,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-26",
+            "template": 0,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-28",
+            "template": 1,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-29",
+            "template": 2,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-30",
+            "template": 3,
+            "path": "rolled_back"
+          }
+        ],
+        "control_second_pass": 0.0,
+        "learned_second_pass": 0.0,
+        "control_updates": 0,
+        "control_state_unchanged": true,
+        "gain": 0.0,
+        "a4_updates": 192,
+        "a4_second_pass": 0.3333333333333333
+      },
+      "counter_fact": {
+        "follows_counter": 0,
+        "denominator": 24,
+        "tracks_the_record": 0.0
+      },
+      "retention": {
+        "a_fit_before": 1.0,
+        "a_fit_after": 1.0,
+        "damage": 0.0
+      },
+      "pairs": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ]
+      ],
+      "a_fit_after_feedback_digest": "b6503a20b821e03a0fb766727252c85ca0295c290f9e38be2cb76a4de35a1016",
+      "bundle_pre_feedback": "data/experiments/taiji_u2/a5/20261116T0520Z/seed-20261110/bundle-pre-feedback.pt",
+      "bundle_pre_feedback_sha256": "de5452f6b7716cb44f48221aafca5e5e5f132fcdeaa46c3196d8929d0c815465",
+      "bundle_post_feedback": "data/experiments/taiji_u2/a5/20261116T0520Z/seed-20261110/bundle-post-feedback.pt",
+      "bundle_post_feedback_sha256": "28b6a5989c47ed9c9fdbd1c2feb82912c24315cdce0ef32f51266bee6be4114c",
+      "loss_first10": 4.474911499023437,
+      "loss_last10": 0.14595957249403,
+      "trainable_names": [
+        "byte_head.bias",
+        "byte_head.weight",
+        "copy_gate.bias",
+        "copy_gate.weight",
+        "coverage_logit",
+        "joint_readout.first.bias",
+        "joint_readout.first.weight",
+        "joint_readout.last.bias",
+        "joint_readout.last.weight",
+        "record_goal_query.weight",
+        "record_key.weight",
+        "record_metadata.bias",
+        "record_metadata.weight",
+        "record_null.bias",
+        "record_null.weight",
+        "record_null_value",
+        "record_output.bias",
+        "record_output.weight",
+        "record_position_key.weight",
+        "record_position_query.bias",
+        "record_position_query.weight",
+        "record_provenance.weight",
+        "record_query.bias",
+        "record_query.weight",
+        "record_value.bias",
+        "record_value.weight"
+      ],
+      "record_parameters_inert_in_a_training": [
+        "record_null_value",
+        "coverage_logit",
+        "record_goal_query.weight",
+        "record_query.weight",
+        "record_query.bias",
+        "record_key.weight",
+        "record_position_key.weight",
+        "record_position_query.weight",
+        "record_position_query.bias",
+        "record_null.weight",
+        "record_null.bias",
+        "record_value.weight",
+        "record_value.bias",
+        "record_output.weight",
+        "record_output.bias",
+        "record_metadata.weight",
+        "record_metadata.bias",
+        "record_provenance.weight"
+      ]
+    },
+    {
+      "seed": 20261111,
+      "doses": [
+        {
+          "update": 600,
+          "fit_correct": 32,
+          "fit_accuracy": 1.0,
+          "train_correct": 61,
+          "train_accuracy": 0.953125,
+          "fit_rounds": 96
+        }
+      ],
+      "final": {
+        "update": 600,
+        "fit_correct": 32,
+        "fit_accuracy": 1.0,
+        "train_correct": 61,
+        "train_accuracy": 0.953125,
+        "fit_rounds": 96
+      },
+      "first_pass": {
+        "correct": 0,
+        "denominator": 24,
+        "accuracy": 0.0,
+        "error_ids": [
+          "fit-0",
+          "fit-1",
+          "fit-2",
+          "fit-4",
+          "fit-5",
+          "fit-6",
+          "fit-8",
+          "fit-9",
+          "fit-10",
+          "fit-12",
+          "fit-13",
+          "fit-14",
+          "fit-16",
+          "fit-17",
+          "fit-18",
+          "fit-20",
+          "fit-21",
+          "fit-22",
+          "fit-24",
+          "fit-25",
+          "fit-26",
+          "fit-28",
+          "fit-29",
+          "fit-30"
+        ]
+      },
+      "feedback": {
+        "releases": 24,
+        "updates": 24,
+        "rollbacks": 24,
+        "corrected": 0,
+        "correction_rate": 0.0,
+        "trace": [
+          {
+            "id": "fit-0",
+            "template": 0,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-1",
+            "template": 1,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-2",
+            "template": 2,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-4",
+            "template": 3,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-5",
+            "template": 0,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-6",
+            "template": 1,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-8",
+            "template": 2,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-9",
+            "template": 3,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-10",
+            "template": 0,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-12",
+            "template": 1,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-13",
+            "template": 2,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-14",
+            "template": 3,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-16",
+            "template": 0,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-17",
+            "template": 1,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-18",
+            "template": 2,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-20",
+            "template": 3,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-21",
+            "template": 0,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-22",
+            "template": 1,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-24",
+            "template": 2,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-25",
+            "template": 3,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-26",
+            "template": 0,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-28",
+            "template": 1,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-29",
+            "template": 2,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-30",
+            "template": 3,
+            "path": "rolled_back"
+          }
+        ],
+        "control_second_pass": 0.0,
+        "learned_second_pass": 0.0,
+        "control_updates": 0,
+        "control_state_unchanged": true,
+        "gain": 0.0,
+        "a4_updates": 192,
+        "a4_second_pass": 0.3333333333333333
+      },
+      "counter_fact": {
+        "follows_counter": 0,
+        "denominator": 24,
+        "tracks_the_record": 0.0
+      },
+      "retention": {
+        "a_fit_before": 1.0,
+        "a_fit_after": 1.0,
+        "damage": 0.0
+      },
+      "pairs": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ]
+      ],
+      "a_fit_after_feedback_digest": "b6503a20b821e03a0fb766727252c85ca0295c290f9e38be2cb76a4de35a1016",
+      "bundle_pre_feedback": "data/experiments/taiji_u2/a5/20261116T0520Z/seed-20261111/bundle-pre-feedback.pt",
+      "bundle_pre_feedback_sha256": "db04cb9b889d3ee61c0bb86342f961409f33b3c30cabffa24eacc6d8ecea9627",
+      "bundle_post_feedback": "data/experiments/taiji_u2/a5/20261116T0520Z/seed-20261111/bundle-post-feedback.pt",
+      "bundle_post_feedback_sha256": "13f55bc525bd5f9abb9f05d34deec4ca9f8353abbe4e4cc9650d18d452f75ff3",
+      "loss_first10": 4.454164314270019,
+      "loss_last10": 0.18590941056609153,
+      "trainable_names": [
+        "byte_head.bias",
+        "byte_head.weight",
+        "copy_gate.bias",
+        "copy_gate.weight",
+        "coverage_logit",
+        "joint_readout.first.bias",
+        "joint_readout.first.weight",
+        "joint_readout.last.bias",
+        "joint_readout.last.weight",
+        "record_goal_query.weight",
+        "record_key.weight",
+        "record_metadata.bias",
+        "record_metadata.weight",
+        "record_null.bias",
+        "record_null.weight",
+        "record_null_value",
+        "record_output.bias",
+        "record_output.weight",
+        "record_position_key.weight",
+        "record_position_query.bias",
+        "record_position_query.weight",
+        "record_provenance.weight",
+        "record_query.bias",
+        "record_query.weight",
+        "record_value.bias",
+        "record_value.weight"
+      ],
+      "record_parameters_inert_in_a_training": [
+        "record_null_value",
+        "coverage_logit",
+        "record_goal_query.weight",
+        "record_query.weight",
+        "record_query.bias",
+        "record_key.weight",
+        "record_position_key.weight",
+        "record_position_query.weight",
+        "record_position_query.bias",
+        "record_null.weight",
+        "record_null.bias",
+        "record_value.weight",
+        "record_value.bias",
+        "record_output.weight",
+        "record_output.bias",
+        "record_metadata.weight",
+        "record_metadata.bias",
+        "record_provenance.weight"
+      ],
+      "doses_measured": [
+        600
+      ],
+      "seed_cpu": 130.296875
+    },
+    {
+      "seed": 20261112,
+      "doses": [
+        {
+          "update": 600,
+          "fit_correct": 32,
+          "fit_accuracy": 1.0,
+          "train_correct": 61,
+          "train_accuracy": 0.953125,
+          "fit_rounds": 96
+        }
+      ],
+      "final": {
+        "update": 600,
+        "fit_correct": 32,
+        "fit_accuracy": 1.0,
+        "train_correct": 61,
+        "train_accuracy": 0.953125,
+        "fit_rounds": 96
+      },
+      "first_pass": {
+        "correct": 0,
+        "denominator": 24,
+        "accuracy": 0.0,
+        "error_ids": [
+          "fit-0",
+          "fit-1",
+          "fit-2",
+          "fit-4",
+          "fit-5",
+          "fit-6",
+          "fit-8",
+          "fit-9",
+          "fit-10",
+          "fit-12",
+          "fit-13",
+          "fit-14",
+          "fit-16",
+          "fit-17",
+          "fit-18",
+          "fit-20",
+          "fit-21",
+          "fit-22",
+          "fit-24",
+          "fit-25",
+          "fit-26",
+          "fit-28",
+          "fit-29",
+          "fit-30"
+        ]
+      },
+      "feedback": {
+        "releases": 24,
+        "updates": 24,
+        "rollbacks": 24,
+        "corrected": 0,
+        "correction_rate": 0.0,
+        "trace": [
+          {
+            "id": "fit-0",
+            "template": 0,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-1",
+            "template": 1,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-2",
+            "template": 2,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-4",
+            "template": 3,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-5",
+            "template": 0,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-6",
+            "template": 1,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-8",
+            "template": 2,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-9",
+            "template": 3,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-10",
+            "template": 0,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-12",
+            "template": 1,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-13",
+            "template": 2,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-14",
+            "template": 3,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-16",
+            "template": 0,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-17",
+            "template": 1,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-18",
+            "template": 2,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-20",
+            "template": 3,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-21",
+            "template": 0,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-22",
+            "template": 1,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-24",
+            "template": 2,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-25",
+            "template": 3,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-26",
+            "template": 0,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-28",
+            "template": 1,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-29",
+            "template": 2,
+            "path": "rolled_back"
+          },
+          {
+            "id": "fit-30",
+            "template": 3,
+            "path": "rolled_back"
+          }
+        ],
+        "control_second_pass": 0.0,
+        "learned_second_pass": 0.0,
+        "control_updates": 0,
+        "control_state_unchanged": true,
+        "gain": 0.0,
+        "a4_updates": 0,
+        "a4_second_pass": null
+      },
+      "counter_fact": {
+        "follows_counter": 0,
+        "denominator": 24,
+        "tracks_the_record": 0.0
+      },
+      "retention": {
+        "a_fit_before": 1.0,
+        "a_fit_after": 1.0,
+        "damage": 0.0
+      },
+      "pairs": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ]
+      ],
+      "a_fit_after_feedback_digest": "b6503a20b821e03a0fb766727252c85ca0295c290f9e38be2cb76a4de35a1016",
+      "bundle_pre_feedback": "data/experiments/taiji_u2/a5/20261116T0520Z/seed-20261112/bundle-pre-feedback.pt",
+      "bundle_pre_feedback_sha256": "3dbc1ba54713e59808de730251485fdddd125500223c4a9a70564b50974b783a",
+      "bundle_post_feedback": "data/experiments/taiji_u2/a5/20261116T0520Z/seed-20261112/bundle-post-feedback.pt",
+      "bundle_post_feedback_sha256": "6dbdeaa9a12499ae65712d4b158c2a93b02e72f5adcb1e64a5ebc8cb29743bf7",
+      "loss_first10": 4.443507051467895,
+      "loss_last10": 0.17694499865174293,
+      "trainable_names": [
+        "byte_head.bias",
+        "byte_head.weight",
+        "copy_gate.bias",
+        "copy_gate.weight",
+        "coverage_logit",
+        "joint_readout.first.bias",
+        "joint_readout.first.weight",
+        "joint_readout.last.bias",
+        "joint_readout.last.weight",
+        "record_goal_query.weight",
+        "record_key.weight",
+        "record_metadata.bias",
+        "record_metadata.weight",
+        "record_null.bias",
+        "record_null.weight",
+        "record_null_value",
+        "record_output.bias",
+        "record_output.weight",
+        "record_position_key.weight",
+        "record_position_query.bias",
+        "record_position_query.weight",
+        "record_provenance.weight",
+        "record_query.bias",
+        "record_query.weight",
+        "record_value.bias",
+        "record_value.weight"
+      ],
+      "record_parameters_inert_in_a_training": [
+        "record_null_value",
+        "coverage_logit",
+        "record_goal_query.weight",
+        "record_query.weight",
+        "record_query.bias",
+        "record_key.weight",
+        "record_position_key.weight",
+        "record_position_query.weight",
+        "record_position_query.bias",
+        "record_null.weight",
+        "record_null.bias",
+        "record_value.weight",
+        "record_value.bias",
+        "record_output.weight",
+        "record_output.bias",
+        "record_metadata.weight",
+        "record_metadata.bias",
+        "record_provenance.weight"
+      ],
+      "doses_measured": [
+        600
+      ],
+      "seed_cpu": 51.359375
+    }
+  ],
+  "denominator": {
+    "task_b_examples": 24,
+    "task_b_skipped_unknown": 8,
+    "task_b_skipped_ids": [
+      "fit-3",
+      "fit-7",
+      "fit-11",
+      "fit-15",
+      "fit-19",
+      "fit-23",
+      "fit-27",
+      "fit-31"
+    ],
+    "fit_rounds": 32,
+    "train_rounds": 64
+  },
+  "templates": [
+    "{entity}现在在{label}。",
+    "现在在{label}的是{entity}。",
+    "{label}就是{entity}此刻的位置。",
+    "据最新观测，{entity}的位置是{label}。"
+  ],
+  "template_offsets": [
+    21,
+    9,
+    0,
+    42
+  ],
+  "bootstrap": {
+    "pooled": {
+      "unit": "example",
+      "pairs": 72,
+      "observed_mean": 0.0,
+      "resamples": 2000,
+      "lower_bound_95": 0.0,
+      "upper_bound_95": 0.0
+    },
+    "per_seed": [
+      {
+        "unit": "example",
+        "pairs": 24,
+        "observed_mean": 0.0,
+        "resamples": 2000,
+        "lower_bound_95": 0.0,
+        "upper_bound_95": 0.0
+      },
+      {
+        "unit": "example",
+        "pairs": 24,
+        "observed_mean": 0.0,
+        "resamples": 2000,
+        "lower_bound_95": 0.0,
+        "upper_bound_95": 0.0
+      },
+      {
+        "unit": "example",
+        "pairs": 24,
+        "observed_mean": 0.0,
+        "resamples": 2000,
+        "lower_bound_95": 0.0,
+        "upper_bound_95": 0.0
+      }
+    ]
+  },
+  "gates": {
+    "main": "passed",
+    "correction": "failed",
+    "gain": "failed",
+    "lower_bound": "failed",
+    "three_seed": "failed",
+    "retention": "passed",
+    "recovery": "passed"
+  },
+  "gain_by_seed": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "recovery": {
+    "rows": [
+      {
+        "id": "fit-0",
+        "target": "左边",
+        "output_hex": "e5b7a6e8beb9",
+        "eos": true,
+        "valid_utf8": true,
+        "correct": true
+      },
+      {
+        "id": "fit-1",
+        "target": "中间",
+        "output_hex": "e4b8ade997b4",
+        "eos": true,
+        "valid_utf8": true,
+        "correct": true
+      },
+      {
+        "id": "fit-2",
+        "target": "右边",
+        "output_hex": "e58fb3e8beb9",
+        "eos": true,
+        "valid_utf8": true,
+        "correct": true
+      },
+      {
+        "id": "fit-3",
+        "target": "未知",
+        "output_hex": "e69caae79fa5",
+        "eos": true,
+        "valid_utf8": true,
+        "correct": true
+      },
+      {
+        "id": "fit-4",
+        "target": "左边",
+        "output_hex": "e5b7a6e8beb9",
+        "eos": true,
+        "valid_utf8": true,
+        "correct": true
+      },
+      {
+        "id": "fit-5",
+        "target": "中间",
+        "output_hex": "e4b8ade997b4",
+        "eos": true,
+        "valid_utf8": true,
+        "correct": true
+      },
+      {
+        "id": "fit-6",
+        "target": "右边",
+        "output_hex": "e58fb3e8beb9",
+        "eos": true,
+        "valid_utf8": true,
+        "correct": true
+      },
+      {
+        "id": "fit-7",
+        "target": "未知",
+        "output_hex": "e69caae79fa5",
+        "eos": true,
+        "valid_utf8": true,
+        "correct": true
+      },
+      {
+        "id": "fit-8",
+        "target": "左边",
+        "output_hex": "e5b7a6e8beb9",
+        "eos": true,
+        "valid_utf8": true,
+        "correct": true
+      },
+      {
+        "id": "fit-9",
+        "target": "中间",
+        "output_hex": "e4b8ade997b4",
+        "eos": true,
+        "valid_utf8": true,
+        "correct": true
+      },
+      {
+        "id": "fit-10",
+        "target": "右边",
+        "output_hex": "e58fb3e8beb9",
+        "eos": true,
+        "valid_utf8": true,
+        "correct": true
+      },
+      {
+        "id": "fit-11",
+        "target": "未知",
+        "output_hex": "e69caae79fa5",
+        "eos": true,
+        "valid_utf8": true,
+        "correct": true
+      },
+      {
+        "id": "fit-12",
+        "target": "左边",
+        "output_hex": "e5b7a6e8beb9",
+        "eos": true,
+        "valid_utf8": true,
+        "correct": true
+      },
+      {
+        "id": "fit-13",
+        "target": "中间",
+        "output_hex": "e4b8ade997b4",
+        "eos": true,
+        "valid_utf8": true,
+        "correct": true
+      },
+      {
+        "id": "fit-14",
+        "target": "右边",
+        "output_hex": "e58fb3e8beb9",
+        "eos": true,
+        "valid_utf8": true,
+        "correct": true
+      },
+      {
+        "id": "fit-15",
+        "target": "未知",
+        "output_hex": "e69caae79fa5",
+        "eos": true,
+        "valid_utf8": true,
+        "correct": true
+      },
+      {
+        "id": "fit-16",
+        "target": "左边",
+        "output_hex": "e5b7a6e8beb9",
+        "eos": true,
+        "valid_utf8": true,
+        "correct": true
+      },
+      {
+        "id": "fit-17",
+        "target": "中间",
+        "output_hex": "e4b8ade997b4",
+        "eos": true,
+        "valid_utf8": true,
+        "correct": true
+      },
+      {
+        "id": "fit-18",
+        "target": "右边",
+        "output_hex": "e58fb3e8beb9",
+        "eos": true,
+        "valid_utf8": true,
+        "correct": true
+      },
+      {
+        "id": "fit-19",
+        "target": "未知",
+        "output_hex": "e69caae79fa5",
+        "eos": true,
+        "valid_utf8": true,
+        "correct": true
+      },
+      {
+        "id": "fit-20",
+        "target": "左边",
+        "output_hex": "e5b7a6e8beb9",
+        "eos": true,
+        "valid_utf8": true,
+        "correct": true
+      },
+      {
+        "id": "fit-21",
+        "target": "中间",
+        "output_hex": "e4b8ade997b4",
+        "eos": true,
+        "valid_utf8": true,
+        "correct": true
+      },
+      {
+        "id": "fit-22",
+        "target": "右边",
+        "output_hex": "e58fb3e8beb9",
+        "eos": true,
+        "valid_utf8": true,
+        "correct": true
+      },
+      {
+        "id": "fit-23",
+        "target": "未知",
+        "output_hex": "e69caae79fa5",
+        "eos": true,
+        "valid_utf8": true,
+        "correct": true
+      },
+      {
+        "id": "fit-24",
+        "target": "左边",
+        "output_hex": "e5b7a6e8beb9",
+        "eos": true,
+        "valid_utf8": true,
+        "correct": true
+      },
+      {
+        "id": "fit-25",
+        "target": "中间",
+        "output_hex": "e4b8ade997b4",
+        "eos": true,
+        "valid_utf8": true,
+        "correct": true
+      },
+      {
+        "id": "fit-26",
+        "target": "右边",
+        "output_hex": "e58fb3e8beb9",
+        "eos": true,
+        "valid_utf8": true,
+        "correct": true
+      },
+      {
+        "id": "fit-27",
+        "target": "未知",
+        "output_hex": "e69caae79fa5",
+        "eos": true,
+        "valid_utf8": true,
+        "correct": true
+      },
+      {
+        "id": "fit-28",
+        "target": "左边",
+        "output_hex": "e5b7a6e8beb9",
+        "eos": true,
+        "valid_utf8": true,
+        "correct": true
+      },
+      {
+        "id": "fit-29",
+        "target": "中间",
+        "output_hex": "e4b8ade997b4",
+        "eos": true,
+        "valid_utf8": true,
+        "correct": true
+      },
+      {
+        "id": "fit-30",
+        "target": "右边",
+        "output_hex": "e58fb3e8beb9",
+        "eos": true,
+        "valid_utf8": true,
+        "correct": true
+      },
+      {
+        "id": "fit-31",
+        "target": "未知",
+        "output_hex": "e69caae79fa5",
+        "eos": true,
+        "valid_utf8": true,
+        "correct": true
+      }
+    ],
+    "digest": "b6503a20b821e03a0fb766727252c85ca0295c290f9e38be2cb76a4de35a1016",
+    "in_process_digest": "b6503a20b821e03a0fb766727252c85ca0295c290f9e38be2cb76a4de35a1016",
+    "rows_equal": true
+  },
+  "resumed_seeds": [
+    20261110,
+    20261111
+  ],
+  "phase_cpu": {
+    "training": 10.390625,
+    "dose_eval": 3.90625,
+    "protocol": 37.453125
+  },
+  "criteria": {
+    "response_round": "exact answer bytes plus EOS plus valid UTF-8, greedy, 65-byte cap",
+    "main_denominator": "all 32 fit rounds; a failed, extra-byte or invalid round is counted, never filtered",
+    "main_gate": 0.8,
+    "correction_gate": 0.8,
+    "feedback_gain_gate": 0.05,
+    "stability_rule": "first-round correct rounds that become wrong <= max(1, 0.10 * first-round correct)",
+    "correction_protocol": "one first-pass error released at a time; the released error is re-asked immediately and the next error is only released after it is answered; no error accumulates updates across the round",
+    "feedback_carrier": "released record (environment result)",
+    "teacher_forcing_forbidden": true,
+    "correction_denominator": "first-pass fit errors",
+    "control_arm": "same subject, same feedback exposure, zero parameter updates and zero state writes; state digest before == after",
+    "feedback_gain": "learned second-pass fit accuracy minus control second-pass fit accuracy",
+    "not_identifiable_rule": "if first-pass fit errors < 4, correction and feedback gain are recorded as not_identifiable_by_design",
+    "recovery": "save the trained bundle, reload in an independent process, re-ask all 32; outputs must be byte-identical",
+    "seed_rule": "three seeds, same direction; the world-paired 95 percent lower bound must exceed zero",
+    "world_pairing": "each first_A example is an independent world, identified by its own audit.world_digest; the pairing unit is the example, and the bootstrap resamples examples, not rows",
+    "a_retention": "not_applicable_no_A_parent",
+    "three_seed": "in_scope",
+    "check2": "not_read",
+    "accepted_parent": false,
+    "task_b_uses_multiple_templates": true,
+    "task_b_template_offset_spread_minimum": 4,
+    "counter_fact_arm_required": true,
+    "shortcut_copy_fixed_offset_forbidden": true,
+    "unseen_query_measurement": "score only rounds whose request wording was never released; routing is not query-sensitive (measured 1e-6), so a wording-based gate must not rely on it",
+    "cross_session_persistence": "records, released ids and fast memory must survive a save/reload boundary",
+    "multi_fact_out_of_scope": "the route is query-blind across two released records (measured), so one fact per episode",
+    "retention_is_structurally_guaranteed": true,
+    "retention_may_not_be_cited_as_evidence": true,
+    "retention_note": "the gate probe measured the A-task byte distribution to be exactly invariant to the copy gate when no record is present (+/-4 logits, delta 0.0), so the old ability cannot be damaged by training the record channel. The retention check is kept as a monitor but must not be cited as evidence that retention was earned"
+  },
+  "cost": {
+    "cpu": 51.5625,
+    "unit_cpu_measured": {
+      "training_per_seed": 10.390625,
+      "dose_eval_all_seeds": 3.90625,
+      "protocol_per_seed_block": 37.453125
+    },
+    "wall": 57.030771,
+    "cap_cpu": 230.0,
+    "cap_wall": 460.0
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "capability_claims": 0,
+    "accepted_parent": false
+  },
+  "run_conditions": {
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  },
+  "scope": "the 22.5.1 parent protocol measured on the byte world; passing does not sign an A parent (22.5.0 is still open) and the retention check may not be cited as evidence"
+}

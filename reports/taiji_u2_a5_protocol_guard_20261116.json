@@ -95,7 +95,7 @@
     "cap_cpu": 139.811
   },
   "measured": {
-    "cpu_seconds": 0.03125,
-    "wall_seconds": 0.027443
+    "cpu_seconds": 0.015625,
+    "wall_seconds": 0.019121
   }
 }

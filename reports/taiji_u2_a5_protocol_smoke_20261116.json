@@ -1,0 +1,79 @@
+{
+  "schema": "taiji-u2-a5-protocol-smoke-v1",
+  "card": "22.5.A.5",
+  "date": "2026-11-16",
+  "verdict": "smoke_passed",
+  "trainable": {
+    "names": [
+      "byte_head.bias",
+      "byte_head.weight",
+      "copy_gate.bias",
+      "copy_gate.weight",
+      "coverage_logit",
+      "joint_readout.first.bias",
+      "joint_readout.first.weight",
+      "joint_readout.last.bias",
+      "joint_readout.last.weight",
+      "record_goal_query.weight",
+      "record_key.weight",
+      "record_metadata.bias",
+      "record_metadata.weight",
+      "record_null.bias",
+      "record_null.weight",
+      "record_null_value",
+      "record_output.bias",
+      "record_output.weight",
+      "record_position_key.weight",
+      "record_position_query.bias",
+      "record_position_query.weight",
+      "record_provenance.weight",
+      "record_query.bias",
+      "record_query.weight",
+      "record_value.bias",
+      "record_value.weight"
+    ],
+    "tensors": 26,
+    "scalars": 4681
+  },
+  "denominator": {
+    "task_b": 24,
+    "skipped": 8,
+    "a_fit": 32
+  },
+  "templates": [
+    "{entity}现在在{label}。",
+    "现在在{label}的是{entity}。",
+    "{label}就是{entity}此刻的位置。",
+    "据最新观测，{entity}的位置是{label}。"
+  ],
+  "template_offsets": [
+    21,
+    9,
+    0,
+    42
+  ],
+  "a_fit_accuracy": 0.0,
+  "b_first_pass_accuracy": 0.0,
+  "b_counter_fact_tracking": 0.0,
+  "legal_release": {
+    "released": [
+      "a5-fact"
+    ],
+    "records": 1,
+    "fast_norm": 0.007891262
+  },
+  "illegal_release_refused": "feedback record not legally released",
+  "cost": {
+    "cpu": 76.4375
+  },
+  "discipline": {
+    "optimizer_updates": 0,
+    "checkpoints_written": 0,
+    "capability_claims": 0,
+    "accepted_parent": false
+  },
+  "run_conditions": {
+    "threads": 1,
+    "torch": "2.13.0+cpu"
+  }
+}

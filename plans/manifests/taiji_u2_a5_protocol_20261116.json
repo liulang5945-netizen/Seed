@@ -1,9 +1,9 @@
 {
   "schema": "taiji-u2-a5-protocol-v1",
-  "status": "design_priced",
+  "status": "frozen",
   "card": "22.5.A.5",
   "date": "2026-11-16",
-  "scope": "protocol card for the 22.5.1 parent gate on the strongest configuration; zero-training probe and pricing complete, no training authorized",
+  "scope": "protocol card for the 22.5.1 parent gate on the strongest configuration; the gates and the pricing were frozen before execution, and the run measures the protocol rather than a structure",
   "candidate": {
     "architecture": "native",
     "profile": "metadata+request",
@@ -130,11 +130,26 @@
     "bootstrap_resamples": 2000,
     "bootstrap_seed": 20261116
   },
-  "training_authority": null,
+  "training_authority": "owner replied 授权 twice on 2026-11-16: first to the priced cap (139.811), then to the corrected cap (230) after the first invocation stopped on budget with no reading",
   "authorization": {
     "asked": "是否立项 22.5.A.5 协议卡并授权按实价执行",
-    "reply": null,
-    "scope": null
+    "reply": "授权",
+    "reply_date": "2026-11-16",
+    "scope": "run the card at the priced cap: 3 seeds x 600 updates, cap 139.811 CPU / 279.622 wall",
+    "history": [
+      {
+        "asked": "是否立项 22.5.A.5 并授权按实价（帽 139.811 CPU）执行",
+        "reply": "授权",
+        "date": "2026-11-16",
+        "outcome": "budget_stop after 139.8 CPU; seed 1 finished training but no report was written"
+      },
+      {
+        "asked": "是否授权按修正帽重跑 A.5（230 CPU／460 wall），第一次已用 139.8",
+        "reply": "授权",
+        "date": "2026-11-16",
+        "scope": "re-run at the corrected cap; intermediate doses read the fit split only"
+      }
+    ]
   },
   "source_pins": {
     "probe": "165b39fa588620d7f4404f1cf0edc17fdaaae11327d81300b62a0e9b48bf88e4",
@@ -150,13 +165,22 @@
     "protocol_fit_probe": "80f075f226c2cbdaaaf1838b32b6162a86803660fd1348df4ae74c1f7187f353",
     "content_probe": "8e124ad1529155c53209b54e25b4e697c10030d8f00e9fb5b15e01b7e67dee14",
     "shortcut_probe": "b1bcd445e1fe79c5ae6730a4a8cdcf597113376693b31f6f301f5216a2da7740",
-    "gate_probe": "35817e4e6d995544a6089021772dc4134f375cceb4fb3773febed154bad825cf"
+    "gate_probe": "35817e4e6d995544a6089021772dc4134f375cceb4fb3773febed154bad825cf",
+    "runner": "3e4db0ccf8346b77c132a2cc428c100dc00e94700368f0b857af2a308c9cf231"
   },
   "exits": [
+    "parent_protocol_measured",
+    "parent_protocol_partial",
+    "feedback_protocol_fixed_but_gain_absent",
+    "protocol_defect_is_capability_gap",
+    "correction_protocol_suppressed_learning",
+    "not_identifiable_by_design",
+    "main_gate_unmet",
+    "budget_stop",
+    "engineering_failure",
     "probe_complete",
     "protocol_priced",
-    "pricing_over_budget",
-    "engineering_failure"
+    "pricing_over_budget"
   ],
   "criteria_sha256": "9b876cc2198ff185a43f5cd37b1ef71182cd23794b5b17a27cf073b002499d00",
   "note": "probe stage: the manifest exists so the zero-training feasibility probe can run against frozen candidate identities; criteria and pins are frozen before any training reading",
@@ -203,5 +227,65 @@
       "a_task_invariant_without_a_record": true,
       "note": "the copy gate is a function of the read code only, so it cannot switch on the presence of a record; the switch has to come from the record route and the copy position, which are the parameters this card trains"
     }
+  },
+  "cpu_cap": 230.0,
+  "wall_cap": 460.0,
+  "run_root": "data/experiments/taiji_u2/a5/20261116T0520Z",
+  "record_parameters": [
+    "coverage_logit",
+    "record_goal_query.weight",
+    "record_key.weight",
+    "record_metadata.bias",
+    "record_metadata.weight",
+    "record_null.bias",
+    "record_null.weight",
+    "record_null_value",
+    "record_output.bias",
+    "record_output.weight",
+    "record_position_key.weight",
+    "record_position_query.bias",
+    "record_position_query.weight",
+    "record_provenance.weight",
+    "record_query.bias",
+    "record_query.weight",
+    "record_value.bias",
+    "record_value.weight"
+  ],
+  "record_scalar_count": 762,
+  "trainable_tensor_count": 26,
+  "trainable_scalar_count": 4681,
+  "execution": {
+    "train_task": "A: the frozen calibrated read becomes read-code-v1 and the byte head writes the position word",
+    "train_split": "train[64] through the A.2 position cache",
+    "doses": [
+      200,
+      400,
+      600
+    ],
+    "eval_rounds_per_dose": 96,
+    "task_b": "fact revision: the environment legally releases a record naming the queried entity's new position; the first pass has no record and is wrong by construction; the four templates put the answer at four different byte offsets",
+    "release": "the record is set before begin_utterance and released by a second observation packet whose feedback_record_ids names it; the subject raises 'feedback record not legally released' when the id has no matching writable record",
+    "correction": "one error at a time: release, re-ask, at most one update on the released record, re-ask again, and roll back to the saved parameters (and to a fresh optimizer, so the rejected step's moments do not survive the rollback) when the update did not help",
+    "control_arm": "same subject copy, same releases and re-asks, zero updates; parameter digest before == after",
+    "a4_arm": "eight accumulated updates per error on the same first pass, for attribution only",
+    "counter_fact_arm": "a record that names the third position is released instead; a subject that reads the record must follow it and a subject that answers from the frozen truth cannot",
+    "seed_use": "the subject, the read and the code are frozen, so the three seeds differ only in the order the cached positions are consumed. This is a weaker replication than three initialisations and is recorded as such instead of being presented as three independent runs",
+    "recovery": "the post-feedback bundle is reloaded in a fresh process and the 32 A rounds must digest identically",
+    "retention": "A fit accuracy before and after the feedback phase; monitor only, may not be cited as evidence",
+    "eval_rounds_by_dose": {
+      "200": 32,
+      "400": 32,
+      "600": 96
+    },
+    "eval_rounds_note": "intermediate doses read the fit split only (32 rounds); the final dose reads fit plus train (96). The first attempt priced 96 rounds at every dose from a trained-head unit and consumed the whole cap before finishing seed 1, because a partly trained head runs to the 65-byte cap: this is a declared cost change on a diagnostic block, and no gate depends on it",
+    "intermediate_doses_seeds": [
+      20261110
+    ],
+    "intermediate_doses_note": "only the primary seed carries the 200/400 learning curve; seeds 2 and 3 measure the final dose only. No gate reads the curve, and on a half-trained head the intermediate doses were the single largest cost of a seed. Recorded here before the second and third seed ran.",
+    "a4_arm_seeds": [
+      20261110,
+      20261111
+    ],
+    "a4_arm_note": "the A.4-style attribution arm runs on the primary seeds only. On seed 20261111 it was 73 percent of the seed cost (192 record-conditioned updates, each with a fresh episode and a legal release) and no gate reads it. Recorded before the third seed ran."
   }
 }
