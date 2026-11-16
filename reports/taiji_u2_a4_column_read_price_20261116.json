@@ -1,0 +1,82 @@
+{
+  "schema": "taiji-u2-a4-column-read-price-v1",
+  "card": "22.5.A.4",
+  "date": "2026-11-16",
+  "verdict": "price_measured",
+  "read_identity": "column-read-v1",
+  "read_parameters": {
+    "names": [
+      "query.weight",
+      "query.bias",
+      "key.weight",
+      "key.bias",
+      "value.weight",
+      "value.bias",
+      "head.0.weight",
+      "head.0.bias",
+      "head.2.weight",
+      "head.2.bias",
+      "out.weight",
+      "out.bias"
+    ],
+    "scalars": 476,
+    "tensors": 12
+  },
+  "body": {
+    "parameters": 22742,
+    "tensors": 194,
+    "note": "the registered candidate is unchanged; the read is a separately identified scaffold"
+  },
+  "unit_cpu": {
+    "column_public_per_example": 0.0,
+    "read_forward_per_example": 0.0,
+    "byte_round_per_example_cached_read": 0.251953,
+    "byte_round_per_example_recomputed_read": 0.269531,
+    "train_step_proxy_per_example": 0.078125,
+    "prefix0_capture_fit32": 1.1875,
+    "recovery_replay_fit8": 1.953125,
+    "replay_stable": true
+  },
+  "raw": {
+    "byte_round_samples": [
+      1.828125,
+      2.015625,
+      2.140625
+    ],
+    "train_step_samples": [
+      0.078125,
+      0.0625,
+      0.09375
+    ]
+  },
+  "plan": {
+    "seeds": 3,
+    "updates_per_seed": 600,
+    "dose_points": 3,
+    "per_seed_training": 46.875,
+    "per_seed_evaluation": 72.562,
+    "per_seed_probe": 1.188,
+    "per_seed_recovery": 7.812,
+    "per_seed_checkpoints": 0.15,
+    "per_seed_total": 128.588,
+    "estimate_cpu": 385.763,
+    "contingency_cpu": 57.864,
+    "cap_cpu": 443.627
+  },
+  "discipline": {
+    "optimizer_calls": 0,
+    "optimizer_steps": 0,
+    "checkpoints_written": 0,
+    "bundles_written": 0,
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "capability_claims": 0,
+    "training_updates": 0
+  },
+  "measured": {
+    "cpu_seconds": 19.953125,
+    "wall_seconds": 20.02065
+  },
+  "scope": "pricing only: forward passes and one backward on a throwaway copy, no optimizer, no checkpoint, no capability claim"
+}

@@ -1,0 +1,50 @@
+{
+  "schema": "taiji-u2-a4-column-read-guard-v1",
+  "card": "22.5.A.4",
+  "verdict": "guard_passed",
+  "checks": {
+    "contract_is_design_priced": true,
+    "training_not_authorised": true,
+    "criteria_sha256_matches": true,
+    "script_pin_live": true,
+    "read_module_pin_live": true,
+    "read_identity_declared": true,
+    "read_scalar_count_matches_contract": true,
+    "read_under_design_cap": true,
+    "body_identity_unchanged": true,
+    "cap_recomputes_from_unit_costs": true,
+    "cap_within_design_cap": true,
+    "replay_is_byte_stable": true,
+    "no_training_happened": true,
+    "no_capability_claims": true,
+    "no_sealed_reads": true,
+    "gate_r_carries_the_three_conditions": true,
+    "correction_identifiability_declared": true,
+    "scope_limit_declared": true
+  },
+  "drills": {
+    "shrink_the_cap": true,
+    "inflate_a_unit_cost": true,
+    "hide_an_optimizer_call": true,
+    "inject_capability_claim": true,
+    "claim_a_changed_body": true,
+    "hide_an_oversized_read": true
+  },
+  "failed": [],
+  "drills_not_firing": [],
+  "recomputed_cap": {
+    "per_seed_training": 46.875,
+    "per_seed_evaluation": 72.562,
+    "per_seed_probe": 1.188,
+    "per_seed_recovery": 7.812,
+    "per_seed_checkpoints": 0.15,
+    "per_seed_total": 128.587,
+    "estimate_cpu": 385.762,
+    "contingency_cpu": 57.864,
+    "cap_cpu": 443.627
+  },
+  "measured": {
+    "cpu_seconds": 0.0,
+    "wall_seconds": 0.006721
+  }
+}

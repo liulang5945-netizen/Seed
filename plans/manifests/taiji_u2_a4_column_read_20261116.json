@@ -1,0 +1,88 @@
+{
+  "schema": "taiji-u2-a4-column-read-contract-v1",
+  "status": "design_priced",
+  "card": "22.5.A.4",
+  "date": "2026-11-16",
+  "scope": "design and pricing only; no training, no optimizer, no checkpoint, no capability claim",
+  "candidate": {
+    "architecture": "native + column-read-v1",
+    "seed": 20261110,
+    "width": 8,
+    "read_identity": "column-read-v1",
+    "body": "the registered candidate, unchanged: 22742 scalars / 194 tensors",
+    "read_scalars_expected": 476
+  },
+  "data_root": "data/experiments/taiji_u2/first_a/20261112T074836Z/data.bin",
+  "data_digest": "40813b4cc8ffec0c3ae5639941b373c139422b4ccbaa34790de34a9e1149d214",
+  "structure": {
+    "query": "the body's own request embedding, averaged over its text units",
+    "keys_values": "the body's own column tokens: sixteen 8-dim tokens from the same encoder applied to the column regrouping",
+    "attention": "scores over the sixteen columns, softmax, value pooling",
+    "features": "attended column coordinate, attention strength, attention entropy, pooled content",
+    "classes": "a four-way head over those features: left, middle, right, unknown; unknown is a class to be earned, never a free slot",
+    "injection": "additive at the joint readout output through a zero-initialised projection over eleven features plus the four class probabilities, so the initial byte path is bit-identical to the body without the read and the class head is trained by the byte loss",
+    "design_scalar_cap": 8000
+  },
+  "criteria": {
+    "gate_r_read_prefix0": {
+      "fit_read_accuracy": 0.8,
+      "margin_over_shuffle_null": 0.2,
+      "painted_column_colour_probe": 0.5,
+      "prefix": 0,
+      "note": "the three conditions come from the A.3 criteria-flaw registration: prefix 0 only, a minimum margin over the shuffle null, and a painted-column colour probe floor"
+    },
+    "gate_b_byte": {
+      "full_response_exact_success": 0.8,
+      "correction_rate": 0.8,
+      "feedback_gain": 0.05,
+      "old_ability_drop": 0.02,
+      "recovery": "byte-identical across an independent process",
+      "correction_identifiability": "a first pass at 32/32 leaves nothing to correct, so the correction gate is measured on a declared degraded first pass: the A.1b uncalibrated read (fit 25/32); this is declared before any reading"
+    },
+    "seed_rule": "three seeds, same direction; the world-paired 95 percent lower bound must exceed zero",
+    "scope_limit": "this card can at most sign read_in_body_confirmed; the 22.5.1 parent claim needs the full protocol including real feedback rounds and the retention control, and is not signed here",
+    "exits": [
+      "read_in_body_confirmed",
+      "read_gate_failed",
+      "byte_gate_failed_with_read_passed",
+      "inconclusive_a4",
+      "budget_stop",
+      "engineering_failure"
+    ],
+    "capability_claims": 0
+  },
+  "plan": {
+    "seeds": 3,
+    "updates_per_seed": 600,
+    "dose_points": 3,
+    "contingency": 0.15,
+    "design_cap_cpu": 600.0,
+    "note": "the contingency replaces A.2's implicit 10.9 percent overrun with a declared one; every fixed phase is priced separately this time"
+  },
+  "training_authority": null,
+  "authorization": null,
+  "source_pins": {
+    "script": "scripts/training/price_a4_column_read_20261116.py",
+    "script_sha256": "c62628b13398a776b39a9b0644aa3511d25869c2ff73afbd17cf6ca609031fe0",
+    "read_module": "taiji/u2_column_read.py",
+    "read_module_sha256": "86ad24b8c92459b4d475fbb35480f636f6e54378ce74fd120b15102783b3e08f"
+  },
+  "exits": [
+    "price_measured",
+    "pricing_over_budget"
+  ],
+  "note": "training remains unauthorized; the owner must approve the design and the priced cap before any optimizer call",
+  "criteria_sha256": "6b59d3e0aea82506340e8210763f1814ca605667b1aa3361cfac5a6dddbdca59",
+  "amendment_pre_execution": {
+    "what": "the first design injected only the eleven features, which left the four-class head outside the gradient path of the byte loss: it could never be trained, and any read accuracy measured on it would have been an accident. A contract test caught it. The class probabilities are now injected as well (fifteen values), so the byte loss earns the class. The scalar count moves from the expected 444 to the measured 476.",
+    "change": "the injection vector now carries the class distribution; the zero-initialised residual keeps the first step byte-identical, which also means the head gradient is exactly zero on step one and non-zero from step two on (declared property, asserted by the contract tests)",
+    "unchanged": [
+      "criteria",
+      "criteria_sha256",
+      "plan",
+      "gates",
+      "scope_limit"
+    ],
+    "final_note": "the last re-pin follows an import-style fix (UP035) with no behavioural change; the measured price is unaffected"
+  }
+}
