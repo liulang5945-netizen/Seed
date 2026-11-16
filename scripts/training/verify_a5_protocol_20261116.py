@@ -25,6 +25,11 @@ MANIFEST = ROOT / "plans/manifests/taiji_u2_a5_protocol_20261116.json"
 PROBE_REPORT = ROOT / "reports/taiji_u2_a5_feasibility_probe_20261116.json"
 REPORT = ROOT / "reports/taiji_u2_a5_protocol_price_20261116.json"
 GUARD_REPORT = ROOT / "reports/taiji_u2_a5_protocol_guard_20261116.json"
+HEADROOM_REPORT = ROOT / "reports/taiji_u2_a5_headroom_probe_20261116.json"
+FIT_REPORT = ROOT / "reports/taiji_u2_a5_protocol_fit_probe_20261116.json"
+CONTENT_REPORT = ROOT / "reports/taiji_u2_a5_content_probe_20261116.json"
+SHORTCUT_REPORT = ROOT / "reports/taiji_u2_a5_shortcut_probe_20261116.json"
+GATE_REPORT = ROOT / "reports/taiji_u2_a5_gate_probe_20261116.json"
 
 
 def sha_of(path: Path) -> str:
@@ -45,7 +50,7 @@ def recompute_cap(report: dict) -> dict:
     per_seed_training = updates * unit["train_step_proxy_per_batch"]
     per_seed_evaluation = dose_points * rounds * unit["byte_round_per_example"]
     per_seed_feedback = error_cap * (
-        unit["single_error_correction_per_error"] + unit["byte_round_per_example_untrained"]
+        unit["single_error_correction_per_error"] + unit["byte_round_with_record"]
     )
     per_seed_control = (
         error_cap
@@ -53,7 +58,7 @@ def recompute_cap(report: dict) -> dict:
             a4_updates * unit["train_step_proxy_per_batch"]
             + unit["single_error_correction_per_error"]
         )
-        + 32 * unit["byte_round_per_example_untrained"]
+        + 2 * 32 * unit["byte_round_with_record"]
     )
     per_seed_recovery = unit["recovery_replay_fit8"] * (32 / 8)
     per_seed_checkpoints = dose_points * 0.05
@@ -81,7 +86,16 @@ def recompute_cap(report: dict) -> dict:
     }
 
 
-def evaluate(contract: dict, report: dict, probe: dict) -> dict[str, bool]:
+def evaluate(
+    contract: dict,
+    report: dict,
+    probe: dict,
+    headroom: dict | None = None,
+    fit: dict | None = None,
+    content: dict | None = None,
+    shortcut: dict | None = None,
+    gate: dict | None = None,
+) -> dict[str, bool]:
     checks: dict[str, bool] = {}
     checks["contract_state_is_recorded"] = contract["status"] in {
         "design_priced",
@@ -133,7 +147,7 @@ def evaluate(contract: dict, report: dict, probe: dict) -> dict[str, bool]:
     checks["budget_uses_the_expensive_round"] = (
         report["plan"]["per_seed_feedback"]
         >= int(contract["plan"]["feedback_error_allowance"])
-        * report["unit_cpu"]["byte_round_per_example_untrained"]
+        * report["unit_cpu"]["byte_round_with_record"]
     )
     checks["budget_uses_the_expensive_round_strictly"] = (
         abs(
@@ -141,10 +155,13 @@ def evaluate(contract: dict, report: dict, probe: dict) -> dict[str, bool]:
             - int(contract["plan"]["feedback_error_allowance"])
             * (
                 report["unit_cpu"]["single_error_correction_per_error"]
-                + report["unit_cpu"]["byte_round_per_example_untrained"]
+                + report["unit_cpu"]["byte_round_with_record"]
             )
         )
         < 0.01
+    )
+    checks["record_round_is_priced_separately"] = (
+        report["unit_cpu"]["byte_round_with_record"] > report["unit_cpu"]["byte_round_per_example"]
     )
     checks["trained_and_untrained_rounds_are_distinguished"] = (
         report["unit_cpu"]["byte_round_per_example_untrained"]
@@ -206,10 +223,91 @@ def evaluate(contract: dict, report: dict, probe: dict) -> dict[str, bool]:
     checks["illegal_release_is_refused"] = bool(
         findings["F1_environment_result_channel"].get("set_records_after_utterance_refused")
     )
+
+    # Task B must not be passable without reading the fact.
+    task_b = contract.get("task_b", {})
+    checks["task_b_declares_templates"] = len(task_b.get("templates", [])) >= 4
+    checks["task_b_offsets_spread"] = len(set(task_b.get("template_offsets", []))) >= int(
+        contract["criteria"]["task_b_template_offset_spread_minimum"]
+    )
+    checks["task_b_has_a_counter_fact_arm"] = bool(task_b.get("counter_fact_arm"))
+    checks["counter_fact_arm_is_required"] = (
+        contract["criteria"]["counter_fact_arm_required"] is True
+    )
+    checks["fixed_offset_copy_is_forbidden"] = (
+        contract["criteria"]["shortcut_copy_fixed_offset_forbidden"] is True
+    )
+
+    if shortcut is not None:
+        checks["shortcut_confirmed_under_one_template"] = (
+            shortcut["S1_fixed_template"]["offset_is_constant"] is True
+        )
+        checks["templates_break_the_shortcut"] = shortcut["S2_template_spread"][
+            "offset_spread"
+        ] >= int(contract["criteria"]["task_b_template_offset_spread_minimum"])
+
+    if headroom is not None:
+        checks["headroom_is_not_zero_by_construction"] = (
+            headroom["headroom"]["first_pass_accuracy"] == 0.0
+            and headroom["headroom"]["with_record_accuracy"] < 0.8
+        )
+        checks["correction_denominator_is_identifiable"] = (
+            headroom["headroom"]["first_pass_correct"] == 0
+            and headroom["task_b"]["denominator"] >= 4
+        )
+        checks["headroom_probe_ran_without_training"] = (
+            headroom["discipline"]["optimizer_steps"] == 0
+            and headroom["discipline"]["checkpoints_written"] == 0
+        )
+
+    if content is not None:
+        finite = [
+            item["max_abs_delta"]
+            for item in content["C1_deltas"]
+            if item["max_abs_delta"] is not None
+        ]
+        checks["record_channel_is_content_sensitive"] = content[
+            "C1_distribution_moves"
+        ] is True and bool(finite)
+        checks["content_probe_uses_a_real_threshold"] = bool(finite) and max(finite) > 1e-4
+
+    if fit is not None:
+        checks["cross_session_persistence_declared"] = bool(
+            contract["criteria"]["cross_session_persistence"]
+        )
+        checks["records_survive_the_boundary"] = (
+            fit["U2_cross_session"]["records_survive"] is True
+            and fit["U2_cross_session"]["record_raw_equal"] is True
+        )
+        checks["multi_fact_out_of_scope_declared"] = bool(
+            contract["criteria"]["multi_fact_out_of_scope"]
+        )
+
+    if gate is not None:
+        checks["gate_does_not_see_the_record"] = gate["summary"]["gates_see_the_record"] is False
+        checks["a_task_is_invariant_to_the_gate_without_a_record"] = (
+            gate["invariance"]["gamma_cancels_without_a_record"] is True
+        )
+        # The honest reading: a retention gate that cannot fail is not evidence.
+        checks["retention_is_declared_structurally_guaranteed"] = (
+            contract["criteria"].get("retention_is_structurally_guaranteed") is True
+        )
+        checks["retention_not_counted_as_evidence"] = (
+            contract["criteria"].get("retention_may_not_be_cited_as_evidence") is True
+        )
     return checks
 
 
-def drills(contract: dict, report: dict, probe: dict) -> dict[str, bool]:
+def drills(
+    contract: dict,
+    report: dict,
+    probe: dict,
+    headroom: dict | None = None,
+    fit: dict | None = None,
+    content: dict | None = None,
+    shortcut: dict | None = None,
+    gate: dict | None = None,
+) -> dict[str, bool]:
     out: dict[str, bool] = {}
 
     def fires(mutated_report: dict, key: str) -> bool:
@@ -285,6 +383,60 @@ def drills(contract: dict, report: dict, probe: dict) -> dict[str, bool]:
         "feedback_is_an_environment_result"
     ]
 
+    # Task B red directions: the card must not be able to go back to a single
+    # template, drop the counter-fact arm, or re-enable the fixed-offset copy.
+    mutated_contract = json.loads(json.dumps(contract))
+    mutated_contract["task_b"]["templates"] = mutated_contract["task_b"]["templates"][:1]
+    mutated_contract["task_b"]["template_offsets"] = [21]
+    out["collapse_task_b_to_one_template"] = not evaluate(mutated_contract, report, probe)[
+        "task_b_declares_templates"
+    ]
+
+    mutated_contract = json.loads(json.dumps(contract))
+    mutated_contract["task_b"]["counter_fact_arm"] = ""
+    out["drop_the_counter_fact_arm"] = not evaluate(mutated_contract, report, probe)[
+        "task_b_has_a_counter_fact_arm"
+    ]
+
+    mutated_contract = json.loads(json.dumps(contract))
+    mutated_contract["criteria"]["shortcut_copy_fixed_offset_forbidden"] = False
+    out["allow_the_fixed_offset_copy"] = not evaluate(mutated_contract, report, probe)[
+        "fixed_offset_copy_is_forbidden"
+    ]
+
+    if shortcut is not None:
+        mutated_shortcut = json.loads(json.dumps(shortcut))
+        mutated_shortcut["S2_template_spread"]["offset_spread"] = 1
+        out["claim_one_template_breaks_the_shortcut"] = not evaluate(
+            contract, report, probe, shortcut=mutated_shortcut
+        )["templates_break_the_shortcut"]
+
+    if headroom is not None:
+        mutated_headroom = json.loads(json.dumps(headroom))
+        mutated_headroom["headroom"]["with_record_accuracy"] = 1.0
+        out["claim_the_gain_is_zero_by_construction"] = not evaluate(
+            contract, report, probe, headroom=mutated_headroom
+        )["headroom_is_not_zero_by_construction"]
+
+    if gate is not None:
+        mutated_gate = json.loads(json.dumps(gate))
+        mutated_gate["summary"]["gates_see_the_record"] = True
+        out["claim_the_gate_sees_the_record"] = not evaluate(
+            contract, report, probe, gate=mutated_gate
+        )["gate_does_not_see_the_record"]
+
+        mutated_gate = json.loads(json.dumps(gate))
+        mutated_gate["invariance"]["gamma_cancels_without_a_record"] = False
+        out["claim_the_a_task_moves_with_the_gate"] = not evaluate(
+            contract, report, probe, gate=mutated_gate
+        )["a_task_is_invariant_to_the_gate_without_a_record"]
+
+        mutated_contract = json.loads(json.dumps(contract))
+        mutated_contract["criteria"]["retention_may_not_be_cited_as_evidence"] = False
+        out["cite_a_retention_gate_that_cannot_fail"] = not evaluate(
+            mutated_contract, report, probe, gate=gate
+        )["retention_not_counted_as_evidence"]
+
     return out
 
 
@@ -294,8 +446,13 @@ def main() -> int:
     contract = json.loads(MANIFEST.read_text(encoding="utf-8"))
     report = json.loads(REPORT.read_text(encoding="utf-8"))
     probe = json.loads(PROBE_REPORT.read_text(encoding="utf-8"))
-    checks = evaluate(contract, report, probe)
-    fired = drills(contract, report, probe)
+    headroom = json.loads(HEADROOM_REPORT.read_text(encoding="utf-8"))
+    fit = json.loads(FIT_REPORT.read_text(encoding="utf-8"))
+    content = json.loads(CONTENT_REPORT.read_text(encoding="utf-8"))
+    shortcut = json.loads(SHORTCUT_REPORT.read_text(encoding="utf-8"))
+    gate = json.loads(GATE_REPORT.read_text(encoding="utf-8"))
+    checks = evaluate(contract, report, probe, headroom, fit, content, shortcut, gate)
+    fired = drills(contract, report, probe, headroom, fit, content, shortcut, gate)
     passed = all(checks.values()) and all(fired.values())
     receipt = {
         "schema": "taiji-u2-a5-protocol-guard-v1",

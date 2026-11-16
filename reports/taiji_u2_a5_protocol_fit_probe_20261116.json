@@ -1,0 +1,178 @@
+{
+  "schema": "taiji-u2-a5-protocol-fit-probe-v1",
+  "card": "22.5.A.5",
+  "date": "2026-11-16",
+  "verdict": "protocol_fit_measured",
+  "U1_unseen_query": {
+    "original_request": "绿色圆片现在在哪里？",
+    "original_route": {
+      "route_probabilities": [
+        0.527698,
+        0.472302
+      ],
+      "copy_mass": 0.324594,
+      "gen_mass": 1.675406,
+      "record_ids": [
+        231,
+        187,
+        191,
+        232,
+        137,
+        178,
+        229,
+        156,
+        134,
+        231,
+        137,
+        135,
+        231,
+        142,
+        176,
+        229,
+        156,
+        168,
+        229,
+        156,
+        168,
+        228,
+        184,
+        173,
+        233,
+        151,
+        180,
+        227,
+        128,
+        130
+      ],
+      "first_symbol": 256
+    },
+    "paraphrase_request": "绿色圆片现在位于哪里？",
+    "paraphrase_route": {
+      "route_probabilities": [
+        0.527697,
+        0.472303
+      ],
+      "copy_mass": 0.324528,
+      "gen_mass": 1.675472,
+      "record_ids": [
+        231,
+        187,
+        191,
+        232,
+        137,
+        178,
+        229,
+        156,
+        134,
+        231,
+        137,
+        135,
+        231,
+        142,
+        176,
+        229,
+        156,
+        168,
+        229,
+        156,
+        168,
+        228,
+        184,
+        173,
+        233,
+        151,
+        180,
+        227,
+        128,
+        130
+      ],
+      "first_symbol": 256
+    },
+    "prefixed_request": "请问绿色圆片现在在哪里？",
+    "prefixed_route": {
+      "route_probabilities": [
+        0.527698,
+        0.472302
+      ],
+      "copy_mass": 0.324659,
+      "gen_mass": 1.675341,
+      "record_ids": [
+        231,
+        187,
+        191,
+        232,
+        137,
+        178,
+        229,
+        156,
+        134,
+        231,
+        137,
+        135,
+        231,
+        142,
+        176,
+        229,
+        156,
+        168,
+        229,
+        156,
+        168,
+        228,
+        184,
+        173,
+        233,
+        151,
+        180,
+        227,
+        128,
+        130
+      ],
+      "first_symbol": 256
+    },
+    "route_changes_with_wording": true
+  },
+  "U2_cross_session": {
+    "records_survive": true,
+    "record_raw_equal": true,
+    "released_ids_survive": true,
+    "fast_memory_equal": true,
+    "routing_after_reload": [
+      0.527698,
+      0.472302
+    ],
+    "record_bytes_after_reload": 30
+  },
+  "U3_multi_fact_discrimination": {
+    "two_records": 2,
+    "route_for_first_entity": [
+      0.345389,
+      0.34548,
+      0.309131
+    ],
+    "route_for_second_entity": [
+      0.34539,
+      0.345481,
+      0.309129
+    ],
+    "route_differs_by_entity": true,
+    "note": "three entries are route-to-record-a, route-to-record-b and the null route; a route that does not differ by entity means multi-fact B is not constructible"
+  },
+  "discipline": {
+    "optimizer_calls": 0,
+    "optimizer_steps": 0,
+    "training_updates": 0,
+    "checkpoints_written": 0,
+    "bundles_written": 0,
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "capability_claims": 0,
+    "accepted_parent": false
+  },
+  "measured": {
+    "cpu_seconds": 0.328125,
+    "wall_seconds": 0.329464
+  },
+  "scope": "zero-training protocol-fit probe: no optimizer, no step, no checkpoint, no capability claim"
+}

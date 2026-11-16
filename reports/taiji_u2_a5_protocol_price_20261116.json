@@ -7,27 +7,20 @@
     "byte_round_per_example": 0.03125,
     "byte_round_per_example_untrained": 0.222656,
     "train_step_proxy_per_batch": 0.015625,
-    "single_error_correction_per_error": 0.0625,
+    "single_error_correction_per_error": 0.054688,
     "single_example_reask": 0.03125,
-    "recovery_replay_fit8": 0.265625
+    "byte_round_with_record": 0.140625,
+    "recovery_replay_fit8": 0.25
   },
   "raw": {
     "byte_round_samples": [
-      0.25,
       0.265625,
       0.25,
-      0.234375,
+      0.25,
+      0.265625,
       0.25
     ],
     "train_step_samples": [
-      0.0,
-      0.015625,
-      0.015625,
-      0.0,
-      0.015625,
-      0.0,
-      0.015625,
-      0.0,
       0.015625,
       0.0,
       0.015625,
@@ -39,12 +32,18 @@
       0.0,
       0.015625,
       0.0,
-      0.015625
+      0.015625,
+      0.015625,
+      0.0,
+      0.015625,
+      0.0,
+      0.015625,
+      0.0,
+      0.015625,
+      0.0
     ],
     "single_error_correction_samples": [
-      0.859375,
-      0.0625,
-      0.046875,
+      0.90625,
       0.046875,
       0.0625,
       0.046875,
@@ -58,20 +57,22 @@
       0.0625,
       0.046875,
       0.0625,
-      0.125,
-      0.0625,
       0.046875,
-      0.0625
+      0.0625,
+      0.140625,
+      0.046875,
+      0.0625,
+      0.046875
     ],
     "single_example_reask_samples": [
       0.03125,
       0.03125,
       0.03125,
       0.03125,
+      0.046875,
       0.03125,
-      0.03125,
-      0.03125,
-      0.03125,
+      0.015625,
+      0.046875,
       0.03125,
       0.03125,
       0.03125,
@@ -86,10 +87,10 @@
       0.03125
     ],
     "recovery_replay_samples": [
-      0.265625,
+      0.25,
       0.25,
       0.265625,
-      0.234375,
+      0.25,
       0.265625
     ],
     "replay_stable": true
@@ -102,15 +103,15 @@
     "a4_protocol_updates_per_error": 8,
     "per_seed_training": 9.375,
     "per_seed_evaluation": 9.0,
-    "per_seed_feedback": 9.125,
-    "per_seed_control_arm": 13.125,
-    "per_seed_recovery": 1.062,
+    "per_seed_feedback": 6.25,
+    "per_seed_control_arm": 14.75,
+    "per_seed_recovery": 1.0,
     "per_seed_checkpoints": 0.15,
-    "per_seed_total": 41.837,
-    "estimate_cpu": 125.512,
-    "contingency_cpu": 18.827,
-    "cap_cpu": 144.339,
-    "cap_wall": 288.678,
+    "per_seed_total": 40.525,
+    "estimate_cpu": 121.575,
+    "contingency_cpu": 18.236,
+    "cap_cpu": 139.811,
+    "cap_wall": 279.622,
     "design_cap_cpu": 600.0
   },
   "discipline": {
@@ -126,8 +127,8 @@
     "accepted_parent": false
   },
   "measured": {
-    "cpu_seconds": 15.171875,
-    "wall_seconds": 15.673976
+    "cpu_seconds": 16.6875,
+    "wall_seconds": 17.207491
   },
   "scope": "pricing only: forward passes, one backward on the trained head, and copies of the subject; no optimizer, no checkpoint, no capability claim"
 }

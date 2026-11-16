@@ -104,7 +104,17 @@
     "a_retention": "not_applicable_no_A_parent",
     "three_seed": "in_scope",
     "check2": "not_read",
-    "accepted_parent": false
+    "accepted_parent": false,
+    "task_b_uses_multiple_templates": true,
+    "task_b_template_offset_spread_minimum": 4,
+    "counter_fact_arm_required": true,
+    "shortcut_copy_fixed_offset_forbidden": true,
+    "unseen_query_measurement": "score only rounds whose request wording was never released; routing is not query-sensitive (measured 1e-6), so a wording-based gate must not rely on it",
+    "cross_session_persistence": "records, released ids and fast memory must survive a save/reload boundary",
+    "multi_fact_out_of_scope": "the route is query-blind across two released records (measured), so one fact per episode",
+    "retention_is_structurally_guaranteed": true,
+    "retention_may_not_be_cited_as_evidence": true,
+    "retention_note": "the gate probe measured the A-task byte distribution to be exactly invariant to the copy gate when no record is present (+/-4 logits, delta 0.0), so the old ability cannot be damaged by training the record channel. The retention check is kept as a monitor but must not be cited as evidence that retention was earned"
   },
   "plan": {
     "seeds": [
@@ -128,14 +138,19 @@
   },
   "source_pins": {
     "probe": "165b39fa588620d7f4404f1cf0edc17fdaaae11327d81300b62a0e9b48bf88e4",
-    "price": "729a52e5d84b728549c7a4ded419d3ada6aeb51e903cd13892dd42209211dab5",
+    "price": "62ec958d56b87fb13b0c83596b19e8915adbd22b2281016b8540306f3329bd34",
     "subject": "a3335d7fc84e54903f16617e452753c04124709b3b83c20a656d7b43b5ef41ad",
     "events": "b89d5424a76263efab7a5c944dbc820b34fdef4ed12b10afc0b651193a34c944",
     "contract_module": "957d9d4163eb960dbef5939e721ce1a69dd13311148944901aafb700022bed84",
     "a2_runner": "c26f4a545ffb5d12f579cb7e69c57eabca6cd7c427e479fb3a55e4621f0fd981",
     "support": "33d9301f98859934c1413e25765c55e6bc7b64dfa410d65b03f0e5a198041b4c",
     "columns": "4afb7c94a0641f6f5eb943339d19f13c8f690ddcf6956bc6787cba5aa4653476",
-    "guard": "80b53184ae2ef77b6adcb54549257fd6e8ba0b1f43c11d393fd70ede1e7ac089"
+    "guard": "d49a540037c40fcf0a4b6cc1ad02c44b835501ae0f4afe7925087689f0a5a556",
+    "headroom_probe": "50af0897559fcdc32816ce64412dca62956935ae4a799d04ae84ee85dc127e4a",
+    "protocol_fit_probe": "80f075f226c2cbdaaaf1838b32b6162a86803660fd1348df4ae74c1f7187f353",
+    "content_probe": "8e124ad1529155c53209b54e25b4e697c10030d8f00e9fb5b15e01b7e67dee14",
+    "shortcut_probe": "b1bcd445e1fe79c5ae6730a4a8cdcf597113376693b31f6f301f5216a2da7740",
+    "gate_probe": "35817e4e6d995544a6089021772dc4134f375cceb4fb3773febed154bad825cf"
   },
   "exits": [
     "probe_complete",
@@ -143,6 +158,50 @@
     "pricing_over_budget",
     "engineering_failure"
   ],
-  "criteria_sha256": "547dfa6bb354f9e945815effc5fd37b4898fcf0a66d05d50c1d9f1cd6596a03d",
-  "note": "probe stage: the manifest exists so the zero-training feasibility probe can run against frozen candidate identities; criteria and pins are frozen before any training reading"
+  "criteria_sha256": "9b876cc2198ff185a43f5cd37b1ef71182cd23794b5b17a27cf073b002499d00",
+  "note": "probe stage: the manifest exists so the zero-training feasibility probe can run against frozen candidate identities; criteria and pins are frozen before any training reading",
+  "task_b": {
+    "definition": "fact revision: the environment legally releases a record stating the queried entity's new position; the answer target is that new position; the first pass only sees the read and is wrong by construction",
+    "templates": [
+      "{entity}现在在{label}。",
+      "现在在{label}的是{entity}。",
+      "{label}就是{entity}此刻的位置。",
+      "据最新观测，{entity}的位置是{label}。"
+    ],
+    "template_offsets": [
+      21,
+      9,
+      0,
+      42
+    ],
+    "template_rule": "the answer word must land at a different byte offset in each template; with a single template every record puts the answer at byte 21, and 'copy bytes 21..27' would pass the gate without reading the fact",
+    "counter_fact_arm": "a second arm releases a record whose answer contradicts the truth; a subject that reads the record must answer differently, a fixed-offset copier cannot",
+    "measured_headroom": {
+      "denominator": 24,
+      "first_pass_correct": 0,
+      "with_record_correct_frozen": 0,
+      "note": "the gain is not zero by construction; an update has something to buy"
+    },
+    "measured_content_sensitivity": {
+      "max_abs_delta_at_first_position": 0.4717979431,
+      "position_argmax_by_word": [
+        26,
+        24,
+        26
+      ],
+      "note": "the channel reacts to the answer word (delta 0.47) but the copy position does not yet point at it (entropy 3.40 over thirty positions), so there is real work for an update to do"
+    },
+    "measured_protocol_limits": {
+      "unseen_query": "routing is numerically but not operationally query-sensitive: a paraphrase moves route mass by 1e-6, so an unseen-query gate cannot rest on routing; the unseen query is therefore measured by changing the request wording and the template, and by scoring only rounds whose wording was never released",
+      "cross_session": "records, released ids and fast memory all survive a save/reload boundary and routing after reload equals routing before (0.527698 / 0.472302)",
+      "multi_fact": "with two records released the route is query-blind (0.345389 against 0.345390), so task B is single-fact per episode by design"
+    },
+    "measured_gate_structure": {
+      "gates_see_the_record": false,
+      "max_gamma_delta": 0.0,
+      "max_lambda_delta": 0.0,
+      "a_task_invariant_without_a_record": true,
+      "note": "the copy gate is a function of the read code only, so it cannot switch on the presence of a record; the switch has to come from the record route and the copy position, which are the parameters this card trains"
+    }
+  }
 }

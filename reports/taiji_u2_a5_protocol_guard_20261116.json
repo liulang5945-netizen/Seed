@@ -18,6 +18,7 @@
     "cap_within_design_cap": true,
     "budget_uses_the_expensive_round": true,
     "budget_uses_the_expensive_round_strictly": true,
+    "record_round_is_priced_separately": true,
     "trained_and_untrained_rounds_are_distinguished": true,
     "replay_is_byte_stable": true,
     "no_training_happened": true,
@@ -36,7 +37,26 @@
     "records_channel_is_live": true,
     "records_channel_survives_the_read_code_hook": true,
     "fast_path_is_recorded_as_cut": true,
-    "illegal_release_is_refused": true
+    "illegal_release_is_refused": true,
+    "task_b_declares_templates": true,
+    "task_b_offsets_spread": true,
+    "task_b_has_a_counter_fact_arm": true,
+    "counter_fact_arm_is_required": true,
+    "fixed_offset_copy_is_forbidden": true,
+    "shortcut_confirmed_under_one_template": true,
+    "templates_break_the_shortcut": true,
+    "headroom_is_not_zero_by_construction": true,
+    "correction_denominator_is_identifiable": true,
+    "headroom_probe_ran_without_training": true,
+    "record_channel_is_content_sensitive": true,
+    "content_probe_uses_a_real_threshold": true,
+    "cross_session_persistence_declared": true,
+    "records_survive_the_boundary": true,
+    "multi_fact_out_of_scope_declared": true,
+    "gate_does_not_see_the_record": true,
+    "a_task_is_invariant_to_the_gate_without_a_record": true,
+    "retention_is_declared_structurally_guaranteed": true,
+    "retention_not_counted_as_evidence": true
   },
   "drills": {
     "shrink_the_cap": true,
@@ -50,24 +70,32 @@
     "hide_an_unstable_replay": true,
     "claim_the_records_channel_is_cut": true,
     "claim_a_retention_that_has_no_parent": true,
-    "restore_the_byte_supervision_protocol": true
+    "restore_the_byte_supervision_protocol": true,
+    "collapse_task_b_to_one_template": true,
+    "drop_the_counter_fact_arm": true,
+    "allow_the_fixed_offset_copy": true,
+    "claim_one_template_breaks_the_shortcut": true,
+    "claim_the_gain_is_zero_by_construction": true,
+    "claim_the_gate_sees_the_record": true,
+    "claim_the_a_task_moves_with_the_gate": true,
+    "cite_a_retention_gate_that_cannot_fail": true
   },
   "failed": [],
   "drills_not_firing": [],
   "recomputed_cap": {
     "per_seed_training": 9.375,
     "per_seed_evaluation": 9.0,
-    "per_seed_feedback": 9.125,
-    "per_seed_control_arm": 13.125,
-    "per_seed_recovery": 1.062,
+    "per_seed_feedback": 6.25,
+    "per_seed_control_arm": 14.75,
+    "per_seed_recovery": 1.0,
     "per_seed_checkpoints": 0.15,
-    "per_seed_total": 41.837,
-    "estimate_cpu": 125.512,
-    "contingency_cpu": 18.827,
-    "cap_cpu": 144.339
+    "per_seed_total": 40.525,
+    "estimate_cpu": 121.575,
+    "contingency_cpu": 18.236,
+    "cap_cpu": 139.811
   },
   "measured": {
-    "cpu_seconds": 0.0,
-    "wall_seconds": 0.02126
+    "cpu_seconds": 0.03125,
+    "wall_seconds": 0.027443
   }
 }

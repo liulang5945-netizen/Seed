@@ -1,0 +1,246 @@
+{
+  "schema": "taiji-u2-a5-gate-probe-v1",
+  "card": "22.5.A.5",
+  "date": "2026-11-16",
+  "verdict": "gate_discrimination_measured",
+  "rows": [
+    {
+      "id": "fit-0",
+      "without_record": {
+        "lambda_continue": [
+          0.460595,
+          0.460595
+        ],
+        "gamma_generate": [
+          0.906763,
+          0.906763
+        ],
+        "copy_mass": 0.0,
+        "gen_mass": 2.0,
+        "route": null,
+        "position": null,
+        "top_symbol": 229
+      },
+      "with_record": {
+        "lambda_continue": [
+          0.460595,
+          0.460595
+        ],
+        "gamma_generate": [
+          0.906763,
+          0.906763
+        ],
+        "copy_mass": 0.098402,
+        "gen_mass": 1.901598,
+        "route": [
+          0.527698,
+          0.472302
+        ],
+        "position": {
+          "argmax": 24,
+          "entropy": 3.401005,
+          "mass_at_answer_offset": 0.033651
+        },
+        "top_symbol": 229
+      },
+      "gamma_delta": [
+        0.0,
+        0.0
+      ],
+      "lambda_delta": [
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "id": "fit-1",
+      "without_record": {
+        "lambda_continue": [
+          0.638231,
+          0.638231
+        ],
+        "gamma_generate": [
+          0.283327,
+          0.283327
+        ],
+        "copy_mass": 0.0,
+        "gen_mass": 2.0,
+        "route": null,
+        "position": null,
+        "top_symbol": 228
+      },
+      "with_record": {
+        "lambda_continue": [
+          0.638231,
+          0.638231
+        ],
+        "gamma_generate": [
+          0.283327,
+          0.283327
+        ],
+        "copy_mass": 0.755037,
+        "gen_mass": 1.244963,
+        "route": [
+          0.526765,
+          0.473235
+        ],
+        "position": {
+          "argmax": 26,
+          "entropy": 3.400977,
+          "mass_at_answer_offset": 0.032502
+        },
+        "top_symbol": 228
+      },
+      "gamma_delta": [
+        0.0,
+        0.0
+      ],
+      "lambda_delta": [
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "id": "fit-2",
+      "without_record": {
+        "lambda_continue": [
+          0.238062,
+          0.238062
+        ],
+        "gamma_generate": [
+          0.933507,
+          0.933507
+        ],
+        "copy_mass": 0.0,
+        "gen_mass": 2.0,
+        "route": null,
+        "position": null,
+        "top_symbol": 229
+      },
+      "with_record": {
+        "lambda_continue": [
+          0.238062,
+          0.238062
+        ],
+        "gamma_generate": [
+          0.933507,
+          0.933507
+        ],
+        "copy_mass": 0.070078,
+        "gen_mass": 1.929922,
+        "route": [
+          0.526958,
+          0.473042
+        ],
+        "position": {
+          "argmax": 26,
+          "entropy": 3.400965,
+          "mass_at_answer_offset": 0.032478
+        },
+        "top_symbol": 229
+      },
+      "gamma_delta": [
+        0.0,
+        0.0
+      ],
+      "lambda_delta": [
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "id": "fit-3",
+      "without_record": {
+        "lambda_continue": [
+          0.294357,
+          0.294357
+        ],
+        "gamma_generate": [
+          0.792133,
+          0.792133
+        ],
+        "copy_mass": 0.0,
+        "gen_mass": 2.0,
+        "route": null,
+        "position": null,
+        "top_symbol": 230
+      },
+      "with_record": {
+        "lambda_continue": [
+          0.294357,
+          0.294357
+        ],
+        "gamma_generate": [
+          0.792133,
+          0.792133
+        ],
+        "copy_mass": 0.219084,
+        "gen_mass": 1.780916,
+        "route": [
+          0.526981,
+          0.473019
+        ],
+        "position": {
+          "argmax": 0,
+          "entropy": 3.400935,
+          "mass_at_answer_offset": 0.032406
+        },
+        "top_symbol": 230
+      },
+      "gamma_delta": [
+        0.0,
+        0.0
+      ],
+      "lambda_delta": [
+        0.0,
+        0.0
+      ]
+    }
+  ],
+  "summary": {
+    "max_gamma_delta": 0.0,
+    "max_lambda_delta": 0.0,
+    "gates_see_the_record": false,
+    "threshold": 0.001,
+    "threshold_note": "a route change at the sixth decimal is not evidence; the floor is the level below which a gate cannot steer a decision",
+    "answer_offsets": [
+      21,
+      21,
+      21,
+      21
+    ],
+    "copy_can_reach_the_answer_offset": true
+  },
+  "implication": "the gates do not condition on the record, but that is not a barrier: with no record the copy term is absent and gamma cancels out of the mixture, so a training gradient that moves gamma comes only from rounds where a record is present.  Whether that is true is measured in invariance below, not assumed",
+  "invariance": {
+    "what": "perturb the copy gate by +/-4 logits with no record present",
+    "max_abs_delta_by_shift": {
+      "gamma_low": 0.0,
+      "gamma_high": 0.0
+    },
+    "gamma_cancels_without_a_record": true,
+    "reading": "if the A-task distribution is invariant to the gate when no record is present, then the gate can be trained from B rounds alone and the retention gate is achievable; if it is not invariant, learning B necessarily costs A",
+    "copy_mass_by_shift": {
+      "nominal": 0.0,
+      "gamma_low": 0.0,
+      "gamma_high": 0.0
+    }
+  },
+  "discipline": {
+    "optimizer_calls": 0,
+    "optimizer_steps": 0,
+    "training_updates": 0,
+    "checkpoints_written": 0,
+    "bundles_written": 0,
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "capability_claims": 0,
+    "accepted_parent": false
+  },
+  "measured": {
+    "cpu_seconds": 0.34375,
+    "wall_seconds": 0.342438
+  },
+  "scope": "zero-training gate probe: no optimizer, no step, no checkpoint, no capability claim"
+}

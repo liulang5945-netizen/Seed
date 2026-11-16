@@ -197,6 +197,39 @@ def main() -> int:
     reask_cost, reask_samples = timeit(lambda: one_round(trained, sample[:1], codes), 20)
     unit["single_example_reask"] = round(reask_cost, 6)
 
+    # A task-B round carries a record, so the copy path has positions to weigh.
+    # It is measured separately: pricing it at the A-task rate would repeat
+    # A.2's mistake of pricing fixed phases at the per-update slope.
+    from scripts.training.probe_a5_gate_20261116 import build_state
+    from scripts.training.probe_a5_shortcut_20261116 import TEMPLATES
+    from taiji.u2_subject import U2Record
+
+    def one_record_round():
+        example = sample[0]
+        entity = example["public"]["request"].decode()[: -len("现在在哪里？")]
+        record = U2Record(
+            "price-record",
+            TEMPLATES[0].format(entity=entity, label="中间").encode(),
+            0,
+            "sensor",
+            "world",
+            0.0,
+            True,
+        )
+        state = build_state(trained, example, record)
+        with torch.no_grad(), a2.reading_code(trained, codes[example["id"]]):
+            for _ in range(int(trained.c.max_output_bytes) + 1):
+                probability, _, details = trained.output(
+                    state, trained.language_goal(state), state["prediction_action"]
+                )
+                symbol = int(probability.argmax())
+                if symbol == 256:
+                    break
+                state = trained.accept_byte(state, symbol, details)
+
+    record_cost, record_samples = timeit(one_record_round, 10)
+    unit["byte_round_with_record"] = round(record_cost, 6)
+
     digests = replay_digests(trained, fit[:8], codes)
     replay_cost, replay_samples = timeit(lambda: replay_digests(trained, fit[:8], codes), 5)
     unit["recovery_replay_fit8"] = round(replay_cost, 6)
@@ -215,17 +248,20 @@ def main() -> int:
     # and an immediate re-ask of that error.  The re-ask of a wrong head can
     # run to the byte cap, so the expensive round cost is used.
     per_seed_feedback = error_cap * (
-        unit["single_error_correction_per_error"] + unit["byte_round_per_example_untrained"]
+        unit["single_error_correction_per_error"] + unit["byte_round_with_record"]
     )
     # The retention control arm: the A.4-style accumulating protocol over the
     # same errors, eight updates each, then a full second pass over the split.
+    # The control arm re-asks the whole B split twice: once against the truthful
+    # record and once against the counter-fact record.  The second pass is what
+    # tells a reader from a fixed-offset copier.
     per_seed_control = (
         error_cap
         * (
             a4_updates * unit["train_step_proxy_per_batch"]
             + unit["single_error_correction_per_error"]
         )
-        + len(fit) * unit["byte_round_per_example_untrained"]
+        + 2 * len(fit) * unit["byte_round_with_record"]
     )
     per_seed_recovery = unit["recovery_replay_fit8"] * (len(fit) / 8)
     per_seed_checkpoints = dose_count * 0.05

@@ -1,0 +1,100 @@
+{
+  "schema": "taiji-u2-a5-shortcut-probe-v1",
+  "card": "22.5.A.5",
+  "date": "2026-11-16",
+  "verdict": "shortcut_measured",
+  "S1_fixed_template": {
+    "offset_values": [
+      21
+    ],
+    "offset_is_constant": true,
+    "records": [
+      {
+        "entity": "红色圆片",
+        "label": "左边",
+        "offset": 21,
+        "length": 30
+      },
+      {
+        "entity": "红色圆片",
+        "label": "中间",
+        "offset": 21,
+        "length": 30
+      },
+      {
+        "entity": "红色圆片",
+        "label": "右边",
+        "offset": 21,
+        "length": 30
+      }
+    ],
+    "risk": "with every entity name at twelve bytes and one template, the answer always sits at byte 21 of a thirty-byte record, so 'copy bytes 21..27' passes the gate without reading the fact"
+  },
+  "S2_template_spread": {
+    "templates": [
+      "{entity}现在在{label}。",
+      "现在在{label}的是{entity}。",
+      "{label}就是{entity}此刻的位置。",
+      "据最新观测，{entity}的位置是{label}。"
+    ],
+    "offset_values": [
+      0,
+      9,
+      21,
+      42
+    ],
+    "offset_spread": 4,
+    "records": [
+      {
+        "template": "{entity}现在在{label}。",
+        "record": "红色圆片现在在左边。",
+        "offset": 21,
+        "length": 30
+      },
+      {
+        "template": "现在在{label}的是{entity}。",
+        "record": "现在在左边的是红色圆片。",
+        "offset": 9,
+        "length": 36
+      },
+      {
+        "template": "{label}就是{entity}此刻的位置。",
+        "record": "左边就是红色圆片此刻的位置。",
+        "offset": 0,
+        "length": 42
+      },
+      {
+        "template": "据最新观测，{entity}的位置是{label}。",
+        "record": "据最新观测，红色圆片的位置是左边。",
+        "offset": 42,
+        "length": 51
+      }
+    ],
+    "fix": "four templates put the answer at four different offsets, so a fixed-offset copy cannot pass; the subject must locate the answer in the record it was given"
+  },
+  "S3_counter_fact_arm": {
+    "truth": "左边",
+    "counter_label": "中间",
+    "output_with_truthful_record": "左边",
+    "output_with_counter_record": "左边",
+    "output_follows_record": false,
+    "note": "a subject that reads the record must answer differently when the record says something different; a fixed-offset copier answers the same either way. The frozen subject is expected NOT to follow the record - that is the headroom - so this number reports the protocol's ability to tell the two policies apart, not a capability"
+  },
+  "discipline": {
+    "optimizer_calls": 0,
+    "optimizer_steps": 0,
+    "training_updates": 0,
+    "checkpoints_written": 0,
+    "bundles_written": 0,
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "capability_claims": 0,
+    "accepted_parent": false
+  },
+  "measured": {
+    "cpu_seconds": 0.4375,
+    "wall_seconds": 0.431306
+  },
+  "scope": "zero-training shortcut probe: no optimizer, no step, no checkpoint, no capability claim"
+}
