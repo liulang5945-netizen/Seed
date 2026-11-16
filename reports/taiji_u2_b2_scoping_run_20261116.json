@@ -1,0 +1,81 @@
+{
+  "schema": "taiji-u2-b2-scoping-run-v1",
+  "card": "22.5.B.2",
+  "date": "2026-11-16",
+  "verdict": "retention_broken_under_scoping",
+  "seeds": [
+    20261110,
+    20261111,
+    20261112
+  ],
+  "denominator": {
+    "task_b_examples": 24,
+    "first_pass_errors": [
+      24,
+      24,
+      24
+    ],
+    "distractor_rounds": 32,
+    "skipped_unknown": 8
+  },
+  "correction_rates": [
+    0.0,
+    0.0,
+    0.08333333333333333
+  ],
+  "distractor_damages": [
+    0.5,
+    0.0,
+    0.25
+  ],
+  "distractor_accuracies": [
+    0.5,
+    1.0,
+    0.75
+  ],
+  "baseline_distractor_accuracies": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "record_free_damages": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "record_free_damage_is_structural_monitor": true,
+  "gains": [
+    0.0,
+    0.0,
+    0.0833333333
+  ],
+  "lower_bound": {
+    "pairs": 72,
+    "lower_bound_95": 0.0,
+    "mean": 0.027777777777777776
+  },
+  "counter_follow": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "knockout_b": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "knockout_ok": true,
+  "gate_ok": true,
+  "purity_ok": true,
+  "recovery_ok": true,
+  "control_ok": true,
+  "main_ok": true,
+  "stability_ok": true,
+  "accepted_parent": false,
+  "capability_claims": 0,
+  "check2": "not_read",
+  "cost": {
+    "cpu": 379.90625,
+    "wall": 450.283608
+  }
+}

@@ -1,6 +1,6 @@
 # 22.5.B.2 设计卡：把纠正可塑性定域到记录在场
 
-> 卡号：`22.5.B.2`｜日期：2026-11-16｜状态：**已设计、已定价、smoke 全过，训练未授权**。
+> 卡号：`22.5.B.2`｜日期：2026-11-16｜状态：**已结案（负，informative）**——见[结果卡](RESULT-TAIJI_U2_B2_SCOPING_20261116.md)（D-20261116-11，`retention_broken_under_scoping`）与[B 线收束卡](CLOSEOUT-TAIJI_U2_B_LINE_20261116.md)；本卡保留冻结时的设计原文。
 > 契约 [`taiji_u2_b2_scoping_20261116.json`](../manifests/taiji_u2_b2_scoping_20261116.json)（`criteria_sha256=75daaf6f…`）；[smoke 回执](../../reports/taiji_u2_b2_scoping_smoke_20261116.json)、[定价回执](../../reports/taiji_u2_b2_scoping_price_20261116.json)。
 > 前置：[B.1 结果卡](RESULT-TAIJI_U2_B1_SEPARATION_20261116.md)（D-20261116-09）——参数分离兑现但学成记录盲全局平移；探针证明 presence 信号存在却被忽略，容量/剂量排除。owner 已裁决**立项 B.2 功能定域**（D-20261116-10）。
 

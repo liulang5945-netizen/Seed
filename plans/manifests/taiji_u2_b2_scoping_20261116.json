@@ -230,12 +230,12 @@
   },
   "criteria_sha256": "75daaf6f415b773f09b65f825eb07696e3acd7aa0f742c7dee43e107eb72f66b",
   "criteria_canonicalization": "json.dumps(criteria, sort_keys=True, ensure_ascii=False, separators=(',',':')) utf-8 sha256",
-  "training_authority": null,
+  "training_authority": "owner replied 授权执行 on 2026-11-16 to scoping_3seed (cap 493.027 CPU / 986.054 wall)",
   "authorization": {
-    "asked": null,
-    "reply": null,
-    "reply_date": null,
-    "scope": null
+    "asked": "是否授权按 scoping_3seed 实价执行 22.5.B.2（帽 493.027 CPU／986.054 wall，576 更新＋96 distractor 回合，3 seed）",
+    "reply": "授权执行",
+    "reply_date": "2026-11-16",
+    "scope": "three seeds, k=8, 576 updates, 96 distractor rounds, cap 493.027 CPU / 986.054 wall"
   },
   "source_pins": {
     "runner": "2ce7a5dabde66a1d8ce526b4b82f930f368db1f922b21b38bde44b70bc7323d4",
@@ -291,5 +291,33 @@
     "smoke_cpu": 177.125,
     "price_cpu": 6.953125,
     "note": "pre-authorization wiring and pricing, accounted separately from the formal cap"
+  },
+  "result": {
+    "verdict": "retention_broken_under_scoping",
+    "date": "2026-11-16",
+    "correction_rates": [
+      0.0,
+      0.0,
+      0.08333333333333333
+    ],
+    "distractor_damages": [
+      0.5,
+      0.0,
+      0.25
+    ],
+    "record_free_damages_structural_monitor": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "lower_bound_95": 0.0,
+    "cost_cpu": 379.90625,
+    "cost_wall": 450.283608,
+    "run_report": "reports/taiji_u2_b2_scoping_run_20261116.json",
+    "verify_report": "reports/taiji_u2_b2_scoping_verify_20261116.json",
+    "result_card": "plans/reference/RESULT-TAIJI_U2_B2_SCOPING_20261116.md",
+    "closeout_card": "plans/reference/CLOSEOUT-TAIJI_U2_B_LINE_20261116.md",
+    "verify": "19/19 green; red drill tampered report -> rc1, byte-exact restore -> rc0",
+    "decisive_attribution": "post-feedback adapter (4 tensors) and record channel (18 tensors) bit-identical to B.1 on all three seeds: every training episode releases a record so valid.any()==1 throughout training; the presence gate is a no-op on the learning path and only changes evaluation (record-free A protected structurally, distractor rounds exposed). record_output norm grew 0 -> 0.72-1.36 but counter-fact follow stayed 0."
   }
 }
