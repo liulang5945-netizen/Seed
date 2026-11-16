@@ -10,6 +10,7 @@
 
 | 编号 | 类型 | 一句话 | 提交 |
 |---|---|---|---|
+| D-20261116-22 | 设计冻结＋定价（U.1 修订 1）＋独立复核 | `22.5.U.1r1` 位置感知读出：问题条件列注意力替代 mean-pool（`PositionRouteBGraph`），编码合同 `00319fff…` 冻结不变；smoke 34/34（0 步）、契约测试 8/8、三门 rc0、8 pin＋3 bundle＋criteria/data 摘要逐项匹配、run 授权守卫正反支＋三条篡改负对照全命中；`read_3seed` 帽 18.0/36.0（推导 17.99424）；**新限制：RGB 绝对信用未上升（0.0024/0.0013/0.0006 对 U.1 0.0025），比值改善全来自 question 信用降 ~10×**；库外输入件实测 `regenerable_exact`（R-REBUILD-1，3/3 bundle＋3/3 分区，负对照全拒）；训练未授权 | 见本文件 Git 历史 |
 | D-20261116-21 | 方向取舍（U.1 修订 1 立项） | owner 裁决 U.1 修订 1＝**位置感知读出**（query 条件列注意力替代 mean-pool，编码合同冻结不变），直接打 U.1 定位缺口（RGB 信用饥饿＋空间抹平）；单位核心 B 修订上限 2 用 1；首步零训练设计＋定价 | 见本文件 Git 历史 |
 | D-20261116-20 | 训练卡结案（负）＋归因 | `22.5.U.1` 判 `read_prerequisite_failed`：fit 0.22–0.41/train 0.36–0.41/distinct 2；归因非剂量（8× 剂量 train 0.5/fit 塌）、RGB 信用饥饿（rgb 梯度比 query 弱 ~30×）、mean-pool 读出抹平列位置绑定（编码 96/96 忠实）；6.375 CPU 帽内、recover/verify 12/12；决策节点 U.1 修订 1（位置感知读出）vs 收束 | 见本文件 Git 历史 |
 | D-20261116-19 | 设计冻结＋定价（单位原生读基础） | `22.5.U.1` 单位核心 B 首卡：输入编码合同 `unit-input-column-color-v1`（first_a→6 通道，编码导出标签与 oracle 96/96 一致）＋单位直读 runner＋中性出生＋四干预＋cut_h＋控制；smoke 34/34、契约测试 9、376 回归、mypy 0/261；read_3seed 帽 18.0/36.0（设计帽 600 内）；训练未授权 | 见本文件 Git 历史 |
@@ -4298,3 +4299,31 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **2. 裁决**：owner 批准 U.1 修订 1＝**位置感知读出**。依据 U.1 归因（D-20261116-20）：编码信息忠实（96/96 oracle），缺口在读出聚合（mean-pool 抹平列位置绑定）＋RGB 信用饥饿（rgb 编码器梯度比 query 弱 ~30×）。修订直接打此缺口：用 query 条件列注意力替代 mean-pool，保留"查询颜色在哪一列"的绑定并把梯度路由回 RGB 内容。**编码合同 `unit-input-column-color-v1` 冻结不变**（信息权利/降维损失声明沿用）。
 
 **3. 范围与纪律**：单位核心 B 版本 unit-core-b-v1 修订上限 2，本次用 1。首步零训练设计＋定价（位置感知读出机制＋中性出生/cut_h/四干预重验＋smoke＋精确定价），训练另行授权。门沿用 U.1 读前提（fit≥0.80/train≥0.90/distinct≥3/控制<0.5/3 seed）。正结果只签读前提（U.2/U.3 另案）；负结果按修订上限裁决（剩 1 次）。不签父/能力/check②/22.6。
+
+### D-20261116-22 U.1 修订 1（位置感知读出）设计＋定价冻结与独立复核
+
+**1. 编号／时间／类型**：D-20261116-22｜2026-11-16｜设计冻结＋定价（零训练）＋执行者独立复核。不开训练窗口、不改已冻结判据、不读封存分区。
+
+**2. 唯一结构变量**：`taiji/u2_unit_position_readout.py::PositionRouteBGraph` 继承 `RouteBGraph`（units／encoding／state_mix／p 不变），删除 mean-pool 读出头与固定 query 槽，改为**问题条件列注意力**：列 key `projected = p @ state_view`（[T,H]，来自单位活动、RGB 驱动）；`attn_query = question_vec @ W_q`（question 通道首行 [8]，W_q [8,H]）；`attention = softmax((projected @ attn_query)/√H)`（[T]）；`attended = attention @ projected`（[H]）；`position_head: H→4`（单向量，不再 mean）。**编码合同 `unit-input-column-color-v1`（digest `00319fff…`）冻结不变**。route=`B_position`，无 h_readout／w_g／ell。
+
+**3. 冻结身份**：[契约](../manifests/taiji_u2_u1r1_position_20261116.json) `criteria_sha256=f11879d3…`、`status=frozen`、`training_authority=null`、`result=null`、revision 1/2（unit-core-b-v1）；8 个 source pin；3 份起点 bundle 各 **27,366 字节**（sha `6ddc69b0…`／`dab24770…`／`b66f0998…`）；数据 `data/experiments/taiji_u2/first_a/20261112T074836Z/data.bin`、`data_digest=40813b4c…`（**`value_digest` 口径，不是整文件 sha256**），分区 **train 64／fit 32／price 8**，数据件**无 check／final／confirm 键**。门沿用 U.1：fit≥0.80、train≥0.90、distinct≥3、控制 agreement<0.5、四干预改变读出≥0.5＋cut_h 逐位=1.0、中性出生精确、独立进程恢复逐位＋篡改拒绝；3 seed（2026111601/02/03）×384 更新、float64、Adam lr 0.001。
+
+**4. 独立复核（本会话执行，取法用 runner 自己的 `guards()`，零优化器步）**：`guards(mode="smoke")` **PASS**（8 pin＋编码合同 digest＋3 bundle 全匹配）；`guards(mode="run")` 在 `training_authority=null` 下 **REFUSED `missing_training_authority`**，只在内存副本补授权字段后 PASS（**两支都走到，未写盘、未开跑**）；三条篡改负对照全部命中——pin→`source_pin_mismatch:position_readout`、编码 digest→`encoding_contract_digest_mismatch`、bundle→`start_bundle_mismatch:seed2026111601`；`value_digest(criteria)` 与声明一致；`u1.load_data` 通过；契约测试 **8/8**（2.47 s）；`ruff`／`ruff --select B,SIM --ignore B008`／`black --check` 对 runner＋模块＋测试三件 **rc 全 0**。
+
+**5. 复核中我自己造出的两处假红（留痕）**：首版核验脚本用**整文件 sha256** 比 `data_digest`、用**自造 JSON 序列化**（sort_keys／separators）比 `criteria_sha256`，两处都报不一致；改用被核验件自己的 `value_digest` 后两处均匹配。教训：摘要口径必须取自被核验件的函数，不能用核验者猜的规范化；假红先查自己的取法再判对象。
+
+**6. smoke 与定价（设计阶段产物，本会话复核其自洽）**：smoke **34/34**、`verdict=smoke_passed`、**0 优化器步**、0.2031 CPU／0.203 wall、编码 oracle **96/96**、中性出生 `max_abs=0.0`、cut_h 与 h 扰动逐位不变、新单位成熟化后 r 信用 0.026362／0.007791／0.007192、全参数有梯度。定价 `per_update=0.01562`／`per_eval=0.0`（**低于本机 process_time 刻度 0.0156 s，分辨率不足，沿 P3.9／U.1 登记限制**）：1152 更新＋3×13 评估 ⇒ 推导 **17.99424 CPU**，帽 **18.0 CPU／36.0 wall**（余量 0.032%，设计帽 600／1200 内）；price 阶段实耗 1.3281 CPU／2.234 wall、**3 次优化器步（定价用丢弃模型，非正式训练窗口）**、1 次 price 分区读取、0 check 读取。U.1 同帽实耗 6.375 CPU，故该低刻度估计在实践中偏保守。
+
+**7. 必须随读数引用的限制（本会话新增，不由 smoke 绿掩盖）**：
+
+- **RGB 绝对信用没有上升**：`rgb_encoder_credit` **0.002435／0.001256／0.000635**，对 U.1 的 0.0025 持平或更低；question／rgb 比值从 ~29× 变为 **2.55／3.74／10.50×**，改善**全部来自 question 信用下降**（0.073→0.006208／0.004692／0.006663，约 10×）。因此"把梯度路由回 RGB 内容"目前只有**结构证据**（列 key 经 units 依赖 RGB、全参数有梯度），**没有幅度证据**；本修订仍可能因同一信用饥饿失败。
+- **出生控制读数不是门读数**：`rgb_zero_agreement` 1.0／0.0／1.0、`fixed_question_agreement` 1.0×3 都取自未训练图，只说明出生读出对 RGB 不敏感，不得当作训练后控制门的预测，也不得据此声称修订已修好信用路。
+- **无显式注意力监督**：CE 必须间接把注意力 sharpen 到被查询列。C.1 曾在同族机制上失败（mass 0.157），C.2 加位置聚焦损失后 mass 到 0.96 而值仍不可解码。本卡为守"唯一变量"不加监督，run 只记注意力熵诊断；若负结果，须区分"注意力没聚焦"与"聚焦了但值不可读"，不得直接归因到剂量。
+
+**8. 能签／不能签**：能签设计冻结、工程可执行性、价格、以及本会话的独立复核（含守卫正反支与三条负对照）。不能签父／能力／check②／22.6；smoke 的机制接通、编码 oracle 96/96、注意力问题条件化**不得引为"主体会读"**；0 优化器步的 smoke 不得引为学习收益；定价阶段的 3 步不得引为训练。
+
+**9. 状态与唯一后继**：**停在 owner 训练授权是非题**（`read_3seed`，帽 18.0 CPU／36.0 wall）。授权后执行 `--run`→`--recover`→`--verify`，按冻结出口结案（`read_prerequisite_passed`／`read_prerequisite_failed`／`budget_stop`／工程失败）。正结果只签读前提（U.2 单位纠正／U.3 正式 A/B 另案）；负结果 ⇒ 修订上限 2 用满 1、剩 1 次，按程序裁决（修订 2 或单位核心 B 读路径收束）。裁决前 0 训练、0 能力、0 A 父。
+
+**10. 库外输入件的可重建性（R-REBUILD-1，本会话实测）**：起点 bundle 与任务数据都落在 `.gitignore:160:data/` 之下（`git ls-files data/experiments/taiji_u2/` 为空），即冻结合同钉住的字节**不在库内**。新增 `scripts/training/verify_u1r1_rebuild_20261116.py`，走**生成链自己的函数**（`build_graph(seed)`→`build_capsule`→`save_capsule`；`first_a_support_22_5.generate_examples(part,n)`）重建后比摘要，判定 **`regenerable_exact`**：3/3 bundle 的重建 sha256 与冻结值、盘上值三方逐字节相同（各 27,366 字节）；price(8)／train(64)／fit(32) 三分区 `value_digest` 与盘上相同、id 序列相同，整集 104 例摘要 `40813b4c…` 与合同 `data_digest` 相同。**负对照全部拒绝**：`position_head.weight += 1e-3` 后 3 枚 bundle sha 全变；改一条 `target` 后分区摘要变。实耗 **1.1875 CPU／1.235 wall**、0 优化器步、1 次任务数据读取、临时目录跑完即删并复核为空（报告 `reports/taiji_u2_u1r1_rebuild_20261116.json`）。⇒ 换机重跑不需搬运 `data/`，只需 seed 与生成链；**该结论只覆盖 train/fit/price 与初始 bundle，不覆盖任何封存分区**。留痕：首版探针在整集汇总行缺负对照键处崩（`KeyError`），而后台包装的 `; echo RC=$?` 把真 rc 掩盖成 0（通知报 exit 0）；修为分区行／整集行分别取键、black＋ruff 过后重跑，入库报告由格式化后的字节产出。
+
+**11. 文档门实测与归因（13 件精确暂存后跑，未卷入他线未跟踪件）**：`audit_plan_single_mainline` **rc0**；`audit_taiji_ledger_marker_uniqueness --out-report` **rc0**（763 行／763 枚不同圈号、`duplicates={}`，bracket 594＋heading 169）；`check_plans_markdown_links --json` **rc1**＝2416 条问题中 **2410 归档（政策预期）＋6 现行层**，6 条落在 03 的 348／373／1748／1756／2780 行与 07 的第 5 行，五个坏锚点与 MASTER-PLAN 的 ndjson 缺件在 **HEAD blob 里逐条命中（各 1 次）**⇒ 既存红、非本批造成；`audit_taiji_ledger_cited_reports_are_tracked --out-report` **rc1**，唯一红项＝`reports/taiji_u2_bind2_graph_20261115.json`（未跟踪且盘上不存在），引用方是他线已入库的 `DESIGN-TAIJI_U2_OBJECT_CENTRIC_BINDING_20261115.md`（`a3e40eb5d`）⇒ 既存红。**本批新链接零问题**：该门现行层只含 `plans/active/`＋`plans/README.md`，MASTER-PLAN／台账／设计卡落"归档档"不被强制，故另用**门自己的解析函数**把扫描面收窄到本批 5 份文档重跑（5 件／1489 链接／9 问题，与全量跑的同一子集逐条相同＝正对照，证明真扫到这些文件），其中涉及 `u1r1`／`rebuild` 的问题 **0 条**。

@@ -1,0 +1,108 @@
+{
+  "schema": "taiji-u2-u1r1-rebuild-v1",
+  "card": "22.5.U.1r1",
+  "phase": "rebuild",
+  "rule": "R-REBUILD-1",
+  "criteria_sha256": "f11879d3f7bd6af91f2f05d92b69aca7260535ab6b5e37a1d47289e3388bcd50",
+  "ignored_by": ".gitignore:160:data/",
+  "classification": "regenerable_exact",
+  "bundles": [
+    {
+      "key": "seed2026111601",
+      "seed": 2026111601,
+      "path": "data/experiments/taiji_u2/u1r1_position_20261116/seed2026111601_initial.bin",
+      "frozen_sha256": "6ddc69b03123d82a6f1e0bf70653f0fbfb9d0c84a9b7eeee846581406afb4a9a",
+      "on_disk_sha256": "6ddc69b03123d82a6f1e0bf70653f0fbfb9d0c84a9b7eeee846581406afb4a9a",
+      "rebuilt_sha256": "6ddc69b03123d82a6f1e0bf70653f0fbfb9d0c84a9b7eeee846581406afb4a9a",
+      "rebuilt_bytes": 27366,
+      "exact": true,
+      "perturbed_sha256": "8a3d8240996581ba1adf5e5bc84d66db3cac6085b8c35ae39cc6d3b1174de5f2",
+      "negative_control_rejects": true
+    },
+    {
+      "key": "seed2026111602",
+      "seed": 2026111602,
+      "path": "data/experiments/taiji_u2/u1r1_position_20261116/seed2026111602_initial.bin",
+      "frozen_sha256": "dab24770b71bca492151e4d8b3a775b450adf38780bc804ecf3f24f97a58f80d",
+      "on_disk_sha256": "dab24770b71bca492151e4d8b3a775b450adf38780bc804ecf3f24f97a58f80d",
+      "rebuilt_sha256": "dab24770b71bca492151e4d8b3a775b450adf38780bc804ecf3f24f97a58f80d",
+      "rebuilt_bytes": 27366,
+      "exact": true,
+      "perturbed_sha256": "154463381759eb6e34c3d7c0528d4bcc4c0f33b4dae9cf2c5cc68e6f58ff89cc",
+      "negative_control_rejects": true
+    },
+    {
+      "key": "seed2026111603",
+      "seed": 2026111603,
+      "path": "data/experiments/taiji_u2/u1r1_position_20261116/seed2026111603_initial.bin",
+      "frozen_sha256": "b66f099829d8f46265189e021218d439573c2686aca742d0e93c1afd6b5595b3",
+      "on_disk_sha256": "b66f099829d8f46265189e021218d439573c2686aca742d0e93c1afd6b5595b3",
+      "rebuilt_sha256": "b66f099829d8f46265189e021218d439573c2686aca742d0e93c1afd6b5595b3",
+      "rebuilt_bytes": 27366,
+      "exact": true,
+      "perturbed_sha256": "701926effdecba82a5d8e2a0a129e27c7553597a67b503a76d35e251a89a8a40",
+      "negative_control_rejects": true
+    }
+  ],
+  "dataset": [
+    {
+      "partition": "price",
+      "count": 8,
+      "status": "measured",
+      "rebuilt_value_digest": "5172910a9d4e7704645efcf77047e3710b156d79183ee11240eb7a5b3c5e9814",
+      "on_disk_value_digest": "5172910a9d4e7704645efcf77047e3710b156d79183ee11240eb7a5b3c5e9814",
+      "exact": true,
+      "ids_match": true,
+      "negative_control_rejects": true,
+      "cpu": 0.0625,
+      "wall": 0.063
+    },
+    {
+      "partition": "train",
+      "count": 64,
+      "status": "measured",
+      "rebuilt_value_digest": "c242e433a76e4105c58f8573e00d516a98cdaafe65862c8d2046b545718d32fc",
+      "on_disk_value_digest": "c242e433a76e4105c58f8573e00d516a98cdaafe65862c8d2046b545718d32fc",
+      "exact": true,
+      "ids_match": true,
+      "negative_control_rejects": true,
+      "cpu": 0.7031,
+      "wall": 0.719
+    },
+    {
+      "partition": "fit",
+      "count": 32,
+      "status": "measured",
+      "rebuilt_value_digest": "edc5763512a305e1f052369e125a24329c42cbb30307bd115179b9e183f5317b",
+      "on_disk_value_digest": "edc5763512a305e1f052369e125a24329c42cbb30307bd115179b9e183f5317b",
+      "exact": true,
+      "ids_match": true,
+      "negative_control_rejects": true,
+      "cpu": 0.25,
+      "wall": 0.234
+    },
+    {
+      "partition": "whole_dataset",
+      "count": 104,
+      "status": "measured",
+      "rebuilt_value_digest": "40813b4cc8ffec0c3ae5639941b373c139422b4ccbaa34790de34a9e1149d214",
+      "on_disk_value_digest": "40813b4cc8ffec0c3ae5639941b373c139422b4ccbaa34790de34a9e1149d214",
+      "exact": true
+    }
+  ],
+  "budget_stopped": false,
+  "scratch_removed": true,
+  "verdict": "rebuild_exact",
+  "discipline": {
+    "optimizer_steps": 0,
+    "training_updates": 0,
+    "task_data_reads": 1,
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0
+  },
+  "cost": {
+    "cpu": 1.1875,
+    "wall": 1.235
+  }
+}

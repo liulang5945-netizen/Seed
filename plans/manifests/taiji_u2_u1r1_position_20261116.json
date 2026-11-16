@@ -1,0 +1,79 @@
+{
+  "schema": "taiji-u2-u1r1-position-v1",
+  "card": "22.5.U.1r1",
+  "date": "2026-11-16",
+  "status": "frozen",
+  "training_authority": null,
+  "identity": "taiji-u2-unit-core-b-v1",
+  "core_version": "unit-core-b-v1",
+  "revision": 1,
+  "revision_limit": 2,
+  "parent_card": "22.5.U.1",
+  "revision_basis": "U.1 located negative: mean-pool washes column binding + RGB credit starvation; encoding faithful 96/96",
+  "data_root": "data/experiments/taiji_u2/first_a/20261112T074836Z/data.bin",
+  "data_digest": "40813b4cc8ffec0c3ae5639941b373c139422b4ccbaa34790de34a9e1149d214",
+  "encoding_contract_identity": "unit-input-column-color-v1",
+  "encoding_contract_digest": "00319fff32cf1ac14a89c6999c8ea4fe63f0ea1b26924eb6e73baa45877c0a55",
+  "criteria": {
+    "fit_gate": 0.8,
+    "train_gate": 0.9,
+    "distinct_min": 3,
+    "control_agreement_max": 0.5,
+    "intervention_change_min_fraction": 0.5,
+    "seeds": [
+      2026111601,
+      2026111602,
+      2026111603
+    ],
+    "updates_per_seed": 384,
+    "learning_rate": 0.001,
+    "readout": "question_conditioned_column_attention",
+    "dtype": "float64",
+    "gates": "ones[T,n_units]; lifecycle cuts via active_gate",
+    "controls": [
+      "rgb_zero",
+      "fixed_question"
+    ],
+    "interventions": [
+      "without_edges",
+      "permute_source",
+      "remove_history",
+      "cut_h"
+    ],
+    "neutral_birth": "exact output identity + new unit r nonzero task gradient after credit",
+    "recovery": "independent-process capsule restore bit-exact + tamper rejection",
+    "encoding_contract": "unit-input-column-color-v1 frozen unchanged",
+    "scope": "read prerequisite only; correction/retention=U.2, formal A/B=U.3"
+  },
+  "criteria_sha256": "f11879d3f7bd6af91f2f05d92b69aca7260535ab6b5e37a1d47289e3388bcd50",
+  "plan": {
+    "design_cap_cpu": 600.0,
+    "design_cap_wall": 1200.0,
+    "cap_cpu": 18.0,
+    "cap_wall": 36.0,
+    "updates_per_seed": 384,
+    "per_update_cpu": 0.01562,
+    "per_eval_cpu": 0.0
+  },
+  "source_pins": {
+    "runner": "fef2f580a4dd27e162886bcff0a7bcd12f33c5086eedb57bacf4c3cde071bca8",
+    "position_readout": "1bab85076b816513dd85e9019c99784a238c3c222a3edde283bcf550f1a7e9b5",
+    "u1_runner": "ab6def65ca694148da930bc8e3a2aab7019d82a91d1ce6600c2b6a4d7ea09948",
+    "unit_input": "4a97e0d1eb3b0be4af65e0bc7a5d9f84767f51f2bd24f60e74b1914eefc1ae6b",
+    "neural_units": "6a8bfc15f44b39cc22cd1570bf43cedaf44e018628572efb528f2a829a5deca9",
+    "support": "33d9301f98859934c1413e25765c55e6bc7b64dfa410d65b03f0e5a198041b4c",
+    "columns": "852c54e60c97efb23f83072659a363f890c58a4929354467ce4b71a028bc8443",
+    "episode": "fc5dbed68c9a428c4ec8725ba2d454564f153b8e60ed1d16fa7cfc13d16ab470"
+  },
+  "start_bundles": {
+    "seed2026111601": "data/experiments/taiji_u2/u1r1_position_20261116/seed2026111601_initial.bin",
+    "seed2026111602": "data/experiments/taiji_u2/u1r1_position_20261116/seed2026111602_initial.bin",
+    "seed2026111603": "data/experiments/taiji_u2/u1r1_position_20261116/seed2026111603_initial.bin"
+  },
+  "start_bundle_sha256": {
+    "seed2026111601": "6ddc69b03123d82a6f1e0bf70653f0fbfb9d0c84a9b7eeee846581406afb4a9a",
+    "seed2026111602": "dab24770b71bca492151e4d8b3a775b450adf38780bc804ecf3f24f97a58f80d",
+    "seed2026111603": "b66f099829d8f46265189e021218d439573c2686aca742d0e93c1afd6b5595b3"
+  },
+  "result": null
+}
