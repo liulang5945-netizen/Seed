@@ -1,0 +1,24 @@
+{
+  "schema": "taiji-u2-c2-position-price-v1",
+  "card": "22.5.C.2",
+  "date": "2026-11-16",
+  "pricing_optimizer_steps": 8,
+  "pricing_model_discarded": true,
+  "options": [
+    {
+      "name": "position_3seed",
+      "seeds": 3,
+      "updates_per_seed": 384,
+      "updates_total": 1152,
+      "unit_cpu_measured": 0.179688,
+      "estimate_cpu": 325.126,
+      "cap_cpu": 373.895,
+      "cap_wall": 747.79,
+      "over_design_cap": false
+    }
+  ],
+  "cost": {
+    "cpu": 2.875,
+    "wall": 3.204702
+  }
+}

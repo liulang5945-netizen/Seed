@@ -1,0 +1,81 @@
+{
+  "schema": "taiji-u2-c2-position-smoke-v1",
+  "card": "22.5.C.2",
+  "date": "2026-11-16",
+  "seeds": [
+    {
+      "seed": 20261110,
+      "birth_decode_accuracy": 0.3333333333333333,
+      "birth_selectivity_accuracy": 0.71875,
+      "birth_diagnostics": {
+        "answer_mass_mean": 0.199298,
+        "read_std_over_norm": 0.0
+      },
+      "gradient_probe": {
+        "record_output_grad": 0.0001072217128239572,
+        "record_position_key_grad": 0.2772306799888611,
+        "head_last_grad": 4.810024261474609,
+        "emission_grads_present": [],
+        "parameters_unchanged": true,
+        "optimizer_steps": 0
+      },
+      "answer_path_bit_identical": true,
+      "purity": {
+        "checked": 176,
+        "drifted": [],
+        "pure": true
+      }
+    },
+    {
+      "seed": 20261111,
+      "birth_decode_accuracy": 0.3333333333333333,
+      "birth_selectivity_accuracy": 0.71875,
+      "birth_diagnostics": {
+        "answer_mass_mean": 0.199298,
+        "read_std_over_norm": 0.0
+      },
+      "gradient_probe": {
+        "record_output_grad": 0.00010722028673626482,
+        "record_position_key_grad": 0.2772306799888611,
+        "head_last_grad": 4.0942487716674805,
+        "emission_grads_present": [],
+        "parameters_unchanged": true,
+        "optimizer_steps": 0
+      },
+      "answer_path_bit_identical": true,
+      "purity": {
+        "checked": 176,
+        "drifted": [],
+        "pure": true
+      }
+    },
+    {
+      "seed": 20261112,
+      "birth_decode_accuracy": 0.3333333333333333,
+      "birth_selectivity_accuracy": 0.71875,
+      "birth_diagnostics": {
+        "answer_mass_mean": 0.199298,
+        "read_std_over_norm": 0.0
+      },
+      "gradient_probe": {
+        "record_output_grad": 0.00010722048318712041,
+        "record_position_key_grad": 0.2772306799888611,
+        "head_last_grad": 4.146015167236328,
+        "emission_grads_present": [],
+        "parameters_unchanged": true,
+        "optimizer_steps": 0
+      },
+      "answer_path_bit_identical": true,
+      "purity": {
+        "checked": 176,
+        "drifted": [],
+        "pure": true
+      }
+    }
+  ],
+  "optimizer_steps": 0,
+  "cost": {
+    "cpu": 31.1875,
+    "wall": 31.830123
+  }
+}
