@@ -1,0 +1,39 @@
+{
+  "schema": "taiji-u2-a6-k8-guard-v1",
+  "card": "22.5.A.6",
+  "date": "2026-11-16",
+  "verdict": "guard_passed",
+  "checks": {
+    "runner_pin_matches": true,
+    "continuation_authorized": true,
+    "bundle_sha_matches": true,
+    "updates_match_budget": true,
+    "damage_is_a_difference": true,
+    "correct_matches_rate": true,
+    "cap_respected": true,
+    "discipline_zero": true,
+    "b_second_pass_reproduced": true,
+    "a_fit_reproduced": true,
+    "a_fit_digest_reproduced": true
+  },
+  "drills": {
+    "claim_every_error_was_corrected": true,
+    "hide_the_damage": true,
+    "understate_the_updates": true,
+    "exceed_the_cap": true
+  },
+  "rederived_from_bundle": {
+    "a_fit_accuracy": 0.25,
+    "a_fit_digest": "5984ca59c0d1115e04d4b66014c1134f8a02740954e267c0e4a1201886ea79b6",
+    "correct": 8
+  },
+  "published": {
+    "correct": 8,
+    "a_fit_accuracy": 0.25,
+    "a_fit_digest": "5984ca59c0d1115e04d4b66014c1134f8a02740954e267c0e4a1201886ea79b6"
+  },
+  "measured": {
+    "cpu": 18.15625,
+    "wall": 18.236847
+  }
+}

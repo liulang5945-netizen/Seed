@@ -1,0 +1,34 @@
+{
+  "schema": "taiji-u2-a6-k8-v1",
+  "card": "22.5.A.6",
+  "date": "2026-11-16",
+  "verdict": "k8_measured",
+  "seed": 20261110,
+  "first_pass_accuracy": 0.0,
+  "baseline_a_fit": 1.0,
+  "denominator": 24,
+  "arm": {
+    "budget": 8,
+    "updates": 192,
+    "second_pass_accuracy": 0.3333333333333333,
+    "a_fit_accuracy": 0.25,
+    "a_fit_digest": "5984ca59c0d1115e04d4b66014c1134f8a02740954e267c0e4a1201886ea79b6",
+    "correct": 8,
+    "parameter_abs_sum": 1678.84229872,
+    "damage": 0.75,
+    "arm_cpu": 109.375
+  },
+  "bundle": "data/experiments/taiji_u2/a6/20261116T0545Z/arm-k8-bundle.pt",
+  "bundle_sha256": "8b08ccfca3398a78203c859c4f7a164bb1ebe755ec6c4772764e91e83e44e4a5",
+  "cost": {
+    "cpu": 117.25,
+    "wall": 118.307524,
+    "cap_cpu": 180.0,
+    "cap_wall": 360.0
+  },
+  "discipline": {
+    "capability_claims": 0,
+    "accepted_parent": false
+  },
+  "scope": "the missing arm of an already measured card; no parent or capability claim"
+}

@@ -92,7 +92,15 @@ def freeze_parameters(model) -> None:
 
 
 def arm(
-    contract: dict, seed: int, budget: int, codes: dict, errors, templates, data, spend
+    contract: dict,
+    seed: int,
+    budget: int,
+    codes: dict,
+    errors,
+    templates,
+    data,
+    spend,
+    save_path: Path | None = None,
 ) -> dict:
     """One arm: every error consumes ``budget`` updates, then one re-ask."""
     model = load_start(contract, seed)
@@ -122,6 +130,16 @@ def arm(
             updates += 1
     rows = a5.b_pass(model, errors, codes, lambda position: templates[position])
     a_rows = [a5.a_round(model, example, codes[example["id"]]) for example in data["fit"]]
+    if save_path is not None:
+        a5.p4_2.save_checkpoint(
+            save_path,
+            {
+                "model": {key: value.detach().clone() for key, value in model.state_dict().items()},
+                "budget": budget,
+                "revision": int(model.parameter_revision),
+                "start_bundle": contract["start_bundles"][str(seed)],
+            },
+        )
     return {
         "budget": budget,
         "updates": updates,
@@ -373,13 +391,105 @@ def summarize(contract: dict) -> int:
     return 0
 
 
+def k8(contract: dict) -> int:
+    """Run the missing arm with its cap and save its bundle for re-derivation."""
+    continuation = contract.get("continuation") or {}
+    if not continuation.get("cap_cpu") or not continuation.get("reply"):
+        print(json.dumps({"verdict": "refused", "reason": "missing_continuation_authority"}))
+        return 2
+    torch.set_num_threads(1)
+    wall_start, cpu_start = time.perf_counter(), time.process_time()
+    data = atomic_load(ROOT / contract["data_root"])
+    items, skipped = a5.task_b_examples(data, contract)
+    seed = int(contract["plan"]["seeds"][0])
+    start = load_start(contract, seed)
+    head = a2.load_head(contract)
+    prior = a2.prior_of(data)
+    codes = a2.code_by_id(start, head, prior, data["train"] + data["fit"], contract)
+    template_of = lambda index: index % len(contract["task_b"]["templates"])  # noqa: E731
+    first = a5.b_pass(start, items, codes, template_of)
+    baseline_a = a5.accuracy(
+        [a5.a_round(start, example, codes[example["id"]]) for example in data["fit"]]
+    )
+    errors = [items[index] for index, row in enumerate(first) if not row["correct"]]
+    error_templates = [template_of(index) for index, row in enumerate(first) if not row["correct"]]
+
+    def spend() -> None:
+        if time.process_time() - cpu_start > float(continuation["cap_cpu"]):
+            raise BudgetStop("a6_k8_budget_stop")
+        if time.perf_counter() - wall_start > float(continuation["cap_wall"]):
+            raise BudgetStop("a6_k8_wall_stop")
+
+    root = ROOT / contract["run_root"]
+    root.mkdir(parents=True, exist_ok=True)
+    bundle = root / "arm-k8-bundle.pt"
+    started = time.process_time()
+    entry = arm(
+        contract,
+        seed,
+        8,
+        codes,
+        errors,
+        error_templates,
+        data,
+        spend,
+        save_path=bundle,
+    )
+    entry["damage"] = round(baseline_a - entry["a_fit_accuracy"], 10)
+    entry["arm_cpu"] = round(time.process_time() - started, 6)
+    (root / "arm-k8.json").write_text(
+        json.dumps(entry, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n"
+    )
+    payload = {
+        "schema": "taiji-u2-a6-k8-v1",
+        "card": "22.5.A.6",
+        "date": "2026-11-16",
+        "verdict": "k8_measured",
+        "seed": seed,
+        "first_pass_accuracy": a5.accuracy(first),
+        "baseline_a_fit": baseline_a,
+        "denominator": len(errors),
+        "arm": entry,
+        "bundle": str(bundle.relative_to(ROOT)).replace("\\", "/"),
+        "bundle_sha256": hashlib.sha256(bundle.read_bytes()).hexdigest(),
+        "cost": {
+            "cpu": round(time.process_time() - cpu_start, 6),
+            "wall": round(time.perf_counter() - wall_start, 6),
+            "cap_cpu": continuation["cap_cpu"],
+            "cap_wall": continuation["cap_wall"],
+        },
+        "discipline": {"capability_claims": 0, "accepted_parent": False},
+        "scope": "the missing arm of an already measured card; no parent or capability claim",
+    }
+    path = ROOT / "reports/taiji_u2_a6_k8_run_20261116.json"
+    path.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n"
+    )
+    print(
+        json.dumps(
+            {
+                "verdict": payload["verdict"],
+                "correct": entry["correct"],
+                "second_pass": entry["second_pass_accuracy"],
+                "a_fit": entry["a_fit_accuracy"],
+                "damage": entry["damage"],
+                "cpu": payload["cost"]["cpu"],
+            },
+            ensure_ascii=False,
+        )
+    )
+    return 0
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--mode", choices=("run", "summarize"), default="run")
+    parser.add_argument("--mode", choices=("run", "summarize", "k8"), default="run")
     args = parser.parse_args()
     contract = json.loads(CONTRACT.read_text(encoding="utf-8"))
     if args.mode == "summarize":
         return summarize(contract)
+    if args.mode == "k8":
+        return k8(contract)
     try:
         guards(contract, args.mode)
     except ValueError as error:
