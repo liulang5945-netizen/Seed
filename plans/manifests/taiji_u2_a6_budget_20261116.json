@@ -1,0 +1,220 @@
+{
+  "schema": "taiji-u2-a6-budget-v1",
+  "status": "design_priced",
+  "card": "22.5.A.6",
+  "date": "2026-11-16",
+  "scope": "protocol dose-response card: the per-error update budget is the only independent variable; no new structure, no new read, no width change",
+  "candidate": {
+    "architecture": "native",
+    "profile": "metadata+request",
+    "seed": 20261110,
+    "parameters": 22742,
+    "tensors": 194,
+    "subject_frozen": true,
+    "encoder_bundle": "data/experiments/taiji_u2/p4_2/20261116T0500Z/reconstruct-B-007376.pt",
+    "encoder_bundle_sha256": "f670508850685cb8aa4e9ed385eb2f5997154524e606d1ab7cbfbd5230eb0f2f",
+    "a1b_checkpoint": "data/experiments/taiji_u2/a1b/20261115T2300Z/a1b-00200.pt",
+    "a1b_checkpoint_sha256": "3ebac8b34ace3e9d784867e0096527cba515bace68199712a6cdc940a458dbc3",
+    "read_head_parameters": 263,
+    "prior": [
+      0.0234375,
+      0.0302734375,
+      0.015625,
+      0.0146484375,
+      0.0146484375,
+      0.021484375,
+      0.8798828125
+    ]
+  },
+  "data_root": "data/experiments/taiji_u2/first_a/20261112T074836Z/data.bin",
+  "data_digest": "40813b4cc8ffec0c3ae5639941b373c139422b4ccbaa34790de34a9e1149d214",
+  "read_code": {
+    "interface": "read-code-v1",
+    "width": 24,
+    "class_order": [
+      "左边",
+      "中间",
+      "右边",
+      "未知"
+    ],
+    "rule": "zeros(24); code[class] = 1.0; both branches receive the same code at joint_readout",
+    "injection": "forward hook on joint_readout replaces its output with joint_readout(code); training, evaluation and feedback use the same path",
+    "limitation": "the code carries the read's four-way answer, not the scene's pixels; a pass measures byte expression, not content-conditioned binding"
+  },
+  "emission_parameters": [
+    "byte_head.bias",
+    "byte_head.weight",
+    "copy_gate.bias",
+    "copy_gate.weight",
+    "joint_readout.first.bias",
+    "joint_readout.first.weight",
+    "joint_readout.last.bias",
+    "joint_readout.last.weight"
+  ],
+  "record_parameters": [
+    "coverage_logit",
+    "record_goal_query.weight",
+    "record_key.weight",
+    "record_metadata.bias",
+    "record_metadata.weight",
+    "record_null.bias",
+    "record_null.weight",
+    "record_null_value",
+    "record_output.bias",
+    "record_output.weight",
+    "record_position_key.weight",
+    "record_position_query.bias",
+    "record_position_query.weight",
+    "record_provenance.weight",
+    "record_query.bias",
+    "record_query.weight",
+    "record_value.bias",
+    "record_value.weight"
+  ],
+  "emission_scalar_count": 3919,
+  "record_scalar_count": 762,
+  "trainable_tensor_count": 26,
+  "trainable_scalar_count": 4681,
+  "feedback_optimizer": {
+    "lr": 0.001,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "weight_decay": 0.0
+  },
+  "start_bundles": {
+    "20261110": "data/experiments/taiji_u2/a5/20261116T0520Z/seed-20261110/bundle-pre-feedback.pt",
+    "20261111": "data/experiments/taiji_u2/a5/20261116T0520Z/seed-20261111/bundle-pre-feedback.pt",
+    "20261112": "data/experiments/taiji_u2/a5/20261116T0520Z/seed-20261112/bundle-pre-feedback.pt"
+  },
+  "start_bundle_sha256": {
+    "20261110": "de5452f6b7716cb44f48221aafca5e5e5f132fcdeaa46c3196d8929d0c815465",
+    "20261111": "db04cb9b889d3ee61c0bb86342f961409f33b3c30cabffa24eacc6d8ecea9627",
+    "20261112": "3dbc1ba54713e59808de730251485fdddd125500223c4a9a70564b50974b783a"
+  },
+  "run_root": "data/experiments/taiji_u2/a6/20261116T0545Z",
+  "plan": {
+    "option": "curve_1seed",
+    "budgets": [
+      1,
+      2,
+      4,
+      8
+    ],
+    "seeds": [
+      20261110
+    ],
+    "errors_per_arm": 24,
+    "updates_total": 360,
+    "estimate_cpu": 176.062,
+    "contingency": 0.15,
+    "cap_cpu": 202.472,
+    "cap_wall": 404.943,
+    "design_cap_cpu": 600.0,
+    "design_cap_wall": 1200.0
+  },
+  "price_options": [
+    {
+      "name": "full_curve_3seed",
+      "seeds": 3,
+      "budgets": [
+        1,
+        2,
+        4,
+        8
+      ],
+      "note": "all four budgets on all three seeds",
+      "updates": 1080,
+      "estimate_cpu": 528.187,
+      "cap_cpu": 607.415,
+      "cap_wall": 1214.83,
+      "over_design_cap": true
+    },
+    {
+      "name": "curve_1seed",
+      "seeds": 1,
+      "budgets": [
+        1,
+        2,
+        4,
+        8
+      ],
+      "note": "curve shape on the primary seed; A.5 showed the three seeds numerically identical",
+      "updates": 360,
+      "estimate_cpu": 176.062,
+      "cap_cpu": 202.472,
+      "cap_wall": 404.943,
+      "over_design_cap": false
+    },
+    {
+      "name": "confirm_3seed_k8",
+      "seeds": 3,
+      "budgets": [
+        8
+      ],
+      "note": "k=8 only, as the replication arm",
+      "updates": 576,
+      "estimate_cpu": 258.75,
+      "cap_cpu": 297.562,
+      "cap_wall": 595.124,
+      "over_design_cap": false
+    }
+  ],
+  "unit_cpu_measured": {
+    "record_update": 0.414062,
+    "b_round": 0.21875,
+    "a_round": 0.046875
+  },
+  "criteria": {
+    "question": "budget or ceiling: does the correction rate move with the per-error update budget",
+    "response_round": "exact answer bytes plus EOS plus valid UTF-8, greedy, 65-byte cap",
+    "denominator": "the 24 first-pass fit errors of the same subject, same template assignment",
+    "correction_gate": 0.8,
+    "zero_band": 0.05,
+    "scaling_rule": "the correction rate is non-decreasing in k and correction(8) - correction(1) >= 2/24",
+    "retention_gate": 0.02,
+    "retention_is_not_tautological": "the B updates touch byte_head and joint_readout, which the A task also uses, so the retention check can fail here; this is the opposite of the A.5 situation",
+    "budgets": [
+      1,
+      2,
+      4,
+      8
+    ],
+    "rollback": "none; the budget is the independent variable and rollback would erase it",
+    "re_ask": "once per arm, after every error has consumed its budget",
+    "seeds": [
+      20261110
+    ],
+    "seed_note": "the curve runs on the primary seed only; A.5 measured the three seeds to be numerically identical, so a three-seed curve would buy nothing at three times the price. A positive point must be replicated at that k in a follow-up card, not extrapolated",
+    "start_state": "A.5 pre-feedback bundle per seed, byte-identical",
+    "accepted_parent": false,
+    "capability_claims": 0,
+    "check2": "not_read"
+  },
+  "criteria_sha256": "04f413c9487851b83e15f40fb8dfec2119c8ff9c97756c8f5399124501fd9aab",
+  "training_authority": null,
+  "authorization": {
+    "asked": "是否立项 22.5.A.6 并按 curve_1seed 实价执行（帽 202.47 CPU／404.94 wall）",
+    "reply": null,
+    "scope": null
+  },
+  "source_pins": {
+    "price": "c9c3049eba76e49ad4bdccf908ce5e0c8013fe4e58e8b8a6ca5c3ac81cf42aa7",
+    "spec": "9512f21a72e655d572bccb6619ade712551cd52bcc12ce74e7c88048e26c4451",
+    "a5_runner": "3e4db0ccf8346b77c132a2cc428c100dc00e94700368f0b857af2a308c9cf231",
+    "subject": "a3335d7fc84e54903f16617e452753c04124709b3b83c20a656d7b43b5ef41ad",
+    "events": "b89d5424a76263efab7a5c944dbc820b34fdef4ed12b10afc0b651193a34c944",
+    "a2_runner": "c26f4a545ffb5d12f579cb7e69c57eabca6cd7c427e479fb3a55e4621f0fd981"
+  },
+  "exits": [
+    "correction_scales_with_budget",
+    "correction_plateaus_below_gate",
+    "correction_zero_at_every_budget",
+    "retention_broken_by_budget",
+    "budget_stop",
+    "engineering_failure"
+  ],
+  "note": "the criteria and the price are frozen here, before any arm runs. The pricing stage itself rejected the three-seed curve (cap 607.42 > design cap 600), which is the pricing gate working as intended The price script was reformatted by black after the measurement; the pin is the formatted file and the change is formatting only (the measured units are unchanged)."
+}

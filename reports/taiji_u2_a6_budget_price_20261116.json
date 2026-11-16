@@ -1,0 +1,119 @@
+{
+  "schema": "taiji-u2-a6-budget-price-v1",
+  "card": "22.5.A.6",
+  "date": "2026-11-16",
+  "probe_start": "data/experiments/taiji_u2/a5/20261116T0520Z/seed-20261110/bundle-pre-feedback.pt",
+  "units_cpu": {
+    "record_update": 0.414062,
+    "b_round": 0.21875,
+    "a_round": 0.046875
+  },
+  "unit_samples": {
+    "record_update": [
+      0.40625,
+      0.40625,
+      0.40625,
+      0.421875,
+      0.421875,
+      0.390625,
+      0.5625,
+      0.453125
+    ],
+    "b_round": [
+      0.21875,
+      0.1875,
+      0.21875,
+      0.21875
+    ],
+    "a_round": [
+      0.046875,
+      0.046875,
+      0.03125,
+      0.046875
+    ]
+  },
+  "plan": {
+    "seeds": [
+      20261110,
+      20261111,
+      20261112
+    ],
+    "budgets": [
+      1,
+      2,
+      4,
+      8
+    ],
+    "errors_per_arm": 24,
+    "per_seed": {
+      "updates": 360,
+      "second_pass_rounds": 96,
+      "a_fit_rounds": 128,
+      "update_cpu": 149.0625,
+      "round_cpu": 21.0,
+      "a_cpu": 6.0,
+      "seed_cpu": 176.0625
+    },
+    "estimate_cpu": 528.188,
+    "contingency": 0.15,
+    "cap_cpu": 607.416,
+    "cap_wall": 1214.832
+  },
+  "discipline": {
+    "subject_training_updates": 0,
+    "checkpoints_written": 0,
+    "capability_claims": 0,
+    "accepted_parent": false
+  },
+  "note": "the units are measured on the A.5 pre-feedback bundle because the card starts there; a record-conditioned update rebuilds the episode (legal release included), which is the term A.5's price table underestimated by three times",
+  "cost": {
+    "cpu": 5.921875
+  },
+  "options": [
+    {
+      "name": "full_curve_3seed",
+      "seeds": 3,
+      "budgets": [
+        1,
+        2,
+        4,
+        8
+      ],
+      "note": "all four budgets on all three seeds",
+      "updates": 1080,
+      "estimate_cpu": 528.187,
+      "cap_cpu": 607.415,
+      "cap_wall": 1214.83,
+      "over_design_cap": true
+    },
+    {
+      "name": "curve_1seed",
+      "seeds": 1,
+      "budgets": [
+        1,
+        2,
+        4,
+        8
+      ],
+      "note": "curve shape on the primary seed; A.5 showed the three seeds numerically identical",
+      "updates": 360,
+      "estimate_cpu": 176.062,
+      "cap_cpu": 202.472,
+      "cap_wall": 404.943,
+      "over_design_cap": false
+    },
+    {
+      "name": "confirm_3seed_k8",
+      "seeds": 3,
+      "budgets": [
+        8
+      ],
+      "note": "k=8 only, as the replication arm",
+      "updates": 576,
+      "estimate_cpu": 258.75,
+      "cap_cpu": 297.562,
+      "cap_wall": 595.124,
+      "over_design_cap": false
+    }
+  ]
+}
