@@ -1,0 +1,120 @@
+{
+  "schema": "taiji-u2-22-5-a-readout-repair-v1",
+  "card": "22.5.0.A",
+  "run_id": "20261117T102204Z",
+  "status": "fit_readout_signal",
+  "method": "mask EOS at the first emitted byte during training and decoding",
+  "conditions": {
+    "seed": 20261110,
+    "updates": 512,
+    "batch": 2,
+    "lr": 0.003,
+    "train_examples": 64,
+    "fit_examples": 32,
+    "check_reads": 0
+  },
+  "preflight": {
+    "initial_loss": 4.527647018432617,
+    "recovered_loss": 4.527647018432617
+  },
+  "history": [
+    {
+      "step": 256,
+      "loss": 0.99688,
+      "fit_correct": 8,
+      "fit_denominator": 32
+    },
+    {
+      "step": 512,
+      "loss": 0.443647,
+      "fit_correct": 8,
+      "fit_denominator": 32
+    }
+  ],
+  "train": {
+    "correct": 16,
+    "denominator": 64,
+    "accuracy": 0.25
+  },
+  "fit": {
+    "correct": 8,
+    "denominator": 32,
+    "accuracy": 0.25,
+    "examples": [
+      {
+        "id": "fit-0",
+        "target": "左边",
+        "output": "左边",
+        "correct": true,
+        "eos": true
+      },
+      {
+        "id": "fit-1",
+        "target": "中间",
+        "output": "左边",
+        "correct": false,
+        "eos": true
+      },
+      {
+        "id": "fit-2",
+        "target": "右边",
+        "output": "左边",
+        "correct": false,
+        "eos": true
+      },
+      {
+        "id": "fit-3",
+        "target": "未知",
+        "output": "左边",
+        "correct": false,
+        "eos": true
+      },
+      {
+        "id": "fit-4",
+        "target": "左边",
+        "output": "左边",
+        "correct": true,
+        "eos": true
+      },
+      {
+        "id": "fit-5",
+        "target": "中间",
+        "output": "左边",
+        "correct": false,
+        "eos": true
+      },
+      {
+        "id": "fit-6",
+        "target": "右边",
+        "output": "左边",
+        "correct": false,
+        "eos": true
+      },
+      {
+        "id": "fit-7",
+        "target": "未知",
+        "output": "左边",
+        "correct": false,
+        "eos": true
+      }
+    ]
+  },
+  "recovery_equal": true,
+  "cost": {
+    "cpu": 2784.7812,
+    "wall": 280.2319,
+    "cpu_cap": 4000.0,
+    "wall_cap": 8000.0
+  },
+  "check_exposure": {
+    "used": 1,
+    "remaining": 1,
+    "unchanged": true
+  },
+  "discipline": {
+    "optimizer_steps": 512,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "checkpoint": "output\\a_readout_repair_20261117T102204Z\\final.bin"
+}
