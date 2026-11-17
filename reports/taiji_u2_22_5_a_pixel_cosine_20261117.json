@@ -1,0 +1,44 @@
+{
+  "schema": "taiji-u2-22-5-a-pixel-cosine-v1",
+  "card": "22.5.0.A",
+  "steps": 2000,
+  "seeds": [
+    {
+      "seed": 20261110,
+      "train": 1.0,
+      "fit": 1.0,
+      "temp": 6.275
+    },
+    {
+      "seed": 20261111,
+      "train": 1.0,
+      "fit": 0.9948,
+      "temp": 7.034
+    },
+    {
+      "seed": 20261112,
+      "train": 1.0,
+      "fit": 1.0,
+      "temp": 6.297
+    },
+    {
+      "seed": 20261113,
+      "train": 0.707,
+      "fit": 0.5156,
+      "temp": 2.715
+    },
+    {
+      "seed": 20261114,
+      "train": 1.0,
+      "fit": 0.9948,
+      "temp": 8.179
+    }
+  ],
+  "median_fit": 0.9948,
+  "min_fit": 0.5156,
+  "max_fit": 1.0,
+  "verdict": "cosine_stabilises",
+  "cost": {
+    "cpu": 2200.8125
+  }
+}
