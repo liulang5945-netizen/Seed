@@ -42,6 +42,8 @@ MAX_BYTES = 64
 SEED = 20261110
 HEAD_SEEDS = (20261110, 20261111, 20261112)
 COUNTS = {"train": 768, "fit": 192}
+CAPACITY_REPORT = ROOT / "reports/taiji_u2_22_5_a_query_bind_capacity_20261117.json"
+CAPACITY_STEPS = 2000
 
 
 class QueryBindHead(nn.Module):
@@ -71,6 +73,57 @@ class QueryBindHead(nn.Module):
         scores = torch.einsum("bqd,bkd->bqk", query, self.key(token)) / math.sqrt(token.shape[-1])
         bound = torch.einsum("bqk,bkd->bqd", scores.softmax(-1), self.value(token))[:, 0]
         return self.output(torch.cat([bound, query[:, 0]], -1))
+
+
+class BindBlock(nn.Module):
+    """One residual attention block with a single learned query."""
+
+    def __init__(self, width: int) -> None:
+        super().__init__()
+        self.query = nn.Linear(width, width)
+        self.key = nn.Linear(width, width)
+        self.value = nn.Linear(width, width)
+        self.norm_attention = nn.LayerNorm(width)
+        self.norm_feedforward = nn.LayerNorm(width)
+        self.feedforward = nn.Sequential(
+            nn.Linear(width, 2 * width), nn.GELU(), nn.Linear(2 * width, width)
+        )
+
+    def forward(self, tokens, query):
+        prompt = self.query(query)[:, None, :]
+        scores = torch.einsum("bqd,bkd->bqk", prompt, self.key(tokens)) / math.sqrt(
+            tokens.shape[-1]
+        )
+        bound = torch.einsum("bqk,bkd->bqd", scores.softmax(-1), self.value(tokens))[:, 0]
+        query = self.norm_attention(query + bound)
+        return self.norm_feedforward(query + self.feedforward(query))
+
+
+class CapacityHead(nn.Module):
+    """Wider two-block variant used only for the capacity upper bound."""
+
+    def __init__(self, token_dim: int, width: int = 64, text: int = 24) -> None:
+        super().__init__()
+        self.token = nn.Linear(token_dim, width)
+        self.byte = nn.Embedding(256, text)
+        self.position = nn.Parameter(torch.zeros(1, MAX_BYTES, text))
+        self.text = nn.Linear(2 * text, width)
+        self.null_token = nn.Parameter(torch.zeros(width))
+        self.blocks = nn.ModuleList([BindBlock(width), BindBlock(width)])
+        self.output = nn.Linear(width, 4)
+
+    def forward(self, tokens, request, mask):
+        token = torch.tanh(self.token(tokens))
+        null = self.null_token.expand(token.shape[0], 1, -1)
+        token = torch.cat([token, null], 1)
+        text = self.byte(request) + self.position[:, : request.shape[1]]
+        text = text.masked_fill(~mask[..., None], 0.0)
+        mean = text.sum(1) / mask.sum(1, keepdim=True).clamp(min=1)
+        peak = text.masked_fill(~mask[..., None], -1e4).amax(1)
+        query = torch.tanh(self.text(torch.cat([mean, peak], -1)))
+        for block in self.blocks:
+            query = block(token, query)
+        return self.output(query)
 
 
 def _examples(split: str) -> list[dict]:
@@ -107,31 +160,35 @@ def _pad(requests: list[torch.Tensor]) -> tuple[torch.Tensor, torch.Tensor]:
     return request, mask
 
 
-def _extract(model, examples: list[dict]) -> dict:
+def _extract(model, examples: list[dict], raw_only: bool = False) -> dict:
     raw_tokens, u2_tokens, requests, labels = [], [], [], []
     with torch.no_grad():
         for example in examples:
             rgb = example["observations"]["rgb"]
             coords = example["coordinates"]["rgb"][:, :2]
             raw_tokens.append(torch.cat([rgb, coords], -1))
-            encoded = model.encode(
-                example["observations"], example["coordinates"], example["outcome"]
-            )
-            u2_tokens.append(
-                torch.cat(
-                    [encoded["rgb"], encoded["audio"], encoded["proprio"], encoded["outcome"]], 0
+            if not raw_only:
+                encoded = model.encode(
+                    example["observations"], example["coordinates"], example["outcome"]
                 )
-            )
+                u2_tokens.append(
+                    torch.cat(
+                        [encoded["rgb"], encoded["audio"], encoded["proprio"], encoded["outcome"]],
+                        0,
+                    )
+                )
             requests.append(torch.tensor(list(example["request"]), dtype=torch.long))
             labels.append(example["label"])
     request, mask = _pad(requests)
-    return {
+    rows = {
         "raw": torch.stack(raw_tokens),
-        "u2": torch.stack(u2_tokens),
         "request": request,
         "mask": mask,
         "label": torch.tensor(labels),
     }
+    if u2_tokens:
+        rows["u2"] = torch.stack(u2_tokens)
+    return rows
 
 
 def _fit(
@@ -158,10 +215,97 @@ def _confusion(prediction: torch.Tensor, label: torch.Tensor) -> list[list[int]]
     return table
 
 
+def _fit_capacity(data: dict, seed: int):
+    torch.manual_seed(seed)
+    head = CapacityHead(data["raw"].shape[2])
+    optimizer = torch.optim.Adam(head.parameters(), lr=0.01, weight_decay=1e-4)
+    for _ in range(CAPACITY_STEPS):
+        optimizer.zero_grad(set_to_none=True)
+        loss = functional.cross_entropy(
+            head(data["raw"], data["request"], data["mask"]), data["label"]
+        )
+        loss.backward()
+        optimizer.step()
+    head.eval()
+    with torch.no_grad():
+        logits = head(data["raw"], data["request"], data["mask"])
+    return head, (logits.argmax(-1) == data["label"]).float().mean().item(), logits
+
+
+def _capacity(data: dict, fit: dict) -> dict:
+    rows = []
+    for seed in HEAD_SEEDS:
+        head, train_accuracy, train_logits = _fit_capacity(data, seed)
+        with torch.no_grad():
+            logits = head(fit["raw"], fit["request"], fit["mask"])
+        rows.append(
+            {
+                "seed": seed,
+                "train_accuracy": train_accuracy,
+                "fit_accuracy": (logits.argmax(-1) == fit["label"]).float().mean().item(),
+                "train_confusion": _confusion(train_logits.argmax(-1), data["label"]),
+                "fit_confusion": _confusion(logits.argmax(-1), fit["label"]),
+            }
+        )
+    median_train = sorted(row["train_accuracy"] for row in rows)[1]
+    median_fit = sorted(row["fit_accuracy"] for row in rows)[1]
+    if median_train < 0.95:
+        verdict = "capacity_still_short"
+    elif median_fit < 0.80:
+        verdict = "capacity_feasible_generalization_gap"
+    else:
+        verdict = "capacity_feasible"
+    return {
+        "results": rows,
+        "median_train_accuracy": median_train,
+        "median_fit_accuracy": median_fit,
+        "verdict": verdict,
+    }
+
+
 def main() -> int:
     model = make_model("native", SEED)
     train_examples = _examples("train")
     fit_examples = _examples("fit")
+    if "--capacity" in sys.argv:
+        train = _extract(model, train_examples, raw_only=True)
+        fit = _extract(model, fit_examples, raw_only=True)
+        capacity = _capacity(train, fit)
+        if CAPACITY_REPORT.exists():
+            raise FileExistsError(CAPACITY_REPORT)
+        payload = {
+            "schema": "taiji-u2-22-5-a-query-bind-capacity-v1",
+            "card": "22.5.0.A",
+            "source": "raw",
+            "width": 64,
+            "blocks": 2,
+            "steps": CAPACITY_STEPS,
+            "capacity": capacity,
+            "declared_verdict": {
+                "capacity_feasible": "median train >= 0.95 and median fit >= 0.80",
+                "capacity_feasible_generalization_gap": "median train >= 0.95, fit < 0.80",
+                "capacity_still_short": "median train < 0.95",
+            },
+            "discipline": {
+                "u2_optimizer_steps": 0,
+                "head_optimizer_steps": CAPACITY_STEPS * len(HEAD_SEEDS),
+                "check_reads": 0,
+                "final_reads": 0,
+            },
+            "examples": {"train": len(train_examples), "fit": len(fit_examples)},
+        }
+        CAPACITY_REPORT.write_bytes(
+            json.dumps(payload, ensure_ascii=False, indent=2).encode() + b"\n"
+        )
+        print(
+            "capacity verdict="
+            + capacity["verdict"]
+            + " train="
+            + str(round(capacity["median_train_accuracy"], 4))
+            + " fit="
+            + str(round(capacity["median_fit_accuracy"], 4))
+        )
+        return 0
     train = _extract(model, train_examples)
     fit = _extract(model, fit_examples)
     summary = {}

@@ -1,0 +1,201 @@
+{
+  "schema": "taiji-u2-22-5-a-query-bind-capacity-v1",
+  "card": "22.5.0.A",
+  "source": "raw",
+  "width": 64,
+  "blocks": 2,
+  "steps": 2000,
+  "capacity": {
+    "results": [
+      {
+        "seed": 20261110,
+        "train_accuracy": 1.0,
+        "fit_accuracy": 0.5260416865348816,
+        "train_confusion": [
+          [
+            192,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            192,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            192,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            192
+          ]
+        ],
+        "fit_confusion": [
+          [
+            38,
+            1,
+            4,
+            5
+          ],
+          [
+            15,
+            9,
+            9,
+            15
+          ],
+          [
+            7,
+            2,
+            32,
+            7
+          ],
+          [
+            20,
+            3,
+            3,
+            22
+          ]
+        ]
+      },
+      {
+        "seed": 20261111,
+        "train_accuracy": 1.0,
+        "fit_accuracy": 0.3854166567325592,
+        "train_confusion": [
+          [
+            192,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            192,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            192,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            192
+          ]
+        ],
+        "fit_confusion": [
+          [
+            23,
+            9,
+            5,
+            11
+          ],
+          [
+            12,
+            21,
+            6,
+            9
+          ],
+          [
+            7,
+            14,
+            12,
+            15
+          ],
+          [
+            12,
+            10,
+            8,
+            18
+          ]
+        ]
+      },
+      {
+        "seed": 20261112,
+        "train_accuracy": 0.9127604365348816,
+        "fit_accuracy": 0.6458333134651184,
+        "train_confusion": [
+          [
+            166,
+            4,
+            2,
+            20
+          ],
+          [
+            2,
+            180,
+            0,
+            10
+          ],
+          [
+            0,
+            1,
+            182,
+            9
+          ],
+          [
+            6,
+            4,
+            9,
+            173
+          ]
+        ],
+        "fit_confusion": [
+          [
+            25,
+            6,
+            2,
+            15
+          ],
+          [
+            5,
+            31,
+            2,
+            10
+          ],
+          [
+            0,
+            2,
+            34,
+            12
+          ],
+          [
+            7,
+            5,
+            2,
+            34
+          ]
+        ]
+      }
+    ],
+    "median_train_accuracy": 1.0,
+    "median_fit_accuracy": 0.5260416865348816,
+    "verdict": "capacity_feasible_generalization_gap"
+  },
+  "declared_verdict": {
+    "capacity_feasible": "median train >= 0.95 and median fit >= 0.80",
+    "capacity_feasible_generalization_gap": "median train >= 0.95, fit < 0.80",
+    "capacity_still_short": "median train < 0.95"
+  },
+  "discipline": {
+    "u2_optimizer_steps": 0,
+    "head_optimizer_steps": 6000,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "examples": {
+    "train": 768,
+    "fit": 192
+  }
+}

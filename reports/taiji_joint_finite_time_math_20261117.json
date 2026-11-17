@@ -1,0 +1,79 @@
+{
+  "schema": "taiji-joint-finite-time-math-v1",
+  "status": "scalar_example_and_closed_form_checks_passed",
+  "behavior_validation": "not_run",
+  "training_steps": 0,
+  "counterexample": {
+    "individual_spectral_radii": [
+      0.5,
+      0.5
+    ],
+    "product": [
+      [
+        0.25,
+        1.0
+      ],
+      [
+        1.0,
+        4.25
+      ]
+    ],
+    "product_eigenvalues": [
+      0.013932022500210195,
+      4.48606797749979
+    ],
+    "product_spectral_radius": 4.48606797749979,
+    "exact_product": [
+      [
+        "1/4",
+        "1"
+      ],
+      [
+        "1",
+        "17/4"
+      ]
+    ],
+    "alternating_growth": [
+      {
+        "k": 1,
+        "measured": 4.486067977499791,
+        "expected": 4.48606797749979
+      },
+      {
+        "k": 2,
+        "measured": 20.12480589874906,
+        "expected": 20.124805898749056
+      },
+      {
+        "k": 3,
+        "measured": 90.281247295777,
+        "expected": 90.281247295777
+      },
+      {
+        "k": 4,
+        "measured": 405.0078124623247,
+        "expected": 405.00781246232475
+      }
+    ],
+    "conclusion": "bounded_steps_do_not_imply_joint_contraction"
+  },
+  "rate_example": {
+    "rho_z": 0.575,
+    "rho_a": 0.7875,
+    "rho_h": 0.52875,
+    "joint_L": 0.7875
+  },
+  "read_only_bound": {
+    "horizon": 8,
+    "recursive": 0.018721367493568147,
+    "closed_form": 0.018721367493568144,
+    "read_only_f": 0.02
+  },
+  "write_bound": {
+    "horizon": 8,
+    "recursive_transient": 0.026232286768911477,
+    "closed_form_transient": 0.026232286768911466,
+    "persistent_memory_error": 0.03600000000000001,
+    "increment_per_write": 0.002
+  }
+}
