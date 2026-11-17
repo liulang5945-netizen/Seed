@@ -1,0 +1,92 @@
+{
+  "schema": "taiji-u2-22-5-a-delta-probe-v1",
+  "card": "22.5.0.A",
+  "checkpoint": "output/a_pixel_grouped_20261117T144714Z/final.bin",
+  "probe": {
+    "train_accuracy": 0.5117,
+    "fit_accuracy": 0.375,
+    "fit_confusion": [
+      [
+        11,
+        10,
+        3,
+        8
+      ],
+      [
+        9,
+        11,
+        6,
+        6
+      ],
+      [
+        3,
+        9,
+        16,
+        4
+      ],
+      [
+        11,
+        7,
+        4,
+        10
+      ]
+    ],
+    "chance": 0.25
+  },
+  "delta": {
+    "per_class_means": [
+      [
+        0.132,
+        0.3082,
+        0.0902,
+        0.1192,
+        0.2475,
+        -0.1223,
+        0.1382,
+        -0.6762
+      ],
+      [
+        0.1442,
+        0.2927,
+        0.112,
+        0.1305,
+        0.2406,
+        -0.1214,
+        0.1576,
+        -0.5737
+      ],
+      [
+        0.3701,
+        -0.0888,
+        0.5979,
+        0.6125,
+        0.0302,
+        -0.1388,
+        0.7315,
+        0.6237
+      ],
+      [
+        0.2187,
+        0.1446,
+        0.2912,
+        0.3541,
+        0.1526,
+        -0.1334,
+        0.3963,
+        -0.3484
+      ]
+    ],
+    "cross_sample_std": 0.681
+  },
+  "verdict": "delta_does_not_carry_position",
+  "conditions": {
+    "train_worlds": 256,
+    "fit_worlds": 128,
+    "steps": 400
+  },
+  "discipline": {
+    "u2_optimizer_steps": 0,
+    "probe_steps": 400,
+    "check_reads": 0
+  }
+}
