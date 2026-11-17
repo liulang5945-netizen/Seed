@@ -1076,8 +1076,11 @@ class U2Subject(_WorldKernel):
         result["logw"] = (prior["logw"] + logp).log_softmax(0)
         tokens = self.encode(observations, coordinates, outcome)
         if self.c.readout == "pixel-salience":
+            from .u2_pixel_read import pixel_grid
+
             result["pixel_blocks"] = observations["rgb"].detach()
             result["pixel_coordinates"] = coordinates["rgb"]
+            result["pixel_grid"] = pixel_grid(coordinates["rgb"])
         for _ in range(2):
             obs, mass, spatial = self.binding(result, tokens, coordinates)
             gate = mass / (mass + 0.01)
@@ -1229,9 +1232,12 @@ class U2Subject(_WorldKernel):
             from .u2_pixel_read import pixel_grid
 
             raw = state["answer_request"]["raw"] if self.c.separate_requests else state["goal_raw"]
+            grid = state.get("pixel_grid")
+            if grid is None:
+                grid = pixel_grid(state["pixel_coordinates"])
             context = context + self.pixel_readout(
                 state["pixel_blocks"],
-                state.get("pixel_grid") or pixel_grid(state["pixel_coordinates"]),
+                grid,
                 torch.tensor(list(raw), dtype=torch.long, device=context.device),
             )
         return context

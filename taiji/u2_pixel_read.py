@@ -23,15 +23,17 @@ UNIT_IDS = ("pixel-salience:substrate", "pixel-salience:query", "pixel-salience:
 
 
 def pixel_grid(coordinates: torch.Tensor) -> torch.Tensor:
-    """Expand 16 patch centres to the 16x16 pixel grid with the fixed sub-offsets."""
+    """Expand 16 patch centres to the 16x16 pixel grid with the fixed sub-offsets.
+
+    Vectorised into one broadcast; patch order and the in-patch (i x j) sub-grid
+    match how ``encode`` reshaped the raster.
+    """
     centres = coordinates[:, :2]
     offsets = torch.tensor([-3 / 32, -1 / 32, 1 / 32, 3 / 32], dtype=coordinates.dtype)
-    rows = []
-    for index in range(SIDE):
-        span_x = (centres[index][0] + offsets).reshape(-1, 1).expand(4, 4)
-        span_y = (centres[index][1] + offsets).reshape(1, -1).expand(4, 4)
-        rows.append(torch.stack([span_x, span_y], -1))
-    return torch.stack(rows).reshape(4, 4, 4, 4, 2).permute(0, 2, 1, 3, 4).reshape(SIDE, SIDE, 2)
+    span_x = centres[:, 0].reshape(-1, 1, 1) + offsets.reshape(1, -1, 1)
+    span_y = centres[:, 1].reshape(-1, 1, 1) + offsets.reshape(1, 1, -1)
+    grid = torch.stack([span_x.expand(-1, 4, 4), span_y.expand(-1, 4, 4)], -1)
+    return grid.reshape(4, 4, 4, 4, 2).permute(0, 2, 1, 3, 4).reshape(SIDE, SIDE, 2)
 
 
 def raster(blocks: torch.Tensor) -> torch.Tensor:
