@@ -1,0 +1,121 @@
+{
+  "schema": "taiji-u2-22-4-accepted-parent-v1",
+  "status": "accepted_engineering_parent_for_22_5",
+  "engineering_parent": {
+    "ref": "plans/manifests/taiji_u2_22_3_accepted_parent_20261111.json",
+    "sha256": "250c1ab38ce044796668ec4e9276c280262bd3f5473aa0caed51b6977a39b2fa"
+  },
+  "baseline_identity": {
+    "ref": "plans/manifests/taiji_u2_22_4_4_baseline_identity_20261111.json",
+    "sha256": "e5c776c4f12e4633bf7366d66ee22e6095efac7fa2147e5c6973653797335b29",
+    "selected": "transformer_sequence",
+    "limitations": [
+      "L1 compute parity absent",
+      "resource gates dominated by parameter band"
+    ]
+  },
+  "data": {
+    "recipe_digest": "a96cf26e2008256efeb9f5e223f4d5d3d7141a9daa79ada5ba6e14563d100644",
+    "partition_digest": "8f16e764911579c6e86af8950b6cd63c6cc72922d414c155ef592054134f10ea",
+    "feedback_rights": {
+      "observation": [
+        "perception",
+        "online",
+        "development"
+      ],
+      "train_label": [
+        "development"
+      ],
+      "online_correction": [
+        "online"
+      ],
+      "help_reply": [
+        "online"
+      ],
+      "score_only": [
+        "scoring"
+      ]
+    },
+    "check_exposure": {
+      "max": 8,
+      "used": 0,
+      "remaining": 8,
+      "allocations": {
+        "22.5": 2,
+        "22.6": 2,
+        "22.7": 3,
+        "22.8": 1
+      },
+      "exposure_unit": "complete candidate x 3 fixed seeds x all stage arms",
+      "irrevocable": true,
+      "first_access_consumes": true,
+      "aggregate_only": true,
+      "labels_to_selector": false,
+      "check_content_generated": false,
+      "check_labels_read": false,
+      "global_check_used_for_birth": false
+    },
+    "final_seal": {
+      "authorization": "R-SEAL-1",
+      "status": "reserved_not_generated",
+      "count": 128,
+      "first": 21423478,
+      "last": 21551621,
+      "seeds_sha256": "894943df6bdbcbfe639d93a9b3de043898a55c2861bbff93e0ce0550f58b1795",
+      "recipe_digest": "a96cf26e2008256efeb9f5e223f4d5d3d7141a9daa79ada5ba6e14563d100644",
+      "generated": false,
+      "read": false
+    }
+  },
+  "price": {
+    "ref": "reports/taiji_u2_22_4_4_price_20261117.json",
+    "digest": "25d0e692c4589997526d9bdfbf45183bcb98a658488ab180309499d6227b1d1a",
+    "updates_by_stage": {
+      "22.5": 9808,
+      "22.6": 4904,
+      "22.7": 7356,
+      "22.8": 2452
+    },
+    "u2_per_update_cpu": 0.54375,
+    "u2_per_update_pack_cpu": 1.63125,
+    "seed_factor": 3
+  },
+  "arm_component_applicability": {
+    "u2_reference": {
+      "observation_encoding": true,
+      "query_expression": true,
+      "policy": true,
+      "single_learning": true,
+      "save_rebuild": true,
+      "replay_transfer": true,
+      "birth_maturity": true
+    },
+    "transformer_sequence": {
+      "observation_encoding": true,
+      "query_expression": true,
+      "policy": false,
+      "single_learning": true,
+      "save_rebuild": true,
+      "replay_transfer": true,
+      "birth_maturity": false
+    },
+    "gru_sequence": {
+      "observation_encoding": true,
+      "query_expression": true,
+      "policy": false,
+      "single_learning": true,
+      "save_rebuild": true,
+      "replay_transfer": true,
+      "birth_maturity": false
+    }
+  },
+  "stop_conditions": [
+    "pricing_over_budget if total CPU > 1200 or wall > 2400",
+    "not_admitted if any of the seven 22.4 deliverables is missing",
+    "check exposure starts on first check access and is irrevocable",
+    "final read requires explicit R-SEAL-1 authorization"
+  ],
+  "capability_qualifications": [],
+  "authorized": false,
+  "note": "Engineering parent only; does not authorize training, update a model, or claim capability."
+}

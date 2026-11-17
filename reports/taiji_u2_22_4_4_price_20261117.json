@@ -1,0 +1,520 @@
+{
+  "schema": "taiji-u2-22-4-4-price-v1",
+  "card": "22.4.4",
+  "phase": "pricing_only_no_formal_training",
+  "verdict": "pricing_valid",
+  "seeds": [
+    20261110,
+    20261111,
+    20261112
+  ],
+  "arms": [
+    "u2_reference",
+    "transformer_sequence",
+    "gru_sequence"
+  ],
+  "preflight": {
+    "u2_reference": {
+      "arm": "u2_reference",
+      "save_rebuild_equal": true,
+      "method": "U2Subject.export_bundle/from_bundle"
+    },
+    "transformer_sequence": {
+      "arm": "transformer_sequence",
+      "save_rebuild_equal": true,
+      "method": "torch.save/load state_dict"
+    },
+    "gru_sequence": {
+      "arm": "gru_sequence",
+      "save_rebuild_equal": true,
+      "method": "torch.save/load state_dict"
+    }
+  },
+  "measurements": {
+    "u2_reference": [
+      {
+        "observation_encoding": {
+          "cpu": 0.0,
+          "wall": 0.000115,
+          "repeats": 8
+        },
+        "query_expression": {
+          "cpu": 0.046875,
+          "wall": 0.04081,
+          "repeats": 8
+        },
+        "policy": {
+          "cpu": 0.0,
+          "wall": 0.002781,
+          "repeats": 8
+        },
+        "single_learning": {
+          "cpu": 0.546875,
+          "wall": 0.561626,
+          "loss": 1467.23291015625,
+          "updated_parameters": 191,
+          "forward_cpu": 0.421875
+        },
+        "save_rebuild": {
+          "cpu": 0.015625,
+          "wall": 0.017335,
+          "repeats": 1
+        },
+        "replay_transfer": {
+          "cpu": 0.484375,
+          "wall": 0.492995,
+          "repeats": 1
+        },
+        "birth_maturity": {
+          "cpu": 0.0,
+          "wall": 0.00106,
+          "repeats": 3
+        }
+      },
+      {
+        "observation_encoding": {
+          "cpu": 0.0,
+          "wall": 0.000423,
+          "repeats": 8
+        },
+        "query_expression": {
+          "cpu": 0.046875,
+          "wall": 0.04686,
+          "repeats": 8
+        },
+        "policy": {
+          "cpu": 0.0,
+          "wall": 0.002258,
+          "repeats": 8
+        },
+        "single_learning": {
+          "cpu": 0.453125,
+          "wall": 0.444676,
+          "loss": 1467.4508056640625,
+          "updated_parameters": 191,
+          "forward_cpu": 0.359375
+        },
+        "save_rebuild": {
+          "cpu": 0.015625,
+          "wall": 0.019657,
+          "repeats": 1
+        },
+        "replay_transfer": {
+          "cpu": 0.28125,
+          "wall": 0.294,
+          "repeats": 1
+        },
+        "birth_maturity": {
+          "cpu": 0.0,
+          "wall": 0.0003,
+          "repeats": 3
+        }
+      },
+      {
+        "observation_encoding": {
+          "cpu": 0.0,
+          "wall": 0.000175,
+          "repeats": 8
+        },
+        "query_expression": {
+          "cpu": 0.03125,
+          "wall": 0.034821,
+          "repeats": 8
+        },
+        "policy": {
+          "cpu": 0.0,
+          "wall": 0.002775,
+          "repeats": 8
+        },
+        "single_learning": {
+          "cpu": 0.328125,
+          "wall": 0.369263,
+          "loss": 1467.59375,
+          "updated_parameters": 191,
+          "forward_cpu": 0.3125
+        },
+        "save_rebuild": {
+          "cpu": 0.015625,
+          "wall": 0.014954,
+          "repeats": 1
+        },
+        "replay_transfer": {
+          "cpu": 0.3125,
+          "wall": 0.312315,
+          "repeats": 1
+        },
+        "birth_maturity": {
+          "cpu": 0.0,
+          "wall": 0.000665,
+          "repeats": 3
+        }
+      }
+    ],
+    "transformer_sequence": [
+      {
+        "observation_encoding": {
+          "cpu": 0.0,
+          "wall": 0.001025,
+          "repeats": 8
+        },
+        "query_expression": {
+          "cpu": 0.0,
+          "wall": 2.1e-05,
+          "repeats": 8
+        },
+        "policy": null,
+        "single_learning": {
+          "cpu": 0.015625,
+          "wall": 0.010438,
+          "loss": 5.737762451171875
+        },
+        "save_rebuild": {
+          "cpu": 0.015625,
+          "wall": 0.021883,
+          "repeats": 1
+        },
+        "replay_transfer": {
+          "cpu": 0.0,
+          "wall": 0.002326,
+          "repeats": 1
+        },
+        "birth_maturity": null
+      },
+      {
+        "observation_encoding": {
+          "cpu": 0.0,
+          "wall": 0.000932,
+          "repeats": 8
+        },
+        "query_expression": {
+          "cpu": 0.0,
+          "wall": 2.6e-05,
+          "repeats": 8
+        },
+        "policy": null,
+        "single_learning": {
+          "cpu": 0.0,
+          "wall": 0.006481,
+          "loss": 5.6637773513793945
+        },
+        "save_rebuild": {
+          "cpu": 0.015625,
+          "wall": 0.010512,
+          "repeats": 1
+        },
+        "replay_transfer": {
+          "cpu": 0.015625,
+          "wall": 0.001508,
+          "repeats": 1
+        },
+        "birth_maturity": null
+      },
+      {
+        "observation_encoding": {
+          "cpu": 0.0,
+          "wall": 0.000904,
+          "repeats": 8
+        },
+        "query_expression": {
+          "cpu": 0.0,
+          "wall": 1.8e-05,
+          "repeats": 8
+        },
+        "policy": null,
+        "single_learning": {
+          "cpu": 0.0,
+          "wall": 0.007668,
+          "loss": 5.311094760894775
+        },
+        "save_rebuild": {
+          "cpu": 0.015625,
+          "wall": 0.012117,
+          "repeats": 1
+        },
+        "replay_transfer": {
+          "cpu": 0.0,
+          "wall": 0.001956,
+          "repeats": 1
+        },
+        "birth_maturity": null
+      }
+    ],
+    "gru_sequence": [
+      {
+        "observation_encoding": {
+          "cpu": 0.0,
+          "wall": 0.001211,
+          "repeats": 8
+        },
+        "query_expression": {
+          "cpu": 0.0,
+          "wall": 3.5e-05,
+          "repeats": 8
+        },
+        "policy": null,
+        "single_learning": {
+          "cpu": 0.015625,
+          "wall": 0.009936,
+          "loss": 5.430665016174316
+        },
+        "save_rebuild": {
+          "cpu": 0.0,
+          "wall": 0.017261,
+          "repeats": 1
+        },
+        "replay_transfer": {
+          "cpu": 0.0,
+          "wall": 0.003108,
+          "repeats": 1
+        },
+        "birth_maturity": null
+      },
+      {
+        "observation_encoding": {
+          "cpu": 0.0,
+          "wall": 0.000789,
+          "repeats": 8
+        },
+        "query_expression": {
+          "cpu": 0.0,
+          "wall": 3e-05,
+          "repeats": 8
+        },
+        "policy": null,
+        "single_learning": {
+          "cpu": 0.0,
+          "wall": 0.006851,
+          "loss": 5.608737945556641
+        },
+        "save_rebuild": {
+          "cpu": 0.015625,
+          "wall": 0.012133,
+          "repeats": 1
+        },
+        "replay_transfer": {
+          "cpu": 0.0,
+          "wall": 0.001801,
+          "repeats": 1
+        },
+        "birth_maturity": null
+      },
+      {
+        "observation_encoding": {
+          "cpu": 0.0,
+          "wall": 0.000913,
+          "repeats": 8
+        },
+        "query_expression": {
+          "cpu": 0.0,
+          "wall": 2e-05,
+          "repeats": 8
+        },
+        "policy": null,
+        "single_learning": {
+          "cpu": 0.0,
+          "wall": 0.006712,
+          "loss": 5.567628383636475
+        },
+        "save_rebuild": {
+          "cpu": 0.015625,
+          "wall": 0.012296,
+          "repeats": 1
+        },
+        "replay_transfer": {
+          "cpu": 0.0,
+          "wall": 0.001703,
+          "repeats": 1
+        },
+        "birth_maturity": null
+      }
+    ]
+  },
+  "price_table": {
+    "components": {
+      "u2_reference": {
+        "observation_encoding": {
+          "cpu": 0.0,
+          "wall": 0.000175,
+          "seeds": 3
+        },
+        "query_expression": {
+          "cpu": 0.046875,
+          "wall": 0.04081,
+          "seeds": 3
+        },
+        "policy": {
+          "cpu": 0.0,
+          "wall": 0.002775,
+          "seeds": 3
+        },
+        "single_learning": {
+          "cpu": 0.453125,
+          "wall": 0.444676,
+          "seeds": 3
+        },
+        "save_rebuild": {
+          "cpu": 0.015625,
+          "wall": 0.017335,
+          "seeds": 3
+        },
+        "replay_transfer": {
+          "cpu": 0.3125,
+          "wall": 0.312315,
+          "seeds": 3
+        },
+        "birth_maturity": {
+          "cpu": 0.0,
+          "wall": 0.000665,
+          "seeds": 3
+        }
+      },
+      "transformer_sequence": {
+        "observation_encoding": {
+          "cpu": 0.0,
+          "wall": 0.000932,
+          "seeds": 3
+        },
+        "query_expression": {
+          "cpu": 0.0,
+          "wall": 2.1e-05,
+          "seeds": 3
+        },
+        "policy": {
+          "status": "not_applicable_architecture"
+        },
+        "single_learning": {
+          "cpu": 0.0,
+          "wall": 0.007668,
+          "seeds": 3
+        },
+        "save_rebuild": {
+          "cpu": 0.015625,
+          "wall": 0.012117,
+          "seeds": 3
+        },
+        "replay_transfer": {
+          "cpu": 0.0,
+          "wall": 0.001956,
+          "seeds": 3
+        },
+        "birth_maturity": {
+          "status": "not_applicable_architecture"
+        }
+      },
+      "gru_sequence": {
+        "observation_encoding": {
+          "cpu": 0.0,
+          "wall": 0.000913,
+          "seeds": 3
+        },
+        "query_expression": {
+          "cpu": 0.0,
+          "wall": 3e-05,
+          "seeds": 3
+        },
+        "policy": {
+          "status": "not_applicable_architecture"
+        },
+        "single_learning": {
+          "cpu": 0.0,
+          "wall": 0.006851,
+          "seeds": 3
+        },
+        "save_rebuild": {
+          "cpu": 0.015625,
+          "wall": 0.012296,
+          "seeds": 3
+        },
+        "replay_transfer": {
+          "cpu": 0.0,
+          "wall": 0.001801,
+          "seeds": 3
+        },
+        "birth_maturity": {
+          "status": "not_applicable_architecture"
+        }
+      }
+    },
+    "per_update_formula": "u2_single_learning_cpu * 1.20 overhead * 3 fixed seeds",
+    "u2_per_update_cpu": 0.54375,
+    "u2_per_update_pack_cpu": 1.63125,
+    "seed_factor": 3,
+    "updates_by_stage": {
+      "22.5": 9808,
+      "22.6": 4904,
+      "22.7": 7356,
+      "22.8": 2452
+    },
+    "stage_plan_cpu": {
+      "22.5": 16000.0,
+      "22.6": 8000.0,
+      "22.7": 12000.0,
+      "22.8": 4000.0
+    },
+    "note": "updates use the plan CPU column, preserving the 20% reserve in the total cap; they are capacity ceilings, not a prescribed dose"
+  },
+  "price_table_digest": "25d0e692c4589997526d9bdfbf45183bcb98a658488ab180309499d6227b1d1a",
+  "identity": {
+    "ref": "plans/manifests/taiji_u2_22_4_4_baseline_identity_20261111.json",
+    "sha256": "e5c776c4f12e4633bf7366d66ee22e6095efac7fa2147e5c6973653797335b29",
+    "selected": "transformer_sequence"
+  },
+  "accepted_parent_22_3": {
+    "ref": "plans/manifests/taiji_u2_22_3_accepted_parent_20261111.json",
+    "sha256": "250c1ab38ce044796668ec4e9276c280262bd3f5473aa0caed51b6977a39b2fa"
+  },
+  "data": {
+    "recipe_digest": "a96cf26e2008256efeb9f5e223f4d5d3d7141a9daa79ada5ba6e14563d100644",
+    "partition_digest": "8f16e764911579c6e86af8950b6cd63c6cc72922d414c155ef592054134f10ea"
+  },
+  "applicability": {
+    "u2_reference": {
+      "observation_encoding": true,
+      "query_expression": true,
+      "policy": true,
+      "single_learning": true,
+      "save_rebuild": true,
+      "replay_transfer": true,
+      "birth_maturity": true
+    },
+    "transformer_sequence": {
+      "observation_encoding": true,
+      "query_expression": true,
+      "policy": false,
+      "single_learning": true,
+      "save_rebuild": true,
+      "replay_transfer": true,
+      "birth_maturity": false
+    },
+    "gru_sequence": {
+      "observation_encoding": true,
+      "query_expression": true,
+      "policy": false,
+      "single_learning": true,
+      "save_rebuild": true,
+      "replay_transfer": true,
+      "birth_maturity": false
+    }
+  },
+  "discipline": {
+    "formal_training": false,
+    "pricing_updates": 3,
+    "optimizer_steps": 3,
+    "project_data_reads": 0,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 9.40625,
+    "wall": 10.139676,
+    "cpu_cap": 250.0,
+    "wall_cap": 600.0
+  },
+  "limitations": [
+    "Pricing fragment is synthetic: batch=2, 8 steps, float32, cpu, threads=1.",
+    "Policy and birth/maturity are not applicable to the frozen sequence baselines; they have no action-selection or unit-growth interface.",
+    "U2 single learning and replay are measured with the identity script's real protocol; baselines use their frozen forward path.",
+    "One throwaway Adam step per seed is a pricing measurement, not formal training; the original model is not updated.",
+    "Windows timer granularity is about 15.6 ms; cheap components use repeat medians."
+  ]
+}
