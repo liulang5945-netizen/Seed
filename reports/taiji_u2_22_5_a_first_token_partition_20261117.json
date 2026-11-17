@@ -1,0 +1,58 @@
+{
+  "schema": "taiji-u2-22-5-a-first-token-partition-probe-v1",
+  "card": "22.5.0.A",
+  "verdict": "head_not_feasible",
+  "best_head": "linear_mean",
+  "summary": {
+    "linear_mean": {
+      "results": [
+        {
+          "seed": 20261110,
+          "train_accuracy": 0.29296875,
+          "fit_accuracy": 0.3020833432674408
+        },
+        {
+          "seed": 20261111,
+          "train_accuracy": 0.29296875,
+          "fit_accuracy": 0.3020833432674408
+        },
+        {
+          "seed": 20261112,
+          "train_accuracy": 0.29296875,
+          "fit_accuracy": 0.3020833432674408
+        }
+      ],
+      "max_fit_accuracy": 0.3020833432674408,
+      "median_fit_accuracy": 0.3020833432674408
+    },
+    "attention": {
+      "results": [
+        {
+          "seed": 20261110,
+          "train_accuracy": 0.29296875,
+          "fit_accuracy": 0.3020833432674408
+        },
+        {
+          "seed": 20261111,
+          "train_accuracy": 0.29296875,
+          "fit_accuracy": 0.3020833432674408
+        },
+        {
+          "seed": 20261112,
+          "train_accuracy": 0.29296875,
+          "fit_accuracy": 0.3020833432674408
+        }
+      ],
+      "max_fit_accuracy": 0.3020833432674408,
+      "median_fit_accuracy": 0.3020833432674408
+    }
+  },
+  "train_examples": 768,
+  "fit_examples": 192,
+  "discipline": {
+    "u2_optimizer_steps": 0,
+    "head_optimizer_steps": 3000,
+    "check_reads": 0,
+    "final_reads": 0
+  }
+}

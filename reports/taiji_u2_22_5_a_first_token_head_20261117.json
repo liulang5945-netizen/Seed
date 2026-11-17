@@ -1,0 +1,104 @@
+{
+  "schema": "taiji-u2-22-5-a-first-token-head-probe-v1",
+  "card": "22.5.0.A",
+  "verdict": "head_not_feasible",
+  "best_feature": "read",
+  "summary": {
+    "context": {
+      "dimension": 16,
+      "results": [
+        {
+          "seed": 20261110,
+          "train_accuracy": 0.484375,
+          "fit_accuracy": 0.28125
+        },
+        {
+          "seed": 20261111,
+          "train_accuracy": 0.46875,
+          "fit_accuracy": 0.28125
+        },
+        {
+          "seed": 20261112,
+          "train_accuracy": 0.46875,
+          "fit_accuracy": 0.28125
+        }
+      ],
+      "max_fit_accuracy": 0.28125,
+      "median_fit_accuracy": 0.28125
+    },
+    "read": {
+      "dimension": 16,
+      "results": [
+        {
+          "seed": 20261110,
+          "train_accuracy": 0.515625,
+          "fit_accuracy": 0.4375
+        },
+        {
+          "seed": 20261111,
+          "train_accuracy": 0.515625,
+          "fit_accuracy": 0.4375
+        },
+        {
+          "seed": 20261112,
+          "train_accuracy": 0.515625,
+          "fit_accuracy": 0.4375
+        }
+      ],
+      "max_fit_accuracy": 0.4375,
+      "median_fit_accuracy": 0.4375
+    },
+    "h": {
+      "dimension": 32,
+      "results": [
+        {
+          "seed": 20261110,
+          "train_accuracy": 0.5625,
+          "fit_accuracy": 0.375
+        },
+        {
+          "seed": 20261111,
+          "train_accuracy": 0.5625,
+          "fit_accuracy": 0.375
+        },
+        {
+          "seed": 20261112,
+          "train_accuracy": 0.5625,
+          "fit_accuracy": 0.375
+        }
+      ],
+      "max_fit_accuracy": 0.375,
+      "median_fit_accuracy": 0.375
+    },
+    "context_h": {
+      "dimension": 48,
+      "results": [
+        {
+          "seed": 20261110,
+          "train_accuracy": 0.65625,
+          "fit_accuracy": 0.40625
+        },
+        {
+          "seed": 20261111,
+          "train_accuracy": 0.65625,
+          "fit_accuracy": 0.40625
+        },
+        {
+          "seed": 20261112,
+          "train_accuracy": 0.65625,
+          "fit_accuracy": 0.40625
+        }
+      ],
+      "max_fit_accuracy": 0.40625,
+      "median_fit_accuracy": 0.40625
+    }
+  },
+  "train_examples": 64,
+  "fit_examples": 32,
+  "discipline": {
+    "optimizer_steps_u2": 0,
+    "head_optimizer_steps": 6000,
+    "check_reads": 0,
+    "final_reads": 0
+  }
+}
