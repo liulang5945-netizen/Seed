@@ -1,0 +1,62 @@
+{
+  "schema": "taiji-u2-local-jacobian-v1",
+  "status": "partial_local_jacobian_only",
+  "joint_status": "full_z_a_H_F_contract_not_instantiated",
+  "behavior_validation": "not_run",
+  "task_data_read": false,
+  "training_steps": 0,
+  "candidate": {
+    "class": "U2Subject",
+    "config": "U2Config.small",
+    "seed": 20261110,
+    "branches": 2,
+    "groups": 2,
+    "d": 8,
+    "key": 3,
+    "source_sha256": {
+      "u2_subject.py": "ba4075a20a35f2478934964ca4c68b09156f004c8fb3d69890dd5e9b8ecfa3c7",
+      "u2_operators.py": "4b45e504e8ce90fd8bf5f794c107ef1f07128ac759a3f86c99914fe7dafae8c2"
+    }
+  },
+  "contract": {
+    "H_present": true,
+    "FP1_F_present": true,
+    "z_a_present": false,
+    "Y_shared_F_W_present": false,
+    "full_z_a_H_F_contract_instantiated": false,
+    "joint_L": null,
+    "joint_M": null,
+    "joint_N": null
+  },
+  "local_native": {
+    "point": "initial_state_zero_H_zero_F_zero_event",
+    "L_native_dH_dH": 0.7873571491520278,
+    "N_native_dH_dF": 0.0002717031595205667,
+    "M_native_dH_devent": 0.041797269130491754,
+    "directional_jvp_max_abs_error": 1.0602629885170245e-13,
+    "interpretation": "pointwise spectral norms only; not trajectory Lipschitz certificates"
+  },
+  "local_fp1_write": {
+    "point": "zero_memory_inactive_ball",
+    "L_fp1_dF_dF": 0.786078887330388,
+    "analytic_L_fp1_dF_dF": 0.7860788873303881,
+    "max_abs_autograd_vs_analytic": 1.1102230246251565e-16,
+    "alpha": [
+      0.2,
+      0.4,
+      0.6
+    ],
+    "gains": [
+      0.3,
+      0.7
+    ],
+    "chi": 0.5,
+    "radius": 4.0
+  },
+  "boundary": [
+    "z/a blocks are absent, so the proof's joint z/a/H/F rate cannot be instantiated",
+    "Y shared F/W is not a field of the current U2Subject",
+    "the pending query-binding readout has no frozen implementation identity",
+    "local Jacobians do not prove a trajectory-wide Lipschitz bound or behavioral stability"
+  ]
+}
