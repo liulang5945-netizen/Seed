@@ -1,0 +1,65 @@
+{
+  "schema": "taiji-u2-22-5-0-flops-parity-v1",
+  "card": "22.5.0",
+  "verdict": "compute_parity_unavailable",
+  "parity_quantity": "flops",
+  "method": "torch.utils.flop_counter.FlopCounterMode, forward+backward, same fragment",
+  "counts": {
+    "u2_reference": 30894768,
+    "transformer_sequence": 1174400,
+    "gru_sequence": 1032464
+  },
+  "ratios": {
+    "transformer_sequence": 26.306853,
+    "gru_sequence": 29.923337
+  },
+  "max_updates": 256,
+  "effective_min_updates": 24,
+  "cap_ratio": 10.666667,
+  "common_flops_budget_exists": false,
+  "time_parity_v1": {
+    "ref": "reports\\taiji_u2_22_5_0_compute_parity_20261117.json",
+    "sha256": "b8d1859105c8d9fcbb90a57dd1e2d6a3a31f7289457ce34cce558f1baab121df",
+    "verdict": "compute_parity_unavailable",
+    "ratios": {
+      "transformer_sequence": 57.991132,
+      "gru_sequence": 64.906729
+    }
+  },
+  "interpretation": "Both permitted parity quantities fail: time ratios are 57.99x/64.91x and FLOPs ratios are 26.31x/29.92x, while the 256/24 dose envelope allows only 10.67x. This is a diagnostic, not a metric switch to reopen the gate.",
+  "options_for_owner": [
+    {
+      "id": "A",
+      "name": "time parity with a new dose cap",
+      "effect": "would require re-freezing 22.5.2 and may land in budget_cannot_express"
+    },
+    {
+      "id": "B",
+      "name": "FLOPs parity",
+      "effect": "tested here; also unavailable within the frozen dose envelope"
+    },
+    {
+      "id": "C",
+      "name": "comparable-cost baseline or U2 variant",
+      "effect": "requires a new identity version and re-freeze"
+    },
+    {
+      "id": "D",
+      "name": "close 22.5.0 as a limited exit",
+      "effect": "no architecture claim, no 22.5.1/22.6/22.7 unlock"
+    }
+  ],
+  "recommended_option": "D",
+  "recommendation_note": "D closes this 22.5 window honestly; C is the only higher-ceiling path but is a separate new identity/re-freeze decision, not an automatic next step.",
+  "cost": {
+    "cpu": 7.0,
+    "wall": 7.397148
+  },
+  "discipline": {
+    "model_forwards": 3,
+    "optimizer_steps": 0,
+    "project_data_reads": 0,
+    "check_reads": 0,
+    "final_reads": 0
+  }
+}
