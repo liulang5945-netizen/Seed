@@ -1,0 +1,74 @@
+{
+  "schema": "taiji-u2-22-5-c-parity-v1",
+  "card": "22.5.0.C",
+  "identity": {
+    "architecture_id": "weight_tied_transformer_sequence",
+    "applications": 3,
+    "weight_tied": true,
+    "param_total": 21977,
+    "param_tensors": 35,
+    "param_delta_pct": 3.36382,
+    "flops": 2960256,
+    "wall": 0.00327,
+    "manifest": "plans\\manifests\\taiji_u2_22_4_4_baseline_identity_c_20261117.json",
+    "sha256": "49431a3689333d01ad7457f7fe60585eed0635ddb84971265321dbd32b4e8f6e"
+  },
+  "u2": {
+    "flops": 30894768,
+    "single_learning_cpu": 0.453125,
+    "single_learning_wall": 0.444676
+  },
+  "parity": {
+    "quantity": "flops",
+    "ratio_u2_over_c": 10.436519,
+    "cap": 10.666667,
+    "flops_parity_available": true,
+    "time_ratio_u2_over_c": 135.986544,
+    "time_parity_claimed": false
+  },
+  "dose_envelope": {
+    "max_updates": 256,
+    "effective_min_updates": 24,
+    "baseline_updates_at_u2_256": 2671,
+    "u2_updates_at_baseline_256": 24,
+    "common_flops_per_seed_at_u2_256": 7909060608,
+    "current_cap_can_hold_common_flops": false,
+    "reason": "at the 256 cap the FLOPs-matched U2 dose is only 24 updates, which is below the effective course minimum; at U2 256 the baseline needs 2671 updates, above the 256 cap"
+  },
+  "proposed_refreeze": {
+    "u2_updates": 256,
+    "baseline_updates": 2671,
+    "common_flops_per_seed": 7909060608,
+    "changes": "only the baseline update cap, from 256 to the FLOPs-matched count",
+    "does_not_change": [
+      "U2 256-update cap",
+      "check exposure",
+      "final seal",
+      "feedback rights",
+      "data partition"
+    ],
+    "estimated_a_gate_cpu": 417.6,
+    "requires_owner_authorization": true
+  },
+  "status": "flops_parity_available_dose_cap_blocks_a_gate",
+  "a_parent_gate_ready": false,
+  "training_authorized": false,
+  "first_a_cross_check": {
+    "status": "compute_parity_unavailable",
+    "updates": {
+      "native": 24,
+      "gru": 243,
+      "transformer": 188
+    },
+    "prices": {
+      "native": 1.373046875,
+      "transformer": 0.181640625,
+      "gru": 0.140625
+    }
+  },
+  "source_pins": {
+    "plans/manifests/taiji_u2_22_4_4_baseline_identity_c_20261117.json": "49431a3689333d01ad7457f7fe60585eed0635ddb84971265321dbd32b4e8f6e",
+    "reports/taiji_u2_22_5_0_flops_parity_20261117.json": "d51b071db71cde8aff5801380164f518ac14bbf20eb17633bf168e1cb4fdd111",
+    "reports/taiji_u2_22_4_4_price_20261117.json": "d5962847a96cf7d07f3b27367ef32c5ffa263f8625f86a576373c3e53b56b09f"
+  }
+}

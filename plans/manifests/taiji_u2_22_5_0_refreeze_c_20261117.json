@@ -1,0 +1,74 @@
+{
+  "schema": "taiji-u2-22-5-0-refreeze-c-v1",
+  "card": "22.5.0.C",
+  "status": "frozen_pending_training_authorization",
+  "parity_quantity": "flops",
+  "u2_updates_per_seed": 256,
+  "baseline_updates_per_seed": 2671,
+  "common_flops_per_seed": 7909060608,
+  "u2_flops_per_update": 30894768,
+  "baseline_flops_per_update": 2960256,
+  "flops_ratio_u2_over_baseline": 10.436519,
+  "flop_ratio_cap": 10.666667,
+  "time_ratio_u2_over_baseline": 135.986544,
+  "time_parity_claimed": false,
+  "baseline_identity": {
+    "ref": "plans\\manifests\\taiji_u2_22_4_4_baseline_identity_c_20261117.json",
+    "sha256": "49431a3689333d01ad7457f7fe60585eed0635ddb84971265321dbd32b4e8f6e",
+    "architecture_id": "weight_tied_transformer_sequence",
+    "applications": 3,
+    "param_total": 21977,
+    "param_tensors": 35,
+    "param_delta_pct": 3.36382
+  },
+  "parents": {
+    "engineering_22_3": {
+      "ref": "plans\\manifests\\taiji_u2_22_3_accepted_parent_20261111.json",
+      "sha256": "250c1ab38ce044796668ec4e9276c280262bd3f5473aa0caed51b6977a39b2fa"
+    },
+    "engineering_22_4": {
+      "ref": "plans\\manifests\\taiji_u2_22_4_accepted_parent_20261117.json",
+      "sha256": "ba7c0d7ea6381fe154fc36e4ebc031282c62dd5340e490bba27842961075bf7a",
+      "authorized": false
+    }
+  },
+  "data": {
+    "recipe_digest": "a96cf26e2008256efeb9f5e223f4d5d3d7141a9daa79ada5ba6e14563d100644",
+    "partition_digest": "8f16e764911579c6e86af8950b6cd63c6cc72922d414c155ef592054134f10ea"
+  },
+  "changes_only": [
+    "baseline update cap for the FLOPs-matched arm: 256 -> 2671 per seed"
+  ],
+  "does_not_change": [
+    "U2 256-update cap",
+    "check exposure max 8 and allocations",
+    "final seal",
+    "feedback rights",
+    "data partition",
+    "price table for U2"
+  ],
+  "check_exposure": {
+    "allocated_22_5": 2,
+    "used": 0,
+    "a_gate_would_use": 1,
+    "remaining_after_a_gate": 1,
+    "note": "A gate uses check1 only after explicit training authorization"
+  },
+  "estimated_a_gate_cpu": 417.6,
+  "u2_single_learning_cpu": 0.453125,
+  "u2_single_learning_wall": 0.444676,
+  "baseline_single_learning_wall": 0.00327,
+  "training_authorized": false,
+  "requires_owner_authorization": true,
+  "forbidden": [
+    "do not change the U2 cap",
+    "do not enlarge the cheaper arm beyond the FLOPs-matched count",
+    "do not read check or final before authorization",
+    "do not claim performance or capability from this contract"
+  ],
+  "source_pins": {
+    "plans/manifests/taiji_u2_22_5_c_parity_20261117.json": "4eddd8add8f75468a81d105421f5ac485d8d01654868400fa69c1646e278ecfa",
+    "plans/manifests/taiji_u2_22_4_4_baseline_identity_c_20261117.json": "49431a3689333d01ad7457f7fe60585eed0635ddb84971265321dbd32b4e8f6e",
+    "reports/taiji_u2_22_4_4_price_20261117.json": "d5962847a96cf7d07f3b27367ef32c5ffa263f8625f86a576373c3e53b56b09f"
+  }
+}

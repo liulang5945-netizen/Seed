@@ -1,0 +1,84 @@
+{
+  "schema": "taiji-u2-22-5-c-baseline-identity-v1",
+  "card": "22.5.0.C",
+  "status": "selected",
+  "anchor": 22742,
+  "param_band": [
+    20467.8,
+    25016.2
+  ],
+  "u2_flops": 30894768,
+  "u2_single_learning_wall": 0.444676,
+  "target_flops": 2896384.5,
+  "flop_ratio_cap": 10.666666666666666,
+  "scan": [
+    {
+      "applications": 1,
+      "param_total": 21977,
+      "param_tensors": 35,
+      "flops": 1153920,
+      "wall_median": 0.002388,
+      "loss": 5.737762451171875
+    },
+    {
+      "applications": 2,
+      "param_total": 21977,
+      "param_tensors": 35,
+      "flops": 2057088,
+      "wall_median": 0.003113,
+      "loss": 5.7270026206970215
+    },
+    {
+      "applications": 3,
+      "param_total": 21977,
+      "param_tensors": 35,
+      "flops": 2960256,
+      "wall_median": 0.00327,
+      "loss": 5.716372013092041
+    },
+    {
+      "applications": 4,
+      "param_total": 21977,
+      "param_tensors": 35,
+      "flops": 3863424,
+      "wall_median": 0.004064,
+      "loss": 5.706341743469238
+    },
+    {
+      "applications": 5,
+      "param_total": 21977,
+      "param_tensors": 35,
+      "flops": 4766592,
+      "wall_median": 0.003904,
+      "loss": 5.697134017944336
+    },
+    {
+      "applications": 6,
+      "param_total": 21977,
+      "param_tensors": 35,
+      "flops": 5669760,
+      "wall_median": 0.004367,
+      "loss": 5.688669204711914
+    }
+  ],
+  "selected": {
+    "applications": 3,
+    "param_total": 21977,
+    "param_tensors": 35,
+    "flops": 2960256,
+    "wall_median": 0.00327,
+    "loss": 5.716372013092041
+  },
+  "cost": {
+    "cpu": 3.71875,
+    "wall": 4.09645
+  },
+  "discipline": {
+    "optimizer_steps": 0,
+    "project_data_reads": 0,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "manifest": "plans\\manifests\\taiji_u2_22_4_4_baseline_identity_c_20261117.json",
+  "manifest_sha256": "49431a3689333d01ad7457f7fe60585eed0635ddb84971265321dbd32b4e8f6e"
+}
