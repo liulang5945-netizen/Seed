@@ -1,0 +1,960 @@
+{
+  "schema": "taiji-u2-22-5-a-gate-coverage-v1",
+  "card": "22.5.0.A",
+  "verdict": "within_distribution_gap",
+  "reproduction_of_d43": true,
+  "frozen_d43": {
+    "median_train_accuracy": 1.0,
+    "median_fit_accuracy": 0.5260416865348816,
+    "verdict": "capacity_feasible_generalization_gap"
+  },
+  "fixture": {
+    "train12_bodies": "1-2 (frozen rule)",
+    "train3_bodies": 3,
+    "fit3_bodies": 3,
+    "fit12_bodies": "1-2",
+    "fit12_partition": "coverage-fit12",
+    "note": "the frozen A-gate fixture draws train with 1-2 bodies and fit with 3; fit12 is a new held-out namespace so both body-count bands have a held-out split"
+  },
+  "arms": {
+    "train12_fit3": {
+      "train_split": "train12",
+      "fit_split": "fit3",
+      "train_examples": 768,
+      "fit_examples": 192,
+      "results": [
+        {
+          "seed": 20261110,
+          "train_accuracy": 1.0,
+          "fit_accuracy": 0.5260416865348816,
+          "train_confusion": [
+            [
+              192,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              192,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              192,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              192
+            ]
+          ],
+          "fit_confusion": [
+            [
+              38,
+              1,
+              4,
+              5
+            ],
+            [
+              15,
+              9,
+              9,
+              15
+            ],
+            [
+              7,
+              2,
+              32,
+              7
+            ],
+            [
+              20,
+              3,
+              3,
+              22
+            ]
+          ]
+        },
+        {
+          "seed": 20261111,
+          "train_accuracy": 1.0,
+          "fit_accuracy": 0.3854166567325592,
+          "train_confusion": [
+            [
+              192,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              192,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              192,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              192
+            ]
+          ],
+          "fit_confusion": [
+            [
+              23,
+              9,
+              5,
+              11
+            ],
+            [
+              12,
+              21,
+              6,
+              9
+            ],
+            [
+              7,
+              14,
+              12,
+              15
+            ],
+            [
+              12,
+              10,
+              8,
+              18
+            ]
+          ]
+        },
+        {
+          "seed": 20261112,
+          "train_accuracy": 0.9127604365348816,
+          "fit_accuracy": 0.6458333134651184,
+          "train_confusion": [
+            [
+              166,
+              4,
+              2,
+              20
+            ],
+            [
+              2,
+              180,
+              0,
+              10
+            ],
+            [
+              0,
+              1,
+              182,
+              9
+            ],
+            [
+              6,
+              4,
+              9,
+              173
+            ]
+          ],
+          "fit_confusion": [
+            [
+              25,
+              6,
+              2,
+              15
+            ],
+            [
+              5,
+              31,
+              2,
+              10
+            ],
+            [
+              0,
+              2,
+              34,
+              12
+            ],
+            [
+              7,
+              5,
+              2,
+              34
+            ]
+          ]
+        }
+      ],
+      "median_train_accuracy": 1.0,
+      "median_fit_accuracy": 0.5260416865348816
+    },
+    "train12_fit12": {
+      "train_split": "train12",
+      "fit_split": "fit12",
+      "train_examples": 768,
+      "fit_examples": 192,
+      "results": [
+        {
+          "seed": 20261110,
+          "train_accuracy": 1.0,
+          "fit_accuracy": 0.6041666865348816,
+          "train_confusion": [
+            [
+              192,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              192,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              192,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              192
+            ]
+          ],
+          "fit_confusion": [
+            [
+              33,
+              3,
+              1,
+              11
+            ],
+            [
+              1,
+              26,
+              4,
+              17
+            ],
+            [
+              1,
+              0,
+              40,
+              7
+            ],
+            [
+              4,
+              20,
+              7,
+              17
+            ]
+          ]
+        },
+        {
+          "seed": 20261111,
+          "train_accuracy": 1.0,
+          "fit_accuracy": 0.4739583432674408,
+          "train_confusion": [
+            [
+              192,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              192,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              192,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              192
+            ]
+          ],
+          "fit_confusion": [
+            [
+              30,
+              6,
+              2,
+              10
+            ],
+            [
+              4,
+              21,
+              3,
+              20
+            ],
+            [
+              6,
+              8,
+              26,
+              8
+            ],
+            [
+              12,
+              19,
+              3,
+              14
+            ]
+          ]
+        },
+        {
+          "seed": 20261112,
+          "train_accuracy": 0.9127604365348816,
+          "fit_accuracy": 0.8020833134651184,
+          "train_confusion": [
+            [
+              166,
+              4,
+              2,
+              20
+            ],
+            [
+              2,
+              180,
+              0,
+              10
+            ],
+            [
+              0,
+              1,
+              182,
+              9
+            ],
+            [
+              6,
+              4,
+              9,
+              173
+            ]
+          ],
+          "fit_confusion": [
+            [
+              36,
+              1,
+              0,
+              11
+            ],
+            [
+              3,
+              40,
+              2,
+              3
+            ],
+            [
+              1,
+              3,
+              40,
+              4
+            ],
+            [
+              6,
+              2,
+              2,
+              38
+            ]
+          ]
+        }
+      ],
+      "median_train_accuracy": 1.0,
+      "median_fit_accuracy": 0.6041666865348816
+    },
+    "train3_fit3": {
+      "train_split": "train3",
+      "fit_split": "fit3",
+      "train_examples": 768,
+      "fit_examples": 192,
+      "results": [
+        {
+          "seed": 20261110,
+          "train_accuracy": 0.80078125,
+          "fit_accuracy": 0.5677083134651184,
+          "train_confusion": [
+            [
+              168,
+              13,
+              0,
+              11
+            ],
+            [
+              8,
+              142,
+              1,
+              41
+            ],
+            [
+              5,
+              8,
+              168,
+              11
+            ],
+            [
+              11,
+              42,
+              2,
+              137
+            ]
+          ],
+          "fit_confusion": [
+            [
+              26,
+              8,
+              2,
+              12
+            ],
+            [
+              9,
+              21,
+              0,
+              18
+            ],
+            [
+              0,
+              4,
+              37,
+              7
+            ],
+            [
+              5,
+              18,
+              0,
+              25
+            ]
+          ]
+        },
+        {
+          "seed": 20261111,
+          "train_accuracy": 0.3020833432674408,
+          "fit_accuracy": 0.3125,
+          "train_confusion": [
+            [
+              121,
+              6,
+              36,
+              29
+            ],
+            [
+              88,
+              3,
+              53,
+              48
+            ],
+            [
+              50,
+              4,
+              36,
+              102
+            ],
+            [
+              78,
+              4,
+              38,
+              72
+            ]
+          ],
+          "fit_confusion": [
+            [
+              25,
+              2,
+              9,
+              12
+            ],
+            [
+              25,
+              2,
+              12,
+              9
+            ],
+            [
+              19,
+              0,
+              10,
+              19
+            ],
+            [
+              17,
+              3,
+              5,
+              23
+            ]
+          ]
+        },
+        {
+          "seed": 20261112,
+          "train_accuracy": 0.2552083432674408,
+          "fit_accuracy": 0.2447916716337204,
+          "train_confusion": [
+            [
+              185,
+              7,
+              0,
+              0
+            ],
+            [
+              181,
+              11,
+              0,
+              0
+            ],
+            [
+              187,
+              5,
+              0,
+              0
+            ],
+            [
+              187,
+              5,
+              0,
+              0
+            ]
+          ],
+          "fit_confusion": [
+            [
+              45,
+              3,
+              0,
+              0
+            ],
+            [
+              46,
+              2,
+              0,
+              0
+            ],
+            [
+              47,
+              1,
+              0,
+              0
+            ],
+            [
+              46,
+              2,
+              0,
+              0
+            ]
+          ]
+        }
+      ],
+      "median_train_accuracy": 0.3020833432674408,
+      "median_fit_accuracy": 0.3125
+    },
+    "train3_fit12": {
+      "train_split": "train3",
+      "fit_split": "fit12",
+      "train_examples": 768,
+      "fit_examples": 192,
+      "results": [
+        {
+          "seed": 20261110,
+          "train_accuracy": 0.80078125,
+          "fit_accuracy": 0.578125,
+          "train_confusion": [
+            [
+              168,
+              13,
+              0,
+              11
+            ],
+            [
+              8,
+              142,
+              1,
+              41
+            ],
+            [
+              5,
+              8,
+              168,
+              11
+            ],
+            [
+              11,
+              42,
+              2,
+              137
+            ]
+          ],
+          "fit_confusion": [
+            [
+              24,
+              15,
+              0,
+              9
+            ],
+            [
+              2,
+              30,
+              0,
+              16
+            ],
+            [
+              0,
+              2,
+              38,
+              8
+            ],
+            [
+              4,
+              23,
+              2,
+              19
+            ]
+          ]
+        },
+        {
+          "seed": 20261111,
+          "train_accuracy": 0.3020833432674408,
+          "fit_accuracy": 0.3229166567325592,
+          "train_confusion": [
+            [
+              121,
+              6,
+              36,
+              29
+            ],
+            [
+              88,
+              3,
+              53,
+              48
+            ],
+            [
+              50,
+              4,
+              36,
+              102
+            ],
+            [
+              78,
+              4,
+              38,
+              72
+            ]
+          ],
+          "fit_confusion": [
+            [
+              39,
+              1,
+              5,
+              3
+            ],
+            [
+              32,
+              0,
+              5,
+              11
+            ],
+            [
+              13,
+              1,
+              8,
+              26
+            ],
+            [
+              30,
+              0,
+              3,
+              15
+            ]
+          ]
+        },
+        {
+          "seed": 20261112,
+          "train_accuracy": 0.2552083432674408,
+          "fit_accuracy": 0.2447916716337204,
+          "train_confusion": [
+            [
+              185,
+              7,
+              0,
+              0
+            ],
+            [
+              181,
+              11,
+              0,
+              0
+            ],
+            [
+              187,
+              5,
+              0,
+              0
+            ],
+            [
+              187,
+              5,
+              0,
+              0
+            ]
+          ],
+          "fit_confusion": [
+            [
+              47,
+              1,
+              0,
+              0
+            ],
+            [
+              48,
+              0,
+              0,
+              0
+            ],
+            [
+              47,
+              1,
+              0,
+              0
+            ],
+            [
+              46,
+              2,
+              0,
+              0
+            ]
+          ]
+        }
+      ],
+      "median_train_accuracy": 0.3020833432674408,
+      "median_fit_accuracy": 0.3229166567325592
+    },
+    "mixed_fit3": {
+      "train_split": "mixed",
+      "fit_split": "fit3",
+      "train_examples": 1536,
+      "fit_examples": 192,
+      "results": [
+        {
+          "seed": 20261110,
+          "train_accuracy": 0.703125,
+          "fit_accuracy": 0.640625,
+          "train_confusion": [
+            [
+              365,
+              13,
+              4,
+              2
+            ],
+            [
+              45,
+              239,
+              8,
+              92
+            ],
+            [
+              6,
+              4,
+              368,
+              6
+            ],
+            [
+              40,
+              205,
+              31,
+              108
+            ]
+          ],
+          "fit_confusion": [
+            [
+              46,
+              2,
+              0,
+              0
+            ],
+            [
+              11,
+              22,
+              3,
+              12
+            ],
+            [
+              0,
+              1,
+              44,
+              3
+            ],
+            [
+              8,
+              26,
+              3,
+              11
+            ]
+          ]
+        },
+        {
+          "seed": 20261111,
+          "train_accuracy": 1.0,
+          "fit_accuracy": 0.640625,
+          "train_confusion": [
+            [
+              384,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              384,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              384,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              384
+            ]
+          ],
+          "fit_confusion": [
+            [
+              42,
+              1,
+              0,
+              5
+            ],
+            [
+              7,
+              15,
+              0,
+              26
+            ],
+            [
+              1,
+              2,
+              44,
+              1
+            ],
+            [
+              5,
+              20,
+              1,
+              22
+            ]
+          ]
+        },
+        {
+          "seed": 20261112,
+          "train_accuracy": 0.3528645932674408,
+          "fit_accuracy": 0.3177083432674408,
+          "train_confusion": [
+            [
+              13,
+              254,
+              109,
+              8
+            ],
+            [
+              14,
+              236,
+              122,
+              12
+            ],
+            [
+              16,
+              77,
+              281,
+              10
+            ],
+            [
+              14,
+              205,
+              153,
+              12
+            ]
+          ],
+          "fit_confusion": [
+            [
+              5,
+              26,
+              17,
+              0
+            ],
+            [
+              2,
+              30,
+              13,
+              3
+            ],
+            [
+              2,
+              20,
+              25,
+              1
+            ],
+            [
+              2,
+              21,
+              24,
+              1
+            ]
+          ]
+        }
+      ],
+      "median_train_accuracy": 0.703125,
+      "median_fit_accuracy": 0.640625
+    }
+  },
+  "medians": {
+    "train12_fit3": 0.5260416865348816,
+    "train12_fit12": 0.6041666865348816,
+    "train3_fit3": 0.3125,
+    "train3_fit12": 0.3229166567325592,
+    "mixed_fit3": 0.640625
+  },
+  "declared_verdict": {
+    "within_distribution_gap": "train12_fit12 median < 0.80",
+    "coverage_binding_constraint": "train3_fit3 median >= 0.80",
+    "partial_coverage_gain": "0.60 <= train3_fit3 median < 0.80",
+    "coverage_insufficient_to_close_gap": "train3_fit3 median < 0.60"
+  },
+  "conditions": {
+    "head": "CapacityHead width 64, two blocks",
+    "steps": 2000,
+    "seeds": [
+      20261110,
+      20261111,
+      20261112
+    ],
+    "source": "raw 16x48 rgb patches plus 2-d patch coordinates"
+  },
+  "discipline": {
+    "u2_optimizer_steps": 0,
+    "head_optimizer_steps": 30000,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "source_pins": {
+    "scripts/training/probe_a_gate_coverage_20261117.py": "732cfc1423ed9adbc750f183e44e65ed2d1d6b94a6fed04715d76badf0c14184",
+    "scripts/training/probe_a_query_bind_head_20261117.py": "1cbe118fe3fd7c3d5e8d35ad270a6615da4002b6e928fd24092a2a60bc9e6616",
+    "scripts/training/first_a_support_22_5.py": "33d9301f98859934c1413e25765c55e6bc7b64dfa410d65b03f0e5a198041b4c"
+  }
+}

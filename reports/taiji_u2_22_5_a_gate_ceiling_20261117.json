@@ -1,0 +1,622 @@
+{
+  "schema": "taiji-u2-22-5-a-gate-ceiling-v1",
+  "card": "22.5.0.A",
+  "verdict": "ceiling_not_convergent",
+  "why": "the D-43 capacity comparison fixed 2000 full-batch steps; on three-body worlds two of three seeds never fitted train, so its fit numbers were not a ceiling.  This probe stops on train accuracy instead of a step count.",
+  "conditions": {
+    "head": "CapacityHead width 64, two blocks",
+    "adam": {
+      "lr": 0.01,
+      "weight_decay": 0.0001
+    },
+    "step_cap": 6000,
+    "target_train_accuracy": 0.995,
+    "evaluate_every": 250,
+    "seeds": [
+      20261110,
+      20261111,
+      20261112
+    ],
+    "source": "raw 16x48 rgb patches plus 2-d patch coordinates"
+  },
+  "arms": {
+    "train12_fit12": {
+      "train_split": "train12",
+      "fit_split": "fit12",
+      "train_examples": 768,
+      "fit_examples": 192,
+      "results": [
+        {
+          "seed": 20261110,
+          "steps": 2000,
+          "converged": true,
+          "train_accuracy": 1.0,
+          "fit_accuracy": 0.6041666865348816,
+          "train_confusion": [
+            [
+              192,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              192,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              192,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              192
+            ]
+          ],
+          "fit_confusion": [
+            [
+              33,
+              3,
+              1,
+              11
+            ],
+            [
+              1,
+              26,
+              4,
+              17
+            ],
+            [
+              1,
+              0,
+              40,
+              7
+            ],
+            [
+              4,
+              20,
+              7,
+              17
+            ]
+          ],
+          "cpu": 483.0156
+        },
+        {
+          "seed": 20261111,
+          "steps": 500,
+          "converged": true,
+          "train_accuracy": 1.0,
+          "fit_accuracy": 0.6354166865348816,
+          "train_confusion": [
+            [
+              192,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              192,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              192,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              192
+            ]
+          ],
+          "fit_confusion": [
+            [
+              36,
+              7,
+              1,
+              4
+            ],
+            [
+              3,
+              33,
+              2,
+              10
+            ],
+            [
+              3,
+              6,
+              30,
+              9
+            ],
+            [
+              10,
+              12,
+              3,
+              23
+            ]
+          ],
+          "cpu": 119.9688
+        },
+        {
+          "seed": 20261112,
+          "steps": 750,
+          "converged": true,
+          "train_accuracy": 1.0,
+          "fit_accuracy": 0.6875,
+          "train_confusion": [
+            [
+              192,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              192,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              192,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              192
+            ]
+          ],
+          "fit_confusion": [
+            [
+              39,
+              1,
+              0,
+              8
+            ],
+            [
+              0,
+              34,
+              4,
+              10
+            ],
+            [
+              3,
+              4,
+              35,
+              6
+            ],
+            [
+              10,
+              7,
+              7,
+              24
+            ]
+          ],
+          "cpu": 176.7188
+        }
+      ],
+      "median_train_accuracy": 1.0,
+      "median_fit_accuracy": 0.6354166865348816
+    },
+    "train12_fit3": {
+      "train_split": "train12",
+      "fit_split": "fit3",
+      "train_examples": 768,
+      "fit_examples": 192,
+      "results": [
+        {
+          "seed": 20261110,
+          "steps": 2000,
+          "converged": true,
+          "train_accuracy": 1.0,
+          "fit_accuracy": 0.5260416865348816,
+          "train_confusion": [
+            [
+              192,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              192,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              192,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              192
+            ]
+          ],
+          "fit_confusion": [
+            [
+              38,
+              1,
+              4,
+              5
+            ],
+            [
+              15,
+              9,
+              9,
+              15
+            ],
+            [
+              7,
+              2,
+              32,
+              7
+            ],
+            [
+              20,
+              3,
+              3,
+              22
+            ]
+          ],
+          "cpu": 471.3594
+        },
+        {
+          "seed": 20261111,
+          "steps": 500,
+          "converged": true,
+          "train_accuracy": 1.0,
+          "fit_accuracy": 0.484375,
+          "train_confusion": [
+            [
+              192,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              192,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              192,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              192
+            ]
+          ],
+          "fit_confusion": [
+            [
+              34,
+              3,
+              4,
+              7
+            ],
+            [
+              12,
+              15,
+              4,
+              17
+            ],
+            [
+              6,
+              6,
+              24,
+              12
+            ],
+            [
+              16,
+              7,
+              5,
+              20
+            ]
+          ],
+          "cpu": 118.5312
+        },
+        {
+          "seed": 20261112,
+          "steps": 750,
+          "converged": true,
+          "train_accuracy": 1.0,
+          "fit_accuracy": 0.5104166865348816,
+          "train_confusion": [
+            [
+              192,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              192,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              192,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              192
+            ]
+          ],
+          "fit_confusion": [
+            [
+              32,
+              3,
+              2,
+              11
+            ],
+            [
+              9,
+              19,
+              2,
+              18
+            ],
+            [
+              8,
+              6,
+              15,
+              19
+            ],
+            [
+              7,
+              7,
+              2,
+              32
+            ]
+          ],
+          "cpu": 174.8125
+        }
+      ],
+      "median_train_accuracy": 1.0,
+      "median_fit_accuracy": 0.5104166865348816
+    },
+    "train3072_fit3": {
+      "train_split": "train3072",
+      "fit_split": "fit3",
+      "train_examples": 3072,
+      "fit_examples": 192,
+      "results": [
+        {
+          "seed": 20261110,
+          "steps": 3250,
+          "converged": true,
+          "train_accuracy": 1.0,
+          "fit_accuracy": 0.640625,
+          "train_confusion": [
+            [
+              768,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              768,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              768,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              768
+            ]
+          ],
+          "fit_confusion": [
+            [
+              38,
+              0,
+              1,
+              9
+            ],
+            [
+              7,
+              16,
+              3,
+              22
+            ],
+            [
+              0,
+              1,
+              42,
+              5
+            ],
+            [
+              7,
+              9,
+              5,
+              27
+            ]
+          ],
+          "cpu": 3367.8594
+        },
+        {
+          "seed": 20261111,
+          "steps": 2000,
+          "converged": true,
+          "train_accuracy": 0.9964192509651184,
+          "fit_accuracy": 0.8333333134651184,
+          "train_confusion": [
+            [
+              767,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              766,
+              0,
+              2
+            ],
+            [
+              0,
+              0,
+              767,
+              1
+            ],
+            [
+              1,
+              5,
+              1,
+              761
+            ]
+          ],
+          "fit_confusion": [
+            [
+              40,
+              1,
+              2,
+              5
+            ],
+            [
+              1,
+              39,
+              1,
+              7
+            ],
+            [
+              2,
+              2,
+              44,
+              0
+            ],
+            [
+              5,
+              4,
+              2,
+              37
+            ]
+          ],
+          "cpu": 2099.0781
+        },
+        {
+          "seed": 20261112,
+          "steps": 6000,
+          "converged": false,
+          "train_accuracy": 0.91015625,
+          "fit_accuracy": 0.6614583134651184,
+          "train_confusion": [
+            [
+              768,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              668,
+              0,
+              100
+            ],
+            [
+              0,
+              0,
+              766,
+              2
+            ],
+            [
+              0,
+              171,
+              3,
+              594
+            ]
+          ],
+          "fit_confusion": [
+            [
+              38,
+              0,
+              3,
+              7
+            ],
+            [
+              0,
+              15,
+              4,
+              29
+            ],
+            [
+              2,
+              2,
+              42,
+              2
+            ],
+            [
+              1,
+              9,
+              6,
+              32
+            ]
+          ],
+          "cpu": 6212.3438
+        }
+      ],
+      "median_train_accuracy": 0.9964192509651184,
+      "median_fit_accuracy": 0.6614583134651184
+    }
+  },
+  "medians": {
+    "train12_fit12": 0.6354166865348816,
+    "train12_fit3": 0.5104166865348816,
+    "train3072_fit3": 0.6614583134651184
+  },
+  "declared_verdict": {
+    "ceiling_not_convergent": "any arm below 0.99 train accuracy at the step cap",
+    "data_scale_binding": "train3072_fit3 median fit >= 0.80",
+    "within_distribution_only": "train12_fit12 median fit >= 0.80 only",
+    "fixture_not_learnable_at_scale": "both medians < 0.80"
+  },
+  "discipline": {
+    "u2_optimizer_steps": 0,
+    "head_optimizer_steps": 17750,
+    "check_reads": 0,
+    "final_reads": 0,
+    "project_data_reads": 0
+  },
+  "cost": {
+    "cpu": 13688.8125,
+    "wall": 1340.0197
+  },
+  "source_pins": {
+    "scripts/training/probe_a_gate_ceiling_20261117.py": "883f5dfb3f00a3b434371cf92553c10e5ad0d1928a6f39b6dc68cff9896ffdd2",
+    "scripts/training/probe_a_gate_coverage_20261117.py": "732cfc1423ed9adbc750f183e44e65ed2d1d6b94a6fed04715d76badf0c14184",
+    "scripts/training/probe_a_query_bind_head_20261117.py": "1cbe118fe3fd7c3d5e8d35ad270a6615da4002b6e928fd24092a2a60bc9e6616",
+    "scripts/training/first_a_support_22_5.py": "33d9301f98859934c1413e25765c55e6bc7b64dfa410d65b03f0e5a198041b4c"
+  }
+}
