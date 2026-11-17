@@ -10,6 +10,7 @@
 
 | 编号 | 类型 | 一句话 | 提交 |
 |---|---|---|---|
+| D-20261117-17 | 记忆定位校正（工作记忆 vs 长期/情景/联想） | owner 指出"长期记忆的定位是人脑的情景记忆和联想吗，别把定位搞错，无限上下文是不可能的"。校正：`22.5.W／W.1／W.1.1` 是 **4 槽有界工作记忆／延迟缓冲**（单 episode、delay 0–8），**不是**长期/情景/联想记忆，**不承诺无限上下文**；不做跨会话存储/巩固/提取/遗忘/来源证据。已改 W/W.1/W.1.1 设计/结果卡、MAINLINE／MASTER-PLAN／03／包22计划；W.1.1 冻结/定价不变，训练授权待 owner；长期记忆另轴 | 见本文件 Git 历史 |
 | D-20261117-16 | 设计＋定价冻结（`22.5.W.1.1` 可学习门控记忆） | owner 授权冻结契约＋定价。`LearnedMemoryGraph`：门控写入/保持/读出，基础图与编码冻结，只训 **5 张量/约 476 标量**；smoke **21/21**、0 步；定价实测 **35.1562 CPU**、帽 **70.3125/140.625**；契约 **frozen**、authority null、criteria `ac268d9f…`、6 pin；契约测试 **11 passed**；`--run` 授权前拒绝；出口 fit≥0.90/train≥0.95/lesion≤0.60；待训练授权 | 见本文件 Git 历史 |
 | D-20261117-15 | 结构记忆探针（`22.5.W.1`） | owner 选 W.1。`MemoryRouteBGraph` 固定 4 槽样本写入/保持/读取，3 出生图 seed：normal fit **1.0/1.0/1.0**、lesion **0.53125**、test-only **0.53125**、delay **0–8** 全保持、正对照 1.0、置换 0.0；`m` 正常逐位=样本 one-hot、lesion 为零；16.1875 CPU／0 图步／封存 0；判 **`structural_memory_viable`**（信息路径存在；手写 oracle，不是学习结果）；下一轴 W.1.1 可学习门控设计＋定价，待 owner | 见本文件 Git 历史 |
 | D-20261117-14 | DMS 零训练可行性（`22.5.W`） | owner 授权零训练可行性。`unit-input-dms-v1` train 64/fit 32、属性×位置 disjoint、标签各半、oracle 100%；3 出生图 seed 的 normal/lesion/test-only fit 全同值 **0.5625/0.5938/0.5938**，delay **0/1/2/4/8** 全 **0.56–0.66**；正对照 1.0、置换 0.41–0.44；判 **`task_not_learnable`**，缺口＝**状态不保留样本**（delay=0 也不行）；21.4531 CPU／0 图步／封存 0；不进父训练；下一轴 W.1 持久记忆机制设计（建议）/关父获取线 | 见本文件 Git 历史 |
@@ -4669,6 +4670,19 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **7. 唯一后继**：**owner 训练授权**（3 seed×2000 更新、只训 5 张量/约 476 标量、帽 **70.3125 CPU／140.625 wall**、授权用完即止）。授权后 `--run`→`--recover`→`--verify`，按出口结案；授权前 **0 训练新增**、0 能力、0 父；check② 不读、22.6 不解锁；字节世界 effort 保持全局收束。
 
 **8. 文档门与行尾（本项写完后四门各跑一遍）**：① `audit_plan_single_mainline.py` → **`status: ok`**、rc **0**。② `audit_taiji_ledger_marker_uniqueness.py` → rc **0**、`rows_counted` **763**、`distinct_markers` **763**、`max_marker` **1139**、`duplicates` **{}**、`nonmonotonic_runs` **15**、`ledger_markers_unique` **true**；`D-20261117-16` 独立扫描＝索引行 **1**＋正文标题 **1**、总命中 **5**。③ `audit_taiji_ledger_cited_reports_are_tracked.py` → rc **1**、`not_tracked` 与 `missing_on_disk` **各 1 条且同指别线既有** `reports/taiji_u2_bind2_graph_20261115.json`；`tracked_reports_total` **3974**（+2＝smoke／price）、`cited_reports_total` **1207**（+2）、`cited_as_reading` **1196**、`malformed` **3**／`planned_output` **8**／`superseded_citation` **2** 均不变。④ `check_plans_markdown_links.py --json` → rc **1**、`files` **1003**（+1＝设计卡）、`links_checked` **9142**（+20）、`problems` **2416**（**与基线同数**）、kinds `missing_file` **2331**＋`missing_anchor` **85**、**现行层 6 枚**＝03 第 **384／409／1784／1792／2816** 行＋`07_MINI_MODEL_DELIVERY.md` 第 **5** 行（较上批 +2）⇒ **本批 0 新增坏链**。**行尾**：十二件 `crlf` **0**、`lone_cr` **0**、**无 BOM**、均以换行结尾（模块 3,917 B／runner 24,950 B／测试 4,542 B／契约 2,666 B／smoke 2,692 B／price 612 B／设计卡 3,830 B／包22计划 113,356 B／MAINLINE 63,786 B／MASTER-PLAN 125,518 B／03 790,774 B／台账 777,567 B）。**暂存面**：精确 `git add` 十二件，**未用目录形**；别线未跟踪件一枚未暂存。**推送**：本批**不推**——提交后未推 **17 笔**。
+
+### D-20261117-17 记忆定位校正（工作记忆 vs 长期/情景/联想）
+
+**1. 触发**：owner 在 W.1.1 训练授权弹窗中指出：「这个长期记忆的定位是人脑的情景记忆，和联想吗，别把定位搞错，无限上下文是不可能的」。这是**定位校正**，不是新实验；**0 训练新增**。
+
+**2. 校正后的定位**：`22.5.W／W.1／W.1.1` 是 **4 槽有界工作记忆／延迟缓冲**——单 episode、delay 0–8；**不是**人脑情景记忆、**不是**联想长期记忆、**不承诺无限上下文**；不做跨会话存储、巩固、提取、遗忘或来源证据。长期／情景／联想记忆是另一条轴，当前未启动；任何长期记忆都必须是**有界、选择性、可巩固/可提取/可遗忘**的机制，不能靠"无限上下文"。
+
+**3. 已改文档**：[W 设计卡](DESIGN-TAIJI_U2_PARENT_ACQUISITION_20261117.md)（加定位声明）、[W 结果卡](RESULT-TAIJI_U2_W_DMS_FEASIBILITY_20261117.md)（加定位）、[W.1 设计卡](DESIGN-TAIJI_U2_W1_MEMORY_20261117.md)（标题与定位改为"工作记忆缓冲"）、[W.1 结果卡](RESULT-TAIJI_U2_W1_MEMORY_20261117.md)（标题与定位、能签/不能签）、[W.1.1 设计卡](DESIGN-TAIJI_U2_W11_LEARNED_MEMORY_20261117.md)（标题与定位、父门/出口措辞）、MAINLINE／MASTER-PLAN 头、03、包22计划。**历史台账 D-14/15/16 原文不改**，由本项校正定位。
+
+**4. 当前状态**：W.1.1 设计＋定价仍冻结（smoke 21/21、price 35.1562、帽 70.3125／140.625、契约测试 11 passed、`training_authority=null`）；**训练未授权、未启动**。本校正不改变契约的判据/价格，只改变**定位与措辞**；契约 `criteria.scope` 仍为"DMS parent acquisition only"，不含长期记忆声明。
+
+**5. 唯一后继**：owner 决定——① 按**工作记忆父候选**授权 W.1.1 训练（3 seed×2000、帽 70.3125／140.625；只签 DMS 工作记忆父，不签长期/情景/联想记忆）；或 ② 暂停 W 线，另立**长期/情景/联想记忆**设计轴（有界存储、巩固、提取、遗忘、来源证据；不承诺无限上下文）。裁决前 **0 训练新增**、0 能力、0 父；check② 不读、22.6 不解锁；字节世界 effort 保持全局收束。
+
 
 
 

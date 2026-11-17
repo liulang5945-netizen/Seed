@@ -1,13 +1,14 @@
-# 22.5.W.1.1 设计卡：可学习门控记忆（DMS 父获取）
+# 22.5.W.1.1 设计卡：可学习工作记忆门控（DMS 父获取；非长期/情景/联想记忆）
 
-> 卡号：`22.5.W.1.1`｜日期：2026-11-17｜状态：**设计＋定价冻结完成**（smoke **21/21**、price **35.1562 CPU**、帽 **70.3125 CPU／140.625 wall**、契约测试 **11 passed**、`training_authority=null`），**停在 owner 训练授权**｜性质：22.5.W 父获取的训练卡，不是 U/V 读路径延续。
+> 卡号：`22.5.W.1.1`｜日期：2026-11-17｜状态：**设计＋定价冻结完成**（smoke **21/21**、price **35.1562 CPU**、帽 **70.3125 CPU／140.625 wall**、契约测试 **11 passed**、`training_authority=null`），**停在 owner 训练授权**｜性质：22.5.W 工作记忆父候选的训练卡，不是长期/情景/联想记忆，也不是 U/V 读路径延续。
+> **定位（owner 2026-11-17 校正）**：只学一个 **4 槽有界工作记忆**的写入/保持/读出（单 episode、delay 0–8）；不做跨会话存储、巩固、提取、遗忘或来源证据，**不承诺无限上下文**；长期记忆是另一条轴。
 > 上游：[W.1 结构记忆结果](RESULT-TAIJI_U2_W1_MEMORY_20261117.md)（`structural_memory_viable`：normal 1.0、lesion 0.53125、delay 0–8）｜[DMS 可行性](RESULT-TAIJI_U2_W_DMS_FEASIBILITY_20261117.md)（原图 `task_not_learnable`）。
 
 ## 1 单问题
 
 结构 oracle 证明"有 4 槽持久状态就能在 D=4 后读出样本"；本卡问：
 
-> **把固定写入换成可学习门控、基础图与编码冻结，只训门控与读出，能否在未见组合上取得 DMS 父？**
+> **把固定写入换成可学习门控、基础图与编码冻结，只训门控与读出，能否在未见组合上取得 DMS 工作记忆父？**
 
 ## 2 机制
 
@@ -23,9 +24,9 @@
 
 ## 3 门与出口
 
-- **父门**（3 seed 全过）：fit（未见组合）**≥0.90**、train **≥0.95**、记忆 lesion（样本阶段置空）**≤0.60**。
+- **父门**（3 seed 全过）：fit（未见组合）**≥0.90**、train **≥0.95**、工作记忆 lesion（样本阶段置空）**≤0.60**。
 - 工程：中性出生、可训恰 5 张量、checkpoint 往返、独立恢复、成本 ≤实测帽。
-- 出口按序：`budget_stop`→`engineering_failure`→`parent_not_acquired`→`memory_lesion_failed`→`parent_acquired`。**只签 DMS 父资格**，不签自然中文/能力/check②/22.6。
+- 出口按序：`budget_stop`→`engineering_failure`→`parent_not_acquired`→`memory_lesion_failed`→`parent_acquired`。**只签 DMS 工作记忆父资格**，不签自然中文/能力/check②/22.6，也不签长期/情景/联想记忆。
 
 ## 4 验证与定价（已完成，零训练）
 

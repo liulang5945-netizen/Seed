@@ -1,6 +1,7 @@
 # 22.5.W DMS 零训练可行性结果（`task_not_learnable`；缺口定位＝状态不保留样本）
 
 > 卡号：`22.5.W`｜日期：2026-11-17｜正式判定：**`task_not_learnable`**｜性质：**零训练可行性复核**，不是训练结果。
+> **定位（owner 2026-11-17 校正）**：DMS 是**工作记忆**任务（单 episode、delay 0–8）；本卡不是长期/情景/联想记忆，也不承诺无限上下文。
 > 设计：[DESIGN-TAIJI_U2_PARENT_ACQUISITION_20261117.md](DESIGN-TAIJI_U2_PARENT_ACQUISITION_20261117.md)｜编码：[taiji/u2_unit_input_dms.py](../../taiji/u2_unit_input_dms.py)｜探针：[probe_u2_w_dms_20261117.py](../../scripts/training/probe_u2_w_dms_20261117.py)｜报告：[reports/taiji_u2_w_dms_feasibility_20261117.json](../../reports/taiji_u2_w_dms_feasibility_20261117.json)。
 > 纪律：**0 图优化器步、0 权重写入、只读合成 train/fit、封存 0**；实耗 **21.4531 CPU／21.688 wall**（自设帽 120／240 内）。
 
