@@ -1,0 +1,54 @@
+{
+  "schema": "taiji-u2-22-5-a-pixel-salience-price-v1",
+  "card": "22.5.0.A",
+  "status": "priced_no_training",
+  "neutral_at_birth": {
+    "max_abs_first_step_delta_zero_init": 0.0,
+    "entries_with_different_support": 0,
+    "max_abs_first_step_delta_after_1e3_perturbation": 0.0007224082946777344,
+    "green": true,
+    "red": true
+  },
+  "gradients": {
+    "norms": {
+      "position": 6.48e-08,
+      "null": 1.545e-07,
+      "byte.weight": 7.02e-08,
+      "text.weight": 1.693e-06,
+      "text.bias": 2.07e-07,
+      "query.weight": 1.3527e-06,
+      "query.bias": 5.447e-07,
+      "pixel.weight": 7.46e-07,
+      "pixel.bias": 1.228e-07,
+      "out.weight": 0.1449821591,
+      "out.bias": 0.1454698443
+    },
+    "zero_grad_tensors": []
+  },
+  "inherited_parameters_untouched": true,
+  "readout_parameters": 6056,
+  "cost": {
+    "cpu_per_example_switch_on": 0.960938,
+    "cpu_per_example_switch_off": 0.992188,
+    "increment": -0.03125,
+    "repeats": 5,
+    "batch_examples": 2
+  },
+  "budget": {
+    "prototype_example_updates": 4600000,
+    "gate_example_updates": 512,
+    "cpu_prototype": 4420312.5,
+    "cpu_gate": 492.0,
+    "shortfall_ratio": 8984.4,
+    "note": "prototype example-updates are full-batch steps times worlds; this is a scale, not an optimum"
+  },
+  "discipline": {
+    "u2_optimizer_steps": 0,
+    "check_reads": 0,
+    "final_reads": 0,
+    "source_files_modified": 0
+  },
+  "source_pins": {
+    "scripts/training/price_a_pixel_salience_20261117.py": "1ddc166c2fb93d6d2cb7a739be01e1ea85ac2e54cbc938f46b1580b4cff0c96e"
+  }
+}
