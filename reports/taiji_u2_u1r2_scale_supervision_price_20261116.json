@@ -1,0 +1,196 @@
+{
+  "schema": "taiji-u2-u1r2-price-v2",
+  "card": "22.5.U.1r2",
+  "phase": "price",
+  "criteria_sha256": "c8f2d98b8a539013aa465a09978a7325e95f3a94ad3f4369ad6a7fc90905eb3f",
+  "verdict": "price_measured_within_design",
+  "samples": {
+    "update_epoch": [
+      0.00366211,
+      0.00341797,
+      0.00341797
+    ],
+    "evaluation_face": [
+      0.00048828,
+      0.00048828,
+      0.00048828
+    ],
+    "intervention_item": [
+      0.00390625,
+      0.00390625,
+      0.00390625
+    ]
+  },
+  "per_update_cpu": 0.00366211,
+  "per_eval_cpu": 0.00048828,
+  "per_intervention_item_cpu": 0.00390625,
+  "timing_method": "batched: one full train epoch (64 updates, 48 of them supervised), one fit face (32 forwards) and 8 intervention items, each divided by its batch size",
+  "timing_face": "birth graph (c=0,w=0); per_intervention_item includes the history forward",
+  "seeds": 3,
+  "updates_per_seed": 384,
+  "plain_item_evals_per_seed": 288,
+  "intervention_items_per_seed": 32,
+  "measured_cpu": 5.0156,
+  "cap_margin": 2.0,
+  "cap_cpu": 10.0312,
+  "cap_wall": 20.0625,
+  "design_cap_cpu": 600.0,
+  "dose_measurement": {
+    "optimizer_steps": 18,
+    "per_seed": {
+      "2026111601": {
+        "arms": {
+          "uniform_lr": {
+            "steps": 3,
+            "w_q_relative_displacement": 0.008599414638821516,
+            "w_q_relative_displacement_per_step": 0.002866471546273839,
+            "log_tau_displacement": 0.0024761541221262643,
+            "log_tau_displacement_per_step": 0.0008253847073754214,
+            "projected_relative_displacement_over_run": 1.100725073769154,
+            "projected_log_tau_over_run": 0.31694772763216184,
+            "log_tau_rate": 0.001,
+            "w_q_rate": 0.001
+          },
+          "r2_groups": {
+            "steps": 3,
+            "w_q_relative_displacement": 0.0171401746503735,
+            "w_q_relative_displacement_per_step": 0.0057133915501245,
+            "log_tau_displacement": 0.1020684818370538,
+            "log_tau_displacement_per_step": 0.03402282727901793,
+            "projected_relative_displacement_over_run": 2.193942355247808,
+            "projected_log_tau_over_run": 13.064765675142887,
+            "log_tau_rate": 0.041420056,
+            "w_q_rate": 0.002
+          }
+        },
+        "log_tau_needed": 7.952650771584998,
+        "r2_groups_reaches_scale": true,
+        "uniform_lr_reaches_scale": false
+      },
+      "2026111602": {
+        "arms": {
+          "uniform_lr": {
+            "steps": 3,
+            "w_q_relative_displacement": 0.007675051373627673,
+            "w_q_relative_displacement_per_step": 0.002558350457875891,
+            "log_tau_displacement": 0.0027030391216766795,
+            "log_tau_displacement_per_step": 0.0009010130405588931,
+            "projected_relative_displacement_over_run": 0.9824065758243421,
+            "projected_log_tau_over_run": 0.345989007574615,
+            "log_tau_rate": 0.001,
+            "w_q_rate": 0.001
+          },
+          "r2_groups": {
+            "steps": 3,
+            "w_q_relative_displacement": 0.015369016617059946,
+            "w_q_relative_displacement_per_step": 0.005123005539019982,
+            "log_tau_displacement": 0.11767648344820447,
+            "log_tau_displacement_per_step": 0.039225494482734824,
+            "projected_relative_displacement_over_run": 1.9672341269836733,
+            "projected_log_tau_over_run": 15.062589881370172,
+            "log_tau_rate": 0.043513149,
+            "w_q_rate": 0.002
+          }
+        },
+        "log_tau_needed": 8.354524580834456,
+        "r2_groups_reaches_scale": true,
+        "uniform_lr_reaches_scale": false
+      },
+      "2026111603": {
+        "arms": {
+          "uniform_lr": {
+            "steps": 3,
+            "w_q_relative_displacement": 0.009682056430951887,
+            "w_q_relative_displacement_per_step": 0.003227352143650629,
+            "log_tau_displacement": 0.0025805434054181706,
+            "log_tau_displacement_per_step": 0.0008601811351393902,
+            "projected_relative_displacement_over_run": 1.2393032231618415,
+            "projected_log_tau_over_run": 0.33030955589352584,
+            "log_tau_rate": 0.001,
+            "w_q_rate": 0.001
+          },
+          "r2_groups": {
+            "steps": 3,
+            "w_q_relative_displacement": 0.0194273264970415,
+            "w_q_relative_displacement_per_step": 0.006475775499013833,
+            "log_tau_displacement": 0.10226644401377114,
+            "log_tau_displacement_per_step": 0.034088814671257045,
+            "projected_relative_displacement_over_run": 2.486697791621312,
+            "projected_log_tau_over_run": 13.090104833762705,
+            "log_tau_rate": 0.039739542,
+            "w_q_rate": 0.002
+          }
+        },
+        "log_tau_needed": 7.629992140112775,
+        "r2_groups_reaches_scale": true,
+        "uniform_lr_reaches_scale": false
+      }
+    },
+    "note": "3-step displacement extrapolated linearly; Adam's per-coordinate step is bounded by lr"
+  },
+  "rotation_requirement": {
+    "2026111601": {
+      "labelled_train_scenes": 48,
+      "birth_w_q_frobenius": 1.4161221338787644,
+      "fitted_w_q_frobenius": 4026.1787976369974,
+      "cosine_birth_to_fitted": 0.17609024595749684,
+      "angle_degrees": 79.85789007798752,
+      "needed_relative_displacement": 1.2836742219445736,
+      "solution_nullity": 46,
+      "bound_note": "distance to the minimum-norm solution; the focusing set is larger"
+    },
+    "2026111602": {
+      "labelled_train_scenes": 48,
+      "birth_w_q_frobenius": 1.485104594123792,
+      "fitted_w_q_frobenius": 6310.749854557393,
+      "cosine_birth_to_fitted": 0.22360761214399938,
+      "angle_degrees": 77.0789857448869,
+      "needed_relative_displacement": 1.2461078507545007,
+      "solution_nullity": 46,
+      "bound_note": "distance to the minimum-norm solution; the focusing set is larger"
+    },
+    "2026111603": {
+      "labelled_train_scenes": 48,
+      "birth_w_q_frobenius": 1.3916453462770788,
+      "fitted_w_q_frobenius": 2865.444855585647,
+      "cosine_birth_to_fitted": 0.02480529860862705,
+      "angle_degrees": 88.5786152910696,
+      "needed_relative_displacement": 1.3965634259791948,
+      "solution_nullity": 46,
+      "bound_note": "distance to the minimum-norm solution; the focusing set is larger"
+    }
+  },
+  "design_feasibility": {
+    "2026111601": {
+      "measured_projected_relative_displacement": 2.193942355247808,
+      "needed_relative_displacement_upper_bound": 1.2836742219445736,
+      "rotation_reachable": true,
+      "scale_reachable": true
+    },
+    "2026111602": {
+      "measured_projected_relative_displacement": 1.9672341269836733,
+      "needed_relative_displacement_upper_bound": 1.2461078507545007,
+      "rotation_reachable": true,
+      "scale_reachable": true
+    },
+    "2026111603": {
+      "measured_projected_relative_displacement": 2.486697791621312,
+      "needed_relative_displacement_upper_bound": 1.3965634259791948,
+      "rotation_reachable": true,
+      "scale_reachable": true
+    }
+  },
+  "low_tick_limit": "process_time resolution ~0.0156s (P3.9/U.1); single-call timing quantized to 0.0 and produced a 1.5s cap lottery, so v2 times batches instead",
+  "discipline": {
+    "optimizer_steps": 210,
+    "project_task_data_reads": 1,
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "models_discarded": true
+  },
+  "cost": {
+    "cpu": 1.7969,
+    "wall": 1.985
+  }
+}

@@ -1,0 +1,373 @@
+{
+  "schema": "taiji-u2-u1r2-scale-supervision-v1",
+  "card": "22.5.U.1r2",
+  "date": "2026-11-17",
+  "design_started": "2026-11-16",
+  "status": "frozen",
+  "training_authority": "owner 2026-11-17 指令「接最新进度推进，按计划推进」授权按 read_3seed 实价帽 10.0312 CPU／20.0625 wall 执行（3 seed x 384 更新，零封存读取；本次授权用完即止，不外推到下一卡）",
+  "identity": "taiji-u2-unit-core-b-v1",
+  "core_version": "unit-core-b-v1",
+  "revision": 2,
+  "revision_limit": 2,
+  "parent_card": "22.5.U.1r1",
+  "revision_basis": "r1 located negative (attention never focused, logit range 0.025-0.203 nats vs ln16 ceiling); owner ruled option 乙 = logit scale correction + train-label attention supervision; two zero-training design probes priced the fix and rejected the larger-W_q-init form",
+  "owner_ruling": "2026-11-16 乙：logit 尺度修正＋训练标签注意力监督（选甲/乙＝先做设计与定价，零训练；跑之前再按实价请一次授权）",
+  "data_root": "data/experiments/taiji_u2/first_a/20261112T074836Z/data.bin",
+  "data_digest": "40813b4cc8ffec0c3ae5639941b373c139422b4ccbaa34790de34a9e1149d214",
+  "encoding_contract_identity": "unit-input-column-color-v1",
+  "encoding_contract_digest": "00319fff32cf1ac14a89c6999c8ea4fe63f0ea1b26924eb6e73baa45877c0a55",
+  "criteria": {
+    "fit_gate": 0.8,
+    "train_gate": 0.9,
+    "distinct_min": 3,
+    "control_agreement_max": 0.5,
+    "intervention_change_min_fraction": 0.5,
+    "seeds": [
+      2026111601,
+      2026111602,
+      2026111603
+    ],
+    "updates_per_seed": 384,
+    "learning_rate": 0.001,
+    "query_lr": {
+      "parameter": "W_q",
+      "multiplier": 2.0,
+      "effective_lr": 0.002,
+      "basis": "measured Adam dose at lr 0.001 projects a relative W_q displacement of 1.0970/0.9836/1.2434 over 384 updates, while the birth-to-focusing-direction angle (79.86/77.08/88.58 degrees) needs 1.2837/1.2461/1.3966; 2.0x clears the worst shortfall (1.267x) with margin",
+      "value_side_lr_unchanged": true,
+      "verification": "price measures the dose under the real parameter groups and reports rotation_reachable per seed"
+    },
+    "readout": "question_conditioned_column_attention_with_learnable_logit_temperature",
+    "graph": "taiji.u2_unit_temperature_readout.TemperaturePositionGraph",
+    "route": "B_position_temp",
+    "dtype": "float64",
+    "gates": "ones[T,n_units]; lifecycle cuts via active_gate",
+    "controls": [
+      "rgb_zero",
+      "fixed_question"
+    ],
+    "interventions": [
+      "without_edges",
+      "permute_source",
+      "remove_history",
+      "cut_h"
+    ],
+    "neutral_birth": "exact output identity + new unit r nonzero task gradient after credit",
+    "recovery": "independent-process capsule restore bit-exact + tamper rejection",
+    "encoding_contract": "unit-input-column-color-v1 frozen unchanged",
+    "chain_anchor": "at log_tau=0 the subclass reproduces PositionRouteBGraph readout/attention/attended/next_state bit-for-bit (atol 0)",
+    "logit_temperature": {
+      "parameter": "log_tau",
+      "numel": 1,
+      "init": 0.0,
+      "formula": "attn_scale = (1/sqrt(hidden_dim)) * exp(log_tau)",
+      "base_lr": 0.001,
+      "scale_target_by_seed": {
+        "2026111601": 2843.101383,
+        "2026111602": 4249.363903,
+        "2026111603": 2059.033836
+      },
+      "learning_rate_by_seed": {
+        "2026111601": 0.041420056,
+        "2026111602": 0.043513149,
+        "2026111603": 0.039739542
+      },
+      "dose_margin": 2.0,
+      "target_derivation": "scale_target = lstsq_train_targets.w_q_frobenius / birth W_q frobenius, per seed, from the focus-feasibility report; learning_rate = dose_margin * ln(scale_target) / updates_per_seed",
+      "why_outside_W_q": "at the norm focus needs, a random birth direction saturates softmax (max attention 0.55/0.71/0.99) and corrupts the task-gradient direction (cosine 0.30/0.35/-0.31); Adam's 3.072 L2 displacement bound is 0.05-0.11% of that norm, so rotation is unreachable"
+    },
+    "supervision": {
+      "loss": "soft-target cross entropy on the attention vector",
+      "target": "queried-entity colour mass per column, normalised (oracle_soft)",
+      "source": "frozen encoding unit-input-column-color-v1, the train scene's own rgb channel",
+      "finer_than_task_label": true,
+      "task_label_width": 4,
+      "target_width": 16,
+      "applied_to": "labelled train scenes only",
+      "labelled_train_scenes_expected": 48,
+      "train_scenes_without_supervision_expected": 16,
+      "fit_or_check_used_as_supervision": false,
+      "unit_prelabeling": "none: the loss is a training signal, not an architectural label",
+      "weight": 1.0,
+      "log_clamp": 1e-12,
+      "credit_restriction": [
+        "W_q",
+        "log_tau"
+      ],
+      "credit_restriction_reason": "focus credit on units.p/input_projection/rgb is 71-1375x task credit at scale; restricting it keeps the value-side representation trained by the task loss alone",
+      "credit_restriction_machine_check": "combined gradient equals task gradient on every parameter plus weight*focus gradient only on W_q and log_tau (max abs <= 1e-12)"
+    },
+    "focus_gate": {
+      "face": "fit",
+      "answer_mass_min": 0.5,
+      "effective_columns_max": 8.0,
+      "labelled_fit_scenes_expected": 24,
+      "fit_scenes_expected": 32,
+      "instrument": "scripts/training/probe_u1r2_scale_focus_20261116.py focus_stats",
+      "ruler_dynamic_range": "false at birth, true under oracle_soft forced attention (checked in smoke)"
+    },
+    "scope": "read prerequisite only; correction/retention=U.2, formal A/B=U.3",
+    "exits": [
+      {
+        "order": 1,
+        "verdict": "budget_stop",
+        "condition": "cap_cpu or cap_wall exceeded before all seeds complete"
+      },
+      {
+        "order": 2,
+        "verdict": "engineering_failure",
+        "condition": "fewer arms than seeds without a budget stop, or any smoke/recover/verify check uncovered"
+      },
+      {
+        "order": 3,
+        "verdict": "focus_not_met",
+        "condition": "聚焦仍未达标：any seed's fit answer_mass < 0.5 or fit effective_columns > 8.0"
+      },
+      {
+        "order": 4,
+        "verdict": "focus_met_value_failed",
+        "condition": "聚焦达标而值不达标：all seeds meet the focus gate but any read gate fails"
+      },
+      {
+        "order": 5,
+        "verdict": "read_prerequisite_passed",
+        "condition": "all seeds meet both the focus gate and every read gate"
+      }
+    ],
+    "exit_discipline": "mutually exclusive, evaluated in the declared order; no secondary metric may replace a frozen criterion"
+  },
+  "plan": {
+    "design_cap_cpu": 600.0,
+    "design_cap_wall": 1200.0,
+    "cap_cpu": 10.0312,
+    "cap_wall": 20.0625,
+    "updates_per_seed": 384,
+    "per_update_cpu": 0.00366211,
+    "per_eval_cpu": 0.00048828,
+    "pricing_note": "cap_cpu/cap_wall stay null until price measures them; run mode refuses to start without them and without training_authority",
+    "per_intervention_item_cpu": 0.00390625,
+    "price_report": "reports/taiji_u2_u1r2_scale_supervision_price_20261116.json"
+  },
+  "result": {
+    "verdict": "focus_not_met",
+    "verdict_scope": "task-level frozen gates: seed2026111602 fit answer_mass 0.389147 < 0.5; read gates 0/3; no parent/capability/check2/22.6 claim",
+    "mechanical_exit_conflict": "a literal reading of exit 2 ('any verify check uncovered') would record engineering_failure because verify is 15/18; the three red checks are all the same birth-only invariant temperature_starts_at_zero applied to trained capsules (structurally false for every trained capsule) while all substantive verify checks reproduce the run values; disclosed, not used to replace the task exit; owner may prefer the literal reading without changing the substantive readings or the exhausted-revision next step",
+    "result_card": "plans/reference/RESULT-TAIJI_U2_U1R2_SCALE_SUPERVISION_20261117.md",
+    "run_report": "reports/taiji_u2_u1r2_scale_supervision_run_20261116.json",
+    "recover_report": "reports/taiji_u2_u1r2_scale_supervision_recover_20261116.json",
+    "verify_report": "reports/taiji_u2_u1r2_scale_supervision_verify_20261116.json",
+    "authorized_by": "owner 2026-11-17 directive to continue per plan; authorization consumed by this run and not extended to the next card",
+    "execution": {
+      "run_cpu_seconds": 8.3281,
+      "run_wall_seconds": 8.532,
+      "cap_cpu": 10.0312,
+      "cap_wall": 20.0625,
+      "recover_cpu_seconds": 0.1719,
+      "recover_wall_seconds": 35.735,
+      "verify_cpu_seconds": 0.3906,
+      "verify_wall_seconds": 0.39,
+      "recover": "15/15 recovery_verified (independent-process capsule restore, tamper rejection, next-step gradient, log_tau gradient)",
+      "verify": "15/18 verify_failed; all three red are seed*_B_identity caused by temperature_starts_at_zero at run_u1r2_scale_supervision_20261116.py:231 on trained capsules; fit/train/focus/log_tau/capsule-digest checks all match the run",
+      "check_reads": 0,
+      "final_reads": 0,
+      "confirm_reads": 0,
+      "sealed_partitions_read": [],
+      "pregate_contract_tests": "22 passed in 12.98s",
+      "start_bundles_rebuilt_and_verified": "recover guards re-hashed the three pinned start bundles after the run rewrote them; all match start_bundle_sha256"
+    },
+    "readings_by_seed": {
+      "2026111601": {
+        "fit_accuracy": 0.375,
+        "train_accuracy": 0.328125,
+        "before_fit_accuracy": 0.25,
+        "before_train_accuracy": 0.25,
+        "fit_distinct": 3,
+        "train_distinct": 3,
+        "rgb_zero_agreement": 0.46875,
+        "fixed_question_agreement": 0.6875,
+        "focus_answer_mass": 0.730227,
+        "focus_effective_columns": 4.305893,
+        "focus_met": true,
+        "log_tau_final": 4.576304200496764,
+        "logit_scale_final": 97.15466570904618,
+        "logit_range_mean": 10.482176,
+        "entropy_fraction_of_uniform_ceiling": 0.423197,
+        "task_loss_first": 1.358543,
+        "task_loss_final": 1.472254,
+        "focus_loss_first": 2.765688,
+        "focus_loss_final": 0.067163,
+        "final_capsule_digest": "442bcce84b60207d48b82627d9860580c14f2df5ee8acb186da024cf9067ac30"
+      },
+      "2026111602": {
+        "fit_accuracy": 0.34375,
+        "train_accuracy": 0.421875,
+        "before_fit_accuracy": 0.3125,
+        "before_train_accuracy": 0.265625,
+        "fit_distinct": 3,
+        "train_distinct": 3,
+        "rgb_zero_agreement": 0.53125,
+        "fixed_question_agreement": 0.3125,
+        "focus_answer_mass": 0.389147,
+        "focus_effective_columns": 4.829468,
+        "focus_met": false,
+        "log_tau_final": 4.673573949500606,
+        "logit_scale_final": 107.0797570195282,
+        "logit_range_mean": 8.178958,
+        "entropy_fraction_of_uniform_ceiling": 0.430186,
+        "task_loss_first": 1.378394,
+        "task_loss_final": 1.309963,
+        "focus_loss_first": 2.771121,
+        "focus_loss_final": 1.052193,
+        "final_capsule_digest": "5324dd20aa7c2afd9e3457ca0225c9997b3f3d81add5f8f0275dd1a70bc5e9db"
+      },
+      "2026111603": {
+        "fit_accuracy": 0.21875,
+        "train_accuracy": 0.28125,
+        "before_fit_accuracy": 0.28125,
+        "before_train_accuracy": 0.265625,
+        "fit_distinct": 2,
+        "train_distinct": 2,
+        "rgb_zero_agreement": 0.59375,
+        "fixed_question_agreement": 0.875,
+        "focus_answer_mass": 0.514639,
+        "focus_effective_columns": 4.58721,
+        "focus_met": true,
+        "log_tau_final": 4.055877499591878,
+        "logit_scale_final": 57.73580391859451,
+        "logit_range_mean": 7.050001,
+        "entropy_fraction_of_uniform_ceiling": 0.509102,
+        "task_loss_first": 1.365906,
+        "task_loss_final": 1.408108,
+        "focus_loss_first": 2.772209,
+        "focus_loss_final": 1.42239,
+        "final_capsule_digest": "91e8f034de9e22f99fc89c0e456300970eb1089d1a99e799d7f0ebdfd0181148"
+      }
+    },
+    "gates": {
+      "focus_pass_seeds": 2,
+      "focus_failing_seed": 2026111602,
+      "focus_shortfall": 0.110853,
+      "effective_columns_pass_seeds": 3,
+      "fit_gate_pass_seeds": 0,
+      "train_gate_pass_seeds": 0,
+      "distinct_gate_pass_seeds": 2,
+      "both_controls_pass_seeds": 0,
+      "best_fit": 0.375,
+      "fit_gap": 0.425,
+      "best_train": 0.421875,
+      "train_gap": 0.478125
+    },
+    "paired_against_r1": {
+      "birth_weights_identical": true,
+      "birth_fit_by_seed": [0.25, 0.3125, 0.28125],
+      "r1_fit_by_seed": [0.1875, 0.25, 0.15625],
+      "r2_fit_by_seed": [0.375, 0.34375, 0.21875],
+      "fit_delta_by_seed": [0.1875, 0.09375, 0.0625],
+      "r1_train_by_seed": [0.3125, 0.40625, 0.3125],
+      "r2_train_by_seed": [0.328125, 0.421875, 0.28125],
+      "train_delta_by_seed": [0.015625, 0.015625, -0.03125],
+      "caveat": "three training-side variables changed together (temperature scalar, W_q 2x lr, attention supervision); no ablation arms; no single-variable attribution"
+    },
+    "mechanism": {
+      "attention_shift": "trained entropy fraction of the uniform ceiling fell from 0.999266-0.99999 (r1) to 0.423197/0.430186/0.509102; effective columns from 15.967507-15.999541 to 4.305893/4.829468/4.58721; logit range mean from 0.025293-0.203172 to 10.482176/8.178958/7.050001 nats",
+      "scale_reached_vs_needed": {
+        "log_tau_final": [4.576304200496764, 4.673573949500606, 4.055877499591878],
+        "log_tau_needed": [7.952650771584998, 8.354524580834456, 7.629992140112775],
+        "ratio": [0.5754, 0.5594, 0.5316],
+        "logit_scale_final": [97.15466570904618, 107.0797570195282, 57.73580391859451],
+        "scale_target": [2843.101383, 4249.363903, 2059.033836],
+        "fraction_of_target": [0.03417, 0.0252, 0.02804]
+      },
+      "linear_extrapolation_falsified": "the price probe projected log_tau 13.064765675142887/15.062589881370172/13.090104833762705 over 384 updates; measured 4.5763/4.6736/4.0559, less than one third; three-step linear extrapolation is disqualified as an admission argument",
+      "direction_vs_scale_separable": "seed2026111602 has the highest log_tau (4.6736, scale 107.08) but the lowest focus (0.389147); seed2026111601 has the lowest log_tau (4.5763) but the highest focus (0.730227)",
+      "focus_met_read_failed_descriptive": "seed01 and seed03 meet the focus gate but fit is 0.375/0.21875 and train 0.328125/0.28125; not promoted to focus_met_value_failed because seed02 fails the focus gate and the frozen exit order applies",
+      "value_side_not_identifiable": "in-body head trained only by task CE for 384 updates under its own partial attention; the earlier oracle probe (r1 weights, separately fitted linear head, forced oracle focus) reached 0.90625 on 2/3 seeds and does not transfer into this card"
+    },
+    "verify_instrument_defect": {
+      "check": "temperature_starts_at_zero",
+      "source": "scripts/training/run_u1r2_scale_supervision_20261116.py:231 via b_identity_checks inside verify()",
+      "why_structurally_false": "the check asserts log_tau == 0.0, which is a birth-only invariant; verify applies it to trained capsules whose log_tau is 4.576304/4.673574/4.055877",
+      "unchanged_frozen_files": true,
+      "substantive_checks": "fit/train/focus/log_tau/capsule-digest checks all green (15 substantive checks)",
+      "disposition": "recorded; frozen runner and criteria untouched; strict literal exit 2 would record engineering_failure, disclosed in mechanical_exit_conflict"
+    },
+    "residuals": [
+      "focus: 2/3 seeds meet answer_mass>=0.5 (0.730227/0.514639) and 3/3 meet effective_columns<=8.0 (4.305893/4.829468/4.58721); seed02 fails at 0.389147",
+      "value side: not separable; read gates 0/3 even on the two focus-met seeds (fit 0.375/0.21875)",
+      "three variables changed together (temperature scalar, W_q 2x lr, attention supervision) with no ablation arm; no single-variable attribution",
+      "three-step linear extrapolation of reachable log_tau was falsified by the run (projected 13.06/15.06/13.09 vs measured 4.58/4.67/4.06)",
+      "verify instrument defect: birth-only temperature_starts_at_zero applied to trained capsules; frozen files untouched"
+    ],
+    "decision_node": "unit-core-B read-path closeout ruling; revision limit 2/2 used, 0 remaining; zero training before ruling; closeout must carry the five residuals and must not be written as an architecture disproof",
+    "capability_scope": "read prerequisite failed; no parent/capability/check2/22.6 claim; four interventions 1.0 and cut_h bit-identity prove mechanism wiring only",
+    "revision_accounting": "revision limit 2, used 2, remaining 0; this is the last revision of unit-core-b-v1",
+    "input_artifacts": "regenerable_exact",
+    "rebuild_command": "python scripts/training/verify_u1r2_rebuild_20261116.py",
+    "rebuild_report": "reports/taiji_u2_u1r2_scale_supervision_rebuild_20261116.json",
+    "rebuild_evidence": "regenerable_exact measured, not assumed: 3/3 birth capsules byte-identical (27683 bytes each) rebuilt through build_graph/build_capsule/save_capsule; 6/6 perturbation negative controls reject (position_head.weight and log_tau, +1e-3 each, on all three seeds); 3/3 dataset partitions value_digest and id sequence identical; whole dataset equals data_digest; cross-seed rebuilt digests distinct; scratch removed; 1.1875 CPU / 1.344 wall, 0 optimizer steps, 0 sealed reads",
+    "rebuild_command_correction": "the draft named --freeze, which refuses a frozen contract and would rewrite it; the probe rebuilds through the same producing functions without touching the contract"
+  },
+  "source_pins": {
+    "runner": "63286ae511b96cd0e8891b0a8f0339c7074785a6567bfac298d433f748b0f9e8",
+    "temperature_readout": "ca0fec81d06a0fe89132bce303120a4728a788dab4b66cdff79c1a5bcc3f75d1",
+    "position_readout": "1bab85076b816513dd85e9019c99784a238c3c222a3edde283bcf550f1a7e9b5",
+    "u1_runner": "ab6def65ca694148da930bc8e3a2aab7019d82a91d1ce6600c2b6a4d7ea09948",
+    "unit_input": "4a97e0d1eb3b0be4af65e0bc7a5d9f84767f51f2bd24f60e74b1914eefc1ae6b",
+    "neural_units": "6a8bfc15f44b39cc22cd1570bf43cedaf44e018628572efb528f2a829a5deca9",
+    "support": "33d9301f98859934c1413e25765c55e6bc7b64dfa410d65b03f0e5a198041b4c",
+    "columns": "852c54e60c97efb23f83072659a363f890c58a4929354467ce4b71a028bc8443",
+    "episode": "fc5dbed68c9a428c4ec8725ba2d454564f153b8e60ed1d16fa7cfc13d16ab470",
+    "scale_focus_probe": "0658bfde19b98cd866d99a5c55d5fae82c390bf429c7537c1a63a6e7240ce81e",
+    "focus_feasibility_probe": "32ed02b6077f4ef0953ef64e2b5feeda707efa549c1c0b7c3abd434076e1ce7c",
+    "value_side_probe": "37de5e68f5428c7bc2c988d041abd35faafff887cfcbbdaaaabb05e8ee28c311"
+  },
+  "design_reports": {
+    "scale_calibration": "reports/taiji_u2_u1r2_scale_focus_20261116.json",
+    "focus_feasibility": "reports/taiji_u2_u1r2_focus_feasibility_20261116.json"
+  },
+  "design_report_sha256": {
+    "scale_calibration": "1987637bd2284be894b4c14614e4cdb7a6b2e71f7558eaa486990559ffb667a5",
+    "focus_feasibility": "b58a349e3b7ad67d7541a4baf1abe42bc4fe91bca622f1ae371c8b9352af3ee9"
+  },
+  "criteria_sha256": "c8f2d98b8a539013aa465a09978a7325e95f3a94ad3f4369ad6a7fc90905eb3f",
+  "start_bundles": {
+    "seed2026111601": "data/experiments/taiji_u2/u1r2_scale_supervision_20261116/seed2026111601_initial.bin",
+    "seed2026111602": "data/experiments/taiji_u2/u1r2_scale_supervision_20261116/seed2026111602_initial.bin",
+    "seed2026111603": "data/experiments/taiji_u2/u1r2_scale_supervision_20261116/seed2026111603_initial.bin"
+  },
+  "start_bundle_sha256": {
+    "seed2026111601": "ad0c3db1f1326af86e79f658edce14bf611029d54636139aba78b7bab561656a",
+    "seed2026111602": "4f6be495c35a08e4038afcd804cb63297e1d1becb549e168ece337d72897e648",
+    "seed2026111603": "28f544b46e664aaa6456ecd1f62fae6c827e0181b91d234c5b084b1178dc4e54"
+  },
+  "design_anchor": {
+    "feasibility_classification": "focus_reachable_and_generalizes",
+    "feasibility_instrument": "10/12",
+    "calibration_verdict": "scale_calibrated_supervision_stronger",
+    "calibration_instrument": "16/16",
+    "design_reports_criteria_sha256": "f11879d3f7bd6af91f2f05d92b69aca7260535ab6b5e37a1d47289e3388bcd50",
+    "design_reports_anchor": "plans/manifests/taiji_u2_u1r1_position_20261116.json",
+    "rejected_form": "larger W_q init at uniform learning rate",
+    "rejection_evidence": "reports/taiji_u2_u1r2_focus_feasibility_20261116.json"
+  },
+  "design_feasibility": {
+    "2026111601": {
+      "measured_projected_relative_displacement": 2.193942355247808,
+      "needed_relative_displacement_upper_bound": 1.2836742219445736,
+      "rotation_reachable": true,
+      "scale_reachable": true
+    },
+    "2026111602": {
+      "measured_projected_relative_displacement": 1.9672341269836733,
+      "needed_relative_displacement_upper_bound": 1.2461078507545007,
+      "rotation_reachable": true,
+      "scale_reachable": true
+    },
+    "2026111603": {
+      "measured_projected_relative_displacement": 2.486697791621312,
+      "needed_relative_displacement_upper_bound": 1.3965634259791948,
+      "rotation_reachable": true,
+      "scale_reachable": true
+    }
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "schema": "taiji-u2-u1r2-verify-v1",
+  "card": "22.5.U.1r2",
+  "phase": "verify",
+  "criteria_sha256": "c8f2d98b8a539013aa465a09978a7325e95f3a94ad3f4369ad6a7fc90905eb3f",
+  "verdict": "verify_failed",
+  "checks": {
+    "seed2026111601_fit_matches_run": true,
+    "seed2026111601_train_matches_run": true,
+    "seed2026111601_focus_matches_run": true,
+    "seed2026111601_log_tau_matches_run": true,
+    "seed2026111601_capsule_digest": true,
+    "seed2026111601_B_identity": false,
+    "seed2026111602_fit_matches_run": true,
+    "seed2026111602_train_matches_run": true,
+    "seed2026111602_focus_matches_run": true,
+    "seed2026111602_log_tau_matches_run": true,
+    "seed2026111602_capsule_digest": true,
+    "seed2026111602_B_identity": false,
+    "seed2026111603_fit_matches_run": true,
+    "seed2026111603_train_matches_run": true,
+    "seed2026111603_focus_matches_run": true,
+    "seed2026111603_log_tau_matches_run": true,
+    "seed2026111603_capsule_digest": true,
+    "seed2026111603_B_identity": false
+  },
+  "uncovered": [
+    "seed2026111601_B_identity",
+    "seed2026111602_B_identity",
+    "seed2026111603_B_identity"
+  ],
+  "rows": [
+    {
+      "seed": 2026111601,
+      "fit_accuracy": 0.375,
+      "train_accuracy": 0.328125,
+      "fit_distinct": 3,
+      "fit_answer_mass": 0.730227,
+      "log_tau": 4.576304200496764
+    },
+    {
+      "seed": 2026111602,
+      "fit_accuracy": 0.34375,
+      "train_accuracy": 0.421875,
+      "fit_distinct": 3,
+      "fit_answer_mass": 0.389147,
+      "log_tau": 4.673573949500606
+    },
+    {
+      "seed": 2026111603,
+      "fit_accuracy": 0.21875,
+      "train_accuracy": 0.28125,
+      "fit_distinct": 2,
+      "fit_answer_mass": 0.514639,
+      "log_tau": 4.055877499591878
+    }
+  ],
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0
+  },
+  "cost": {
+    "cpu": 0.3906,
+    "wall": 0.39
+  }
+}

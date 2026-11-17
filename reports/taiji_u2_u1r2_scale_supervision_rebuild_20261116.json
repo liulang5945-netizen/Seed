@@ -1,0 +1,151 @@
+{
+  "schema": "taiji-u2-u1r2-rebuild-v1",
+  "card": "22.5.U.1r2",
+  "phase": "rebuild",
+  "rule": "R-REBUILD-1",
+  "criteria_sha256": "c8f2d98b8a539013aa465a09978a7325e95f3a94ad3f4369ad6a7fc90905eb3f",
+  "ignored_by": ".gitignore:160:data/",
+  "classification": "regenerable_exact",
+  "bundles": [
+    {
+      "key": "seed2026111601",
+      "seed": 2026111601,
+      "path": "data/experiments/taiji_u2/u1r2_scale_supervision_20261116/seed2026111601_initial.bin",
+      "frozen_sha256": "ad0c3db1f1326af86e79f658edce14bf611029d54636139aba78b7bab561656a",
+      "on_disk_sha256": "ad0c3db1f1326af86e79f658edce14bf611029d54636139aba78b7bab561656a",
+      "rebuilt_sha256": "ad0c3db1f1326af86e79f658edce14bf611029d54636139aba78b7bab561656a",
+      "rebuilt_bytes": 27683,
+      "exact": true,
+      "negative_controls": {
+        "position_head.weight": {
+          "sha256": "4af0c088b729bc6b53834dc9449c9d4b5cb0bd85ebda1a1f385b426099a50340",
+          "rejects": true
+        },
+        "log_tau": {
+          "sha256": "e0ef4b20150c7b803053df1cca16fccbc0a7c86efe50fe9030cc6f4960b361c1",
+          "rejects": true
+        }
+      },
+      "negative_control_rejects": true
+    },
+    {
+      "key": "seed2026111602",
+      "seed": 2026111602,
+      "path": "data/experiments/taiji_u2/u1r2_scale_supervision_20261116/seed2026111602_initial.bin",
+      "frozen_sha256": "4f6be495c35a08e4038afcd804cb63297e1d1becb549e168ece337d72897e648",
+      "on_disk_sha256": "4f6be495c35a08e4038afcd804cb63297e1d1becb549e168ece337d72897e648",
+      "rebuilt_sha256": "4f6be495c35a08e4038afcd804cb63297e1d1becb549e168ece337d72897e648",
+      "rebuilt_bytes": 27683,
+      "exact": true,
+      "negative_controls": {
+        "position_head.weight": {
+          "sha256": "a8947b1162524efcd525d0e60e810aa0579b889bac4b2d04404e50c4643fdd44",
+          "rejects": true
+        },
+        "log_tau": {
+          "sha256": "1c88cd1e39e9e34ca85c48f4eebaf183e90268e9792661203816e86c9db3b852",
+          "rejects": true
+        }
+      },
+      "negative_control_rejects": true
+    },
+    {
+      "key": "seed2026111603",
+      "seed": 2026111603,
+      "path": "data/experiments/taiji_u2/u1r2_scale_supervision_20261116/seed2026111603_initial.bin",
+      "frozen_sha256": "28f544b46e664aaa6456ecd1f62fae6c827e0181b91d234c5b084b1178dc4e54",
+      "on_disk_sha256": "28f544b46e664aaa6456ecd1f62fae6c827e0181b91d234c5b084b1178dc4e54",
+      "rebuilt_sha256": "28f544b46e664aaa6456ecd1f62fae6c827e0181b91d234c5b084b1178dc4e54",
+      "rebuilt_bytes": 27683,
+      "exact": true,
+      "negative_controls": {
+        "position_head.weight": {
+          "sha256": "37e3f06046429d54b8094711c3516382d3c782af225cdc4092c8d6aff0716a41",
+          "rejects": true
+        },
+        "log_tau": {
+          "sha256": "f622b29fdf9a9ea8a3f3bcd4e718d53136eab155b47bc8dba512566ba67d7986",
+          "rejects": true
+        }
+      },
+      "negative_control_rejects": true
+    }
+  ],
+  "dataset": [
+    {
+      "partition": "price",
+      "count": 8,
+      "status": "measured",
+      "rebuilt_value_digest": "5172910a9d4e7704645efcf77047e3710b156d79183ee11240eb7a5b3c5e9814",
+      "on_disk_value_digest": "5172910a9d4e7704645efcf77047e3710b156d79183ee11240eb7a5b3c5e9814",
+      "exact": true,
+      "ids_match": true,
+      "negative_control_rejects": true,
+      "cpu": 0.0469,
+      "wall": 0.109
+    },
+    {
+      "partition": "train",
+      "count": 64,
+      "status": "measured",
+      "rebuilt_value_digest": "c242e433a76e4105c58f8573e00d516a98cdaafe65862c8d2046b545718d32fc",
+      "on_disk_value_digest": "c242e433a76e4105c58f8573e00d516a98cdaafe65862c8d2046b545718d32fc",
+      "exact": true,
+      "ids_match": true,
+      "negative_control_rejects": true,
+      "cpu": 0.6562,
+      "wall": 0.656
+    },
+    {
+      "partition": "fit",
+      "count": 32,
+      "status": "measured",
+      "rebuilt_value_digest": "edc5763512a305e1f052369e125a24329c42cbb30307bd115179b9e183f5317b",
+      "on_disk_value_digest": "edc5763512a305e1f052369e125a24329c42cbb30307bd115179b9e183f5317b",
+      "exact": true,
+      "ids_match": true,
+      "negative_control_rejects": true,
+      "cpu": 0.3125,
+      "wall": 0.312
+    },
+    {
+      "partition": "whole_dataset",
+      "count": 104,
+      "status": "measured",
+      "rebuilt_value_digest": "40813b4cc8ffec0c3ae5639941b373c139422b4ccbaa34790de34a9e1149d214",
+      "on_disk_value_digest": "40813b4cc8ffec0c3ae5639941b373c139422b4ccbaa34790de34a9e1149d214",
+      "exact": true
+    }
+  ],
+  "cross_seed_distinct": true,
+  "rebuild_path": "r2.build_graph(seed) -> r2.build_capsule -> r2.save_capsule, the same calls freeze() makes; --freeze itself refuses a frozen contract and rewrites it",
+  "reused_instrument": {
+    "module": "scripts/training/verify_u1r1_rebuild_20261116.py",
+    "sha256": "ae5957f3fe680f2ebc854433f686facc35ea102845993be4c8565d21d741fead",
+    "reused": [
+      "bytes_sha",
+      "dataset_rows",
+      "classify",
+      "PARTITIONS"
+    ],
+    "r2_specific": [
+      "bundle_rows (log_tau negative control)"
+    ]
+  },
+  "budget_stopped": false,
+  "scratch_removed": true,
+  "verdict": "rebuild_exact",
+  "discipline": {
+    "optimizer_steps": 0,
+    "training_updates": 0,
+    "task_data_reads": 1,
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "sealed_partitions_read": []
+  },
+  "cost": {
+    "cpu": 1.1875,
+    "wall": 1.344
+  }
+}
