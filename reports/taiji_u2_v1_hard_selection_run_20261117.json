@@ -1,0 +1,285 @@
+{
+  "schema": "taiji-u2-v1-hard-selection-run-v1",
+  "card": "22.5.V.1",
+  "phase": "run",
+  "criteria_sha256": "00bc9cf904c8d7f68bb6d3b2f5f264c16217b22e454ab53eb38bc9819a23db98",
+  "verdict": "budget_stop",
+  "reasons": [
+    "cap_exceeded"
+  ],
+  "arms": [
+    {
+      "seed": 2026111601,
+      "updates": 384,
+      "supervised_updates": 288,
+      "before_fit_accuracy": 0.375,
+      "before_train_accuracy": 0.328125,
+      "before_fit_selection": 0.76,
+      "fit_accuracy": 0.34375,
+      "train_accuracy": 0.359375,
+      "fit_distinct": 3,
+      "train_distinct": 3,
+      "fit_selection": {
+        "hits": 21,
+        "denominator": 25,
+        "accuracy": 0.84
+      },
+      "train_selection": {
+        "hits": 46,
+        "denominator": 49,
+        "accuracy": 0.9387755102040817
+      },
+      "fit_focus": {
+        "denominator": 32,
+        "labelled_denominator": 24,
+        "absent_denominator": 8,
+        "forced": false,
+        "entropy_mean": 1.193605,
+        "entropy_fraction_of_uniform_ceiling": 0.430502,
+        "effective_columns_mean": 3.960691,
+        "logit_range_mean": 7.35073,
+        "logit_range_mean_unrounded": 7.350729727405804,
+        "logit_range_min": 3.527142,
+        "logit_range_max": 11.692126,
+        "max_attention_mean": 0.584635,
+        "attention_min_over_all": 8.234135943196703e-06,
+        "answer_mass_mean": 0.751262,
+        "answer_span_size_mean": 2.166667,
+        "absent_max_attention_mean": 0.424433,
+        "focus_met": true
+      },
+      "rgb_zero_agreement": 0.375,
+      "fixed_question_agreement": 0.71875,
+      "intervention_fraction": {
+        "without_edges_changes_readout": 0.96875,
+        "permute_source_changes_readout": 0.96875,
+        "history_changes_readout": 1.0,
+        "cut_h_bit_identical": 1.0
+      },
+      "first_task_loss": 1.025066,
+      "final_task_loss": 1.458704,
+      "first_focus_loss": 0.773223,
+      "final_focus_loss": 0.077386,
+      "final_capsule_digest": "c41eca10e954be4d54dc5eeb77678133a40ed661a612acb5cbac18f38f855164",
+      "cpu_seconds": 3.6406
+    },
+    {
+      "seed": 2026111602,
+      "updates": 384,
+      "supervised_updates": 288,
+      "before_fit_accuracy": 0.34375,
+      "before_train_accuracy": 0.46875,
+      "before_fit_selection": 0.44,
+      "fit_accuracy": 0.375,
+      "train_accuracy": 0.4375,
+      "fit_distinct": 3,
+      "train_distinct": 3,
+      "fit_selection": {
+        "hits": 13,
+        "denominator": 25,
+        "accuracy": 0.52
+      },
+      "train_selection": {
+        "hits": 36,
+        "denominator": 49,
+        "accuracy": 0.7346938775510204
+      },
+      "fit_focus": {
+        "denominator": 32,
+        "labelled_denominator": 24,
+        "absent_denominator": 8,
+        "forced": false,
+        "entropy_mean": 1.27039,
+        "entropy_fraction_of_uniform_ceiling": 0.458196,
+        "effective_columns_mean": 4.476005,
+        "logit_range_mean": 7.6817,
+        "logit_range_mean_unrounded": 7.681699607537821,
+        "logit_range_min": 3.61522,
+        "logit_range_max": 18.862518,
+        "max_attention_mean": 0.584012,
+        "attention_min_over_all": 4.863282576846933e-09,
+        "answer_mass_mean": 0.433217,
+        "answer_span_size_mean": 2.166667,
+        "absent_max_attention_mean": 0.539368,
+        "focus_met": false
+      },
+      "rgb_zero_agreement": 0.5625,
+      "fixed_question_agreement": 0.3125,
+      "intervention_fraction": {
+        "without_edges_changes_readout": 1.0,
+        "permute_source_changes_readout": 1.0,
+        "history_changes_readout": 1.0,
+        "cut_h_bit_identical": 1.0
+      },
+      "first_task_loss": 1.320055,
+      "final_task_loss": 1.283142,
+      "first_focus_loss": 1.272468,
+      "final_focus_loss": 0.798021,
+      "final_capsule_digest": "9755fb91aef549a36b18f863713e5d4aaf0a9b01d335bdf4c315705398148d94",
+      "cpu_seconds": 0.8125
+    },
+    {
+      "seed": 2026111603,
+      "updates": 83,
+      "supervised_updates": 63,
+      "before_fit_accuracy": 0.21875,
+      "before_train_accuracy": 0.28125,
+      "before_fit_selection": 0.64,
+      "fit_accuracy": 0.21875,
+      "train_accuracy": 0.28125,
+      "fit_distinct": 2,
+      "train_distinct": 2,
+      "fit_selection": {
+        "hits": 16,
+        "denominator": 25,
+        "accuracy": 0.64
+      },
+      "train_selection": {
+        "hits": 38,
+        "denominator": 49,
+        "accuracy": 0.7755102040816326
+      },
+      "fit_focus": {
+        "denominator": 32,
+        "labelled_denominator": 24,
+        "absent_denominator": 8,
+        "forced": false,
+        "entropy_mean": 1.295061,
+        "entropy_fraction_of_uniform_ceiling": 0.467095,
+        "effective_columns_mean": 4.066536,
+        "logit_range_mean": 7.656153,
+        "logit_range_mean_unrounded": 7.656153342809821,
+        "logit_range_min": 5.160841,
+        "logit_range_max": 11.172693,
+        "max_attention_mean": 0.576266,
+        "attention_min_over_all": 7.58288494070542e-06,
+        "answer_mass_mean": 0.540263,
+        "answer_span_size_mean": 2.166667,
+        "absent_max_attention_mean": 0.594312,
+        "focus_met": true
+      },
+      "rgb_zero_agreement": 0.53125,
+      "fixed_question_agreement": 0.84375,
+      "intervention_fraction": {
+        "without_edges_changes_readout": 1.0,
+        "permute_source_changes_readout": 1.0,
+        "history_changes_readout": 1.0,
+        "cut_h_bit_identical": 1.0
+      },
+      "first_task_loss": 1.31854,
+      "final_task_loss": 1.417,
+      "first_focus_loss": 1.091501,
+      "final_focus_loss": 1.240799,
+      "final_capsule_digest": "85fcbcf0fa684416763ec29dc0fb58c45761e20a15a3b6826d7a3e57deb48fb1",
+      "cpu_seconds": 0.4844
+    }
+  ],
+  "selection_pass": [
+    false,
+    false,
+    false
+  ],
+  "read_pass": [
+    false,
+    false,
+    false
+  ],
+  "gates": {
+    "route": "B_hard_select",
+    "parent_route": "B_position_temp",
+    "seeds": [
+      2026111601,
+      2026111602,
+      2026111603
+    ],
+    "updates_per_seed": 384,
+    "learning_rate": {
+      "W_q": 0.002,
+      "position_head": 0.001
+    },
+    "dtype": "float64",
+    "selection_gate": 0.95,
+    "fit_gate": 0.8,
+    "train_gate": 0.9,
+    "distinct_min": 3,
+    "control_agreement_max": 0.5,
+    "intervention_change_min_fraction": 0.5,
+    "value_side_frozen": true,
+    "value_side_review_report": "reports/taiji_u2_value_side_review_20261117.json",
+    "value_side_review_sha256": "f2675d8842800cc78169db1aa9013f98fb7fcee2cb6f8476ead860bf4fe81c2f",
+    "value_side_prerequisite": {
+      "answer_column_head_fit_min": 0.8,
+      "answer_column_head_train_min": 0.9,
+      "measured_fit": [
+        0.9375,
+        0.84375,
+        0.96875
+      ],
+      "measured_train": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "colour_baseline_painted": {
+      "2026111601": 0.7907,
+      "2026111602": 0.686,
+      "2026111603": 0.6744
+    },
+    "colour_drop_max": 0.05,
+    "focus_supervision": {
+      "loss": "soft-target cross entropy on attention",
+      "target": "queried-entity colour mass per column, normalised (oracle_soft)",
+      "applied_to": "labelled train scenes only",
+      "weight": 1.0,
+      "log_clamp": 1e-12,
+      "credit": [
+        "W_q"
+      ]
+    },
+    "scope": "read prerequisite only; no parent/capability/check2/22.6 claim",
+    "exits": [
+      {
+        "order": 1,
+        "verdict": "budget_stop"
+      },
+      {
+        "order": 2,
+        "verdict": "engineering_failure"
+      },
+      {
+        "order": 3,
+        "verdict": "selection_failed",
+        "condition": "any seed fit top1-on-span < 0.95"
+      },
+      {
+        "order": 4,
+        "verdict": "value_side_degraded",
+        "condition": "structurally impossible: value side frozen"
+      },
+      {
+        "order": 5,
+        "verdict": "read_failed",
+        "condition": "read gates/controls/interventions below"
+      },
+      {
+        "order": 6,
+        "verdict": "hard_readout_passed"
+      }
+    ]
+  },
+  "value_side_frozen": true,
+  "capability_scope": "read prerequisite only; no parent/capability/check2/22.6 claim",
+  "discipline": {
+    "optimizer_steps": 1152,
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "sealed_partitions_read": [],
+    "capability_claims": 0
+  },
+  "cost": {
+    "cpu": 5.0625,
+    "wall": 5.469
+  }
+}

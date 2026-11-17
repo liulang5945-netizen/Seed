@@ -1,7 +1,8 @@
 # 22.5.V.1 设计卡：硬选列直读（值侧冻结，只训选择与读出）
 
-> 卡号：`22.5.V.1`｜日期：2026-11-17｜状态：**设计＋定价冻结完成**（smoke **36/36**、price **2.3906 CPU**、帽 **4.7812 CPU／9.5625 wall**、契约测试 **8 passed**），**停在 owner 训练授权**｜性质：P3.9 后继新范围，**不是 `unit-core-b-v1` 修订**（修订额度已 2/2 用满）。
+> 卡号：`22.5.V.1`｜日期：2026-11-17｜状态：**已执行＝`budget_stop`**（实耗 **5.0625 CPU** > 帽 **4.7812**，+5.9%；seed03 只跑 **83/384**；完整 seed 选择 **0.84／0.52**，0/3 达 0.95；recover **9/9**、verify **18/18**；不重跑同一配置），**停在 owner 收束/新机制裁决**｜性质：P3.9 后继新范围，**不是 `unit-core-b-v1` 修订**（修订额度已 2/2 用满）。
 > 上游：[值侧复核结果](RESULT-TAIJI_U2_VALUE_SIDE_REVIEW_20261117.md)（`mixed`；答案列头 3/3 达双门、attended 0/3、top-1 选择 0/3、painted 0.674–0.791）、[设计/预注册](DESIGN-TAIJI_U2_VALUE_SIDE_REVIEW_20261117.md)、[读路径收束卡](CLOSEOUT-TAIJI_U2_UNIT_CORE_B_READ_PATH_20261117.md)。
+> 结果：[RESULT-TAIJI_U2_V1_HARD_SELECTION_20261117.md](RESULT-TAIJI_U2_V1_HARD_SELECTION_20261117.md)（`budget_stop`＋部分负读数）；报告 [run](../../reports/taiji_u2_v1_hard_selection_run_20261117.json)／[recover](../../reports/taiji_u2_v1_hard_selection_recover_20261117.json)／[verify](../../reports/taiji_u2_v1_hard_selection_verify_20261117.json)。
 > 父：U.1r2 三枚训练后胶囊（`data/experiments/taiji_u2/u1r2_scale_supervision_20261116/seed*_final.bin`），route `B_position_temp`；**值侧冻结**，从父继承。
 
 ## 1 单问题
@@ -68,3 +69,13 @@
 - **契约测试** [test_v1_hard_selection.py](../../tests/taiji_native/test_v1_hard_selection.py)：**8 passed**（契约冻结／帽、pin 与父摘要、父胶囊拒绝、可训恰两枚、硬读出恒等、run 授权守卫、价格与帽、smoke 全绿）。
 
 **授权后执行顺序**：`--run` → `--recover` → `--verify`，按 §5 出口结案；授权字符串写进契约、**用完即止不外推到下一卡**。授权前 0 训练新增、0 能力、0 A 父；check② 不读、22.6 不解锁。
+
+## 9 执行结果（2026-11-17）
+
+正式判定 **`budget_stop`**：实耗 **5.0625 CPU／5.469 wall** 对帽 **4.7812／9.5625**，**超 CPU 帽 0.2813（+5.9%）**；seed01／02 各 384 更新，**seed03 只跑 83/384**。按预注册出口预算停止优先，不重跑同一配置。
+
+**部分负读数**：两个完整 seed 的选择率 **0.76→0.84**、**0.44→0.52**，均未达 **0.95**；seed02 完整 384 步仍 **0.52**。fit **0.34375／0.375／0.21875**（门 0.80）、train **0.359375／0.4375／0.28125**（门 0.90）、双控制 **0/3**（0.375／**0.71875**、**0.5625**／0.3125、**0.53125**／**0.84375**）、聚焦 **2/3**（0.751／0.433／0.540）。工程：recover **9/9**、verify **18/18**、verify 确认只有 `W_q` 与 `position_head.weight` 改变。
+
+**定价缺口**：定价 2.3906／帽 4.7812，实际 5.0625（2.12×实测、+5.9% 超帽）；完整 run 的逐更新/评估/干预被低估。**不改帽、不重跑同一配置**，读数留作归因。
+
+**决策节点**：甲（执行者建议）收束 V.1 为 `budget_stop`＋部分负，保留六项残留，不追加同机制训练；乙 重新定价＋补完 seed03（按现有读数预计仍不过选择门）；丙 新选择机制 `22.5.V.2`（零训练设计＋定价后再请授权）。裁决前 0 训练新增、0 能力、0 A 父；check② 不读、22.6 不解锁。

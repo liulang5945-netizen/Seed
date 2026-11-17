@@ -1,0 +1,87 @@
+{
+  "schema": "taiji-u2-v1-hard-selection-recover-v1",
+  "card": "22.5.V.1",
+  "phase": "recover",
+  "criteria_sha256": "00bc9cf904c8d7f68bb6d3b2f5f264c16217b22e454ab53eb38bc9819a23db98",
+  "verdict": "recovery_verified",
+  "checks": {
+    "seed2026111601_final_restore": true,
+    "seed2026111601_next_gradient": true,
+    "seed2026111601_tamper_rejected": true,
+    "seed2026111602_final_restore": true,
+    "seed2026111602_next_gradient": true,
+    "seed2026111602_tamper_rejected": true,
+    "seed2026111603_final_restore": true,
+    "seed2026111603_next_gradient": true,
+    "seed2026111603_tamper_rejected": true
+  },
+  "uncovered": [],
+  "receipts": [
+    {
+      "pid": 42644,
+      "summary": {
+        "route": "B_hard_select",
+        "units": 12,
+        "edges": 12,
+        "tensors": 20,
+        "proposal_clock": 384,
+        "parameter_version": 384,
+        "digest": "471119b8758478040dcec7321b9dfc11bc4a783a2e04507e083fcb933bcf7cc7"
+      },
+      "capsule_digest": "c41eca10e954be4d54dc5eeb77678133a40ed661a612acb5cbac18f38f855164",
+      "next_loss": 0.326521028827721,
+      "next_gradient_digest": "c39e69d7b6a1964e217b7f71a44176151f4db050632334253da4260d509a2de0",
+      "selected": 3,
+      "digest_matches": true,
+      "tag": "seed2026111601_final",
+      "pid_differs": true
+    },
+    {
+      "pid": 22316,
+      "summary": {
+        "route": "B_hard_select",
+        "units": 12,
+        "edges": 12,
+        "tensors": 20,
+        "proposal_clock": 384,
+        "parameter_version": 384,
+        "digest": "8d3d0d18349175ca24dbde1c9d83412229cb26835edc66bc15fd9249ac579e38"
+      },
+      "capsule_digest": "9755fb91aef549a36b18f863713e5d4aaf0a9b01d335bdf4c315705398148d94",
+      "next_loss": 0.04459928719443505,
+      "next_gradient_digest": "3a1dff6bf218490dfba95acd70260b471798130324fdf9e14571f5a1e96b04fe",
+      "selected": 3,
+      "digest_matches": true,
+      "tag": "seed2026111602_final",
+      "pid_differs": true
+    },
+    {
+      "pid": 39340,
+      "summary": {
+        "route": "B_hard_select",
+        "units": 12,
+        "edges": 12,
+        "tensors": 20,
+        "proposal_clock": 384,
+        "parameter_version": 384,
+        "digest": "06bff556b25b3ef1d5a9279750cc3d218d0a6bfb6c73d63a0f454db2fd1f1077"
+      },
+      "capsule_digest": "85fcbcf0fa684416763ec29dc0fb58c45761e20a15a3b6826d7a3e57deb48fb1",
+      "next_loss": 0.009401329310949162,
+      "next_gradient_digest": "244e6db374e6e5d9876c1cf6d9e68ed29af309aa042cca836957bcb22d434f98",
+      "selected": 2,
+      "digest_matches": true,
+      "tag": "seed2026111603_final",
+      "pid_differs": true
+    }
+  ],
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0
+  },
+  "cost": {
+    "cpu": 0.125,
+    "wall": 17.422
+  }
+}
