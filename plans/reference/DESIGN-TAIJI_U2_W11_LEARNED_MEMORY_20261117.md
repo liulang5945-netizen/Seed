@@ -3,6 +3,7 @@
 > 卡号：`22.5.W.1.1`｜日期：2026-11-17｜状态：**冻结但不再作为目标记忆轴**（owner 2026-11-17：目标记忆定位是**情景/联想记忆**；W.1.1 只是**工作记忆前置**，**不训练**；设计/价格保留为历史与前置证据）｜性质：22.5.W 工作记忆父候选的训练卡，不是长期/情景/联想记忆，也不是 U/V 读路径延续。
 > **定位（owner 2026-11-17 校正）**：只学一个 **4 槽有界工作记忆**的写入/保持/读出（单 episode、delay 0–8）；不做跨会话存储、巩固、提取、遗忘或来源证据，**不承诺无限上下文**；长期记忆另立 [22.5.X 情景与联想记忆轴](DESIGN-TAIJI_U2_EPISODIC_ASSOCIATIVE_20261117.md)。
 > 上游：[W.1 结构记忆结果](RESULT-TAIJI_U2_W1_MEMORY_20261117.md)（`structural_memory_viable`：normal 1.0、lesion 0.53125、delay 0–8）｜[DMS 可行性](RESULT-TAIJI_U2_W_DMS_FEASIBILITY_20261117.md)（原图 `task_not_learnable`）。
+> **归置（owner 2026-11-17 裁决「降为 C/D/J 候选载体」，[D-20261117-22](DECISION-LEDGER_20261109.md)）**：本卡**降为 `22.4.2.4` C/D/J 的候选载体**，保留为**只读设计资产**，**待 C/D/J 任务族冻结后再评估是否作为载体**；判据／价格／契约**一字不改**，契约继续 `status=frozen`、`training_authority=null`、**不收口、无出口判词**（现测 `result=None`，只有 smoke＋price 两份报告，**从未执行**）。**不可准入为 22.5 父卡**：契约无 `accepted_parent`／`data_recipe`／`feedback_rights`／`exposure` 任何一项，`data_root="generated:dms-20261117"` 为自生成数据，违反计划横切合同 `:492`（须非空绑定 accepted_parent、禁以"待定"开跑）⇒ 即使跑完得到 `parent_acquired` 也只是 **DMS 代理父**，不满足计划 `:360` 的父身份来源。主线真正队首与八格解锁路径见[缺口审计卡](REVIEW-TAIJI_U2_22_4_PARENT_ADMISSION_GAP_20261117.md)。
 
 ## 1 单问题
 
