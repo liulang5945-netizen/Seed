@@ -1,0 +1,374 @@
+{
+  "schema": "taiji-u2-22-4-2-cdj-fixture-certification-v1",
+  "card": "22.4.2.4",
+  "phase": "zero_training_fixture_certification",
+  "verdict": "c_d_j_fixtures_valid",
+  "c_acquisition": {
+    "rows": [
+      {
+        "seed": 124,
+        "initial_x": -0.55,
+        "known": true,
+        "best": "wait",
+        "oracle_best": "wait",
+        "answers": {
+          "inspect": "左边",
+          "wait": "左边"
+        },
+        "truth": "左边",
+        "utilities": {
+          "inspect": 0.99,
+          "wait": 0.999
+        },
+        "oracle_ok": true,
+        "answer_ok": true
+      },
+      {
+        "seed": 124,
+        "initial_x": -0.55,
+        "known": false,
+        "best": "inspect",
+        "oracle_best": "inspect",
+        "answers": {
+          "inspect": "左边",
+          "wait": "未知"
+        },
+        "truth": "左边",
+        "utilities": {
+          "inspect": 0.99,
+          "wait": -0.001
+        },
+        "oracle_ok": true,
+        "answer_ok": true
+      },
+      {
+        "seed": 124,
+        "initial_x": 0.55,
+        "known": true,
+        "best": "wait",
+        "oracle_best": "wait",
+        "answers": {
+          "inspect": "右边",
+          "wait": "右边"
+        },
+        "truth": "右边",
+        "utilities": {
+          "inspect": 0.99,
+          "wait": 0.999
+        },
+        "oracle_ok": true,
+        "answer_ok": true
+      },
+      {
+        "seed": 124,
+        "initial_x": 0.55,
+        "known": false,
+        "best": "inspect",
+        "oracle_best": "inspect",
+        "answers": {
+          "inspect": "右边",
+          "wait": "未知"
+        },
+        "truth": "右边",
+        "utilities": {
+          "inspect": 0.99,
+          "wait": -0.001
+        },
+        "oracle_ok": true,
+        "answer_ok": true
+      },
+      {
+        "seed": 125,
+        "initial_x": -0.55,
+        "known": true,
+        "best": "wait",
+        "oracle_best": "wait",
+        "answers": {
+          "inspect": "左边",
+          "wait": "左边"
+        },
+        "truth": "左边",
+        "utilities": {
+          "inspect": 0.99,
+          "wait": 0.999
+        },
+        "oracle_ok": true,
+        "answer_ok": true
+      },
+      {
+        "seed": 125,
+        "initial_x": -0.55,
+        "known": false,
+        "best": "inspect",
+        "oracle_best": "inspect",
+        "answers": {
+          "inspect": "左边",
+          "wait": "未知"
+        },
+        "truth": "左边",
+        "utilities": {
+          "inspect": 0.99,
+          "wait": -0.001
+        },
+        "oracle_ok": true,
+        "answer_ok": true
+      },
+      {
+        "seed": 125,
+        "initial_x": 0.55,
+        "known": true,
+        "best": "wait",
+        "oracle_best": "wait",
+        "answers": {
+          "inspect": "右边",
+          "wait": "右边"
+        },
+        "truth": "右边",
+        "utilities": {
+          "inspect": 0.99,
+          "wait": 0.999
+        },
+        "oracle_ok": true,
+        "answer_ok": true
+      },
+      {
+        "seed": 125,
+        "initial_x": 0.55,
+        "known": false,
+        "best": "inspect",
+        "oracle_best": "inspect",
+        "answers": {
+          "inspect": "右边",
+          "wait": "未知"
+        },
+        "truth": "右边",
+        "utilities": {
+          "inspect": 0.99,
+          "wait": -0.001
+        },
+        "oracle_ok": true,
+        "answer_ok": true
+      },
+      {
+        "seed": 126,
+        "initial_x": -0.55,
+        "known": true,
+        "best": "wait",
+        "oracle_best": "wait",
+        "answers": {
+          "inspect": "左边",
+          "wait": "左边"
+        },
+        "truth": "左边",
+        "utilities": {
+          "inspect": 0.99,
+          "wait": 0.999
+        },
+        "oracle_ok": true,
+        "answer_ok": true
+      },
+      {
+        "seed": 126,
+        "initial_x": -0.55,
+        "known": false,
+        "best": "inspect",
+        "oracle_best": "inspect",
+        "answers": {
+          "inspect": "左边",
+          "wait": "未知"
+        },
+        "truth": "左边",
+        "utilities": {
+          "inspect": 0.99,
+          "wait": -0.001
+        },
+        "oracle_ok": true,
+        "answer_ok": true
+      },
+      {
+        "seed": 126,
+        "initial_x": 0.55,
+        "known": true,
+        "best": "wait",
+        "oracle_best": "wait",
+        "answers": {
+          "inspect": "右边",
+          "wait": "右边"
+        },
+        "truth": "右边",
+        "utilities": {
+          "inspect": 0.99,
+          "wait": 0.999
+        },
+        "oracle_ok": true,
+        "answer_ok": true
+      },
+      {
+        "seed": 126,
+        "initial_x": 0.55,
+        "known": false,
+        "best": "inspect",
+        "oracle_best": "inspect",
+        "answers": {
+          "inspect": "右边",
+          "wait": "未知"
+        },
+        "truth": "右边",
+        "utilities": {
+          "inspect": 0.99,
+          "wait": -0.001
+        },
+        "oracle_ok": true,
+        "answer_ok": true
+      }
+    ],
+    "correct": 12,
+    "denominator": 12,
+    "accuracy": 1.0
+  },
+  "j_joint_oracle": {
+    "rows": [
+      {
+        "seed": 124,
+        "sessions": 3,
+        "rounds": 48,
+        "correct": 18,
+        "denominator": 18,
+        "mismatches": []
+      },
+      {
+        "seed": 125,
+        "sessions": 3,
+        "rounds": 48,
+        "correct": 18,
+        "denominator": 18,
+        "mismatches": []
+      },
+      {
+        "seed": 126,
+        "sessions": 3,
+        "rounds": 48,
+        "correct": 18,
+        "denominator": 18,
+        "mismatches": []
+      }
+    ],
+    "correct": 54,
+    "denominator": 54,
+    "accuracy": 1.0
+  },
+  "d_capacity_pressure": {
+    "rows": [
+      {
+        "seed": 124,
+        "standard": {
+          "correct": 12,
+          "denominator": 12
+        },
+        "occlusion": {
+          "correct": 12,
+          "denominator": 12,
+          "occluded_entity": "黄色圆片"
+        },
+        "dynamics": {
+          "baseline_correct": 6,
+          "altered_correct": 6,
+          "first_frames_equal": true,
+          "last_answers_differ": true,
+          "altered_mass": 2.0,
+          "altered_drag": 2.0,
+          "seed_ok": true
+        }
+      },
+      {
+        "seed": 125,
+        "standard": {
+          "correct": 12,
+          "denominator": 12
+        },
+        "occlusion": {
+          "correct": 12,
+          "denominator": 12,
+          "occluded_entity": "青色圆片"
+        },
+        "dynamics": {
+          "baseline_correct": 6,
+          "altered_correct": 6,
+          "first_frames_equal": true,
+          "last_answers_differ": true,
+          "altered_mass": 2.0,
+          "altered_drag": 2.0,
+          "seed_ok": true
+        }
+      },
+      {
+        "seed": 126,
+        "standard": {
+          "correct": 12,
+          "denominator": 12
+        },
+        "occlusion": {
+          "correct": 12,
+          "denominator": 12,
+          "occluded_entity": "青色圆片"
+        },
+        "dynamics": {
+          "baseline_correct": 6,
+          "altered_correct": 6,
+          "first_frames_equal": true,
+          "last_answers_differ": true,
+          "altered_mass": 2.0,
+          "altered_drag": 2.0,
+          "seed_ok": true
+        }
+      }
+    ],
+    "standard_correct": 36,
+    "standard_denominator": 36,
+    "standard_accuracy": 1.0,
+    "occlusion_correct": 36,
+    "occlusion_denominator": 36,
+    "occlusion_accuracy": 1.0,
+    "blank_correct": 0,
+    "blank_accuracy": 0.0,
+    "dynamics_ok": true,
+    "capacity": 4,
+    "entities": 6,
+    "worlds": 2,
+    "world_body_limit": 3,
+    "frames": 2,
+    "rounds": 48,
+    "observed_facts": 12,
+    "pressure_ratio": 3.0,
+    "defined": true
+  },
+  "a_b_unknown_reference": {
+    "report": "reports/taiji_u2_temporal_world_22_4_2_20261112.json",
+    "groups": {
+      "A_initial_current": "32/32",
+      "B_previous": "32/32",
+      "U_unknown": "32/32"
+    },
+    "blank_previous_information_ceiling": 0.5,
+    "wrong_time_accuracy": 0.5,
+    "note": "cited, not rerun; the existing report has 0 model forwards and 0 optimizer steps"
+  },
+  "gate": {
+    "oracle_min": 0.95,
+    "c_ok": true,
+    "j_ok": true,
+    "d_ok": true,
+    "all_required_families": true
+  },
+  "discipline": {
+    "model_forwards": 0,
+    "optimizer_steps": 0,
+    "project_data_reads": 0,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 52.5469,
+    "wall": 7.578
+  }
+}
