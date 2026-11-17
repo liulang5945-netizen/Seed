@@ -1,0 +1,74 @@
+{
+  "schema": "taiji-u2-22-5-a-gate-smoke-v1",
+  "card": "22.5.0.A",
+  "status": "early_stop_a_parent_not_met",
+  "run_id": "20261117T100847Z",
+  "authorization": {
+    "owner_approval_ref": "chat:2026-11-17#approve-refreeze-and-A-gate",
+    "training_authorized": true,
+    "scope": "single-seed instrument smoke of the U2 A gate; no formal 3-seed package"
+  },
+  "conditions": {
+    "seed": 20261110,
+    "updates": 256,
+    "batch": 2,
+    "optimizer": {"type": "Adam", "lr": 0.001, "betas": [0.9, 0.999], "eps": 1e-08},
+    "fit_examples": 32,
+    "check_examples": 192,
+    "a_gate_min": 0.8
+  },
+  "readings": {
+    "preflight_equal": true,
+    "last_train_loss": 1.827147,
+    "fit_correct": 0,
+    "fit_denominator": 32,
+    "fit_accuracy": 0.0,
+    "recovery_equal": true,
+    "check_correct": 0,
+    "check_denominator": 192,
+    "check_accuracy": 0.0,
+    "check_valid_utf8": 192,
+    "check_eos": 192,
+    "check_per_label": {
+      "未知": {"correct": 0, "denominator": 48},
+      "右边": {"correct": 0, "denominator": 43},
+      "中间": {"correct": 0, "denominator": 57},
+      "左边": {"correct": 0, "denominator": 44}
+    },
+    "gate": false
+  },
+  "cost": {
+    "training_cpu": 1011.0312,
+    "check_worker_cpu": 73.828125,
+    "io_cpu": 33.7969,
+    "total_cpu": 1118.656225,
+    "cpu_cap": 1200.0,
+    "note": "one seed already consumes most of the 1200 cap; three seeds would exceed it"
+  },
+  "check_exposure": {
+    "used": 1,
+    "remaining": 1,
+    "allocated_22_5": 2,
+    "labels_returned_to_selector": false,
+    "aggregate_only": true,
+    "note": "the smoke accessed check data; per plan discipline this counts as one exposure and cannot be revoked"
+  },
+  "formal_gate": {
+    "three_seed_package_run": false,
+    "reason": "fit 0/32 and check 0/192; no candidate; do not spend the remaining check exposure"
+  },
+  "next": {
+    "action": "fit-only A learnability diagnosis",
+    "check_reads": 0,
+    "do_not": "do not use the remaining check exposure until fit shows a learnable signal"
+  },
+  "checkpoints": {
+    "initial": "output/a_gate_20261117T100847Z/seed-20261110-initial.bin",
+    "final": "output/a_gate_20261117T100847Z/seed-20261110-final.bin"
+  },
+  "discipline": {
+    "optimizer_steps": 256,
+    "project_data_reads": 0,
+    "final_reads": 0
+  }
+}
