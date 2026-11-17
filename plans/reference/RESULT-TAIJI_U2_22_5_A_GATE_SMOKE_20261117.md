@@ -48,3 +48,11 @@
 3. fit 出现可学信号后，才用剩余 1 次 check 跑正式 3-seed A 门（U2 256 更新；C 基线序列版在 22.5.1 另立）。
 
 未出现 fit 信号前：0 训练新增、0 check、0 final、0 A 父、0 B；22.5.1／22.6／22.7 锁定。
+
+## 6 fit-only 诊断（2026-11-17，0 check）
+
+- 初始 checkpoint（出生）与训练后 checkpoint 在 **train 64／fit 32** 上均为 **0 正确**。
+- 两者的输出**全部是空字符串＋EOS**（`outputs={'':64}`），不是左/中/右/未知分类错误。
+- 结论：**输出/发射从出生起就塌缩到 EOS**；训练 256 步没有把它推离 EOS。不是 UTF-8、不是 EOS 缺失、不是恢复失败、不是位置标签问题。
+- 下一步只做 **fit-only 读出修复**（检查 EOS 偏置、`request_candidate` 的 goal/emission 路径），不读 check；剩余 **1/2 check** 仍保留。
+- 见[诊断报告](../../reports/taiji_u2_22_5_a_fit_diagnosis_20261117.json)、D-20261117-36。

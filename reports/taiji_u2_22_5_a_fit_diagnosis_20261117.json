@@ -1,0 +1,80 @@
+{
+  "schema": "taiji-u2-22-5-a-fit-diagnosis-v1",
+  "card": "22.5.0.A",
+  "checkpoint_run": "output\\a_gate_20261117T100847Z",
+  "initial": {
+    "train": {
+      "correct": 0,
+      "denominator": 64,
+      "accuracy": 0.0,
+      "outputs": {
+        "ҰX\u001f\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011": 64
+      },
+      "targets": {
+        "左边": 16,
+        "中间": 16,
+        "右边": 16,
+        "未知": 16
+      },
+      "eos": 64,
+      "valid_utf8": 64
+    },
+    "fit": {
+      "correct": 0,
+      "denominator": 32,
+      "accuracy": 0.0,
+      "outputs": {
+        "ҰX\u001f\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011": 32
+      },
+      "targets": {
+        "左边": 8,
+        "中间": 8,
+        "右边": 8,
+        "未知": 8
+      },
+      "eos": 32,
+      "valid_utf8": 32
+    }
+  },
+  "final": {
+    "train": {
+      "correct": 0,
+      "denominator": 64,
+      "accuracy": 0.0,
+      "outputs": {
+        "": 64
+      },
+      "targets": {
+        "左边": 16,
+        "中间": 16,
+        "右边": 16,
+        "未知": 16
+      },
+      "eos": 64,
+      "valid_utf8": 64
+    },
+    "fit": {
+      "correct": 0,
+      "denominator": 32,
+      "accuracy": 0.0,
+      "outputs": {
+        "": 32
+      },
+      "targets": {
+        "左边": 8,
+        "中间": 8,
+        "右边": 8,
+        "未知": 8
+      },
+      "eos": 32,
+      "valid_utf8": 32
+    }
+  },
+  "conclusion": "Both birth and post-smoke checkpoints emit an empty string followed by EOS on every train and fit example. The failure is output/emission collapse, not a position classification error, not UTF-8, and not recovery.",
+  "next": "fit-only readout diagnosis/fix: inspect EOS bias and the request_candidate goal/emission path, then retrain on train/fit until content is emitted; keep check at 1/2.",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "optimizer_steps": 0
+  }
+}

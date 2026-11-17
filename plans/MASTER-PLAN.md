@@ -40,7 +40,7 @@
 
 ## 0. 一句话与队首
 
-**队首（唯一）**：`22.5.0.A` **A 门冒烟＝`early_stop_a_parent_not_met`**（owner 2026-11-17 授权；D-20261117-24／26／27／28／29／30／31／32／33／34／35）。seed 20261110、256 更新、batch 2；**fit 0/32**、**check 0/192**；UTF-8/EOS 192/192 但内容全错；初始/训练后恢复通过；单 seed **1,118.66 CPU**（训练 1011.03 + check worker 73.83 + IO 33.80）；**check 曝光 1/2 used、1/2 remaining**；正式 3-seed 包未跑、A 父未得。**A 父门未开**，22.5.1／22.6／22.7 锁定；0 能力、0 新父。**唯一后继＝fit-only A 可学性诊断（0 check）**；未出现 fit 信号前 0 训练新增、0 check、0 final。见[冒烟卡](reference/RESULT-TAIJI_U2_22_5_A_GATE_SMOKE_20261117.md)、D-20261117-35。
+**队首（唯一）**：`22.5.0.A` **A 门冒烟＝`early_stop_a_parent_not_met`**（owner 2026-11-17 授权；D-20261117-24／26／27／28／29／30／31／32／33／34／35）。seed 20261110、256 更新、batch 2；**fit 0/32**、**check 0/192**；UTF-8/EOS 192/192 但内容全错；初始/训练后恢复通过；单 seed **1,118.66 CPU**（训练 1011.03 + check worker 73.83 + IO 33.80）；**check 曝光 1/2 used、1/2 remaining**；正式 3-seed 包未跑、A 父未得。**A 父门未开**，22.5.1／22.6／22.7 锁定；0 能力、0 新父。**fit-only 诊断已做**：出生与训练后 train/fit 全 0，输出全为空字符串＋EOS ⇒ 发射从出生塌缩；**唯一后继＝fit-only 读出修复（0 check）**；未出现内容发射前 0 训练新增、0 check、0 final。见[冒烟卡](reference/RESULT-TAIJI_U2_22_5_A_GATE_SMOKE_20261117.md)、D-20261117-35。
 
 **上一队首（已归档，2026-11-17 Plan C 身份/重冻时点）**：`22.5.0.C` 新基线 `weight_tied_transformer_sequence`（K=3，21,977／35，+3.3638%，FLOPs 2,960,256）；FLOPs 比 10.4365× ≤10.6667×；重冻合同基线 256→2,671、U2 256、common FLOPs 7,909,060,608／seed、`training_authorized=false`。见[C 结果卡](reference/RESULT-TAIJI_U2_22_5_C_BASELINE_20261117.md)、D-20261117-34。
 
