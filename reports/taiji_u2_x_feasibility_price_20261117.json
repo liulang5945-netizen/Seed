@@ -1,0 +1,63 @@
+{
+  "schema": "taiji-u2-x-feasibility-price-v1",
+  "card": "22.5.X",
+  "phase": "price",
+  "prereg": "plans/reference/DESIGN-TAIJI_U2_EPISODIC_ASSOCIATIVE_20261117.md#9",
+  "criteria_digest": "af9c9db85c2f6c078f4b094ca938458c8c4d7b19a8838477cb7713e6221ab185",
+  "timing": "batched: one features call covers 96 episodes; one head fit is 300 LBFGS iterations",
+  "repeats": 5,
+  "aggregation": "cap basis = mean over repeats; median and max disclosed alongside",
+  "cap_basis_note": "a single contention outlier can make the max basis non-predictive (the first pricing pass measured head cpu_max at 32x cpu_median), so the cap is set from the mean basis, which already carries the outlier's contribution; the live ratio is disclosed in head_outlier_ratio_max_over_median and the max basis is not adopted",
+  "features_timing": {
+    "repeats": 5,
+    "cpu_mean": 0.496875,
+    "cpu_median": 0.484375,
+    "cpu_max": 0.546875,
+    "wall_mean": 0.5,
+    "wall_max": 0.546
+  },
+  "head_timing": {
+    "repeats": 5,
+    "cpu_mean": 0.315625,
+    "cpu_median": 0.046875,
+    "cpu_max": 1.421875,
+    "wall_mean": 0.403,
+    "wall_max": 1.859
+  },
+  "head_outlier_ratio_max_over_median": 30.3333,
+  "median_basis_cpu": 8.7812,
+  "mean_basis_cpu": 16.225,
+  "max_basis_cpu": 46.8438,
+  "per_features_call_cpu": 0.496875,
+  "per_head_fit_cpu": 0.315625,
+  "per_store_face_cpu": 0.05,
+  "store_faces_cpu": 0.25,
+  "store_faces_wall": 0.25,
+  "features_per_seed": 5,
+  "heads_per_seed": 9,
+  "seeds": 3,
+  "measured_cpu": 16.225,
+  "cap_margin": 2.0,
+  "cap_cpu": 32.45,
+  "cap_wall": 64.9,
+  "design_cap_cpu": 120.0,
+  "design_cap_wall": 240.0,
+  "reserve_cpu": 5.0,
+  "reserve_wall": 10.0,
+  "low_tick_limit": "single-call timing below the ~0.0156 s process_time resolution is a tick lottery, not a measurement; every timed unit here is a batch",
+  "discipline": {
+    "graph_optimizer_steps": 0,
+    "weight_writes": 0,
+    "head_optimizer": "LBFGS on diagnostic heads only, never on the graph",
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "sealed_partitions_read": [],
+    "project_data_files_opened": 0,
+    "dataset_origin": "fully synthetic via probe_u2_w_dms_20261117.make_dataset"
+  },
+  "cost": {
+    "cpu": 4.7656,
+    "wall": 5.218
+  }
+}

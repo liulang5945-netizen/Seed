@@ -1,0 +1,301 @@
+{
+  "schema": "taiji-u2-x-feasibility-v1",
+  "card": "22.5.X",
+  "phase": "smoke",
+  "prereg": "plans/reference/DESIGN-TAIJI_U2_EPISODIC_ASSOCIATIVE_20261117.md#9",
+  "criteria": {
+    "triple_fit_min": 0.75,
+    "positive_triple_min": 0.8,
+    "deranged_triple_max": 0.5,
+    "place_narrowing_exact": 1.0,
+    "place_in_cue_top1_min": 0.8,
+    "place_attribute_only_top1_max": 0.5,
+    "place_arm_gap_min": 0.3,
+    "permuted_ordering_abs_diff_max": 0.1,
+    "cross_session_retention_min": 0.8,
+    "gate_on_exclusion_exact": 1.0,
+    "graph_seeds": [
+      2026111701,
+      2026111702,
+      2026111703
+    ],
+    "delays": [
+      0,
+      1,
+      2,
+      4,
+      8
+    ],
+    "places": [
+      "kitchen",
+      "hall",
+      "garden",
+      "cellar"
+    ],
+    "exits": [
+      "budget_stop",
+      "instrument_invalid",
+      "task_not_learnable",
+      "episodic_associative_feasible"
+    ]
+  },
+  "criteria_digest": "af9c9db85c2f6c078f4b094ca938458c8c4d7b19a8838477cb7713e6221ab185",
+  "encoding_contract": {
+    "identity": "unit-input-dms-v1",
+    "columns": 16,
+    "channels": [
+      "rgb",
+      "audio",
+      "proprio",
+      "question",
+      "goal",
+      "feedback"
+    ],
+    "rgb_layout": "[4 attribute one-hot, present, test marker, sample marker, bias]",
+    "question_layout": "[sample, delay, test, query, same-query marker, 0, 0, bias]",
+    "goal_layout": "fixed marker at slot 0 (constant)",
+    "attributes": 4,
+    "delay_steps": 4,
+    "label": "1 iff the sample attribute appears in the test row",
+    "unit_prelabeling": "none: sensory evidence only, the graph carries the sample"
+  },
+  "data_digest": "fa5ddfc76a19f0b0c1782143e457ca53f88c54d1089db2fcb733036732f2fb5c",
+  "dataset_sizes": {
+    "train": 64,
+    "fit": 32
+  },
+  "head_anchor": {
+    "binary_head": {
+      "train_accuracy": 0.5,
+      "fit_accuracy": 0.5625,
+      "fit_distinct": 2
+    },
+    "multi_head_k2": {
+      "train_accuracy": 0.5,
+      "fit_accuracy": 0.5625,
+      "fit_distinct": 2
+    },
+    "exact": true,
+    "reused_helper": "scripts/training/probe_u2_w_dms_20261117.py:fit_head"
+  },
+  "global_checks": {
+    "encoding_oracle": true,
+    "encoding_oracle_hits": 96,
+    "encoding_oracle_total": 96,
+    "partition_disjoint": true,
+    "multi_head_anchor_exact": true,
+    "store_record_roundtrip": true
+  },
+  "seeds": [
+    {
+      "seed": 2026111701,
+      "bridge": {
+        "what": {
+          "k": 4,
+          "train_accuracy": 0.40625,
+          "fit_accuracy": 0.21875,
+          "fit_distinct": 3
+        },
+        "where": {
+          "k": 8,
+          "train_accuracy": 0.25,
+          "fit_accuracy": 0.03125,
+          "fit_distinct": 4
+        },
+        "when": {
+          "k": 5,
+          "train_accuracy": 1.0,
+          "fit_accuracy": 1.0,
+          "fit_distinct": 5
+        },
+        "triple_fit": 0.0,
+        "positive_triple_fit": 1.0,
+        "deranged_triple_fit": 0.0,
+        "derangement": "train labels shifted by +1 mod k, fit labels untouched",
+        "std_delay": 4,
+        "when_fit_rows": 160,
+        "collapsed_heads": [],
+        "collapse_note": "a collapsed head on real features is a finding about the representation, not an instrument failure; the ruler's range is established by the oracle and deranged arms instead",
+        "checks": {
+          "positive_control_reaches_gate": true,
+          "deranged_below_band": true,
+          "ruler_has_dynamic_range": true
+        },
+        "gates": {
+          "triple_reaches_gate": false
+        }
+      },
+      "checks": {
+        "params_unchanged": true
+      }
+    }
+  ],
+  "store_faces": {
+    "S1_place": {
+      "place_in_cue_top1": 1.0,
+      "place_attribute_only_top1": 0.25,
+      "arm_gap": 0.75,
+      "narrowing_rate": 1.0,
+      "narrowing_faces": 8,
+      "queries_per_arm": 32,
+      "checks": {
+        "narrowing_exact": true,
+        "arm_gap_wide_enough": true,
+        "ruler_has_dynamic_range": true
+      },
+      "gates": {
+        "in_cue_reaches_gate": true,
+        "attribute_only_below_band": true
+      }
+    },
+    "S2_confidence": {
+      "record_has_confidence_field": false,
+      "record_fields": [
+        "action_intent",
+        "assembly_ids",
+        "attribute_ids",
+        "cue",
+        "episode_id",
+        "event_ids",
+        "memory_id",
+        "object_ids",
+        "outcome",
+        "prediction_error",
+        "provenance",
+        "relation_ids",
+        "tick",
+        "version",
+        "world_transition"
+      ],
+      "high_confidence_error_rate": 0.140625,
+      "low_confidence_error_rate": 0.390625,
+      "observed_abs_diff": 0.25,
+      "error_count": 34,
+      "query_alpha_range": [
+        0.05,
+        0.5957031250000001
+      ],
+      "permuted_abs_diff_mean": 0.0859375,
+      "permuted_abs_diff_max": 0.15625,
+      "permutations": 20,
+      "oracle_statistic_high_error_rate": 0.0,
+      "oracle_statistic_low_error_rate": 0.53125,
+      "queries": 128,
+      "confidence_proxy": "retrieve cosine score (no per-record confidence exists)",
+      "stimulus": "competing partial cue (1-alpha)*onehot(place) + alpha*onehot(other), alpha 0.05-0.60; record noise scale 0.05-1.55",
+      "checks": {
+        "record_confidence_absent": true,
+        "errors_exist": true,
+        "oracle_statistic_ordering_holds": true,
+        "permuted_ordering_within_band": true,
+        "ruler_has_dynamic_range": true
+      },
+      "gates": {
+        "calibration_ordering_holds": true
+      }
+    },
+    "S3_conflict": {
+      "default_reachable_ids": [
+        "fresh",
+        "stale"
+      ],
+      "default_count": 2,
+      "contradiction_persists": true,
+      "conflict_marker_api_present": false,
+      "overwrite_top_attribute": [
+        "color=blue"
+      ],
+      "overwrite_stale_reachable": false,
+      "expire_removed": 1,
+      "expire_top_attribute": [
+        "color=blue"
+      ],
+      "expire_stale_reachable": false,
+      "expired_memory_ids": [
+        "stale"
+      ],
+      "checks": {
+        "ruler_has_dynamic_range": true
+      },
+      "gates": {
+        "default_contradiction_persists": true,
+        "corrected_top1_is_current": true,
+        "stale_not_reachable_after_correction": true
+      }
+    },
+    "S4_forgetting": {
+      "large_capacity_retention": {
+        "0": 1.0,
+        "8": 1.0,
+        "32": 1.0,
+        "64": 1.0
+      },
+      "large_capacity_evicted": {
+        "0": 0,
+        "8": 0,
+        "32": 0,
+        "64": 0
+      },
+      "retention_flat": true,
+      "small_capacity": 8,
+      "small_before_retention": 1.0,
+      "small_after_retention": 0.0,
+      "small_after_evicted_count": 8,
+      "expected_evicted": 8,
+      "store_has_decay_attribute": false,
+      "checks": {
+        "evicted_count_exact": true,
+        "store_has_no_decay": true,
+        "ruler_has_dynamic_range": true
+      },
+      "gates": {
+        "retention_flat_without_decay": true,
+        "retention_drops_under_capacity": true
+      }
+    },
+    "S5_session": {
+      "checkpoint_roundtrip_exact": true,
+      "checkpoint_format": "taiji-episodic-memory-v1",
+      "cross_session_retention": 1.0,
+      "session_queries": 8,
+      "gate_off_leakage": true,
+      "gate_off_hit_count": 16,
+      "gate_on_exclusion_rate": 1.0,
+      "gate_on_hit_count": 8,
+      "checks": {
+        "checkpoint_roundtrip_exact": true,
+        "gate_on_exclusion_exact": true,
+        "ruler_has_dynamic_range": true
+      },
+      "gates": {
+        "cross_session_retention_reaches_gate": true,
+        "gate_off_leaks": true
+      }
+    }
+  },
+  "uncovered": [],
+  "budget_stopped": false,
+  "verdict": "smoke_passed",
+  "discipline": {
+    "graph_optimizer_steps": 0,
+    "weight_writes": 0,
+    "head_optimizer": "LBFGS on diagnostic heads only, never on the graph",
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "sealed_partitions_read": [],
+    "project_data_files_opened": 0,
+    "dataset_origin": "fully synthetic via probe_u2_w_dms_20261117.make_dataset"
+  },
+  "cost": {
+    "cpu": 5.2812,
+    "wall": 5.641
+  },
+  "scope_note": "feasible means only: the current unit representation carries the event triple and the five store gaps are precisely localized (including absence by construction). It does not mean episodic/associative memory works, nor infinite context.",
+  "prior_readings_not_remeasured": [
+    "reports/taiji_m5_episodic_field_20260821.json",
+    "reports/taiji_p4_episodic_recall_baseline_20260825.json",
+    "reports/taiji_g5_episodic_write_four_grid_v3_20260926.json",
+    "reports/taiji_episodic_read_sharing_face_20261011.json"
+  ]
+}
