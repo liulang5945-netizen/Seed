@@ -1,0 +1,28 @@
+{
+  "schema": "taiji-u2-v1-hard-selection-price-v1",
+  "card": "22.5.V.1",
+  "phase": "price",
+  "criteria_sha256": "00bc9cf904c8d7f68bb6d3b2f5f264c16217b22e454ab53eb38bc9819a23db98",
+  "verdict": "price_measured_within_design",
+  "per_update_cpu": 0.0012207,
+  "per_eval_cpu": 0.00048828,
+  "per_intervention_item_cpu": 0.00585938,
+  "measured_cpu": 2.3906,
+  "cap_cpu": 4.7812,
+  "cap_wall": 9.5625,
+  "design_cap_cpu": 600.0,
+  "design_cap_wall": 1200.0,
+  "formula": "3*(384*per_update + 288*per_eval + 32*per_intervention)",
+  "models_discarded": true,
+  "discipline": {
+    "optimizer_steps": 68,
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "sealed_partitions_read": []
+  },
+  "cost": {
+    "cpu": 3.0,
+    "wall": 3.297
+  }
+}

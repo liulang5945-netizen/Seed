@@ -1,0 +1,148 @@
+{
+  "schema": "taiji-u2-v1-hard-selection-v1",
+  "card": "22.5.V.1",
+  "date": "2026-11-17",
+  "status": "frozen",
+  "training_authority": null,
+  "identity": "taiji-u2-hard-select-v1",
+  "parent_card": "22.5.U.1r2",
+  "data_root": "data/experiments/taiji_u2/first_a/20261112T074836Z/data.bin",
+  "data_digest": "40813b4cc8ffec0c3ae5639941b373c139422b4ccbaa34790de34a9e1149d214",
+  "encoding_contract_identity": "unit-input-column-color-v1",
+  "encoding_contract_digest": "00319fff32cf1ac14a89c6999c8ea4fe63f0ea1b26924eb6e73baa45877c0a55",
+  "criteria": {
+    "route": "B_hard_select",
+    "parent_route": "B_position_temp",
+    "seeds": [
+      2026111601,
+      2026111602,
+      2026111603
+    ],
+    "updates_per_seed": 384,
+    "learning_rate": {
+      "W_q": 0.002,
+      "position_head": 0.001
+    },
+    "dtype": "float64",
+    "selection_gate": 0.95,
+    "fit_gate": 0.8,
+    "train_gate": 0.9,
+    "distinct_min": 3,
+    "control_agreement_max": 0.5,
+    "intervention_change_min_fraction": 0.5,
+    "value_side_frozen": true,
+    "value_side_review_report": "reports/taiji_u2_value_side_review_20261117.json",
+    "value_side_review_sha256": "f2675d8842800cc78169db1aa9013f98fb7fcee2cb6f8476ead860bf4fe81c2f",
+    "value_side_prerequisite": {
+      "answer_column_head_fit_min": 0.8,
+      "answer_column_head_train_min": 0.9,
+      "measured_fit": [
+        0.9375,
+        0.84375,
+        0.96875
+      ],
+      "measured_train": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "colour_baseline_painted": {
+      "2026111601": 0.7907,
+      "2026111602": 0.686,
+      "2026111603": 0.6744
+    },
+    "colour_drop_max": 0.05,
+    "focus_supervision": {
+      "loss": "soft-target cross entropy on attention",
+      "target": "queried-entity colour mass per column, normalised (oracle_soft)",
+      "applied_to": "labelled train scenes only",
+      "weight": 1.0,
+      "log_clamp": 1e-12,
+      "credit": [
+        "W_q"
+      ]
+    },
+    "scope": "read prerequisite only; no parent/capability/check2/22.6 claim",
+    "exits": [
+      {
+        "order": 1,
+        "verdict": "budget_stop"
+      },
+      {
+        "order": 2,
+        "verdict": "engineering_failure"
+      },
+      {
+        "order": 3,
+        "verdict": "selection_failed",
+        "condition": "any seed fit top1-on-span < 0.95"
+      },
+      {
+        "order": 4,
+        "verdict": "value_side_degraded",
+        "condition": "structurally impossible: value side frozen"
+      },
+      {
+        "order": 5,
+        "verdict": "read_failed",
+        "condition": "read gates/controls/interventions below"
+      },
+      {
+        "order": 6,
+        "verdict": "hard_readout_passed"
+      }
+    ]
+  },
+  "criteria_sha256": "00bc9cf904c8d7f68bb6d3b2f5f264c16217b22e454ab53eb38bc9819a23db98",
+  "plan": {
+    "design_cap_cpu": 600.0,
+    "design_cap_wall": 1200.0,
+    "cap_cpu": 4.7812,
+    "cap_wall": 9.5625,
+    "per_update_cpu": 0.0012207,
+    "per_eval_cpu": 0.00048828,
+    "per_intervention_item_cpu": 0.00585938,
+    "price_report": "reports/taiji_u2_v1_hard_selection_price_20261117.json"
+  },
+  "source_pins": {
+    "runner": "7a3f7b7baec047d6328c1c4a5d5fbd41420d49ef293a79eebb5a4493e861897c",
+    "hard_readout": "9e0ab8ba579899ecb1767b0801998ed2447d33dd1ae62273101fa73706ad0900",
+    "temperature_readout": "ca0fec81d06a0fe89132bce303120a4728a788dab4b66cdff79c1a5bcc3f75d1",
+    "position_readout": "1bab85076b816513dd85e9019c99784a238c3c222a3edde283bcf550f1a7e9b5",
+    "u1_runner": "ab6def65ca694148da930bc8e3a2aab7019d82a91d1ce6600c2b6a4d7ea09948",
+    "u1r1_runner": "fef2f580a4dd27e162886bcff0a7bcd12f33c5086eedb57bacf4c3cde071bca8",
+    "u1r2_runner": "63286ae511b96cd0e8891b0a8f0339c7074785a6567bfac298d433f748b0f9e8",
+    "unit_input": "4a97e0d1eb3b0be4af65e0bc7a5d9f84767f51f2bd24f60e74b1914eefc1ae6b",
+    "neural_units": "6a8bfc15f44b39cc22cd1570bf43cedaf44e018628572efb528f2a829a5deca9",
+    "support": "33d9301f98859934c1413e25765c55e6bc7b64dfa410d65b03f0e5a198041b4c",
+    "columns": "852c54e60c97efb23f83072659a363f890c58a4929354467ce4b71a028bc8443",
+    "episode": "fc5dbed68c9a428c4ec8725ba2d454564f153b8e60ed1d16fa7cfc13d16ab470",
+    "value_side_review": "f2675d8842800cc78169db1aa9013f98fb7fcee2cb6f8476ead860bf4fe81c2f"
+  },
+  "source_pin_paths": {
+    "runner": "scripts/training/run_v1_hard_selection_20261117.py",
+    "hard_readout": "taiji/u2_unit_hard_selection_readout.py",
+    "temperature_readout": "taiji/u2_unit_temperature_readout.py",
+    "position_readout": "taiji/u2_unit_position_readout.py",
+    "u1_runner": "scripts/training/run_u1_unit_read_20261116.py",
+    "u1r1_runner": "scripts/training/run_u1r1_position_20261116.py",
+    "u1r2_runner": "scripts/training/run_u1r2_scale_supervision_20261116.py",
+    "unit_input": "taiji/u2_unit_input.py",
+    "neural_units": "taiji/u2_neural_units.py",
+    "support": "scripts/training/first_a_support_22_5.py",
+    "columns": "taiji/u2_observation_columns.py",
+    "episode": "taiji/u2_task_episode.py",
+    "value_side_review": "reports/taiji_u2_value_side_review_20261117.json"
+  },
+  "start_parents": {
+    "seed2026111601": "data/experiments/taiji_u2/u1r2_scale_supervision_20261116/seed2026111601_final.bin",
+    "seed2026111602": "data/experiments/taiji_u2/u1r2_scale_supervision_20261116/seed2026111602_final.bin",
+    "seed2026111603": "data/experiments/taiji_u2/u1r2_scale_supervision_20261116/seed2026111603_final.bin"
+  },
+  "start_parent_sha256": {
+    "seed2026111601": "760294f69e1f13d59ffb0b1b6fbb3c8773a5c1b7bb61cdfdfa5b2087a4a98a36",
+    "seed2026111602": "b404c5ff7811b694ea424ef4ef1de2747e1c753a0a92231b03fe98ab636cd4bf",
+    "seed2026111603": "a83a4861489dced23af39c533ae7384d6574ddff808c33927d32a86cbb372bd6"
+  }
+}

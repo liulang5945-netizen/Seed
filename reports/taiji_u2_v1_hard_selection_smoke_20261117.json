@@ -1,0 +1,130 @@
+{
+  "schema": "taiji-u2-v1-hard-selection-smoke-v1",
+  "card": "22.5.V.1",
+  "phase": "smoke",
+  "criteria_sha256": "00bc9cf904c8d7f68bb6d3b2f5f264c16217b22e454ab53eb38bc9819a23db98",
+  "verdict": "smoke_passed",
+  "checks": {
+    "seed2026111601_attention_matches_parent": true,
+    "seed2026111601_attended_matches_parent": true,
+    "seed2026111601_selected_is_argmax": true,
+    "seed2026111601_hard_readout_identity": true,
+    "seed2026111601_parent_capsule_loudly_rejected": true,
+    "seed2026111601_trainable_is_exactly_two": true,
+    "seed2026111601_state_dict_keys_match_parent": true,
+    "seed2026111601_checkpoint_roundtrip": true,
+    "seed2026111601_task_loss_finite": true,
+    "seed2026111601_focus_loss_finite": true,
+    "seed2026111601_trainable_grads_present": true,
+    "seed2026111601_frozen_params_no_grad": true,
+    "seed2026111602_attention_matches_parent": true,
+    "seed2026111602_attended_matches_parent": true,
+    "seed2026111602_selected_is_argmax": true,
+    "seed2026111602_hard_readout_identity": true,
+    "seed2026111602_parent_capsule_loudly_rejected": true,
+    "seed2026111602_trainable_is_exactly_two": true,
+    "seed2026111602_state_dict_keys_match_parent": true,
+    "seed2026111602_checkpoint_roundtrip": true,
+    "seed2026111602_task_loss_finite": true,
+    "seed2026111602_focus_loss_finite": true,
+    "seed2026111602_trainable_grads_present": true,
+    "seed2026111602_frozen_params_no_grad": true,
+    "seed2026111603_attention_matches_parent": true,
+    "seed2026111603_attended_matches_parent": true,
+    "seed2026111603_selected_is_argmax": true,
+    "seed2026111603_hard_readout_identity": true,
+    "seed2026111603_parent_capsule_loudly_rejected": true,
+    "seed2026111603_trainable_is_exactly_two": true,
+    "seed2026111603_state_dict_keys_match_parent": true,
+    "seed2026111603_checkpoint_roundtrip": true,
+    "seed2026111603_task_loss_finite": true,
+    "seed2026111603_focus_loss_finite": true,
+    "seed2026111603_trainable_grads_present": true,
+    "seed2026111603_frozen_params_no_grad": true
+  },
+  "uncovered": [],
+  "seeds": [
+    {
+      "seed": 2026111601,
+      "trainable": [
+        "W_q",
+        "position_head.weight"
+      ],
+      "selected": 3,
+      "task_loss": 1.0250655999187188,
+      "focus_loss": 0.7732228214557718,
+      "checks": {
+        "attention_matches_parent": true,
+        "attended_matches_parent": true,
+        "selected_is_argmax": true,
+        "hard_readout_identity": true,
+        "parent_capsule_loudly_rejected": true,
+        "trainable_is_exactly_two": true,
+        "state_dict_keys_match_parent": true,
+        "checkpoint_roundtrip": true,
+        "task_loss_finite": true,
+        "focus_loss_finite": true,
+        "trainable_grads_present": true,
+        "frozen_params_no_grad": true
+      }
+    },
+    {
+      "seed": 2026111602,
+      "trainable": [
+        "W_q",
+        "position_head.weight"
+      ],
+      "selected": 3,
+      "task_loss": 1.3200552206329637,
+      "focus_loss": 1.2724684986325916,
+      "checks": {
+        "attention_matches_parent": true,
+        "attended_matches_parent": true,
+        "selected_is_argmax": true,
+        "hard_readout_identity": true,
+        "parent_capsule_loudly_rejected": true,
+        "trainable_is_exactly_two": true,
+        "state_dict_keys_match_parent": true,
+        "checkpoint_roundtrip": true,
+        "task_loss_finite": true,
+        "focus_loss_finite": true,
+        "trainable_grads_present": true,
+        "frozen_params_no_grad": true
+      }
+    },
+    {
+      "seed": 2026111603,
+      "trainable": [
+        "W_q",
+        "position_head.weight"
+      ],
+      "selected": 2,
+      "task_loss": 1.318540131533858,
+      "focus_loss": 1.0915014683292315,
+      "checks": {
+        "attention_matches_parent": true,
+        "attended_matches_parent": true,
+        "selected_is_argmax": true,
+        "hard_readout_identity": true,
+        "parent_capsule_loudly_rejected": true,
+        "trainable_is_exactly_two": true,
+        "state_dict_keys_match_parent": true,
+        "checkpoint_roundtrip": true,
+        "task_loss_finite": true,
+        "focus_loss_finite": true,
+        "trainable_grads_present": true,
+        "frozen_params_no_grad": true
+      }
+    }
+  ],
+  "discipline": {
+    "optimizer_steps": 0,
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0
+  },
+  "cost": {
+    "cpu": 2.9531,
+    "wall": 3.344
+  }
+}
