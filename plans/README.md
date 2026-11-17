@@ -20,6 +20,7 @@ R1、R3b、R5b 等保留为原合同和实验身份，N1–N6 保留为机制责
 
 ## 需要核验时再查
 
+- [全算法纯数学验证矩阵](reference/MATRIX-TAIJI_FULL_ALGORITHM_MATH_20261117.md)：45项命题的前提、局部证明、反例、未闭合边界与下一数学动作；只做数学验证，不替代owner现有行为验证主线。
 - [有状态神经单位与生命周期](reference/SPEC-TAIJI_U2_NEURAL_UNIT_LIFECYCLE_20261113.md)：持续状态、可塑连接、历史出生信用、复制/休眠/退役及兼容迁移；设计与局部数学，不是新增能力声明。
 - [神经核心两路线备案](reference/DECISION-TAIJI_NEURAL_CORE_PATH_20261114.md)：兼容嵌入与单位原生重构的设计比较、保留/替换边界、转换条件及22–28影响。
 
