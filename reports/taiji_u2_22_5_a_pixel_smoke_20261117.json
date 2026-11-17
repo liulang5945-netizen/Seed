@@ -1,0 +1,23 @@
+{
+  "schema": "taiji-u2-22-5-a-pixel-smoke-v1",
+  "card": "22.5.0.A",
+  "readout": "pixel-salience",
+  "updates": 3,
+  "losses": [
+    4.52844,
+    4.644244,
+    4.516996
+  ],
+  "recovery_equal": true,
+  "fit_accuracy": 0.0,
+  "description_readout": "pixel-salience",
+  "cpu": {
+    "training": 14.9219,
+    "per_example_update": 2.487
+  },
+  "discipline": {
+    "u2_optimizer_steps": 3,
+    "check_reads": 0,
+    "final_reads": 0
+  }
+}
