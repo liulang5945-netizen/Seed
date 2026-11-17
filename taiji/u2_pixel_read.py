@@ -51,9 +51,9 @@ class PixelSalienceReadout(nn.Module):
         self.byte = nn.Embedding(256, text)
         self.position = nn.Parameter(torch.zeros(1, MAX_BYTES, text))
         self.text = nn.Linear(2 * text, width)
-        self.query = nn.Linear(width, width)
         self.pixel = nn.Linear(3, width)
         self.null = nn.Parameter(torch.zeros(width))
+        self.log_temp = nn.Parameter(torch.zeros(()))
         self.out = nn.Linear(6, out_dim)
         nn.init.zeros_(self.out.weight)
         nn.init.zeros_(self.out.bias)
@@ -63,15 +63,18 @@ class PixelSalienceReadout(nn.Module):
     ) -> torch.Tensor:
         image = raster(blocks if blocks.dim() == 3 else blocks[None])
         flat = image.reshape(image.shape[0], SIDE * SIDE, 3)
-        key = torch.tanh(self.pixel(flat))
+        key = nn.functional.normalize(self.pixel(flat), dim=-1)
         text = self.byte(request) + self.position[0, : request.numel()]
-        question = torch.tanh(
-            self.query(torch.tanh(self.text(torch.cat([text.mean(0), text.amax(0)], -1))))
+        question = nn.functional.normalize(
+            self.text(torch.cat([text.mean(0), text.amax(0)], -1)), dim=-1
         )
+        scale = math.sqrt(key.shape[-1]) * self.log_temp.exp()
         score = torch.cat(
             [
-                torch.einsum("d,nkd->nk", question, key) / math.sqrt(key.shape[-1]),
-                (question @ self.null).reshape(1, 1).expand(image.shape[0], -1),
+                torch.einsum("d,nkd->nk", question, key) * scale,
+                (question @ nn.functional.normalize(self.null, dim=-1))
+                .reshape(1, 1)
+                .expand(image.shape[0], -1),
             ],
             -1,
         )
@@ -104,8 +107,6 @@ def unit_registry(width: int = 16, text: int = 16, out_dim: int = 8) -> dict:
             "position",
             "text.weight",
             "text.bias",
-            "query.weight",
-            "query.bias",
         ],
-        "pixel-salience:match": ["null"],
+        "pixel-salience:match": ["null", "log_temp"],
     }
