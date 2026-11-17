@@ -821,6 +821,9 @@ class U2Subject(_WorldKernel):
     def language_goal(self, state):
         from .u2_request_state import active_request
 
+        cached = state.get("utterance_goal")
+        if cached is not None:
+            return cached
         raw = (
             state["answer_request"]["raw"]
             if self.c.separate_requests and active_request(state)
@@ -1269,6 +1272,10 @@ class U2Subject(_WorldKernel):
             from .u2_request_state import bind_utterance
 
             child = bind_utterance(self, state, child)
+        # The request/goal encoding is constant across the bytes of one utterance;
+        # computing it once removes three redundant text convolutions per example.
+        raw_goal = child["answer_request"]["raw"] if self.c.separate_requests else child["goal_raw"]
+        child["utterance_goal"] = self.goal(raw_goal)
         if self.c.readout == "pixel-salience" and state.get("pixel_blocks") is not None:
             # The readout's inputs (raster, grid, request) are constant across the
             # bytes of one utterance, so its contribution is computed once here and
@@ -1347,9 +1354,12 @@ class U2Subject(_WorldKernel):
         event = bounded(
             self.text_input(self.embedding(torch.tensor(symbol, device=self.native_w.device)))
         )
+        goal = child.get("utterance_goal")
+        if goal is None:
+            goal = self.goal(child["goal_raw"])
         child["H"] = self.native(
             child,
-            self.goal(child["goal_raw"]),
+            goal,
             self.native_w.new_zeros(15),
             event[None].expand(self.c.branches, -1),
         )
