@@ -10,6 +10,7 @@
 
 | 编号 | 类型 | 一句话 | 提交 |
 |---|---|---|---|
+| D-20261117-13 | 父获取设计（`22.5.W`，零训练） | owner 选 A 父获取设计。DMS 延迟匹配样本：样本属性 4 类 → D=4 空白延迟 → 8 槽测试行 → 二分类 same/different；按属性×位置划分，fit 只含未见组合；复用单位核心 B 图、拟 `unit-input-dms-v1`、真实反馈；父门 fit≥0.90/train≥0.95、未见组合≥0.85、记忆 lesion≤0.60、独立恢复、成本≤实测帽；下一步零训练可行性（数据＋编码 oracle＋线性探针 fit≥0.80 才进训练，<0.60 判 task_not_learnable）＋定价，帽 120 CPU；0 训练 | 见本文件 Git 历史 |
 | D-20261117-12 | 全局 22.5 复核/收束对账（零训练） | owner 选全局复核。结论 **`parent_missing`**：P3.9 `p3_9_closed_limited_exit`；A 线 A 父 absent；B 线 `retention_broken_under_scoping`；C 线 `both_failed`；U/V 累计负（值侧答案列 3/3、选择 0/3 达 0.95、查询表示不足）；22.6/22.7 `not_admitted/parent_missing`；22.8 未启动；23–28 未启动；S19–S22 独立。后继线已登记成本约 **3,971.1 CPU**（65 份报告；U/V 95.6405、P2 316.359 单列）；绑定约束是**无被接受 task parent**，不是缺机制卡。下一轴 A 父获取设计（建议）/B 跳过 22.5 重划主线/C 重开读路径；裁决前 0 训练 | 见本文件 Git 历史 |
 | D-20261117-11 | 累计收束裁决（单位核心 B 读路径整线） | owner 2026-11-17 弹窗裁决收束 U.1→U.1r1→U.1r2→V→V.1→V.2 整条读路径；不追加同路径训练/seed/剂量/修订；**不关闭**架构、生命周期、U.2/U.3、N 主线；**不签**父/能力/check②/22.6，不写"架构已证否"或"选择原理不可行"。累计定位＝**值侧答案列 3/3 可读、选择/查询表示不足**（基線 0.76/0.44/0.64；V.2 指针最好 0.80/0.56/0.72；查询只有实体 one-hot）；累计成本 **95.6405 CPU**；十项残留＋六条教训入卡；历史产物只读保留；下一轴建议先做零训练全局 22.5 复核/收束对账 | 见本文件 Git 历史 |
 | D-20261117-10 | 零训练选择机制复核（`22.5.V.2`） | owner 选 V.2。判 **`neither_reaches_gate`**：基线 **0.76/0.44/0.64**；指针线性 0.48/0.40/0.56、双线性 span 0.68/0.52/0.72、双线性 one-hot **0.80/0.56/0.72**（train 0.959/0.959/1.0；错误查询 0.04/0.08/0.12；固定查询 0.52/0.32/0.48）；共享 W_q 最小二乘 0.60/0.56/0.72（train 0.90–0.96、范数 10^5–10^6、病态）；oracle 1.0；三种机制 0/3 达 0.95；值侧答案列仍 3/3 可读 ⇒ 缺口在**查询表示**（只有实体 one-hot）；仪器全过、**9.0469 CPU／0 步／封存 0**；待 owner 裁决收束读路径（建议）或 V.3 内容查询设计 | 见本文件 Git 历史 |
@@ -4599,6 +4600,23 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **6. 下一轴选项**：A（执行者建议）**可处理任务的父获取设计**（零训练设计＋定价；窄任务、直接查询/表示、真实反馈、父门/数据边界/预算/出口先冻结）；B **把 22.5 标记为 parent_missing 并重划 N 主线**（跳过 22.5 的代价与依赖缺口须 owner 明确接受）；C 重开 first_a 读路径新范围（上限已被压低，不推荐）。裁决前 **0 训练新增**、0 能力、0 A 父；check② 不读、22.6 不解锁；字节世界 effort 保持全局收束。
 
 **7. 文档门与行尾（本项写完后四门各跑一遍）**：① `audit_plan_single_mainline.py` → **`status: ok`**、rc **0**。② `audit_taiji_ledger_marker_uniqueness.py` → rc **0**、`rows_counted` **763**、`distinct_markers` **763**、`max_marker` **1139**、`duplicates` **{}**、`nonmonotonic_runs` **15**、`ledger_markers_unique` **true**；`D-20261117-12` 独立扫描＝索引行 **1**＋正文标题 **1**、总命中 **6**。③ `audit_taiji_ledger_cited_reports_are_tracked.py` → rc **1**、`not_tracked` 与 `missing_on_disk` **各 1 条且同指别线既有** `reports/taiji_u2_bind2_graph_20261115.json`；`tracked_reports_total` **3970**、`cited_reports_total` **1203**、`cited_as_reading` **1192**、`malformed` **3**／`planned_output` **8**／`superseded_citation` **2** 均不变。④ `check_plans_markdown_links.py --json` → rc **1**、`files` **998**（+1＝复核卡）、`links_checked` **9081**（+7）、`problems` **2416**（**与基线同数**）、kinds `missing_file` **2331**＋`missing_anchor` **85**、**现行层 6 枚**＝03 第 **376／401／1776／1784／2808** 行＋`07_MINI_MODEL_DELIVERY.md` 第 **5** 行（较上批 +2）⇒ **本批 0 新增坏链**。**行尾**：六件 `crlf` **0**、`lone_cr` **0**、**无 BOM**、均以换行结尾（复核卡 6,409 B／包22计划 111,777 B／MAINLINE 62,808 B／MASTER-PLAN 125,518 B／03 784,941 B／台账 759,099 B）。**暂存面**：精确 `git add` 六件，**未用目录形**；别线未跟踪件一枚未暂存。**推送**：本批**不推**——提交后未推 **13 笔**。
+
+### D-20261117-13 `22.5.W` 父获取设计（DMS，零训练）
+
+**1. 触发与性质**：D-20261117-13｜2026-11-17｜**零训练设计**。owner 在全局 22.5 复核后选「A 父获取设计」。设计卡＝[DESIGN-TAIJI_U2_PARENT_ACQUISITION_20261117.md](DESIGN-TAIJI_U2_PARENT_ACQUISITION_20261117.md)。这是 22.5 的父获取新范围，不是 U/V 读路径的延续。
+
+**2. 任务**：延迟匹配样本（DMS）——每 episode 先呈现样本属性（4 类之一），随后 **D=4 步空白延迟**，再呈现 **8 槽测试行**，查询"测试行里是否出现样本属性？"（二分类 same/different）；测试行中样本属性出现 0 或 1 次。数据按**属性×位置组合**划分，fit 只含未见组合；check 另立、本卡不读。**合成任务**，不是自然中文/多模态能力。
+
+**3. 为什么可处理**：查询是"测试行 vs 记忆样本"的比较，不是"实体 one-hot → 颜色"的绑定；标签空间 2，避免 4 类位置读的复合误差；需要跨延迟维持样本，直接测持续状态与记忆使用；反馈是真实对错，可用于后续有界学习。**不默认新增结构**：复用单位核心 B 图；输入合同拟 `unit-input-dms-v1`（样本/延迟/测试阶段标记＋属性 one-hot）；若可行性探针显示状态不可读，另立机制卡，不在本卡加头。
+
+**4. 父门与预算**：fit 二分类 ≥0.90、train ≥0.95；未见组合 fit ≥0.85；记忆 lesion（延迟置空/样本移除）fit ≤0.60；旧能力 `not_applicable_new_task`；独立恢复逐位；成本 ≤实测帽。**零训练可行性阶段**：数据构建＋编码 oracle 100%＋线性/凸 CE 头探针（fit ≥0.80 才进训练；<0.60 判 `task_not_learnable`）＋精确定价；自设帽 **120 CPU／240 wall**；0 优化器步、0 封存。
+
+**5. 能签与不能签**：**能签**（后续阶段）DMS 任务范围、编码合同、可行性读数、父门、成本。**不能签**当前模型已会记忆/推理、自然中文能力、任何父/能力/check②/22.6；DMS 通过也不等于 22.5 父（还须正式父训练与验收）。
+
+**6. 唯一后继**：零训练可行性阶段（数据构建＋探针＋定价），写完设计/报告后再请 owner 决定是否进入父训练。授权前 **0 训练新增**、0 能力、0 A 父；check② 不读、22.6 不解锁；字节世界 effort 保持全局收束。
+
+**7. 文档门与行尾（本项写完后四门各跑一遍）**：① `audit_plan_single_mainline.py` → **`status: ok`**、rc **0**。② `audit_taiji_ledger_marker_uniqueness.py` → rc **0**、`rows_counted` **763**、`distinct_markers` **763**、`max_marker` **1139**、`duplicates` **{}**、`nonmonotonic_runs` **15**、`ledger_markers_unique` **true**；`D-20261117-13` 独立扫描＝索引行 **1**＋正文标题 **1**、总命中 **6**。③ `audit_taiji_ledger_cited_reports_are_tracked.py` → rc **1**、`not_tracked` 与 `missing_on_disk` **各 1 条且同指别线既有** `reports/taiji_u2_bind2_graph_20261115.json`；`tracked_reports_total` **3970**、`cited_reports_total` **1203**、`cited_as_reading` **1192**、`malformed` **3**／`planned_output` **8**／`superseded_citation` **2** 均不变。④ `check_plans_markdown_links.py --json` → rc **1**、`files` **999**（+1＝设计卡）、`links_checked` **9088**（+7）、`problems` **2416**（**与基线同数**）、kinds `missing_file` **2331**＋`missing_anchor` **85**、**现行层 6 枚**＝03 第 **378／403／1778／1786／2810** 行＋`07_MINI_MODEL_DELIVERY.md` 第 **5** 行（较上批 +2）⇒ **本批 0 新增坏链**。**行尾**：六件 `crlf` **0**、`lone_cr` **0**、**无 BOM**、均以换行结尾（设计卡 5,509 B／包22计划 112,122 B／MAINLINE 63,030 B／MASTER-PLAN 125,518 B／03 786,062 B／台账 763,728 B）。**暂存面**：精确 `git add` 六件，**未用目录形**；别线未跟踪件一枚未暂存。**推送**：本批**不推**——提交后未推 **14 笔**。
+
 
 
 
