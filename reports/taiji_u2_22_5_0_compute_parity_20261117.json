@@ -1,0 +1,102 @@
+{
+  "schema": "taiji-u2-22-5-0-compute-parity-v1",
+  "card": "22.5.0",
+  "phase": "zero_training_compute_parity_check",
+  "verdict": "compute_parity_unavailable",
+  "parity_quantity": "wall",
+  "parity_quantity_frozen_before_reading": true,
+  "max_updates_per_seed_per_architecture": 256,
+  "effective_min_updates": 24,
+  "prices": {
+    "u2_reference": {
+      "cpu": 0.453125,
+      "wall": 0.444676,
+      "seeds": 3
+    },
+    "transformer_sequence": {
+      "cpu": 0.0,
+      "wall": 0.007668,
+      "seeds": 3
+    },
+    "gru_sequence": {
+      "cpu": 0.0,
+      "wall": 0.006851,
+      "seeds": 3
+    }
+  },
+  "ratios": {
+    "transformer_sequence": 57.991132,
+    "gru_sequence": 64.906729
+  },
+  "required_baseline_updates_at_min_dose": {
+    "transformer_sequence": 1391.7872,
+    "gru_sequence": 1557.7615
+  },
+  "u2_updates_if_baseline_at_cap": {
+    "transformer_sequence": 4.4145,
+    "gru_sequence": 3.9441
+  },
+  "reasons": [
+    "matching the U2 24-update time budget requires the baseline to exceed the 256-update cap",
+    "fitting the baseline at 256 updates leaves U2 below the observed matched dose 24",
+    "the first-A manifest already records compute_parity_unavailable with 1.373 vs 0.1816 CPU per step and 24 vs 188 updates"
+  ],
+  "cross_checks": {
+    "price_report": "reports\\taiji_u2_22_4_4_price_20261117.json",
+    "price_digest": "25d0e692c4589997526d9bdfbf45183bcb98a658488ab180309499d6227b1d1a",
+    "first_a_manifest": "plans\\manifests\\taiji_u2_first_A_execution_20261112.json",
+    "first_a_status": "compute_parity_unavailable",
+    "first_a_prices": {
+      "native": 1.373046875,
+      "transformer": 0.181640625,
+      "gru": 0.140625
+    },
+    "first_a_updates": {
+      "native": 24,
+      "gru": 243,
+      "transformer": 188
+    }
+  },
+  "consequences": {
+    "a_parent_gate_opened": false,
+    "training_authorized": false,
+    "capability_claimed": false,
+    "22_5_1_unlocked": false,
+    "22_6_7_unlocked": false,
+    "engineering_parent_authorized": false
+  },
+  "options_for_owner": [
+    {
+      "id": "A",
+      "name": "time parity with a new dose cap",
+      "effect": "would require re-freezing 22.5.2 and may land in budget_cannot_express"
+    },
+    {
+      "id": "B",
+      "name": "FLOPs parity",
+      "effect": "zero-training analytic forward+backward count; allowed by plan :378; recommended next check"
+    },
+    {
+      "id": "C",
+      "name": "comparable-cost baseline or U2 variant",
+      "effect": "requires a new identity version and re-freeze"
+    },
+    {
+      "id": "D",
+      "name": "close 22.5.0 as a limited exit",
+      "effect": "no architecture claim, no 22.5.1/22.6/22.7 unlock"
+    }
+  ],
+  "recommended_option": "B",
+  "cost": {
+    "cpu": 0.0,
+    "wall": 0.000967
+  },
+  "discipline": {
+    "model_forwards": 0,
+    "optimizer_steps": 0,
+    "project_data_reads": 0,
+    "check_reads": 0,
+    "final_reads": 0
+  }
+}

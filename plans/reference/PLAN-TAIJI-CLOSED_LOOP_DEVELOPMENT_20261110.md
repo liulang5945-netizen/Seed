@@ -768,3 +768,7 @@ P3.9工程父取P3.8最后可恢复、来源完整的Native研究父，若无新
 #### 22.4.4 完整任务定价与工程父（2026-11-17，零训练）
 
 `22.4.4` **完成＝`pricing_valid`**：三臂（U2／transformer_sequence／gru_sequence）七分项价格表；**U2 单次学习 0.453125 CPU／0.444676 wall**；transformer 0.0／0.007668、gru 0.0／0.006851；冻结序列基线无 policy／出生成熟接口，标 **N/A**；更新包 **1.63125 CPU**（×1.20 余量×3 seed）；容量上限 **22.5=9,808／22.6=4,904／22.7=7,356／22.8=2,452**；`price_digest=25d0e692c4589997…`；**9.40625 CPU／10.14 wall**（帽 250／600），**3 次一次性定价 Adam 步、0 正式训练、0 项目数据、0 check、0 final**；checkpoint 预检 3/3。**22.4 七项交付已齐**，工程父 [accepted_parent](../manifests/taiji_u2_22_4_accepted_parent_20261117.json) 已写入（`status=accepted_engineering_parent_for_22_5`、`authorized=false`、`capability_qualifications=[]`）。**不签**性能优劣、能力、训练授权；22.5.0 A 父门仍须**等算力配平＋owner 明确授权**，否则 `compute_parity_unavailable`。见[结果卡](RESULT-TAIJI_U2_22_4_4_PRICING_20261117.md)、[报告](../../reports/taiji_u2_22_4_4_price_20261117.json)、D-20261117-30。
+
+#### 22.5.0 A 父门：等算力配平（2026-11-17，零训练）
+
+`22.5.0` **停在 `compute_parity_unavailable`**：读数前冻结**时间配平**；22.4.4 的 U2 **0.444676 wall** 对 transformer **0.007668**／gru **0.006851**（**57.99×／64.91×**）；同 U2 24 次更新基线需 **1,392／1,558** 次 > 256 上限；基线满 256 次则 U2 只能 **4.41／3.94** 次 < 24 参照；首次 A 清单 1.373／0.1816 与 24／188 同判。**A 父门未开**，22.5.1／22.6／22.7 锁定；0 训练、0 能力、0 新父；22.4 工程父保持 `authorized=false`。**唯一建议＝owner 选 B：改冻结 FLOPs 配平并做零训练前向+反向计数**；若 FLOPs 也不可配平则按 D 收束。0 模型前向／0 optimizer／0 项目数据／0 check／0 final；实耗 **0.0 CPU／0.000967 wall**。见[结果卡](RESULT-TAIJI_U2_22_5_0_COMPUTE_PARITY_20261117.md)、[报告](../../reports/taiji_u2_22_5_0_compute_parity_20261117.json)、D-20261117-31。
