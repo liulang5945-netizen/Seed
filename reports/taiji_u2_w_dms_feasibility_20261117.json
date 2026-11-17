@@ -1,0 +1,590 @@
+{
+  "schema": "taiji-u2-w-dms-feasibility-v1",
+  "card": "22.5.W",
+  "phase": "feasibility_zero_training",
+  "verdict": "task_not_learnable",
+  "encoding_contract": {
+    "identity": "unit-input-dms-v1",
+    "columns": 16,
+    "channels": [
+      "rgb",
+      "audio",
+      "proprio",
+      "question",
+      "goal",
+      "feedback"
+    ],
+    "rgb_layout": "[4 attribute one-hot, present, test marker, sample marker, bias]",
+    "question_layout": "[sample, delay, test, query, same-query marker, 0, 0, bias]",
+    "goal_layout": "fixed marker at slot 0 (constant)",
+    "attributes": 4,
+    "delay_steps": 4,
+    "label": "1 iff the sample attribute appears in the test row",
+    "unit_prelabeling": "none: sensory evidence only, the graph carries the sample"
+  },
+  "data_digest": "fa5ddfc76a19f0b0c1782143e457ca53f88c54d1089db2fcb733036732f2fb5c",
+  "partition": {
+    "train_combinations": [
+      [
+        0,
+        1
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        0,
+        3
+      ],
+      [
+        0,
+        4
+      ],
+      [
+        0,
+        5
+      ],
+      [
+        1,
+        0
+      ],
+      [
+        1,
+        3
+      ],
+      [
+        1,
+        4
+      ],
+      [
+        1,
+        5
+      ],
+      [
+        1,
+        6
+      ],
+      [
+        1,
+        7
+      ],
+      [
+        2,
+        0
+      ],
+      [
+        2,
+        1
+      ],
+      [
+        2,
+        2
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        2,
+        4
+      ],
+      [
+        2,
+        5
+      ],
+      [
+        2,
+        6
+      ],
+      [
+        2,
+        7
+      ],
+      [
+        3,
+        0
+      ],
+      [
+        3,
+        1
+      ],
+      [
+        3,
+        2
+      ],
+      [
+        3,
+        5
+      ],
+      [
+        3,
+        6
+      ]
+    ],
+    "fit_combinations": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        6
+      ],
+      [
+        0,
+        7
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        3,
+        3
+      ],
+      [
+        3,
+        4
+      ],
+      [
+        3,
+        7
+      ]
+    ],
+    "disjoint": true,
+    "train_labels": {
+      "0": 32,
+      "1": 32
+    },
+    "fit_labels": {
+      "0": 16,
+      "1": 16
+    }
+  },
+  "dataset_sizes": {
+    "train": 64,
+    "fit": 32
+  },
+  "seeds": [
+    {
+      "seed": 2026111701,
+      "normal": {
+        "train_accuracy": 0.5,
+        "fit_accuracy": 0.5625,
+        "fit_distinct": 2
+      },
+      "lesion": {
+        "train_accuracy": 0.5,
+        "fit_accuracy": 0.5625,
+        "fit_distinct": 2
+      },
+      "test_only": {
+        "train_accuracy": 0.5,
+        "fit_accuracy": 0.5625,
+        "fit_distinct": 2
+      },
+      "positive_control": {
+        "train_accuracy": 1.0,
+        "fit_accuracy": 1.0,
+        "fit_distinct": 2
+      },
+      "deranged": {
+        "train_accuracy": 0.5,
+        "fit_accuracy": 0.4375,
+        "fit_distinct": 2
+      },
+      "delay_sweep": [
+        {
+          "delay": 0,
+          "normal": {
+            "train_accuracy": 0.546875,
+            "fit_accuracy": 0.59375,
+            "fit_distinct": 2
+          },
+          "lesion": {
+            "train_accuracy": 0.5,
+            "fit_accuracy": 0.5625,
+            "fit_distinct": 2
+          },
+          "test_only": {
+            "train_accuracy": 0.5,
+            "fit_accuracy": 0.5625,
+            "fit_distinct": 2
+          }
+        },
+        {
+          "delay": 1,
+          "normal": {
+            "train_accuracy": 0.515625,
+            "fit_accuracy": 0.59375,
+            "fit_distinct": 2
+          },
+          "lesion": {
+            "train_accuracy": 0.5,
+            "fit_accuracy": 0.5625,
+            "fit_distinct": 2
+          },
+          "test_only": {
+            "train_accuracy": 0.5,
+            "fit_accuracy": 0.5625,
+            "fit_distinct": 2
+          }
+        },
+        {
+          "delay": 2,
+          "normal": {
+            "train_accuracy": 0.5,
+            "fit_accuracy": 0.5625,
+            "fit_distinct": 2
+          },
+          "lesion": {
+            "train_accuracy": 0.5,
+            "fit_accuracy": 0.5625,
+            "fit_distinct": 2
+          },
+          "test_only": {
+            "train_accuracy": 0.5,
+            "fit_accuracy": 0.5625,
+            "fit_distinct": 2
+          }
+        },
+        {
+          "delay": 4,
+          "normal": {
+            "train_accuracy": 0.5,
+            "fit_accuracy": 0.5625,
+            "fit_distinct": 2
+          },
+          "lesion": {
+            "train_accuracy": 0.5,
+            "fit_accuracy": 0.5625,
+            "fit_distinct": 2
+          },
+          "test_only": {
+            "train_accuracy": 0.5,
+            "fit_accuracy": 0.5625,
+            "fit_distinct": 2
+          }
+        },
+        {
+          "delay": 8,
+          "normal": {
+            "train_accuracy": 0.5,
+            "fit_accuracy": 0.5625,
+            "fit_distinct": 2
+          },
+          "lesion": {
+            "train_accuracy": 0.5,
+            "fit_accuracy": 0.5625,
+            "fit_distinct": 2
+          },
+          "test_only": {
+            "train_accuracy": 0.5,
+            "fit_accuracy": 0.5625,
+            "fit_distinct": 2
+          }
+        }
+      ],
+      "normal_ok": false,
+      "lesion_ok": true,
+      "test_only_ok": true,
+      "checks": {
+        "encoding_oracle": true,
+        "partition_disjoint": true,
+        "params_unchanged": true,
+        "positive_control_reaches_gate": true,
+        "deranged_below_band": true,
+        "label_balance_train": true,
+        "label_balance_fit": true
+      },
+      "uncovered": []
+    },
+    {
+      "seed": 2026111702,
+      "normal": {
+        "train_accuracy": 0.59375,
+        "fit_accuracy": 0.59375,
+        "fit_distinct": 2
+      },
+      "lesion": {
+        "train_accuracy": 0.59375,
+        "fit_accuracy": 0.59375,
+        "fit_distinct": 2
+      },
+      "test_only": {
+        "train_accuracy": 0.59375,
+        "fit_accuracy": 0.59375,
+        "fit_distinct": 2
+      },
+      "positive_control": {
+        "train_accuracy": 1.0,
+        "fit_accuracy": 1.0,
+        "fit_distinct": 2
+      },
+      "deranged": {
+        "train_accuracy": 0.59375,
+        "fit_accuracy": 0.40625,
+        "fit_distinct": 2
+      },
+      "delay_sweep": [
+        {
+          "delay": 0,
+          "normal": {
+            "train_accuracy": 0.546875,
+            "fit_accuracy": 0.5625,
+            "fit_distinct": 2
+          },
+          "lesion": {
+            "train_accuracy": 0.59375,
+            "fit_accuracy": 0.59375,
+            "fit_distinct": 2
+          },
+          "test_only": {
+            "train_accuracy": 0.59375,
+            "fit_accuracy": 0.59375,
+            "fit_distinct": 2
+          }
+        },
+        {
+          "delay": 1,
+          "normal": {
+            "train_accuracy": 0.609375,
+            "fit_accuracy": 0.65625,
+            "fit_distinct": 2
+          },
+          "lesion": {
+            "train_accuracy": 0.59375,
+            "fit_accuracy": 0.59375,
+            "fit_distinct": 2
+          },
+          "test_only": {
+            "train_accuracy": 0.59375,
+            "fit_accuracy": 0.59375,
+            "fit_distinct": 2
+          }
+        },
+        {
+          "delay": 2,
+          "normal": {
+            "train_accuracy": 0.59375,
+            "fit_accuracy": 0.59375,
+            "fit_distinct": 2
+          },
+          "lesion": {
+            "train_accuracy": 0.59375,
+            "fit_accuracy": 0.59375,
+            "fit_distinct": 2
+          },
+          "test_only": {
+            "train_accuracy": 0.59375,
+            "fit_accuracy": 0.59375,
+            "fit_distinct": 2
+          }
+        },
+        {
+          "delay": 4,
+          "normal": {
+            "train_accuracy": 0.59375,
+            "fit_accuracy": 0.59375,
+            "fit_distinct": 2
+          },
+          "lesion": {
+            "train_accuracy": 0.59375,
+            "fit_accuracy": 0.59375,
+            "fit_distinct": 2
+          },
+          "test_only": {
+            "train_accuracy": 0.59375,
+            "fit_accuracy": 0.59375,
+            "fit_distinct": 2
+          }
+        },
+        {
+          "delay": 8,
+          "normal": {
+            "train_accuracy": 0.59375,
+            "fit_accuracy": 0.59375,
+            "fit_distinct": 2
+          },
+          "lesion": {
+            "train_accuracy": 0.59375,
+            "fit_accuracy": 0.59375,
+            "fit_distinct": 2
+          },
+          "test_only": {
+            "train_accuracy": 0.59375,
+            "fit_accuracy": 0.59375,
+            "fit_distinct": 2
+          }
+        }
+      ],
+      "normal_ok": false,
+      "lesion_ok": true,
+      "test_only_ok": true,
+      "checks": {
+        "encoding_oracle": true,
+        "partition_disjoint": true,
+        "params_unchanged": true,
+        "positive_control_reaches_gate": true,
+        "deranged_below_band": true,
+        "label_balance_train": true,
+        "label_balance_fit": true
+      },
+      "uncovered": []
+    },
+    {
+      "seed": 2026111703,
+      "normal": {
+        "train_accuracy": 0.53125,
+        "fit_accuracy": 0.59375,
+        "fit_distinct": 2
+      },
+      "lesion": {
+        "train_accuracy": 0.53125,
+        "fit_accuracy": 0.59375,
+        "fit_distinct": 2
+      },
+      "test_only": {
+        "train_accuracy": 0.53125,
+        "fit_accuracy": 0.59375,
+        "fit_distinct": 2
+      },
+      "positive_control": {
+        "train_accuracy": 1.0,
+        "fit_accuracy": 1.0,
+        "fit_distinct": 2
+      },
+      "deranged": {
+        "train_accuracy": 0.53125,
+        "fit_accuracy": 0.40625,
+        "fit_distinct": 2
+      },
+      "delay_sweep": [
+        {
+          "delay": 0,
+          "normal": {
+            "train_accuracy": 0.546875,
+            "fit_accuracy": 0.65625,
+            "fit_distinct": 2
+          },
+          "lesion": {
+            "train_accuracy": 0.53125,
+            "fit_accuracy": 0.59375,
+            "fit_distinct": 2
+          },
+          "test_only": {
+            "train_accuracy": 0.53125,
+            "fit_accuracy": 0.59375,
+            "fit_distinct": 2
+          }
+        },
+        {
+          "delay": 1,
+          "normal": {
+            "train_accuracy": 0.53125,
+            "fit_accuracy": 0.5625,
+            "fit_distinct": 2
+          },
+          "lesion": {
+            "train_accuracy": 0.53125,
+            "fit_accuracy": 0.59375,
+            "fit_distinct": 2
+          },
+          "test_only": {
+            "train_accuracy": 0.53125,
+            "fit_accuracy": 0.59375,
+            "fit_distinct": 2
+          }
+        },
+        {
+          "delay": 2,
+          "normal": {
+            "train_accuracy": 0.546875,
+            "fit_accuracy": 0.59375,
+            "fit_distinct": 2
+          },
+          "lesion": {
+            "train_accuracy": 0.53125,
+            "fit_accuracy": 0.59375,
+            "fit_distinct": 2
+          },
+          "test_only": {
+            "train_accuracy": 0.53125,
+            "fit_accuracy": 0.59375,
+            "fit_distinct": 2
+          }
+        },
+        {
+          "delay": 4,
+          "normal": {
+            "train_accuracy": 0.53125,
+            "fit_accuracy": 0.59375,
+            "fit_distinct": 2
+          },
+          "lesion": {
+            "train_accuracy": 0.53125,
+            "fit_accuracy": 0.59375,
+            "fit_distinct": 2
+          },
+          "test_only": {
+            "train_accuracy": 0.53125,
+            "fit_accuracy": 0.59375,
+            "fit_distinct": 2
+          }
+        },
+        {
+          "delay": 8,
+          "normal": {
+            "train_accuracy": 0.53125,
+            "fit_accuracy": 0.59375,
+            "fit_distinct": 2
+          },
+          "lesion": {
+            "train_accuracy": 0.53125,
+            "fit_accuracy": 0.59375,
+            "fit_distinct": 2
+          },
+          "test_only": {
+            "train_accuracy": 0.53125,
+            "fit_accuracy": 0.59375,
+            "fit_distinct": 2
+          }
+        }
+      ],
+      "normal_ok": false,
+      "lesion_ok": true,
+      "test_only_ok": true,
+      "checks": {
+        "encoding_oracle": true,
+        "partition_disjoint": true,
+        "params_unchanged": true,
+        "positive_control_reaches_gate": true,
+        "deranged_below_band": true,
+        "label_balance_train": true,
+        "label_balance_fit": true
+      },
+      "uncovered": []
+    }
+  ],
+  "caps": {
+    "cap_cpu": 120.0,
+    "cap_wall": 240.0
+  },
+  "discipline": {
+    "optimizer_steps": 0,
+    "weight_writes": 0,
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "sealed_partitions_read": []
+  },
+  "cost": {
+    "cpu": 21.4531,
+    "wall": 21.688
+  }
+}
