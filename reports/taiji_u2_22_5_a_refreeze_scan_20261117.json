@@ -1,0 +1,1253 @@
+{
+  "schema": "taiji-u2-22-5-a-refreeze-scan-v1",
+  "card": "22.5.0.A",
+  "target": "taiji/u2_subject.py",
+  "current_sha256_raw": "ba4075a20a35f2478934964ca4c68b09156f004c8fb3d69890dd5e9b8ecfa3c7",
+  "current_sha256_utf8sig": "b7ae83db6fbb6b086541d6ca41a235cb855e60415377009af14ced03cddd99ff",
+  "manifests_scanned": 548,
+  "manifests_referencing_target": 45,
+  "manifests_by_pool": {
+    "text_mention": 6,
+    "source_pins": 35,
+    "other": 11
+  },
+  "records": [
+    {
+      "manifest": "taiji_u2_22_1_contract_20261110.json",
+      "pools": {
+        "text_mention": 7
+      },
+      "hits": [
+        {
+          "pool": "text_mention",
+          "path": "coverage/0/planned_source",
+          "value": "taiji/u2_subject.py::admit_event,settle_receipt",
+          "is_digest": false,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "text_mention",
+          "path": "coverage/7/planned_source",
+          "value": "taiji/u2_subject.py::encode_event",
+          "is_digest": false,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "text_mention",
+          "path": "coverage/8/planned_source",
+          "value": "taiji/u2_subject.py::prior,correct",
+          "is_digest": false,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "text_mention",
+          "path": "coverage/9/planned_source",
+          "value": "taiji/u2_subject.py::query_read,express",
+          "is_digest": false,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "text_mention",
+          "path": "coverage/10/planned_source",
+          "value": "taiji/u2_subject.py::choose_operation,settle_outcome",
+          "is_digest": false,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "text_mention",
+          "path": "coverage/11/planned_source",
+          "value": "taiji/u2_subject.py::predict_development,apply_internal_operation",
+          "is_digest": false,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "text_mention",
+          "path": "coverage/12/planned_source",
+          "value": "taiji/u2_subject.py::state_registry,export_bundle,restore_bundle",
+          "is_digest": false,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        }
+      ]
+    },
+    {
+      "manifest": "taiji_u2_22_1_contract_20261110_v2.json",
+      "pools": {
+        "text_mention": 7
+      },
+      "hits": [
+        {
+          "pool": "text_mention",
+          "path": "coverage/0/planned_source",
+          "value": "taiji/u2_subject.py::admit_event,settle_receipt",
+          "is_digest": false,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "text_mention",
+          "path": "coverage/7/planned_source",
+          "value": "taiji/u2_subject.py::encode_event",
+          "is_digest": false,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "text_mention",
+          "path": "coverage/8/planned_source",
+          "value": "taiji/u2_subject.py::prior,correct",
+          "is_digest": false,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "text_mention",
+          "path": "coverage/9/planned_source",
+          "value": "taiji/u2_subject.py::query_read,express",
+          "is_digest": false,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "text_mention",
+          "path": "coverage/10/planned_source",
+          "value": "taiji/u2_subject.py::choose_operation,settle_outcome",
+          "is_digest": false,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "text_mention",
+          "path": "coverage/11/planned_source",
+          "value": "taiji/u2_subject.py::predict_development,apply_internal_operation",
+          "is_digest": false,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "text_mention",
+          "path": "coverage/12/planned_source",
+          "value": "taiji/u2_subject.py::state_registry,export_bundle,restore_bundle",
+          "is_digest": false,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        }
+      ]
+    },
+    {
+      "manifest": "taiji_u2_22_2_contract_20261110.json",
+      "pools": {
+        "source_pins": 3,
+        "text_mention": 28
+      },
+      "hits": [
+        {
+          "pool": "source_pins",
+          "path": "source_pins/<key>",
+          "value": "237241598250a540f1cbb4f15315a63d88b55d521ac8ae4164f1db03b64b003e",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "source_pins",
+          "path": "source_pins/<key>",
+          "value": "40a8f886da0bf07e63d472f3adc81da60644234ac0de68f0f473093d98a8b4c5",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "source_pins",
+          "path": "source_pins/<key>",
+          "value": "262c20d7746f7bea62c61e16a6e5bacda9461b094944a0b5dc0e5c235488aa91",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "text_mention",
+          "path": "coverage/0/implementations/0/path",
+          "value": "taiji/u2_subject.py",
+          "is_digest": false,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "text_mention",
+          "path": "coverage/0/implementations/1/path",
+          "value": "taiji/u2_subject.py",
+          "is_digest": false,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "text_mention",
+          "path": "coverage/1/implementations/0/path",
+          "value": "taiji/u2_subject.py",
+          "is_digest": false,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "text_mention",
+          "path": "coverage/1/implementations/1/path",
+          "value": "taiji/u2_subject.py",
+          "is_digest": false,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "text_mention",
+          "path": "coverage/1/implementations/2/path",
+          "value": "taiji/u2_subject.py",
+          "is_digest": false,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "text_mention",
+          "path": "coverage/2/implementations/0/path",
+          "value": "taiji/u2_subject.py",
+          "is_digest": false,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "text_mention",
+          "path": "coverage/3/implementations/0/path",
+          "value": "taiji/u2_subject.py",
+          "is_digest": false,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "text_mention",
+          "path": "coverage/3/implementations/1/path",
+          "value": "taiji/u2_subject.py",
+          "is_digest": false,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "text_mention",
+          "path": "coverage/3/implementations/2/path",
+          "value": "taiji/u2_subject.py",
+          "is_digest": false,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "text_mention",
+          "path": "coverage/3/implementations/3/path",
+          "value": "taiji/u2_subject.py",
+          "is_digest": false,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "text_mention",
+          "path": "coverage/3/implementations/4/path",
+          "value": "taiji/u2_subject.py",
+          "is_digest": false,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "text_mention",
+          "path": "coverage/3/implementations/5/path",
+          "value": "taiji/u2_subject.py",
+          "is_digest": false,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "text_mention",
+          "path": "coverage/4/implementations/0/path",
+          "value": "taiji/u2_subject.py",
+          "is_digest": false,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "text_mention",
+          "path": "coverage/4/implementations/1/path",
+          "value": "taiji/u2_subject.py",
+          "is_digest": false,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "text_mention",
+          "path": "coverage/4/implementations/2/path",
+          "value": "taiji/u2_subject.py",
+          "is_digest": false,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "text_mention",
+          "path": "coverage/4/implementations/3/path",
+          "value": "taiji/u2_subject.py",
+          "is_digest": false,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "text_mention",
+          "path": "coverage/5/implementations/0/path",
+          "value": "taiji/u2_subject.py",
+          "is_digest": false,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "text_mention",
+          "path": "coverage/5/implementations/1/path",
+          "value": "taiji/u2_subject.py",
+          "is_digest": false,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "text_mention",
+          "path": "coverage/6/implementations/0/path",
+          "value": "taiji/u2_subject.py",
+          "is_digest": false,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "text_mention",
+          "path": "coverage/6/implementations/1/path",
+          "value": "taiji/u2_subject.py",
+          "is_digest": false,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "text_mention",
+          "path": "coverage/7/implementations/0/path",
+          "value": "taiji/u2_subject.py",
+          "is_digest": false,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "text_mention",
+          "path": "coverage/7/implementations/1/path",
+          "value": "taiji/u2_subject.py",
+          "is_digest": false,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "text_mention",
+          "path": "coverage/7/implementations/2/path",
+          "value": "taiji/u2_subject.py",
+          "is_digest": false,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "text_mention",
+          "path": "coverage/8/implementations/0/path",
+          "value": "taiji/u2_subject.py",
+          "is_digest": false,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "text_mention",
+          "path": "coverage/8/implementations/1/path",
+          "value": "taiji/u2_subject.py",
+          "is_digest": false,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "text_mention",
+          "path": "coverage/9/implementations/0/path",
+          "value": "taiji/u2_subject.py",
+          "is_digest": false,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "text_mention",
+          "path": "coverage/9/implementations/1/path",
+          "value": "taiji/u2_subject.py",
+          "is_digest": false,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "text_mention",
+          "path": "coverage/9/implementations/2/path",
+          "value": "taiji/u2_subject.py",
+          "is_digest": false,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        }
+      ]
+    },
+    {
+      "manifest": "taiji_u2_22_3_4_3_execution_20261111.json",
+      "pools": {
+        "source_pins": 1
+      },
+      "hits": [
+        {
+          "pool": "source_pins",
+          "path": "source_pins/<key>",
+          "value": "95607245747eac2b89163c88c11366c20a0198c20e2bc86d5be8988397de94de",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        }
+      ]
+    },
+    {
+      "manifest": "taiji_u2_22_3_4_3_precontract_20261111.json",
+      "pools": {
+        "other": 1
+      },
+      "hits": [
+        {
+          "pool": "other",
+          "path": "authority/source_pins/<key>",
+          "value": "95607245747eac2b89163c88c11366c20a0198c20e2bc86d5be8988397de94de",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        }
+      ]
+    },
+    {
+      "manifest": "taiji_u2_22_3_accepted_parent_20261111.json",
+      "pools": {
+        "other": 1
+      },
+      "hits": [
+        {
+          "pool": "other",
+          "path": "accepted_parent/source_pins/<key>",
+          "value": "95607245747eac2b89163c88c11366c20a0198c20e2bc86d5be8988397de94de",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        }
+      ]
+    },
+    {
+      "manifest": "taiji_u2_22_3_closeout_contract_20261111.json",
+      "pools": {
+        "source_pins": 1,
+        "other": 1
+      },
+      "hits": [
+        {
+          "pool": "source_pins",
+          "path": "source_pins/<key>",
+          "value": "95607245747eac2b89163c88c11366c20a0198c20e2bc86d5be8988397de94de",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "other",
+          "path": "core_source_pins/<key>",
+          "value": "95607245747eac2b89163c88c11366c20a0198c20e2bc86d5be8988397de94de",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        }
+      ]
+    },
+    {
+      "manifest": "taiji_u2_22_3_cross_process_contract_20261111.json",
+      "pools": {
+        "source_pins": 1
+      },
+      "hits": [
+        {
+          "pool": "source_pins",
+          "path": "source_pins/<key>",
+          "value": "9c6778674f296012ece6e6ab7729a78e81fc9422f98f5243a6007e4bf59a54d1",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        }
+      ]
+    },
+    {
+      "manifest": "taiji_u2_22_3_history_contract_20261111.json",
+      "pools": {
+        "source_pins": 1
+      },
+      "hits": [
+        {
+          "pool": "source_pins",
+          "path": "source_pins/<key>",
+          "value": "9c6778674f296012ece6e6ab7729a78e81fc9422f98f5243a6007e4bf59a54d1",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        }
+      ]
+    },
+    {
+      "manifest": "taiji_u2_22_3_recovery_contract_20261110.json",
+      "pools": {
+        "other": 3,
+        "source_pins": 1
+      },
+      "hits": [
+        {
+          "pool": "other",
+          "path": "parent_pins_verified_in_history/<key>",
+          "value": "237241598250a540f1cbb4f15315a63d88b55d521ac8ae4164f1db03b64b003e",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "other",
+          "path": "parent_pins_verified_in_history/<key>",
+          "value": "40a8f886da0bf07e63d472f3adc81da60644234ac0de68f0f473093d98a8b4c5",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "other",
+          "path": "parent_pins_verified_in_history/<key>",
+          "value": "262c20d7746f7bea62c61e16a6e5bacda9461b094944a0b5dc0e5c235488aa91",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "source_pins",
+          "path": "source_pins/<key>",
+          "value": "4b3d33b53e2d9b7b1bb2579e83a5d586fc825035b3218de82bb1b0ad446f3888",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        }
+      ]
+    },
+    {
+      "manifest": "taiji_u2_22_3_reencoding_contract_20261111.json",
+      "pools": {
+        "source_pins": 1
+      },
+      "hits": [
+        {
+          "pool": "source_pins",
+          "path": "source_pins/<key>",
+          "value": "95607245747eac2b89163c88c11366c20a0198c20e2bc86d5be8988397de94de",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        }
+      ]
+    },
+    {
+      "manifest": "taiji_u2_22_3_window_contract_20261111.json",
+      "pools": {
+        "source_pins": 1
+      },
+      "hits": [
+        {
+          "pool": "source_pins",
+          "path": "source_pins/<key>",
+          "value": "9c6778674f296012ece6e6ab7729a78e81fc9422f98f5243a6007e4bf59a54d1",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        }
+      ]
+    },
+    {
+      "manifest": "taiji_u2_22_4_1_data_price_admission_20261111.json",
+      "pools": {
+        "other": 1
+      },
+      "hits": [
+        {
+          "pool": "other",
+          "path": "authority/source_pins/<key>",
+          "value": "aa7a23249ad6fdaff1900000c665d575651debc498e800b8c292839ea4f736a8",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        }
+      ]
+    },
+    {
+      "manifest": "taiji_u2_22_4_1_execution_20261111.json",
+      "pools": {
+        "other": 1
+      },
+      "hits": [
+        {
+          "pool": "other",
+          "path": "authority/source_pins/<key>",
+          "value": "aa7a23249ad6fdaff1900000c665d575651debc498e800b8c292839ea4f736a8",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        }
+      ]
+    },
+    {
+      "manifest": "taiji_u2_22_4_1_execution_20261111_v2.json",
+      "pools": {
+        "other": 1
+      },
+      "hits": [
+        {
+          "pool": "other",
+          "path": "authority/source_pins/<key>",
+          "value": "aa7a23249ad6fdaff1900000c665d575651debc498e800b8c292839ea4f736a8",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        }
+      ]
+    },
+    {
+      "manifest": "taiji_u2_22_4_1_no_migration_20261112.json",
+      "pools": {
+        "source_pins": 1
+      },
+      "hits": [
+        {
+          "pool": "source_pins",
+          "path": "source_pins/<key>",
+          "value": "aa7a23249ad6fdaff1900000c665d575651debc498e800b8c292839ea4f736a8",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        }
+      ]
+    },
+    {
+      "manifest": "taiji_u2_22_4_1_no_migration_20261112_v2.json",
+      "pools": {
+        "source_pins": 1
+      },
+      "hits": [
+        {
+          "pool": "source_pins",
+          "path": "source_pins/<key>",
+          "value": "aa7a23249ad6fdaff1900000c665d575651debc498e800b8c292839ea4f736a8",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        }
+      ]
+    },
+    {
+      "manifest": "taiji_u2_22_4_2_joint_price_20261112.json",
+      "pools": {
+        "source_pins": 1
+      },
+      "hits": [
+        {
+          "pool": "source_pins",
+          "path": "source_pins/<key>",
+          "value": "cf99503e2614e1b4bada401b2e4e4ce08d6cb779ebb6b84ef713e6b646fb2c2e",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        }
+      ]
+    },
+    {
+      "manifest": "taiji_u2_22_4_2_joint_price_20261112_v2.json",
+      "pools": {
+        "source_pins": 1
+      },
+      "hits": [
+        {
+          "pool": "source_pins",
+          "path": "source_pins/<key>",
+          "value": "cf99503e2614e1b4bada401b2e4e4ce08d6cb779ebb6b84ef713e6b646fb2c2e",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        }
+      ]
+    },
+    {
+      "manifest": "taiji_u2_22_4_2_runtime_contract_20261112.json",
+      "pools": {
+        "source_pins": 1
+      },
+      "hits": [
+        {
+          "pool": "source_pins",
+          "path": "source_pins/<key>",
+          "value": "cfe785cfcdf8c8ed2f2679dc615810e0ee2014fc136d0eb7b1eaf7d37466d370",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        }
+      ]
+    },
+    {
+      "manifest": "taiji_u2_22_4_2_source_overlays_20261112.json",
+      "pools": {
+        "text_mention": 8
+      },
+      "hits": [
+        {
+          "pool": "text_mention",
+          "path": "overlays/6/source_path",
+          "value": "taiji/u2_subject.py",
+          "is_digest": false,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "text_mention",
+          "path": "overlays/6/archive",
+          "value": "scripts/archive/u2_subject_20261112_v3.py",
+          "is_digest": false,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "text_mention",
+          "path": "overlays/15/source_path",
+          "value": "taiji/u2_subject.py",
+          "is_digest": false,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "text_mention",
+          "path": "overlays/15/archive",
+          "value": "scripts/archive/u2_subject_20261112_v3.py",
+          "is_digest": false,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "text_mention",
+          "path": "overlays/25/source_path",
+          "value": "taiji/u2_subject.py",
+          "is_digest": false,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "text_mention",
+          "path": "overlays/25/archive",
+          "value": "scripts/archive/u2_subject_20261112_v2.py",
+          "is_digest": false,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "text_mention",
+          "path": "overlays/34/source_path",
+          "value": "taiji/u2_subject.py",
+          "is_digest": false,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "text_mention",
+          "path": "overlays/34/archive",
+          "value": "scripts/archive/u2_subject_20261112_v1.py",
+          "is_digest": false,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        }
+      ]
+    },
+    {
+      "manifest": "taiji_u2_22_4_2_world_contract_20261112.json",
+      "pools": {
+        "source_pins": 1
+      },
+      "hits": [
+        {
+          "pool": "source_pins",
+          "path": "source_pins/<key>",
+          "value": "aa7a23249ad6fdaff1900000c665d575651debc498e800b8c292839ea4f736a8",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        }
+      ]
+    },
+    {
+      "manifest": "taiji_u2_22_4_4_baseline_identity_20261111.json",
+      "pools": {
+        "text_mention": 2
+      },
+      "hits": [
+        {
+          "pool": "text_mention",
+          "path": "init/source",
+          "value": "taiji/u2_subject.py lines 279-283 (same rule as _WorldKernel)",
+          "is_digest": false,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "text_mention",
+          "path": "architecture/frontend/source_path",
+          "value": "taiji/u2_subject.py",
+          "is_digest": false,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        }
+      ]
+    },
+    {
+      "manifest": "taiji_u2_bind_2_design_20261115.json",
+      "pools": {
+        "text_mention": 1
+      },
+      "hits": [
+        {
+          "pool": "text_mention",
+          "path": "planned_artifacts/2",
+          "value": "taiji/u2_subject.py",
+          "is_digest": false,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        }
+      ]
+    },
+    {
+      "manifest": "taiji_u2_evidence_A_execution_20261112.json",
+      "pools": {
+        "source_pins": 1
+      },
+      "hits": [
+        {
+          "pool": "source_pins",
+          "path": "source_pins/<key>",
+          "value": "01d54b472e6cc99728ca45b94aeb556148498081ce1128cf28f8bed2d8784025",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        }
+      ]
+    },
+    {
+      "manifest": "taiji_u2_evidence_A_execution_20261112_v2.json",
+      "pools": {
+        "source_pins": 1
+      },
+      "hits": [
+        {
+          "pool": "source_pins",
+          "path": "source_pins/<key>",
+          "value": "01d54b472e6cc99728ca45b94aeb556148498081ce1128cf28f8bed2d8784025",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        }
+      ]
+    },
+    {
+      "manifest": "taiji_u2_evidence_A_parents_20261112.json",
+      "pools": {
+        "other": 6,
+        "source_pins": 1
+      },
+      "hits": [
+        {
+          "pool": "other",
+          "path": "parents/native-old/source_pins/<key>",
+          "value": "01d54b472e6cc99728ca45b94aeb556148498081ce1128cf28f8bed2d8784025",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "other",
+          "path": "parents/native-query/source_pins/<key>",
+          "value": "01d54b472e6cc99728ca45b94aeb556148498081ce1128cf28f8bed2d8784025",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "other",
+          "path": "parents/native-capacity/source_pins/<key>",
+          "value": "01d54b472e6cc99728ca45b94aeb556148498081ce1128cf28f8bed2d8784025",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "other",
+          "path": "parents/transformer/source_pins/<key>",
+          "value": "01d54b472e6cc99728ca45b94aeb556148498081ce1128cf28f8bed2d8784025",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "other",
+          "path": "native_parent_verification/source_pins_verified/<key>",
+          "value": "01d54b472e6cc99728ca45b94aeb556148498081ce1128cf28f8bed2d8784025",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "other",
+          "path": "transformer_parent_verification/source_pins_verified/<key>",
+          "value": "01d54b472e6cc99728ca45b94aeb556148498081ce1128cf28f8bed2d8784025",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "source_pins",
+          "path": "source_pins/<key>",
+          "value": "01d54b472e6cc99728ca45b94aeb556148498081ce1128cf28f8bed2d8784025",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        }
+      ]
+    },
+    {
+      "manifest": "taiji_u2_evidence_A_price_20261112.json",
+      "pools": {
+        "source_pins": 1
+      },
+      "hits": [
+        {
+          "pool": "source_pins",
+          "path": "source_pins/<key>",
+          "value": "01d54b472e6cc99728ca45b94aeb556148498081ce1128cf28f8bed2d8784025",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        }
+      ]
+    },
+    {
+      "manifest": "taiji_u2_first_A_execution_20261112.json",
+      "pools": {
+        "source_pins": 1
+      },
+      "hits": [
+        {
+          "pool": "source_pins",
+          "path": "source_pins/<key>",
+          "value": "01d54b472e6cc99728ca45b94aeb556148498081ce1128cf28f8bed2d8784025",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        }
+      ]
+    },
+    {
+      "manifest": "taiji_u2_first_A_execution_20261112_v2.json",
+      "pools": {
+        "source_pins": 1
+      },
+      "hits": [
+        {
+          "pool": "source_pins",
+          "path": "source_pins/<key>",
+          "value": "01d54b472e6cc99728ca45b94aeb556148498081ce1128cf28f8bed2d8784025",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        }
+      ]
+    },
+    {
+      "manifest": "taiji_u2_first_A_execution_20261112_v3.json",
+      "pools": {
+        "source_pins": 1
+      },
+      "hits": [
+        {
+          "pool": "source_pins",
+          "path": "source_pins/<key>",
+          "value": "01d54b472e6cc99728ca45b94aeb556148498081ce1128cf28f8bed2d8784025",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        }
+      ]
+    },
+    {
+      "manifest": "taiji_u2_first_binding_update_contract_20261113.json",
+      "pools": {
+        "source_pins": 1
+      },
+      "hits": [
+        {
+          "pool": "source_pins",
+          "path": "source_pins/<key>",
+          "value": "01d54b472e6cc99728ca45b94aeb556148498081ce1128cf28f8bed2d8784025",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        }
+      ]
+    },
+    {
+      "manifest": "taiji_u2_joint_learning_admission_20261113.json",
+      "pools": {
+        "source_pins": 1
+      },
+      "hits": [
+        {
+          "pool": "source_pins",
+          "path": "source_pins/<key>",
+          "value": "01d54b472e6cc99728ca45b94aeb556148498081ce1128cf28f8bed2d8784025",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        }
+      ]
+    },
+    {
+      "manifest": "taiji_u2_joint_learning_execution_20261113.json",
+      "pools": {
+        "source_pins": 1
+      },
+      "hits": [
+        {
+          "pool": "source_pins",
+          "path": "source_pins/<key>",
+          "value": "01d54b472e6cc99728ca45b94aeb556148498081ce1128cf28f8bed2d8784025",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        }
+      ]
+    },
+    {
+      "manifest": "taiji_u2_joint_subject_accepted_20261113.json",
+      "pools": {
+        "source_pins": 1
+      },
+      "hits": [
+        {
+          "pool": "source_pins",
+          "path": "source_pins/<key>",
+          "value": "01d54b472e6cc99728ca45b94aeb556148498081ce1128cf28f8bed2d8784025",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        }
+      ]
+    },
+    {
+      "manifest": "taiji_u2_joint_subject_contract_20261113.json",
+      "pools": {
+        "source_pins": 1
+      },
+      "hits": [
+        {
+          "pool": "source_pins",
+          "path": "source_pins/<key>",
+          "value": "01d54b472e6cc99728ca45b94aeb556148498081ce1128cf28f8bed2d8784025",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        }
+      ]
+    },
+    {
+      "manifest": "taiji_u2_joint_subject_contract_20261113_v1.json",
+      "pools": {
+        "source_pins": 1
+      },
+      "hits": [
+        {
+          "pool": "source_pins",
+          "path": "source_pins/<key>",
+          "value": "01d54b472e6cc99728ca45b94aeb556148498081ce1128cf28f8bed2d8784025",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        }
+      ]
+    },
+    {
+      "manifest": "taiji_u2_paired_learning_admission_20261113.json",
+      "pools": {
+        "other": 1,
+        "source_pins": 1
+      },
+      "hits": [
+        {
+          "pool": "other",
+          "path": "data/source_pins/<key>",
+          "value": "01d54b472e6cc99728ca45b94aeb556148498081ce1128cf28f8bed2d8784025",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "source_pins",
+          "path": "source_pins/<key>",
+          "value": "01d54b472e6cc99728ca45b94aeb556148498081ce1128cf28f8bed2d8784025",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        }
+      ]
+    },
+    {
+      "manifest": "taiji_u2_paired_learning_execution_20261113.json",
+      "pools": {
+        "source_pins": 1
+      },
+      "hits": [
+        {
+          "pool": "source_pins",
+          "path": "source_pins/<key>",
+          "value": "01d54b472e6cc99728ca45b94aeb556148498081ce1128cf28f8bed2d8784025",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        }
+      ]
+    },
+    {
+      "manifest": "taiji_u2_paired_task_20261112.json",
+      "pools": {
+        "source_pins": 1
+      },
+      "hits": [
+        {
+          "pool": "source_pins",
+          "path": "source_pins/<key>",
+          "value": "01d54b472e6cc99728ca45b94aeb556148498081ce1128cf28f8bed2d8784025",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        }
+      ]
+    },
+    {
+      "manifest": "taiji_u2_task_goal_engineering_20261113.json",
+      "pools": {
+        "source_pins": 1
+      },
+      "hits": [
+        {
+          "pool": "source_pins",
+          "path": "source_pins/<key>",
+          "value": "01d54b472e6cc99728ca45b94aeb556148498081ce1128cf28f8bed2d8784025",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        }
+      ]
+    },
+    {
+      "manifest": "taiji_u2_task_goal_learning_admission_20261113.json",
+      "pools": {
+        "other": 1,
+        "source_pins": 1
+      },
+      "hits": [
+        {
+          "pool": "other",
+          "path": "data/source_pins/<key>",
+          "value": "01d54b472e6cc99728ca45b94aeb556148498081ce1128cf28f8bed2d8784025",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "source_pins",
+          "path": "source_pins/<key>",
+          "value": "01d54b472e6cc99728ca45b94aeb556148498081ce1128cf28f8bed2d8784025",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        }
+      ]
+    },
+    {
+      "manifest": "taiji_u2_task_goal_learning_admission_20261113_v2.json",
+      "pools": {
+        "other": 1,
+        "source_pins": 1
+      },
+      "hits": [
+        {
+          "pool": "other",
+          "path": "data/source_pins/<key>",
+          "value": "01d54b472e6cc99728ca45b94aeb556148498081ce1128cf28f8bed2d8784025",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        },
+        {
+          "pool": "source_pins",
+          "path": "source_pins/<key>",
+          "value": "01d54b472e6cc99728ca45b94aeb556148498081ce1128cf28f8bed2d8784025",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        }
+      ]
+    },
+    {
+      "manifest": "taiji_u2_task_goal_learning_execution_20261113.json",
+      "pools": {
+        "source_pins": 1
+      },
+      "hits": [
+        {
+          "pool": "source_pins",
+          "path": "source_pins/<key>",
+          "value": "01d54b472e6cc99728ca45b94aeb556148498081ce1128cf28f8bed2d8784025",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        }
+      ]
+    },
+    {
+      "manifest": "taiji_u2_task_goal_learning_execution_20261113_v1.json",
+      "pools": {
+        "source_pins": 1
+      },
+      "hits": [
+        {
+          "pool": "source_pins",
+          "path": "source_pins/<key>",
+          "value": "01d54b472e6cc99728ca45b94aeb556148498081ce1128cf28f8bed2d8784025",
+          "is_digest": true,
+          "matches_current_raw": false,
+          "matches_current_sig": false
+        }
+      ]
+    }
+  ],
+  "discipline": {
+    "files_modified": 0,
+    "u2_optimizer_steps": 0,
+    "check_reads": 0,
+    "final_reads": 0
+  }
+}
