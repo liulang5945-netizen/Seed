@@ -68,6 +68,7 @@ class U2Config:
     separate_requests: bool = False
     binding: str = "v1"
     correction: str = "off"
+    readout: str = "patch"
 
     def __post_init__(self) -> None:
         if (
@@ -100,6 +101,8 @@ class U2Config:
             raise ValueError("Invalid binding version")
         if self.correction not in {"off", "v1", "v2"}:
             raise ValueError("Invalid correction adapter version")
+        if self.readout not in {"patch", "pixel-salience"}:
+            raise ValueError("Invalid readout identity")
         if self.correction != "off" and self.binding == "v2":
             raise ValueError("Correction adapter is not defined for binding v2")
         if self.group_units is None:
@@ -659,6 +662,14 @@ class U2Subject(_WorldKernel):
                 self.correction_adapter = MLP(2 * d, d, d)
                 nn.init.zeros_(self.correction_adapter.last.weight)
                 nn.init.zeros_(self.correction_adapter.last.bias)
+            if config.readout == "pixel-salience":
+                # Born after every inherited tensor, zero-initialised output: a
+                # parent's weights reproduce bit for bit until the task loss
+                # credits these units.  No teacher, no external label.
+                from .u2_pixel_read import PixelSalienceReadout, unit_registry
+
+                self.pixel_readout = PixelSalienceReadout(out_dim=d)
+                self.pixel_unit_owners = unit_registry()
         self.generation = 0
         self.parameter_revision = 0
         widths = config.group_units or (config.units,) * config.groups
@@ -1064,6 +1075,9 @@ class U2Subject(_WorldKernel):
         )
         result["logw"] = (prior["logw"] + logp).log_softmax(0)
         tokens = self.encode(observations, coordinates, outcome)
+        if self.c.readout == "pixel-salience":
+            result["pixel_blocks"] = observations["rgb"].detach()
+            result["pixel_coordinates"] = coordinates["rgb"]
         for _ in range(2):
             obs, mass, spatial = self.binding(result, tokens, coordinates)
             gate = mass / (mass + 0.01)
@@ -1210,7 +1224,17 @@ class U2Subject(_WorldKernel):
         fast = self.f_output(torch.einsum("bkv,bk->bv", state["F"], query))
         if "fast" in getattr(self, "_verification_cuts", ()):
             fast = self.f_output(torch.zeros_like(torch.einsum("bkv,bk->bv", state["F"], query)))
-        return self.joint_readout(torch.cat([h, o, fast], -1))
+        context = self.joint_readout(torch.cat([h, o, fast], -1))
+        if self.c.readout == "pixel-salience" and state.get("pixel_blocks") is not None:
+            from .u2_pixel_read import pixel_grid
+
+            raw = state["answer_request"]["raw"] if self.c.separate_requests else state["goal_raw"]
+            context = context + self.pixel_readout(
+                state["pixel_blocks"],
+                state.get("pixel_grid") or pixel_grid(state["pixel_coordinates"]),
+                torch.tensor(list(raw), dtype=torch.long, device=context.device),
+            )
+        return context
 
     def begin_utterance(self, state: Any) -> Any:
         child = dict(state)
