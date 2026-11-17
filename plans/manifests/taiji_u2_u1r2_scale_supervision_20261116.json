@@ -330,6 +330,16 @@
       "verify instrument defect: birth-only temperature_starts_at_zero applied to trained capsules; frozen files untouched"
     ],
     "decision_node": "unit-core-B read-path closeout ruling; revision limit 2/2 used, 0 remaining; zero training before ruling; posthoc localization is scale_and_value_both_short; closeout must carry the five residuals plus the posthoc readings and must not be written as an architecture disproof",
+    "closeout": {
+      "card": "plans/reference/CLOSEOUT-TAIJI_U2_UNIT_CORE_B_READ_PATH_20261117.md",
+      "decision": "owner 2026-11-17 popup ruling: close the unit-core-B read path",
+      "scope": "unit-direct read of the first_a queried colour only; not the architecture, the unit lifecycle axes, U.2/U.3, or the N mainline objective",
+      "ledger": "D-20261117-04",
+      "revision_limit": "2/2 used, 0 remaining",
+      "residuals_carried": 5,
+      "training_after_closeout": 0,
+      "capability_claims": 0
+    },
     "capability_scope": "read prerequisite failed; no parent/capability/check2/22.6 claim; four interventions 1.0 and cut_h bit-identity prove mechanism wiring only",
     "revision_accounting": "revision limit 2, used 2, remaining 0; this is the last revision of unit-core-b-v1",
     "input_artifacts": "regenerable_exact",
