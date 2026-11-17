@@ -281,7 +281,8 @@
       "linear_extrapolation_falsified": "the price probe projected log_tau 13.064765675142887/15.062589881370172/13.090104833762705 over 384 updates; measured 4.5763/4.6736/4.0559, less than one third; three-step linear extrapolation is disqualified as an admission argument",
       "direction_vs_scale_separable": "seed2026111602 has the highest log_tau (4.6736, scale 107.08) but the lowest focus (0.389147); seed2026111601 has the lowest log_tau (4.5763) but the highest focus (0.730227)",
       "focus_met_read_failed_descriptive": "seed01 and seed03 meet the focus gate but fit is 0.375/0.21875 and train 0.328125/0.28125; not promoted to focus_met_value_failed because seed02 fails the focus gate and the frozen exit order applies",
-      "value_side_not_identifiable": "in-body head trained only by task CE for 384 updates under its own partial attention; the earlier oracle probe (r1 weights, separately fitted linear head, forced oracle focus) reached 0.90625 on 2/3 seeds and does not transfer into this card"
+      "value_side_not_identifiable": "in-body head trained only by task CE for 384 updates under its own partial attention; the earlier oracle probe (r1 weights, separately fitted linear head, forced oracle focus) reached 0.90625 on 2/3 seeds and does not transfer into this card",
+      "value_side_posthoc": "the posthoc probe measured it: under oracle focus the converged linear head is 0/3 at the fit gate and 1/3 at the train gate on the r2 capsules; the value side is below gate even with perfect focus and degraded relative to r1 on seed01/seed03"
     },
     "verify_instrument_defect": {
       "check": "temperature_starts_at_zero",
@@ -291,14 +292,44 @@
       "substantive_checks": "fit/train/focus/log_tau/capsule-digest checks all green (15 substantive checks)",
       "disposition": "recorded; frozen runner and criteria untouched; strict literal exit 2 would record engineering_failure, disclosed in mechanical_exit_conflict"
     },
+    "posthoc_zero_training": {
+      "report": "reports/taiji_u2_u1r2_posthoc_scale_value_20261117.json",
+      "script": "scripts/training/probe_u1r2_posthoc_scale_value_20261117.py",
+      "verdict": "scale_and_value_both_short",
+      "cost": {"cpu": 7.2812, "wall": 7.406, "cap_cpu": 60.0, "cap_wall": 120.0},
+      "discipline": "0 optimizer steps, 0 weight writes, 0 sealed reads; params_unchanged on 3/3 seeds; run readings reproduced exactly",
+      "instrument": "geometry positive control fit/train 1.0/1.0; input-side reference 0.84375/0.84375; deranged-label head fit 0.21875/0.28125/0.25; oracle attention bit-exact",
+      "scale_sweep": "raising log_tau from trained to the design-needed 7.95/8.35/7.63 changes fit by 0.0/0.0/0.0 and train by 0.0/+0.046875/0.0; focus mass rises 0.061/0.062/0.152 then saturates; scale alone cannot rescue the read",
+      "w_q_zero_arm": "trained W_q minus exact mean-pool fit delta +0.1875/+0.0625/0.0; direction is partially learned but far below gate",
+      "converged_head": {
+        "trained_attention": {
+          "fit": [0.4375, 0.375, 0.53125],
+          "train": [0.53125, 0.609375, 0.59375]
+        },
+        "needed_attention": {
+          "fit": [0.53125, 0.375, 0.40625],
+          "train": [0.640625, 0.625, 0.578125]
+        },
+        "oracle_soft_attention": {
+          "fit": [0.78125, 0.71875, 0.625],
+          "train": [0.921875, 0.84375, 0.859375]
+        },
+        "deranged_labels": {"fit": [0.21875, 0.28125, 0.25]}
+      },
+      "oracle_value_side_below_both_gates_seeds": [2026111601, 2026111602, 2026111603],
+      "r1_reference": "the same probe on r1 weights reached oracle fit 0.90625/0.71875/0.90625; r2 task-only updates degraded seed01 by 0.125 and seed03 by 0.28125, seed02 unchanged",
+      "gradient_census": "mean focus gradient w.r.t. log_tau at the trained point -0.023143/+0.104321/-0.337353 with 20/16/9 positive scenes; 2/3 seeds have a negative mean (more training would lower tau); seed03 task and focus both prefer a smaller tau (cosine +1.0); seed02 task and focus oppose (cosine -1.0)",
+      "instrument_defect_corrected": "the first run used oracle_head_reaches_gate as an instrument check; that is a substantive reading, not a control; replaced with the model-independent geometry control; the first untracked report was deleted after git ls-files --error-unmatch rc1 and regenerated; a retain_graph crash on the task gradient was fixed first",
+      "implication": "the closeout recommendation is upgraded from 'revision exhausted' to 'direction plus value side are the located walls'; more scale or dose will not change the result"
+    },
     "residuals": [
       "focus: 2/3 seeds meet answer_mass>=0.5 (0.730227/0.514639) and 3/3 meet effective_columns<=8.0 (4.305893/4.829468/4.58721); seed02 fails at 0.389147",
-      "value side: not separable; read gates 0/3 even on the two focus-met seeds (fit 0.375/0.21875)",
+      "value side (posthoc measured): under oracle focus a converged linear no-bias head is 0/3 at the fit gate (0.78125/0.71875/0.625) and 1/3 at the train gate; r2 task-only updates degraded the r1 value side on seed01 (-0.125) and seed03 (-0.28125)",
       "three variables changed together (temperature scalar, W_q 2x lr, attention supervision) with no ablation arm; no single-variable attribution",
       "three-step linear extrapolation of reachable log_tau was falsified by the run (projected 13.06/15.06/13.09 vs measured 4.58/4.67/4.06)",
       "verify instrument defect: birth-only temperature_starts_at_zero applied to trained capsules; frozen files untouched"
     ],
-    "decision_node": "unit-core-B read-path closeout ruling; revision limit 2/2 used, 0 remaining; zero training before ruling; closeout must carry the five residuals and must not be written as an architecture disproof",
+    "decision_node": "unit-core-B read-path closeout ruling; revision limit 2/2 used, 0 remaining; zero training before ruling; posthoc localization is scale_and_value_both_short; closeout must carry the five residuals plus the posthoc readings and must not be written as an architecture disproof",
     "capability_scope": "read prerequisite failed; no parent/capability/check2/22.6 claim; four interventions 1.0 and cut_h bit-identity prove mechanism wiring only",
     "revision_accounting": "revision limit 2, used 2, remaining 0; this is the last revision of unit-core-b-v1",
     "input_artifacts": "regenerable_exact",
