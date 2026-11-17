@@ -1228,18 +1228,26 @@ class U2Subject(_WorldKernel):
         if "fast" in getattr(self, "_verification_cuts", ()):
             fast = self.f_output(torch.zeros_like(torch.einsum("bkv,bk->bv", state["F"], query)))
         context = self.joint_readout(torch.cat([h, o, fast], -1))
-        if self.c.readout == "pixel-salience" and state.get("pixel_blocks") is not None:
-            from .u2_pixel_read import pixel_grid
+        if self.c.readout == "pixel-salience":
+            delta = state.get("pixel_delta")
+            if delta is None and state.get("pixel_blocks") is not None:
+                from .u2_pixel_read import pixel_grid
 
-            raw = state["answer_request"]["raw"] if self.c.separate_requests else state["goal_raw"]
-            grid = state.get("pixel_grid")
-            if grid is None:
-                grid = pixel_grid(state["pixel_coordinates"])
-            context = context + self.pixel_readout(
-                state["pixel_blocks"],
-                grid,
-                torch.tensor(list(raw), dtype=torch.long, device=context.device),
-            )
+                raw = (
+                    state["answer_request"]["raw"]
+                    if self.c.separate_requests
+                    else state["goal_raw"]
+                )
+                grid = state.get("pixel_grid")
+                if grid is None:
+                    grid = pixel_grid(state["pixel_coordinates"])
+                delta = self.pixel_readout(
+                    state["pixel_blocks"],
+                    grid,
+                    torch.tensor(list(raw), dtype=torch.long, device=context.device),
+                )
+            if delta is not None:
+                context = context + delta
         return context
 
     def begin_utterance(self, state: Any) -> Any:
@@ -1261,6 +1269,21 @@ class U2Subject(_WorldKernel):
             from .u2_request_state import bind_utterance
 
             child = bind_utterance(self, state, child)
+        if self.c.readout == "pixel-salience" and state.get("pixel_blocks") is not None:
+            # The readout's inputs (raster, grid, request) are constant across the
+            # bytes of one utterance, so its contribution is computed once here and
+            # reused by every branch_context call.
+            from .u2_pixel_read import pixel_grid
+
+            raw = child["answer_request"]["raw"] if self.c.separate_requests else child["goal_raw"]
+            grid = state.get("pixel_grid")
+            if grid is None:
+                grid = pixel_grid(state["pixel_coordinates"])
+            child["pixel_delta"] = self.pixel_readout(
+                state["pixel_blocks"],
+                grid,
+                torch.tensor(list(raw), dtype=torch.long, device=self.native_w.device),
+            )
         return child
 
     def output(self, state: Any, goal: Any, action: Any, previous: Any = None) -> Any:
