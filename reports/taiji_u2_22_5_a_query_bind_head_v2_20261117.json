@@ -1,0 +1,71 @@
+{
+  "schema": "taiji-u2-22-5-a-query-bind-head-probe-v1",
+  "card": "22.5.0.A",
+  "verdict": "perception_not_separable",
+  "primary_source": "raw",
+  "summary": {
+    "raw": {
+      "results": [
+        {
+          "seed": 20261110,
+          "train_accuracy": 0.8424479365348816,
+          "fit_accuracy": 0.4114583432674408
+        },
+        {
+          "seed": 20261111,
+          "train_accuracy": 0.7669270634651184,
+          "fit_accuracy": 0.40625
+        },
+        {
+          "seed": 20261112,
+          "train_accuracy": 0.7200520634651184,
+          "fit_accuracy": 0.4479166567325592
+        }
+      ],
+      "max_train_accuracy": 0.8424479365348816,
+      "median_train_accuracy": 0.7669270634651184,
+      "max_fit_accuracy": 0.4479166567325592,
+      "median_fit_accuracy": 0.4114583432674408
+    },
+    "u2": {
+      "results": [
+        {
+          "seed": 20261110,
+          "train_accuracy": 0.4231770932674408,
+          "fit_accuracy": 0.375
+        },
+        {
+          "seed": 20261111,
+          "train_accuracy": 0.4388020932674408,
+          "fit_accuracy": 0.3854166567325592
+        },
+        {
+          "seed": 20261112,
+          "train_accuracy": 0.4401041567325592,
+          "fit_accuracy": 0.3541666567325592
+        }
+      ],
+      "max_train_accuracy": 0.4401041567325592,
+      "median_train_accuracy": 0.4388020932674408,
+      "max_fit_accuracy": 0.3854166567325592,
+      "median_fit_accuracy": 0.375
+    }
+  },
+  "examples": {
+    "train": 768,
+    "fit": 192,
+    "request_width": 30,
+    "fixture": "generate_examples (formal A-gate distribution)"
+  },
+  "declared_verdict": {
+    "head_feasible": "raw median train >= 0.95 and median fit >= 0.80",
+    "query_pathway_fixed_generalization_gap": "raw median train >= 0.95, fit < 0.80",
+    "perception_not_separable": "raw median train < 0.95"
+  },
+  "discipline": {
+    "u2_optimizer_steps": 0,
+    "head_optimizer_steps": 3600,
+    "check_reads": 0,
+    "final_reads": 0
+  }
+}

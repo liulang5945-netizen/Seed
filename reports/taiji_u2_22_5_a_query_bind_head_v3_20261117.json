@@ -1,0 +1,383 @@
+{
+  "schema": "taiji-u2-22-5-a-query-bind-head-probe-v1",
+  "card": "22.5.0.A",
+  "verdict": "perception_not_separable",
+  "primary_source": "raw",
+  "summary": {
+    "raw": {
+      "results": [
+        {
+          "seed": 20261110,
+          "train_accuracy": 0.7877604365348816,
+          "fit_accuracy": 0.3802083432674408,
+          "train_confusion": [
+            [
+              186,
+              0,
+              1,
+              5
+            ],
+            [
+              3,
+              142,
+              23,
+              24
+            ],
+            [
+              5,
+              8,
+              154,
+              25
+            ],
+            [
+              0,
+              11,
+              58,
+              123
+            ]
+          ],
+          "fit_confusion": [
+            [
+              33,
+              7,
+              1,
+              7
+            ],
+            [
+              16,
+              17,
+              3,
+              12
+            ],
+            [
+              8,
+              12,
+              8,
+              20
+            ],
+            [
+              17,
+              5,
+              11,
+              15
+            ]
+          ]
+        },
+        {
+          "seed": 20261111,
+          "train_accuracy": 0.7916666865348816,
+          "fit_accuracy": 0.421875,
+          "train_confusion": [
+            [
+              182,
+              4,
+              0,
+              6
+            ],
+            [
+              19,
+              119,
+              12,
+              42
+            ],
+            [
+              0,
+              17,
+              169,
+              6
+            ],
+            [
+              16,
+              32,
+              6,
+              138
+            ]
+          ],
+          "fit_confusion": [
+            [
+              25,
+              1,
+              0,
+              22
+            ],
+            [
+              19,
+              2,
+              3,
+              24
+            ],
+            [
+              1,
+              0,
+              23,
+              24
+            ],
+            [
+              10,
+              0,
+              7,
+              31
+            ]
+          ]
+        },
+        {
+          "seed": 20261112,
+          "train_accuracy": 0.7135416865348816,
+          "fit_accuracy": 0.4375,
+          "train_confusion": [
+            [
+              170,
+              14,
+              0,
+              8
+            ],
+            [
+              21,
+              115,
+              20,
+              36
+            ],
+            [
+              0,
+              11,
+              171,
+              10
+            ],
+            [
+              17,
+              62,
+              21,
+              92
+            ]
+          ],
+          "fit_confusion": [
+            [
+              25,
+              4,
+              1,
+              18
+            ],
+            [
+              10,
+              12,
+              6,
+              20
+            ],
+            [
+              0,
+              0,
+              25,
+              23
+            ],
+            [
+              18,
+              0,
+              8,
+              22
+            ]
+          ]
+        }
+      ],
+      "max_train_accuracy": 0.7916666865348816,
+      "median_train_accuracy": 0.7877604365348816,
+      "max_fit_accuracy": 0.4375,
+      "median_fit_accuracy": 0.421875
+    },
+    "u2": {
+      "results": [
+        {
+          "seed": 20261110,
+          "train_accuracy": 0.4440104067325592,
+          "fit_accuracy": 0.34375,
+          "train_confusion": [
+            [
+              102,
+              37,
+              15,
+              38
+            ],
+            [
+              25,
+              44,
+              82,
+              41
+            ],
+            [
+              13,
+              19,
+              147,
+              13
+            ],
+            [
+              33,
+              33,
+              78,
+              48
+            ]
+          ],
+          "fit_confusion": [
+            [
+              31,
+              6,
+              8,
+              3
+            ],
+            [
+              22,
+              7,
+              10,
+              9
+            ],
+            [
+              14,
+              5,
+              26,
+              3
+            ],
+            [
+              28,
+              7,
+              11,
+              2
+            ]
+          ]
+        },
+        {
+          "seed": 20261111,
+          "train_accuracy": 0.4375,
+          "fit_accuracy": 0.3333333432674408,
+          "train_confusion": [
+            [
+              105,
+              41,
+              9,
+              37
+            ],
+            [
+              55,
+              42,
+              61,
+              34
+            ],
+            [
+              12,
+              11,
+              146,
+              23
+            ],
+            [
+              53,
+              32,
+              64,
+              43
+            ]
+          ],
+          "fit_confusion": [
+            [
+              27,
+              11,
+              5,
+              5
+            ],
+            [
+              18,
+              8,
+              13,
+              9
+            ],
+            [
+              10,
+              5,
+              26,
+              7
+            ],
+            [
+              25,
+              6,
+              14,
+              3
+            ]
+          ]
+        },
+        {
+          "seed": 20261112,
+          "train_accuracy": 0.4296875,
+          "fit_accuracy": 0.3541666567325592,
+          "train_confusion": [
+            [
+              94,
+              42,
+              9,
+              47
+            ],
+            [
+              48,
+              34,
+              77,
+              33
+            ],
+            [
+              9,
+              9,
+              155,
+              19
+            ],
+            [
+              49,
+              26,
+              70,
+              47
+            ]
+          ],
+          "fit_confusion": [
+            [
+              27,
+              7,
+              5,
+              9
+            ],
+            [
+              18,
+              7,
+              13,
+              10
+            ],
+            [
+              8,
+              8,
+              28,
+              4
+            ],
+            [
+              23,
+              5,
+              14,
+              6
+            ]
+          ]
+        }
+      ],
+      "max_train_accuracy": 0.4440104067325592,
+      "median_train_accuracy": 0.4375,
+      "max_fit_accuracy": 0.3541666567325592,
+      "median_fit_accuracy": 0.34375
+    }
+  },
+  "examples": {
+    "train": 768,
+    "fit": 192,
+    "request_width": 30,
+    "fixture": "generate_examples (formal A-gate distribution)"
+  },
+  "declared_verdict": {
+    "head_feasible": "raw median train >= 0.95 and median fit >= 0.80",
+    "query_pathway_fixed_generalization_gap": "raw median train >= 0.95, fit < 0.80",
+    "perception_not_separable": "raw median train < 0.95"
+  },
+  "discipline": {
+    "u2_optimizer_steps": 0,
+    "head_optimizer_steps": 3600,
+    "check_reads": 0,
+    "final_reads": 0
+  }
+}

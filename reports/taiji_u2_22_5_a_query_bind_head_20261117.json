@@ -1,0 +1,72 @@
+{
+  "schema": "taiji-u2-22-5-a-query-bind-head-probe-v1",
+  "card": "22.5.0.A",
+  "verdict": "perception_not_separable",
+  "primary_source": "raw",
+  "summary": {
+    "raw": {
+      "results": [
+        {
+          "seed": 20261110,
+          "train_accuracy": 0.8650442361831665,
+          "fit_accuracy": 0.3619631826877594
+        },
+        {
+          "seed": 20261111,
+          "train_accuracy": 0.8561946749687195,
+          "fit_accuracy": 0.3558282256126404
+        },
+        {
+          "seed": 20261112,
+          "train_accuracy": 0.8716813921928406,
+          "fit_accuracy": 0.3558282256126404
+        }
+      ],
+      "max_train_accuracy": 0.8716813921928406,
+      "median_train_accuracy": 0.8650442361831665,
+      "max_fit_accuracy": 0.3619631826877594,
+      "median_fit_accuracy": 0.3558282256126404
+    },
+    "u2": {
+      "results": [
+        {
+          "seed": 20261110,
+          "train_accuracy": 0.4491150379180908,
+          "fit_accuracy": 0.25766870379447937
+        },
+        {
+          "seed": 20261111,
+          "train_accuracy": 0.45132744312286377,
+          "fit_accuracy": 0.25766870379447937
+        },
+        {
+          "seed": 20261112,
+          "train_accuracy": 0.45132744312286377,
+          "fit_accuracy": 0.25766870379447937
+        }
+      ],
+      "max_train_accuracy": 0.45132744312286377,
+      "median_train_accuracy": 0.45132744312286377,
+      "max_fit_accuracy": 0.25766870379447937,
+      "median_fit_accuracy": 0.25766870379447937
+    }
+  },
+  "examples": {
+    "train": 452,
+    "train_skipped": 316,
+    "fit": 163,
+    "fit_skipped": 29,
+    "request_width": 30
+  },
+  "declared_verdict": {
+    "head_feasible": "raw median train >= 0.95 and median fit >= 0.80",
+    "query_pathway_fixed_generalization_gap": "raw median train >= 0.95, fit < 0.80",
+    "perception_not_separable": "raw median train < 0.95"
+  },
+  "discipline": {
+    "u2_optimizer_steps": 0,
+    "head_optimizer_steps": 3600,
+    "check_reads": 0,
+    "final_reads": 0
+  }
+}
