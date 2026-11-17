@@ -756,3 +756,7 @@ P3.9工程父取P3.8最后可恢复、来源完整的Native研究父，若无新
 #### 22.4.2.5 干预矩阵（2026-11-17，零训练）
 
 `22.4.2.5` 固定干预矩阵**完成＝`intervention_matrix_valid`**：3 seed × 8 臂（动作因果／经历必要／外观动力学／遮挡／音频缺失·冲突／本体缺失·冲突）全部可被评分器区分；**经历必要臂末帧逐位相等、首帧不同、previous 答案不同**（只看当前视图不可辨）；缺失→`未知`、冲突→`求证`；63.7812 CPU／9.672 wall（帽 120／240），0 模型前向／0 optimizer。原始轨迹以紧凑动作序列＋媒体 SHA-256 入库，可由 seed＋动作重放；报告 550,647 字节。**音频/本体臂使用本地 `CrossModalCase` 规则，未改冻结合同**；若 22.4.2.6 接入模型须先扩展合同并重新冻结。**不签**模型会听/会本体感、父/能力/`accepted_parent`；22.4 七项交付仍缺第 2／7。下一步＝22.4.2.6 生成器入口。见[结果卡](RESULT-TAIJI_U2_22_4_2_INTERVENTIONS_20261117.md)、[报告](../../reports/taiji_u2_intervention_matrix_22_4_2_20261117.json)、D-20261117-27。
+
+#### 22.4.2.6 生成器入口（2026-11-17，零训练）
+
+`22.4.2.6` 生成器入口**完成＝`generator_entry_valid`**：A/B/C/D/J 统一包络；观测 shape **rgb[16,48]／audio[7,33]／proprio[1,16]**、坐标 **[16,8]／[7,8]／[1,8]**、**outcome[6]** 全族一致；合法内容键集与反馈权利全族一致；A/B/C 的 `Case` 通过 `validate_case`，目标只留在 `task`；胶囊 **save/load/rebuild 逐位一致**；执行器一步 create→execute→snapshot→restore→query **applied** 5/5；66.5312 CPU／9.891 wall（帽 120／240），0 模型前向／0 optimizer。D/J 全族 seed 124、A/B/C 扫 124／125／126；22.4.3 再扩到 1,280 world。**不签**模型能力/父/`accepted_parent`；22.4 七项交付仍缺第 2／7。下一步＝22.4.3 分区生成。见[结果卡](RESULT-TAIJI_U2_22_4_2_GENERATOR_20261117.md)、[报告](../../reports/taiji_u2_generator_22_4_2_20261117.json)、D-20261117-28。

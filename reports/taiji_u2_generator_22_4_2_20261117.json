@@ -1,0 +1,1232 @@
+{
+  "schema": "taiji-u2-22-4-2-generator-entry-v1",
+  "card": "22.4.2.6",
+  "phase": "zero_training_generator_entry",
+  "verdict": "generator_entry_valid",
+  "full_seed": 124,
+  "sweep_seeds": [
+    124,
+    125,
+    126
+  ],
+  "families": {
+    "A": {
+      "family": "A",
+      "seed": 124,
+      "envelope_digest": "a654d34390d1f3fb8d207d79c93a338fceba7cfb23537c6c216bf74697191c58",
+      "problems": [],
+      "capsule_bytes": 277373,
+      "generation_cpu": 1.9844,
+      "encoding_cpu": 0.0,
+      "save": {
+        "cpu": 0.2188,
+        "wall": 0.032
+      },
+      "load": {
+        "cpu": 0.2188,
+        "wall": 0.031
+      },
+      "rebuild": {
+        "cpu": 1.6406,
+        "wall": 0.234
+      },
+      "executor": {
+        "schema": "taiji-u2-physical-executor-v1",
+        "effect_count": 1,
+        "restore_equal": true,
+        "query_status": "applied",
+        "world_keys": [
+          "audio_bank",
+          "audio_ring",
+          "bodies",
+          "byte_count",
+          "contract_hash",
+          "dtype",
+          "modalities",
+          "occluder",
+          "recipe",
+          "rng_states",
+          "sample_index",
+          "schema",
+          "source_pins",
+          "terminal",
+          "tick_index",
+          "transactions",
+          "version",
+          "world_id",
+          "world_time"
+        ],
+        "cpu": 0.5312,
+        "wall": 0.063,
+        "ack": "applied"
+      },
+      "shapes": {
+        "observations": {
+          "rgb": [
+            16,
+            48
+          ],
+          "audio": [
+            7,
+            33
+          ],
+          "proprio": [
+            1,
+            16
+          ]
+        },
+        "coordinates": {
+          "rgb": [
+            16,
+            8
+          ],
+          "audio": [
+            7,
+            8
+          ],
+          "proprio": [
+            1,
+            8
+          ]
+        },
+        "outcome": [
+          6
+        ]
+      }
+    },
+    "B": {
+      "family": "B",
+      "seed": 124,
+      "envelope_digest": "2ae539534dcdb0db60ba882bccadb1098667770a2d93a044be988dee36086648",
+      "problems": [],
+      "capsule_bytes": 277373,
+      "generation_cpu": 1.5312,
+      "encoding_cpu": 0.0,
+      "save": {
+        "cpu": 0.1094,
+        "wall": 0.016
+      },
+      "load": {
+        "cpu": 0.2188,
+        "wall": 0.031
+      },
+      "rebuild": {
+        "cpu": 1.5312,
+        "wall": 0.219
+      },
+      "executor": {
+        "schema": "taiji-u2-physical-executor-v1",
+        "effect_count": 1,
+        "restore_equal": true,
+        "query_status": "applied",
+        "world_keys": [
+          "audio_bank",
+          "audio_ring",
+          "bodies",
+          "byte_count",
+          "contract_hash",
+          "dtype",
+          "modalities",
+          "occluder",
+          "recipe",
+          "rng_states",
+          "sample_index",
+          "schema",
+          "source_pins",
+          "terminal",
+          "tick_index",
+          "transactions",
+          "version",
+          "world_id",
+          "world_time"
+        ],
+        "cpu": 0.4375,
+        "wall": 0.062,
+        "ack": "applied"
+      },
+      "shapes": {
+        "observations": {
+          "rgb": [
+            16,
+            48
+          ],
+          "audio": [
+            7,
+            33
+          ],
+          "proprio": [
+            1,
+            16
+          ]
+        },
+        "coordinates": {
+          "rgb": [
+            16,
+            8
+          ],
+          "audio": [
+            7,
+            8
+          ],
+          "proprio": [
+            1,
+            8
+          ]
+        },
+        "outcome": [
+          6
+        ]
+      }
+    },
+    "C": {
+      "family": "C",
+      "seed": 124,
+      "envelope_digest": "e7b4c5eab37f89923e0d6005b0746f4eabb8fce37e1269bde9b80f6a4a1e715c",
+      "problems": [],
+      "capsule_bytes": 104670,
+      "generation_cpu": 0.2188,
+      "encoding_cpu": 0.0,
+      "save": {
+        "cpu": 0.1094,
+        "wall": 0.016
+      },
+      "load": {
+        "cpu": 0.1094,
+        "wall": 0.016
+      },
+      "rebuild": {
+        "cpu": 0.2188,
+        "wall": 0.031
+      },
+      "executor": {
+        "schema": "taiji-u2-physical-executor-v1",
+        "effect_count": 1,
+        "restore_equal": true,
+        "query_status": "applied",
+        "world_keys": [
+          "audio_bank",
+          "audio_ring",
+          "bodies",
+          "byte_count",
+          "contract_hash",
+          "dtype",
+          "modalities",
+          "occluder",
+          "recipe",
+          "rng_states",
+          "sample_index",
+          "schema",
+          "source_pins",
+          "terminal",
+          "tick_index",
+          "transactions",
+          "version",
+          "world_id",
+          "world_time"
+        ],
+        "cpu": 0.5156,
+        "wall": 0.078,
+        "ack": "applied"
+      },
+      "shapes": {
+        "observations": {
+          "rgb": [
+            16,
+            48
+          ],
+          "audio": [
+            7,
+            33
+          ],
+          "proprio": [
+            1,
+            16
+          ]
+        },
+        "coordinates": {
+          "rgb": [
+            16,
+            8
+          ],
+          "audio": [
+            7,
+            8
+          ],
+          "proprio": [
+            1,
+            8
+          ]
+        },
+        "outcome": [
+          6
+        ]
+      }
+    },
+    "D": {
+      "family": "D",
+      "seed": 124,
+      "envelope_digest": "7316085c1205327a0a211bbe61fab4291a1c035dc3ef570470ebc2392901c4cf",
+      "problems": [],
+      "capsule_bytes": 630165,
+      "generation_cpu": 8.2812,
+      "encoding_cpu": 0.0,
+      "save": {
+        "cpu": 0.2188,
+        "wall": 0.031
+      },
+      "load": {
+        "cpu": 0.4219,
+        "wall": 0.063
+      },
+      "rebuild": {
+        "cpu": 8.9844,
+        "wall": 1.421
+      },
+      "executor": {
+        "schema": "taiji-u2-physical-executor-v1",
+        "effect_count": 1,
+        "restore_equal": true,
+        "query_status": "applied",
+        "world_keys": [
+          "audio_bank",
+          "audio_ring",
+          "bodies",
+          "byte_count",
+          "contract_hash",
+          "dtype",
+          "modalities",
+          "occluder",
+          "recipe",
+          "rng_states",
+          "sample_index",
+          "schema",
+          "source_pins",
+          "terminal",
+          "tick_index",
+          "transactions",
+          "version",
+          "world_id",
+          "world_time"
+        ],
+        "cpu": 0.5312,
+        "wall": 0.094,
+        "ack": "applied"
+      },
+      "shapes": {
+        "observations": {
+          "rgb": [
+            16,
+            48
+          ],
+          "audio": [
+            7,
+            33
+          ],
+          "proprio": [
+            1,
+            16
+          ]
+        },
+        "coordinates": {
+          "rgb": [
+            16,
+            8
+          ],
+          "audio": [
+            7,
+            8
+          ],
+          "proprio": [
+            1,
+            8
+          ]
+        },
+        "outcome": [
+          6
+        ]
+      }
+    },
+    "J": {
+      "family": "J",
+      "seed": 124,
+      "envelope_digest": "6a829fd1eb0cb35e01d91300f6584022f62eae068e2c369671b7c7bf7b047ad7",
+      "problems": [],
+      "capsule_bytes": 642045,
+      "generation_cpu": 4.1562,
+      "encoding_cpu": 0.0,
+      "save": {
+        "cpu": 0.0938,
+        "wall": 0.031
+      },
+      "load": {
+        "cpu": 0.4375,
+        "wall": 0.047
+      },
+      "rebuild": {
+        "cpu": 3.6875,
+        "wall": 0.532
+      },
+      "executor": {
+        "schema": "taiji-u2-physical-executor-v1",
+        "effect_count": 1,
+        "restore_equal": true,
+        "query_status": "applied",
+        "world_keys": [
+          "audio_bank",
+          "audio_ring",
+          "bodies",
+          "byte_count",
+          "contract_hash",
+          "dtype",
+          "modalities",
+          "occluder",
+          "recipe",
+          "rng_states",
+          "sample_index",
+          "schema",
+          "source_pins",
+          "terminal",
+          "tick_index",
+          "transactions",
+          "version",
+          "world_id",
+          "world_time"
+        ],
+        "cpu": 0.5,
+        "wall": 0.078,
+        "ack": "applied"
+      },
+      "shapes": {
+        "observations": {
+          "rgb": [
+            16,
+            48
+          ],
+          "audio": [
+            7,
+            33
+          ],
+          "proprio": [
+            1,
+            16
+          ]
+        },
+        "coordinates": {
+          "rgb": [
+            16,
+            8
+          ],
+          "audio": [
+            7,
+            8
+          ],
+          "proprio": [
+            1,
+            8
+          ]
+        },
+        "outcome": [
+          6
+        ]
+      }
+    }
+  },
+  "sweep": {
+    "A": [
+      {
+        "family": "A",
+        "seed": 124,
+        "envelope_digest": "a654d34390d1f3fb8d207d79c93a338fceba7cfb23537c6c216bf74697191c58",
+        "problems": [],
+        "capsule_bytes": 277373,
+        "generation_cpu": 1.5938,
+        "encoding_cpu": 0.0,
+        "save": {
+          "cpu": 0.0,
+          "wall": 0.016
+        },
+        "load": {
+          "cpu": 0.2188,
+          "wall": 0.031
+        },
+        "rebuild": {
+          "cpu": 1.5938,
+          "wall": 0.235
+        },
+        "executor": {
+          "schema": "taiji-u2-physical-executor-v1",
+          "effect_count": 1,
+          "restore_equal": true,
+          "query_status": "applied",
+          "world_keys": [
+            "audio_bank",
+            "audio_ring",
+            "bodies",
+            "byte_count",
+            "contract_hash",
+            "dtype",
+            "modalities",
+            "occluder",
+            "recipe",
+            "rng_states",
+            "sample_index",
+            "schema",
+            "source_pins",
+            "terminal",
+            "tick_index",
+            "transactions",
+            "version",
+            "world_id",
+            "world_time"
+          ],
+          "cpu": 0.5156,
+          "wall": 0.078,
+          "ack": "applied"
+        },
+        "shapes": {
+          "observations": {
+            "rgb": [
+              16,
+              48
+            ],
+            "audio": [
+              7,
+              33
+            ],
+            "proprio": [
+              1,
+              16
+            ]
+          },
+          "coordinates": {
+            "rgb": [
+              16,
+              8
+            ],
+            "audio": [
+              7,
+              8
+            ],
+            "proprio": [
+              1,
+              8
+            ]
+          },
+          "outcome": [
+            6
+          ]
+        }
+      },
+      {
+        "family": "A",
+        "seed": 125,
+        "envelope_digest": "2844bcb9e8726ce7c0dc0352a919f90e39936b14ea819dce477b9075491a50e5",
+        "problems": [],
+        "capsule_bytes": 277373,
+        "generation_cpu": 1.7344,
+        "encoding_cpu": 0.0,
+        "save": {
+          "cpu": 0.0938,
+          "wall": 0.0
+        },
+        "load": {
+          "cpu": 0.2031,
+          "wall": 0.047
+        },
+        "rebuild": {
+          "cpu": 1.6406,
+          "wall": 0.218
+        },
+        "executor": {
+          "schema": "taiji-u2-physical-executor-v1",
+          "effect_count": 1,
+          "restore_equal": true,
+          "query_status": "applied",
+          "world_keys": [
+            "audio_bank",
+            "audio_ring",
+            "bodies",
+            "byte_count",
+            "contract_hash",
+            "dtype",
+            "modalities",
+            "occluder",
+            "recipe",
+            "rng_states",
+            "sample_index",
+            "schema",
+            "source_pins",
+            "terminal",
+            "tick_index",
+            "transactions",
+            "version",
+            "world_id",
+            "world_time"
+          ],
+          "cpu": 0.5469,
+          "wall": 0.079,
+          "ack": "applied"
+        },
+        "shapes": {
+          "observations": {
+            "rgb": [
+              16,
+              48
+            ],
+            "audio": [
+              7,
+              33
+            ],
+            "proprio": [
+              1,
+              16
+            ]
+          },
+          "coordinates": {
+            "rgb": [
+              16,
+              8
+            ],
+            "audio": [
+              7,
+              8
+            ],
+            "proprio": [
+              1,
+              8
+            ]
+          },
+          "outcome": [
+            6
+          ]
+        }
+      },
+      {
+        "family": "A",
+        "seed": 126,
+        "envelope_digest": "686a3222e9eb2635e088a46873721323c6b307908f4195d233b85419e2b4d7d2",
+        "problems": [],
+        "capsule_bytes": 277373,
+        "generation_cpu": 1.5,
+        "encoding_cpu": 0.0,
+        "save": {
+          "cpu": 0.0938,
+          "wall": 0.016
+        },
+        "load": {
+          "cpu": 0.2188,
+          "wall": 0.031
+        },
+        "rebuild": {
+          "cpu": 1.8438,
+          "wall": 0.265
+        },
+        "executor": {
+          "schema": "taiji-u2-physical-executor-v1",
+          "effect_count": 1,
+          "restore_equal": true,
+          "query_status": "applied",
+          "world_keys": [
+            "audio_bank",
+            "audio_ring",
+            "bodies",
+            "byte_count",
+            "contract_hash",
+            "dtype",
+            "modalities",
+            "occluder",
+            "recipe",
+            "rng_states",
+            "sample_index",
+            "schema",
+            "source_pins",
+            "terminal",
+            "tick_index",
+            "transactions",
+            "version",
+            "world_id",
+            "world_time"
+          ],
+          "cpu": 0.5156,
+          "wall": 0.079,
+          "ack": "applied"
+        },
+        "shapes": {
+          "observations": {
+            "rgb": [
+              16,
+              48
+            ],
+            "audio": [
+              7,
+              33
+            ],
+            "proprio": [
+              1,
+              16
+            ]
+          },
+          "coordinates": {
+            "rgb": [
+              16,
+              8
+            ],
+            "audio": [
+              7,
+              8
+            ],
+            "proprio": [
+              1,
+              8
+            ]
+          },
+          "outcome": [
+            6
+          ]
+        }
+      }
+    ],
+    "B": [
+      {
+        "family": "B",
+        "seed": 124,
+        "envelope_digest": "2ae539534dcdb0db60ba882bccadb1098667770a2d93a044be988dee36086648",
+        "problems": [],
+        "capsule_bytes": 277373,
+        "generation_cpu": 1.875,
+        "encoding_cpu": 0.0,
+        "save": {
+          "cpu": 0.1094,
+          "wall": 0.016
+        },
+        "load": {
+          "cpu": 0.2812,
+          "wall": 0.047
+        },
+        "rebuild": {
+          "cpu": 1.9531,
+          "wall": 0.297
+        },
+        "executor": {
+          "schema": "taiji-u2-physical-executor-v1",
+          "effect_count": 1,
+          "restore_equal": true,
+          "query_status": "applied",
+          "world_keys": [
+            "audio_bank",
+            "audio_ring",
+            "bodies",
+            "byte_count",
+            "contract_hash",
+            "dtype",
+            "modalities",
+            "occluder",
+            "recipe",
+            "rng_states",
+            "sample_index",
+            "schema",
+            "source_pins",
+            "terminal",
+            "tick_index",
+            "transactions",
+            "version",
+            "world_id",
+            "world_time"
+          ],
+          "cpu": 0.5,
+          "wall": 0.078,
+          "ack": "applied"
+        },
+        "shapes": {
+          "observations": {
+            "rgb": [
+              16,
+              48
+            ],
+            "audio": [
+              7,
+              33
+            ],
+            "proprio": [
+              1,
+              16
+            ]
+          },
+          "coordinates": {
+            "rgb": [
+              16,
+              8
+            ],
+            "audio": [
+              7,
+              8
+            ],
+            "proprio": [
+              1,
+              8
+            ]
+          },
+          "outcome": [
+            6
+          ]
+        }
+      },
+      {
+        "family": "B",
+        "seed": 125,
+        "envelope_digest": "f1bf1cb1155e317cdd57b1d0d0f26b4e9c9cae8cdd56511249ade5087c1f86c9",
+        "problems": [],
+        "capsule_bytes": 277373,
+        "generation_cpu": 1.7344,
+        "encoding_cpu": 0.0,
+        "save": {
+          "cpu": 0.0469,
+          "wall": 0.0
+        },
+        "load": {
+          "cpu": 0.2812,
+          "wall": 0.031
+        },
+        "rebuild": {
+          "cpu": 1.625,
+          "wall": 0.234
+        },
+        "executor": {
+          "schema": "taiji-u2-physical-executor-v1",
+          "effect_count": 1,
+          "restore_equal": true,
+          "query_status": "applied",
+          "world_keys": [
+            "audio_bank",
+            "audio_ring",
+            "bodies",
+            "byte_count",
+            "contract_hash",
+            "dtype",
+            "modalities",
+            "occluder",
+            "recipe",
+            "rng_states",
+            "sample_index",
+            "schema",
+            "source_pins",
+            "terminal",
+            "tick_index",
+            "transactions",
+            "version",
+            "world_id",
+            "world_time"
+          ],
+          "cpu": 0.3906,
+          "wall": 0.063,
+          "ack": "applied"
+        },
+        "shapes": {
+          "observations": {
+            "rgb": [
+              16,
+              48
+            ],
+            "audio": [
+              7,
+              33
+            ],
+            "proprio": [
+              1,
+              16
+            ]
+          },
+          "coordinates": {
+            "rgb": [
+              16,
+              8
+            ],
+            "audio": [
+              7,
+              8
+            ],
+            "proprio": [
+              1,
+              8
+            ]
+          },
+          "outcome": [
+            6
+          ]
+        }
+      },
+      {
+        "family": "B",
+        "seed": 126,
+        "envelope_digest": "e3d804f91635e91867cf1582b297ad281067f217de84ac6b98bf69c059bb6a21",
+        "problems": [],
+        "capsule_bytes": 277373,
+        "generation_cpu": 1.9375,
+        "encoding_cpu": 0.0,
+        "save": {
+          "cpu": 0.1094,
+          "wall": 0.015
+        },
+        "load": {
+          "cpu": 0.1875,
+          "wall": 0.031
+        },
+        "rebuild": {
+          "cpu": 1.5312,
+          "wall": 0.219
+        },
+        "executor": {
+          "schema": "taiji-u2-physical-executor-v1",
+          "effect_count": 1,
+          "restore_equal": true,
+          "query_status": "applied",
+          "world_keys": [
+            "audio_bank",
+            "audio_ring",
+            "bodies",
+            "byte_count",
+            "contract_hash",
+            "dtype",
+            "modalities",
+            "occluder",
+            "recipe",
+            "rng_states",
+            "sample_index",
+            "schema",
+            "source_pins",
+            "terminal",
+            "tick_index",
+            "transactions",
+            "version",
+            "world_id",
+            "world_time"
+          ],
+          "cpu": 0.5156,
+          "wall": 0.063,
+          "ack": "applied"
+        },
+        "shapes": {
+          "observations": {
+            "rgb": [
+              16,
+              48
+            ],
+            "audio": [
+              7,
+              33
+            ],
+            "proprio": [
+              1,
+              16
+            ]
+          },
+          "coordinates": {
+            "rgb": [
+              16,
+              8
+            ],
+            "audio": [
+              7,
+              8
+            ],
+            "proprio": [
+              1,
+              8
+            ]
+          },
+          "outcome": [
+            6
+          ]
+        }
+      }
+    ],
+    "C": [
+      {
+        "family": "C",
+        "seed": 124,
+        "envelope_digest": "e7b4c5eab37f89923e0d6005b0746f4eabb8fce37e1269bde9b80f6a4a1e715c",
+        "problems": [],
+        "capsule_bytes": 104670,
+        "generation_cpu": 0.2188,
+        "encoding_cpu": 0.0,
+        "save": {
+          "cpu": 0.0938,
+          "wall": 0.0
+        },
+        "load": {
+          "cpu": 0.1094,
+          "wall": 0.015
+        },
+        "rebuild": {
+          "cpu": 0.2188,
+          "wall": 0.031
+        },
+        "executor": {
+          "schema": "taiji-u2-physical-executor-v1",
+          "effect_count": 1,
+          "restore_equal": true,
+          "query_status": "applied",
+          "world_keys": [
+            "audio_bank",
+            "audio_ring",
+            "bodies",
+            "byte_count",
+            "contract_hash",
+            "dtype",
+            "modalities",
+            "occluder",
+            "recipe",
+            "rng_states",
+            "sample_index",
+            "schema",
+            "source_pins",
+            "terminal",
+            "tick_index",
+            "transactions",
+            "version",
+            "world_id",
+            "world_time"
+          ],
+          "cpu": 0.5156,
+          "wall": 0.063,
+          "ack": "applied"
+        },
+        "shapes": {
+          "observations": {
+            "rgb": [
+              16,
+              48
+            ],
+            "audio": [
+              7,
+              33
+            ],
+            "proprio": [
+              1,
+              16
+            ]
+          },
+          "coordinates": {
+            "rgb": [
+              16,
+              8
+            ],
+            "audio": [
+              7,
+              8
+            ],
+            "proprio": [
+              1,
+              8
+            ]
+          },
+          "outcome": [
+            6
+          ]
+        }
+      },
+      {
+        "family": "C",
+        "seed": 125,
+        "envelope_digest": "40761a8e0cda69974a01094f2c07098da4069c7cefc4b95949881432ca9cc54d",
+        "problems": [],
+        "capsule_bytes": 104670,
+        "generation_cpu": 0.2188,
+        "encoding_cpu": 0.0,
+        "save": {
+          "cpu": 0.1094,
+          "wall": 0.016
+        },
+        "load": {
+          "cpu": 0.1094,
+          "wall": 0.016
+        },
+        "rebuild": {
+          "cpu": 0.2188,
+          "wall": 0.031
+        },
+        "executor": {
+          "schema": "taiji-u2-physical-executor-v1",
+          "effect_count": 1,
+          "restore_equal": true,
+          "query_status": "applied",
+          "world_keys": [
+            "audio_bank",
+            "audio_ring",
+            "bodies",
+            "byte_count",
+            "contract_hash",
+            "dtype",
+            "modalities",
+            "occluder",
+            "recipe",
+            "rng_states",
+            "sample_index",
+            "schema",
+            "source_pins",
+            "terminal",
+            "tick_index",
+            "transactions",
+            "version",
+            "world_id",
+            "world_time"
+          ],
+          "cpu": 0.5938,
+          "wall": 0.094,
+          "ack": "applied"
+        },
+        "shapes": {
+          "observations": {
+            "rgb": [
+              16,
+              48
+            ],
+            "audio": [
+              7,
+              33
+            ],
+            "proprio": [
+              1,
+              16
+            ]
+          },
+          "coordinates": {
+            "rgb": [
+              16,
+              8
+            ],
+            "audio": [
+              7,
+              8
+            ],
+            "proprio": [
+              1,
+              8
+            ]
+          },
+          "outcome": [
+            6
+          ]
+        }
+      },
+      {
+        "family": "C",
+        "seed": 126,
+        "envelope_digest": "c799bee1cdf809ade962df6224bd93e484b772009874e28a3c0cae6881314655",
+        "problems": [],
+        "capsule_bytes": 104670,
+        "generation_cpu": 0.2812,
+        "encoding_cpu": 0.0,
+        "save": {
+          "cpu": 0.0,
+          "wall": 0.015
+        },
+        "load": {
+          "cpu": 0.0938,
+          "wall": 0.016
+        },
+        "rebuild": {
+          "cpu": 0.1719,
+          "wall": 0.047
+        },
+        "executor": {
+          "schema": "taiji-u2-physical-executor-v1",
+          "effect_count": 1,
+          "restore_equal": true,
+          "query_status": "applied",
+          "world_keys": [
+            "audio_bank",
+            "audio_ring",
+            "bodies",
+            "byte_count",
+            "contract_hash",
+            "dtype",
+            "modalities",
+            "occluder",
+            "recipe",
+            "rng_states",
+            "sample_index",
+            "schema",
+            "source_pins",
+            "terminal",
+            "tick_index",
+            "transactions",
+            "version",
+            "world_id",
+            "world_time"
+          ],
+          "cpu": 0.6719,
+          "wall": 0.109,
+          "ack": "applied"
+        },
+        "shapes": {
+          "observations": {
+            "rgb": [
+              16,
+              48
+            ],
+            "audio": [
+              7,
+              33
+            ],
+            "proprio": [
+              1,
+              16
+            ]
+          },
+          "coordinates": {
+            "rgb": [
+              16,
+              8
+            ],
+            "audio": [
+              7,
+              8
+            ],
+            "proprio": [
+              1,
+              8
+            ]
+          },
+          "outcome": [
+            6
+          ]
+        }
+      }
+    ]
+  },
+  "feedback_rights": {
+    "observation": [
+      "perception",
+      "online",
+      "development"
+    ],
+    "train_label": [
+      "development"
+    ],
+    "online_correction": [
+      "online"
+    ],
+    "help_reply": [
+      "online"
+    ],
+    "score_only": [
+      "scoring"
+    ]
+  },
+  "rights_problems": [],
+  "problems": [],
+  "discipline": {
+    "model_forwards": 0,
+    "optimizer_steps": 0,
+    "project_data_reads": 0,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 66.5312,
+    "wall": 9.891,
+    "cpu_cap": 120.0,
+    "wall_cap": 240.0
+  }
+}
