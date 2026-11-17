@@ -1,0 +1,503 @@
+{
+  "schema": "taiji-u2-22-5-a-gate-pixel-read-v1",
+  "card": "22.5.0.A",
+  "verdict": "not_convergent",
+  "why": "the paired query probe excluded the lexicon; patch tokens quantise x to four columns, so the next test is a pixel-level salience match with a linear coordinate readout",
+  "oracle_reconstruction": {
+    "train12": {
+      "agreement": 1.0,
+      "confusion": [
+        [
+          192,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          192,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          192,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          192
+        ]
+      ]
+    },
+    "fit3": {
+      "agreement": 1.0,
+      "confusion": [
+        [
+          48,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          48,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          48,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          48
+        ]
+      ]
+    },
+    "fit12": {
+      "agreement": 1.0,
+      "confusion": [
+        [
+          48,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          48,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          48,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          48
+        ]
+      ]
+    }
+  },
+  "conditions": {
+    "tokens": "256 pixels of the 16x16 raster, exact x/y",
+    "match": "multiplicative query/pixel score plus a learned null slot",
+    "readout": "[mu_x, mu_y, mass, max_w, sum w x, sum w y] -> 32 -> 4",
+    "query": "6-dim entity one-hot (declared prior)",
+    "train_split": "train12 (768 worlds, 1-2 bodies)",
+    "step_cap": 6000,
+    "target_train_accuracy": 0.995,
+    "evaluate_every": 250,
+    "seeds": [
+      20261110,
+      20261111,
+      20261112
+    ]
+  },
+  "arms": {
+    "entity_fit3": {
+      "fit_split": "fit3",
+      "results": [
+        {
+          "seed": 20261110,
+          "steps": 6000,
+          "train_accuracy": 0.9934895634651184,
+          "train_confusion": [
+            [
+              190,
+              2,
+              0,
+              0
+            ],
+            [
+              0,
+              191,
+              1,
+              0
+            ],
+            [
+              0,
+              2,
+              190,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              192
+            ]
+          ],
+          "cpu": 851.0,
+          "fit_accuracy": 0.9427083134651184,
+          "fit_confusion": [
+            [
+              42,
+              6,
+              0,
+              0
+            ],
+            [
+              0,
+              48,
+              0,
+              0
+            ],
+            [
+              0,
+              5,
+              43,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              48
+            ]
+          ]
+        },
+        {
+          "seed": 20261111,
+          "steps": 6000,
+          "train_accuracy": 0.73046875,
+          "train_confusion": [
+            [
+              192,
+              0,
+              0,
+              0
+            ],
+            [
+              1,
+              99,
+              3,
+              89
+            ],
+            [
+              0,
+              0,
+              192,
+              0
+            ],
+            [
+              0,
+              114,
+              0,
+              78
+            ]
+          ],
+          "cpu": 849.7344,
+          "fit_accuracy": 0.7239583134651184,
+          "fit_confusion": [
+            [
+              47,
+              1,
+              0,
+              0
+            ],
+            [
+              2,
+              25,
+              3,
+              18
+            ],
+            [
+              0,
+              0,
+              46,
+              2
+            ],
+            [
+              1,
+              26,
+              0,
+              21
+            ]
+          ]
+        },
+        {
+          "seed": 20261112,
+          "steps": 6000,
+          "train_accuracy": 0.98828125,
+          "train_confusion": [
+            [
+              189,
+              3,
+              0,
+              0
+            ],
+            [
+              2,
+              188,
+              2,
+              0
+            ],
+            [
+              0,
+              2,
+              190,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              192
+            ]
+          ],
+          "cpu": 862.9219,
+          "fit_accuracy": 0.9322916865348816,
+          "fit_confusion": [
+            [
+              41,
+              7,
+              0,
+              0
+            ],
+            [
+              0,
+              48,
+              0,
+              0
+            ],
+            [
+              0,
+              6,
+              42,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              48
+            ]
+          ]
+        }
+      ],
+      "median_train_accuracy": 0.98828125,
+      "median_fit_accuracy": 0.9322916865348816
+    },
+    "entity_fit12": {
+      "fit_split": "fit12",
+      "results": [
+        {
+          "seed": 20261110,
+          "steps": 6000,
+          "train_accuracy": 0.9934895634651184,
+          "train_confusion": [
+            [
+              190,
+              2,
+              0,
+              0
+            ],
+            [
+              0,
+              191,
+              1,
+              0
+            ],
+            [
+              0,
+              2,
+              190,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              192
+            ]
+          ],
+          "cpu": 853.375,
+          "fit_accuracy": 0.9947916865348816,
+          "fit_confusion": [
+            [
+              47,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              48,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              48,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              48
+            ]
+          ]
+        },
+        {
+          "seed": 20261111,
+          "steps": 6000,
+          "train_accuracy": 0.73046875,
+          "train_confusion": [
+            [
+              192,
+              0,
+              0,
+              0
+            ],
+            [
+              1,
+              99,
+              3,
+              89
+            ],
+            [
+              0,
+              0,
+              192,
+              0
+            ],
+            [
+              0,
+              114,
+              0,
+              78
+            ]
+          ],
+          "cpu": 852.2656,
+          "fit_accuracy": 0.734375,
+          "fit_confusion": [
+            [
+              46,
+              2,
+              0,
+              0
+            ],
+            [
+              2,
+              29,
+              2,
+              15
+            ],
+            [
+              0,
+              0,
+              48,
+              0
+            ],
+            [
+              0,
+              30,
+              0,
+              18
+            ]
+          ]
+        },
+        {
+          "seed": 20261112,
+          "steps": 6000,
+          "train_accuracy": 0.98828125,
+          "train_confusion": [
+            [
+              189,
+              3,
+              0,
+              0
+            ],
+            [
+              2,
+              188,
+              2,
+              0
+            ],
+            [
+              0,
+              2,
+              190,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              192
+            ]
+          ],
+          "cpu": 818.6562,
+          "fit_accuracy": 0.9947916865348816,
+          "fit_confusion": [
+            [
+              47,
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              48,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              48,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              48
+            ]
+          ]
+        }
+      ],
+      "median_train_accuracy": 0.98828125,
+      "median_fit_accuracy": 0.9947916865348816
+    }
+  },
+  "medians": {
+    "entity_fit3": 0.9322916865348816,
+    "entity_fit12": 0.9947916865348816
+  },
+  "declared_verdict": {
+    "not_convergent": "any arm below 0.99 train accuracy at the step cap",
+    "pixel_read_feasible": "entity_fit3 median >= 0.80",
+    "resolution_is_the_bound": "entity_fit3 median < 0.80"
+  },
+  "discipline": {
+    "u2_optimizer_steps": 0,
+    "head_optimizer_steps": 36000,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 5088.4688,
+    "wall": 479.0985
+  },
+  "source_pins": {
+    "scripts/training/probe_a_gate_pixel_read_20261117.py": "1978f94aa569d0eafad1f63aff4844b76c60e7f2e3bfa0b07ac1f5a6bac97883",
+    "scripts/training/probe_a_gate_ceiling_20261117.py": "883f5dfb3f00a3b434371cf92553c10e5ad0d1928a6f39b6dc68cff9896ffdd2"
+  }
+}
