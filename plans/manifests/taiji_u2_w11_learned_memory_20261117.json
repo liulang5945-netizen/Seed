@@ -1,0 +1,83 @@
+{
+  "schema": "taiji-u2-w11-learned-memory-v1",
+  "card": "22.5.W.1.1",
+  "date": "2026-11-17",
+  "status": "frozen",
+  "training_authority": null,
+  "identity": "taiji-u2-learned-memory-v1",
+  "parent_card": "22.5.W.1",
+  "data_root": "generated:dms-20261117",
+  "data_digest": "fa5ddfc76a19f0b0c1782143e457ca53f88c54d1089db2fcb733036732f2fb5c",
+  "encoding_contract_identity": "unit-input-dms-v1",
+  "encoding_contract_digest": "60f1f100279958d55f9fe251a9d3846f902e4c856bd9caea899b5183cf8ee7b5",
+  "criteria": {
+    "route": "B_learned_memory",
+    "seeds": [
+      2026111701,
+      2026111702,
+      2026111703
+    ],
+    "updates_per_seed": 2000,
+    "learning_rate": 0.01,
+    "fit_gate": 0.9,
+    "train_gate": 0.95,
+    "unseen_gate": 0.85,
+    "lesion_max": 0.6,
+    "dtype": "float64",
+    "trainable": [
+      "write_gate.weight",
+      "write_gate.bias",
+      "write_candidate.weight",
+      "write_candidate.bias",
+      "memory_readout.weight"
+    ],
+    "scope": "DMS parent acquisition only; no capability/check2/22.6 claim",
+    "exits": [
+      {
+        "order": 1,
+        "verdict": "budget_stop"
+      },
+      {
+        "order": 2,
+        "verdict": "engineering_failure"
+      },
+      {
+        "order": 3,
+        "verdict": "parent_not_acquired"
+      },
+      {
+        "order": 4,
+        "verdict": "memory_lesion_failed"
+      },
+      {
+        "order": 5,
+        "verdict": "parent_acquired"
+      }
+    ]
+  },
+  "criteria_sha256": "ac268d9f6ef8906d123923b79c94032f9a3a9cee262666de4cf3c6536cf85df7",
+  "plan": {
+    "design_cap_cpu": 600.0,
+    "design_cap_wall": 1200.0,
+    "cap_cpu": 70.3125,
+    "cap_wall": 140.625,
+    "per_update_cpu": 0.00585938,
+    "price_report": "reports/taiji_u2_w11_learned_memory_price_20261117.json"
+  },
+  "source_pins": {
+    "runner": "fcac67bb57dd11fc471d53c283738b8b4c9f6a792b825f9e5bed0b38a2672d1d",
+    "memory_module": "e45646625d55f3f239d041c4c5999b9d3e0d915bb5ac8f7bd52fa3f8434d0866",
+    "dms_input": "cc92702bf19c95ad00e58f4e6f819c2082247713e698815362b05a9a0fed42d7",
+    "dms_probe": "1dc4d7253cbac43e35641bee79a8dfd7901d5da4415df8c47091100490f56a3f",
+    "neural_units": "6a8bfc15f44b39cc22cd1570bf43cedaf44e018628572efb528f2a829a5deca9",
+    "u2_history": "067b9c07290d42bc08188b421267e7d9dca0f73343bc8e18c6e2a0a7e71e79bf"
+  },
+  "source_pin_paths": {
+    "runner": "scripts/training/run_w11_learned_memory_20261117.py",
+    "memory_module": "taiji/u2_unit_memory_readout.py",
+    "dms_input": "taiji/u2_unit_input_dms.py",
+    "dms_probe": "scripts/training/probe_u2_w_dms_20261117.py",
+    "neural_units": "taiji/u2_neural_units.py",
+    "u2_history": "taiji/u2_history.py"
+  }
+}

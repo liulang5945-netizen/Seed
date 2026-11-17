@@ -1,0 +1,91 @@
+{
+  "schema": "taiji-u2-w11-learned-memory-smoke-v1",
+  "card": "22.5.W.1.1",
+  "phase": "smoke",
+  "criteria_sha256": "ac268d9f6ef8906d123923b79c94032f9a3a9cee262666de4cf3c6536cf85df7",
+  "verdict": "smoke_passed",
+  "checks": {
+    "seed2026111701_trainable_is_gate_plus_readout": true,
+    "seed2026111701_neutral_birth_readout_zero": true,
+    "seed2026111701_neutral_birth_gate_zero": true,
+    "seed2026111701_trainable_grads_present": true,
+    "seed2026111701_frozen_params_no_grad": true,
+    "seed2026111701_checkpoint_roundtrip": true,
+    "seed2026111701_data_sizes": true,
+    "seed2026111702_trainable_is_gate_plus_readout": true,
+    "seed2026111702_neutral_birth_readout_zero": true,
+    "seed2026111702_neutral_birth_gate_zero": true,
+    "seed2026111702_trainable_grads_present": true,
+    "seed2026111702_frozen_params_no_grad": true,
+    "seed2026111702_checkpoint_roundtrip": true,
+    "seed2026111702_data_sizes": true,
+    "seed2026111703_trainable_is_gate_plus_readout": true,
+    "seed2026111703_neutral_birth_readout_zero": true,
+    "seed2026111703_neutral_birth_gate_zero": true,
+    "seed2026111703_trainable_grads_present": true,
+    "seed2026111703_frozen_params_no_grad": true,
+    "seed2026111703_checkpoint_roundtrip": true,
+    "seed2026111703_data_sizes": true
+  },
+  "uncovered": [],
+  "rows": [
+    {
+      "seed": 2026111701,
+      "logits": [
+        0.0,
+        0.0
+      ],
+      "checks": {
+        "trainable_is_gate_plus_readout": true,
+        "neutral_birth_readout_zero": true,
+        "neutral_birth_gate_zero": true,
+        "trainable_grads_present": true,
+        "frozen_params_no_grad": true,
+        "checkpoint_roundtrip": true,
+        "data_sizes": true
+      }
+    },
+    {
+      "seed": 2026111702,
+      "logits": [
+        0.0,
+        0.0
+      ],
+      "checks": {
+        "trainable_is_gate_plus_readout": true,
+        "neutral_birth_readout_zero": true,
+        "neutral_birth_gate_zero": true,
+        "trainable_grads_present": true,
+        "frozen_params_no_grad": true,
+        "checkpoint_roundtrip": true,
+        "data_sizes": true
+      }
+    },
+    {
+      "seed": 2026111703,
+      "logits": [
+        0.0,
+        0.0
+      ],
+      "checks": {
+        "trainable_is_gate_plus_readout": true,
+        "neutral_birth_readout_zero": true,
+        "neutral_birth_gate_zero": true,
+        "trainable_grads_present": true,
+        "frozen_params_no_grad": true,
+        "checkpoint_roundtrip": true,
+        "data_sizes": true
+      }
+    }
+  ],
+  "discipline": {
+    "optimizer_steps": 0,
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0
+  },
+  "cost": {
+    "cpu": 0.125,
+    "wall": 0.156
+  }
+}

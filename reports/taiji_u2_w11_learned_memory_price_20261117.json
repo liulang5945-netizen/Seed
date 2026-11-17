@@ -1,0 +1,24 @@
+{
+  "schema": "taiji-u2-w11-learned-memory-price-v1",
+  "card": "22.5.W.1.1",
+  "phase": "price",
+  "criteria_sha256": "ac268d9f6ef8906d123923b79c94032f9a3a9cee262666de4cf3c6536cf85df7",
+  "verdict": "price_measured_within_design",
+  "per_update_cpu": 0.00585938,
+  "measured_cpu": 35.1562,
+  "cap_cpu": 70.3125,
+  "cap_wall": 140.625,
+  "design_cap_cpu": 600.0,
+  "formula": "3 * updates_per_seed * per_update",
+  "models_discarded": true,
+  "discipline": {
+    "optimizer_steps": 36,
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0
+  },
+  "cost": {
+    "cpu": 2.9062,
+    "wall": 3.14
+  }
+}
