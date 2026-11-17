@@ -1,0 +1,40 @@
+{
+  "schema": "taiji-u2-22-5-a-pixel-selfread-v2",
+  "card": "22.5.0.A",
+  "query": "request bytes",
+  "steps": 2000,
+  "seeds": [
+    {
+      "seed": 20261110,
+      "train": 0.9896,
+      "fit": 0.9375
+    },
+    {
+      "seed": 20261111,
+      "train": 0.7461,
+      "fit": 0.724
+    },
+    {
+      "seed": 20261112,
+      "train": 0.7734,
+      "fit": 0.7135
+    },
+    {
+      "seed": 20261113,
+      "train": 0.7044,
+      "fit": 0.6875
+    },
+    {
+      "seed": 20261114,
+      "train": 0.9948,
+      "fit": 0.9219
+    }
+  ],
+  "median_fit": 0.724,
+  "min_fit": 0.6875,
+  "max_fit": 0.9375,
+  "verdict": "self_read_collapses",
+  "cost": {
+    "cpu": 1588.7031
+  }
+}
