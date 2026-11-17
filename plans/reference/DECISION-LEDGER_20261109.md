@@ -10,6 +10,7 @@
 
 | 编号 | 类型 | 一句话 | 提交 |
 |---|---|---|---|
+| D-20261117-12 | 全局 22.5 复核/收束对账（零训练） | owner 选全局复核。结论 **`parent_missing`**：P3.9 `p3_9_closed_limited_exit`；A 线 A 父 absent；B 线 `retention_broken_under_scoping`；C 线 `both_failed`；U/V 累计负（值侧答案列 3/3、选择 0/3 达 0.95、查询表示不足）；22.6/22.7 `not_admitted/parent_missing`；22.8 未启动；23–28 未启动；S19–S22 独立。后继线已登记成本约 **3,971.1 CPU**（65 份报告；U/V 95.6405、P2 316.359 单列）；绑定约束是**无被接受 task parent**，不是缺机制卡。下一轴 A 父获取设计（建议）/B 跳过 22.5 重划主线/C 重开读路径；裁决前 0 训练 | 见本文件 Git 历史 |
 | D-20261117-11 | 累计收束裁决（单位核心 B 读路径整线） | owner 2026-11-17 弹窗裁决收束 U.1→U.1r1→U.1r2→V→V.1→V.2 整条读路径；不追加同路径训练/seed/剂量/修订；**不关闭**架构、生命周期、U.2/U.3、N 主线；**不签**父/能力/check②/22.6，不写"架构已证否"或"选择原理不可行"。累计定位＝**值侧答案列 3/3 可读、选择/查询表示不足**（基線 0.76/0.44/0.64；V.2 指针最好 0.80/0.56/0.72；查询只有实体 one-hot）；累计成本 **95.6405 CPU**；十项残留＋六条教训入卡；历史产物只读保留；下一轴建议先做零训练全局 22.5 复核/收束对账 | 见本文件 Git 历史 |
 | D-20261117-10 | 零训练选择机制复核（`22.5.V.2`） | owner 选 V.2。判 **`neither_reaches_gate`**：基线 **0.76/0.44/0.64**；指针线性 0.48/0.40/0.56、双线性 span 0.68/0.52/0.72、双线性 one-hot **0.80/0.56/0.72**（train 0.959/0.959/1.0；错误查询 0.04/0.08/0.12；固定查询 0.52/0.32/0.48）；共享 W_q 最小二乘 0.60/0.56/0.72（train 0.90–0.96、范数 10^5–10^6、病态）；oracle 1.0；三种机制 0/3 达 0.95；值侧答案列仍 3/3 可读 ⇒ 缺口在**查询表示**（只有实体 one-hot）；仪器全过、**9.0469 CPU／0 步／封存 0**；待 owner 裁决收束读路径（建议）或 V.3 内容查询设计 | 见本文件 Git 历史 |
 | D-20261117-09 | 收束裁决（`22.5.V.1` 硬选列直读） | owner 2026-11-17 弹窗裁决按 `budget_stop`＋部分负收束 V.1；只关闭硬选列机制，不关闭 `22.5.V` 值侧复核、`22.5.U` 读路径收束、架构、生命周期、U.2/U.3、N 主线；六项残留（预算停止、选择 0/3、读门/控制 0/3、聚焦 2/3、定价缺口、值侧未动）；不追加同机制训练；历史产物全部只读保留；**不签**父/能力/check②/22.6，不写"硬选列原理不可行"；下一轴待 owner（建议零训练 V.2 选择机制复核） | 见本文件 Git 历史 |
@@ -4582,6 +4583,23 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **8. 唯一后继**：owner 对**下一轴**做方向裁决。执行者建议：**先做一次零训练全局 22.5 复核/收束对账**——盘点 22.5 学习与保持父尚未取得、22.6/22.7 `not_admitted/parent_missing`、U/V 读路径已关闭、剩余可用轴与成本，再决定下一轴；不建议直接开新训练卡。裁决前 **0 训练新增**、0 能力、0 A 父；check② 不读、22.6 不解锁；字节世界 effort 保持全局收束。
 
 **9. 文档门与行尾（本项写完后四门各跑一遍）**：① `audit_plan_single_mainline.py` → **`status: ok`**、rc **0**。② `audit_taiji_ledger_marker_uniqueness.py` → rc **0**、`rows_counted` **763**、`distinct_markers` **763**、`max_marker` **1139**、`duplicates` **{}**、`nonmonotonic_runs` **15**、`ledger_markers_unique` **true**；`D-20261117-11` 独立扫描＝索引行 **1**＋正文标题 **1**、总命中 **10**。③ `audit_taiji_ledger_cited_reports_are_tracked.py` → rc **1**、`not_tracked` 与 `missing_on_disk` **各 1 条且同指别线既有** `reports/taiji_u2_bind2_graph_20261115.json`；`tracked_reports_total` **3970**、`cited_reports_total` **1203**、`cited_as_reading` **1192**、`malformed` **3**／`planned_output` **8**／`superseded_citation` **2** 均不变。④ `check_plans_markdown_links.py --json` → rc **1**、`files` **997**（+1＝累计收束卡）、`links_checked` **9074**（+12）、`problems` **2416**（**与基线同数**）、kinds `missing_file` **2331**＋`missing_anchor` **85**、**现行层 6 枚**＝03 第 **374／399／1774／1782／2806** 行＋`07_MINI_MODEL_DELIVERY.md` 第 **5** 行（较上批 +2）⇒ **本批 0 新增坏链**。**行尾**：八件 `crlf` **0**、`lone_cr` **0**、**无 BOM**、均以换行结尾（累计收束卡 7,250 B／U 收束卡 9,711 B／V.1 收束卡 5,289 B／包22计划 111,414 B／MAINLINE 62,430 B／MASTER-PLAN 125,518 B／03 783,406 B／台账 754,310 B）。**暂存面**：精确 `git add` 八件，**未用目录形**；别线未跟踪件一枚未暂存。**推送**：本批**不推**——提交后未推 **12 笔**。
+
+### D-20261117-12 22.5 全局复核/收束对账（`parent_missing`）
+
+**1. 触发与性质**：D-20261117-12｜2026-11-17｜**零训练全局复核**。owner 在弹窗中选「全局 22.5 复核（推荐）」。复核卡＝[REVIEW-TAIJI_U2_22_5_GLOBAL_20261117.md](REVIEW-TAIJI_U2_22_5_GLOBAL_20261117.md)。**0 训练、0 权重写入、0 封存读取**。
+
+**2. 方法**：对账包22计划 §2.5/§P3.9、P3.9 收束卡、A/B/C 线收束/结果卡、U/V 累计收束卡、台账 D-20261114-01～D-20261117-11；按报告 `cost.cpu` 统计已登记成本；不新开实验。
+
+**3. 状态总账**：22.1–22.4 工程/恢复/数据/价格在位；P2 `intervention_not_supported_no_A_parent`（316.359 CPU）；P3.9 `p3_9_closed_limited_exit`（2026-11-14；两图工程通过、行为窗 `compute_parity_unavailable`、不交正式 A/B）；A 线 `byte_expression_confirmed_feedback_unmeasured`、A 父 absent；B 线 `retention_broken_under_scoping`；C 线 `both_failed`＋字节世界联合父门收束；U/V 累计负（值侧答案列 3/3 可读、attended 0/3、选择 0/3 达 0.95、查询表示不足）；22.6/22.7 `not_admitted/parent_missing`；22.8 未启动；23–28 未启动；S19–S22 独立。
+
+**4. 成本对账**：22.5 后继线已登记报告（A/B/C/binding/U/V）约 **3,971.1 CPU**（65 份报告相加；含 U/V 95.6405；不含缺 `cost.cpu` 字段的 P3.8/P3.9 机读件、wall 与未记账 shell）；P2 316.359、P3.9 定价/图/行为窗约 1.2031／0.2／1.8125 单独登记。任何"总成本"必须带此口径限制。
+
+**5. 结论**：**22.5 的绑定约束是没有被接受的 task parent，不是缺一张机制卡**。P3.9 工程通过不构成父；A/B/C/U/V 均有定位负/不可判；first_a 读任务的查询/列表示不足以支撑 0.95 选择；继续同路径加卡不会产生 22.5 父。22.6/22.7 不能放行。
+
+**6. 下一轴选项**：A（执行者建议）**可处理任务的父获取设计**（零训练设计＋定价；窄任务、直接查询/表示、真实反馈、父门/数据边界/预算/出口先冻结）；B **把 22.5 标记为 parent_missing 并重划 N 主线**（跳过 22.5 的代价与依赖缺口须 owner 明确接受）；C 重开 first_a 读路径新范围（上限已被压低，不推荐）。裁决前 **0 训练新增**、0 能力、0 A 父；check② 不读、22.6 不解锁；字节世界 effort 保持全局收束。
+
+**7. 文档门与行尾（本项写完后四门各跑一遍）**：① `audit_plan_single_mainline.py` → **`status: ok`**、rc **0**。② `audit_taiji_ledger_marker_uniqueness.py` → rc **0**、`rows_counted` **763**、`distinct_markers` **763**、`max_marker` **1139**、`duplicates` **{}**、`nonmonotonic_runs` **15**、`ledger_markers_unique` **true**；`D-20261117-12` 独立扫描＝索引行 **1**＋正文标题 **1**、总命中 **6**。③ `audit_taiji_ledger_cited_reports_are_tracked.py` → rc **1**、`not_tracked` 与 `missing_on_disk` **各 1 条且同指别线既有** `reports/taiji_u2_bind2_graph_20261115.json`；`tracked_reports_total` **3970**、`cited_reports_total` **1203**、`cited_as_reading` **1192**、`malformed` **3**／`planned_output` **8**／`superseded_citation` **2** 均不变。④ `check_plans_markdown_links.py --json` → rc **1**、`files` **998**（+1＝复核卡）、`links_checked` **9081**（+7）、`problems` **2416**（**与基线同数**）、kinds `missing_file` **2331**＋`missing_anchor` **85**、**现行层 6 枚**＝03 第 **376／401／1776／1784／2808** 行＋`07_MINI_MODEL_DELIVERY.md` 第 **5** 行（较上批 +2）⇒ **本批 0 新增坏链**。**行尾**：六件 `crlf` **0**、`lone_cr` **0**、**无 BOM**、均以换行结尾（复核卡 6,409 B／包22计划 111,777 B／MAINLINE 62,808 B／MASTER-PLAN 125,518 B／03 784,941 B／台账 759,099 B）。**暂存面**：精确 `git add` 六件，**未用目录形**；别线未跟踪件一枚未暂存。**推送**：本批**不推**——提交后未推 **13 笔**。
+
 
 
 
