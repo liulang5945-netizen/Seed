@@ -10,6 +10,7 @@
 
 | 编号 | 类型 | 一句话 | 提交 |
 |---|---|---|---|
+| D-20261117-09 | 收束裁决（`22.5.V.1` 硬选列直读） | owner 2026-11-17 弹窗裁决按 `budget_stop`＋部分负收束 V.1；只关闭硬选列机制，不关闭 `22.5.V` 值侧复核、`22.5.U` 读路径收束、架构、生命周期、U.2/U.3、N 主线；六项残留（预算停止、选择 0/3、读门/控制 0/3、聚焦 2/3、定价缺口、值侧未动）；不追加同机制训练；历史产物全部只读保留；**不签**父/能力/check②/22.6，不写"硬选列原理不可行"；下一轴待 owner（建议零训练 V.2 选择机制复核） | 见本文件 Git 历史 |
 | D-20261117-08 | 训练卡结案（`budget_stop`，部分负读数） | `22.5.V.1` 按 owner 授权执行；run 判 **`budget_stop`**：实耗 **5.0625 CPU／5.469 wall** 对帽 **4.7812／9.5625**（**+5.9% 超帽**），seed03 只跑 **83/384**。完整 seed 选择 **0.76→0.84／0.44→0.52**（门 0.95，0/3；seed02 完整 384 步仍 0.52）；fit **0.34375／0.375／0.21875**、train **0.359375／0.4375／0.28125**、双控制 **0/3**、聚焦 **2/3**；recover **9/9**、verify **18/18**、只有 W_q/position_head 改变。定价缺口 2.3906 vs 实际 5.0625（2.12×）；不改帽、不重跑同一配置。决策节点：收束 V.1（建议）／重新定价补 seed03／新选择机制 `22.5.V.2` | 见本文件 Git 历史 |
 | D-20261117-07 | 设计＋定价冻结（`22.5.V.1` 硬选列直读） | 按 owner 弹窗实现 `HardSelectionGraph`（`selected=argmax(attention)`、前向 `position_head(projected[selected])`、训练期直通软注意力梯度给 W_q）＋runner；父＝U.1r2 三胶囊、值侧冻结、只训 `W_q`/`position_head`（**无新参数**、2 张量/96 标量）、route `B_hard_select`；smoke **36/36**、0 步；定价 per_update **0.0012207**、实测 **2.3906 CPU**、帽 **4.7812/9.5625**；契约 **frozen**、authority null、criteria `00bc9cf9…`、13 pin＋3 父摘要；契约测试 **8 passed**；`--run` 授权前拒绝 ⇒ **待训练授权** | 见本文件 Git 历史 |
 | D-20261117-06 | 值侧表示复核（`22.5.V`，零训练）＋下一卡设计 | owner 选值侧复核/设计卡。`22.5.V` 判 **`mixed`**：答案列位置头 **3/3 达双门**（fit 0.9375/0.8438/0.9688、train 1.0），attended 头 **0/3**（0.4375/0.375/0.5312）、oracle 加权 0/3、masked 0/3、concat fit 0/3、top-1 选择 0/3、列颜色 painted **0.7907/0.6860/0.6744**（0/3 达 0.80）⇒ 描述性模式＝答案列可读、平均读出不可读、选择不够准、颜色部分保留；**预注册 `value_present_readout_gap` 因 painted 差 0.0093–0.126 未命中，正式判 mixed，不改判**；仪器全过（几何 1.0、输入颜色 0.9863、置换 0.094–0.188、recon 0.0、params 不变）、**8.9219 CPU／0 步／封存 0**。下一卡 `22.5.V.1`＝硬选列直读（无新参数、值侧冻结、只训 W_q/position_head），待冻结契约/定价/授权 | 见本文件 Git 历史 |
@@ -4525,6 +4526,25 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **6. 决策节点（不自动启动）**：甲（执行者建议）**收束 V.1 为 `budget_stop`＋部分负**，保留六项残留，不追加同机制训练；乙 重新定价＋补完 seed03（按现有读数预计仍不过选择门）；丙 新选择机制 `22.5.V.2`（零训练设计＋定价后再请授权）。裁决前 **0 训练新增**、0 能力、0 A 父；check② 不读、22.6 不解锁；字节世界 effort 保持全局收束。
 
 **7. 文档门与行尾（本项写完后四门各跑一遍）**：① `audit_plan_single_mainline.py` → **`status: ok`**、rc **0**。② `audit_taiji_ledger_marker_uniqueness.py` → rc **0**、`rows_counted` **763**、`distinct_markers` **763**、`max_marker` **1139**、`duplicates` **{}**、`nonmonotonic_runs` **15**、`ledger_markers_unique` **true**；`D-20261117-08` 独立扫描＝索引行 **1**＋正文标题 **1**、总命中 **5**。③ `audit_taiji_ledger_cited_reports_are_tracked.py` → rc **1**、`not_tracked` 与 `missing_on_disk` **各 1 条且同指别线既有** `reports/taiji_u2_bind2_graph_20261115.json`；`tracked_reports_total` **3969**（+3＝run／recover／verify）、`cited_reports_total` **1202**（+3）、`cited_as_reading` **1191**、`malformed` **3**／`planned_output` **8**／`superseded_citation` **2** 均不变。④ `check_plans_markdown_links.py --json` → rc **1**、`files` **993**（+1＝结果卡）、`links_checked` **9030**（+16）、`problems` **2416**（**与基线同数**）、kinds `missing_file` **2331**＋`missing_anchor` **85**、**现行层 6 枚**＝03 第 **368／393／1768／1776／2800** 行＋`07_MINI_MODEL_DELIVERY.md` 第 **5** 行（较上批 +2）⇒ **本批 0 新增坏链**。**行尾**：十一件 `crlf` **0**、`lone_cr` **0**、**无 BOM**、均以换行结尾（设计卡 8,967 B／结果卡 6,002 B／契约 8,387 B／run 8,328 B／recover 2,769 B／verify 2,122 B／包22计划 110,529 B／MAINLINE 61,642 B／MASTER-PLAN 124,730 B／03 778,810 B／台账 737,816 B）。**暂存面**：精确 `git add` 十一件，**未用目录形**；别线未跟踪件一枚未暂存。**推送**：本批**不推**——提交后未推 **9 笔**。
+
+### D-20261117-09 `22.5.V.1` 硬选列直读收束（owner 弹窗裁决）
+
+**1. 裁决与性质**：D-20261117-09｜2026-11-17｜**收束裁决**（零训练、零新权重）。owner 在弹窗中选「收束 V.1（推荐）」。收束卡＝[CLOSEOUT-TAIJI_U2_V1_HARD_SELECTION_20261117.md](CLOSEOUT-TAIJI_U2_V1_HARD_SELECTION_20261117.md)。
+
+**2. 关闭范围**：关闭 `argmax(attention)` 直读 `projected[selected]`、值侧冻结、只训 `W_q`／`position_head` 这一条机制；**不再追加同机制训练**，包括不补 seed03 的 301 步。**没有关闭**：`22.5.V` 值侧复核（答案列 3/3 可读仍有效）、`22.5.U` 读路径收束、单位核心 B 架构、单位生命周期其他轴、U.2／U.3、N 主线。**不签**父／能力／check②／22.6；**不写"硬选列原理不可行"**。
+
+**3. 证据链**：`22.5.V` 值侧复核（答案列 3/3 达双门、attended 0/3、top-1 选择 0/3）→ V.1 设计＋定价（smoke 36/36、price 2.3906 CPU、帽 4.7812／9.5625、契约测试 8 passed）→ V.1 执行（`budget_stop`：5.0625 CPU > 4.7812 帽、seed03 83/384；完整 seed 选择 0.84／0.52、fit 0.34375／0.375、双控制 0/3、聚焦 2/3；recover 9/9、verify 18/18）。
+
+**4. 六项残留**：① 预算停止（+5.9%、seed03 83/384）；② 选择门 0/3（0.84／0.52，seed02 完整 384 步仍 0.52）；③ 读门/双控制 0/3；④ 聚焦 2/3（seed02 0.433217）；⑤ 定价缺口（2.3906 vs 实际 5.0625，2.12×）；⑥ 值侧未动（冻结；答案列 3/3 可读 ⇒ 失败不归因到值编码）。
+
+**5. 产物处置**：V.1 设计卡、结果卡、契约、smoke／price／run／recover／verify 报告、模块、runner、测试、三枚 final 胶囊全部**只读保留、不删除、不改字节**；在 MAINLINE／MASTER-PLAN／03／台账标记**已收束·仅历史**；confirm 继续封存、check② 不读、22.6 不解锁、**0 训练新增**。
+
+**6. 能签与不能签**：**能签**＝V.1 在冻结剂量下判 `budget_stop`；硬选列把两个完整 seed 的选择率各抬 +0.08 但 0/3 达 0.95；fit/train/双控制 0/3；值侧冻结且只有两枚张量改变；工程纪律成立；定价缺口如实登记。**不能签**＝硬选列原理不可行；任何能力/父/check②/22.6；"补完 seed03 就能过"（完整 seed02 只有 0.52）；不得把 `budget_stop` 写成 `selection_failed` 或 `hard_readout_passed`。
+
+**7. 唯一后继**：owner 对**下一轴**做方向裁决。执行者建议：**先做零训练的选择机制复核／设计卡 `22.5.V.2`**（答案跨度监督直接作用于列选择，或 pointer/argmax 监督头），与当前 `W_q`＋聚焦监督做零训练对比，回答"选择能否被推到 0.95"，再决定是否训练；不继续则回 N 主线下一轴。裁决前 **0 训练新增**、0 能力、0 A 父；check② 不读、22.6 不解锁；字节世界 effort 保持全局收束。
+
+**8. 文档门与行尾（本项写完后四门各跑一遍）**：① `audit_plan_single_mainline.py` → **`status: ok`**、rc **0**。② `audit_taiji_ledger_marker_uniqueness.py` → rc **0**、`rows_counted` **763**、`distinct_markers` **763**、`max_marker` **1139**、`duplicates` **{}**、`nonmonotonic_runs` **15**、`ledger_markers_unique` **true**；`D-20261117-09` 独立扫描＝索引行 **1**＋正文标题 **1**、总命中 **9**。③ `audit_taiji_ledger_cited_reports_are_tracked.py` → rc **1**、`not_tracked` 与 `missing_on_disk` **各 1 条且同指别线既有** `reports/taiji_u2_bind2_graph_20261115.json`；`tracked_reports_total` **3969**、`cited_reports_total` **1202**、`cited_as_reading` **1191**、`malformed` **3**／`planned_output` **8**／`superseded_citation` **2** 均不变。④ `check_plans_markdown_links.py --json` → rc **1**、`files` **994**（+1＝收束卡）、`links_checked` **9043**（+13）、`problems` **2416**（**与基线同数**）、kinds `missing_file` **2331**＋`missing_anchor` **85**、**现行层 6 枚**＝03 第 **370／395／1770／1778／2802** 行＋`07_MINI_MODEL_DELIVERY.md` 第 **5** 行（较上批 +2）⇒ **本批 0 新增坏链**。**行尾**：八件 `crlf` **0**、`lone_cr` **0**、**无 BOM**、均以换行结尾（收束卡 5,068 B／结果卡 6,163 B／契约 8,873 B／包22计划 110,624 B／MAINLINE 61,769 B／MASTER-PLAN 124,857 B／03 780,204 B／台账 743,069 B）。**暂存面**：精确 `git add` 八件，**未用目录形**；别线未跟踪件一枚未暂存。**推送**：本批**不推**——提交后未推 **10 笔**。
+
 
 
 

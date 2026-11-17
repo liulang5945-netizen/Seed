@@ -1,6 +1,6 @@
 # 22.5.V.1 硬选列直读结果卡（`budget_stop`，部分负读数；不重跑同一配置）
 
-> 卡号：`22.5.V.1`｜日期：2026-11-17｜正式判定：**`budget_stop`**（CPU **5.0625** > 帽 **4.7812**，+5.9%；seed03 只跑了 **83/384** 更新）｜性质：训练卡结果，**不是**能力/父/check②/22.6 声明。
+> 卡号：`22.5.V.1`｜日期：2026-11-17｜正式判定：**`budget_stop`**（CPU **5.0625** > 帽 **4.7812**，+5.9%；seed03 只跑了 **83/384** 更新）｜**已收束（owner 2026-11-17 弹窗裁决，[D-20261117-09](DECISION-LEDGER_20261109.md)，[收束卡](CLOSEOUT-TAIJI_U2_V1_HARD_SELECTION_20261117.md)）**｜性质：训练卡结果，**不是**能力/父/check②/22.6 声明。
 > 设计：[DESIGN-TAIJI_U2_V1_HARD_SELECTION_20261117.md](DESIGN-TAIJI_U2_V1_HARD_SELECTION_20261117.md)｜契约：[taiji_u2_v1_hard_selection_20261117.json](../manifests/taiji_u2_v1_hard_selection_20261117.json)（criteria `00bc9cf9…`）｜台账 D-20261117-08。
 > 报告：[run](../../reports/taiji_u2_v1_hard_selection_run_20261117.json)、[recover](../../reports/taiji_u2_v1_hard_selection_recover_20261117.json)、[verify](../../reports/taiji_u2_v1_hard_selection_verify_20261117.json)；冻结前：[smoke](../../reports/taiji_u2_v1_hard_selection_smoke_20261117.json)、[price](../../reports/taiji_u2_v1_hard_selection_price_20261117.json)。
 

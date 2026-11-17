@@ -187,6 +187,15 @@
     "decision_node": "close V.1 as budget_stop with partial negative (executor recommendation) vs re-price and complete seed03 vs a new selection mechanism as 22.5.V.2; zero training before ruling",
     "capability_scope": "budget_stop with partial negative readings; no capability/parent/check2/22.6 claim",
     "result_card": "plans/reference/RESULT-TAIJI_U2_V1_HARD_SELECTION_20261117.md",
+    "closeout": {
+      "card": "plans/reference/CLOSEOUT-TAIJI_U2_V1_HARD_SELECTION_20261117.md",
+      "decision": "owner 2026-11-17 popup ruling: close V.1 as budget_stop with partial negative",
+      "ledger": "D-20261117-09",
+      "scope": "hard-selection mechanism only; the value-side review, the U-line closeout, the architecture, U.2/U.3 and the N mainline are unaffected",
+      "residuals_carried": 6,
+      "training_after_closeout": 0,
+      "capability_claims": 0
+    },
     "run_report": "reports/taiji_u2_v1_hard_selection_run_20261117.json",
     "recover_report": "reports/taiji_u2_v1_hard_selection_recover_20261117.json",
     "verify_report": "reports/taiji_u2_v1_hard_selection_verify_20261117.json"
