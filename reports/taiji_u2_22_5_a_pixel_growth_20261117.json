@@ -1,0 +1,75 @@
+{
+  "schema": "taiji-u2-22-5-a-pixel-growth-v1",
+  "card": "22.5.0.A",
+  "run_id": "20261117T143703Z",
+  "conditions": {
+    "seed": 20261110,
+    "updates": 600,
+    "batch": 2,
+    "lr": 0.001,
+    "first_weight": 2.0,
+    "eos_masked_at_byte_zero": true,
+    "trainable": "pixel_readout only",
+    "frozen_parameter_tensors": 194,
+    "trainable_tensors": 11
+  },
+  "marks": [
+    {
+      "update": 0,
+      "fit_correct": 0,
+      "fit_accuracy": 0.0,
+      "delta_spread": 0.0,
+      "outputs": [
+        "ҰX\u001f\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011",
+        "ҰX\u001f\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011",
+        "ҰX\u001f\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011",
+        "ҰX\u001f\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011"
+      ]
+    },
+    {
+      "update": 200,
+      "fit_correct": 0,
+      "fit_accuracy": 0.0,
+      "delta_spread": 0.001473,
+      "outputs": [
+        " ѝl\fm ѝl\fm ѝl\fm ѝl\fm ѝl\fm ѝl\fm ѝl\fm ѝl\fm ѝl\fm ѝl\fm ѝl",
+        " ѝl\fm ѝl\fm ѝl\fm ѝl\fm ѝl\fm ѝl\fm ѝl\fm ѝl\fm ѝl\fm ѝl\fm ѝl",
+        " ѝl\fm ѝl\fm ѝl\fm ѝl\fm ѝl\fm ѝl\fm ѝl\fm ѝl\fm ѝl\fm ѝl\fm ѝl",
+        " ѝl\fm ѝl\fm ѝl\fm ѝl\fm ѝl\fm ѝl\fm ѝl\fm ѝl\fm ѝl\fm ѝl\fm ѝl"
+      ]
+    },
+    {
+      "update": 400,
+      "fit_correct": 0,
+      "fit_accuracy": 0.0,
+      "delta_spread": 0.004201,
+      "outputs": [
+        " ;xm ;xm ;xm ;xm ;xm ;xm ;xm ;xm ;xm ;xm ;xm ;xm ;x",
+        " ;xm ;xm ;xm ;xm ;xm ;xm ;xm ;xm ;xm ;xm ;xm ;xm ;x",
+        " ;xm ;xm ;xm ;xm ;xm ;xm ;xm ;xm ;xm ;xm ;xm ;xm ;x",
+        " ;xm ;xm ;xm ;xm ;xm ;xm ;xm ;xm ;xm ;xm ;xm ;xm ;x"
+      ]
+    },
+    {
+      "update": 600,
+      "fit_correct": 0,
+      "fit_accuracy": 0.0,
+      "delta_spread": 0.007014,
+      "outputs": [
+        " ;xm ;xm ;xm ;xm ;xm ;xm ;xm ;xm ;xm ;xm ;xm ;xm ;x",
+        " ;xm ;xm ;xm ;xm ;xm ;xm ;xm ;xm ;xm ;xm ;xm ;xm ;x",
+        " ;xm ;xm ;xm ;xm ;xm ;xm ;xm ;xm ;xm ;xm ;xm ;xm ;x",
+        " ;xm ;xm ;xm ;xm ;xm ;xm ;xm ;xm ;xm ;xm ;xm ;xm ;x"
+      ]
+    }
+  ],
+  "recovery_equal": true,
+  "cost": {
+    "cpu": 1933.1719
+  },
+  "discipline": {
+    "u2_optimizer_steps": 600,
+    "check_reads": 0,
+    "final_reads": 0
+  }
+}
