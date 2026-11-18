@@ -1,0 +1,46 @@
+{
+  "schema": "taiji-u2-e5-dose-v2",
+  "card": "E5",
+  "premise": {
+    "old_ability": 1.0,
+    "old_ability_gate": 0.8,
+    "b_first_pass_correct": 0,
+    "errors": 24,
+    "skipped": 8,
+    "a_training": {
+      "steps": 600,
+      "curve": {
+        "400": {
+          "fit_correct": 32,
+          "fit_accuracy": 1.0
+        },
+        "600": {
+          "fit_correct": 32,
+          "fit_accuracy": 1.0
+        }
+      },
+      "loss_first": 4.484004,
+      "loss_last": 0.095105
+    }
+  },
+  "doses": [
+    {
+      "dose": 32,
+      "errors": 24,
+      "updates": 768,
+      "corrected": 16,
+      "correction_rate": 0.6667,
+      "old_ability": 1.0,
+      "old_ability_after": 0.0,
+      "damage": 1.0,
+      "cpu": 310.36
+    }
+  ],
+  "criteria": {
+    "correction_gate": 0.8,
+    "damage_gate": 0.02
+  },
+  "verdict": "no_dose_satisfies_both",
+  "cpu": 329.3,
+  "wall": 330.48
+}
