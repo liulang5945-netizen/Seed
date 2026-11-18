@@ -1,0 +1,121 @@
+{
+  "schema": "taiji-subject-registry-v1",
+  "date": "2026-11-18",
+  "note": "Checkpoints under output/ are transient arm states with mixed protocols; they are not registered and must not be cited as subjects. Every entry is declared by hand, never discovered by glob.",
+  "subjects": {
+    "a5-pre-seed20261110": {
+      "path": "data/experiments/taiji_u2/a5/20261116T0520Z/seed-20261110/bundle-pre-feedback.pt",
+      "sha256": "de5452f6b7716cb44f48221aafca5e5e5f132fcdeaa46c3196d8929d0c815465",
+      "update": 600,
+      "revision": 602,
+      "tensors": 194,
+      "family": "a5-pre",
+      "trained_on": "task A only (A.5 protocol, 600 updates)",
+      "verified": {
+        "task_a_fit_accuracy": 1.0,
+        "source": "probe_e5_eos_contrast_v2_20261118"
+      },
+      "may_be_used_for": [
+        "E5 mechanism probes",
+        "task-A reproduction"
+      ],
+      "must_not_be_used_for": [
+        "correction-rate claims (no feedback applied)"
+      ]
+    },
+    "a5-pre-seed20261111": {
+      "path": "data/experiments/taiji_u2/a5/20261116T0520Z/seed-20261111/bundle-pre-feedback.pt",
+      "sha256": "db04cb9b889d3ee61c0bb86342f961409f33b3c30cabffa24eacc6d8ecea9627",
+      "update": 600,
+      "revision": 602,
+      "tensors": 194,
+      "family": "a5-pre",
+      "trained_on": "task A only (A.5 protocol, 600 updates)",
+      "verified": {
+        "task_a_fit_accuracy": 1.0,
+        "source": "probe_e5_eos_contrast_v2_20261118"
+      },
+      "may_be_used_for": [
+        "E5 mechanism probes",
+        "task-A reproduction"
+      ],
+      "must_not_be_used_for": [
+        "correction-rate claims (no feedback applied)"
+      ]
+    },
+    "a5-pre-seed20261112": {
+      "path": "data/experiments/taiji_u2/a5/20261116T0520Z/seed-20261112/bundle-pre-feedback.pt",
+      "sha256": "3dbc1ba54713e59808de730251485fdddd125500223c4a9a70564b50974b783a",
+      "update": 600,
+      "revision": 602,
+      "tensors": 194,
+      "family": "a5-pre",
+      "trained_on": "task A only (A.5 protocol, 600 updates)",
+      "verified": {
+        "task_a_fit_accuracy": 1.0,
+        "source": "probe_e5_eos_contrast_v2_20261118"
+      },
+      "may_be_used_for": [
+        "E5 mechanism probes",
+        "task-A reproduction"
+      ],
+      "must_not_be_used_for": [
+        "correction-rate claims (no feedback applied)"
+      ]
+    },
+    "a5-post-seed20261110": {
+      "path": "data/experiments/taiji_u2/a5/20261116T0520Z/seed-20261110/bundle-post-feedback.pt",
+      "sha256": "28b6a5989c47ed9c9fdbd1c2feb82912c24315cdce0ef32f51266bee6be4114c",
+      "update": "feedback",
+      "revision": 650,
+      "tensors": 194,
+      "family": "a5-post",
+      "trained_on": "task A, then one feedback pass (A.5 protocol)",
+      "verified": {
+        "note": "not independently re-verified; cite the A.5 card"
+      },
+      "may_be_used_for": [
+        "post-feedback comparisons"
+      ],
+      "must_not_be_used_for": [
+        "correctness claims without calibration"
+      ]
+    },
+    "a5-post-seed20261111": {
+      "path": "data/experiments/taiji_u2/a5/20261116T0520Z/seed-20261111/bundle-post-feedback.pt",
+      "sha256": "13f55bc525bd5f9abb9f05d34deec4ca9f8353abbe4e4cc9650d18d452f75ff3",
+      "update": "feedback",
+      "revision": 650,
+      "tensors": 194,
+      "family": "a5-post",
+      "trained_on": "task A, then one feedback pass (A.5 protocol)",
+      "verified": {
+        "note": "not independently re-verified; cite the A.5 card"
+      },
+      "may_be_used_for": [
+        "post-feedback comparisons"
+      ],
+      "must_not_be_used_for": [
+        "correctness claims without calibration"
+      ]
+    },
+    "a5-post-seed20261112": {
+      "path": "data/experiments/taiji_u2/a5/20261116T0520Z/seed-20261112/bundle-post-feedback.pt",
+      "sha256": "6dbdeaa9a12499ae65712d4b158c2a93b02e72f5adcb1e64a5ebc8cb29743bf7",
+      "update": "feedback",
+      "revision": 650,
+      "tensors": 194,
+      "family": "a5-post",
+      "trained_on": "task A, then one feedback pass (A.5 protocol)",
+      "verified": {
+        "note": "not independently re-verified; cite the A.5 card"
+      },
+      "may_be_used_for": [
+        "post-feedback comparisons"
+      ],
+      "must_not_be_used_for": [
+        "correctness claims without calibration"
+      ]
+    }
+  }
+}

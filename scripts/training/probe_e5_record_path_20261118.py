@@ -26,11 +26,12 @@ sys.path.insert(0, str(ROOT))
 
 from scripts.training import run_a2_byte_20261115 as a2  # noqa: E402
 from scripts.training import run_a5_22_5 as a5  # noqa: E402
+from scripts.training.subject_registry import load_subject  # noqa: E402
 from taiji.u2_history import value_digest  # noqa: E402
 
 OUT = ROOT / "reports/taiji_u2_e5_record_path_20261118.json"
 CONTRACT = ROOT / "plans/manifests/taiji_u2_a5_protocol_20261116.json"
-BUNDLE = ROOT / "data/experiments/taiji_u2/a5/20261116T0520Z/seed-20261110/bundle-pre-feedback.pt"
+SUBJECT = "a5-pre-seed20261110"
 FLOOR = 0.90
 ITEMS = 4
 
@@ -71,10 +72,7 @@ def main() -> int:
     items, _ = a5.task_b_examples(data, contract)
     template_of = lambda index: index % len(contract["task_b"]["templates"])  # noqa: E731
 
-    model = a5.build_subject(contract)
-    payload = torch.load(BUNDLE, weights_only=False)
-    model.load_state_dict(payload["model"])
-    model.eval()
+    model, subject = load_subject(SUBJECT, contract)
     a5.set_trainable(model, contract)
     head = a2.load_head(contract)
     prior = a2.prior_of(data)
@@ -89,8 +87,10 @@ def main() -> int:
     result = {
         "schema": "taiji-u2-e5-record-path-v1",
         "card": "E5",
-        "bundle": BUNDLE.relative_to(ROOT).as_posix(),
-        "bundle_update": int(payload.get("update", -1)),
+        "subject": SUBJECT,
+        "bundle": subject["path"],
+        "bundle_sha256": subject["sha256"],
+        "bundle_update": subject["update"],
         "calibration_a_accuracy": round(accuracy, 4),
     }
     if accuracy < FLOOR:

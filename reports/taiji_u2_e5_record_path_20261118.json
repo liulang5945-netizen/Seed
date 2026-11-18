@@ -1,7 +1,9 @@
 {
   "schema": "taiji-u2-e5-record-path-v1",
   "card": "E5",
+  "subject": "a5-pre-seed20261110",
   "bundle": "data/experiments/taiji_u2/a5/20261116T0520Z/seed-20261110/bundle-pre-feedback.pt",
+  "bundle_sha256": "de5452f6b7716cb44f48221aafca5e5e5f132fcdeaa46c3196d8929d0c815465",
   "bundle_update": 600,
   "calibration_a_accuracy": 1.0,
   "status": "measured",
