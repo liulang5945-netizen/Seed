@@ -1,0 +1,9 @@
+{
+  "torch": "2.13.0+cpu",
+  "branch_eager": 0.009375,
+  "branch_compiled": 0.008594,
+  "readout_eager": 0.016406,
+  "readout_compiled": 0.0,
+  "accept_eager": 0.045312,
+  "accept_compiled": 0.048438
+}

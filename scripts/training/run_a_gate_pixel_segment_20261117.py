@@ -72,6 +72,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--batch", type=int, default=4)
     parser.add_argument("--lr", type=float, default=0.01)
     parser.add_argument("--resume", type=Path)
+    parser.add_argument("--compile", action="store_true")
     args = parser.parse_args(argv)
     run_id = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
     directory = ROOT / "output" / f"a_pixel_segment_{run_id}"
@@ -83,6 +84,9 @@ def main(argv: list[str] | None = None) -> int:
         model = U2Subject(config).metadata_candidate().request_candidate()
         optimizer = torch.optim.Adam(model.parameters(), lr=args.lr, betas=(0.9, 0.999))
         payload = {"order": torch.randperm(64, generator=torch.Generator().manual_seed(9)).tolist()}
+    if args.compile:
+        torch._dynamo.config.cache_size_limit = 64
+        model.branch_context = torch.compile(model.branch_context, dynamic=False)
     train = generate_examples("train", 64)
     order = (
         payload["order"] if isinstance(payload, dict) and "order" in payload else list(range(64))
