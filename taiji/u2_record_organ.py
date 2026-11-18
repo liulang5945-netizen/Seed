@@ -1,16 +1,12 @@
-"""A record-reading organ that lives inside the subject.
+"""A record-reading organ with a sentinel gate (Pointer Sentinel, Merity et al. 2017).
 
-The word channel proved (E5.6) that a correction can be answered from a released
-record without touching the parent, but it lived outside the model.  This organ puts
-the same binding inside the subject: it reads the record's characters, binds one
-two-character window, and emits that window's bytes in order.
+The earlier version decided relevance with a separate scalar head trained by BCE and
+collapsed to "always copy" or "never copy".  The sentinel construction removes that
+degree of freedom: the sentinel is one more candidate inside the same softmax as the
+record's windows, so mass given to the sentinel is mass taken from copying, and the
+pointer-sum loss lets either side satisfy the target.
 
-Two properties are deliberate:
-
-* every tensor here is new, so attaching the organ leaves the parent's weights
-  bit-identical (the runner checks a digest of the parent keys);
-* the organ answers only when the episode carries a record, and the routing lives in
-  ``_WorldKernel.output`` rather than in the harness.
+Every tensor here is new, so attaching the organ leaves the parent bit-identical.
 """
 
 from __future__ import annotations
@@ -22,7 +18,6 @@ from torch import nn
 
 
 def spans_of(record: bytes) -> list[int]:
-    """Byte offsets of character starts."""
     out, index = [], 0
     while index < len(record):
         out.append(index)
@@ -42,56 +37,45 @@ def windows_of(record: bytes) -> list[bytes]:
 
 
 class RecordOrgan(nn.Module):
-    """Bind one word from the record and hand its bytes out one at a time."""
-
     def __init__(self, emb: int = 16, width: int = 32) -> None:
         super().__init__()
         self.byte = nn.Embedding(256, emb)
         self.query = nn.Linear(2 * emb, width)
         self.key = nn.Linear(emb, width)
-        self.scale = nn.Parameter(torch.tensor(1.0))
-        self.proj = nn.Linear(emb, emb)
+        self.sentinel = nn.Parameter(torch.zeros(width))
+        # The gate must see how confident the pointer is, not only the query.
+        self.gain = nn.Parameter(torch.zeros(()))
 
-    def select(self, request: bytes, record: bytes) -> bytes:
+    def attention(self, request: bytes, record: bytes) -> torch.Tensor:
+        """Softmax over [window scores; sentinel]; the last entry is the gate."""
         windows = windows_of(record)
         if not windows:
-            return b""
-        pieces = [torch.tensor(list(window), dtype=torch.long) for window in windows]
-        keys = self.key(torch.stack([self.byte(piece).mean(0) for piece in pieces]))
+            return torch.tensor([1.0])
         text = self.byte(torch.tensor(list(request), dtype=torch.long))
         pooled = torch.cat([text.mean(0), text.amax(0)], -1)
         query = self.query(pooled)
-        scores = keys @ query / math.sqrt(query.shape[-1])
-        return windows[int(scores.argmax())]
+        scale = math.sqrt(query.shape[-1])
+        keys = self.key(
+            torch.stack(
+                [
+                    self.byte(torch.tensor(list(window), dtype=torch.long)).mean(0)
+                    for window in windows
+                ]
+            )
+        )
+        scores = keys @ query / scale
+        sentinel = (query @ self.sentinel) / scale + self.gain * scores.max()
+        return torch.cat([scores, sentinel.reshape(1)]).softmax(-1)
 
-    def relevance_logits(self, request: bytes, record: bytes) -> torch.Tensor:
-        """Containment score: the best match of the asked entity against the record.
-
-        Pooling the whole record averages the entity away against the template, so
-        the score is the maximum over record positions of the entity vector.
-        """
-        # Every character of the asked entity must appear somewhere in the record:
-        # min over entity characters of max over record positions.  Averaging the
-        # entity (or taking a single max) cannot tell 绿色圆片 from 紫色圆片, which
-        # differ in one character only.
-        body = self.byte(torch.tensor(list(record), dtype=torch.long))
-        spans = spans_of(request)
-        pieces = [
-            request[start : (spans[i + 1] if i + 1 < len(spans) else len(request))]
-            for i, start in enumerate(spans)
-        ]
-        per_char = [
-            self.byte(torch.tensor(list(piece), dtype=torch.long)).mean(0) for piece in pieces
-        ]
-        projected = self.proj(body)
-        matched = torch.stack([(projected @ self.proj(vector)).max() for vector in per_char])
-        return (self.scale * matched.min()).reshape(1)
-
-    def relevant(self, request: bytes, record: bytes) -> float:
-        return float(self.relevance_logits(request, record).sigmoid())
+    def route(self, request: bytes, record: bytes) -> bytes | None:
+        """Return the bound window, or None when the sentinel wins (back off)."""
+        attention = self.attention(request, record)
+        windows = windows_of(record)
+        if float(attention[-1]) > 0.5 or not windows:
+            return None
+        return windows[int(attention[:-1].argmax())]
 
     def log_distribution(self, window: bytes, offset: int) -> torch.Tensor:
-        """One-hot log distribution: the organ decides, the parent head is bypassed."""
         logits = torch.full((257,), -1e4)
         if offset < len(window):
             logits[window[offset]] = 0.0

@@ -1,0 +1,258 @@
+{
+  "schema": "taiji-u2-e5-11-sentinel-v1",
+  "card": "E5.11",
+  "subject": "a5-pre-seed20261110",
+  "a_correct": 32,
+  "a_denominator": 32,
+  "b_correct": 8,
+  "b_denominator": 24,
+  "d_correct": 16,
+  "d_denominator": 24,
+  "parent_unchanged": true,
+  "verdict": "sentinel_fails",
+  "cpu": 19.59,
+  "b_rows": [
+    {
+      "id": "fit-0",
+      "got": "左边",
+      "correct": false
+    },
+    {
+      "id": "fit-1",
+      "got": "右边",
+      "correct": true
+    },
+    {
+      "id": "fit-2",
+      "got": "右边",
+      "correct": false
+    },
+    {
+      "id": "fit-4",
+      "got": "左边",
+      "correct": false
+    },
+    {
+      "id": "fit-5",
+      "got": "右边",
+      "correct": true
+    },
+    {
+      "id": "fit-6",
+      "got": "右边",
+      "correct": false
+    },
+    {
+      "id": "fit-8",
+      "got": "左边",
+      "correct": false
+    },
+    {
+      "id": "fit-9",
+      "got": "右边",
+      "correct": true
+    },
+    {
+      "id": "fit-10",
+      "got": "右边",
+      "correct": false
+    },
+    {
+      "id": "fit-12",
+      "got": "左边",
+      "correct": false
+    },
+    {
+      "id": "fit-13",
+      "got": "右边",
+      "correct": true
+    },
+    {
+      "id": "fit-14",
+      "got": "右边",
+      "correct": false
+    },
+    {
+      "id": "fit-16",
+      "got": "左边",
+      "correct": false
+    },
+    {
+      "id": "fit-17",
+      "got": "右边",
+      "correct": true
+    },
+    {
+      "id": "fit-18",
+      "got": "右边",
+      "correct": false
+    },
+    {
+      "id": "fit-20",
+      "got": "左边",
+      "correct": false
+    },
+    {
+      "id": "fit-21",
+      "got": "右边",
+      "correct": true
+    },
+    {
+      "id": "fit-22",
+      "got": "右边",
+      "correct": false
+    },
+    {
+      "id": "fit-24",
+      "got": "左边",
+      "correct": false
+    },
+    {
+      "id": "fit-25",
+      "got": "右边",
+      "correct": true
+    },
+    {
+      "id": "fit-26",
+      "got": "右边",
+      "correct": false
+    },
+    {
+      "id": "fit-28",
+      "got": "左边",
+      "correct": false
+    },
+    {
+      "id": "fit-29",
+      "got": "右边",
+      "correct": true
+    },
+    {
+      "id": "fit-30",
+      "got": "右边",
+      "correct": false
+    }
+  ],
+  "d_rows": [
+    {
+      "id": "fit-0",
+      "got": "右边",
+      "correct": false
+    },
+    {
+      "id": "fit-1",
+      "got": "中间",
+      "correct": true
+    },
+    {
+      "id": "fit-2",
+      "got": "右边",
+      "correct": true
+    },
+    {
+      "id": "fit-4",
+      "got": "右边",
+      "correct": false
+    },
+    {
+      "id": "fit-5",
+      "got": "中间",
+      "correct": true
+    },
+    {
+      "id": "fit-6",
+      "got": "右边",
+      "correct": true
+    },
+    {
+      "id": "fit-8",
+      "got": "右边",
+      "correct": false
+    },
+    {
+      "id": "fit-9",
+      "got": "中间",
+      "correct": true
+    },
+    {
+      "id": "fit-10",
+      "got": "右边",
+      "correct": true
+    },
+    {
+      "id": "fit-12",
+      "got": "右边",
+      "correct": false
+    },
+    {
+      "id": "fit-13",
+      "got": "中间",
+      "correct": true
+    },
+    {
+      "id": "fit-14",
+      "got": "右边",
+      "correct": true
+    },
+    {
+      "id": "fit-16",
+      "got": "右边",
+      "correct": false
+    },
+    {
+      "id": "fit-17",
+      "got": "中间",
+      "correct": true
+    },
+    {
+      "id": "fit-18",
+      "got": "右边",
+      "correct": true
+    },
+    {
+      "id": "fit-20",
+      "got": "右边",
+      "correct": false
+    },
+    {
+      "id": "fit-21",
+      "got": "中间",
+      "correct": true
+    },
+    {
+      "id": "fit-22",
+      "got": "右边",
+      "correct": true
+    },
+    {
+      "id": "fit-24",
+      "got": "右边",
+      "correct": false
+    },
+    {
+      "id": "fit-25",
+      "got": "中间",
+      "correct": true
+    },
+    {
+      "id": "fit-26",
+      "got": "右边",
+      "correct": true
+    },
+    {
+      "id": "fit-28",
+      "got": "右边",
+      "correct": false
+    },
+    {
+      "id": "fit-29",
+      "got": "中间",
+      "correct": true
+    },
+    {
+      "id": "fit-30",
+      "got": "右边",
+      "correct": true
+    }
+  ]
+}

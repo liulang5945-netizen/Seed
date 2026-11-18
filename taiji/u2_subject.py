@@ -1377,15 +1377,12 @@ class U2Subject(_WorldKernel):
         request_bytes = (
             raw_goal if isinstance(raw_goal, bytes) else bytes(int(v) for v in raw_goal.tolist())
         )
-        if organ.relevant(request_bytes, records[0].raw) < 0.5:
-            # A record that does not concern the asked entity must not override the
-            # observation: fall through to the parent head.
-            return None
         window = state.get("organ_window")
         if window is None:
-            raw = state["goal_raw"]
-            request = raw if isinstance(raw, bytes) else bytes(int(v) for v in raw.tolist())
-            window = organ.select(request, records[0].raw)
+            window = organ.route(request_bytes, records[0].raw)
+            if window is None:
+                # The sentinel wins: this record should not override the observation.
+                return None
             state["organ_window"] = window
         return organ.log_distribution(window, int(state["data_bytes"]))
 

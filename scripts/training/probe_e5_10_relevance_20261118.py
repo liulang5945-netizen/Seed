@@ -20,7 +20,6 @@ import time
 from pathlib import Path
 
 import torch
-from torch.nn import functional as F
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
@@ -28,13 +27,13 @@ sys.path.insert(0, str(ROOT))
 from scripts.training import run_a2_byte_20261115 as a2  # noqa: E402
 from scripts.training import run_a5_22_5 as a5  # noqa: E402
 from scripts.training.probe_e5_6_char_channel_20261118 import items_of  # noqa: E402
-from scripts.training.probe_e5_9_organ_20261118 import _organ_config, organ_scores  # noqa: E402
+from scripts.training.probe_e5_9_organ_20261118 import _organ_config  # noqa: E402
 from scripts.training.subject_registry import resolve  # noqa: E402
 from taiji.u2_history import value_digest  # noqa: E402
 from taiji.u2_record_organ import windows_of  # noqa: E402
 from taiji.u2_subject import U2Subject  # noqa: E402
 
-OUT = ROOT / "reports/taiji_u2_e5_10_relevance_20261118.json"
+OUT = ROOT / "reports/taiji_u2_e5_11_sentinel_20261118.json"
 CONTRACT = ROOT / "plans/manifests/taiji_u2_a5_protocol_20261116.json"
 SUBJECT = "a5-pre-seed20261110"
 STEPS = 6000
@@ -74,22 +73,21 @@ def main() -> int:
         index = rng.randrange(len(templates))
         record = item["records"][index]
         windows = windows_of(record)
-        labels = [i for i, window in enumerate(windows) if window == item["target"]]
-        if not labels:
+        hits = [i for i, window in enumerate(windows) if window == item["target"]]
+        if not hits or len(windows) < 1:
             continue
-        scores = organ_scores(organ, item["entity"].encode(), record)
-        binding = F.cross_entropy(scores[None], torch.tensor([labels[0]]))
-        positive = organ.relevance_logits(item["entity"].encode(), record).sigmoid()
+        attention = organ.attention(item["entity"].encode(), record)
+        # Pointer-sum loss: the sentinel or any matching window may carry the target.
+        # The conflict case must be answered by the pointer: the gate may not carry it.
+        loss = -torch.log(attention[hits].sum().clamp_min(1e-9))
         negative_record = (
             templates[index].format(entity=other["entity"], label=other["target"].decode()).encode()
         )
-        negative = organ.relevance_logits(item["entity"].encode(), negative_record).sigmoid()
-        relevance = F.binary_cross_entropy(
-            torch.cat([positive, negative]).clamp(1e-6, 1 - 1e-6),
-            torch.tensor([1.0, 0.0]),
-        )
+        attention_negative = organ.attention(item["entity"].encode(), negative_record)
+        # No window matches, so the only way to satisfy the target is the sentinel.
+        loss_negative = -torch.log(attention_negative[-1].clamp_min(1e-9))
         optimizer.zero_grad(set_to_none=True)
-        (binding + relevance).backward()
+        (loss + loss_negative).backward()
         optimizer.step()
 
     head = a2.load_head(contract)
@@ -151,8 +149,8 @@ def main() -> int:
         before == after and a_correct == len(data["fit"]) and b_correct >= 20 and d_correct >= 20
     )
     payload = {
-        "schema": "taiji-u2-e5-10-relevance-v1",
-        "card": "E5.10",
+        "schema": "taiji-u2-e5-11-sentinel-v1",
+        "card": "E5.11",
         "subject": SUBJECT,
         "a_correct": a_correct,
         "a_denominator": len(data["fit"]),
@@ -161,7 +159,7 @@ def main() -> int:
         "d_correct": d_correct,
         "d_denominator": len(fit_items),
         "parent_unchanged": before == after,
-        "verdict": "relevance_passes" if passed else "relevance_fails",
+        "verdict": "sentinel_passes" if passed else "sentinel_fails",
         "cpu": round(time.process_time() - started, 2),
         "b_rows": b_rows,
         "d_rows": d_rows,
