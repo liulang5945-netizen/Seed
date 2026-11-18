@@ -1,0 +1,219 @@
+{
+  "schema": "taiji-u2-e5-copy-share-v1",
+  "card": "E5",
+  "items": 8,
+  "answers_changed_at_zero_updates": 8,
+  "answers_correct_at_zero_updates": 0,
+  "items_with_copy_mass": 8,
+  "rows": [
+    {
+      "id": "fit-0",
+      "target": "中间",
+      "no_record": {
+        "argmax": 210,
+        "copy_slots": 0,
+        "log_copy_max": null,
+        "log_gen_max": -5.5379,
+        "copy_mass": 0.0,
+        "gen_mass": 2.0
+      },
+      "with_record": {
+        "argmax": 229,
+        "copy_slots": 60,
+        "log_copy_max": -4.8218,
+        "log_gen_max": -5.805,
+        "copy_mass": 0.468763,
+        "gen_mass": 1.531237
+      },
+      "answer_changed": true,
+      "answer_correct": false,
+      "answer_text": "在在中间。片现在在中间。片现在在中间。片现X",
+      "copy_gain": 0.468763,
+      "record_id": "fit-0",
+      "code_dim": 24
+    },
+    {
+      "id": "fit-1",
+      "target": "右边",
+      "no_record": {
+        "argmax": 210,
+        "copy_slots": 0,
+        "log_copy_max": null,
+        "log_gen_max": -5.5379,
+        "copy_mass": 0.0,
+        "gen_mass": 2.0
+      },
+      "with_record": {
+        "argmax": 229,
+        "copy_slots": 72,
+        "log_copy_max": -4.9962,
+        "log_gen_max": -5.8047,
+        "copy_mass": 0.468342,
+        "gen_mass": 1.531658
+      },
+      "answer_changed": true,
+      "answer_correct": false,
+      "answer_text": "在在右边的是紫色圆片。现在在右边的是紫色圆m",
+      "copy_gain": 0.468342,
+      "record_id": "fit-1",
+      "code_dim": 24
+    },
+    {
+      "id": "fit-2",
+      "target": "左边",
+      "no_record": {
+        "argmax": 210,
+        "copy_slots": 0,
+        "log_copy_max": null,
+        "log_gen_max": -5.5379,
+        "copy_mass": 0.0,
+        "gen_mass": 2.0
+      },
+      "with_record": {
+        "argmax": 229,
+        "copy_slots": 84,
+        "log_copy_max": -5.1447,
+        "log_gen_max": -5.8044,
+        "copy_mass": 0.467893,
+        "gen_mass": 1.532107
+      },
+      "answer_changed": true,
+      "answer_correct": false,
+      "answer_text": "就是绿色圆片此刻的位置。就是绿色圆片此刻的h",
+      "copy_gain": 0.467893,
+      "record_id": "fit-2",
+      "code_dim": 24
+    },
+    {
+      "id": "fit-4",
+      "target": "中间",
+      "no_record": {
+        "argmax": 210,
+        "copy_slots": 0,
+        "log_copy_max": null,
+        "log_gen_max": -5.5379,
+        "copy_mass": 0.0,
+        "gen_mass": 2.0
+      },
+      "with_record": {
+        "argmax": 230,
+        "copy_slots": 102,
+        "log_copy_max": -5.3484,
+        "log_gen_max": -5.8044,
+        "copy_mass": 0.467883,
+        "gen_mass": 1.532117
+      },
+      "answer_changed": true,
+      "answer_correct": false,
+      "answer_text": "据最新观测，红色圆片的位置是中间。测，红色Z",
+      "copy_gain": 0.467883,
+      "record_id": "fit-4",
+      "code_dim": 24
+    },
+    {
+      "id": "fit-5",
+      "target": "右边",
+      "no_record": {
+        "argmax": 210,
+        "copy_slots": 0,
+        "log_copy_max": null,
+        "log_gen_max": -5.5379,
+        "copy_mass": 0.0,
+        "gen_mass": 2.0
+      },
+      "with_record": {
+        "argmax": 229,
+        "copy_slots": 60,
+        "log_copy_max": -4.8177,
+        "log_gen_max": -5.805,
+        "copy_mass": 0.468849,
+        "gen_mass": 1.531151
+      },
+      "answer_changed": true,
+      "answer_correct": false,
+      "answer_text": "在在右边。在在右边。在在右边。在在右边。片+",
+      "copy_gain": 0.468849,
+      "record_id": "fit-5",
+      "code_dim": 24
+    },
+    {
+      "id": "fit-6",
+      "target": "左边",
+      "no_record": {
+        "argmax": 210,
+        "copy_slots": 0,
+        "log_copy_max": null,
+        "log_gen_max": -5.5379,
+        "copy_mass": 0.0,
+        "gen_mass": 2.0
+      },
+      "with_record": {
+        "argmax": 229,
+        "copy_slots": 72,
+        "log_copy_max": -4.9919,
+        "log_gen_max": -5.8044,
+        "copy_mass": 0.467958,
+        "gen_mass": 1.532042
+      },
+      "answer_changed": true,
+      "answer_correct": false,
+      "answer_text": "在在左边的是蓝色圆片。在在左边的是蓝色圆片+",
+      "copy_gain": 0.467958,
+      "record_id": "fit-6",
+      "code_dim": 24
+    },
+    {
+      "id": "fit-8",
+      "target": "中间",
+      "no_record": {
+        "argmax": 210,
+        "copy_slots": 0,
+        "log_copy_max": null,
+        "log_gen_max": -5.5379,
+        "copy_mass": 0.0,
+        "gen_mass": 2.0
+      },
+      "with_record": {
+        "argmax": 231,
+        "copy_slots": 84,
+        "log_copy_max": -5.1464,
+        "log_gen_max": -5.8047,
+        "copy_mass": 0.468284,
+        "gen_mass": 1.531716
+      },
+      "answer_changed": true,
+      "answer_correct": false,
+      "answer_text": "置。置。绿色圆片此刻的位置。绿色圆片此刻的h",
+      "copy_gain": 0.468284,
+      "record_id": "fit-8",
+      "code_dim": 24
+    },
+    {
+      "id": "fit-9",
+      "target": "右边",
+      "no_record": {
+        "argmax": 210,
+        "copy_slots": 0,
+        "log_copy_max": null,
+        "log_gen_max": -5.5379,
+        "copy_mass": 0.0,
+        "gen_mass": 2.0
+      },
+      "with_record": {
+        "argmax": 230,
+        "copy_slots": 102,
+        "log_copy_max": -5.3446,
+        "log_gen_max": -5.8049,
+        "copy_mass": 0.468669,
+        "gen_mass": 1.531331
+      },
+      "answer_changed": true,
+      "answer_correct": false,
+      "answer_text": "据最新观测，青色圆片的位置是右边。测，青色Z",
+      "copy_gain": 0.468669,
+      "record_id": "fit-9",
+      "code_dim": 24
+    }
+  ],
+  "verdict": "copy_path_live"
+}
