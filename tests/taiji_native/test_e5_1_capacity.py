@@ -15,10 +15,12 @@ def contract() -> dict:
     return json.loads(runner.CONTRACT.read_text(encoding="utf-8"))
 
 
-def test_frozen_identity_price_and_missing_training_authority() -> None:
+def test_frozen_identity_price_and_training_gate() -> None:
     data = contract()
     assert data["status"] == "frozen"
-    assert data["training_authority"] is None
+    assert data["training_authority"]
+    assert data["result"]["verdict"] == "capacity_tradeoff_persists"
+    assert data["result"]["closed"] is True
     assert data["criteria_sha256"] == runner.value_digest(data["criteria"])
     assert data["arms"]["small"]["parameters"] == 22742
     assert data["arms"]["wide"]["parameters"] == 23270
@@ -26,8 +28,10 @@ def test_frozen_identity_price_and_missing_training_authority() -> None:
     assert data["plan"]["option"] == "paired_full"
     assert data["plan"]["cap_cpu"] <= data["plan"]["design_cap_cpu"]
     assert data["plan"]["cap_wall"] <= data["plan"]["design_cap_wall"]
+    draft = copy.deepcopy(data)
+    draft["training_authority"] = None
     with pytest.raises(ValueError, match="missing_training_authority"):
-        runner.guards(data, "run")
+        runner.guards(draft, "run")
     assert not runner.anchor_matches({"old_ability": 0.0}, data)
 
 
@@ -124,3 +128,33 @@ def test_smoke_and_price_receipts_match_frozen_contract() -> None:
     assert not price["options"]["paired_full"]["over_design_cap"]
     assert price["options"]["paired_full"]["cap_cpu"] == data["plan"]["cap_cpu"]
     assert price["options"]["paired_full"]["cap_wall"] == data["plan"]["cap_wall"]
+
+
+def test_execution_receipts_recompute_negative_closeout_and_cost_incident() -> None:
+    data = contract()
+    run = json.loads(runner.RUN_REPORT.read_text(encoding="utf-8"))
+    recover = json.loads(runner.RECOVER_REPORT.read_text(encoding="utf-8"))
+    verify = json.loads(runner.VERIFY_REPORT.read_text(encoding="utf-8"))
+    red = json.loads(
+        (runner.ROOT / "reports/taiji_u2_e5_1_capacity_red_drill_20261118.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert run["verdict"] == "capacity_tradeoff_persists"
+    assert run["anchor_ok"] is True
+    small, wide = run["arms"]
+    assert (small["corrected"], small["damage"]) == (8, 0.75)
+    assert (wide["corrected"], wide["damage"]) == (2, 1.0)
+    assert wide["counterfactual"]["corrected"] == 8
+    assert wide["capacity_ablation"]["corrected"] == 0
+    assert small["purity"]["exact"] == wide["purity"]["exact"] == 168
+    assert recover["verdict"] == "recover_passed"
+    assert len(recover["checks"]) == 5 and all(recover["checks"].values())
+    assert verify["verdict"] == "verify_passed"
+    assert len(verify["checks"]) == 11 and all(verify["checks"].values())
+    assert red["verdict"] == "red_drill_passed"
+    assert all(red["checks"].values())
+    expected_total = run["cost"]["cpu"] + recover["cpu"] + verify["cpu"] + red["cpu"]
+    assert data["result"]["cost"]["execution_total_cpu"] == round(expected_total, 4)
+    assert data["result"]["budget_incident"]["formal_run_within_cap"] is True
+    assert data["result"]["budget_incident"]["recovery_rerun"] is False

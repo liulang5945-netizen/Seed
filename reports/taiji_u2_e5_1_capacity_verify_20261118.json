@@ -1,0 +1,21 @@
+{
+  "checks": {
+    "recover_passed": true,
+    "anchor_ok": true,
+    "verdict_matches": true,
+    "small_purity": true,
+    "small_correction_recomputed": true,
+    "small_damage_recomputed": true,
+    "wide_purity": true,
+    "wide_correction_recomputed": true,
+    "wide_damage_recomputed": true,
+    "wide_counterfactual_recomputed": true,
+    "wide_ablation_arithmetic": true
+  },
+  "uncovered": [],
+  "verdict": "verify_passed",
+  "schema": "taiji-u2-e5-1-capacity-verify-v1",
+  "card": "E5.1",
+  "criteria_sha256": "f59c5ee197326219b9f889c62380c53b9d6dfdd2ac6584eb45811db588fa706b",
+  "cpu": 0.0156
+}

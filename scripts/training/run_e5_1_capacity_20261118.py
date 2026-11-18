@@ -685,12 +685,23 @@ def verify_reports(contract: dict[str, Any], data: dict[str, Any]) -> dict[str, 
         checks[f"{name}_purity"] = all(
             torch.equal(pre["model"][key], post["model"][key]) for key in frozen
         )
-        checks[f"{name}_correction_recomputed"] = arm["corrected"] == sum(
-            int(row["correct"]) for row in arm["corrected_rows"]
-        )
+        corrected = sum(int(row["correct"]) for row in arm["corrected_rows"])
+        checks[f"{name}_correction_recomputed"] = arm["corrected"] == corrected and arm[
+            "correction_rate"
+        ] == round(corrected / max(len(arm["errors"]), 1), 4)
         checks[f"{name}_damage_recomputed"] = arm["damage"] == round(
             arm["old_ability"] - a5.accuracy(arm["after_rows"]), 4
         )
+        if name == "wide":
+            counter_corrected = sum(int(row["correct"]) for row in arm["counterfactual"]["rows"])
+            checks["wide_counterfactual_recomputed"] = arm["counterfactual"][
+                "corrected"
+            ] == counter_corrected and arm["counterfactual"]["rate"] == round(
+                counter_corrected / max(len(arm["errors"]), 1), 4
+            )
+            checks["wide_ablation_arithmetic"] = arm["capacity_ablation"]["drop"] == round(
+                arm["correction_rate"] - arm["capacity_ablation"]["correction_rate"], 4
+            )
     return {
         "checks": checks,
         "uncovered": [name for name, passed in checks.items() if not passed],

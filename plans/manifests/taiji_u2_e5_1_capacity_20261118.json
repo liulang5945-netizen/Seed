@@ -217,8 +217,52 @@
     "cap_wall": 795.369
   },
   "run_root": "data/experiments/taiji_u2/e5_1/20261118T0000Z",
-  "training_authority": null,
-  "result": null,
+  "training_authority": "owner 2026-11-18 answered 授权执行（推荐） to the structured E5.1 training question: paired_full, one diagnostic seed, small reproduction anchor plus wide main/counterfactual/ablation arms, cap 397.684 CPU / 795.369 wall; one use only, no cap increase or scope carry-over",
+  "result": {
+    "verdict": "capacity_tradeoff_persists",
+    "closed": true,
+    "closure_scope": "E5.1 only; no automatic dose, width, depth or seed revision",
+    "run_report": "reports/taiji_u2_e5_1_capacity_run_20261118.json",
+    "recover_report": "reports/taiji_u2_e5_1_capacity_recover_20261118.json",
+    "verify_report": "reports/taiji_u2_e5_1_capacity_verify_20261118.json",
+    "red_drill_report": "reports/taiji_u2_e5_1_capacity_red_drill_20261118.json",
+    "result_card": "plans/reference/RESULT-TAIJI_U2_E5_1_CAPACITY_20261118.md",
+    "small": {
+      "corrected": 8,
+      "correction_rate": 0.3333,
+      "old_ability_after": 0.25,
+      "damage": 0.75,
+      "anchor_ok": true
+    },
+    "wide": {
+      "corrected": 2,
+      "correction_rate": 0.0833,
+      "old_ability_after": 0.0,
+      "damage": 1.0,
+      "counterfactual_rate": 0.3333,
+      "ablation_correction_rate": 0.0,
+      "ablation_drop": 0.0833
+    },
+    "cost": {
+      "formal_run_cpu": 322.0625,
+      "formal_run_wall": 323.96,
+      "recover_cpu": 965.7656,
+      "verify_cpu": 0.0156,
+      "red_drill_cpu": 0.0938,
+      "execution_total_cpu": 1287.9375,
+      "recover_wall_recorded": false
+    },
+    "budget_incident": {
+      "kind": "unpriced_independent_recovery",
+      "formal_run_within_cap": true,
+      "execution_total_exceeds_formal_cap_by_cpu": 890.2535,
+      "cap_changed": false,
+      "recovery_rerun": false,
+      "verdict_changed": false
+    },
+    "accepted_parent": false,
+    "capability_qualifications": []
+  },
   "exits": [
     "capacity_earns_joint_gate",
     "capacity_tradeoff_persists",
@@ -232,7 +276,7 @@
     "pricing_over_budget"
   ],
   "source_pins": {
-    "runner": "3264f017275a806dc4af2d1e263b31f2e72af4f28bbc1a48fb8a6e3660c45da1",
+    "runner": "590796e7487bb1c2ae9b53ca1d8eba4b4e09539e5161a68302054fa1b64ece64",
     "e5_probe": "f15ffba9264de3e3e97ba9e806c6610591b33ee471e2ae5610fbf581d8f78f4e",
     "a5_runner": "3e4db0ccf8346b77c132a2cc428c100dc00e94700368f0b857af2a308c9cf231",
     "a2_runner": "c26f4a545ffb5d12f579cb7e69c57eabca6cd7c427e479fb3a55e4621f0fd981",
@@ -243,5 +287,21 @@
   },
   "upstream_a5_contract_sha256": "ce1e3c4e3c7281a50640eff2c8314d7ae42834648e81fc8003f846c30927f3cc",
   "note": "design/pricing only. Smoke has zero optimizer steps. Pricing uses 12 one-shot Adam steps on discarded models. No check/final/confirm read and no product default change.",
-  "price_report": "reports/taiji_u2_e5_1_capacity_price_20261118.json"
+  "price_report": "reports/taiji_u2_e5_1_capacity_price_20261118.json",
+  "amendments": [
+    {
+      "id": "verify-rate-recompute-20261118",
+      "scope": "verify-only instrumentation repair after red-direction drill",
+      "reason": "initial verify recomputed corrected counts but not correction_rate; tampering that field stayed green",
+      "change": "recompute correction_rate and counterfactual rate from rows; check ablation arithmetic; no model, protocol, criterion, cap or run-report change",
+      "evidence": "smoke/price paths unchanged and not rerun; run data retained; verify and red-direction drill rerun on the amended pin"
+    },
+    {
+      "id": "recovery-price-omission-20261118",
+      "scope": "post-execution cost accounting, not a criterion or verdict change",
+      "reason": "the paired_full price covered formal training/evaluation but omitted independent-process recovery",
+      "reading": "formal run 322.0625 CPU within cap; recover 965.7656 CPU; execution total 1287.9375 CPU",
+      "action": "disclose the budget incident, do not raise the cap, rerun recovery, add training or replace the negative verdict with budget_stop"
+    }
+  ]
 }

@@ -1,6 +1,6 @@
 # E5.1 设计卡：共享 emission 瓶颈的容量单变量检验
 
-> 卡号：`E5.1`｜日期：2026-11-18｜状态：**设计＋精确定价已冻结，训练未授权**。
+> 卡号：`E5.1`｜日期：2026-11-18｜状态：**已结案＝`capacity_tradeoff_persists`，E5.1 收束**（D-20261118-04）。
 > 上游：[E5 剂量-反应结果卡](RESULT-TAIJI_U2_E5_DOSE_20261118.md)（D-20261118-02）；owner 2026-11-18 明确授权“立项 E5.1：容量单变量检验，先做零训练设计与精确定价，训练另请授权”。
 > [冻结合同](../manifests/taiji_u2_e5_1_capacity_20261118.json)｜`criteria_sha256=f59c5ee197326219b9f889c62380c53b9d6dfdd2ac6584eb45811db588fa706b`｜[runner](../../scripts/training/run_e5_1_capacity_20261118.py)｜[smoke](../../reports/taiji_u2_e5_1_capacity_smoke_20261118.json)｜[定价](../../reports/taiji_u2_e5_1_capacity_price_20261118.json)｜[契约测试](../../tests/taiji_native/test_e5_1_capacity.py)。
 
@@ -104,3 +104,7 @@ B.1 已经测过另一条路：冻结 emission、把更新移到 408 标量的�
 ## 9 唯一的请求（是非题）
 
 **是否授权按 `paired_full` 执行 E5.1：small 复现锚＋wide 容量主臂/反事实/容量敲除，1 seed，600 A 步/臂＋剂量 8，帽 397.684 CPU／795.369 wall？**
+
+## 10 结案戳（D-20261118-04）
+
+owner 已授权一次执行。正式 run **322.0625 CPU／323.96 wall** 在帽内；small 逐值复现 E5，wide 纠正 **2/24＝0.0833**、旧能力 **1.0→0.0**、损伤 **1.00**，判 **`capacity_tradeoff_persists`**，E5.1 按 §5 收束。recover **5/5**、verify **11/11**、红向 **3/3**。独立恢复实耗 **965.7656 CPU**，属于定价遗漏；执行侧合计 **1287.9375 CPU**，预算事故与负结果并列留档，不改帽、不重跑。详见[结果卡](RESULT-TAIJI_U2_E5_1_CAPACITY_20261118.md)。

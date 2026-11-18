@@ -1,0 +1,14 @@
+{
+  "schema": "taiji-u2-e5-1-capacity-recover-v1",
+  "card": "E5.1",
+  "checks": {
+    "small_a_byte_exact": true,
+    "small_b_byte_exact": true,
+    "wide_a_byte_exact": true,
+    "wide_b_byte_exact": true,
+    "wide_counterfactual_byte_exact": true
+  },
+  "uncovered": [],
+  "cpu": 965.7656,
+  "verdict": "recover_passed"
+}
