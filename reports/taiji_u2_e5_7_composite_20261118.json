@@ -1,0 +1,180 @@
+{
+  "schema": "taiji-u2-e5-7-composite-v1",
+  "card": "E5.7",
+  "subject": "a5-pre-seed20261110",
+  "bundle_sha256": "de5452f6b7716cb44f48221aafca5e5e5f132fcdeaa46c3196d8929d0c815465",
+  "routing_audit": {
+    "subject": 32,
+    "channel": 0
+  },
+  "a_correct": 32,
+  "a_denominator": 32,
+  "a_accuracy": 1.0,
+  "b_correct": 24,
+  "b_denominator": 24,
+  "b_accuracy": 1.0,
+  "verdict": "both_hold_in_one_run",
+  "a_rows": [
+    {
+      "id": "fit-0",
+      "correct": true,
+      "got": "左边"
+    },
+    {
+      "id": "fit-1",
+      "correct": true,
+      "got": "中间"
+    },
+    {
+      "id": "fit-2",
+      "correct": true,
+      "got": "右边"
+    },
+    {
+      "id": "fit-3",
+      "correct": true,
+      "got": "未知"
+    },
+    {
+      "id": "fit-4",
+      "correct": true,
+      "got": "左边"
+    },
+    {
+      "id": "fit-5",
+      "correct": true,
+      "got": "中间"
+    },
+    {
+      "id": "fit-6",
+      "correct": true,
+      "got": "右边"
+    },
+    {
+      "id": "fit-7",
+      "correct": true,
+      "got": "未知"
+    },
+    {
+      "id": "fit-8",
+      "correct": true,
+      "got": "左边"
+    },
+    {
+      "id": "fit-9",
+      "correct": true,
+      "got": "中间"
+    },
+    {
+      "id": "fit-10",
+      "correct": true,
+      "got": "右边"
+    },
+    {
+      "id": "fit-11",
+      "correct": true,
+      "got": "未知"
+    },
+    {
+      "id": "fit-12",
+      "correct": true,
+      "got": "左边"
+    },
+    {
+      "id": "fit-13",
+      "correct": true,
+      "got": "中间"
+    },
+    {
+      "id": "fit-14",
+      "correct": true,
+      "got": "右边"
+    },
+    {
+      "id": "fit-15",
+      "correct": true,
+      "got": "未知"
+    },
+    {
+      "id": "fit-16",
+      "correct": true,
+      "got": "左边"
+    },
+    {
+      "id": "fit-17",
+      "correct": true,
+      "got": "中间"
+    },
+    {
+      "id": "fit-18",
+      "correct": true,
+      "got": "右边"
+    },
+    {
+      "id": "fit-19",
+      "correct": true,
+      "got": "未知"
+    },
+    {
+      "id": "fit-20",
+      "correct": true,
+      "got": "左边"
+    },
+    {
+      "id": "fit-21",
+      "correct": true,
+      "got": "中间"
+    },
+    {
+      "id": "fit-22",
+      "correct": true,
+      "got": "右边"
+    },
+    {
+      "id": "fit-23",
+      "correct": true,
+      "got": "未知"
+    },
+    {
+      "id": "fit-24",
+      "correct": true,
+      "got": "左边"
+    },
+    {
+      "id": "fit-25",
+      "correct": true,
+      "got": "中间"
+    },
+    {
+      "id": "fit-26",
+      "correct": true,
+      "got": "右边"
+    },
+    {
+      "id": "fit-27",
+      "correct": true,
+      "got": "未知"
+    },
+    {
+      "id": "fit-28",
+      "correct": true,
+      "got": "左边"
+    },
+    {
+      "id": "fit-29",
+      "correct": true,
+      "got": "中间"
+    },
+    {
+      "id": "fit-30",
+      "correct": true,
+      "got": "右边"
+    },
+    {
+      "id": "fit-31",
+      "correct": true,
+      "got": "未知"
+    }
+  ],
+  "b_sample": []
+}
