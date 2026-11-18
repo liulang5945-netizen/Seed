@@ -1,0 +1,162 @@
+{
+  "schema": "taiji-u2-e5-termination-v1",
+  "card": "E5",
+  "item": "fit-1",
+  "target": "右边",
+  "rows": [
+    {
+      "step": 0,
+      "symbol": 229,
+      "char": "å",
+      "valid_positions": 36,
+      "copy_slots": 72,
+      "copy_mass": 0.4683,
+      "eos_prob": -5.33,
+      "best_non_eos": -3.07,
+      "eos_margin": -2.26
+    },
+    {
+      "step": 1,
+      "symbol": 156,
+      "char": "",
+      "valid_positions": 36,
+      "copy_slots": 72,
+      "copy_mass": 0.5624,
+      "eos_prob": -Infinity,
+      "best_non_eos": -1.241,
+      "eos_margin": -Infinity
+    },
+    {
+      "step": 2,
+      "symbol": 168,
+      "char": "¨",
+      "valid_positions": 36,
+      "copy_slots": 72,
+      "copy_mass": 0.776,
+      "eos_prob": -Infinity,
+      "best_non_eos": -0.952,
+      "eos_margin": -Infinity
+    },
+    {
+      "step": 3,
+      "symbol": 229,
+      "char": "å",
+      "valid_positions": 36,
+      "copy_slots": 72,
+      "copy_mass": 0.6686,
+      "eos_prob": -5.762,
+      "best_non_eos": -1.166,
+      "eos_margin": -4.596
+    },
+    {
+      "step": 4,
+      "symbol": 156,
+      "char": "",
+      "valid_positions": 36,
+      "copy_slots": 72,
+      "copy_mass": 0.5755,
+      "eos_prob": -Infinity,
+      "best_non_eos": -1.507,
+      "eos_margin": -Infinity
+    },
+    {
+      "step": 5,
+      "symbol": 168,
+      "char": "¨",
+      "valid_positions": 36,
+      "copy_slots": 72,
+      "copy_mass": 0.7739,
+      "eos_prob": -Infinity,
+      "best_non_eos": -0.636,
+      "eos_margin": -Infinity
+    },
+    {
+      "step": 6,
+      "symbol": 229,
+      "char": "å",
+      "valid_positions": 36,
+      "copy_slots": 72,
+      "copy_mass": 0.6693,
+      "eos_prob": -5.763,
+      "best_non_eos": -1.165,
+      "eos_margin": -4.598
+    },
+    {
+      "step": 7,
+      "symbol": 143,
+      "char": "",
+      "valid_positions": 36,
+      "copy_slots": 72,
+      "copy_mass": 0.5755,
+      "eos_prob": -Infinity,
+      "best_non_eos": -1.087,
+      "eos_margin": -Infinity
+    },
+    {
+      "step": 8,
+      "symbol": 179,
+      "char": "³",
+      "valid_positions": 36,
+      "copy_slots": 72,
+      "copy_mass": 0.6638,
+      "eos_prob": -Infinity,
+      "best_non_eos": -0.741,
+      "eos_margin": -Infinity
+    },
+    {
+      "step": 9,
+      "symbol": 232,
+      "char": "è",
+      "valid_positions": 36,
+      "copy_slots": 72,
+      "copy_mass": 0.6811,
+      "eos_prob": -5.572,
+      "best_non_eos": -1.157,
+      "eos_margin": -4.414
+    },
+    {
+      "step": 10,
+      "symbol": 190,
+      "char": "¾",
+      "valid_positions": 36,
+      "copy_slots": 72,
+      "copy_mass": 0.7066,
+      "eos_prob": -Infinity,
+      "best_non_eos": -0.66,
+      "eos_margin": -Infinity
+    },
+    {
+      "step": 11,
+      "symbol": 185,
+      "char": "¹",
+      "valid_positions": 36,
+      "copy_slots": 72,
+      "copy_mass": 0.5922,
+      "eos_prob": -Infinity,
+      "best_non_eos": -0.838,
+      "eos_margin": -Infinity
+    },
+    {
+      "step": 12,
+      "symbol": 231,
+      "char": "ç",
+      "valid_positions": 36,
+      "copy_slots": 72,
+      "copy_mass": 0.8983,
+      "eos_prob": -5.323,
+      "best_non_eos": -0.734,
+      "eos_margin": -4.589
+    },
+    {
+      "step": 13,
+      "symbol": 154,
+      "char": "",
+      "valid_positions": 36,
+      "copy_slots": 72,
+      "copy_mass": 0.6344,
+      "eos_prob": -Infinity,
+      "best_non_eos": -0.816,
+      "eos_margin": -Infinity
+    }
+  ]
+}
