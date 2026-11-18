@@ -8,6 +8,7 @@ not a reason to add rounds.
 from __future__ import annotations
 
 import json
+import os
 import sys
 import time
 from pathlib import Path
@@ -22,7 +23,16 @@ from scripts.training import run_a5_22_5 as a5  # noqa: E402
 from scripts.training.subject_registry import load_subject  # noqa: E402
 from taiji.u2_history import value_digest  # noqa: E402
 
-OUT = ROOT / "reports/taiji_u2_e5_2_emission_only_20261118.json"
+_ONLY = os.environ.get("TAIJI_E5_ONLY_GROUP", "").strip().strip(".") or "none"
+OUT = (
+    ROOT / f"reports/taiji_u2_e5_ablate_{_ONLY}_20261118.json"
+    if _ONLY != "none"
+    else (
+        ROOT / "reports/taiji_u2_e5_3_frozen_head_20261118.json"
+        if os.environ.get("TAIJI_E5_FREEZE_BYTE_HEAD") == "1"
+        else ROOT / "reports/taiji_u2_e5_2_emission_only_20261118.json"
+    )
+)
 CONTRACT = ROOT / "plans/manifests/taiji_u2_a5_protocol_20261116.json"
 SUBJECT = "a5-pre-seed20261110"
 EPOCHS = 25
@@ -69,6 +79,16 @@ def main() -> int:
 
     model, subject = load_subject(SUBJECT, contract)
     names = a5.set_trainable(model, contract)
+    freeze_head = os.environ.get("TAIJI_E5_FREEZE_BYTE_HEAD") == "1"
+    only_group = os.environ.get("TAIJI_E5_ONLY_GROUP", "").strip()
+    if freeze_head:
+        for name, parameter in model.named_parameters():
+            if name.startswith("byte_head."):
+                parameter.requires_grad_(False)
+    if only_group:
+        for name, parameter in model.named_parameters():
+            if not name.startswith(only_group):
+                parameter.requires_grad_(False)
     head = a2.load_head(contract)
     prior = a2.prior_of(data)
     codes = a2.code_by_id(model, head, prior, data["train"] + data["fit"], contract)
@@ -114,6 +134,8 @@ def main() -> int:
         "bundle_update": subject["update"],
         "trainable_tensors": len(trainable),
         "trainable_names": names,
+        "frozen_byte_head": freeze_head,
+        "only_group": only_group,
         "updates": updates,
         "before": before,
         "after": after,
