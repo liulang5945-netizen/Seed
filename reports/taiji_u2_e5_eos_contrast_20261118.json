@@ -1,0 +1,63 @@
+{
+  "schema": "taiji-u2-e5-eos-contrast-v1",
+  "card": "E5",
+  "task_a": [
+    {
+      "id": "fit-0",
+      "eos": true,
+      "len": 64,
+      "target": "",
+      "exact": false
+    },
+    {
+      "id": "fit-1",
+      "eos": true,
+      "len": 64,
+      "target": "",
+      "exact": false
+    },
+    {
+      "id": "fit-2",
+      "eos": true,
+      "len": 64,
+      "target": "",
+      "exact": false
+    },
+    {
+      "id": "fit-3",
+      "eos": true,
+      "len": 64,
+      "target": "",
+      "exact": false
+    }
+  ],
+  "task_b_with_record": [
+    {
+      "id": "fit-0",
+      "eos": true,
+      "len": 64,
+      "exact": false
+    },
+    {
+      "id": "fit-1",
+      "eos": true,
+      "len": 64,
+      "exact": false
+    },
+    {
+      "id": "fit-2",
+      "eos": true,
+      "len": 64,
+      "exact": false
+    },
+    {
+      "id": "fit-4",
+      "eos": true,
+      "len": 64,
+      "exact": false
+    }
+  ],
+  "a_eos_rate": 1.0,
+  "b_eos_rate": 1.0,
+  "reading": "no_stopping_rule_anywhere"
+}
