@@ -1,0 +1,155 @@
+{
+  "schema": "taiji-u2-mixture-probe-v1",
+  "card": "22.5.0.A",
+  "checkpoint": "output/a_pixel_parallel_20261118T071910Z/segment.bin",
+  "head_equals_final": 19,
+  "total": 32,
+  "middle_rows": [
+    {
+      "target": "中间",
+      "head_argmax": "0xe4",
+      "final_argmax": "0xe4",
+      "head_e4": -1.303,
+      "head_e5": -1.354,
+      "final_e4": -0.73,
+      "final_e5": -0.781,
+      "mixture_keys": [
+        "log_branch",
+        "log_copy",
+        "log_gen",
+        "log_output",
+        "log_total",
+        "mask"
+      ]
+    },
+    {
+      "target": "中间",
+      "head_argmax": "0x1e5",
+      "final_argmax": "0xe4",
+      "head_e4": -1.166,
+      "head_e5": -1.263,
+      "final_e4": -0.673,
+      "final_e5": -0.77,
+      "mixture_keys": [
+        "log_branch",
+        "log_copy",
+        "log_gen",
+        "log_output",
+        "log_total",
+        "mask"
+      ]
+    },
+    {
+      "target": "中间",
+      "head_argmax": "0xe4",
+      "final_argmax": "0xe4",
+      "head_e4": -1.309,
+      "head_e5": -1.351,
+      "final_e4": -0.724,
+      "final_e5": -0.766,
+      "mixture_keys": [
+        "log_branch",
+        "log_copy",
+        "log_gen",
+        "log_output",
+        "log_total",
+        "mask"
+      ]
+    },
+    {
+      "target": "中间",
+      "head_argmax": "0xe4",
+      "final_argmax": "0xe4",
+      "head_e4": -1.091,
+      "head_e5": -1.234,
+      "final_e4": -0.639,
+      "final_e5": -0.782,
+      "mixture_keys": [
+        "log_branch",
+        "log_copy",
+        "log_gen",
+        "log_output",
+        "log_total",
+        "mask"
+      ]
+    },
+    {
+      "target": "中间",
+      "head_argmax": "0xe4",
+      "final_argmax": "0xe4",
+      "head_e4": -0.959,
+      "head_e5": -1.165,
+      "final_e4": -0.599,
+      "final_e5": -0.805,
+      "mixture_keys": [
+        "log_branch",
+        "log_copy",
+        "log_gen",
+        "log_output",
+        "log_total",
+        "mask"
+      ]
+    },
+    {
+      "target": "中间",
+      "head_argmax": "0xe4",
+      "final_argmax": "0xe4",
+      "head_e4": -0.861,
+      "head_e5": -1.086,
+      "final_e4": -0.59,
+      "final_e5": -0.814,
+      "mixture_keys": [
+        "log_branch",
+        "log_copy",
+        "log_gen",
+        "log_output",
+        "log_total",
+        "mask"
+      ]
+    },
+    {
+      "target": "中间",
+      "head_argmax": "0xe4",
+      "final_argmax": "0xe4",
+      "head_e4": -0.788,
+      "head_e5": -0.992,
+      "final_e4": -0.598,
+      "final_e5": -0.802,
+      "mixture_keys": [
+        "log_branch",
+        "log_copy",
+        "log_gen",
+        "log_output",
+        "log_total",
+        "mask"
+      ]
+    },
+    {
+      "target": "中间",
+      "head_argmax": "0xe4",
+      "final_argmax": "0xe4",
+      "head_e4": -0.879,
+      "head_e5": -1.107,
+      "final_e4": -0.588,
+      "final_e5": -0.816,
+      "mixture_keys": [
+        "log_branch",
+        "log_copy",
+        "log_gen",
+        "log_output",
+        "log_total",
+        "mask"
+      ]
+    }
+  ],
+  "middle_head_argmax": [
+    "0xe4",
+    "0x1e5",
+    "0xe4",
+    "0xe4",
+    "0xe4",
+    "0xe4",
+    "0xe4",
+    "0xe4"
+  ]
+}
