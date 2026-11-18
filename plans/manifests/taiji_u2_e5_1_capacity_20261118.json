@@ -1,0 +1,247 @@
+{
+  "schema": "taiji-u2-e5-1-capacity-v1",
+  "status": "frozen",
+  "card": "E5.1",
+  "date": "2026-11-18",
+  "scope": "one-variable diagnostic: can added hidden capacity at the shared emission bottleneck make correction and retention coexist at the E5 dose=8 point?",
+  "owner_direction": "owner 2026-11-18 authorized E5.1 design and pricing only; training requires a separate authorization",
+  "candidate": {
+    "architecture": "native",
+    "profile": "metadata+request",
+    "seed": 20261110,
+    "parameters": 22742,
+    "tensors": 194,
+    "subject_frozen": true,
+    "encoder_bundle": "data/experiments/taiji_u2/p4_2/20261116T0500Z/reconstruct-B-007376.pt",
+    "encoder_bundle_sha256": "f670508850685cb8aa4e9ed385eb2f5997154524e606d1ab7cbfbd5230eb0f2f",
+    "a1b_checkpoint": "data/experiments/taiji_u2/a1b/20261115T2300Z/a1b-00200.pt",
+    "a1b_checkpoint_sha256": "3ebac8b34ace3e9d784867e0096527cba515bace68199712a6cdc940a458dbc3",
+    "read_head_parameters": 263,
+    "prior": [
+      0.0234375,
+      0.0302734375,
+      0.015625,
+      0.0146484375,
+      0.0146484375,
+      0.021484375,
+      0.8798828125
+    ]
+  },
+  "data_root": "data/experiments/taiji_u2/first_a/20261112T074836Z/data.bin",
+  "data_digest": "40813b4cc8ffec0c3ae5639941b373c139422b4ccbaa34790de34a9e1149d214",
+  "data": {
+    "train": 64,
+    "fit": 32,
+    "check_final_confirm": "not read"
+  },
+  "read_code": {
+    "interface": "read-code-v1",
+    "width": 24,
+    "class_order": [
+      "左边",
+      "中间",
+      "右边",
+      "未知"
+    ],
+    "rule": "zeros(24); code[class] = 1.0; both branches receive the same code at joint_readout",
+    "injection": "forward hook on joint_readout replaces its output with joint_readout(code); training, evaluation and feedback use the same path",
+    "limitation": "the code carries the read's four-way answer, not the scene's pixels; a pass measures byte expression, not content-conditioned binding"
+  },
+  "task_b": {
+    "definition": "fact revision: the environment legally releases a record stating the queried entity's new position; the answer target is that new position; the first pass only sees the read and is wrong by construction",
+    "templates": [
+      "{entity}现在在{label}。",
+      "现在在{label}的是{entity}。",
+      "{label}就是{entity}此刻的位置。",
+      "据最新观测，{entity}的位置是{label}。"
+    ],
+    "template_offsets": [
+      21,
+      9,
+      0,
+      42
+    ],
+    "template_rule": "the answer word must land at a different byte offset in each template; with a single template every record puts the answer at byte 21, and 'copy bytes 21..27' would pass the gate without reading the fact",
+    "counter_fact_arm": "a second arm releases a record whose answer contradicts the truth; a subject that reads the record must answer differently, a fixed-offset copier cannot",
+    "measured_headroom": {
+      "denominator": 24,
+      "first_pass_correct": 0,
+      "with_record_correct_frozen": 0,
+      "note": "the gain is not zero by construction; an update has something to buy"
+    },
+    "measured_content_sensitivity": {
+      "max_abs_delta_at_first_position": 0.4717979431,
+      "position_argmax_by_word": [
+        26,
+        24,
+        26
+      ],
+      "note": "the channel reacts to the answer word (delta 0.47) but the copy position does not yet point at it (entropy 3.40 over thirty positions), so there is real work for an update to do"
+    },
+    "measured_protocol_limits": {
+      "unseen_query": "routing is numerically but not operationally query-sensitive: a paraphrase moves route mass by 1e-6, so an unseen-query gate cannot rest on routing; the unseen query is therefore measured by changing the request wording and the template, and by scoring only rounds whose wording was never released",
+      "cross_session": "records, released ids and fast memory all survive a save/reload boundary and routing after reload equals routing before (0.527698 / 0.472302)",
+      "multi_fact": "with two records released the route is query-blind (0.345389 against 0.345390), so task B is single-fact per episode by design"
+    },
+    "measured_gate_structure": {
+      "gates_see_the_record": false,
+      "max_gamma_delta": 0.0,
+      "max_lambda_delta": 0.0,
+      "a_task_invariant_without_a_record": true,
+      "note": "the copy gate is a function of the read code only, so it cannot switch on the presence of a record; the switch has to come from the record route and the copy position, which are the parameters this card trains"
+    }
+  },
+  "emission_parameters": [
+    "byte_head.bias",
+    "byte_head.weight",
+    "copy_gate.bias",
+    "copy_gate.weight",
+    "joint_readout.first.bias",
+    "joint_readout.first.weight",
+    "joint_readout.last.bias",
+    "joint_readout.last.weight"
+  ],
+  "record_parameters": [
+    "coverage_logit",
+    "record_goal_query.weight",
+    "record_key.weight",
+    "record_metadata.bias",
+    "record_metadata.weight",
+    "record_null.bias",
+    "record_null.weight",
+    "record_null_value",
+    "record_output.bias",
+    "record_output.weight",
+    "record_position_key.weight",
+    "record_position_query.bias",
+    "record_position_query.weight",
+    "record_provenance.weight",
+    "record_query.bias",
+    "record_query.weight",
+    "record_value.bias",
+    "record_value.weight"
+  ],
+  "optimizer": {
+    "lr": 0.01,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "weight_decay": 0.0
+  },
+  "feedback_optimizer": {
+    "lr": 0.001,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "weight_decay": 0.0
+  },
+  "batch": 8,
+  "trainable_tensor_count": 26,
+  "trainable_scalar_count": 4681,
+  "emission_scalar_count": 3919,
+  "arms": {
+    "small": {
+      "joint_hidden": 16,
+      "parameters": 22742,
+      "tensors": 194,
+      "trainable_tensors": 26,
+      "trainable_scalars": 4681,
+      "emission_scalars": 3919
+    },
+    "wide": {
+      "joint_hidden": 32,
+      "parameters": 23270,
+      "tensors": 194,
+      "trainable_tensors": 26,
+      "trainable_scalars": 5209,
+      "emission_scalars": 4447,
+      "added_scalars": 528,
+      "birth": "inherit first/last slices; seeded new first rows; zero new last columns => exact neutral birth"
+    }
+  },
+  "criteria": {
+    "single_variable": "joint_readout hidden width 16 -> 32; all other model dimensions, parameter names, data and protocol fixed",
+    "old_ability_gate": 0.8,
+    "correction_gate": 0.8,
+    "damage_gate": 0.02,
+    "counterfactual_gate": 0.8,
+    "ablation_drop_gate": 0.05,
+    "response_round": "exact answer bytes plus EOS plus valid UTF-8, greedy, 65-byte cap",
+    "main_denominator": "all 32 fit rounds; a failed, extra-byte or invalid round is counted, never filtered",
+    "birth_neutrality": "small/wide A rows, B rows and read codes must be identical before any optimizer step",
+    "small_anchor": {
+      "old_ability": 1.0,
+      "b_first_pass_correct": 0,
+      "corrected": 8,
+      "old_ability_after_correct": 8,
+      "damage": 0.75,
+      "a_curve": {
+        "400": 1.0,
+        "600": 1.0
+      }
+    },
+    "anchor_rule": "paired_full must reproduce every small_anchor field exactly; otherwise anchor_mismatch and the wide arm is not interpreted",
+    "counterfactual": "wide arm, same old-ability snapshot and dose=8, counter_records/counter_target; required for a positive verdict",
+    "capacity_ablation": "restore the wide main post-feedback state, zero joint_readout.last.weight[:,16:], then re-ask the same 24 errors and 32 A rounds; correction drop >=0.05 is required for capacity necessity",
+    "ablation_limit": "ablation disables the added columns but does not rewind the inherited 16 hidden units to the small arm's training trajectory",
+    "purity": "all 168 tensors outside the declared 26 trainable names must be bit-identical before/after feedback",
+    "recovery": "fresh process, reload each post-feedback bundle, A and B rows byte-identical; wide counterfactual also byte-identical",
+    "seed_rule": "one diagnostic seed 20261110; no three-seed or capability claim",
+    "negative_closure": "capacity_tradeoff_persists or capacity_correction_absent closes E5.1; no automatic dose/width revision",
+    "check2": "not_read",
+    "accepted_parent": false,
+    "capability_qualifications": []
+  },
+  "criteria_sha256": "f59c5ee197326219b9f889c62380c53b9d6dfdd2ac6584eb45811db588fa706b",
+  "plan": {
+    "option": "paired_full",
+    "seeds": [
+      20261110
+    ],
+    "steps": 600,
+    "curve": [
+      400,
+      600
+    ],
+    "dose": 8,
+    "errors_per_arm": 24,
+    "counterfactual": "wide only",
+    "contingency": 0.15,
+    "design_cap_cpu": 600.0,
+    "design_cap_wall": 1200.0,
+    "cap_cpu": 397.684,
+    "cap_wall": 795.369
+  },
+  "run_root": "data/experiments/taiji_u2/e5_1/20261118T0000Z",
+  "training_authority": null,
+  "result": null,
+  "exits": [
+    "capacity_earns_joint_gate",
+    "capacity_tradeoff_persists",
+    "capacity_correction_absent",
+    "capacity_not_necessary",
+    "counterfactual_failed",
+    "old_ability_not_reached",
+    "anchor_mismatch",
+    "engineering_failure",
+    "budget_stop",
+    "pricing_over_budget"
+  ],
+  "source_pins": {
+    "runner": "3264f017275a806dc4af2d1e263b31f2e72af4f28bbc1a48fb8a6e3660c45da1",
+    "e5_probe": "f15ffba9264de3e3e97ba9e806c6610591b33ee471e2ae5610fbf581d8f78f4e",
+    "a5_runner": "3e4db0ccf8346b77c132a2cc428c100dc00e94700368f0b857af2a308c9cf231",
+    "a2_runner": "c26f4a545ffb5d12f579cb7e69c57eabca6cd7c427e479fb3a55e4621f0fd981",
+    "support": "33d9301f98859934c1413e25765c55e6bc7b64dfa410d65b03f0e5a198041b4c",
+    "subject": "19d922403fe97f56c61bd2573ef7436c5eef1bba4a6e7a698f2e56d1d8d29dd7",
+    "events": "b89d5424a76263efab7a5c944dbc820b34fdef4ed12b10afc0b651193a34c944",
+    "columns": "852c54e60c97efb23f83072659a363f890c58a4929354467ce4b71a028bc8443"
+  },
+  "upstream_a5_contract_sha256": "ce1e3c4e3c7281a50640eff2c8314d7ae42834648e81fc8003f846c30927f3cc",
+  "note": "design/pricing only. Smoke has zero optimizer steps. Pricing uses 12 one-shot Adam steps on discarded models. No check/final/confirm read and no product default change.",
+  "price_report": "reports/taiji_u2_e5_1_capacity_price_20261118.json"
+}

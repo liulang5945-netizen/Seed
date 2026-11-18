@@ -1,0 +1,50 @@
+{
+  "schema": "taiji-u2-e5-1-capacity-price-v1",
+  "card": "E5.1",
+  "criteria_sha256": "f59c5ee197326219b9f889c62380c53b9d6dfdd2ac6584eb45811db588fa706b",
+  "unit_price_cpu": {
+    "small": {
+      "a_train_step": 0.005208,
+      "feedback_step": 0.286458,
+      "a_round": 0.03125,
+      "b_round": 1.273438
+    },
+    "wide": {
+      "a_train_step": 0.010417,
+      "feedback_step": 0.317708,
+      "a_round": 0.023438,
+      "b_round": 1.257812
+    }
+  },
+  "counts": {
+    "small": {
+      "a_training": 600,
+      "feedback": 192,
+      "a_rounds": 128,
+      "b_rounds": 48
+    },
+    "wide": {
+      "a_training": 600,
+      "feedback": 384,
+      "a_rounds": 160,
+      "b_rounds": 72
+    }
+  },
+  "options": {
+    "paired_full": {
+      "estimate_cpu": 345.8125,
+      "cap_cpu": 397.684,
+      "cap_wall": 795.369,
+      "over_design_cap": false
+    },
+    "wide_only_lean": {
+      "estimate_cpu": 222.5625,
+      "cap_cpu": 255.947,
+      "cap_wall": 511.894,
+      "over_design_cap": false
+    }
+  },
+  "one_shot_adam_steps": 12,
+  "models_discarded": true,
+  "instrument_cpu": 11.8281
+}

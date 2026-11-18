@@ -1,0 +1,50 @@
+{
+  "schema": "taiji-u2-e5-1-capacity-smoke-v1",
+  "card": "E5.1",
+  "criteria_sha256": "f59c5ee197326219b9f889c62380c53b9d6dfdd2ac6584eb45811db588fa706b",
+  "checks": {
+    "a_birth_neutral": true,
+    "b_birth_neutral": true,
+    "codes_neutral": true,
+    "inherited_slices_exact": true,
+    "wide_parameter_count": true,
+    "wide_trainable_count": true,
+    "added_capacity_live": true,
+    "last_added_gradient_nonzero": true,
+    "first_added_gradient_after_output_moves": true,
+    "snapshot_restore_exact": true
+  },
+  "uncovered": [],
+  "identity": {
+    "small": {
+      "joint_hidden": 16,
+      "parameters": 22742,
+      "tensors": 194,
+      "trainable_tensors": 26,
+      "trainable_scalars": 4681,
+      "emission_scalars": 3919
+    },
+    "wide": {
+      "joint_hidden": 32,
+      "parameters": 23270,
+      "tensors": 194,
+      "trainable_tensors": 26,
+      "trainable_scalars": 5209,
+      "emission_scalars": 4447,
+      "added_scalars": 528,
+      "birth": "inherit first/last slices; seeded new first rows; zero new last columns => exact neutral birth"
+    },
+    "first_added_gradient": 3.583324909210205,
+    "last_added_gradient": 0.23343990743160248,
+    "restore_max_abs": 0.0
+  },
+  "discipline": {
+    "optimizer_steps": 0,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 82.5469
+  },
+  "verdict": "smoke_passed"
+}
