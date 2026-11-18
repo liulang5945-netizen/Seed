@@ -23,10 +23,12 @@ from scripts.training import run_a5_22_5 as a5  # noqa: E402
 from scripts.training.subject_registry import load_subject  # noqa: E402
 from taiji.u2_history import value_digest  # noqa: E402
 
+REHEARSAL = os.environ.get("TAIJI_E5_REHEARSAL") == "1"
 _ONLY = os.environ.get("TAIJI_E5_ONLY_GROUP", "").strip().strip(".") or "none"
+_SUFFIX = "rehearsal" if REHEARSAL else _ONLY
 OUT = (
-    ROOT / f"reports/taiji_u2_e5_ablate_{_ONLY}_20261118.json"
-    if _ONLY != "none"
+    ROOT / f"reports/taiji_u2_e5_{_SUFFIX}_20261118.json"
+    if _SUFFIX != "none"
     else (
         ROOT / "reports/taiji_u2_e5_3_frozen_head_20261118.json"
         if os.environ.get("TAIJI_E5_FREEZE_BYTE_HEAD") == "1"
@@ -35,7 +37,7 @@ OUT = (
 )
 CONTRACT = ROOT / "plans/manifests/taiji_u2_a5_protocol_20261116.json"
 SUBJECT = "a5-pre-seed20261110"
-EPOCHS = 25
+EPOCHS = 12 if REHEARSAL else 25
 B_PASS = 20
 
 
@@ -95,8 +97,12 @@ def main() -> int:
 
     started = time.process_time()
     before = measure(model, data, items, codes, template_of)
+    a_items = a2.cache_positions(model, data["train"], codes) if REHEARSAL else []
     trainable = [p for p in model.parameters() if p.requires_grad]
-    optimizer = a5.optimizer_for(trainable, contract["feedback_optimizer"])
+    feedback_spec = dict(contract["feedback_optimizer"])
+    if os.environ.get("TAIJI_E5_LR"):
+        feedback_spec["lr"] = float(os.environ["TAIJI_E5_LR"])
+    optimizer = a5.optimizer_for(trainable, feedback_spec)
     updates = 0
     for _epoch in range(EPOCHS):
         for index, item in enumerate(items):
@@ -115,6 +121,13 @@ def main() -> int:
             optimizer.step()
             model.parameter_revision += 1
             updates += 1
+            if REHEARSAL:
+                example = a_items[updates % len(a_items)]
+                optimizer.zero_grad(set_to_none=True)
+                a2.emission_loss(model, [example], use_code=True).backward()
+                optimizer.step()
+                model.parameter_revision += 1
+                updates += 1
     after = measure(model, data, items, codes, template_of)
 
     damage = round(before["a_accuracy"] - after["a_accuracy"], 4)
@@ -136,6 +149,8 @@ def main() -> int:
         "trainable_names": names,
         "frozen_byte_head": freeze_head,
         "only_group": only_group,
+        "rehearsal": REHEARSAL,
+        "lr": feedback_spec["lr"],
         "updates": updates,
         "before": before,
         "after": after,

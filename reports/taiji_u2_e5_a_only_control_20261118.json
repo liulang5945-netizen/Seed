@@ -1,0 +1,25 @@
+{
+  "schema": "taiji-u2-e5-a-only-control-v1",
+  "card": "E5",
+  "subject": "a5-pre-seed20261110",
+  "bundle_sha256": "de5452f6b7716cb44f48221aafca5e5e5f132fcdeaa46c3196d8929d0c815465",
+  "marks": [
+    {
+      "steps": 0,
+      "a_accuracy": 1.0
+    },
+    {
+      "steps": 5,
+      "a_accuracy": 1.0
+    },
+    {
+      "steps": 20,
+      "a_accuracy": 1.0
+    },
+    {
+      "steps": 50,
+      "a_accuracy": 1.0
+    }
+  ],
+  "verdict": "a_is_stable"
+}
