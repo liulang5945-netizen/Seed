@@ -12,6 +12,7 @@ No model code is modified and the bundle format is untouched.
 from __future__ import annotations
 
 import json
+import os
 import sys
 import time
 from dataclasses import replace
@@ -24,7 +25,11 @@ from torch.nn.utils import parameters_to_vector, vector_to_parameters
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from scripts.training.first_a_support_22_5 import generate_examples, save_learner  # noqa: E402
+from scripts.training.first_a_support_22_5 import (  # noqa: E402
+    generate_examples,
+    load_learner,
+    save_learner,
+)
 from scripts.training.run_a_gate_pixel_20261117 import (  # noqa: E402
     FIRST_WEIGHT,
     SEED,
@@ -33,10 +38,14 @@ from scripts.training.run_a_gate_pixel_20261117 import (  # noqa: E402
     masked_loss,
 )
 from scripts.training.run_a_gate_pixel_segment_20261117 import probe  # noqa: E402
+
+if os.environ.get("TAIJI_A_FIXTURE") == "v2":  # arm selector: three-body train split
+    from scripts.training.first_a_support_22_5_v2 import generate_examples  # noqa: F811
 from taiji.u2_history import value_digest  # noqa: E402
 from taiji.u2_subject import U2Config, U2Subject  # noqa: E402
 
 OUT = ROOT / "reports/taiji_u2_parallel_speed_20261118.json"
+WORLDS = 768
 WORKER: dict = {}
 
 
@@ -44,7 +53,7 @@ def _init(workers: int) -> None:
     torch.set_num_threads(1)
     config = replace(U2Config.small(), seed=SEED, readout="pixel-salience")
     WORKER["model"] = U2Subject(config).metadata_candidate().request_candidate()
-    WORKER["train"] = generate_examples("train", 64)
+    WORKER["train"] = generate_examples("train", WORLDS)
     WORKER["workers"] = workers
 
 
@@ -70,14 +79,19 @@ def main(argv: list[str] | None = None) -> int:
     config = replace(U2Config.small(), seed=SEED, readout="pixel-salience")
     model = U2Subject(config).metadata_candidate().request_candidate()
     optimizer = torch.optim.Adam(model.parameters(), lr=0.01, betas=(0.9, 0.999))
-    order = torch.randperm(64, generator=torch.Generator().manual_seed(9)).tolist()
-    flat = parameters_to_vector(model.parameters()).detach()
+    order = torch.randperm(WORLDS, generator=torch.Generator().manual_seed(9)).tolist()
     cursor = 0
+    resume = Path(argv[3]) if len(argv) > 3 else None
+    if resume is not None:
+        model, optimizer, loaded = load_learner(resume)
+        order = [int(index) for index in loaded.get("order", order)]
+        cursor = int(loaded.get(cursor, 0))
+    flat = parameters_to_vector(model.parameters()).detach()
     wall = time.perf_counter()
     with mp.Pool(workers, initializer=_init, initargs=(workers,)) as pool:
         for _ in range(updates):
-            shards = [[order[(cursor + offset) % 64]] for offset in range(batch)]
-            cursor = (cursor + batch) % 64
+            shards = [[order[(cursor + offset) % WORLDS]] for offset in range(batch)]
+            cursor = (cursor + batch) % WORLDS
             results = pool.map(_grad, [(flat, shard) for shard in shards])
             gradient = torch.stack([row[1] for row in results]).mean(0)
             optimizer.zero_grad(set_to_none=True)
@@ -89,12 +103,12 @@ def main(argv: list[str] | None = None) -> int:
             optimizer.step()
             flat = parameters_to_vector(model.parameters()).detach()
     elapsed = time.perf_counter() - wall
-    fit = generate_examples("fit", 8)
+    fit = generate_examples("fit", 32)
     result = evaluate(model, fit)
     stamp = time.strftime("%Y%m%dT%H%M%SZ", time.gmtime())
     directory = ROOT / "output" / f"a_pixel_parallel_{stamp}"
     directory.mkdir(parents=True, exist_ok=True)
-    train_for_digest = generate_examples("train", 64)
+    train_for_digest = generate_examples("train", WORLDS)
     checkpoint = directory / "segment.bin"
     save_learner(
         checkpoint,
@@ -109,6 +123,7 @@ def main(argv: list[str] | None = None) -> int:
     payload = {
         "schema": "taiji-u2-parallel-speed-v1",
         "card": "22.5.0.A",
+        "fixture": os.environ.get("TAIJI_A_FIXTURE", "v1"),
         "updates": updates,
         "workers": workers,
         "batch": batch,
