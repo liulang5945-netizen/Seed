@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import json
 import math
+import os
 import random
 import sys
 import time
@@ -31,11 +32,13 @@ from scripts.training import run_a5_22_5 as a5  # noqa: E402
 from scripts.training.subject_registry import load_subject  # noqa: E402
 from taiji.u2_history import value_digest  # noqa: E402
 
-OUT = ROOT / "reports/taiji_u2_e5_5_record_channel_20261118.json"
+OUT = ROOT / f"reports/taiji_u2_e5_5_channel_{os.environ.get("TAIJI_E5_TAG", "base")}_20261118.json"
 CONTRACT = ROOT / "plans/manifests/taiji_u2_a5_protocol_20261116.json"
 SUBJECT = "a5-pre-seed20261110"
 ORDER = ("左边", "中间", "右边")
-STEPS = 6000
+STEPS = int(os.environ.get("TAIJI_E5_STEPS", 6000))
+EMB = int(os.environ.get("TAIJI_E5_EMB", 16))
+DIM = int(os.environ.get("TAIJI_E5_DIM", 32))
 
 
 class RecordCopy(nn.Module):
@@ -122,7 +125,7 @@ def main() -> int:
     train_items = build_items(data["train"], templates)
     fit_items = build_items(data["fit"], templates)
 
-    channel = RecordCopy()
+    channel = RecordCopy(emb=EMB, d=DIM)
     optimizer = torch.optim.Adam(channel.parameters(), lr=0.01, weight_decay=1e-4)
     started = time.process_time()
     rng = random.Random(20261110)
@@ -178,6 +181,8 @@ def main() -> int:
         "train_items": len(train_items),
         "fit_items": len(fit_items),
         "steps": STEPS,
+        "emb": EMB,
+        "dim": DIM,
         "channel_parameters": sum(p.numel() for p in channel.parameters()),
         "b_correct": correct,
         "b_denominator": len(fit_items),
