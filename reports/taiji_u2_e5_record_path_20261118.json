@@ -1,0 +1,111 @@
+{
+  "schema": "taiji-u2-e5-record-path-v1",
+  "card": "E5",
+  "bundle": "data/experiments/taiji_u2/a5/20261116T0520Z/seed-20261110/bundle-pre-feedback.pt",
+  "bundle_update": 600,
+  "calibration_a_accuracy": 1.0,
+  "status": "measured",
+  "items": 4,
+  "rows": [
+    {
+      "id": "fit-0",
+      "target_first_byte": 228,
+      "record_len": 30,
+      "without_record": {
+        "copy_slots": 0,
+        "copy_mass": 0.0,
+        "copy_argmax": -1,
+        "gen_argmax": 229,
+        "branch_argmax": 229,
+        "final_argmax": 229,
+        "valid_positions": 0,
+        "record_slots": 0
+      },
+      "with_record": {
+        "copy_slots": 60,
+        "copy_mass": 0.383457,
+        "copy_argmax": 24,
+        "gen_argmax": 486,
+        "branch_argmax": 486,
+        "final_argmax": 229,
+        "valid_positions": 30,
+        "record_slots": 30
+      }
+    },
+    {
+      "id": "fit-1",
+      "target_first_byte": 229,
+      "record_len": 36,
+      "without_record": {
+        "copy_slots": 0,
+        "copy_mass": 0.0,
+        "copy_argmax": -1,
+        "gen_argmax": 184,
+        "branch_argmax": 184,
+        "final_argmax": 228,
+        "valid_positions": 0,
+        "record_slots": 0
+      },
+      "with_record": {
+        "copy_slots": 72,
+        "copy_mass": 0.850635,
+        "copy_argmax": 19,
+        "gen_argmax": 441,
+        "branch_argmax": 441,
+        "final_argmax": 228,
+        "valid_positions": 36,
+        "record_slots": 36
+      }
+    },
+    {
+      "id": "fit-2",
+      "target_first_byte": 229,
+      "record_len": 42,
+      "without_record": {
+        "copy_slots": 0,
+        "copy_mass": 0.0,
+        "copy_argmax": -1,
+        "gen_argmax": 229,
+        "branch_argmax": 229,
+        "final_argmax": 229,
+        "valid_positions": 0,
+        "record_slots": 0
+      },
+      "with_record": {
+        "copy_slots": 84,
+        "copy_mass": 0.337703,
+        "copy_argmax": 10,
+        "gen_argmax": 486,
+        "branch_argmax": 486,
+        "final_argmax": 229,
+        "valid_positions": 42,
+        "record_slots": 42
+      }
+    },
+    {
+      "id": "fit-4",
+      "target_first_byte": 228,
+      "record_len": 51,
+      "without_record": {
+        "copy_slots": 0,
+        "copy_mass": 0.0,
+        "copy_argmax": -1,
+        "gen_argmax": 229,
+        "branch_argmax": 229,
+        "final_argmax": 229,
+        "valid_positions": 0,
+        "record_slots": 0
+      },
+      "with_record": {
+        "copy_slots": 102,
+        "copy_mass": 0.382738,
+        "copy_argmax": 40,
+        "gen_argmax": 486,
+        "branch_argmax": 486,
+        "final_argmax": 229,
+        "valid_positions": 51,
+        "record_slots": 51
+      }
+    }
+  ]
+}
