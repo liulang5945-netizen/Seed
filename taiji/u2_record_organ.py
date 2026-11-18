@@ -49,7 +49,8 @@ class RecordOrgan(nn.Module):
         self.byte = nn.Embedding(256, emb)
         self.query = nn.Linear(2 * emb, width)
         self.key = nn.Linear(emb, width)
-        self.relevance = nn.Linear(2 * emb, 1)
+        self.scale = nn.Parameter(torch.tensor(1.0))
+        self.proj = nn.Linear(emb, emb)
 
     def select(self, request: bytes, record: bytes) -> bytes:
         windows = windows_of(record)
@@ -82,8 +83,9 @@ class RecordOrgan(nn.Module):
         per_char = [
             self.byte(torch.tensor(list(piece), dtype=torch.long)).mean(0) for piece in pieces
         ]
-        matched = [float((body @ vector).max()) for vector in per_char]
-        return torch.tensor([min(matched)])
+        projected = self.proj(body)
+        matched = torch.stack([(projected @ self.proj(vector)).max() for vector in per_char])
+        return (self.scale * matched.min()).reshape(1)
 
     def relevant(self, request: bytes, record: bytes) -> float:
         return float(self.relevance_logits(request, record).sigmoid())

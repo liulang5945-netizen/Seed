@@ -4,255 +4,255 @@
   "subject": "a5-pre-seed20261110",
   "a_correct": 32,
   "a_denominator": 32,
-  "b_correct": 24,
+  "b_correct": 0,
   "b_denominator": 24,
-  "d_correct": 0,
+  "d_correct": 24,
   "d_denominator": 24,
   "parent_unchanged": true,
   "verdict": "relevance_fails",
-  "cpu": 17.45,
+  "cpu": 22.92,
   "b_rows": [
     {
       "id": "fit-0",
-      "got": "中间",
-      "correct": true
+      "got": "左边",
+      "correct": false
     },
     {
       "id": "fit-1",
-      "got": "右边",
-      "correct": true
+      "got": "中间",
+      "correct": false
     },
     {
       "id": "fit-2",
-      "got": "左边",
-      "correct": true
+      "got": "右边",
+      "correct": false
     },
     {
       "id": "fit-4",
-      "got": "中间",
-      "correct": true
+      "got": "左边",
+      "correct": false
     },
     {
       "id": "fit-5",
-      "got": "右边",
-      "correct": true
+      "got": "中间",
+      "correct": false
     },
     {
       "id": "fit-6",
-      "got": "左边",
-      "correct": true
+      "got": "右边",
+      "correct": false
     },
     {
       "id": "fit-8",
-      "got": "中间",
-      "correct": true
+      "got": "左边",
+      "correct": false
     },
     {
       "id": "fit-9",
-      "got": "右边",
-      "correct": true
+      "got": "中间",
+      "correct": false
     },
     {
       "id": "fit-10",
-      "got": "左边",
-      "correct": true
+      "got": "右边",
+      "correct": false
     },
     {
       "id": "fit-12",
-      "got": "中间",
-      "correct": true
+      "got": "左边",
+      "correct": false
     },
     {
       "id": "fit-13",
-      "got": "右边",
-      "correct": true
+      "got": "中间",
+      "correct": false
     },
     {
       "id": "fit-14",
-      "got": "左边",
-      "correct": true
+      "got": "右边",
+      "correct": false
     },
     {
       "id": "fit-16",
-      "got": "中间",
-      "correct": true
+      "got": "左边",
+      "correct": false
     },
     {
       "id": "fit-17",
-      "got": "右边",
-      "correct": true
+      "got": "中间",
+      "correct": false
     },
     {
       "id": "fit-18",
-      "got": "左边",
-      "correct": true
+      "got": "右边",
+      "correct": false
     },
     {
       "id": "fit-20",
-      "got": "中间",
-      "correct": true
+      "got": "左边",
+      "correct": false
     },
     {
       "id": "fit-21",
-      "got": "右边",
-      "correct": true
+      "got": "中间",
+      "correct": false
     },
     {
       "id": "fit-22",
-      "got": "左边",
-      "correct": true
+      "got": "右边",
+      "correct": false
     },
     {
       "id": "fit-24",
-      "got": "中间",
-      "correct": true
+      "got": "左边",
+      "correct": false
     },
     {
       "id": "fit-25",
-      "got": "右边",
-      "correct": true
+      "got": "中间",
+      "correct": false
     },
     {
       "id": "fit-26",
-      "got": "左边",
-      "correct": true
+      "got": "右边",
+      "correct": false
     },
     {
       "id": "fit-28",
-      "got": "中间",
-      "correct": true
+      "got": "左边",
+      "correct": false
     },
     {
       "id": "fit-29",
-      "got": "右边",
-      "correct": true
+      "got": "中间",
+      "correct": false
     },
     {
       "id": "fit-30",
-      "got": "左边",
-      "correct": true
+      "got": "右边",
+      "correct": false
     }
   ],
   "d_rows": [
     {
       "id": "fit-0",
-      "got": "右边",
-      "correct": false
+      "got": "左边",
+      "correct": true
     },
     {
       "id": "fit-1",
-      "got": "左边",
-      "correct": false
+      "got": "中间",
+      "correct": true
     },
     {
       "id": "fit-2",
-      "got": "中间",
-      "correct": false
+      "got": "右边",
+      "correct": true
     },
     {
       "id": "fit-4",
-      "got": "右边",
-      "correct": false
+      "got": "左边",
+      "correct": true
     },
     {
       "id": "fit-5",
-      "got": "左边",
-      "correct": false
+      "got": "中间",
+      "correct": true
     },
     {
       "id": "fit-6",
-      "got": "中间",
-      "correct": false
+      "got": "右边",
+      "correct": true
     },
     {
       "id": "fit-8",
-      "got": "右边",
-      "correct": false
+      "got": "左边",
+      "correct": true
     },
     {
       "id": "fit-9",
-      "got": "左边",
-      "correct": false
+      "got": "中间",
+      "correct": true
     },
     {
       "id": "fit-10",
-      "got": "中间",
-      "correct": false
+      "got": "右边",
+      "correct": true
     },
     {
       "id": "fit-12",
-      "got": "右边",
-      "correct": false
+      "got": "左边",
+      "correct": true
     },
     {
       "id": "fit-13",
-      "got": "左边",
-      "correct": false
+      "got": "中间",
+      "correct": true
     },
     {
       "id": "fit-14",
-      "got": "中间",
-      "correct": false
+      "got": "右边",
+      "correct": true
     },
     {
       "id": "fit-16",
-      "got": "右边",
-      "correct": false
+      "got": "左边",
+      "correct": true
     },
     {
       "id": "fit-17",
-      "got": "左边",
-      "correct": false
+      "got": "中间",
+      "correct": true
     },
     {
       "id": "fit-18",
-      "got": "中间",
-      "correct": false
+      "got": "右边",
+      "correct": true
     },
     {
       "id": "fit-20",
-      "got": "右边",
-      "correct": false
+      "got": "左边",
+      "correct": true
     },
     {
       "id": "fit-21",
-      "got": "左边",
-      "correct": false
+      "got": "中间",
+      "correct": true
     },
     {
       "id": "fit-22",
-      "got": "中间",
-      "correct": false
+      "got": "右边",
+      "correct": true
     },
     {
       "id": "fit-24",
-      "got": "右边",
-      "correct": false
+      "got": "左边",
+      "correct": true
     },
     {
       "id": "fit-25",
-      "got": "左边",
-      "correct": false
+      "got": "中间",
+      "correct": true
     },
     {
       "id": "fit-26",
-      "got": "中间",
-      "correct": false
+      "got": "右边",
+      "correct": true
     },
     {
       "id": "fit-28",
-      "got": "右边",
-      "correct": false
+      "got": "左边",
+      "correct": true
     },
     {
       "id": "fit-29",
-      "got": "左边",
-      "correct": false
+      "got": "中间",
+      "correct": true
     },
     {
       "id": "fit-30",
-      "got": "中间",
-      "correct": false
+      "got": "右边",
+      "correct": true
     }
   ]
 }
