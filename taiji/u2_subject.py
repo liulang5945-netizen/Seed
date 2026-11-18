@@ -670,6 +670,12 @@ class U2Subject(_WorldKernel):
 
                 self.pixel_readout = PixelSalienceReadout(out_dim=d)
                 self.pixel_unit_owners = unit_registry()
+                # Dedicated logit path for the readout delta: the shared byte head
+                # has weights that the class prior dominates, so the delta gets its
+                # own rows.  Zero-initialised, so birth stays neutral.
+                self.delta_readout = nn.Linear(d, 257)
+                nn.init.zeros_(self.delta_readout.weight)
+                nn.init.zeros_(self.delta_readout.bias)
         self.generation = 0
         self.parameter_revision = 0
         widths = config.group_units or (config.units,) * config.groups
@@ -1318,7 +1324,12 @@ class U2Subject(_WorldKernel):
                 delta = delta * valid.any().to(delta.dtype)
             context = context + delta
         previous_value = self.previous_embedding(previous)[None].expand(self.c.branches, -1)
-        branch_logits = self.byte_head(torch.cat([context, previous_value], -1)).log_softmax(-1)
+        branch_logits = self.byte_head(torch.cat([context, previous_value], -1))
+        if self.c.readout == "pixel-salience":
+            delta = state.get("pixel_delta")
+            if delta is not None:
+                branch_logits = branch_logits + self.delta_readout(delta)
+        branch_logits = branch_logits.log_softmax(-1)
         gate_input = torch.cat(
             [context, goal[None].expand(self.c.branches, -1), previous_value], -1
         )
