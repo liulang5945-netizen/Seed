@@ -1,0 +1,19 @@
+{
+  "threads": 12,
+  "forward_sequential": 3.6406,
+  "forward_threaded": 4.4375,
+  "loss_sequential": [
+    Infinity,
+    Infinity,
+    Infinity,
+    Infinity
+  ],
+  "loss_threaded": [
+    Infinity,
+    Infinity,
+    Infinity,
+    Infinity
+  ],
+  "forward_plus_backward": 3.75,
+  "speedup_forward": 0.82
+}
