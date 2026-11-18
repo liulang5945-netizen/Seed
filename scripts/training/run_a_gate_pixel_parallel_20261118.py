@@ -46,6 +46,7 @@ from taiji.u2_subject import U2Config, U2Subject  # noqa: E402
 
 OUT = ROOT / "reports/taiji_u2_parallel_speed_20261118.json"
 WORLDS = 768
+RUN_SEED = int(os.environ.get("TAIJI_A_SEED", SEED))
 MASK_EOS = os.environ.get("TAIJI_A_EOS_MASK", "1") == "1"
 BYTE_WEIGHT = {0xE4: 2.0, 0xE6: 2.0} if os.environ.get("TAIJI_A_BYTE_BALANCE") == "1" else None
 WORKER: dict = {}
@@ -53,7 +54,7 @@ WORKER: dict = {}
 
 def _init(workers: int) -> None:
     torch.set_num_threads(1)
-    config = replace(U2Config.small(), seed=SEED, readout="pixel-salience")
+    config = replace(U2Config.small(), seed=RUN_SEED, readout="pixel-salience")
     WORKER["model"] = U2Subject(config).metadata_candidate().request_candidate()
     WORKER["train"] = generate_examples("train", WORLDS)
     WORKER["workers"] = workers
@@ -80,10 +81,10 @@ def main(argv: list[str] | None = None) -> int:
     updates = int(argv[0]) if argv else 100
     workers = int(argv[1]) if len(argv) > 1 else 4
     batch = int(argv[2]) if len(argv) > 2 else 4
-    config = replace(U2Config.small(), seed=SEED, readout="pixel-salience")
+    config = replace(U2Config.small(), seed=RUN_SEED, readout="pixel-salience")
     model = U2Subject(config).metadata_candidate().request_candidate()
     optimizer = torch.optim.Adam(model.parameters(), lr=0.01, betas=(0.9, 0.999))
-    order = torch.randperm(WORLDS, generator=torch.Generator().manual_seed(9)).tolist()
+    order = torch.randperm(WORLDS, generator=torch.Generator().manual_seed(RUN_SEED + 9)).tolist()
     cursor = 0
     resume = Path(argv[3]) if len(argv) > 3 else None
     if resume is not None:
@@ -131,6 +132,7 @@ def main(argv: list[str] | None = None) -> int:
         "eos_masked_in_loss": MASK_EOS,
         "byte_weight": BYTE_WEIGHT,
         "updates": updates,
+        "seed": RUN_SEED,
         "workers": workers,
         "batch": batch,
         "wall_seconds": round(elapsed, 2),
