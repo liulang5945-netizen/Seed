@@ -1,0 +1,11 @@
+{
+  "schema": "taiji-u2-parallel-speed-v1",
+  "card": "22.5.0.A",
+  "updates": 20,
+  "workers": 4,
+  "batch": 4,
+  "wall_seconds": 9.56,
+  "updates_per_second": 2.0921,
+  "seconds_per_update": 0.478,
+  "torch_threads": 12
+}
