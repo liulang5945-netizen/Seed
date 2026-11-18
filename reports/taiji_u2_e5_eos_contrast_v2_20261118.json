@@ -1,0 +1,265 @@
+{
+  "schema": "taiji-u2-e5-eos-contrast-v2",
+  "card": "E5",
+  "bundle": "data/experiments/taiji_u2/a5/20261116T0520Z/seed-20261110/bundle-pre-feedback.pt",
+  "bundle_update": 600,
+  "a_accuracy": 1.0,
+  "a_eos_rate": 1.0,
+  "a_rows": [
+    {
+      "id": "fit-0",
+      "exact": true,
+      "eos": true,
+      "len": 6
+    },
+    {
+      "id": "fit-1",
+      "exact": true,
+      "eos": true,
+      "len": 6
+    },
+    {
+      "id": "fit-2",
+      "exact": true,
+      "eos": true,
+      "len": 6
+    },
+    {
+      "id": "fit-3",
+      "exact": true,
+      "eos": true,
+      "len": 6
+    },
+    {
+      "id": "fit-4",
+      "exact": true,
+      "eos": true,
+      "len": 6
+    },
+    {
+      "id": "fit-5",
+      "exact": true,
+      "eos": true,
+      "len": 6
+    },
+    {
+      "id": "fit-6",
+      "exact": true,
+      "eos": true,
+      "len": 6
+    },
+    {
+      "id": "fit-7",
+      "exact": true,
+      "eos": true,
+      "len": 6
+    },
+    {
+      "id": "fit-8",
+      "exact": true,
+      "eos": true,
+      "len": 6
+    },
+    {
+      "id": "fit-9",
+      "exact": true,
+      "eos": true,
+      "len": 6
+    },
+    {
+      "id": "fit-10",
+      "exact": true,
+      "eos": true,
+      "len": 6
+    },
+    {
+      "id": "fit-11",
+      "exact": true,
+      "eos": true,
+      "len": 6
+    },
+    {
+      "id": "fit-12",
+      "exact": true,
+      "eos": true,
+      "len": 6
+    },
+    {
+      "id": "fit-13",
+      "exact": true,
+      "eos": true,
+      "len": 6
+    },
+    {
+      "id": "fit-14",
+      "exact": true,
+      "eos": true,
+      "len": 6
+    },
+    {
+      "id": "fit-15",
+      "exact": true,
+      "eos": true,
+      "len": 6
+    },
+    {
+      "id": "fit-16",
+      "exact": true,
+      "eos": true,
+      "len": 6
+    },
+    {
+      "id": "fit-17",
+      "exact": true,
+      "eos": true,
+      "len": 6
+    },
+    {
+      "id": "fit-18",
+      "exact": true,
+      "eos": true,
+      "len": 6
+    },
+    {
+      "id": "fit-19",
+      "exact": true,
+      "eos": true,
+      "len": 6
+    },
+    {
+      "id": "fit-20",
+      "exact": true,
+      "eos": true,
+      "len": 6
+    },
+    {
+      "id": "fit-21",
+      "exact": true,
+      "eos": true,
+      "len": 6
+    },
+    {
+      "id": "fit-22",
+      "exact": true,
+      "eos": true,
+      "len": 6
+    },
+    {
+      "id": "fit-23",
+      "exact": true,
+      "eos": true,
+      "len": 6
+    },
+    {
+      "id": "fit-24",
+      "exact": true,
+      "eos": true,
+      "len": 6
+    },
+    {
+      "id": "fit-25",
+      "exact": true,
+      "eos": true,
+      "len": 6
+    },
+    {
+      "id": "fit-26",
+      "exact": true,
+      "eos": true,
+      "len": 6
+    },
+    {
+      "id": "fit-27",
+      "exact": true,
+      "eos": true,
+      "len": 6
+    },
+    {
+      "id": "fit-28",
+      "exact": true,
+      "eos": true,
+      "len": 6
+    },
+    {
+      "id": "fit-29",
+      "exact": true,
+      "eos": true,
+      "len": 6
+    },
+    {
+      "id": "fit-30",
+      "exact": true,
+      "eos": true,
+      "len": 6
+    },
+    {
+      "id": "fit-31",
+      "exact": true,
+      "eos": true,
+      "len": 6
+    }
+  ],
+  "status": "measured",
+  "b_items": 8,
+  "b_exact_rate": 0.0,
+  "b_eos_rate": 1.0,
+  "b_rows": [
+    {
+      "id": "fit-0",
+      "exact": false,
+      "eos": true,
+      "len": 6,
+      "text": "左边"
+    },
+    {
+      "id": "fit-1",
+      "exact": false,
+      "eos": true,
+      "len": 6,
+      "text": "中间"
+    },
+    {
+      "id": "fit-2",
+      "exact": false,
+      "eos": true,
+      "len": 6,
+      "text": "右边"
+    },
+    {
+      "id": "fit-4",
+      "exact": false,
+      "eos": true,
+      "len": 6,
+      "text": "左边"
+    },
+    {
+      "id": "fit-5",
+      "exact": false,
+      "eos": true,
+      "len": 6,
+      "text": "中间"
+    },
+    {
+      "id": "fit-6",
+      "exact": false,
+      "eos": true,
+      "len": 6,
+      "text": "右边"
+    },
+    {
+      "id": "fit-8",
+      "exact": false,
+      "eos": true,
+      "len": 6,
+      "text": "左边"
+    },
+    {
+      "id": "fit-9",
+      "exact": false,
+      "eos": true,
+      "len": 6,
+      "text": "中间"
+    }
+  ],
+  "reading": "terminates_but_ignores_record"
+}
