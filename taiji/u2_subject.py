@@ -673,9 +673,16 @@ class U2Subject(_WorldKernel):
                 # Dedicated logit path for the readout delta: the shared byte head
                 # has weights that the class prior dominates, so the delta gets its
                 # own rows.  Zero-initialised, so birth stays neutral.
-                self.delta_readout = nn.Linear(d, 257)
-                nn.init.zeros_(self.delta_readout.weight)
-                nn.init.zeros_(self.delta_readout.bias)
+                # A single linear map on the delta is provably the same function as
+                # adding a second linear head, so the delta path gets a small MLP:
+                # it can form the interaction between the readout and the emission
+                # context that a sum of two linear maps cannot.  The last layer is
+                # zero-initialised, so birth stays neutral.
+                self.delta_head = nn.Sequential(
+                    nn.Linear(d, 4 * d), nn.GELU(), nn.Linear(4 * d, 257)
+                )
+                nn.init.zeros_(self.delta_head[2].weight)
+                nn.init.zeros_(self.delta_head[2].bias)
         self.generation = 0
         self.parameter_revision = 0
         widths = config.group_units or (config.units,) * config.groups
@@ -1328,7 +1335,7 @@ class U2Subject(_WorldKernel):
         if self.c.readout == "pixel-salience":
             delta = state.get("pixel_delta")
             if delta is not None:
-                branch_logits = branch_logits + self.delta_readout(delta)
+                branch_logits = branch_logits + self.delta_head(delta)
         branch_logits = branch_logits.log_softmax(-1)
         gate_input = torch.cat(
             [context, goal[None].expand(self.c.branches, -1), previous_value], -1
