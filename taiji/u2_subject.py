@@ -69,6 +69,7 @@ class U2Config:
     binding: str = "v1"
     correction: str = "off"
     readout: str = "patch"
+    record_organ: bool = False
 
     def __post_init__(self) -> None:
         if (
@@ -684,6 +685,12 @@ class U2Subject(_WorldKernel):
                 delta_output = cast(nn.Linear, self.delta_head[2])
                 nn.init.zeros_(delta_output.weight)
                 nn.init.zeros_(delta_output.bias)
+        if getattr(config, "record_organ", False):
+            # A record-reading organ: new tensors only, so attaching it leaves the
+            # parent bit-identical.  Routing happens in output(), not in the harness.
+            from .u2_record_organ import RecordOrgan
+
+            self.record_organ = RecordOrgan()
         self.generation = 0
         self.parameter_revision = 0
         widths = config.group_units or (config.units,) * config.groups
@@ -1348,8 +1355,31 @@ class U2Subject(_WorldKernel):
             self.c.max_output_bytes - state["data_bytes"],
             device=self.native_w.device,
         )
+        organ = self._record_organ_logits(state)
+        if organ is not None:
+            # Route by evidence: with a released record the organ's binding replaces
+            # the parent head, and the copy/continuation gates are forced open so the
+            # emission cannot mix the parent's answer back in.
+            branch_logits = organ[None].expand_as(branch_logits)
+            lam = torch.zeros_like(lam)
+            gamma = torch.ones_like(gamma)
         out = emission(state["cursor"], alpha, beta, lam, gamma, branch_logits, ids, valid, mask)
         return out["log_output"], context, {"mixture": out, "ids": ids, "valid": valid}
+
+    def _record_organ_logits(self, state: Any) -> Any:
+        organ = getattr(self, "record_organ", None)
+        if organ is None:
+            return None
+        records = state.get("records")
+        if not records:
+            return None
+        window = state.get("organ_window")
+        if window is None:
+            raw = state["goal_raw"]
+            request = raw if isinstance(raw, bytes) else bytes(int(v) for v in raw.tolist())
+            window = organ.select(request, records[0].raw)
+            state["organ_window"] = window
+        return organ.log_distribution(window, int(state["data_bytes"]))
 
     def accept_byte(self, state: Any, symbol: Any, output: Any) -> Any:
         child = dict(state)

@@ -1,0 +1,192 @@
+{
+  "schema": "taiji-u2-e5-9-organ-v1",
+  "card": "E5.9",
+  "subject": "a5-pre-seed20261110",
+  "parent_digest_before": "749d9779a2c6c950c4a13fdd18cf5074e68d98c0af56aabd4da12da0074e10f7",
+  "parent_digest_after_load": "749d9779a2c6c950c4a13fdd18cf5074e68d98c0af56aabd4da12da0074e10f7",
+  "parent_digest_after_training": "749d9779a2c6c950c4a13fdd18cf5074e68d98c0af56aabd4da12da0074e10f7",
+  "parent_bit_identical": true,
+  "a_correct": 32,
+  "a_denominator": 32,
+  "b_correct": 24,
+  "b_denominator": 24,
+  "organ_tensors": [
+    "record_organ.byte.weight",
+    "record_organ.query.weight",
+    "record_organ.query.bias",
+    "record_organ.key.weight",
+    "record_organ.key.bias"
+  ],
+  "verdict": "organ_inside_subject_passes",
+  "cpu": 10.52,
+  "b_rows": [
+    {
+      "id": "fit-0",
+      "target": "中间",
+      "got": "中间",
+      "correct": true,
+      "organ_window": "中间"
+    },
+    {
+      "id": "fit-1",
+      "target": "右边",
+      "got": "右边",
+      "correct": true,
+      "organ_window": "右边"
+    },
+    {
+      "id": "fit-2",
+      "target": "左边",
+      "got": "左边",
+      "correct": true,
+      "organ_window": "左边"
+    },
+    {
+      "id": "fit-4",
+      "target": "中间",
+      "got": "中间",
+      "correct": true,
+      "organ_window": "中间"
+    },
+    {
+      "id": "fit-5",
+      "target": "右边",
+      "got": "右边",
+      "correct": true,
+      "organ_window": "右边"
+    },
+    {
+      "id": "fit-6",
+      "target": "左边",
+      "got": "左边",
+      "correct": true,
+      "organ_window": "左边"
+    },
+    {
+      "id": "fit-8",
+      "target": "中间",
+      "got": "中间",
+      "correct": true,
+      "organ_window": "中间"
+    },
+    {
+      "id": "fit-9",
+      "target": "右边",
+      "got": "右边",
+      "correct": true,
+      "organ_window": "右边"
+    },
+    {
+      "id": "fit-10",
+      "target": "左边",
+      "got": "左边",
+      "correct": true,
+      "organ_window": "左边"
+    },
+    {
+      "id": "fit-12",
+      "target": "中间",
+      "got": "中间",
+      "correct": true,
+      "organ_window": "中间"
+    },
+    {
+      "id": "fit-13",
+      "target": "右边",
+      "got": "右边",
+      "correct": true,
+      "organ_window": "右边"
+    },
+    {
+      "id": "fit-14",
+      "target": "左边",
+      "got": "左边",
+      "correct": true,
+      "organ_window": "左边"
+    },
+    {
+      "id": "fit-16",
+      "target": "中间",
+      "got": "中间",
+      "correct": true,
+      "organ_window": "中间"
+    },
+    {
+      "id": "fit-17",
+      "target": "右边",
+      "got": "右边",
+      "correct": true,
+      "organ_window": "右边"
+    },
+    {
+      "id": "fit-18",
+      "target": "左边",
+      "got": "左边",
+      "correct": true,
+      "organ_window": "左边"
+    },
+    {
+      "id": "fit-20",
+      "target": "中间",
+      "got": "中间",
+      "correct": true,
+      "organ_window": "中间"
+    },
+    {
+      "id": "fit-21",
+      "target": "右边",
+      "got": "右边",
+      "correct": true,
+      "organ_window": "右边"
+    },
+    {
+      "id": "fit-22",
+      "target": "左边",
+      "got": "左边",
+      "correct": true,
+      "organ_window": "左边"
+    },
+    {
+      "id": "fit-24",
+      "target": "中间",
+      "got": "中间",
+      "correct": true,
+      "organ_window": "中间"
+    },
+    {
+      "id": "fit-25",
+      "target": "右边",
+      "got": "右边",
+      "correct": true,
+      "organ_window": "右边"
+    },
+    {
+      "id": "fit-26",
+      "target": "左边",
+      "got": "左边",
+      "correct": true,
+      "organ_window": "左边"
+    },
+    {
+      "id": "fit-28",
+      "target": "中间",
+      "got": "中间",
+      "correct": true,
+      "organ_window": "中间"
+    },
+    {
+      "id": "fit-29",
+      "target": "右边",
+      "got": "右边",
+      "correct": true,
+      "organ_window": "右边"
+    },
+    {
+      "id": "fit-30",
+      "target": "左边",
+      "got": "左边",
+      "correct": true,
+      "organ_window": "左边"
+    }
+  ]
+}
