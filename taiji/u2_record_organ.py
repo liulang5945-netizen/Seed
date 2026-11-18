@@ -49,6 +49,7 @@ class RecordOrgan(nn.Module):
         self.byte = nn.Embedding(256, emb)
         self.query = nn.Linear(2 * emb, width)
         self.key = nn.Linear(emb, width)
+        self.relevance = nn.Linear(2 * emb, 1)
 
     def select(self, request: bytes, record: bytes) -> bytes:
         windows = windows_of(record)
@@ -61,6 +62,31 @@ class RecordOrgan(nn.Module):
         query = self.query(pooled)
         scores = keys @ query / math.sqrt(query.shape[-1])
         return windows[int(scores.argmax())]
+
+    def relevance_logits(self, request: bytes, record: bytes) -> torch.Tensor:
+        """Containment score: the best match of the asked entity against the record.
+
+        Pooling the whole record averages the entity away against the template, so
+        the score is the maximum over record positions of the entity vector.
+        """
+        # Every character of the asked entity must appear somewhere in the record:
+        # min over entity characters of max over record positions.  Averaging the
+        # entity (or taking a single max) cannot tell 绿色圆片 from 紫色圆片, which
+        # differ in one character only.
+        body = self.byte(torch.tensor(list(record), dtype=torch.long))
+        spans = spans_of(request)
+        pieces = [
+            request[start : (spans[i + 1] if i + 1 < len(spans) else len(request))]
+            for i, start in enumerate(spans)
+        ]
+        per_char = [
+            self.byte(torch.tensor(list(piece), dtype=torch.long)).mean(0) for piece in pieces
+        ]
+        matched = [float((body @ vector).max()) for vector in per_char]
+        return torch.tensor([min(matched)])
+
+    def relevant(self, request: bytes, record: bytes) -> float:
+        return float(self.relevance_logits(request, record).sigmoid())
 
     def log_distribution(self, window: bytes, offset: int) -> torch.Tensor:
         """One-hot log distribution: the organ decides, the parent head is bypassed."""

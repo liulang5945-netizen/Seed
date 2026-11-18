@@ -1373,6 +1373,14 @@ class U2Subject(_WorldKernel):
         records = state.get("records")
         if not records:
             return None
+        raw_goal = state["goal_raw"]
+        request_bytes = (
+            raw_goal if isinstance(raw_goal, bytes) else bytes(int(v) for v in raw_goal.tolist())
+        )
+        if organ.relevant(request_bytes, records[0].raw) < 0.5:
+            # A record that does not concern the asked entity must not override the
+            # observation: fall through to the parent head.
+            return None
         window = state.get("organ_window")
         if window is None:
             raw = state["goal_raw"]
