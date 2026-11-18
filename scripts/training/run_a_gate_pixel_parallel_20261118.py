@@ -24,8 +24,16 @@ from torch.nn.utils import parameters_to_vector, vector_to_parameters
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from scripts.training.first_a_support_22_5 import generate_examples  # noqa: E402
-from scripts.training.run_a_gate_pixel_20261117 import FIRST_WEIGHT, SEED, masked_loss  # noqa: E402
+from scripts.training.first_a_support_22_5 import generate_examples, save_learner  # noqa: E402
+from scripts.training.run_a_gate_pixel_20261117 import (  # noqa: E402
+    FIRST_WEIGHT,
+    SEED,
+    delta_spread,
+    evaluate,
+    masked_loss,
+)
+from scripts.training.run_a_gate_pixel_segment_20261117 import probe  # noqa: E402
+from taiji.u2_history import value_digest  # noqa: E402
 from taiji.u2_subject import U2Config, U2Subject  # noqa: E402
 
 OUT = ROOT / "reports/taiji_u2_parallel_speed_20261118.json"
@@ -81,6 +89,23 @@ def main(argv: list[str] | None = None) -> int:
             optimizer.step()
             flat = parameters_to_vector(model.parameters()).detach()
     elapsed = time.perf_counter() - wall
+    fit = generate_examples("fit", 8)
+    result = evaluate(model, fit)
+    stamp = time.strftime("%Y%m%dT%H%M%SZ", time.gmtime())
+    directory = ROOT / "output" / f"a_pixel_parallel_{stamp}"
+    directory.mkdir(parents=True, exist_ok=True)
+    train_for_digest = generate_examples("train", 64)
+    checkpoint = directory / "segment.bin"
+    save_learner(
+        checkpoint,
+        model,
+        optimizer,
+        "native",
+        updates,
+        updates * batch,
+        order,
+        value_digest(train_for_digest),
+    )
     payload = {
         "schema": "taiji-u2-parallel-speed-v1",
         "card": "22.5.0.A",
@@ -91,6 +116,12 @@ def main(argv: list[str] | None = None) -> int:
         "updates_per_second": round(updates / elapsed, 4),
         "seconds_per_update": round(elapsed / updates, 4),
         "torch_threads": torch.get_num_threads(),
+        "fit_correct": result["correct"],
+        "fit_denominator": result["denominator"],
+        "outputs": [row["output"] for row in result["rows"]],
+        "delta_spread": round(delta_spread(model, fit), 6),
+        "probe": probe(model),
+        "checkpoint": checkpoint.relative_to(ROOT).as_posix(),
     }
     if not OUT.exists():
         OUT.write_bytes(json.dumps(payload, ensure_ascii=False, indent=2).encode() + b"\n")
