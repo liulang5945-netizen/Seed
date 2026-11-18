@@ -46,6 +46,7 @@ from taiji.u2_subject import U2Config, U2Subject  # noqa: E402
 
 OUT = ROOT / "reports/taiji_u2_parallel_speed_20261118.json"
 WORLDS = 768
+MASK_EOS = os.environ.get("TAIJI_A_EOS_MASK", "1") == "1"
 WORKER: dict = {}
 
 
@@ -63,7 +64,9 @@ def _grad(task) -> tuple[float, torch.Tensor]:
     vector_to_parameters(flat, model.parameters())
     model.zero_grad(set_to_none=True)
     train = WORKER["train"]
-    loss = torch.stack([masked_loss(model, [train[i]], FIRST_WEIGHT) for i in indices]).mean()
+    loss = torch.stack(
+        [masked_loss(model, [train[i]], FIRST_WEIGHT, MASK_EOS) for i in indices]
+    ).mean()
     loss.backward()
     pieces = [
         parameter.grad.flatten() if parameter.grad is not None else torch.zeros_like(parameter)
@@ -124,6 +127,7 @@ def main(argv: list[str] | None = None) -> int:
         "schema": "taiji-u2-parallel-speed-v1",
         "card": "22.5.0.A",
         "fixture": os.environ.get("TAIJI_A_FIXTURE", "v1"),
+        "eos_masked_in_loss": MASK_EOS,
         "updates": updates,
         "workers": workers,
         "batch": batch,

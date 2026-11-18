@@ -43,14 +43,14 @@ FIRST_WEIGHT = 2.0
 MARKS = (0, 100, 200, 300)
 
 
-def masked_loss(model, examples, first_weight: float) -> torch.Tensor:
+def masked_loss(model, examples, first_weight: float, mask_eos: bool = True) -> torch.Tensor:
     losses = []
     for example in examples:
         state = prepare(model, example["public"], example["id"])
         terms = []
         for index, symbol in enumerate([*example["target"], 256]):
             probability, _, details = output(model, state)
-            if index == 0:
+            if index == 0 and mask_eos:
                 masked = probability.clone()
                 masked[256] = -torch.inf
                 probability = masked - torch.logsumexp(masked, -1)
