@@ -43,7 +43,9 @@ FIRST_WEIGHT = 2.0
 MARKS = (0, 100, 200, 300)
 
 
-def masked_loss(model, examples, first_weight: float, mask_eos: bool = True) -> torch.Tensor:
+def masked_loss(
+    model, examples, first_weight: float, mask_eos: bool = True, byte_weight=None
+) -> torch.Tensor:
     losses = []
     for example in examples:
         state = prepare(model, example["public"], example["id"])
@@ -57,7 +59,8 @@ def masked_loss(model, examples, first_weight: float, mask_eos: bool = True) -> 
             weight = first_weight if index == 0 else 1.0
             terms.append(-probability[symbol] * weight)
             state = accept(model, state, symbol, details)
-        losses.append(torch.stack(terms).mean())
+        scale = 1.0 if not byte_weight else byte_weight.get(int(example["target"][0]), 1.0)
+        losses.append(torch.stack(terms).mean() * scale)
     return torch.stack(losses).mean()
 
 
