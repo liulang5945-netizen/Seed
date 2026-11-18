@@ -1,0 +1,51 @@
+{
+  "schema": "taiji-u2-u1r1-verify-v1",
+  "card": "22.5.U.1r1",
+  "phase": "verify",
+  "criteria_sha256": "f11879d3f7bd6af91f2f05d92b69aca7260535ab6b5e37a1d47289e3388bcd50",
+  "verdict": "verify_passed",
+  "checks": {
+    "seed2026111601_fit_matches_run": true,
+    "seed2026111601_train_matches_run": true,
+    "seed2026111601_capsule_digest": true,
+    "seed2026111601_B_identity": true,
+    "seed2026111602_fit_matches_run": true,
+    "seed2026111602_train_matches_run": true,
+    "seed2026111602_capsule_digest": true,
+    "seed2026111602_B_identity": true,
+    "seed2026111603_fit_matches_run": true,
+    "seed2026111603_train_matches_run": true,
+    "seed2026111603_capsule_digest": true,
+    "seed2026111603_B_identity": true
+  },
+  "uncovered": [],
+  "rows": [
+    {
+      "seed": 2026111601,
+      "fit_accuracy": 0.1875,
+      "train_accuracy": 0.3125,
+      "fit_distinct": 2
+    },
+    {
+      "seed": 2026111602,
+      "fit_accuracy": 0.25,
+      "train_accuracy": 0.40625,
+      "fit_distinct": 3
+    },
+    {
+      "seed": 2026111603,
+      "fit_accuracy": 0.15625,
+      "train_accuracy": 0.3125,
+      "fit_distinct": 2
+    }
+  ],
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0
+  },
+  "cost": {
+    "cpu": 0.2656,
+    "wall": 0.296
+  }
+}

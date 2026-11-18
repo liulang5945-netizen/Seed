@@ -363,6 +363,7 @@ def _capacity_baseline(seed: int) -> dict[str, Any]:
     result = None
     for index in range(CAPACITY_ROUNDS - 1):
         result = world.step(f"capacity-{index}", capacity_course_action(index))
+    assert result is not None
     return {
         "world": world,
         "names": names,
@@ -512,7 +513,7 @@ def save_capsule(sample: Sample, path: str | Path) -> int:
 
 
 def load_capsule(path: str | Path) -> dict[str, Any]:
-    payload = atomic_load(path)
+    payload: dict[str, Any] = atomic_load(path)
     if (
         payload.get("schema") != CAPSULE_SCHEMA
         or payload.get("source_pins") != source_pins()
@@ -551,7 +552,8 @@ def load_capsule(path: str | Path) -> dict[str, Any]:
 
 
 def sample_world(payload: dict[str, Any]) -> dict[str, Any]:
-    return PhysicalWorld.restore(payload["world"]).snapshot()
+    snapshot: dict[str, Any] = PhysicalWorld.restore(payload["world"]).snapshot()
+    return snapshot
 
 
 def rebuild(sample: Sample) -> dict[str, Any]:

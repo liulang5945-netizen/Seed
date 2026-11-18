@@ -112,7 +112,8 @@ class PixelSalienceReadout(nn.Module):
             ],
             -1,
         )
-        return self.out(features)
+        result: torch.Tensor = self.out(features)
+        return result
 
 
 def unit_registry(width: int = 16, text: int = 16, out_dim: int = 8) -> dict:

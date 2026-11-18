@@ -36,6 +36,8 @@ from .u2_neural_units import RouteBGraph, UnitGraphSpec
 class PositionRouteBGraph(RouteBGraph):
     """Route B with question-conditioned column attention instead of mean-pool."""
 
+    attn_scale: float | torch.Tensor
+
     def __init__(self, spec: UnitGraphSpec) -> None:
         super().__init__(spec)
         self.route = "B_position"

@@ -120,7 +120,7 @@ def _checks(run: dict[str, Any], occlude_entity: str | None) -> list[dict[str, A
 
 
 def _interleave(first: list[dict[str, Any]], second: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    merged = []
+    merged: list[dict[str, Any]] = []
     for left, right in zip(first, second, strict=True):
         merged.extend((left, right))
     return merged

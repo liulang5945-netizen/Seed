@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import copy
 import json
 
 import pytest
@@ -23,7 +24,8 @@ def episodes() -> dict:
 def test_contract_frozen_with_measured_cap() -> None:
     data = contract()
     assert data["status"] == "frozen"
-    assert data["training_authority"] is None
+    assert data["training_authority"]
+    assert data["result"]["verdict"] == "budget_stop"
     assert data["criteria_sha256"] == v1.value_digest(data["criteria"])
     assert data["criteria"]["route"] == "B_hard_select"
     assert data["criteria"]["parent_route"] == "B_position_temp"
@@ -76,8 +78,10 @@ def test_hard_forward_matches_parent_chain() -> None:
 
 
 def test_run_guards_refuse_without_authority() -> None:
+    draft = copy.deepcopy(contract())
+    draft["training_authority"] = None
     with pytest.raises(ValueError, match="missing_training_authority"):
-        v1.guards(contract(), "run")
+        v1.guards(draft, "run")
 
 
 def test_price_report_matches_contract() -> None:

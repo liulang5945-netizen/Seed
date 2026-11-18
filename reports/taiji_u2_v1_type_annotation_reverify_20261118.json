@@ -1,0 +1,81 @@
+{
+  "schema": "taiji-u2-v1-hard-selection-verify-v1",
+  "card": "22.5.V.1",
+  "phase": "verify",
+  "criteria_sha256": "00bc9cf904c8d7f68bb6d3b2f5f264c16217b22e454ab53eb38bc9819a23db98",
+  "verdict": "verify_passed",
+  "checks": {
+    "seed2026111601_fit_matches_run": true,
+    "seed2026111601_train_matches_run": true,
+    "seed2026111601_selection_matches_run": true,
+    "seed2026111601_focus_matches_run": true,
+    "seed2026111601_capsule_digest": true,
+    "seed2026111601_only_trainable_changed": true,
+    "seed2026111602_fit_matches_run": true,
+    "seed2026111602_train_matches_run": true,
+    "seed2026111602_selection_matches_run": true,
+    "seed2026111602_focus_matches_run": true,
+    "seed2026111602_capsule_digest": true,
+    "seed2026111602_only_trainable_changed": true,
+    "seed2026111603_fit_matches_run": true,
+    "seed2026111603_train_matches_run": true,
+    "seed2026111603_selection_matches_run": true,
+    "seed2026111603_focus_matches_run": true,
+    "seed2026111603_capsule_digest": true,
+    "seed2026111603_only_trainable_changed": true
+  },
+  "uncovered": [],
+  "rows": [
+    {
+      "seed": 2026111601,
+      "fit_accuracy": 0.34375,
+      "train_accuracy": 0.359375,
+      "fit_selection": {
+        "hits": 21,
+        "denominator": 25,
+        "accuracy": 0.84
+      },
+      "changed_tensors": [
+        "W_q",
+        "position_head.weight"
+      ]
+    },
+    {
+      "seed": 2026111602,
+      "fit_accuracy": 0.375,
+      "train_accuracy": 0.4375,
+      "fit_selection": {
+        "hits": 13,
+        "denominator": 25,
+        "accuracy": 0.52
+      },
+      "changed_tensors": [
+        "W_q",
+        "position_head.weight"
+      ]
+    },
+    {
+      "seed": 2026111603,
+      "fit_accuracy": 0.21875,
+      "train_accuracy": 0.28125,
+      "fit_selection": {
+        "hits": 16,
+        "denominator": 25,
+        "accuracy": 0.64
+      },
+      "changed_tensors": [
+        "W_q",
+        "position_head.weight"
+      ]
+    }
+  ],
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0
+  },
+  "cost": {
+    "cpu": 0.4062,
+    "wall": 0.438
+  }
+}

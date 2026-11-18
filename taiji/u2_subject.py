@@ -681,8 +681,9 @@ class U2Subject(_WorldKernel):
                 self.delta_head = nn.Sequential(
                     nn.Linear(d, 4 * d), nn.GELU(), nn.Linear(4 * d, 257)
                 )
-                nn.init.zeros_(self.delta_head[2].weight)
-                nn.init.zeros_(self.delta_head[2].bias)
+                delta_output = cast(nn.Linear, self.delta_head[2])
+                nn.init.zeros_(delta_output.weight)
+                nn.init.zeros_(delta_output.bias)
         self.generation = 0
         self.parameter_revision = 0
         widths = config.group_units or (config.units,) * config.groups
