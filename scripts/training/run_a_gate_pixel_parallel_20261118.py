@@ -54,7 +54,12 @@ WORKER: dict = {}
 
 def _init(workers: int) -> None:
     torch.set_num_threads(1)
-    config = replace(U2Config.small(), seed=RUN_SEED, readout="pixel-salience")
+    config = replace(
+        U2Config.small(),
+        seed=RUN_SEED,
+        readout="pixel-salience",
+        d=int(os.environ.get("TAIJI_D", 8)),
+    )
     WORKER["model"] = U2Subject(config).metadata_candidate().request_candidate()
     WORKER["train"] = generate_examples("train", WORLDS)
     WORKER["workers"] = workers
@@ -81,7 +86,12 @@ def main(argv: list[str] | None = None) -> int:
     updates = int(argv[0]) if argv else 100
     workers = int(argv[1]) if len(argv) > 1 else 4
     batch = int(argv[2]) if len(argv) > 2 else 4
-    config = replace(U2Config.small(), seed=RUN_SEED, readout="pixel-salience")
+    config = replace(
+        U2Config.small(),
+        seed=RUN_SEED,
+        readout="pixel-salience",
+        d=int(os.environ.get("TAIJI_D", 8)),
+    )
     model = U2Subject(config).metadata_candidate().request_candidate()
     optimizer = torch.optim.Adam(model.parameters(), lr=0.01, betas=(0.9, 0.999))
     order = torch.randperm(WORLDS, generator=torch.Generator().manual_seed(RUN_SEED + 9)).tolist()
