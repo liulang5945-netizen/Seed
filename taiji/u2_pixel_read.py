@@ -85,7 +85,7 @@ class PixelSalienceReadout(nn.Module):
         question = nn.functional.normalize(
             self.text(torch.cat([text.mean(0), text.amax(0)], -1)), dim=-1
         )
-        scale = math.sqrt(key.shape[-1]) * self.log_temp.exp()
+        scale = math.sqrt(key.shape[-1]) * self.log_temp.clamp(0.0, 2.7726).exp()
         score = torch.cat(
             [
                 torch.einsum("d,nkd->nk", question, key) * scale,
