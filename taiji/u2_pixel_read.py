@@ -30,17 +30,26 @@ def pixel_grid(coordinates: torch.Tensor) -> torch.Tensor:
     """
     centres = coordinates[:, :2]
     offsets = torch.tensor([-3 / 32, -1 / 32, 1 / 32, 3 / 32], dtype=coordinates.dtype)
-    span_x = centres[:, 0].reshape(-1, 1, 1) + offsets.reshape(1, -1, 1)
-    span_y = centres[:, 1].reshape(-1, 1, 1) + offsets.reshape(1, 1, -1)
+    # [patch, row, col]: x changes with the column, y with the row.
+    span_x = centres[:, 0, None, None] + offsets[None, None, :]
+    span_y = centres[:, 1, None, None] + offsets[None, :, None]
     grid = torch.stack([span_x.expand(-1, 4, 4), span_y.expand(-1, 4, 4)], -1)
     return grid.reshape(4, 4, 4, 4, 2).permute(0, 2, 1, 3, 4).reshape(SIDE, SIDE, 2)
 
 
 def raster(blocks: torch.Tensor) -> torch.Tensor:
-    """Resplit 16 patch blocks (4x4 pixels x 3 channels) into a 16x16x3 raster."""
+    """Expand ``(16,48)`` or ``(B,16,48)`` patch blocks into a raster."""
+    squeeze = blocks.dim() == 2
+    if squeeze:
+        if tuple(blocks.shape) != (16, 48):
+            raise ValueError("pixel_blocks_shape")
+        blocks = blocks[None]
+    elif blocks.dim() != 3 or tuple(blocks.shape[1:]) != (16, 48):
+        raise ValueError("pixel_blocks_shape")
     count = blocks.shape[0]
     view = blocks.reshape(count, 4, 4, 4, 4, 3)
-    return view.permute(0, 1, 3, 2, 4, 5).contiguous().reshape(count, SIDE, SIDE, 3)
+    image = view.permute(0, 1, 3, 2, 4, 5).contiguous().reshape(count, SIDE, SIDE, 3)
+    return image[0] if squeeze else image
 
 
 class PixelSalienceReadout(nn.Module):
@@ -61,7 +70,15 @@ class PixelSalienceReadout(nn.Module):
     def forward(
         self, blocks: torch.Tensor, pixel_xy: torch.Tensor, request: torch.Tensor
     ) -> torch.Tensor:
-        image = raster(blocks if blocks.dim() == 3 else blocks[None])
+        if request.ndim != 1:
+            raise ValueError("pixel_request_vector_required")
+        if request.numel() == 0:
+            raise ValueError("pixel_readout_empty_request")
+        if request.numel() > MAX_BYTES:
+            raise ValueError("pixel_readout_request_too_long")
+        image = raster(blocks)
+        if image.dim() == 3:
+            image = image[None]
         flat = image.reshape(image.shape[0], SIDE * SIDE, 3)
         key = nn.functional.normalize(self.pixel(flat), dim=-1)
         text = self.byte(request) + self.position[0, : request.numel()]

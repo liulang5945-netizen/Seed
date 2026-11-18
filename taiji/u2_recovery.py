@@ -84,7 +84,7 @@ def _source_pins() -> dict[str, str]:
 
 def validate_subject_state(model: U2Subject, state: Mapping[str, Any]) -> None:
     """Validate legal anchors as well as reconstructed snapshots."""
-    if set(state) != set(model.state_registry()):
+    if not model.has_valid_state_keys(state):
         raise ValueError("Subject state registry mismatch")
     model.export_bundle(state)
     config, reference = model.c, model.native_w

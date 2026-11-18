@@ -1883,6 +1883,18 @@ class U2Subject(_WorldKernel):
     def state_registry(self) -> tuple[str, ...]:
         return tuple(sorted(self.initial().keys()))
 
+    def optional_state_keys(self) -> frozenset[str]:
+        """Derived utterance fields are optional for old and rebuilt bundles."""
+        keys = {"utterance_goal"}
+        if self.c.readout == "pixel-salience":
+            keys.update(("pixel_blocks", "pixel_coordinates", "pixel_grid", "pixel_delta"))
+        return frozenset(keys)
+
+    def has_valid_state_keys(self, state: Any) -> bool:
+        required = set(self.state_registry())
+        actual = set(state)
+        return required <= actual <= required | self.optional_state_keys()
+
     def mark_parameter_update(self) -> int:
         """Declare an externally owned engineering update before causal rebuild."""
         self.parameter_revision += 1
@@ -1896,7 +1908,7 @@ class U2Subject(_WorldKernel):
             from .u2_request_state import validate
 
             validate(self, state)
-        if set(state) != set(self.state_registry()):
+        if not self.has_valid_state_keys(state):
             raise ValueError("unregistered subject state")
         if state["structure"] != self.structure():
             raise ValueError("state/model structure mismatch")
@@ -1995,7 +2007,7 @@ class U2Subject(_WorldKernel):
 
         validate_structure(model)
         state = clone_tree(bundle["state"], detach=True)
-        if set(state) != set(model.state_registry()) or state["structure"] != model.structure():
+        if not model.has_valid_state_keys(state) or state["structure"] != model.structure():
             raise ValueError("bundle state registry mismatch")
         if model.c.separate_requests:
             from .u2_request_state import validate
