@@ -1,5 +1,7 @@
 {
   "schema": "taiji-u2-e5-9-organ-v1",
+  "bundle": "data/experiments/taiji_u2/e5_9/bundle-parent-plus-organ.pt",
+  "bundle_sha256": "5d510357d87ecb3645ad8aaba6c36f7a853061a285a7d8b2dd74a27017e11367",
   "card": "E5.9",
   "subject": "a5-pre-seed20261110",
   "parent_digest_before": "749d9779a2c6c950c4a13fdd18cf5074e68d98c0af56aabd4da12da0074e10f7",

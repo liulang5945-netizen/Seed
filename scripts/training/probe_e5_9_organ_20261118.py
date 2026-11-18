@@ -140,8 +140,24 @@ def main() -> int:
         )
 
     after = value_digest({k: v for k, v in model.state_dict().items() if k in parent_keys})
+    bundle_dir = ROOT / "data/experiments/taiji_u2/e5_9"
+    bundle_dir.mkdir(parents=True, exist_ok=True)
+    bundle = bundle_dir / "bundle-parent-plus-organ.pt"
+    torch.save(
+        {
+            "model": {k: v.detach().clone() for k, v in model.state_dict().items()},
+            "update": "parent+organ",
+            "revision": int(model.parameter_revision),
+            "parent": SUBJECT,
+        },
+        bundle,
+    )
+    import hashlib
+
     payload = {
         "schema": "taiji-u2-e5-9-organ-v1",
+        "bundle": bundle.relative_to(ROOT).as_posix(),
+        "bundle_sha256": hashlib.sha256(bundle.read_bytes()).hexdigest(),
         "card": "E5.9",
         "subject": SUBJECT,
         "parent_digest_before": before,

@@ -33,15 +33,35 @@ REGISTRY = ROOT / "plans/manifests/subject_registry_20261118.json"
 A5_RUN = "data/experiments/taiji_u2/a5/20261116T0520Z"
 SEEDS = ("20261110", "20261111", "20261112")
 
-DECLARED = [
-    (f"a5-pre-seed{seed}", f"{A5_RUN}/seed-{seed}/bundle-pre-feedback.pt", "a5-pre")
-    for seed in SEEDS
-] + [
-    (f"a5-post-seed{seed}", f"{A5_RUN}/seed-{seed}/bundle-post-feedback.pt", "a5-post")
-    for seed in SEEDS
-]
+DECLARED = (
+    [
+        (f"a5-pre-seed{seed}", f"{A5_RUN}/seed-{seed}/bundle-pre-feedback.pt", "a5-pre")
+        for seed in SEEDS
+    ]
+    + [
+        (
+            "e5-organ-seed20261110",
+            "data/experiments/taiji_u2/e5_9/bundle-parent-plus-organ.pt",
+            "e5-organ",
+        ),
+    ]
+    + [
+        (f"a5-post-seed{seed}", f"{A5_RUN}/seed-{seed}/bundle-post-feedback.pt", "a5-post")
+        for seed in SEEDS
+    ]
+)
 
 FAMILIES = {
+    "e5-organ": {
+        "trained_on": "frozen a5 parent + trained record organ (E5.9)",
+        "verified": {
+            "a_fit_accuracy": 1.0,
+            "b_with_record": 1.0,
+            "source": "probe_e5_9_organ_20261118",
+        },
+        "may_be_used_for": ["E5 correction measurements", "E7 organ comparisons"],
+        "must_not_be_used_for": ["claims that the parent itself learned correction"],
+    },
     "a5-pre": {
         "trained_on": "task A only (A.5 protocol, 600 updates)",
         "verified": {"task_a_fit_accuracy": 1.0, "source": "probe_e5_eos_contrast_v2_20261118"},

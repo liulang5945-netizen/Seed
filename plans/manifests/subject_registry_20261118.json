@@ -63,6 +63,27 @@
         "correction-rate claims (no feedback applied)"
       ]
     },
+    "e5-organ-seed20261110": {
+      "path": "data/experiments/taiji_u2/e5_9/bundle-parent-plus-organ.pt",
+      "sha256": "5d510357d87ecb3645ad8aaba6c36f7a853061a285a7d8b2dd74a27017e11367",
+      "update": "parent+organ",
+      "revision": 2,
+      "tensors": 199,
+      "family": "e5-organ",
+      "trained_on": "frozen a5 parent + trained record organ (E5.9)",
+      "verified": {
+        "a_fit_accuracy": 1.0,
+        "b_with_record": 1.0,
+        "source": "probe_e5_9_organ_20261118"
+      },
+      "may_be_used_for": [
+        "E5 correction measurements",
+        "E7 organ comparisons"
+      ],
+      "must_not_be_used_for": [
+        "claims that the parent itself learned correction"
+      ]
+    },
     "a5-post-seed20261110": {
       "path": "data/experiments/taiji_u2/a5/20261116T0520Z/seed-20261110/bundle-post-feedback.pt",
       "sha256": "28b6a5989c47ed9c9fdbd1c2feb82912c24315cdce0ef32f51266bee6be4114c",
