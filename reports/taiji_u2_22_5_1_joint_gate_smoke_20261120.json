@@ -1,0 +1,70 @@
+{
+  "schema": "taiji-u2-22-5-1-joint-gate-smoke-v1",
+  "card": "22.5.1 joint gate (fit face)",
+  "created_utc": "2026-11-19T17:28:21.907820+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "discipline": {
+    "optimizer_steps": 0,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "parent_audit": {
+    "schema": "taiji-first-A-learner-v1",
+    "identity": "pixel-salience",
+    "config": {
+      "d": 32,
+      "readout": "pixel-salience",
+      "record_metadata": true,
+      "separate_requests": true,
+      "seed": 20261112
+    },
+    "parameters_digest": "5a09a44902d985c7035f474564f0e84e0fcd3bfcfc2b4398150fad721b186f48",
+    "source_pin_matches": {
+      "taiji/u2_recovery.py": true,
+      "taiji/u2_evidence_subject.py": true,
+      "taiji/u2_evidence_read.py": true,
+      "taiji/u2_evidence_runtime.py": true,
+      "taiji/u2_capacity_control.py": true,
+      "taiji/u2_task_goal.py": true,
+      "taiji/u2_joint_tokens.py": true,
+      "taiji/u2_joint_subject.py": true,
+      "taiji/u2_history.py": true,
+      "taiji/u2_history_store.py": true,
+      "taiji/u2_request_state.py": true,
+      "taiji/u2_task_executor.py": true,
+      "taiji/u2_events.py": true,
+      "taiji/u2_learning_transaction.py": true,
+      "taiji/u2_record_metadata.py": true,
+      "taiji/u2_group_structure.py": true,
+      "taiji/u2_subject.py": false,
+      "taiji/u2_operators.py": true,
+      "taiji/utf8_state.py": true,
+      "scripts/training/first_a_support_22_5.py": true,
+      "scripts/training/task_baselines_22_4_a.py": true
+    },
+    "source_pin_mismatches": [
+      "taiji/u2_subject.py"
+    ],
+    "strict_load": true
+  },
+  "checks": {
+    "parent_strict_load": true,
+    "parent_identity": true,
+    "parent_fit_recorded": true,
+    "preflight_match": true,
+    "frozen_update_fork": true,
+    "birth_inherits_parent": true,
+    "arm_decode_wired": true,
+    "birth_decode_matches_parent": true,
+    "measure_rows": true,
+    "bootstrap_wired": true,
+    "overwrite_probe_wired": true,
+    "frozen_arm_zero_step": true
+  },
+  "verdict": "smoke_passed",
+  "cpu": 22.12
+}

@@ -1,6 +1,6 @@
 # 设计卡：22.5.1 联合门（fit 面）S2 零训练设计＋实测定价（已冻结，训练待 S3 授权）
 
-> 文档状态：[设计卡] — 2026-11-20。对象＝MAINLINE §2 的 `22.5.1` 联合门 `S2`。**本卡只完成零训练设计＋实测定价＋冻结合同＋smoke 接线（0 优化器步）；正式执行（S4）另由合同 `training_authority` 授权。** 定价回执：[`taiji_u2_22_5_1_joint_gate_price_20261120.json`](../../reports/taiji_u2_22_5_1_joint_gate_price_20261120.json)；合同：[`taiji_u2_22_5_1_joint_gate_20261120.json`](../manifests/taiji_u2_22_5_1_joint_gate_20261120.json)。
+> 文档状态：[设计卡→已执行] — 2026-11-20。对象＝MAINLINE §2 的 `22.5.1` 联合门 `S2`。**S2 完成零训练设计＋实测定价＋冻结合同＋smoke（22.12 CPU、0 优化器步）；S3 记录常设授权；S4 已执行并判 `joint_gate_fit_face_pass`（实耗 1,359.22≤1,400 CPU；A 行空判经 verify-only 修订 54.42 CPU 重算），22.6 未解锁。** 结果卡：[RESULT-TAIJI_U2_22_5_1_JOINT_GATE_20261120](RESULT-TAIJI_U2_22_5_1_JOINT_GATE_20261120.md)。 定价回执：[`taiji_u2_22_5_1_joint_gate_price_20261120.json`](../../reports/taiji_u2_22_5_1_joint_gate_price_20261120.json)；合同：[`taiji_u2_22_5_1_joint_gate_20261120.json`](../manifests/taiji_u2_22_5_1_joint_gate_20261120.json)。
 
 ## 1. 身份、口径与边界（owner 已裁定）
 

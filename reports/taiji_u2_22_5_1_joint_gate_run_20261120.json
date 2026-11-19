@@ -1,0 +1,4881 @@
+{
+  "schema": "taiji-u2-22-5-1-joint-gate-run-v1",
+  "card": "22.5.1 joint gate (fit face)",
+  "created_utc": "2026-11-19T17:51:27.073563+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "criteria_sha256": "8a8f3ff65dd469ae578257617ff9e6a59e8836afe84bf24a63d841c109bec3ac",
+  "parent_audit": {
+    "schema": "taiji-first-A-learner-v1",
+    "identity": "pixel-salience",
+    "config": {
+      "d": 32,
+      "readout": "pixel-salience",
+      "record_metadata": true,
+      "separate_requests": true,
+      "seed": 20261112
+    },
+    "parameters_digest": "5a09a44902d985c7035f474564f0e84e0fcd3bfcfc2b4398150fad721b186f48",
+    "source_pin_matches": {
+      "taiji/u2_recovery.py": true,
+      "taiji/u2_evidence_subject.py": true,
+      "taiji/u2_evidence_read.py": true,
+      "taiji/u2_evidence_runtime.py": true,
+      "taiji/u2_capacity_control.py": true,
+      "taiji/u2_task_goal.py": true,
+      "taiji/u2_joint_tokens.py": true,
+      "taiji/u2_joint_subject.py": true,
+      "taiji/u2_history.py": true,
+      "taiji/u2_history_store.py": true,
+      "taiji/u2_request_state.py": true,
+      "taiji/u2_task_executor.py": true,
+      "taiji/u2_events.py": true,
+      "taiji/u2_learning_transaction.py": true,
+      "taiji/u2_record_metadata.py": true,
+      "taiji/u2_group_structure.py": true,
+      "taiji/u2_subject.py": false,
+      "taiji/u2_operators.py": true,
+      "taiji/utf8_state.py": true,
+      "scripts/training/first_a_support_22_5.py": true,
+      "scripts/training/task_baselines_22_4_a.py": true
+    },
+    "source_pin_mismatches": [
+      "taiji/u2_subject.py"
+    ],
+    "strict_load": true
+  },
+  "preflight": {
+    "fit_correct": 31,
+    "recorded_fit_correct": 31
+  },
+  "seeds": [
+    {
+      "seed": 20261110,
+      "arms": {
+        "main": {
+          "n": 24,
+          "rows": [
+            {
+              "id": "fit-0",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": false,
+              "supersede": true,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-1",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-2",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-4",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-5",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-6",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-8",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-9",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-10",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-12",
+              "a": false,
+              "b": true,
+              "d": false,
+              "multi": true,
+              "supersede": true,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-13",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": false,
+              "supersede": true,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-14",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-16",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-17",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-18",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-20",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": false,
+              "supersede": true,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-21",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-22",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-24",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-25",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-26",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-28",
+              "a": false,
+              "b": true,
+              "d": false,
+              "multi": true,
+              "supersede": true,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-29",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-30",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": false,
+              "parent_a": false
+            }
+          ],
+          "a_correct": 0,
+          "b_correct": 24,
+          "d_correct": 22,
+          "multi_correct": 21,
+          "supersede_correct": 24,
+          "parent_d_correct": 9,
+          "parent_a_correct": 0
+        },
+        "frozen_update": {
+          "n": 24,
+          "rows": [
+            {
+              "id": "fit-0",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-1",
+              "a": false,
+              "b": false,
+              "d": true,
+              "multi": false,
+              "supersede": false,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-2",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-4",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-5",
+              "a": false,
+              "b": false,
+              "d": true,
+              "multi": false,
+              "supersede": false,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-6",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-8",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-9",
+              "a": false,
+              "b": false,
+              "d": true,
+              "multi": false,
+              "supersede": false,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-10",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-12",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-13",
+              "a": false,
+              "b": false,
+              "d": true,
+              "multi": false,
+              "supersede": false,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-14",
+              "a": false,
+              "b": false,
+              "d": true,
+              "multi": false,
+              "supersede": false,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-16",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-17",
+              "a": false,
+              "b": false,
+              "d": true,
+              "multi": false,
+              "supersede": false,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-18",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-20",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-21",
+              "a": false,
+              "b": false,
+              "d": true,
+              "multi": false,
+              "supersede": false,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-22",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-24",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-25",
+              "a": false,
+              "b": false,
+              "d": true,
+              "multi": false,
+              "supersede": false,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-26",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-28",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-29",
+              "a": false,
+              "b": false,
+              "d": true,
+              "multi": false,
+              "supersede": false,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-30",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            }
+          ],
+          "a_correct": 0,
+          "b_correct": 0,
+          "d_correct": 9,
+          "multi_correct": 0,
+          "supersede_correct": 0,
+          "parent_d_correct": 9,
+          "parent_a_correct": 0
+        },
+        "permuted_feedback": {
+          "n": 24,
+          "rows": [
+            {
+              "id": "fit-0",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-1",
+              "a": false,
+              "b": false,
+              "d": true,
+              "multi": false,
+              "supersede": false,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-2",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-4",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-5",
+              "a": false,
+              "b": false,
+              "d": true,
+              "multi": false,
+              "supersede": false,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-6",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-8",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-9",
+              "a": false,
+              "b": false,
+              "d": true,
+              "multi": false,
+              "supersede": false,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-10",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-12",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-13",
+              "a": false,
+              "b": false,
+              "d": true,
+              "multi": false,
+              "supersede": false,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-14",
+              "a": false,
+              "b": false,
+              "d": true,
+              "multi": false,
+              "supersede": false,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-16",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-17",
+              "a": false,
+              "b": false,
+              "d": true,
+              "multi": false,
+              "supersede": false,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-18",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-20",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-21",
+              "a": false,
+              "b": false,
+              "d": true,
+              "multi": false,
+              "supersede": false,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-22",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-24",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-25",
+              "a": false,
+              "b": false,
+              "d": true,
+              "multi": false,
+              "supersede": false,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-26",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-28",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-29",
+              "a": false,
+              "b": false,
+              "d": true,
+              "multi": false,
+              "supersede": false,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-30",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            }
+          ],
+          "a_correct": 0,
+          "b_correct": 0,
+          "d_correct": 9,
+          "multi_correct": 0,
+          "supersede_correct": 0,
+          "parent_d_correct": 9,
+          "parent_a_correct": 0
+        },
+        "cuts": {
+          "record_organ": {
+            "n": 24,
+            "rows": [
+              {
+                "id": "fit-0",
+                "a": false,
+                "b": false,
+                "d": false,
+                "multi": false,
+                "supersede": false,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-1",
+                "a": false,
+                "b": false,
+                "d": true,
+                "multi": false,
+                "supersede": false,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-2",
+                "a": false,
+                "b": false,
+                "d": false,
+                "multi": false,
+                "supersede": false,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-4",
+                "a": false,
+                "b": false,
+                "d": false,
+                "multi": false,
+                "supersede": false,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-5",
+                "a": false,
+                "b": false,
+                "d": true,
+                "multi": false,
+                "supersede": false,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-6",
+                "a": false,
+                "b": false,
+                "d": false,
+                "multi": false,
+                "supersede": false,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-8",
+                "a": false,
+                "b": false,
+                "d": false,
+                "multi": false,
+                "supersede": false,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-9",
+                "a": false,
+                "b": false,
+                "d": true,
+                "multi": false,
+                "supersede": false,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-10",
+                "a": false,
+                "b": false,
+                "d": false,
+                "multi": false,
+                "supersede": false,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-12",
+                "a": false,
+                "b": false,
+                "d": false,
+                "multi": false,
+                "supersede": false,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-13",
+                "a": false,
+                "b": false,
+                "d": true,
+                "multi": false,
+                "supersede": false,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-14",
+                "a": false,
+                "b": false,
+                "d": true,
+                "multi": false,
+                "supersede": false,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-16",
+                "a": false,
+                "b": false,
+                "d": false,
+                "multi": false,
+                "supersede": false,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-17",
+                "a": false,
+                "b": false,
+                "d": true,
+                "multi": false,
+                "supersede": false,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-18",
+                "a": false,
+                "b": false,
+                "d": false,
+                "multi": false,
+                "supersede": false,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-20",
+                "a": false,
+                "b": false,
+                "d": false,
+                "multi": false,
+                "supersede": false,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-21",
+                "a": false,
+                "b": false,
+                "d": true,
+                "multi": false,
+                "supersede": false,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-22",
+                "a": false,
+                "b": false,
+                "d": false,
+                "multi": false,
+                "supersede": false,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-24",
+                "a": false,
+                "b": false,
+                "d": false,
+                "multi": false,
+                "supersede": false,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-25",
+                "a": false,
+                "b": false,
+                "d": true,
+                "multi": false,
+                "supersede": false,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-26",
+                "a": false,
+                "b": false,
+                "d": false,
+                "multi": false,
+                "supersede": false,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-28",
+                "a": false,
+                "b": false,
+                "d": false,
+                "multi": false,
+                "supersede": false,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-29",
+                "a": false,
+                "b": false,
+                "d": true,
+                "multi": false,
+                "supersede": false,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-30",
+                "a": false,
+                "b": false,
+                "d": false,
+                "multi": false,
+                "supersede": false,
+                "parent_d": false,
+                "parent_a": false
+              }
+            ],
+            "a_correct": 0,
+            "b_correct": 0,
+            "d_correct": 9,
+            "multi_correct": 0,
+            "supersede_correct": 0,
+            "parent_d_correct": 9,
+            "parent_a_correct": 0
+          },
+          "fast": {
+            "n": 24,
+            "rows": [
+              {
+                "id": "fit-0",
+                "a": false,
+                "b": true,
+                "d": false,
+                "multi": false,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-1",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-2",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-4",
+                "a": false,
+                "b": true,
+                "d": false,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-5",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-6",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-8",
+                "a": false,
+                "b": true,
+                "d": false,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-9",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-10",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-12",
+                "a": false,
+                "b": true,
+                "d": false,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-13",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": false,
+                "supersede": true,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-14",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-16",
+                "a": false,
+                "b": true,
+                "d": false,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-17",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-18",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-20",
+                "a": false,
+                "b": true,
+                "d": false,
+                "multi": false,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-21",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-22",
+                "a": false,
+                "b": true,
+                "d": false,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-24",
+                "a": false,
+                "b": true,
+                "d": false,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-25",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-26",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-28",
+                "a": false,
+                "b": true,
+                "d": false,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-29",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-30",
+                "a": false,
+                "b": true,
+                "d": false,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              }
+            ],
+            "a_correct": 0,
+            "b_correct": 24,
+            "d_correct": 14,
+            "multi_correct": 21,
+            "supersede_correct": 24,
+            "parent_d_correct": 9,
+            "parent_a_correct": 0
+          },
+          "record_injection": {
+            "n": 24,
+            "rows": [
+              {
+                "id": "fit-0",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": false,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-1",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-2",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-4",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-5",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-6",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-8",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-9",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-10",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-12",
+                "a": false,
+                "b": true,
+                "d": false,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-13",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": false,
+                "supersede": true,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-14",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-16",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-17",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-18",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-20",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": false,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-21",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-22",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-24",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-25",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-26",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-28",
+                "a": false,
+                "b": true,
+                "d": false,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-29",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-30",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              }
+            ],
+            "a_correct": 0,
+            "b_correct": 24,
+            "d_correct": 22,
+            "multi_correct": 21,
+            "supersede_correct": 24,
+            "parent_d_correct": 9,
+            "parent_a_correct": 0
+          }
+        }
+      },
+      "overwrite_probe": {
+        "a_correct": 0,
+        "n": 24
+      },
+      "parent_bit_identical": true,
+      "recovery_probe": {
+        "artifact": "output\\s2_joint_gate_20261120\\child-20261110.pt",
+        "readings": [
+          {
+            "index": 0,
+            "a": "e5b7a6e8beb9",
+            "a_eos": true,
+            "b": "e4b8ade997b4",
+            "b_eos": true
+          },
+          {
+            "index": 1,
+            "a": "e4b8ade997b4",
+            "a_eos": true,
+            "b": "e58fb3e8beb9",
+            "b_eos": true
+          },
+          {
+            "index": 2,
+            "a": "e58fb3e8beb9",
+            "a_eos": true,
+            "b": "e5b7a6e8beb9",
+            "b_eos": true
+          },
+          {
+            "index": 3,
+            "a": "e5b7a6e8beb9",
+            "a_eos": true,
+            "b": "e4b8ade997b4",
+            "b_eos": true
+          }
+        ]
+      },
+      "info": {
+        "main": {
+          "parent_bit_identical": true,
+          "organ_mix": 1.2024,
+          "kind": "main"
+        },
+        "frozen_update": {
+          "parent_bit_identical": true,
+          "organ_mix": 0.0,
+          "kind": "frozen_update",
+          "frozen_parameters": true,
+          "lr": 0.0
+        },
+        "permuted_feedback": {
+          "parent_bit_identical": true,
+          "organ_mix": 0.1678,
+          "kind": "permuted_feedback",
+          "feedback": "permuted"
+        }
+      }
+    },
+    {
+      "seed": 20261111,
+      "arms": {
+        "main": {
+          "n": 24,
+          "rows": [
+            {
+              "id": "fit-0",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": false,
+              "supersede": true,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-1",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-2",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-4",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-5",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-6",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-8",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-9",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-10",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-12",
+              "a": false,
+              "b": true,
+              "d": false,
+              "multi": true,
+              "supersede": true,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-13",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": false,
+              "supersede": true,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-14",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-16",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-17",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-18",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-20",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": false,
+              "supersede": true,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-21",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-22",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-24",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-25",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-26",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-28",
+              "a": false,
+              "b": true,
+              "d": false,
+              "multi": true,
+              "supersede": true,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-29",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-30",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": false,
+              "parent_a": false
+            }
+          ],
+          "a_correct": 0,
+          "b_correct": 24,
+          "d_correct": 22,
+          "multi_correct": 21,
+          "supersede_correct": 24,
+          "parent_d_correct": 9,
+          "parent_a_correct": 0
+        },
+        "frozen_update": {
+          "n": 24,
+          "rows": [
+            {
+              "id": "fit-0",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-1",
+              "a": false,
+              "b": false,
+              "d": true,
+              "multi": false,
+              "supersede": false,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-2",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-4",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-5",
+              "a": false,
+              "b": false,
+              "d": true,
+              "multi": false,
+              "supersede": false,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-6",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-8",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-9",
+              "a": false,
+              "b": false,
+              "d": true,
+              "multi": false,
+              "supersede": false,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-10",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-12",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-13",
+              "a": false,
+              "b": false,
+              "d": true,
+              "multi": false,
+              "supersede": false,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-14",
+              "a": false,
+              "b": false,
+              "d": true,
+              "multi": false,
+              "supersede": false,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-16",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-17",
+              "a": false,
+              "b": false,
+              "d": true,
+              "multi": false,
+              "supersede": false,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-18",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-20",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-21",
+              "a": false,
+              "b": false,
+              "d": true,
+              "multi": false,
+              "supersede": false,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-22",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-24",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-25",
+              "a": false,
+              "b": false,
+              "d": true,
+              "multi": false,
+              "supersede": false,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-26",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-28",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-29",
+              "a": false,
+              "b": false,
+              "d": true,
+              "multi": false,
+              "supersede": false,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-30",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            }
+          ],
+          "a_correct": 0,
+          "b_correct": 0,
+          "d_correct": 9,
+          "multi_correct": 0,
+          "supersede_correct": 0,
+          "parent_d_correct": 9,
+          "parent_a_correct": 0
+        },
+        "permuted_feedback": {
+          "n": 24,
+          "rows": [
+            {
+              "id": "fit-0",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-1",
+              "a": false,
+              "b": false,
+              "d": true,
+              "multi": false,
+              "supersede": false,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-2",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-4",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-5",
+              "a": false,
+              "b": false,
+              "d": true,
+              "multi": false,
+              "supersede": false,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-6",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-8",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-9",
+              "a": false,
+              "b": false,
+              "d": true,
+              "multi": false,
+              "supersede": false,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-10",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-12",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-13",
+              "a": false,
+              "b": false,
+              "d": true,
+              "multi": false,
+              "supersede": false,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-14",
+              "a": false,
+              "b": false,
+              "d": true,
+              "multi": false,
+              "supersede": false,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-16",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-17",
+              "a": false,
+              "b": false,
+              "d": true,
+              "multi": false,
+              "supersede": false,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-18",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-20",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-21",
+              "a": false,
+              "b": false,
+              "d": true,
+              "multi": false,
+              "supersede": false,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-22",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-24",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-25",
+              "a": false,
+              "b": false,
+              "d": true,
+              "multi": false,
+              "supersede": false,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-26",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-28",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-29",
+              "a": false,
+              "b": false,
+              "d": true,
+              "multi": false,
+              "supersede": false,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-30",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            }
+          ],
+          "a_correct": 0,
+          "b_correct": 0,
+          "d_correct": 9,
+          "multi_correct": 0,
+          "supersede_correct": 0,
+          "parent_d_correct": 9,
+          "parent_a_correct": 0
+        },
+        "cuts": {
+          "record_organ": {
+            "n": 24,
+            "rows": [
+              {
+                "id": "fit-0",
+                "a": false,
+                "b": false,
+                "d": false,
+                "multi": false,
+                "supersede": false,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-1",
+                "a": false,
+                "b": false,
+                "d": true,
+                "multi": false,
+                "supersede": false,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-2",
+                "a": false,
+                "b": false,
+                "d": false,
+                "multi": false,
+                "supersede": false,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-4",
+                "a": false,
+                "b": false,
+                "d": false,
+                "multi": false,
+                "supersede": false,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-5",
+                "a": false,
+                "b": false,
+                "d": true,
+                "multi": false,
+                "supersede": false,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-6",
+                "a": false,
+                "b": false,
+                "d": false,
+                "multi": false,
+                "supersede": false,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-8",
+                "a": false,
+                "b": false,
+                "d": false,
+                "multi": false,
+                "supersede": false,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-9",
+                "a": false,
+                "b": false,
+                "d": true,
+                "multi": false,
+                "supersede": false,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-10",
+                "a": false,
+                "b": false,
+                "d": false,
+                "multi": false,
+                "supersede": false,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-12",
+                "a": false,
+                "b": false,
+                "d": false,
+                "multi": false,
+                "supersede": false,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-13",
+                "a": false,
+                "b": false,
+                "d": true,
+                "multi": false,
+                "supersede": false,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-14",
+                "a": false,
+                "b": false,
+                "d": true,
+                "multi": false,
+                "supersede": false,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-16",
+                "a": false,
+                "b": false,
+                "d": false,
+                "multi": false,
+                "supersede": false,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-17",
+                "a": false,
+                "b": false,
+                "d": true,
+                "multi": false,
+                "supersede": false,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-18",
+                "a": false,
+                "b": false,
+                "d": false,
+                "multi": false,
+                "supersede": false,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-20",
+                "a": false,
+                "b": false,
+                "d": false,
+                "multi": false,
+                "supersede": false,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-21",
+                "a": false,
+                "b": false,
+                "d": true,
+                "multi": false,
+                "supersede": false,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-22",
+                "a": false,
+                "b": false,
+                "d": false,
+                "multi": false,
+                "supersede": false,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-24",
+                "a": false,
+                "b": false,
+                "d": false,
+                "multi": false,
+                "supersede": false,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-25",
+                "a": false,
+                "b": false,
+                "d": true,
+                "multi": false,
+                "supersede": false,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-26",
+                "a": false,
+                "b": false,
+                "d": false,
+                "multi": false,
+                "supersede": false,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-28",
+                "a": false,
+                "b": false,
+                "d": false,
+                "multi": false,
+                "supersede": false,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-29",
+                "a": false,
+                "b": false,
+                "d": true,
+                "multi": false,
+                "supersede": false,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-30",
+                "a": false,
+                "b": false,
+                "d": false,
+                "multi": false,
+                "supersede": false,
+                "parent_d": false,
+                "parent_a": false
+              }
+            ],
+            "a_correct": 0,
+            "b_correct": 0,
+            "d_correct": 9,
+            "multi_correct": 0,
+            "supersede_correct": 0,
+            "parent_d_correct": 9,
+            "parent_a_correct": 0
+          },
+          "fast": {
+            "n": 24,
+            "rows": [
+              {
+                "id": "fit-0",
+                "a": false,
+                "b": true,
+                "d": false,
+                "multi": false,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-1",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-2",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-4",
+                "a": false,
+                "b": true,
+                "d": false,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-5",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-6",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-8",
+                "a": false,
+                "b": true,
+                "d": false,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-9",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-10",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-12",
+                "a": false,
+                "b": true,
+                "d": false,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-13",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": false,
+                "supersede": true,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-14",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-16",
+                "a": false,
+                "b": true,
+                "d": false,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-17",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-18",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-20",
+                "a": false,
+                "b": true,
+                "d": false,
+                "multi": false,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-21",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-22",
+                "a": false,
+                "b": true,
+                "d": false,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-24",
+                "a": false,
+                "b": true,
+                "d": false,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-25",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-26",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-28",
+                "a": false,
+                "b": true,
+                "d": false,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-29",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-30",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              }
+            ],
+            "a_correct": 0,
+            "b_correct": 24,
+            "d_correct": 15,
+            "multi_correct": 21,
+            "supersede_correct": 24,
+            "parent_d_correct": 9,
+            "parent_a_correct": 0
+          },
+          "record_injection": {
+            "n": 24,
+            "rows": [
+              {
+                "id": "fit-0",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": false,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-1",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-2",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-4",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-5",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-6",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-8",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-9",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-10",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-12",
+                "a": false,
+                "b": true,
+                "d": false,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-13",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": false,
+                "supersede": true,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-14",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-16",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-17",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-18",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-20",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": false,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-21",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-22",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-24",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-25",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-26",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-28",
+                "a": false,
+                "b": true,
+                "d": false,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-29",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-30",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              }
+            ],
+            "a_correct": 0,
+            "b_correct": 24,
+            "d_correct": 22,
+            "multi_correct": 21,
+            "supersede_correct": 24,
+            "parent_d_correct": 9,
+            "parent_a_correct": 0
+          }
+        }
+      },
+      "overwrite_probe": {
+        "a_correct": 0,
+        "n": 24
+      },
+      "parent_bit_identical": true,
+      "recovery_probe": {
+        "artifact": "output\\s2_joint_gate_20261120\\child-20261111.pt",
+        "readings": [
+          {
+            "index": 0,
+            "a": "e5b7a6e8beb9",
+            "a_eos": true,
+            "b": "e4b8ade997b4",
+            "b_eos": true
+          },
+          {
+            "index": 1,
+            "a": "e4b8ade997b4",
+            "a_eos": true,
+            "b": "e58fb3e8beb9",
+            "b_eos": true
+          },
+          {
+            "index": 2,
+            "a": "e58fb3e8beb9",
+            "a_eos": true,
+            "b": "e5b7a6e8beb9",
+            "b_eos": true
+          },
+          {
+            "index": 3,
+            "a": "e5b7a6e8beb9",
+            "a_eos": true,
+            "b": "e4b8ade997b4",
+            "b_eos": true
+          }
+        ]
+      },
+      "info": {
+        "main": {
+          "parent_bit_identical": true,
+          "organ_mix": 1.2694,
+          "kind": "main"
+        },
+        "frozen_update": {
+          "parent_bit_identical": true,
+          "organ_mix": 0.0,
+          "kind": "frozen_update",
+          "frozen_parameters": true,
+          "lr": 0.0
+        },
+        "permuted_feedback": {
+          "parent_bit_identical": true,
+          "organ_mix": -0.1452,
+          "kind": "permuted_feedback",
+          "feedback": "permuted"
+        }
+      }
+    },
+    {
+      "seed": 20261112,
+      "arms": {
+        "main": {
+          "n": 24,
+          "rows": [
+            {
+              "id": "fit-0",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": false,
+              "supersede": true,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-1",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-2",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-4",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-5",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-6",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-8",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-9",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-10",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-12",
+              "a": false,
+              "b": true,
+              "d": false,
+              "multi": true,
+              "supersede": true,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-13",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": false,
+              "supersede": true,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-14",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-16",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-17",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-18",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-20",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": false,
+              "supersede": true,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-21",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-22",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-24",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-25",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-26",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-28",
+              "a": false,
+              "b": true,
+              "d": false,
+              "multi": true,
+              "supersede": true,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-29",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-30",
+              "a": false,
+              "b": true,
+              "d": true,
+              "multi": true,
+              "supersede": true,
+              "parent_d": false,
+              "parent_a": false
+            }
+          ],
+          "a_correct": 0,
+          "b_correct": 24,
+          "d_correct": 22,
+          "multi_correct": 21,
+          "supersede_correct": 24,
+          "parent_d_correct": 9,
+          "parent_a_correct": 0
+        },
+        "frozen_update": {
+          "n": 24,
+          "rows": [
+            {
+              "id": "fit-0",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-1",
+              "a": false,
+              "b": false,
+              "d": true,
+              "multi": false,
+              "supersede": false,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-2",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-4",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-5",
+              "a": false,
+              "b": false,
+              "d": true,
+              "multi": false,
+              "supersede": false,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-6",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-8",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-9",
+              "a": false,
+              "b": false,
+              "d": true,
+              "multi": false,
+              "supersede": false,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-10",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-12",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-13",
+              "a": false,
+              "b": false,
+              "d": true,
+              "multi": false,
+              "supersede": false,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-14",
+              "a": false,
+              "b": false,
+              "d": true,
+              "multi": false,
+              "supersede": false,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-16",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-17",
+              "a": false,
+              "b": false,
+              "d": true,
+              "multi": false,
+              "supersede": false,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-18",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-20",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-21",
+              "a": false,
+              "b": false,
+              "d": true,
+              "multi": false,
+              "supersede": false,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-22",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-24",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-25",
+              "a": false,
+              "b": false,
+              "d": true,
+              "multi": false,
+              "supersede": false,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-26",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-28",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-29",
+              "a": false,
+              "b": false,
+              "d": true,
+              "multi": false,
+              "supersede": false,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-30",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            }
+          ],
+          "a_correct": 0,
+          "b_correct": 0,
+          "d_correct": 9,
+          "multi_correct": 0,
+          "supersede_correct": 0,
+          "parent_d_correct": 9,
+          "parent_a_correct": 0
+        },
+        "permuted_feedback": {
+          "n": 24,
+          "rows": [
+            {
+              "id": "fit-0",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-1",
+              "a": false,
+              "b": false,
+              "d": true,
+              "multi": false,
+              "supersede": false,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-2",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-4",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-5",
+              "a": false,
+              "b": false,
+              "d": true,
+              "multi": false,
+              "supersede": false,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-6",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-8",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-9",
+              "a": false,
+              "b": false,
+              "d": true,
+              "multi": false,
+              "supersede": false,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-10",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-12",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-13",
+              "a": false,
+              "b": false,
+              "d": true,
+              "multi": false,
+              "supersede": false,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-14",
+              "a": false,
+              "b": false,
+              "d": true,
+              "multi": false,
+              "supersede": false,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-16",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-17",
+              "a": false,
+              "b": false,
+              "d": true,
+              "multi": false,
+              "supersede": false,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-18",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-20",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-21",
+              "a": false,
+              "b": false,
+              "d": true,
+              "multi": false,
+              "supersede": false,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-22",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-24",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-25",
+              "a": false,
+              "b": false,
+              "d": true,
+              "multi": false,
+              "supersede": false,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-26",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-28",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            },
+            {
+              "id": "fit-29",
+              "a": false,
+              "b": false,
+              "d": true,
+              "multi": false,
+              "supersede": false,
+              "parent_d": true,
+              "parent_a": false
+            },
+            {
+              "id": "fit-30",
+              "a": false,
+              "b": false,
+              "d": false,
+              "multi": false,
+              "supersede": false,
+              "parent_d": false,
+              "parent_a": false
+            }
+          ],
+          "a_correct": 0,
+          "b_correct": 0,
+          "d_correct": 9,
+          "multi_correct": 0,
+          "supersede_correct": 0,
+          "parent_d_correct": 9,
+          "parent_a_correct": 0
+        },
+        "cuts": {
+          "record_organ": {
+            "n": 24,
+            "rows": [
+              {
+                "id": "fit-0",
+                "a": false,
+                "b": false,
+                "d": false,
+                "multi": false,
+                "supersede": false,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-1",
+                "a": false,
+                "b": false,
+                "d": true,
+                "multi": false,
+                "supersede": false,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-2",
+                "a": false,
+                "b": false,
+                "d": false,
+                "multi": false,
+                "supersede": false,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-4",
+                "a": false,
+                "b": false,
+                "d": false,
+                "multi": false,
+                "supersede": false,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-5",
+                "a": false,
+                "b": false,
+                "d": true,
+                "multi": false,
+                "supersede": false,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-6",
+                "a": false,
+                "b": false,
+                "d": false,
+                "multi": false,
+                "supersede": false,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-8",
+                "a": false,
+                "b": false,
+                "d": false,
+                "multi": false,
+                "supersede": false,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-9",
+                "a": false,
+                "b": false,
+                "d": true,
+                "multi": false,
+                "supersede": false,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-10",
+                "a": false,
+                "b": false,
+                "d": false,
+                "multi": false,
+                "supersede": false,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-12",
+                "a": false,
+                "b": false,
+                "d": false,
+                "multi": false,
+                "supersede": false,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-13",
+                "a": false,
+                "b": false,
+                "d": true,
+                "multi": false,
+                "supersede": false,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-14",
+                "a": false,
+                "b": false,
+                "d": true,
+                "multi": false,
+                "supersede": false,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-16",
+                "a": false,
+                "b": false,
+                "d": false,
+                "multi": false,
+                "supersede": false,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-17",
+                "a": false,
+                "b": false,
+                "d": true,
+                "multi": false,
+                "supersede": false,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-18",
+                "a": false,
+                "b": false,
+                "d": false,
+                "multi": false,
+                "supersede": false,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-20",
+                "a": false,
+                "b": false,
+                "d": false,
+                "multi": false,
+                "supersede": false,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-21",
+                "a": false,
+                "b": false,
+                "d": true,
+                "multi": false,
+                "supersede": false,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-22",
+                "a": false,
+                "b": false,
+                "d": false,
+                "multi": false,
+                "supersede": false,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-24",
+                "a": false,
+                "b": false,
+                "d": false,
+                "multi": false,
+                "supersede": false,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-25",
+                "a": false,
+                "b": false,
+                "d": true,
+                "multi": false,
+                "supersede": false,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-26",
+                "a": false,
+                "b": false,
+                "d": false,
+                "multi": false,
+                "supersede": false,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-28",
+                "a": false,
+                "b": false,
+                "d": false,
+                "multi": false,
+                "supersede": false,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-29",
+                "a": false,
+                "b": false,
+                "d": true,
+                "multi": false,
+                "supersede": false,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-30",
+                "a": false,
+                "b": false,
+                "d": false,
+                "multi": false,
+                "supersede": false,
+                "parent_d": false,
+                "parent_a": false
+              }
+            ],
+            "a_correct": 0,
+            "b_correct": 0,
+            "d_correct": 9,
+            "multi_correct": 0,
+            "supersede_correct": 0,
+            "parent_d_correct": 9,
+            "parent_a_correct": 0
+          },
+          "fast": {
+            "n": 24,
+            "rows": [
+              {
+                "id": "fit-0",
+                "a": false,
+                "b": true,
+                "d": false,
+                "multi": false,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-1",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-2",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-4",
+                "a": false,
+                "b": true,
+                "d": false,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-5",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-6",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-8",
+                "a": false,
+                "b": true,
+                "d": false,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-9",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-10",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-12",
+                "a": false,
+                "b": true,
+                "d": false,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-13",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": false,
+                "supersede": true,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-14",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-16",
+                "a": false,
+                "b": true,
+                "d": false,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-17",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-18",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-20",
+                "a": false,
+                "b": true,
+                "d": false,
+                "multi": false,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-21",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-22",
+                "a": false,
+                "b": true,
+                "d": false,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-24",
+                "a": false,
+                "b": true,
+                "d": false,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-25",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-26",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-28",
+                "a": false,
+                "b": true,
+                "d": false,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-29",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-30",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              }
+            ],
+            "a_correct": 0,
+            "b_correct": 24,
+            "d_correct": 15,
+            "multi_correct": 21,
+            "supersede_correct": 24,
+            "parent_d_correct": 9,
+            "parent_a_correct": 0
+          },
+          "record_injection": {
+            "n": 24,
+            "rows": [
+              {
+                "id": "fit-0",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": false,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-1",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-2",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-4",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-5",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-6",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-8",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-9",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-10",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-12",
+                "a": false,
+                "b": true,
+                "d": false,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-13",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": false,
+                "supersede": true,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-14",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-16",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-17",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-18",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-20",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": false,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-21",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-22",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-24",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-25",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-26",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-28",
+                "a": false,
+                "b": true,
+                "d": false,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              },
+              {
+                "id": "fit-29",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": true,
+                "parent_a": false
+              },
+              {
+                "id": "fit-30",
+                "a": false,
+                "b": true,
+                "d": true,
+                "multi": true,
+                "supersede": true,
+                "parent_d": false,
+                "parent_a": false
+              }
+            ],
+            "a_correct": 0,
+            "b_correct": 24,
+            "d_correct": 22,
+            "multi_correct": 21,
+            "supersede_correct": 24,
+            "parent_d_correct": 9,
+            "parent_a_correct": 0
+          }
+        }
+      },
+      "overwrite_probe": {
+        "a_correct": 0,
+        "n": 24
+      },
+      "parent_bit_identical": true,
+      "recovery_probe": {
+        "artifact": "output\\s2_joint_gate_20261120\\child-20261112.pt",
+        "readings": [
+          {
+            "index": 0,
+            "a": "e5b7a6e8beb9",
+            "a_eos": true,
+            "b": "e4b8ade997b4",
+            "b_eos": true
+          },
+          {
+            "index": 1,
+            "a": "e4b8ade997b4",
+            "a_eos": true,
+            "b": "e58fb3e8beb9",
+            "b_eos": true
+          },
+          {
+            "index": 2,
+            "a": "e58fb3e8beb9",
+            "a_eos": true,
+            "b": "e5b7a6e8beb9",
+            "b_eos": true
+          },
+          {
+            "index": 3,
+            "a": "e5b7a6e8beb9",
+            "a_eos": true,
+            "b": "e4b8ade997b4",
+            "b_eos": true
+          }
+        ]
+      },
+      "info": {
+        "main": {
+          "parent_bit_identical": true,
+          "organ_mix": 1.2515,
+          "kind": "main"
+        },
+        "frozen_update": {
+          "parent_bit_identical": true,
+          "organ_mix": 0.0,
+          "kind": "frozen_update",
+          "frozen_parameters": true,
+          "lr": 0.0
+        },
+        "permuted_feedback": {
+          "parent_bit_identical": true,
+          "organ_mix": -0.1816,
+          "kind": "permuted_feedback",
+          "feedback": "permuted"
+        }
+      }
+    }
+  ],
+  "recovery": [
+    {
+      "seed": 20261110,
+      "verdict": "recover_exact",
+      "n": 4
+    },
+    {
+      "seed": 20261111,
+      "verdict": "recover_exact",
+      "n": 4
+    },
+    {
+      "seed": 20261112,
+      "verdict": "recover_exact",
+      "n": 4
+    }
+  ],
+  "summary": {
+    "per_seed": [
+      {
+        "seed": 20261110,
+        "b_rate": 1.0,
+        "correction_rate": 1.0,
+        "gain": 1.0,
+        "gain_lower_bound": 1.0,
+        "a_drop": 0.0,
+        "a_drop_upper_bound": 0.0,
+        "d_relative_drop": -0.5417,
+        "d_drop_upper_bound": -0.375,
+        "causal": {
+          "record_organ_cut_b_correct": 0,
+          "fast_cut_b_correct": 24,
+          "record_injection_cut_b_correct": 24,
+          "permuted_b_correct": 0
+        },
+        "retention_probe_drop": 1.0,
+        "parent_bit_identical": true
+      },
+      {
+        "seed": 20261111,
+        "b_rate": 1.0,
+        "correction_rate": 1.0,
+        "gain": 1.0,
+        "gain_lower_bound": 1.0,
+        "a_drop": 0.0,
+        "a_drop_upper_bound": 0.0,
+        "d_relative_drop": -0.5417,
+        "d_drop_upper_bound": -0.375,
+        "causal": {
+          "record_organ_cut_b_correct": 0,
+          "fast_cut_b_correct": 24,
+          "record_injection_cut_b_correct": 24,
+          "permuted_b_correct": 0
+        },
+        "retention_probe_drop": 1.0,
+        "parent_bit_identical": true
+      },
+      {
+        "seed": 20261112,
+        "b_rate": 1.0,
+        "correction_rate": 1.0,
+        "gain": 1.0,
+        "gain_lower_bound": 1.0,
+        "a_drop": 0.0,
+        "a_drop_upper_bound": 0.0,
+        "d_relative_drop": -0.5417,
+        "d_drop_upper_bound": -0.375,
+        "causal": {
+          "record_organ_cut_b_correct": 0,
+          "fast_cut_b_correct": 24,
+          "record_injection_cut_b_correct": 24,
+          "permuted_b_correct": 0
+        },
+        "retention_probe_drop": 1.0,
+        "parent_bit_identical": true
+      }
+    ],
+    "gains": [
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "budget_ok": true,
+  "verdict": "joint_gate_fit_face_pass",
+  "cost": {
+    "cpu": 1359.22,
+    "wall": 1370.31,
+    "cap_cpu": 1400.0
+  }
+}
