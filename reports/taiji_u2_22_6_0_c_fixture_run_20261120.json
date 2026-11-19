@@ -1,0 +1,53 @@
+{
+  "schema": "taiji-u2-22-6-0-c-task-run-v1",
+  "criteria_sha256": "5a803c96fe420446adfee0863ae295e60a7f481eba7311254f87c0d9bd3c2958",
+  "created_utc": "2026-11-19T18:31:23.110111+00:00",
+  "run_conditions": {
+    "threads": 12,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "controls": {
+    "c1_invalid": true,
+    "c1_winners": [
+      "answer_without_observe"
+    ],
+    "c2_first_correct_tick": 14,
+    "c2_winners": [
+      "wait14_observe_answer"
+    ],
+    "c2_ok": true,
+    "c3_winners": [
+      "wait0_observe_answer"
+    ],
+    "c3_ok": true,
+    "all_controls_pass": true
+  },
+  "replay": {
+    "seeds": [
+      20261200,
+      20261201,
+      20261202,
+      20261203,
+      20261204,
+      20261205,
+      20261206,
+      20261207
+    ],
+    "mismatches": [],
+    "deterministic": true
+  },
+  "verdict": "c_task_ready",
+  "budget": {
+    "cap_cpu": 40.0,
+    "cpu": 9.64
+  },
+  "discipline": {
+    "optimizer_steps": 0,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 9.64
+  }
+}

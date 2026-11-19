@@ -1,0 +1,49 @@
+{
+  "schema": "taiji-u2-22-6-0-c-task-smoke-v1",
+  "created_utc": "2026-11-19T18:31:12.660477+00:00",
+  "run_conditions": {
+    "threads": 12,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "checks": {
+    "c1_fixture_invalid": true,
+    "c2_wait_unique": true,
+    "c3_act_now_unique": true,
+    "session_replay_deterministic": true,
+    "zero_optimizer_steps": true
+  },
+  "controls": {
+    "c1_invalid": true,
+    "c1_winners": [
+      "answer_without_observe"
+    ],
+    "c2_first_correct_tick": 14,
+    "c2_winners": [
+      "wait14_observe_answer"
+    ],
+    "c2_ok": true,
+    "c3_winners": [
+      "wait0_observe_answer"
+    ],
+    "c3_ok": true,
+    "all_controls_pass": true
+  },
+  "replay": {
+    "seeds": [
+      20261300,
+      20261205
+    ],
+    "mismatches": [],
+    "deterministic": true
+  },
+  "verdict": "smoke_passed",
+  "discipline": {
+    "optimizer_steps": 0,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 3.62
+  }
+}

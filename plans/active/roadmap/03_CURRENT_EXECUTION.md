@@ -3951,3 +3951,8 @@ session1＝联合门子体（train[:64] 训练 256 步）；session2＝同一子
 ## 2026-11-20 按常设授权采用 A 案并开 22.6.0（D-20261119-21）
 
 按 owner 常设授权采用 D-20261119-14 提案 A 工作路径：22.5.1 以具名 **`fit_face_only`** 标签引用（不声称正式 check② 通过、不签 B 父资格/架构门），22.6 以 **22.6.0 零训练 C 任务合同** 开卡；C 任务 fixture 三控制已验证 `fixture_controls_pass`（D-20261119-20）。范围：22.6.0 只做合同冻结＋fixture＋报价，0 训练、0 check/final；22.6.1+ 训练按常设授权逐项记录报价，owner 可回溯修订；正式 check② 保留未结，若 owner 改选 B 案可无损切换。
+
+
+## 2026-11-20 22.6.0 C 任务合同冻结并收官（D-20261119-22，`c_task_ready`，零训练 9.64 CPU）
+
+合同 runner 四模式（freeze/smoke/run/closeout）＋4 源码 pin＋判据摘要，合同 [`taiji_u2_22_6_0_c_task_20261120.json`](../../manifests/taiji_u2_22_6_0_c_task_20261120.json)（`criteria_sha256=5a803c96…`）冻结；smoke 3.62 CPU 全过；run 9.64≤cap 40 判 **`c_task_ready`**（C1 fixture_invalid、C2 t14 唯一最优 wait14、C3 唯一最优 wait0、8 seeds 重放逐位一致）；合同测试 4 项全过，`result.closed=true`。零优化器步、零 check/final；只签「C 任务 fixture 合法」，不签 22.6 学习/选择能力，22.5.1 仍 fit_face_only。后继＝22.6.1 预测器设计＋定价。

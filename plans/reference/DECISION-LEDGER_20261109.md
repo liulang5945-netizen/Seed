@@ -5163,3 +5163,14 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **3. 理由**：阶段预算连续超支、check 面一次性资源、fit 面已覆盖联合门全部机制读数（含因果/置换/探针/恢复/身份/未见模板/跨会话保持），而 22.6 的 C 任务数据与训练分布不同，才是检验「自主选择/跨会话积累新内容」的正位。按 A 案先开 22.6.0 零训练合同可在不消耗 check 的前提下继续推进主线。
 
 **4. 边界**：本笔不改任何既有判词与结果卡；不读 check/final；22.6 曝光账仍未开；若 owner 回溯要求正式 check②，本路径可无损切换。
+
+
+### D-20261119-22 22.6.0 C 任务合同冻结并收官（`c_task_ready`，零训练 `9.64 CPU`）
+
+**1. 动作**：新增合同 runner [`run_s2_22_6_0_c_fixture_20261120.py`](../../scripts/training/run_s2_22_6_0_c_fixture_20261120.py)（freeze/smoke/run/closeout 四模式，guards 校验判据摘要＋4 个源码 pin），冻结合同 [`taiji_u2_22_6_0_c_task_20261120.json`](../../plans/manifests/taiji_u2_22_6_0_c_task_20261120.json)（`criteria_sha256=5a803c96…`）＋合同测试 [`test_s2_22_6_0_c_task_contract.py`](../../tests/taiji_native/test_s2_22_6_0_c_task_contract.py)。**零训练**：`training_authority=not_required_zero_training`、`optimizer_steps=0`、`check/final=0`。
+
+**2. 读数**：smoke `3.62 CPU` 全过（C1/C2/C3＋重放确定性）；run `9.64 CPU ≤ cap 40`，判 **`c_task_ready`**：C1 `fixture_invalid=true`（常数策略唯一最优）、C2 首次正确观测 `t14` 且唯一最优 `wait14_observe_answer`、C3 唯一最优 `wait0_observe_answer`、`session(seed)` 两次构建逐位一致（8 seeds 重放检查）。合同 `result.closed=true`。合同测试 4 项全过。
+
+**3. 边界**：本笔只签「C 任务 fixture 合法可用」，**不签** 22.6 的任何学习/选择能力、不读 check/final、不占 22.6 曝光账；22.5.1 仍为 `fit_face_only` 父证据（D-20261119-21），正式 check② 保留未结。22.6.1（预测器）起涉及训练/选择学习，须按常设授权逐项记录并单独报价。
+
+**4. 后继**：22.6.1 设计（gain/risk/cost 预测器）＋定价 → 22.6.2 策略对照（可学习策略/固定日程/反应 ν/等待控制）→ 22.6.3 两次相依改进决策与固定父反事实；每步先合同后执行，owner 可回溯。

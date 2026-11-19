@@ -1,6 +1,6 @@
 # 设计卡（草稿）：22.6.0 C 任务「限时取证」冻结前验证
 
-> 文档状态：[设计卡/草稿] — 2026-11-20。**22.6 仍锁定**（22.5.1 正式资格路径 A/B 待 owner 裁定）。本卡只做**零训练**的 C 任务候选定义＋fixture 有效性验证＋定价；**不冻结合同、不训练、不读 check/final、不签能力**。验证回执：[`taiji_u2_22_6_c_fixture_validation_20261120.json`](../../reports/taiji_u2_22_6_c_fixture_validation_20261120.json)（`fixture_controls_pass`，`0.55 CPU`）。上游开卡备忘：[BRIEF-TAIJI_U2_22_6_OPENING_20261120](BRIEF-TAIJI_U2_22_6_OPENING_20261120.md)。
+> 文档状态：[设计卡→合同已冻结并收官] — 2026-11-20。按常设授权采用 A 案 `fit_face_only` 路径（D-20261119-21）后，本卡 C 任务已冻结为合同 [`taiji_u2_22_6_0_c_task_20261120.json`](../manifests/taiji_u2_22_6_0_c_task_20261120.json) 并判 **`c_task_ready`**（run `9.64 CPU`、smoke `3.62 CPU`、零训练、零 check/final，D-20261119-22）。**只签 fixture 合法；22.6 学习/选择能力未签**。验证回执：[`taiji_u2_22_6_c_fixture_validation_20261120.json`](../../reports/taiji_u2_22_6_c_fixture_validation_20261120.json)（`fixture_controls_pass`，`0.55 CPU`）。上游开卡备忘：[BRIEF-TAIJI_U2_22_6_OPENING_20261120](BRIEF-TAIJI_U2_22_6_OPENING_20261120.md)。
 
 ## 1. 任务定义（候选，已验证可构造）
 

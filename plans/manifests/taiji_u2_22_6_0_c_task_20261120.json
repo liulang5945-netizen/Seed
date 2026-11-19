@@ -1,0 +1,83 @@
+{
+  "schema": "taiji-u2-22-6-0-c-task-v1",
+  "card": "DESIGN-TAIJI_U2_22_6_0_C_TASK_20261120.md",
+  "status": "frozen",
+  "criteria": {
+    "card": "22.6.0 C-task fixture (deadline inquiry)",
+    "task": {
+      "ticks": 16,
+      "deadline": 15,
+      "decisions_per_session": 16,
+      "sessions_per_world": 3,
+      "development_fit_worlds": 32,
+      "observe_cost": 0.02,
+      "wait_cost": 0.01,
+      "actions": [
+        "OBSERVE",
+        "WAIT",
+        "REST",
+        "VERIFY",
+        "RECALL",
+        "ANSWER"
+      ],
+      "answer_reference": "target position word at deadline",
+      "utility": "1[answer==truth] - sum(action costs)"
+    },
+    "fixtures": {
+      "C1_no_task_opportunity": {
+        "seed": 20261300,
+        "expect": "fixture_invalid"
+      },
+      "C2_wait_unique_optimal": {
+        "seed": 20261205,
+        "target": "青色圆片",
+        "expect_first_correct_tick": 14,
+        "expect_winner": "wait14_observe_answer"
+      },
+      "C3_act_now_unique_optimal": {
+        "seed": 20261205,
+        "expect_winner": "wait0_observe_answer"
+      }
+    },
+    "contract_requirements": [
+      "session(seed) deterministic across two builds (identical observations and truth)",
+      "C1 must be rejected as fixture_invalid (constant policy uniquely optimal)",
+      "C2 must have the unique scripted optimum that waits until the late evidence",
+      "C3 must have the unique scripted optimum that acts at the first decision",
+      "zero optimizer steps and zero check/final reads"
+    ],
+    "exits_order": [
+      "engineering_failure",
+      "replay_mismatch",
+      "fixture_controls_fail",
+      "budget_stop",
+      "c_task_ready"
+    ],
+    "check_reads": 0,
+    "final_reads": 0,
+    "training_authority": "not_required_zero_training"
+  },
+  "criteria_sha256": "5a803c96fe420446adfee0863ae295e60a7f481eba7311254f87c0d9bd3c2958",
+  "plan": {
+    "price_cpu": 6.5,
+    "price_source": "reports/taiji_u2_22_6_c_fixture_validation_20261120.json",
+    "optimizer_steps": 0
+  },
+  "cap_cpu": 40.0,
+  "check_exposure": {
+    "reads": 0
+  },
+  "source_pins": {
+    "scripts/training/run_s2_22_6_0_c_fixture_20261120.py": "b9b16480570ed95db8a63e2a672c0725ec04e1faa9670a581a1c32ac55a57452",
+    "scripts/training/validate_22_6_c_fixture_20261120.py": "df4d05dac25bdf7bd8741edb73085f437754b6414eb8c76aee6c28a7eb4a9272",
+    "taiji/u2_task_world.py": "ae696d423e09be09c936dcbc8e3473e28c2c2c927f843bace21150c52d5d2e45",
+    "scripts/training/first_a_support_22_5_v2.py": "a8af1b7c947b203f091993a5141d4aa1e8f0084780e0d34c5e1de5bdabc9fd2b"
+  },
+  "result": {
+    "run": true,
+    "closed": true,
+    "verdict": "c_task_ready",
+    "cost_cpu": 9.64,
+    "report": "reports\\taiji_u2_22_6_0_c_fixture_run_20261120.json"
+  }
+}
