@@ -85,3 +85,7 @@
 ## 12. 不确定性表达（D-20261119-62，有界 verified）
 
 22.6.4b 校准卡：joint24、groups=6、30 单位、3-seed 集成，test acc 0.9531、ECE 0.028→0.021、Brier 同步下降，判 `calibration_already_adequate`。**不确定性表达 = verified（有界：joint24 置信校准）**；连续中文表达、拒答/求助策略、跨任务校准仍 `uncovered`。
+
+## 13. 多会话连续性（D-20261119-63，有界 verified）
+
+三个**独立进程** session：后一 session 从 capsule 载入全新 graph 继续训练；3 seed 全部参数继承逐位一致、身份/谱系不变、准确率不降反升（如 0.4375→0.9062→0.9375）。`lifetime` 轴更新为 **verified（有界：≥3 会话跨进程）**；22.8 完整验收（≥3 session×32 轮 J 轨迹）与 100 会话/24h 级仍 `uncovered`。

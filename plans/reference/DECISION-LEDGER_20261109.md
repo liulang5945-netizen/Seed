@@ -5626,3 +5626,14 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **3. 判读**：**不确定性能被显式表达且有界可核验**——集成置信在 joint24 测试集上 ECE 0.028（校准后 0.021），准确率 0.9531。该证据支持「表达并处理不确定性」轴的一个有界实例；不覆盖连续中文表达、拒答/求助策略、跨任务校准。
 
 **4. 边界**：零 check/final；不签完整「不确定性处理能力」，只签「joint24 置信校准足够（有界）」。22.6.4 校准轴两探针（D-61 fail→口径问题、D-62 adequate）均保留。
+
+
+### D-20261119-63 多会话连续性可行性：三个跨进程 session 全过（`multi_session_continuity_ready`，子进程 59.98 CPU）
+
+**1. 动作**：新增 worker [`s2_multi_session_worker_20261120.py`](../../scripts/training/s2_multi_session_worker_20261120.py) 与协调探针 [`probe_s2_multi_session_20261120.py`](../../scripts/training/probe_s2_multi_session_20261120.py)：每 seed 跑 3 个**独立进程** session；后续 session 从上一 capsule 载入到**全新 graph**（跨进程参数继承）继续训练（每 session 400 步、joint24、groups=6、30 单位），再存新 capsule 与 receipt。回执 [`taiji_u2_multi_session_20261120.json`](../../reports/taiji_u2_multi_session_20261120.json)。**零 check/final。**
+
+**2. 读数**（子进程合计 `59.98 ≤ 帽 180 CPU`；首版因 digest 覆盖范围与 capsule 不一致误判，修正后重跑）：3 seed 全部 `inheritance_exact=true`（后一 session 载入 digest == 前一 session 存储 digest）、`identities_preserved=true`（unit id/数量/身份摘要不变）、`retention_within_0_02=true`（准确率 `0.4375→0.9062→0.9375`、`0.5312→0.8438→0.9688`、`0.3438→0.5938→0.8750`，跨会话不降反升）⇒ **`multi_session_continuity_ready`**。
+
+**3. 判读**：同一主体在**三个独立进程 session** 间保持参数继承（逐位一致）、身份/谱系不变、旧能力不退化且有增益；`lifetime` 轴从「单次跨会话有界」升级为「**≥3 会话跨进程有界 verified**」。仍不等于 22.8（`>=3 session × 32 轮 J 轨迹` 的完整验收），也不覆盖 100 会话/24h 级。
+
+**4. 边界**：零 check/final；22.8 与 23–30 仍锁定；本证据只增 `lifetime` 轴的有界范围，不改其他判词。

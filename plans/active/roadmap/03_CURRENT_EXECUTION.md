@@ -4151,3 +4151,8 @@ joint24、3-seed 集成（groups=6、30 单位、1200 步）、128 fit 分校准
 ## 2026-11-20 22.6.4b 校准卡（D-20261119-62，`calibration_already_adequate`，37.14 CPU）
 
 joint24、groups=6、30 单位、3-seed 集成、1,500 步；256 fit 分 128 校准/128 测试。test acc 0.9531；ECA 前 0.0280 → 后 0.0207（T=1.2573），Brier 同步下降，可靠性分箱已落盘 ⇒ calibration_already_adequate。判读：不确定性能被显式表达且有界可核验（ECE 0.028/0.021），不覆盖连续中文表达、拒答/求助策略、跨任务校准。零 check/final；D-61（口径问题）与 D-62（adequate）均保留。
+
+
+## 2026-11-20 多会话连续性可行性（D-20261119-63，`multi_session_continuity_ready`，子进程 59.98 CPU）
+
+每 seed 3 个独立进程 session，后续 session 从 capsule 载入全新 graph 继续训练（400 步/session、joint24、groups=6、30 单位）。3 seed 全部 inheritance_exact（载入 digest==前存 digest）、identities_preserved、retention 不降反升（0.4375→0.9062→0.9375 等）⇒ multi_session_continuity_ready。首版 digest 覆盖范围错误已修正重跑（披露）。lifetime 升级为「≥3 会话跨进程有界 verified」；不等于 22.8 完整验收、不覆盖 100 会话/24h。零 check/final；22.8/23–30 仍锁定。
