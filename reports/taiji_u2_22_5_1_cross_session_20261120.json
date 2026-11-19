@@ -1,0 +1,96 @@
+{
+  "schema": "taiji-u2-22-5-1-cross-session-v1",
+  "card": "22.5.1 children cross-session accumulation probe",
+  "created_utc": "2026-11-19T18:21:24.319591+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "prereg": {
+    "session1": "saved joint-gate child (organ trained 256 steps on train[:64])",
+    "session2": "continue SAME child 256 steps on disjoint train[64:128], fresh optimizer",
+    "faces": {
+      "s1": "first 24 non-unknown items of train[:64]",
+      "s2": "first 24 non-unknown items of train[64:128]"
+    },
+    "thresholds": {
+      "retention_drop_upper_bound_max": 0.02,
+      "acquisition_gain_min": 0.0,
+      "acquisition_lower_bound_min": 0.0
+    },
+    "exits": [
+      "budget_stop",
+      "engineering_failure",
+      "cross_session_retention_breach",
+      "cross_session_no_learning",
+      "cross_session_accumulation_pass"
+    ],
+    "cap_cpu": 220.0,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "rows": [
+    {
+      "seed": 20261110,
+      "before": {
+        "s1": 24,
+        "s2": 24
+      },
+      "after": {
+        "s1": 24,
+        "s2": 24
+      },
+      "n": 24,
+      "retention_drop_upper_bound": 0.0,
+      "acquisition_gain": 0.0,
+      "acquisition_gain_lower_bound": 0.0,
+      "parent_bit_identical": true,
+      "organ_mix": 2.3089
+    },
+    {
+      "seed": 20261111,
+      "before": {
+        "s1": 24,
+        "s2": 24
+      },
+      "after": {
+        "s1": 24,
+        "s2": 24
+      },
+      "n": 24,
+      "retention_drop_upper_bound": 0.0,
+      "acquisition_gain": 0.0,
+      "acquisition_gain_lower_bound": 0.0,
+      "parent_bit_identical": true,
+      "organ_mix": 2.3483
+    },
+    {
+      "seed": 20261112,
+      "before": {
+        "s1": 24,
+        "s2": 24
+      },
+      "after": {
+        "s1": 24,
+        "s2": 24
+      },
+      "n": 24,
+      "retention_drop_upper_bound": 0.0,
+      "acquisition_gain": 0.0,
+      "acquisition_gain_lower_bound": 0.0,
+      "parent_bit_identical": true,
+      "organ_mix": 2.3262
+    }
+  ],
+  "verdict": "cross_session_no_learning",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "optimizer_steps": 768,
+    "scope": "fit/train faces only; no capability signing"
+  },
+  "cost": {
+    "cpu": 58.16
+  }
+}
