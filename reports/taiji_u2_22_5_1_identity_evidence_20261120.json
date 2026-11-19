@@ -1,0 +1,129 @@
+{
+  "schema": "taiji-u2-22-5-1-identity-evidence-v1",
+  "card": "22.5.1 joint-gate child lineage evidence (fit face)",
+  "created_utc": "2026-11-19T18:09:58.014647+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "parent": {
+    "seed": 20261112,
+    "bundle": "output\\a_pixel_parallel_20261119T070447Z\\segment.bin",
+    "bundle_sha256": "12f9b18786a9bd56b6b26811f23a73cffb8eaaa0811be7d86a4e9b98f0ca5dab",
+    "state_digest": "5a09a44902d985c7035f474564f0e84e0fcd3bfcfc2b4398150fad721b186f48",
+    "identity": "pixel-salience",
+    "strict_load": true,
+    "params": 234096
+  },
+  "lineage": {
+    "rule": "single main candidate parent x three training child seeds (no parent pooling)",
+    "parent_seed": 20261112,
+    "children": [
+      {
+        "training_seed": 20261110,
+        "artifact": "output\\s2_joint_gate_20261120\\child-20261110.pt",
+        "artifact_sha256": "71b97ff9f18a52039a00ada76a677eb25ec2c6a3fafb7313b421e30076dbfc72",
+        "state_digest": "d097e3786ccee3dd57f9a6ebd8655c19a5fce9b79a2747fcc65938e614ed3665",
+        "config": {
+          "readout": "pixel-salience",
+          "d": 32,
+          "record_organ": true
+        },
+        "inherited_keys": 208,
+        "inherited_bit_identical": true,
+        "inherited_max_abs_diff": 0.0,
+        "organ_keys": 21,
+        "organ_keys_sample": [
+          "record_organ.sentinel",
+          "record_organ.gain",
+          "record_organ.recency_logit",
+          "record_organ.organ_mix"
+        ],
+        "organ_parameters": 10878,
+        "organ_mix": 1.2023903131484985,
+        "recovery_readings_sha256": "f951203d6f11a30725a838253d81bd13a928cd9d120a0f5282e9a4ce3855f202",
+        "recovery_cross_process_exact": true,
+        "fit_face_readings": {
+          "b_correct": 24,
+          "d_correct": 22,
+          "a_correct": "23/24"
+        }
+      },
+      {
+        "training_seed": 20261111,
+        "artifact": "output\\s2_joint_gate_20261120\\child-20261111.pt",
+        "artifact_sha256": "8b72f2fcfbe12fae534d99bbf2693bb48354239d339aa0bfd783b2bdbe42f08f",
+        "state_digest": "74e4a907816c55e976de3d9523743e6678eab69cc3e64b7fba9ed31fab486512",
+        "config": {
+          "readout": "pixel-salience",
+          "d": 32,
+          "record_organ": true
+        },
+        "inherited_keys": 208,
+        "inherited_bit_identical": true,
+        "inherited_max_abs_diff": 0.0,
+        "organ_keys": 21,
+        "organ_keys_sample": [
+          "record_organ.sentinel",
+          "record_organ.gain",
+          "record_organ.recency_logit",
+          "record_organ.organ_mix"
+        ],
+        "organ_parameters": 10878,
+        "organ_mix": 1.2693661451339722,
+        "recovery_readings_sha256": "f951203d6f11a30725a838253d81bd13a928cd9d120a0f5282e9a4ce3855f202",
+        "recovery_cross_process_exact": true,
+        "fit_face_readings": {
+          "b_correct": 24,
+          "d_correct": 22,
+          "a_correct": "23/24"
+        }
+      },
+      {
+        "training_seed": 20261112,
+        "artifact": "output\\s2_joint_gate_20261120\\child-20261112.pt",
+        "artifact_sha256": "86ca0a2d5743ec9df60ad69a160ad4bd3e386b5c6cc941d2f7a22d775bb8b50b",
+        "state_digest": "6a2cb33c9e3bb17e55995f905a8f6fea96c5a8a29456df25e110097d4483d6ca",
+        "config": {
+          "readout": "pixel-salience",
+          "d": 32,
+          "record_organ": true
+        },
+        "inherited_keys": 208,
+        "inherited_bit_identical": true,
+        "inherited_max_abs_diff": 0.0,
+        "organ_keys": 21,
+        "organ_keys_sample": [
+          "record_organ.sentinel",
+          "record_organ.gain",
+          "record_organ.recency_logit",
+          "record_organ.organ_mix"
+        ],
+        "organ_parameters": 10878,
+        "organ_mix": 1.251524806022644,
+        "recovery_readings_sha256": "f951203d6f11a30725a838253d81bd13a928cd9d120a0f5282e9a4ce3855f202",
+        "recovery_cross_process_exact": true,
+        "fit_face_readings": {
+          "b_correct": 24,
+          "d_correct": 22,
+          "a_correct": "23/24"
+        }
+      }
+    ]
+  },
+  "claims": {
+    "inheritance": "all non-organ inherited parameters are bit-identical to the accepted parent",
+    "plasticity": "each child adds exactly the record-organ parameter set; no other keys",
+    "recovery": "save -> independent process reload -> same-condition readings byte-identical",
+    "scope": "fit face only; not a check adjudication; no capability signing"
+  },
+  "discipline": {
+    "optimizer_steps": 0,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 0.11
+  }
+}
