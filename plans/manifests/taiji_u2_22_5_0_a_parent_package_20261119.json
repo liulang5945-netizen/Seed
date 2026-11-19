@@ -1,7 +1,7 @@
 {
   "schema": "taiji-u2-22-5-0-a-parent-package-v1",
   "card": "DESIGN-TAIJI_U2_22_5_0_A_PARENT_PACKAGE_20261119.md",
-  "status": "authorized_execution_ready",
+  "status": "authorized_rerun_in_progress",
   "training_authority": true,
   "protocol": {
     "dose_per_seed": 2000,
@@ -87,7 +87,7 @@
       "note": "supersedes the fragment-based 20874/seed estimate; adapter per-example cpu 0.00937 measured"
     },
     "package_cpu_total_measured": 9939.8,
-    "cap_cpu_confirmed": 10586.8,
+    "cap_cpu_confirmed": 17000.0,
     "stage_budget_check": "prior draws ~13400 + package 10586.8 <= refrozen 24000"
   },
   "exits": [
@@ -115,7 +115,23 @@
     "stage_budget_refreeze_cpu": 24000.0,
     "parity": "with_package",
     "parity_task_face": "adapter_a_task",
-    "prior_diagnostic_draw_cpu": 13400.0
+    "prior_diagnostic_draw_cpu": 13400.0,
+    "fifth_ruling_cap_refreeze": {
+      "date": "2026-11-19",
+      "ref": "chat:2026-11-19#popup-baseline-crash-cap",
+      "decision": "rerun baseline arms + refreeze package cap to honest account",
+      "honest_package_basis": {
+        "u2_arms_min_honest_cpu": 5407.0,
+        "baseline_attempt1_waste_cpu": 7400.0,
+        "baseline_rerun_expected_cpu": 7700.0,
+        "cap_refrozen_cpu": 17000.0
+      },
+      "disclosed_pricing_misses": [
+        "runner-child eval/overhead phase unpriced (wall-evidenced ~2560s total, cpu unmeasured)",
+        "baseline optimizer+cycling overhead unpriced (0.00937/example bare-backward vs ~0.0146 real loop)"
+      ],
+      "stage_ledger_note": "stage 24000 diagnostic tally to be honestly re-counted with the same runner-child basis and presented with the closeout"
+    }
   },
   "adapter_prereg": {
     "status": "frozen_before_implementation",
