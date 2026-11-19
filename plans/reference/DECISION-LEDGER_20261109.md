@@ -5604,3 +5604,14 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **3. 判读**：换成「成本敏感上下文策略＋不确定性折扣」仍打不过最强固定策略（甚至输给 held-out oracle 选出的固定策略）。这说明在**该 C 任务池与 t0 观测上下文**下，固定等待策略已接近最优，离线上下文信息不足以产生选择增益；**不是评估口径问题**（贪心与保守均负）。要改进需要**在线闭环探索/部分观测历史**或更丰富的上下文特征（如跨 tick 观测序列），属新设计、新卡；不得同范围重试。
 
 **4. 九轴**：`autonomous_choice` 维持 **negative**（22.6.2 `policy_gain_absent` ＋ 22.6.2b `policy_gain_absent`，两种方法一致）。
+
+
+### D-20261119-61 不确定性表达探针：`uncertainty_uncalibrated`（温度缩放未过门；但集成置信 ECE 已 0.056）
+
+**1. 动作**：新增 [`probe_s2_uncertainty_20261120.py`](../../scripts/training/probe_s2_uncertainty_20261120.py)：joint24、3-seed 集成（groups=6、30 单位、1,200 步）、128 fit world 分校准/测试两半；温度缩放后测 ECE/Brier/置信与准确率。回执 [`taiji_u2_uncertainty_20261120.json`](../../reports/taiji_u2_uncertainty_20261120.json)，`29.20 CPU`、零 check。
+
+**2. 读数**：test 准确率 `0.8906`；**校准前 ECE `0.0560`**（已 ≤0.10）；温度缩放拟合 T＝0.25（撞网格下界，64 条校准样本过拟合）后 ECE `0.0923`（变差）；Brier 同步变差。按预注册门（ECE 减半或 ≤0.05）判 **`uncertainty_uncalibrated`**。
+
+**3. 判读**：这是**门口径问题**而非「不确定无法表达」——集成 softmax **本来就校准良好**（ECE 0.056），温度缩放在小校准集上过拟合反而破坏校准。原门「ECE 减半」默认基线未校准，与实测不符；但**不得事后改门**。证据层面可记：集成置信在 joint24 测试集上 ECE 0.0560、Brier 可复核，属**有界的不确定性表达证据**。
+
+**4. 后继（22.6.4b）**：预注册改为「ECE_after ≤0.10 且校准集≥128、测试集≥128；若基线 ECE≤0.10 则判 `calibration_already_adequate`」；同时报告 Brier 与可靠性曲线分箱表。新卡、零 check、帽 120 CPU。

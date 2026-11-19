@@ -4141,3 +4141,8 @@ groups=6（全通道路由）＋严格 split（训练 256/fit 只评测）＋四
 ## 2026-11-20 22.6.2b 上下文成本敏感策略负结果（D-20261119-60，`policy_gain_absent`，21.62 CPU）
 
 7 固定策略当动作、t0 全实体观测为上下文、仿真全效用为标签；MLP＋bootstrap 集成、argmax(mean−β·std)、β 5 折 CV。held-out 最强固定 observe_t14 0.84（held-out oracle 选择，偏乐观）；学习策略 0.7467/0.8192/0.8237，贪心 0.7592/0.8187/0.7592；均值增益 −0.0435、三个 seed 配对 LB 均 <0 ⇒ policy_gain_absent。判读：该池+t0 上下文下固定等待策略已近最优，离线信息不足；需在线闭环/部分观测历史或更丰富上下文（新卡），不得同范围重试。autonomous_choice 维持 negative（两种方法一致）。
+
+
+## 2026-11-20 不确定性表达探针（D-20261119-61，`uncertainty_uncalibrated` 门未过但基线已 0.056，29.20 CPU）
+
+joint24、3-seed 集成（groups=6、30 单位、1200 步）、128 fit 分校准/测试；test 准确率 0.8906、校准前 ECE 0.0560（≤0.10）、温度缩放 T=0.25 撞界且 64 校准样本过拟合 → ECE 0.0923 变差 ⇒ 按预注册门（减半或 ≤0.05）判 uncertainty_uncalibrated。判读：门口径问题——集成 softmax 本就校准良好，温度缩放在小校准集上过拟合；不得事后改门。证据层面：ECE 0.0560、Brier 可复核，属有界不确定性表达证据。后继 22.6.4b：ECE_after≤0.10、校准≥128/测试≥128、基线 ECE≤0.10 判 calibration_already_adequate，报 Brier 与可靠性分箱；零 check、帽 120 CPU。

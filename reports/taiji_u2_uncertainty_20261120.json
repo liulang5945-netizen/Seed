@@ -1,0 +1,40 @@
+{
+  "schema": "taiji-u2-uncertainty-v1",
+  "card": "explicit uncertainty: ensemble + temperature scaling on joint24",
+  "created_utc": "2026-11-19T21:34:38.803705+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "train_worlds": 256,
+    "eval_worlds": 128,
+    "calibration_items": 64,
+    "test_items": 64,
+    "ensemble_members": 3,
+    "temperature": 0.25,
+    "bins": 10
+  },
+  "test_accuracy": 0.8906,
+  "ece_before": 0.056,
+  "ece_after": 0.0923,
+  "brier_before": 0.1245,
+  "brier_after": 0.1704,
+  "mean_confidence_before": 0.9466,
+  "mean_confidence_after": 0.9829,
+  "gates": {
+    "ece_halved": false,
+    "ece_after_le_0_10": true,
+    "test_disjoint": true
+  },
+  "verdict": "uncertainty_uncalibrated",
+  "discipline": {
+    "optimizer_steps": 3600,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 29.2
+  }
+}
