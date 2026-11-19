@@ -1,0 +1,27 @@
+{
+  "schema": "taiji-u2-22-7-0-alpha-adapter-v3-v1",
+  "card": "alpha adapter v3 raw-media palette histogram + linear probe",
+  "created_utc": "2026-11-19T19:26:21.053857+00:00",
+  "protocol": {
+    "source": "raw_media rgb regenerated from the example's audited seed",
+    "features": 48,
+    "chroma_distance": 0.08,
+    "saturation_min": 0.1,
+    "train_worlds": 256,
+    "fit_worlds": 32,
+    "probe": "linear softmax, 500 Adam steps",
+    "threshold_fit_accuracy": 0.6,
+    "chance": 0.25
+  },
+  "train_accuracy": 0.9414,
+  "fit_accuracy": 0.9062,
+  "verdict": "adapter_v3_signal_ready",
+  "discipline": {
+    "graph_optimizer_steps": 0,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 3.98
+  }
+}

@@ -1,0 +1,82 @@
+{
+  "schema": "taiji-u2-22-7-0-alpha-r4-v1",
+  "card": "22.7.0-alpha r4 interface feasibility (adapter v3 features)",
+  "created_utc": "2026-11-19T19:28:06.150550+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "adapter": "v3 raw-media palette histogram, corrected x-axis",
+    "adapter_probe_fit": 0.9062,
+    "groups": 4,
+    "units_per_group": 8,
+    "steps": 2000,
+    "batch": 64,
+    "lr": 0.003,
+    "warmup": 100,
+    "train_worlds": 256,
+    "heldout_worlds": 32,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "chance": 0.25,
+    "exits": [
+      "engineering_failure",
+      "adapter_insufficient",
+      "budget_stop",
+      "adapter_ready"
+    ],
+    "cap_cpu": 150.0,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "runs": [
+    {
+      "seed": 0,
+      "initial_loss": 1.3868834972381592,
+      "final_loss": 0.00021262648806441575,
+      "loss_drop": 0.999846687563528,
+      "gradient_norm": 0.01797686330974102,
+      "heldout_accuracy": 1.0,
+      "reload_exact": true
+    },
+    {
+      "seed": 1,
+      "initial_loss": 1.3858685493469238,
+      "final_loss": 9.398766269441694e-05,
+      "loss_drop": 0.9999321814015198,
+      "gradient_norm": 0.020703081041574478,
+      "heldout_accuracy": 1.0,
+      "reload_exact": true
+    },
+    {
+      "seed": 2,
+      "initial_loss": 1.387065052986145,
+      "final_loss": 0.0003809367772191763,
+      "loss_drop": 0.99972536488004,
+      "gradient_norm": 0.02558838576078415,
+      "heldout_accuracy": 1.0,
+      "reload_exact": true
+    }
+  ],
+  "checks": {
+    "gradients_flow": true,
+    "loss_drops": true,
+    "heldout_above_chance": true,
+    "reload_exact": true
+  },
+  "verdict": "adapter_ready",
+  "scope": "interface milestone only; no growth, no capability signing, 22.7 locked",
+  "discipline": {
+    "optimizer_steps": 6000,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 44.27
+  }
+}

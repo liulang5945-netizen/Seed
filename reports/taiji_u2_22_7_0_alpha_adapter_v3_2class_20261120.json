@@ -1,0 +1,25 @@
+{
+  "schema": "taiji-u2-22-7-0-alpha-adapter-v3-2class-v1",
+  "card": "alpha 2-class task-face probe on adapter v3 features",
+  "created_utc": "2026-11-19T19:26:26.131652+00:00",
+  "protocol": {
+    "task": "left vs right (middle/unknown excluded)",
+    "features": 48,
+    "train_examples": 128,
+    "fit_examples": 16,
+    "probe": "linear softmax, 500 Adam steps",
+    "threshold_fit_accuracy": 0.7,
+    "chance": 0.5
+  },
+  "train_accuracy": 1.0,
+  "fit_accuracy": 0.9375,
+  "verdict": "adapter_v3_2class_ready",
+  "discipline": {
+    "graph_optimizer_steps": 0,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 3.33
+  }
+}
