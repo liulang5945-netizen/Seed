@@ -1,0 +1,64 @@
+{
+  "schema": "taiji-u2-22-5-1-strict-d-v1",
+  "card": "22.5.1 joint gate fit-face D-reference sensitivity",
+  "created_utc": "2026-11-19T18:01:12.570593+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "scope": "re-decode saved children + accepted parent on fit 24 B items; zero optimizer steps, zero check/final reads, no signing",
+  "parent": {
+    "seed": 20261112,
+    "checkpoint": "output\\a_pixel_parallel_20261119T070447Z\\segment.bin"
+  },
+  "rows": [
+    {
+      "seed": 20261110,
+      "a_child_truth": 23,
+      "a_parent_truth": 23,
+      "d_child_same_condition": 22,
+      "d_parent_same_condition": 9,
+      "d_child_truth": 21,
+      "d_parent_truth": 8,
+      "same_condition_drop_upper_bound": -0.375,
+      "truth_reference_drop_upper_bound": 0.1667,
+      "n": 24
+    },
+    {
+      "seed": 20261111,
+      "a_child_truth": 23,
+      "a_parent_truth": 23,
+      "d_child_same_condition": 22,
+      "d_parent_same_condition": 9,
+      "d_child_truth": 21,
+      "d_parent_truth": 8,
+      "same_condition_drop_upper_bound": -0.375,
+      "truth_reference_drop_upper_bound": 0.1667,
+      "n": 24
+    },
+    {
+      "seed": 20261112,
+      "a_child_truth": 23,
+      "a_parent_truth": 23,
+      "d_child_same_condition": 22,
+      "d_parent_same_condition": 9,
+      "d_child_truth": 21,
+      "d_parent_truth": 8,
+      "same_condition_drop_upper_bound": -0.375,
+      "truth_reference_drop_upper_bound": 0.1667,
+      "n": 24
+    }
+  ],
+  "thresholds": {
+    "d_reference_upper_bound_max": 0.02
+  },
+  "verdicts": {
+    "frozen_same_condition_reference": "d_reference_pass",
+    "strict_parent_a_truth_reference": "d_reference_breach"
+  },
+  "recommendation": "both references pass at the 24-item fit denominator only one way: same-condition passes; the strict parent-A-truth reference breaches. Owner should pick the D reference before any formal check exposure.",
+  "cost": {
+    "cpu": 27.72
+  }
+}
