@@ -5314,3 +5314,14 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **4. 判读与后继**：22.7.0-α 接口里程碑**通过**：单位图＋感知式适配器能学 first-A 4 类任务（fit 1.0，3 seed），且 capsule 跨进程一致。**仍未签**：生长收益、七臂配平、旧能力损伤、连接信用、全成本。后继＝七臂正式卡（合同骨架＋smoke，零训练）准备，**22.7 正式执行仍须 owner 显式范围裁定**；r1–r4/v2/v3 回执全部保留。
 
 **5. 边界**：零 check/final、22.7 仍锁定、不签能力；本笔不改变任何既有判词。
+
+
+### D-20261119-35 22.7 七臂生长合同骨架冻结＋零训练 smoke（`designed_pending_owner`，1.30 CPU）
+
+**1. 动作**：新增合同 runner [`run_s2_22_7_growth_20261120.py`](../../scripts/training/run_s2_22_7_growth_20261120.py)（freeze/smoke/closeout，`--run` 在 `training_authority=null` 时 fail-closed 并报 `runner_not_implemented_training_authority_null`）＋冻结合同 [`taiji_u2_22_7_growth_20261120.json`](../../plans/manifests/taiji_u2_22_7_growth_20261120.json)（`criteria_sha256=bdaba64f…`、`status=designed_pending_owner`、`training_authority=null`）＋合同测试 [`test_s2_22_7_growth_contract.py`](../../tests/taiji_native/test_s2_22_7_growth_contract.py)。
+
+**2. 预注册内容**：任务＝first-A fit 4 类（适配器 v3，48 维，D-20261119-34 已验证可学）；七臂 G0–G6 定义；等预算配平 `steps×batch×seeds`；结构分报 units/effective_edges/state_bytes/learnable_parameters/independent_credit_directions/mature_units；门＝生长净益 ≥0.05、world 95% 下界>0、3 seed 同向、旧能力损伤 ≤0.02、退役移除 ≥50% 增益且绝对降 ≥0.02、恢复 exact、引用清理；出口 `engineering_failure→not_admitted→budget_stop→growth_not_needed→retention_breach→credit_insufficient→recovery_failure→growth_gain_absent→growth_gain_pass`；包价 `600 CPU`、帽 `150 CPU`（本轮 smoke 实耗 1.30）。
+
+**3. 读数**：smoke 全过——适配器特征确定性、标签范围、r4 参考 `adapter_ready`、预算配平为正、七臂已定义、authority 为 null、0 优化器步。
+
+**4. 边界与后继**：**未执行任何训练**，七臂 arm runner 尚未实现（`--run` 拒跑）；22.7 正式执行仍须 owner 显式范围裁定。后继＝实现 G0–G6 臂机制（G0 信用条件出生按生命周期规范 §5、G1/G2 随机/置换门、G3 GradMax 方向、G4 重放、G5 固定容量强优化、G6 预分配容量）＋预注册后开跑；owner 若裁定放行则在常设授权下记录并执行。

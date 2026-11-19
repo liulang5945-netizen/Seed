@@ -4016,3 +4016,8 @@ r3（32 单位/lr 3e-3/2,000 步/batch 64，43.02≤帽 150 CPU）：梯度流 �
 ## 2026-11-20 22.7.0-α 通过（D-20261119-34，`adapter_ready`，44.27 CPU，零 check）
 
 适配器 v3 修正像素 x 轴（16×16 图像按列归一化，chroma 距离 0.08／饱和度 0.10 过滤，「颜色×位置三分桶」直方图，不用标签/oracle）：4 类线性探针 train 0.9414／fit **0.9062**，2 类探针 fit 0.9375。r4 单位图（32 单位、lr 3e-3、2,000 步、batch 64、cosine 100，44.27≤帽 150 CPU）3 seed：loss 降 ~99.98%、fit 准确率 **1.0×3**、梯度流 ✓、capsule 跨进程重载 3/3 逐位一致 ⇒ **`adapter_ready`**。早期「单位图不可学」判断被推翻：根因是像素坐标轴用错＋统计特征抹掉空间信息。仍未签生长收益/七臂配平/旧能力损伤/连接信用/全成本；22.7 正式执行仍须 owner 裁定，r1–r4/v2/v3 回执保留。
+
+
+## 2026-11-20 22.7 七臂合同骨架冻结＋零训练 smoke（D-20261119-35，`designed_pending_owner`，1.30 CPU）
+
+合同 runner 三模式（freeze/smoke/closeout，`--run` 在 authority=null 时 fail-closed）＋冻结合同（criteria_sha256=bdaba64f…、status=designed_pending_owner、training_authority=null）＋合同测试。预注册：任务 first-A fit 4 类（适配器 v3）、七臂 G0–G6、等预算配平、结构六项分报、生长净益≥0.05/world 95% LB>0/3 seed 同向/旧能力≤0.02/退役≥50% 增益且绝对降≥0.02/恢复 exact/引用清理、出口序列、包价 600/帽 150 CPU。smoke 全过（1.30 CPU，0 优化器步）。未执行训练、七臂 arm runner 未实现；22.7 正式执行仍须 owner 裁定。后继＝实现 G0–G6 臂机制并预注册开跑。

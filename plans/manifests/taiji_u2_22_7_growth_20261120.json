@@ -1,0 +1,108 @@
+{
+  "schema": "taiji-u2-22-7-growth-v1",
+  "card": "DESIGN-TAIJI_U2_22_7_0_GROWTH_20261120.md",
+  "status": "designed_pending_owner",
+  "training_authority": null,
+  "criteria": {
+    "card": "22.7 growth/consolidation/lifecycle seven-arm comparison",
+    "base": {
+      "groups": 4,
+      "units_per_group": 8,
+      "input_dim": 8,
+      "hidden_dim": 8,
+      "output_dim": 4,
+      "lr": 0.003,
+      "steps": 2000,
+      "batch": 64,
+      "warmup": 100,
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "train_worlds": 256,
+      "fit_worlds": 32
+    },
+    "task": {
+      "name": "first-A fit 4-way position classification",
+      "adapter": "v3 raw-media palette histogram (D-20261119-34)",
+      "features": 48,
+      "chance": 0.25
+    },
+    "arms": {
+      "G0": "credit-conditioned birth (main candidate)",
+      "G1": "random content-blind gate birth, same budget",
+      "G2": "permuted gate birth, same budget",
+      "G3": "GradMax-style direction + fixed schedule",
+      "G4": "replay only, no growth",
+      "G5": "fixed-capacity strong optimisation",
+      "G6": "preallocated final capacity"
+    },
+    "budget_parity": {
+      "unit": "equal optimizer steps x batch x seeds across arms",
+      "steps_per_arm": 2000,
+      "batch": 64,
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "no_parameter_only_parity": true
+    },
+    "structure_accounts": [
+      "units",
+      "effective_edges",
+      "state_bytes",
+      "learnable_parameters",
+      "independent_credit_directions",
+      "mature_units"
+    ],
+    "gates": {
+      "growth_gain_min": 0.05,
+      "world_paired_lower_bound_min": 0.0,
+      "all_seeds_same_direction": true,
+      "retention_drop_upper_bound_max": 0.02,
+      "retire_gain_removed_fraction_min": 0.5,
+      "retire_absolute_drop_min": 0.02,
+      "recovery_exact": true,
+      "references_cleanup": true
+    },
+    "exits_order": [
+      "engineering_failure",
+      "not_admitted",
+      "budget_stop",
+      "growth_not_needed",
+      "retention_breach",
+      "credit_insufficient",
+      "recovery_failure",
+      "growth_gain_absent",
+      "growth_gain_pass"
+    ],
+    "check_reads": 0,
+    "final_reads": 0,
+    "price_cpu": 600.0,
+    "price_source": "DESIGN-TAIJI_U2_22_7_0_GROWTH_20261120.md §4 (measured 0.00234 CPU/step)",
+    "cap_cpu": 150.0
+  },
+  "criteria_sha256": "bdaba64f0df8b4c2b11608d7a3b21dc66e0afd1c6c009e435307312a01894f2a",
+  "plan": {
+    "price_cpu": 600.0,
+    "optimizer_steps": 42000,
+    "arms": 7
+  },
+  "cap_cpu": 150.0,
+  "check_exposure": {
+    "reads": 0
+  },
+  "source_pins": {
+    "scripts/training/run_s2_22_7_growth_20261120.py": "b7c17ad18773fa9dfcb5b46a26a13ed7dabeee04d13527d14cc43ef8877eae62",
+    "scripts/training/probe_s2_22_7_0_alpha_adapter_v3_20261120.py": "40fea6e7745d8eced5ef4fd780964702e248cfd63c52d8d051a1ca52260bf723",
+    "taiji/u2_neural_units.py": "6a8bfc15f44b39cc22cd1570bf43cedaf44e018628572efb528f2a829a5deca9"
+  },
+  "result": {
+    "smoke": "smoke_passed",
+    "run": false,
+    "closed": false,
+    "verdict": "designed_pending_owner"
+  }
+}
