@@ -4261,3 +4261,8 @@ HEADS=5：s1 joint24→s2 动作桶→s3 推方向→s4 位置词→s5 实体颜
 ## 2026-11-20 五通路干扰矩阵（D-20261119-84，`pathway_interference_ready`，10.23 CPU）
 
 载入 5 通路最终 capsule：依次停用任一通路（清零其头/query/编码器）测 5×5 矩阵，再重新载入未改动 capsule。3 seed 全过：others_unchanged（其余四条逐位不变、others_max_delta=0.0）；disabled_collapses（停用通路=常数类基线，下降 0.50–0.84）；reenabled_exact（重新载入后五任务逐位恢复）⇒ pathway_interference_ready。判读：任务通路互不交叉干扰、停用可逆；与 D-79/81/83 构成通路级结构有界 verified 闭环。边界：单主体、5 任务、通路级停用；单元级休眠交叉影响/6+任务/真机/22.8 仍 uncovered。
+
+
+## 2026-11-20 会话收口报告 v2（D-20261119-85，零训练）
+
+会话收口报告新增 §7 任务通路级结构与组合证据：多读出头（D-75）、任务专用通路三任务（D-78）、4/5 通路（D-79/83）、回收（D-81）、干扰矩阵与可逆停用（D-84），全部有界 verified；通路级「新增/叠加/回收/互不干扰/可逆停用」形成证据闭环。单元级生长收益与共享单元分裂/整合仍不在已证范围、不混写。刷新成本、九轴与残留项（check②、autonomous_choice、recursive、6+任务、真机/长跨度、22.8/23–30）。零 check/final。
