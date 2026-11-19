@@ -1,0 +1,48 @@
+{
+  "schema": "taiji-u2-22-5-a-parent-u2-arm-v1",
+  "card": "22.5.0 A-parent formal package",
+  "seed": 20261112,
+  "preflight_equal": true,
+  "train": {
+    "updates": 2000,
+    "batch": 8,
+    "lr": 0.005,
+    "fit_correct": 31,
+    "fit_denominator": 32,
+    "delta_spread": 0.223311,
+    "wall_seconds": 757.86,
+    "checkpoint": "output/a_pixel_parallel_20261119T070447Z/segment.bin"
+  },
+  "recovery_equal": true,
+  "check": {
+    "correct": 174,
+    "denominator": 192,
+    "accuracy": 0.90625,
+    "valid_utf8": 192,
+    "eos": 192,
+    "per_label": {
+      "未知": {
+        "correct": 48,
+        "denominator": 48
+      },
+      "右边": {
+        "correct": 34,
+        "denominator": 43
+      },
+      "中间": {
+        "correct": 53,
+        "denominator": 57
+      },
+      "左边": {
+        "correct": 39,
+        "denominator": 44
+      }
+    },
+    "self_cpu": 227.515625,
+    "self_wall": 26.054831
+  },
+  "cost": {
+    "cpu": 388.7344,
+    "wall": 836.2358
+  }
+}

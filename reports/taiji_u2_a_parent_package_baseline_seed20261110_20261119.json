@@ -1,0 +1,56 @@
+{
+  "schema": "taiji-u2-22-5-a-parent-baseline-arm-v1",
+  "card": "22.5.0 A-parent formal package",
+  "seed": 20261110,
+  "identity": "weight_tied_transformer_sequence+first_a_adapter_v1",
+  "flops_parity": {
+    "dose": 168318,
+    "ratio_u2_over_adapter": 10.5199,
+    "method": "FlopCounterMode per-example on identical examples"
+  },
+  "optimizer": {
+    "type": "Adam",
+    "lr": 0.001,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08
+  },
+  "last_train_loss": 0.004199,
+  "fit": {
+    "correct": 15,
+    "denominator": 32
+  },
+  "check": {
+    "correct": 71,
+    "denominator": 192,
+    "accuracy": 0.3697916666666667,
+    "valid_utf8": 192,
+    "eos": 192,
+    "per_label": {
+      "未知": {
+        "correct": 18,
+        "denominator": 48
+      },
+      "右边": {
+        "correct": 15,
+        "denominator": 43
+      },
+      "中间": {
+        "correct": 25,
+        "denominator": 57
+      },
+      "左边": {
+        "correct": 13,
+        "denominator": 44
+      }
+    },
+    "aggregate_only": true
+  },
+  "cost": {
+    "cpu": 1952.4531,
+    "wall": 1962.9851,
+    "threads": 1
+  }
+}

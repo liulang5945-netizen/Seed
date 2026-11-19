@@ -1,0 +1,98 @@
+{
+  "schema": "taiji-u2-22-5-a-parent-package-run-v1",
+  "card": "22.5.0 A-parent formal package",
+  "criterion": "yi_median_check_min_0_80",
+  "verdict": "a_parent_earned",
+  "u2": {
+    "seeds": [
+      20261110,
+      20261111,
+      20261112
+    ],
+    "fit_correct": {
+      "20261110": 30,
+      "20261111": 14,
+      "20261112": 31
+    },
+    "check_correct": {
+      "20261110": 171,
+      "20261111": 78,
+      "20261112": 174
+    },
+    "check_accuracies": [
+      0.40625,
+      0.890625,
+      0.90625
+    ],
+    "check_median": 0.890625,
+    "preflight_equal": {
+      "20261110": true,
+      "20261111": true,
+      "20261112": true
+    },
+    "recovery_equal": {
+      "20261110": true,
+      "20261111": true,
+      "20261112": true
+    },
+    "utf8_eos_full": {
+      "20261110": [
+        192,
+        192
+      ],
+      "20261111": [
+        192,
+        192
+      ],
+      "20261112": [
+        192,
+        192
+      ]
+    }
+  },
+  "baseline_flops_matched": {
+    "identity": "weight_tied_transformer_sequence+first_a_adapter_v1",
+    "dose_per_seed": 168318,
+    "ratio_u2_over_baseline": 10.5199,
+    "fit_correct": {
+      "20261110": 15,
+      "20261111": 13,
+      "20261112": 10
+    },
+    "check_correct": {
+      "20261110": 71,
+      "20261111": 70,
+      "20261112": 57
+    },
+    "check_accuracy": {
+      "20261110": 0.3698,
+      "20261111": 0.3646,
+      "20261112": 0.2969
+    }
+  },
+  "cost": {
+    "u2_arm_cpu_parent_measured": 1156.64,
+    "u2_arm_training_child_priced_unit": 4250.0,
+    "u2_arm_cpu": 5406.64,
+    "baseline_arm_cpu": 5833.61,
+    "package_cpu": 11240.25,
+    "cap_cpu": 17000.0,
+    "baseline_attempt1_waste_listed_separately": 7400.0,
+    "stage_draws_cpu_estimate": 13400.0,
+    "stage_cap_cpu": 24000.0,
+    "stage_position_with_package": 32040.25,
+    "stage_ledger_status": "estimate basis undercounts runner-child compute; honest re-tally required, breach recorded as incident",
+    "cost_basis_note": "u2 child training at the frozen measured unit; u2 child eval/overhead phase unpriced (wall-evidenced ~2560s total, disclosed)"
+  },
+  "exposure": {
+    "check": "same-instrument face as D-20261119-02, aggregate-only",
+    "allocated_22_5": 2,
+    "used": 2,
+    "remaining": 0
+  },
+  "not_signed": [
+    "22.6 unlock",
+    "external capability claims",
+    "22.5.1 B/check② (separate case)"
+  ]
+}
