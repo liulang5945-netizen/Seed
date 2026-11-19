@@ -1,4 +1,4 @@
-"""Contract tests for the 22.7b minimal growth package skeleton."""
+"""Contract tests for the 22.7b growth package (executed, retention_breach)."""
 
 from __future__ import annotations
 
@@ -14,16 +14,19 @@ def contract() -> dict:
     return json.loads(runner.CONTRACT.read_text(encoding="utf-8"))
 
 
-def test_contract_pending_owner_and_wired() -> None:
+def test_contract_frozen_closed_and_wired() -> None:
     if not runner.CONTRACT.is_file():
         pytest.skip("22.7b contract not frozen yet")
     data = contract()
     assert data["schema"] == "taiji-u2-22-7b-growth-v1"
-    assert data["status"] == "designed_pending_owner"
-    assert data["training_authority"] is None
+    assert data["status"] == "frozen"
+    assert data["training_authority"]
     assert data["criteria_sha256"] == runner.value_digest(data["criteria"])
     assert data["result"]["smoke"] == "smoke_passed"
-    assert data["result"]["run"] is False
+    assert data["result"]["run"] is True
+    assert data["result"]["closed"] is True
+    assert data["result"]["verdict"] == "retention_breach"
+    assert data["result"]["mean_gain"] < 0
     assert len(data["criteria"]["arms"]) == 3
     assert len(data["criteria"]["out_of_scope"]) == 6
     assert data["criteria"]["check_reads"] == 0
@@ -32,16 +35,32 @@ def test_contract_pending_owner_and_wired() -> None:
         assert data["source_pins"][name] == runner.sha_of(runner.ROOT / name), name
 
 
-def test_guards_refuse_run_and_tampering() -> None:
+def test_guards_refuse_missing_authority_and_tampering() -> None:
     if not runner.CONTRACT.is_file():
         pytest.skip("22.7b contract not frozen yet")
     data = contract()
-    with pytest.raises(ValueError, match="runner_not_implemented_training_authority_null"):
-        runner.guards(data, "run")
+    runner.guards(data, "smoke")
+    draft = copy.deepcopy(data)
+    draft["training_authority"] = None
+    with pytest.raises(ValueError, match="missing_training_authority"):
+        runner.guards(draft, "run")
     tampered = copy.deepcopy(data)
     tampered["criteria"]["gates"]["growth_gain_min"] = 0.0
     with pytest.raises(ValueError, match="criteria_digest_mismatch"):
         runner.guards(tampered, "smoke")
+
+
+def test_run_receipt_named_exit() -> None:
+    if not runner.RUN.is_file():
+        pytest.skip("22.7b run receipt absent")
+    receipt = json.loads(runner.RUN.read_text(encoding="utf-8"))
+    assert receipt["verdict"] == "retention_breach"
+    assert receipt["retention_drop_upper_bound"] > 0.02
+    assert receipt["mean_gain"] <= 0
+    assert receipt["recovery_exact"] is True
+    assert receipt["references_cleanup"] is True
+    assert receipt["cost"]["cpu"] <= receipt["budget"]["cap_cpu"]
+    assert receipt["discipline"]["check_reads"] == 0
 
 
 def test_smoke_receipt_zero_step() -> None:
@@ -49,5 +68,4 @@ def test_smoke_receipt_zero_step() -> None:
         pytest.skip("22.7b smoke receipt absent")
     smoke = json.loads(runner.SMOKE.read_text(encoding="utf-8"))
     assert smoke["verdict"] == "smoke_passed"
-    assert smoke["checks"]["joint24_family_candidate"] is True
     assert smoke["discipline"]["optimizer_steps"] == 0

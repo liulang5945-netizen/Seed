@@ -1,8 +1,8 @@
 {
   "schema": "taiji-u2-22-7b-growth-v1",
   "card": "DESIGN-TAIJI_U2_22_7B_GROWTH_JOINT24_20261120.md",
-  "status": "designed_pending_owner",
-  "training_authority": null,
+  "status": "frozen",
+  "training_authority": "owner:standing-authorization:2026-11-20#recommendation-default",
   "criteria": {
     "card": "22.7b minimal growth benefit on joint 24-class task",
     "base": {
@@ -13,7 +13,7 @@
       "output_dim": 24,
       "lr": 0.003,
       "steps": 1500,
-      "birth_step": 750,
+      "midpoint_step": 750,
       "batch": 64,
       "warmup": 100,
       "seeds": [
@@ -31,9 +31,9 @@
       "chance": 0.0417
     },
     "arms": {
-      "G0_growth": "warm 32 units, neutral birth at step 750 -> 33 units, continue",
-      "C1_no_growth": "32 units, same total steps, no birth",
-      "C2_preallocated": "33 units from step 0, same total steps"
+      "G0_growth": "warm 32 units; neutral birth + maturity at step 750 -> 33 units; continue to 1500 total steps",
+      "C1_no_growth": "32 units; 1500 total steps",
+      "C2_preallocated": "33 units from step 0; 1500 total steps"
     },
     "out_of_scope": {
       "G1": "random content-blind gate birth",
@@ -44,7 +44,7 @@
       "G6": "preallocated final capacity snapshot"
     },
     "parity": {
-      "rule": "equal total optimizer steps; FLOPs ratio (33/32) reported",
+      "rule": "equal total optimizer steps; optimizer recreated at midpoint for all arms; FLOPs ratio (33/32) reported",
       "flops_ratio_max": 1.05
     },
     "gates": {
@@ -70,7 +70,7 @@
     "price_cpu": 200.0,
     "cap_cpu": 200.0
   },
-  "criteria_sha256": "29966a3e7e98488313ff485986f7693828860bdf8fb8a29ce5035c711f0aec36",
+  "criteria_sha256": "ac33ee3764000dbae2806ff94e4a4cd75fc90d48db0243de3174df48e2cf88c2",
   "plan": {
     "price_cpu": 200.0,
     "optimizer_steps": 13500,
@@ -81,15 +81,17 @@
     "reads": 0
   },
   "source_pins": {
-    "scripts/training/run_s2_22_7b_growth_joint24_20261120.py": "7e9a9ae51c2ad19880096e38e62333e4c833c0446e44c475f76bb74ccc11d642",
+    "scripts/training/run_s2_22_7b_growth_joint24_20261120.py": "c07b3587e9c3157d155c0dc6d15e69537b9cc9dbabf5408c9390307c54e76361",
     "scripts/training/probe_s2_22_7_joint24_20261120.py": "4c6695e59ca7c4de2d62c6a17e4da08149b285632736cd43f1b770505587245f",
     "scripts/training/probe_s2_22_7_0_alpha_adapter_v3_20261120.py": "40fea6e7745d8eced5ef4fd780964702e248cfd63c52d8d051a1ca52260bf723",
     "taiji/u2_neural_units.py": "6a8bfc15f44b39cc22cd1570bf43cedaf44e018628572efb528f2a829a5deca9"
   },
   "result": {
     "smoke": "smoke_passed",
-    "run": false,
-    "closed": false,
-    "verdict": "designed_pending_owner"
+    "run": true,
+    "closed": true,
+    "verdict": "retention_breach",
+    "mean_gain": -0.010417,
+    "cost_cpu": 95.98
   }
 }
