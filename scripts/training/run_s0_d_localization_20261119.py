@@ -351,7 +351,7 @@ def smoke(contract: dict[str, Any]) -> int:
     checks["plan_record_weights"] = tuple(plan["record_weights"].shape) == (len(plan["entries"]),)
     emit_route, emit_probs = organ.emit(plan, 0)
     checks["emit_shapes"] = tuple(emit_probs.shape) == (257,) and tuple(emit_route.shape) == ()
-    isolated = child.record_organ_candidate()
+    isolated = parent.record_organ_candidate()
     patch_plan_delta(isolated.record_organ, 2.0)
     with torch.no_grad():
         patched = isolated.record_organ.plan(request, [rec_b])
