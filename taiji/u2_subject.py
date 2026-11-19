@@ -1373,9 +1373,17 @@ class U2Subject(_WorldKernel):
         records = state.get("records")
         if not records:
             return None
-        raw_goal = state["goal_raw"]
+        # Route on the current request, not the standing goal: under the
+        # separate-requests profile the request bytes live in answer_request,
+        # and the goal text is constant across items - routing on it gives the
+        # organ no entity information at all (the E5.10/E5.11 gate "degeneracy").
+        raw_request = (
+            state["answer_request"]["raw"] if self.c.separate_requests else state["goal_raw"]
+        )
         request_bytes = (
-            raw_goal if isinstance(raw_goal, bytes) else bytes(int(v) for v in raw_goal.tolist())
+            raw_request
+            if isinstance(raw_request, bytes)
+            else bytes(int(v) for v in raw_request.tolist())
         )
         window = state.get("organ_window")
         if window is None:
