@@ -18,6 +18,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import os
 import subprocess
 import sys
@@ -399,7 +400,7 @@ def smoke(contract: dict[str, Any]) -> int:
         torch.equal(parent.state_dict()[name], birth_child.state_dict()[name])
         for name in parent.state_dict()
     )
-    fit_small = fit[:8]
+    fit_small = fit[:4]
     items = build_b_items(fit, templates=SEEN)
     item, rec_b, _d, _d2, _old, _new = _records(items, 0, SEEN)
     out, eos = decode_episode(
@@ -422,8 +423,8 @@ def smoke(contract: dict[str, Any]) -> int:
         "multi",
         "supersede",
     }
-    checks["bootstrap_wired"] = (
-        bootstrap_lower([1.0] * 24) == 1.0 and bootstrap_upper([0.0] * 24) == 1.0
+    checks["bootstrap_wired"] = math.isclose(bootstrap_lower([1.0] * 24), 1.0) and math.isclose(
+        bootstrap_upper([0.0] * 24), 0.0
     )
     probe = overwrite_probe(birth_child, parent, fit_small)
     checks["overwrite_probe_wired"] = probe["n"] == small_n
