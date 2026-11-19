@@ -1,0 +1,121 @@
+{
+  "schema": "taiji-u2-22-7-hardness-v1",
+  "card": "22.7 task hardness calibration (adapter v3, target band 0.60-0.85)",
+  "created_utc": "2026-11-19T19:37:57.626666+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "grid": [
+      {
+        "groups": 3,
+        "units_per_group": 4,
+        "units": 12
+      },
+      {
+        "groups": 4,
+        "units_per_group": 4,
+        "units": 16
+      },
+      {
+        "groups": 5,
+        "units_per_group": 4,
+        "units": 20
+      },
+      {
+        "groups": 6,
+        "units_per_group": 4,
+        "units": 24
+      },
+      {
+        "groups": 7,
+        "units_per_group": 4,
+        "units": 28
+      }
+    ],
+    "step_grid": [
+      1000
+    ],
+    "seeds": [
+      0,
+      1
+    ],
+    "batch": 64,
+    "lr": 0.003,
+    "warmup": 100,
+    "target_band": [
+      0.6,
+      0.85
+    ],
+    "selection_rule": "highest units inside band, then fewest steps"
+  },
+  "results": [
+    {
+      "groups": 3,
+      "units_per_group": 4,
+      "units": 12,
+      "steps": 1000,
+      "accuracies": [
+        0.4062,
+        0.375
+      ],
+      "mean": 0.3906
+    },
+    {
+      "groups": 4,
+      "units_per_group": 4,
+      "units": 16,
+      "steps": 1000,
+      "accuracies": [
+        1.0,
+        1.0
+      ],
+      "mean": 1.0
+    },
+    {
+      "groups": 5,
+      "units_per_group": 4,
+      "units": 20,
+      "steps": 1000,
+      "accuracies": [
+        1.0,
+        1.0
+      ],
+      "mean": 1.0
+    },
+    {
+      "groups": 6,
+      "units_per_group": 4,
+      "units": 24,
+      "steps": 1000,
+      "accuracies": [
+        1.0,
+        1.0
+      ],
+      "mean": 1.0
+    },
+    {
+      "groups": 7,
+      "units_per_group": 4,
+      "units": 28,
+      "steps": 1000,
+      "accuracies": [
+        1.0,
+        1.0
+      ],
+      "mean": 1.0
+    }
+  ],
+  "selection": null,
+  "verdict": "hardness_grid_missed_band",
+  "discipline": {
+    "optimizer_steps": 10000,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 70.78
+  }
+}

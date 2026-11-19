@@ -4021,3 +4021,8 @@ r3（32 单位/lr 3e-3/2,000 步/batch 64，43.02≤帽 150 CPU）：梯度流 �
 ## 2026-11-20 22.7 七臂合同骨架冻结＋零训练 smoke（D-20261119-35，`designed_pending_owner`，1.30 CPU）
 
 合同 runner 三模式（freeze/smoke/closeout，`--run` 在 authority=null 时 fail-closed）＋冻结合同（criteria_sha256=bdaba64f…、status=designed_pending_owner、training_authority=null）＋合同测试。预注册：任务 first-A fit 4 类（适配器 v3）、七臂 G0–G6、等预算配平、结构六项分报、生长净益≥0.05/world 95% LB>0/3 seed 同向/旧能力≤0.02/退役≥50% 增益且绝对降≥0.02/恢复 exact/引用清理、出口序列、包价 600/帽 150 CPU。smoke 全过（1.30 CPU，0 优化器步）。未执行训练、七臂 arm runner 未实现；22.7 正式执行仍须 owner 裁定。后继＝实现 G0–G6 臂机制并预注册开跑。
+
+
+## 2026-11-20 22.7 硬度校准未命中→按预设出口结案 no-growth（D-20261119-36，零训练）
+
+两轮硬度校准（r1 低容量 0.30–0.44≈机会；r2 12 单元 0.39→16 单元 1.0 相变；r3 16 单元 100 步 0.47–0.50→200 步 0.95–0.97）证明 first-A 任务面上不存在 0.6–0.85 的中间头空间，七臂生长比较不可测。按 22.7 卡预设出口结案 **`growth_not_needed_in_scope`**：合同 result.verdict 已记、run=false、closed=true、authority 仍 null（未训练）；22.7 结构/生命周期证据（D-29/30）仍成立但只算结构证据；增长收益记 `uncovered/no_growth_needed_in_scope`，不得写成 verified。零 check/final；22.8/23–30 仍锁定；若要测生长收益需新任务族＋owner 裁定。

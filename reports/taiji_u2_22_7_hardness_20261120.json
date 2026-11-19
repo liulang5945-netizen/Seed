@@ -1,0 +1,189 @@
+{
+  "schema": "taiji-u2-22-7-hardness-v1",
+  "card": "22.7 task hardness calibration (adapter v3, target band 0.60-0.85)",
+  "created_utc": "2026-11-19T19:36:08.760553+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "grid": [
+      {
+        "groups": 1,
+        "units_per_group": 2,
+        "units": 2
+      },
+      {
+        "groups": 1,
+        "units_per_group": 4,
+        "units": 4
+      },
+      {
+        "groups": 2,
+        "units_per_group": 2,
+        "units": 4
+      },
+      {
+        "groups": 2,
+        "units_per_group": 4,
+        "units": 8
+      },
+      {
+        "groups": 4,
+        "units_per_group": 4,
+        "units": 16
+      }
+    ],
+    "step_grid": [
+      300,
+      500,
+      1000
+    ],
+    "seeds": [
+      0,
+      1
+    ],
+    "batch": 64,
+    "lr": 0.003,
+    "warmup": 100,
+    "target_band": [
+      0.6,
+      0.85
+    ],
+    "selection_rule": "highest units inside band, then fewest steps"
+  },
+  "results": [
+    {
+      "groups": 1,
+      "units_per_group": 2,
+      "units": 2,
+      "steps": 300,
+      "accuracies": [
+        0.3438,
+        0.25
+      ],
+      "mean": 0.2969
+    },
+    {
+      "groups": 1,
+      "units_per_group": 2,
+      "units": 2,
+      "steps": 500,
+      "accuracies": [
+        0.375,
+        0.3438
+      ],
+      "mean": 0.3594
+    },
+    {
+      "groups": 1,
+      "units_per_group": 2,
+      "units": 2,
+      "steps": 1000,
+      "accuracies": [
+        0.375,
+        0.3438
+      ],
+      "mean": 0.3594
+    },
+    {
+      "groups": 1,
+      "units_per_group": 4,
+      "units": 4,
+      "steps": 300,
+      "accuracies": [
+        0.4375,
+        0.4375
+      ],
+      "mean": 0.4375
+    },
+    {
+      "groups": 1,
+      "units_per_group": 4,
+      "units": 4,
+      "steps": 500,
+      "accuracies": [
+        0.375,
+        0.4375
+      ],
+      "mean": 0.4062
+    },
+    {
+      "groups": 1,
+      "units_per_group": 4,
+      "units": 4,
+      "steps": 1000,
+      "accuracies": [
+        0.3125,
+        0.3438
+      ],
+      "mean": 0.3281
+    },
+    {
+      "groups": 2,
+      "units_per_group": 2,
+      "units": 4,
+      "steps": 300,
+      "accuracies": [
+        0.2812,
+        0.3125
+      ],
+      "mean": 0.2969
+    },
+    {
+      "groups": 2,
+      "units_per_group": 2,
+      "units": 4,
+      "steps": 500,
+      "accuracies": [
+        0.2812,
+        0.3438
+      ],
+      "mean": 0.3125
+    },
+    {
+      "groups": 2,
+      "units_per_group": 2,
+      "units": 4,
+      "steps": 1000,
+      "accuracies": [
+        0.3125,
+        0.2812
+      ],
+      "mean": 0.2969
+    },
+    {
+      "groups": 2,
+      "units_per_group": 4,
+      "units": 8,
+      "steps": 300,
+      "accuracies": [
+        0.2812,
+        0.3125
+      ],
+      "mean": 0.2969
+    },
+    {
+      "groups": 2,
+      "units_per_group": 4,
+      "units": 8,
+      "steps": 500,
+      "accuracies": [
+        0.3125,
+        0.3125
+      ],
+      "mean": 0.3125
+    }
+  ],
+  "selection": null,
+  "verdict": "hardness_grid_missed_band",
+  "discipline": {
+    "optimizer_steps": 12400,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 85.66
+  }
+}

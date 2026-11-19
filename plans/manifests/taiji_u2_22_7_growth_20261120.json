@@ -100,9 +100,23 @@
     "taiji/u2_neural_units.py": "6a8bfc15f44b39cc22cd1570bf43cedaf44e018628572efb528f2a829a5deca9"
   },
   "result": {
-    "smoke": "smoke_passed",
     "run": false,
-    "closed": false,
-    "verdict": "designed_pending_owner"
+    "closed": true,
+    "verdict": "growth_not_needed_in_scope",
+    "closed_by": "D-20261119-36",
+    "evidence": {
+      "hardness_calibration": [
+        "reports/taiji_u2_22_7_hardness_20261120.json",
+        "reports/taiji_u2_22_7_hardness_r2_20261120.json",
+        "reports/taiji_u2_22_7_hardness_r3_20261120.json"
+      ],
+      "alpha_r4": "reports/taiji_u2_22_7_0_alpha_r4_20261120.json",
+      "lifecycle_structure": [
+        "reports/taiji_u2_22_7_0_lifecycle_20261120.json",
+        "reports/taiji_u2_22_7_0_lifecycle_ext_20261120.json"
+      ]
+    },
+    "reason": "no intermediate accuracy regime on the first-A adapter-v3 task: low capacity is at 0.3-0.5 and 16 units/200 steps already reach 0.95-1.0, so a seven-arm growth comparison would be uninformative; per the 22.7 card exit this closes as growth_not_needed_in_scope rather than a fabricated gain comparison",
+    "smoke": "smoke_passed"
   }
 }

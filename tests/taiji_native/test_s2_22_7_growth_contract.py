@@ -24,6 +24,7 @@ def test_contract_is_pending_owner_and_wired() -> None:
     assert data["criteria_sha256"] == runner.value_digest(data["criteria"])
     assert data["result"]["smoke"] == "smoke_passed"
     assert data["result"]["run"] is False
+    assert data["result"]["verdict"] == "growth_not_needed_in_scope"
     assert data["criteria"]["check_reads"] == 0
     assert len(data["criteria"]["arms"]) == 7
     assert data["criteria"]["cap_cpu"] == runner.CAP_CPU

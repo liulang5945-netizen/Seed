@@ -5325,3 +5325,14 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **3. 读数**：smoke 全过——适配器特征确定性、标签范围、r4 参考 `adapter_ready`、预算配平为正、七臂已定义、authority 为 null、0 优化器步。
 
 **4. 边界与后继**：**未执行任何训练**，七臂 arm runner 尚未实现（`--run` 拒跑）；22.7 正式执行仍须 owner 显式范围裁定。后继＝实现 G0–G6 臂机制（G0 信用条件出生按生命周期规范 §5、G1/G2 随机/置换门、G3 GradMax 方向、G4 重放、G5 固定容量强优化、G6 预分配容量）＋预注册后开跑；owner 若裁定放行则在常设授权下记录并执行。
+
+
+### D-20261119-36 22.7 任务硬度校准两轮未命中＋按预设出口结案 `growth_not_needed_in_scope`（零训练）
+
+**1. 动作**：新增校准探针 [`probe_s2_22_7_hardness_20261120.py`](../../scripts/training/probe_s2_22_7_hardness_20261120.py)（r1）及其 r2/r3 网格版本，在适配器 v3 特征上扫描基础容量/步数，目标把基线 fit 准确率调进 `0.60–0.85` 以给七臂生长比较留头空间。回执 [r1](../../reports/taiji_u2_22_7_hardness_20261120.json)／[r2](../../reports/taiji_u2_22_7_hardness_r2_20261120.json)／[r3](../../reports/taiji_u2_22_7_hardness_r3_20261120.json)＋[备忘](../reference/MEMO-TAIJI_U2_22_7_HARDNESS_20261120.md)。**零 check/final。**
+
+**2. 读数**：r1 低容量 `0.30–0.44`≈机会；r2 **12 单元 `0.39` → 16 单元 `1.0`**（尖锐相变）；r3 16 单元 100 步 `0.47–0.50` → 200 步 `0.95–0.97` → 600 步 `1.0`（学习曲线同样陡）。两轮均 `hardness_grid_missed_band`：任务只有「学不会」与「完全学会」两态，无中间头空间。
+
+**3. 决定**：按 22.7 卡自带出口**结案 `growth_not_needed_in_scope`**——本任务面上七臂生长比较不可测（高容量已 1.0 天花板、低容量同步失败），强行开跑只会得到不可解释数字；不得改判据凑增益。合同 `result.verdict=growth_not_needed_in_scope`、`run=false`、`closed=true`、`training_authority` 仍 null（**未训练**）。22.7 的**结构/生命周期证据**（D-20261119-29/30）仍成立，但只算结构证据；「增长收益」在 22.8/包 22 总账记 `uncovered/no_growth_needed_in_scope`，不得写成 verified。
+
+**4. 边界与后继**：零训练、零 check/final；22.8 与 23–30 仍锁定。若 owner 要检验生长收益，需**新任务族**（混淆样本/多属性联合/J 型程序列）并新卡裁定；本笔不改任何既有能力判词。
