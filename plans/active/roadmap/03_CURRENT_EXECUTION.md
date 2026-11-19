@@ -4256,3 +4256,8 @@ HEADS=4：s1 joint24→s2 动作桶→s3 推方向→s4 位置词（4 类）；�
 ## 2026-11-20 五条任务通路压力测试（D-20261119-83，`multihead4_ready`，实际 226.23 CPU > 价200）
 
 HEADS=5：s1 joint24→s2 动作桶→s3 推方向→s4 位置词→s5 实体颜色(6类)；后续冻结共享与既有通路。3 seed 全过：inheritance exact（4 边界）；旧 A/B/C/D 保留 drop 0.0；新 E 1.0/1.0/1.0 ≥0.55 ⇒ multihead4_ready。实际子进程 CPU 226.23 超预注册价 200（+26.23，13.1%），按纪律披露记超价事故、不改判据。判读：通路可扩至 5 任务、旧四任务逐位保持、新任务独立可学；6+任务/干扰矩阵/共享单元分裂整合/真机/22.8 仍 uncovered。
+
+
+## 2026-11-20 五通路干扰矩阵（D-20261119-84，`pathway_interference_ready`，10.23 CPU）
+
+载入 5 通路最终 capsule：依次停用任一通路（清零其头/query/编码器）测 5×5 矩阵，再重新载入未改动 capsule。3 seed 全过：others_unchanged（其余四条逐位不变、others_max_delta=0.0）；disabled_collapses（停用通路=常数类基线，下降 0.50–0.84）；reenabled_exact（重新载入后五任务逐位恢复）⇒ pathway_interference_ready。判读：任务通路互不交叉干扰、停用可逆；与 D-79/81/83 构成通路级结构有界 verified 闭环。边界：单主体、5 任务、通路级停用；单元级休眠交叉影响/6+任务/真机/22.8 仍 uncovered。

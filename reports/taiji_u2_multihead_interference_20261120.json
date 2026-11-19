@@ -1,0 +1,302 @@
+{
+  "schema": "taiji-u2-pathway-interference-v1",
+  "card": "five-task pathway interference matrix and reversible disable",
+  "created_utc": "2026-11-19T23:28:40.740494+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "tasks": [
+      "joint24",
+      "action_bins",
+      "direction",
+      "position",
+      "color"
+    ],
+    "capsules": "output/s2_multihead4/seed*_session5.pt",
+    "retention_max": 1e-09,
+    "disabled_baseline_tol": 0.05,
+    "disabled_drop_min": 0.25
+  },
+  "results": [
+    {
+      "seed": 0,
+      "baseline": [
+        0.78125,
+        0.84375,
+        1.0,
+        0.8125,
+        1.0
+      ],
+      "zero_constant_baseline": [
+        0.09375,
+        0.21875,
+        0.40625,
+        0.21875,
+        0.15625
+      ],
+      "interference": [
+        {
+          "disabled": "joint24",
+          "matrix": [
+            0.09375,
+            0.84375,
+            1.0,
+            0.8125,
+            1.0
+          ],
+          "others_max_delta": 0.0,
+          "disabled_delta": -0.6875
+        },
+        {
+          "disabled": "action_bins",
+          "matrix": [
+            0.78125,
+            0.21875,
+            1.0,
+            0.8125,
+            1.0
+          ],
+          "others_max_delta": 0.0,
+          "disabled_delta": -0.625
+        },
+        {
+          "disabled": "direction",
+          "matrix": [
+            0.78125,
+            0.84375,
+            0.40625,
+            0.8125,
+            1.0
+          ],
+          "others_max_delta": 0.0,
+          "disabled_delta": -0.59375
+        },
+        {
+          "disabled": "position",
+          "matrix": [
+            0.78125,
+            0.84375,
+            1.0,
+            0.21875,
+            1.0
+          ],
+          "others_max_delta": 0.0,
+          "disabled_delta": -0.59375
+        },
+        {
+          "disabled": "color",
+          "matrix": [
+            0.78125,
+            0.84375,
+            1.0,
+            0.8125,
+            0.15625
+          ],
+          "others_max_delta": 0.0,
+          "disabled_delta": -0.84375
+        }
+      ],
+      "reenabled": [
+        0.78125,
+        0.84375,
+        1.0,
+        0.8125,
+        1.0
+      ]
+    },
+    {
+      "seed": 1,
+      "baseline": [
+        0.9375,
+        0.78125,
+        1.0,
+        0.78125,
+        1.0
+      ],
+      "zero_constant_baseline": [
+        0.09375,
+        0.21875,
+        0.40625,
+        0.21875,
+        0.15625
+      ],
+      "interference": [
+        {
+          "disabled": "joint24",
+          "matrix": [
+            0.09375,
+            0.78125,
+            1.0,
+            0.78125,
+            1.0
+          ],
+          "others_max_delta": 0.0,
+          "disabled_delta": -0.84375
+        },
+        {
+          "disabled": "action_bins",
+          "matrix": [
+            0.9375,
+            0.21875,
+            1.0,
+            0.78125,
+            1.0
+          ],
+          "others_max_delta": 0.0,
+          "disabled_delta": -0.5625
+        },
+        {
+          "disabled": "direction",
+          "matrix": [
+            0.9375,
+            0.78125,
+            0.40625,
+            0.78125,
+            1.0
+          ],
+          "others_max_delta": 0.0,
+          "disabled_delta": -0.59375
+        },
+        {
+          "disabled": "position",
+          "matrix": [
+            0.9375,
+            0.78125,
+            1.0,
+            0.21875,
+            1.0
+          ],
+          "others_max_delta": 0.0,
+          "disabled_delta": -0.5625
+        },
+        {
+          "disabled": "color",
+          "matrix": [
+            0.9375,
+            0.78125,
+            1.0,
+            0.78125,
+            0.15625
+          ],
+          "others_max_delta": 0.0,
+          "disabled_delta": -0.84375
+        }
+      ],
+      "reenabled": [
+        0.9375,
+        0.78125,
+        1.0,
+        0.78125,
+        1.0
+      ]
+    },
+    {
+      "seed": 2,
+      "baseline": [
+        0.71875,
+        0.71875,
+        1.0,
+        0.78125,
+        1.0
+      ],
+      "zero_constant_baseline": [
+        0.09375,
+        0.21875,
+        0.40625,
+        0.21875,
+        0.15625
+      ],
+      "interference": [
+        {
+          "disabled": "joint24",
+          "matrix": [
+            0.09375,
+            0.71875,
+            1.0,
+            0.78125,
+            1.0
+          ],
+          "others_max_delta": 0.0,
+          "disabled_delta": -0.625
+        },
+        {
+          "disabled": "action_bins",
+          "matrix": [
+            0.71875,
+            0.21875,
+            1.0,
+            0.78125,
+            1.0
+          ],
+          "others_max_delta": 0.0,
+          "disabled_delta": -0.5
+        },
+        {
+          "disabled": "direction",
+          "matrix": [
+            0.71875,
+            0.71875,
+            0.40625,
+            0.78125,
+            1.0
+          ],
+          "others_max_delta": 0.0,
+          "disabled_delta": -0.59375
+        },
+        {
+          "disabled": "position",
+          "matrix": [
+            0.71875,
+            0.71875,
+            1.0,
+            0.21875,
+            1.0
+          ],
+          "others_max_delta": 0.0,
+          "disabled_delta": -0.5625
+        },
+        {
+          "disabled": "color",
+          "matrix": [
+            0.71875,
+            0.71875,
+            1.0,
+            0.78125,
+            0.15625
+          ],
+          "others_max_delta": 0.0,
+          "disabled_delta": -0.84375
+        }
+      ],
+      "reenabled": [
+        0.71875,
+        0.71875,
+        1.0,
+        0.78125,
+        1.0
+      ]
+    }
+  ],
+  "gates": {
+    "others_unchanged": true,
+    "disabled_collapses": true,
+    "reenabled_exact": true
+  },
+  "verdict": "pathway_interference_ready",
+  "discipline": {
+    "optimizer_steps": 0,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 10.23
+  }
+}
