@@ -5547,3 +5547,14 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **4. 九轴更新**：`physical_transfer` = **verified（有界：仿真动作片段）**；真机/多动力学族（推/碰撞/遮挡声响）与 27 阶段仍 `uncovered`。22.7b 之前「groups=4 仅 0–31 维」的范围限制已在 D-20261119-54 披露，本卡起用 groups=6。
 
 **5. 后继**：多动力学族/真机回放需新卡与 owner 裁定；22.8、23–30 仍锁定。
+
+
+### D-20261119-56 九轴账更新（physical_transfer 有界 verified）＋四项待裁决策汇总（零训练）
+
+**1. 动作**：把 22.4.2b 通过后的九轴向量写入包 22 收口账，并整理[待裁决策汇总](../reference/MEMO-TAIJI_OWNER_DECISIONS_20261120.md)：A 正式资格路径（A 案维持/B 案需冻 D 口径）、B 22.8/23–30 准入、C 真机/多动力学族、D 阶段账处置。**零训练、零 check/final。**
+
+**2. 九轴当前值**：`engineering` verified；`task` verified（fit_face_only，正式 check② 未结）；`learning` verified（路由技能）/uncovered（内容积累）；`retention` verified（严格 D breach 已披露）；`autonomous_choice` **negative**；`mature_growth` 结构机制 verified/收益 `growth_benefit_not_established_in_package_22`；`recursive_development` **uncovered**；`physical_transfer` **verified（有界：22.4.2b 仿真动作片段）**；`lifetime` verified（有界）/长跨度 uncovered。
+
+**3. 建议**：A 案维持（等 owner）；不解锁 22.8/23–30；真机前先在现有 world 内扩仿真多动力学族（零外部依赖、帽 150 CPU）；阶段账维持事故记录、不改帽。
+
+**4. 边界**：只读汇总、不改既有判词；owner 未回溯反对时，下一轮按常设授权推进零依赖部分（仿真多动力学族扩展）。

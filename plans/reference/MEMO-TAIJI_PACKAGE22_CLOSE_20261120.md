@@ -61,3 +61,19 @@
 ## 9. 更新（D-20261119-55）：physical_transfer 有界 verified
 
 22.4.2b 动作片段通过（`action_consequence_pass`）：动作方向对后果预测有真实因果贡献（full 0.781 vs 删/置换动作维 0.41–0.45，配对 95% LB 0.0625>0）。`physical_transfer` 轴更新为 **verified（有界：仿真动作片段，N=3 推、位置桶、单主体）**；真机与多动力学族仍 `uncovered`。既有动作卡 22.4.2 的 `engineering_failure` 与 D-20261119-54 通道路由披露均保留。
+
+## 10. 九轴终值（2026-11-20，D-20261119-56）
+
+| 轴 | 值 |
+|---|---|
+| engineering | verified |
+| task | verified(`fit_face_only`)；正式 check② 未结 |
+| learning | verified(路由技能)／uncovered(内容积累) |
+| retention | verified（严格 D breach 已披露） |
+| autonomous_choice | negative（22.6.2） |
+| mature_growth | 结构机制 verified／收益 `growth_benefit_not_established_in_package_22` |
+| recursive_development | uncovered（22.6.3 两次相依纠正多 seed 不成立） |
+| physical_transfer | **verified（有界：22.4.2b 仿真动作片段）**；真机/多动力学族 uncovered |
+| lifetime | verified（有界）／长跨度 uncovered |
+
+待裁四项与建议见 [待裁汇总](../reference/MEMO-TAIJI_OWNER_DECISIONS_20261120.md)。

@@ -4116,3 +4116,8 @@ r3（32 单位/lr 3e-3/2,000 步/batch 64，43.02≤帽 150 CPU）：梯度流 �
 ## 2026-11-20 22.4.2b 动作片段通过（D-20261119-55，`action_consequence_pass`，105.19 CPU）
 
 groups=6（全通道路由）＋严格 split（训练 256/fit 只评测）＋四臂反事实。full [0.750,0.813,0.781] 均值 0.781；action_masked [0.406,0.406,0.469]；direction_permuted [0.469,0.406,0.469]；proxy_removed 持平 full。动作边际 [0.281,0.406,0.313]（3 seed 同向）、配对单侧 95% LB 0.0625>0、恢复 exact、6 项 check 全过 ⇒ action_consequence_pass。判读：动作方向有真实因果贡献（删/置换即掉回基线），非特征增宽代签；范围＝仿真动作片段（N=3 推、位置桶）、单主体，不等于真机迁移/完整因果理解。九轴 physical_transfer＝verified（有界：仿真动作片段）；真机/多动力学族仍 uncovered。0 check/final。
+
+
+## 2026-11-20 九轴账更新＋四项待裁（D-20261119-56，零训练）
+
+九轴：engineering verified；task verified(fit_face_only，check②未结)；learning verified(路由)/uncovered(内容)；retention verified(严格D breach 披露)；autonomous_choice negative；mature_growth 结构机制 verified/收益 growth_benefit_not_established_in_package_22；recursive_development uncovered；physical_transfer **verified(有界：22.4.2b 仿真动作片段)**；lifetime verified(有界)/长跨度 uncovered。待裁：A 正式资格路径（A 维持/B 需冻 D 口径）、B 22.8与23–30准入、C 真机/多动力学族、D 阶段账处置。建议：A 维持、不解锁长期、真机前先扩仿真多动力学族（零外部依赖、帽150 CPU）、阶段账不改帽。零 check/final。
