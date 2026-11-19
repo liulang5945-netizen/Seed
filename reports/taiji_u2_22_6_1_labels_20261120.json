@@ -1,7 +1,7 @@
 {
   "schema": "taiji-u2-22-6-1-labels-v1",
   "card": "22.6.1 predictor label dataset (zero training)",
-  "created_utc": "2026-11-19T18:44:44.993116+00:00",
+  "created_utc": "2026-11-19T18:50:09.678595+00:00",
   "run_conditions": {
     "threads": 1,
     "OMP_NUM_THREADS": null,
