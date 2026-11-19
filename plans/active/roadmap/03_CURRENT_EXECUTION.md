@@ -3946,3 +3946,8 @@ session1＝联合门子体（train[:64] 训练 256 步）；session2＝同一子
 ## 2026-11-20 22.6.0 C 任务候选/fixture 验证（D-20261119-20，0.55 CPU，零训练）
 
 零训练脚本在冻结 3 体 `PhysicalWorld` 上构造「限时取证」C 任务（16 决策机会、deadline t15、六行动、效用＝正确−成本），并验证三控制：C1 无任务机会（seed 20261300，目标缺席）常数策略唯一最优 ⇒ `fixture_invalid` 正确触发；C2 WAIT 唯一最优（seed 20261205，首次正确观测第 14 tick）唯一最优 `wait14_observe_answer`；C3 立即行动唯一最优（真值=t0 可见词）唯一最优 `wait0_observe_answer` ⇒ **`fixture_controls_pass`**。草稿设计卡含 session 协议与准入判据、实测定价（world 0.0039/prepare 0.0137/decode 0.0273、包价估 700–1,100 对 22.6 帽 9,600）及待 owner 裁定的 5 项开放问题。零 check/final、未冻结合同、22.6 仍锁定。
+
+
+## 2026-11-20 按常设授权采用 A 案并开 22.6.0（D-20261119-21）
+
+按 owner 常设授权采用 D-20261119-14 提案 A 工作路径：22.5.1 以具名 **`fit_face_only`** 标签引用（不声称正式 check② 通过、不签 B 父资格/架构门），22.6 以 **22.6.0 零训练 C 任务合同** 开卡；C 任务 fixture 三控制已验证 `fixture_controls_pass`（D-20261119-20）。范围：22.6.0 只做合同冻结＋fixture＋报价，0 训练、0 check/final；22.6.1+ 训练按常设授权逐项记录报价，owner 可回溯修订；正式 check② 保留未结，若 owner 改选 B 案可无损切换。
