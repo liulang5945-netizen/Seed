@@ -32,3 +32,7 @@
 - 本卡不签生长收益或损失结论；`growth_gain_absent` 亦不能作为最终负结论（出生缺陷混杂）。
 - 后继需**新的工程卡**：修复出生中性（保持分组/归一化/消息支持在 n_units 变化后不变），并用「出生前后 logits 逐位一致」作为前置门；通过后才可重开生长收益对照（新卡、新预算）。
 - 22.7 原卡仍按 `growth_not_needed_in_scope` 结案（不改判）；本卡失败不复活旧窗。
+
+## 5. 归因修正（D-20261119-44）
+
+后续诊断（[`taiji_u2_22_7b_birth_neutrality_20261120`](../../reports/taiji_u2_22_7b_birth_neutrality_20261120.json)）定位：非中性的根因是**本卡训练环漏 `project_parameters_()`**，c/eta/b/w 漂出参数化空间后被 `with_neutral_birth` 的投影夹回，导致旧读出变化；**每步投影后 3/3 seed 出生前后 logits 逐位一致（0.0 差、0 翻转）**。因此本卡判词 `retention_breach` 仍有效（协议即未投影），但「出生 API 违反不变量」的粗归因已修正为「训练协议漏投影」。

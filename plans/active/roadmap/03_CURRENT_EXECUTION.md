@@ -4056,3 +4056,8 @@ r3（32 单位/lr 3e-3/2,000 步/batch 64，43.02≤帽 150 CPU）：梯度流 �
 ## 2026-11-20 22.7b 成本记账（D-20261119-43）
 
 首跑未设单线程：`process_time` 累计 1,651.62 CPU（超价 200/帽 200，判 budget_stop）；修正后重跑 95.98 CPU（retention_breach）；含诊断合计 ≈1,780–1,800 CPU。按纪律不改帽、不追溯改判据，超支永久记事故；overrun 回执保留、有效判词取修正口径。工程教训：训练/评测 runner 入口必须显式 `torch.set_num_threads(1)` 并写入 run_conditions。
+
+
+## 2026-11-20 出生非中性根因修复（D-20261119-44，`birth_neutral_with_projection`，24.19 CPU）
+
+根因：22.7b 训练环漏 `project_parameters_()`，c/eta/b/w 漂出参数化空间；`with_neutral_birth` 对拷贝旧参数做投影把其夹回合法域 → 旧读出改变。每步投影后 3/3 seed 出生前后 logits **最大差 0.0、argmax 翻转 0**（32 项）⇒ `birth_neutral_with_projection`。修正 D-42「with_neutral_birth 违反 SPEC §5」表述为「训练协议漏投影」；22.7b 判词 retention_breach 不变、归因更新。后继＝22.7c 新卡（投影训练＋出生逐位一致前置门）再测生长收益，不复活旧卡。零 check/final；不改 u2_neural_units.py 源码（pin 保持）。

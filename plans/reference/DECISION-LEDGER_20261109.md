@@ -5405,3 +5405,16 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **2. 处置**：按 E5.1/D-20261119-04 纪律——**不改帽、不追溯改判据，超支永久记事故**；overrun 回执保留（`reports/taiji_u2_22_7b_growth_run_overrun_20261120.json`），有效判词来自修正口径重跑（`reports/taiji_u2_22_7b_growth_run_20261120.json`）。工程教训：所有训练/评测 runner 必须在入口显式 `torch.set_num_threads(1)` 并写入 run_conditions（本卡已补，后续新卡同规）。
 
 **3. 边界**：只记账与工程教训，不改 22.7b 判词（`retention_breach`）与归因（出生在已训练图上非中性，D-20261119-42）。
+
+
+### D-20261119-44 出生非中性根因定位并修复：训练环缺 `project_parameters_()`；每步投影后出生 logits 逐位一致（`birth_neutral_with_projection`，24.19 CPU）
+
+**1. 动作**：新增诊断 [`probe_s2_22_7b_birth_neutrality_20261120.py`](../../scripts/training/probe_s2_22_7b_birth_neutrality_20261120.py)（joint24 任务、500 步、3 seed、未投影 vs 每步投影两条件）。回执 [`taiji_u2_22_7b_birth_neutrality_20261120.json`](../../reports/taiji_u2_22_7b_birth_neutrality_20261120.json)，`24.19 CPU`、`0 check/final`。
+
+**2. 根因（取代 D-20261119-42 的粗归因）**：22.7b 训练环**从未调用 `graph.units.project_parameters_()`**，c/eta/b/w 在训练中漂出参数化空间（实测 c 越上界、b/eta 越界），而前向仍用漂移值；`with_neutral_birth` 构造子图后对**拷贝的旧参数**做 `project_parameters_()`，把它们夹回合法域 → 旧读出改变。**不是 `with_neutral_birth` 本身违反不变量，而是训练协议漏了投影**。
+
+**3. 读数**：每步 `project_parameters_()` 后，3/3 seed 出生前后同条件 logits **最大绝对差 `0.0`、argmax 翻转 `0`**（32 项）⇒ 判 **`birth_neutral_with_projection`**；未投影条件 3/3 出现非中性（最大差 >0）。根因修复口径：**训练/继续训练必须每步投影，出生前保证已在投影域**。
+
+**4. 判读与修正**：D-20261119-42 的「`with_neutral_birth` 违反 SPEC §5」表述**被本条修正**为「训练协议漏投影导致出生态越界」；22.7b 判词（`retention_breach`）不变——其协议即未投影，结果有效，但归因更新。后继＝**22.7c 新卡**：投影训练＋「出生前后 logits 逐位一致」前置门，再测生长收益；不复活 22.7b，不改其判词。
+
+**5. 边界**：零 check/final；不改 `taiji/u2_neural_units.py` 源码（既有合同 pin 保持有效），修复落在**训练协议与前置门**。

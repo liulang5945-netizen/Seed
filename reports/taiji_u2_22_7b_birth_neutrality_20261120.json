@@ -1,0 +1,144 @@
+{
+  "schema": "taiji-u2-22-7b-birth-neutrality-v1",
+  "card": "22.7b follow-up birth-neutrality engineering diagnostic",
+  "created_utc": "2026-11-19T20:21:56.708036+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "task": "joint24 adapter-v3",
+    "steps": 500,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "projection_rule": "project_parameters_() after every optimizer step",
+    "gate": "max |delta logit| == 0 and 0 argmax flips on identical inputs"
+  },
+  "results": [
+    {
+      "seed": 0,
+      "unprojected": {
+        "violations": {
+          "c_above_max": 0.0,
+          "c_below_min": 0.24497993290424347,
+          "eta_above_max": 0.03531002998352051,
+          "eta_below_min": 0.0,
+          "b_above_max": 0.0,
+          "b_below_zero": 0.2985588014125824,
+          "w_unmasked": 0.0,
+          "w_above_max": 0.0
+        },
+        "birth": {
+          "max_abs_logit_diff": 12.825973510742188,
+          "argmax_flips": 4,
+          "items": 32
+        }
+      },
+      "projected": {
+        "violations": {
+          "c_above_max": 0.0,
+          "c_below_min": 0.0,
+          "eta_above_max": 0.0,
+          "eta_below_min": 0.0,
+          "b_above_max": 0.0,
+          "b_below_zero": 0.0,
+          "w_unmasked": 0.0,
+          "w_above_max": 0.0
+        },
+        "birth": {
+          "max_abs_logit_diff": 0.0,
+          "argmax_flips": 0,
+          "items": 32
+        }
+      }
+    },
+    {
+      "seed": 1,
+      "unprojected": {
+        "violations": {
+          "c_above_max": 0.0,
+          "c_below_min": 0.3043813407421112,
+          "eta_above_max": 0.0,
+          "eta_below_min": 0.012408103793859482,
+          "b_above_max": 0.0,
+          "b_below_zero": 0.24201008677482605,
+          "w_unmasked": 0.0,
+          "w_above_max": 0.0
+        },
+        "birth": {
+          "max_abs_logit_diff": 17.649456024169922,
+          "argmax_flips": 7,
+          "items": 32
+        }
+      },
+      "projected": {
+        "violations": {
+          "c_above_max": 0.0,
+          "c_below_min": 0.0,
+          "eta_above_max": 0.0,
+          "eta_below_min": 0.0,
+          "b_above_max": 0.0,
+          "b_below_zero": 0.0,
+          "w_unmasked": 0.0,
+          "w_above_max": 0.0
+        },
+        "birth": {
+          "max_abs_logit_diff": 0.0,
+          "argmax_flips": 0,
+          "items": 32
+        }
+      }
+    },
+    {
+      "seed": 2,
+      "unprojected": {
+        "violations": {
+          "c_above_max": 0.0,
+          "c_below_min": 0.37175342440605164,
+          "eta_above_max": 0.0062149763107299805,
+          "eta_below_min": 0.0,
+          "b_above_max": 0.0,
+          "b_below_zero": 0.2823927700519562,
+          "w_unmasked": 0.0,
+          "w_above_max": 0.0
+        },
+        "birth": {
+          "max_abs_logit_diff": 14.968124389648438,
+          "argmax_flips": 13,
+          "items": 32
+        }
+      },
+      "projected": {
+        "violations": {
+          "c_above_max": 0.0,
+          "c_below_min": 0.0,
+          "eta_above_max": 0.0,
+          "eta_below_min": 0.0,
+          "b_above_max": 0.0,
+          "b_below_zero": 0.0,
+          "w_unmasked": 0.0,
+          "w_above_max": 0.0
+        },
+        "birth": {
+          "max_abs_logit_diff": 0.0,
+          "argmax_flips": 0,
+          "items": 32
+        }
+      }
+    }
+  ],
+  "verdict": "birth_neutral_with_projection",
+  "root_cause": "22.7b's training loop omitted project_parameters_(); c/eta/b/w drifted out of the parameterized space and with_neutral_birth's child projection clamped copied old parameters, changing the old readout",
+  "discipline": {
+    "optimizer_steps": 3000,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 24.19
+  }
+}
