@@ -1,0 +1,38 @@
+{
+  "schema": "taiji-u2-22-5-a-gate-package-price-v1",
+  "card": "22.5.0 formal package pricing",
+  "protocol": {
+    "dose_per_seed": 2000,
+    "batch": 8,
+    "seeds": 3,
+    "identity": "pixel-salience + d=32 (readout_gate_earned)"
+  },
+  "measured": {
+    "per_example_cpu": 0.088542,
+    "per_update_cpu": 0.708333,
+    "fixture64_cpu": 0.4688,
+    "fixture768_cpu_estimated": 5.625,
+    "threads": 1
+  },
+  "sourced": {
+    "check_worker_cpu": 118.0,
+    "formal_leg_cpu_allowance": 150.0,
+    "parity_refreeze_cpu": 417.6,
+    "new_parity_updates_per_seed": 20874
+  },
+  "price": {
+    "train_leg_cpu_per_seed": 1416.67,
+    "fixture_leg_cpu_per_seed": 50.62,
+    "u2_arm_cpu_per_seed": 1735.29,
+    "u2_arm_cpu_total": 5205.88,
+    "parity_baseline_cpu": 3263.57,
+    "package_cpu_total": 8469.44,
+    "cap_cpu_proposed": 10586.8,
+    "u2_updates_total": 6000,
+    "stage_22_5_frozen_capacity": {
+      "updates": 9808,
+      "cpu": 16000.0
+    }
+  },
+  "formal_training_authority": false
+}

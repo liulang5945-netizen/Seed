@@ -1,0 +1,98 @@
+{
+  "schema": "taiji-u2-22-5-0-a-parent-package-v1",
+  "card": "DESIGN-TAIJI_U2_22_5_0_A_PARENT_PACKAGE_20261119.md",
+  "status": "priced_pending_owner_decisions",
+  "training_authority": false,
+  "protocol": {
+    "dose_per_seed": 2000,
+    "batch": 8,
+    "seeds": [
+      20261110,
+      20261111,
+      20261112
+    ],
+    "identity": {
+      "readout": "pixel-salience",
+      "d": 32,
+      "fixture": "taiji-first-A-v2-3body",
+      "source": "D-20261119-02 readout_gate_earned"
+    },
+    "schedule": {
+      "lr": 0.005,
+      "warmup_steps": 200,
+      "grad_clip": 1.0,
+      "workers": 8
+    },
+    "legs": [
+      "preflight_roundtrip",
+      "train",
+      "fit_eval",
+      "final_save",
+      "recovery_eval",
+      "check_worker_aggregate"
+    ],
+    "check_worker": "scripts/training/run_a_gate_c_20261117.py --check-worker (byte-identical)"
+  },
+  "open_owner_decisions": {
+    "criterion": {
+      "jia_per_seed_check_min": 0.8,
+      "yi_median_check_min": 0.8,
+      "executor_recommends": "yi_median",
+      "risk_disclosed": "seed 20261111 current reading 0.4062; jia likely a_parent_not_met"
+    },
+    "stage_budget": {
+      "frozen_cap_cpu": 16000.0,
+      "frozen_unit_basis": 0.54375,
+      "measured_unit_cpu": 0.708333,
+      "prior_diagnostic_draw_est_cpu": 13400.0,
+      "proposed_refreeze_cap_cpu": 24000.0,
+      "executor_recommends": "refreeze"
+    },
+    "parity": {
+      "baseline_updates_per_seed_current": 2671,
+      "baseline_updates_per_seed_new": 20874,
+      "flops_ratio_u2_over_baseline": 10.436519,
+      "flop_ratio_cap": 10.666667,
+      "common_flops_per_seed_new": 61789536000,
+      "options": {
+        "jia_with_package": true,
+        "yi_separate_case": false
+      },
+      "executor_recommends": "jia_with_package"
+    }
+  },
+  "price": {
+    "measured": {
+      "per_example_cpu": 0.088542,
+      "per_update_cpu": 0.708333,
+      "fixture768_cpu_per_process": 5.625,
+      "check_worker_cpu": 118.0,
+      "threads": 1
+    },
+    "u2_arm_cpu_per_seed": 1735.29,
+    "u2_arm_cpu_total": 5205.88,
+    "parity_baseline_cpu": 3263.57,
+    "package_cpu_total": 8469.44,
+    "cap_cpu_proposed": 10586.8,
+    "u2_updates_total": 6000,
+    "report": "reports/taiji_u2_a_gate_package_price_20261119.json"
+  },
+  "exits": [
+    "stage_budget_unavailable",
+    "a_parent_not_met",
+    "engineering_failure",
+    "budget_stop",
+    "a_parent_earned"
+  ],
+  "does_not_sign": [
+    "22.6 unlock",
+    "any external capability",
+    "22.5.1 B/check② (separate case)"
+  ],
+  "check_exposure": {
+    "allocated_22_5": 2,
+    "used": 2,
+    "remaining": 0,
+    "note": "formal gate reuses the same partition instrument as D-20261119-02; if owner rules a fresh exposure ledger is required, add it before execution"
+  }
+}
