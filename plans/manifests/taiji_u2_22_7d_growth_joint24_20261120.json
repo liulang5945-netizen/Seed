@@ -86,7 +86,8 @@
     "scripts/training/run_s2_22_7b_growth_joint24_20261120.py": "c07b3587e9c3157d155c0dc6d15e69537b9cc9dbabf5408c9390307c54e76361",
     "scripts/training/probe_s2_22_7_joint24_20261120.py": "4c6695e59ca7c4de2d62c6a17e4da08149b285632736cd43f1b770505587245f",
     "scripts/training/probe_s2_22_7_0_alpha_adapter_v3_20261120.py": "40fea6e7745d8eced5ef4fd780964702e248cfd63c52d8d051a1ca52260bf723",
-    "taiji/u2_neural_units.py": "6a8bfc15f44b39cc22cd1570bf43cedaf44e018628572efb528f2a829a5deca9"
+    "taiji/u2_neural_units.py": "6a8bfc15f44b39cc22cd1570bf43cedaf44e018628572efb528f2a829a5deca9",
+    "scripts/training/run_s2_22_7d_growth_joint24_20261120.py": "b350a78f1b705b5596fca177f3537d25c27247d6518c89bfc15d87a633ac7412"
   },
   "result": {
     "smoke": "smoke_passed",
@@ -94,6 +95,11 @@
     "closed": true,
     "verdict": "engineering_failure",
     "mean_gain": -0.020833,
-    "cost_cpu": 96.28
+    "cost_cpu": 96.28,
+    "amendment": {
+      "kind": "pin_amendment_lint_only",
+      "detail": "post-run SIM114 merge of two identical engineering_failure branches; no behavioural change, verdict and receipts unchanged",
+      "sha256": "b350a78f1b705b5596fca177f3537d25c27247d6518c89bfc15d87a633ac7412"
+    }
   }
 }
