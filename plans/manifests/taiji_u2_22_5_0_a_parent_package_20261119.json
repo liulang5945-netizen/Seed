@@ -1,7 +1,7 @@
 {
   "schema": "taiji-u2-22-5-0-a-parent-package-v1",
   "card": "DESIGN-TAIJI_U2_22_5_0_A_PARENT_PACKAGE_20261119.md",
-  "status": "authorized_implementation_in_progress",
+  "status": "authorized_execution_ready",
   "training_authority": true,
   "protocol": {
     "dose_per_seed": 2000,
@@ -75,7 +75,20 @@
     "package_cpu_total": 8469.44,
     "cap_cpu_proposed": 10586.8,
     "u2_updates_total": 6000,
-    "report": "reports/taiji_u2_a_gate_package_price_20261119.json"
+    "report": "reports/taiji_u2_a_gate_package_price_20261119.json",
+    "parity": {
+      "method": "FlopCounterMode per-example on identical first-A examples",
+      "u2_per_example_flops": 100307284,
+      "baseline_per_example_flops": 9535040,
+      "ratio_u2_over_baseline": 10.5199,
+      "baseline_dose_per_seed": 168318,
+      "baseline_arm_cpu_per_seed": 1578.0,
+      "baseline_arm_cpu_total": 4733.9,
+      "note": "supersedes the fragment-based 20874/seed estimate; adapter per-example cpu 0.00937 measured"
+    },
+    "package_cpu_total_measured": 9939.8,
+    "cap_cpu_confirmed": 10586.8,
+    "stage_budget_check": "prior draws ~13400 + package 10586.8 <= refrozen 24000"
   },
   "exits": [
     "stage_budget_unavailable",
@@ -121,5 +134,11 @@
     "init": "torch.manual_seed(seed) then WeightTiedTransformerBaseline(28, 3); frozen init rule apply_frozen_init",
     "parity_method": "FlopCounterMode per-example forward+backward on identical first-A examples for both arms; baseline dose = U2 dose x (U2 FLOPs / baseline FLOPs), measured and frozen before execution",
     "dose_floor_note": "the fragment-based 20874/seed estimate is superseded by the measured adapter-parity dose"
+  },
+  "smoke": {
+    "date": "2026-11-19",
+    "u2_arm": "dose-2 orchestration smoke: preflight/recovery/check-worker/report all green",
+    "adapter": "birth loss 5.554 (=ln257 chance), decode pipeline green, flops measured",
+    "optimizer_steps_smoke": 2
   }
 }
