@@ -9,10 +9,11 @@ candidate actions under a FROZEN continuation rule:
   observe again at the deadline, then answer;
 * VERIFY_THEN_NOW: spend one VERIFY credit for the true current word and answer;
 * REST_THEN_DEADLINE: do not observe again, answer at the deadline with the
-  latest available word (which decays to "未知" if no observation exists).
+  latest available word.
 
 Continuation is fixed and pre-registered, so labels are realized utilities, not
-model preferences.  Zero optimizer steps, zero check/final reads, no signing.
+model preferences.  ``build_rows()`` is deterministic and is imported by the
+22.6.1 contract runner.  Zero optimizer steps, zero check/final reads.
 """
 
 from __future__ import annotations
@@ -43,22 +44,25 @@ WAIT_COST = 0.01
 VERIFY_COST = 0.10
 ACTIONS = ("ANSWER_NOW", "OBSERVE_THEN_DEADLINE", "VERIFY_THEN_NOW", "REST_THEN_DEADLINE")
 WORDS = ("左边", "中间", "右边", "未知")
+FEATURE_NAMES = (
+    "tick",
+    "decisions_left",
+    "staleness",
+    "observations",
+    "verify_left",
+    "cost_so_far",
+)
 
 
 def one_hot(word: str) -> list[float]:
     return [1.0 if word == item else 0.0 for item in WORDS]
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--out", default=str(OUT))
-    args = parser.parse_args()
-    started = time.process_time()
-    torch.set_num_threads(1)
+def build_rows() -> list[dict]:
     admission = json.loads(ADMISSION.read_text(encoding="utf-8"))
     seeds = [entry["seed"] for entry in admission["admitted_worlds"]]
-    rows = []
-    train_worlds, held_worlds = seeds[:24], seeds[24:]
+    train_worlds = set(seeds[:24])
+    rows: list[dict] = []
     for seed in seeds:
         ticks = tick_stream(seed)
         targets = list(ticks[0]["observed"])
@@ -89,8 +93,7 @@ def main() -> int:
                 )
                 observe_hit = 1.0 if observe_word == truth_deadline else 0.0
                 verify_hit = 1.0 if truth_now == truth_deadline else 0.0
-                rest_word = last_obs_word
-                rest_hit = 1.0 if rest_word == truth_deadline else 0.0
+                rest_hit = 1.0 if last_obs_word == truth_deadline else 0.0
                 labels = {
                     "ANSWER_NOW": round(answer_now - cost, 4),
                     "OBSERVE_THEN_DEADLINE": round(
@@ -110,25 +113,34 @@ def main() -> int:
                         "split": "train" if seed in train_worlds else "heldout",
                     }
                 )
-                # Execute the pre-registered default action: OBSERVE every tick.
                 cost += OBSERVE_COST
                 last_obs_word = observed_by_tick[tick]
                 last_obs_tick = tick
-    label_matrix = np.asarray([[row["labels"][name] for name in ACTIONS] for row in rows])
-    feature_names = [
-        "tick",
-        "decisions_left",
-        "staleness",
-        "observations",
-        "verify_left",
-        "cost_so_far",
-    ]
-    feature_matrix = np.asarray(
+    return rows
+
+
+def vectorize(rows: list[dict]) -> tuple[np.ndarray, np.ndarray]:
+    features = np.asarray(
         [
-            [row["features"][name] for name in feature_names] + list(row["features"]["last_word"])
+            [row["features"][name] for name in FEATURE_NAMES] + list(row["features"]["last_word"])
             for row in rows
-        ]
+        ],
+        dtype=np.float32,
     )
+    labels = np.asarray(
+        [[row["labels"][name] for name in ACTIONS] for row in rows], dtype=np.float32
+    )
+    return features, labels
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--out", default=str(OUT))
+    args = parser.parse_args()
+    started = time.process_time()
+    torch.set_num_threads(1)
+    rows = build_rows()
+    features, labels = vectorize(rows)
     payload = {
         "schema": "taiji-u2-22-6-1-labels-v1",
         "card": "22.6.1 predictor label dataset (zero training)",
@@ -140,28 +152,26 @@ def main() -> int:
         },
         "protocol": {
             "pool_source": str(ADMISSION.relative_to(ROOT)),
-            "worlds": len(seeds),
-            "train_worlds": len(train_worlds),
-            "heldout_worlds": len(held_worlds),
+            "worlds": len({row["world"] for row in rows}),
+            "train_worlds": len({row["world"] for row in rows if row["split"] == "train"}),
+            "heldout_worlds": len({row["world"] for row in rows if row["split"] == "heldout"}),
             "sessions_per_world": 3,
             "decisions": 16,
             "actions": list(ACTIONS),
             "continuation": "frozen per-action continuation (see module docstring)",
             "costs": {"observe": OBSERVE_COST, "wait": WAIT_COST, "verify": VERIFY_COST},
             "default_behavior_policy": "OBSERVE at every tick (labels are counterfactual)",
-            "features": feature_names,
+            "features": list(FEATURE_NAMES),
             "label_means": {
-                name: round(float(label_matrix[:, index].mean()), 4)
-                for index, name in enumerate(ACTIONS)
+                name: round(float(labels[:, index].mean()), 4) for index, name in enumerate(ACTIONS)
             },
             "label_std": {
-                name: round(float(label_matrix[:, index].std()), 4)
-                for index, name in enumerate(ACTIONS)
+                name: round(float(labels[:, index].std()), 4) for index, name in enumerate(ACTIONS)
             },
         },
         "n_rows": len(rows),
-        "feature_dim": feature_matrix.shape[1],
-        "label_dim": label_matrix.shape[1],
+        "feature_dim": int(features.shape[1]),
+        "label_dim": int(labels.shape[1]),
         "rows_sha256": hashlib.sha256(json.dumps(rows, sort_keys=True).encode()).hexdigest(),
         "discipline": {"optimizer_steps": 0, "check_reads": 0, "final_reads": 0},
         "cost": {"cpu": round(time.process_time() - started, 2)},

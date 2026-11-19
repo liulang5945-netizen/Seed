@@ -1,0 +1,49 @@
+{
+  "schema": "taiji-u2-22-6-1-predictor-run-v1",
+  "criteria_sha256": "5f55b7739bb69334d452e17e841b183b485b2b2c5d47d1d4052dce43b9ead6e5",
+  "created_utc": "2026-11-19T18:48:08.312141+00:00",
+  "run_conditions": {
+    "threads": 12,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "dataset": {
+    "rows": 1536,
+    "feature_dim": 10,
+    "label_dim": 4,
+    "receipt_sha": "cd66478f6f02ec788d6c9cbfc9bb2d55dba0737454178e2f79a848bf2382bb84",
+    "rebuilt_sha": "cd66478f6f02ec788d6c9cbfc9bb2d55dba0737454178e2f79a848bf2382bb84",
+    "matches": true
+  },
+  "training": {
+    "epochs": 200,
+    "hidden": 32,
+    "optimizer_steps": 200
+  },
+  "heldout": {
+    "model_huber": 0.233981,
+    "baseline_huber": 0.272873,
+    "improvement": 0.14253,
+    "threshold": 0.1,
+    "oracle_upper_bound_mean": 0.8191
+  },
+  "accounts": {
+    "point_error": {
+      "model": 0.233981,
+      "baseline": 0.272873
+    },
+    "selection_gain": "reported by the separate 22.6.2 card; not gated here"
+  },
+  "verdict": "predictor_gain_pass",
+  "budget": {
+    "cap_cpu": 40.0,
+    "cpu": 20.69
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 20.69
+  }
+}

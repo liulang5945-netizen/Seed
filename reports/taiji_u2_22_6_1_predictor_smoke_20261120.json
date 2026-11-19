@@ -1,0 +1,34 @@
+{
+  "schema": "taiji-u2-22-6-1-predictor-smoke-v1",
+  "created_utc": "2026-11-19T18:47:56.249295+00:00",
+  "run_conditions": {
+    "threads": 12,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "checks": {
+    "dataset_matches_receipt": true,
+    "feature_dim_matches": true,
+    "label_dim_matches": true,
+    "baseline_finite": true,
+    "zero_optimizer_steps": true
+  },
+  "dataset": {
+    "rows": 1536,
+    "feature_dim": 10,
+    "label_dim": 4,
+    "receipt_sha": "cd66478f6f02ec788d6c9cbfc9bb2d55dba0737454178e2f79a848bf2382bb84",
+    "rebuilt_sha": "cd66478f6f02ec788d6c9cbfc9bb2d55dba0737454178e2f79a848bf2382bb84",
+    "matches": true
+  },
+  "baseline_loss": 0.272873,
+  "verdict": "smoke_passed",
+  "discipline": {
+    "optimizer_steps": 0,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 18.58
+  }
+}

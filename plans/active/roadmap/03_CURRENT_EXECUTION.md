@@ -3971,3 +3971,8 @@ session1＝联合门子体（train[:64] 训练 256 步）；session2＝同一子
 ## 2026-11-20 22.6.1 预测器标签数据集＋设计卡（D-20261119-25，2.38 CPU，零训练）
 
 在 32 world 开发池上生成 1,536 个决策点的四动作实现效用标签（ANSWER_NOW 0.5681、OBSERVE_THEN_DEADLINE 0.7550、VERIFY_THEN_NOW 0.5423、REST_THEN_DEADLINE 0.4931）＋10 维无泄漏特征，24 train/8 held-out 按 world 划分；数据 `output/s2_22_6_1/labels.jsonl`，回执与设计卡已出（包价估 ≈10／帽 30 CPU、Huber 基线 −10% 主判据、点误差与选择收益分账）。零优化器步、零 check/final；不签选择/自主能力。后继＝冻结 22.6.1 合同＋smoke＋训练执行（常设授权）→ 22.6.2 对照（基线 0.83）。
+
+
+## 2026-11-20 22.6.1 预测器执行通过（D-20261119-26，`predictor_gain_pass`，20.69≤帽 40 CPU）
+
+合同 runner 五模式＋4 源码 pin＋判据摘要（`criteria_sha256=5f55b773…`、常设授权记录）；smoke 18.58 CPU 全过（数据摘要一致/维度/基线有限/0 训练）；run 20.69≤40 训 MLP 10→32→4（Huber/Adam 1e-3/200 全批 epoch/固定 seed），held-out 归一 Huber 对常数均值基线改善 **14.25% ≥10%** ⇒ `predictor_gain_pass`；点误差与选择收益分账、0 check/final。**定价修正披露**：标签构建实测 18.69 CPU（原估 2.38 低估），合同包价改 22、帽改 40（实际 20.69）。后继＝22.6.2 策略对照（基线 0.83）。

@@ -1,0 +1,80 @@
+{
+  "schema": "taiji-u2-22-6-1-predictor-v1",
+  "card": "DESIGN-TAIJI_U2_22_6_1_PREDICTOR_20261120.md",
+  "status": "frozen",
+  "training_authority": "owner:standing-authorization:2026-11-20#recommendation-default",
+  "criteria": {
+    "card": "22.6.1 gain/risk/cost predictor",
+    "dataset": {
+      "receipt": "reports\\taiji_u2_22_6_1_labels_20261120.json",
+      "rows_sha256": "cd66478f6f02ec788d6c9cbfc9bb2d55dba0737454178e2f79a848bf2382bb84",
+      "n_rows": 1536,
+      "feature_dim": 10,
+      "label_dim": 4,
+      "split": "24 train worlds / 8 held-out worlds, by world",
+      "actions": [
+        "ANSWER_NOW",
+        "OBSERVE_THEN_DEADLINE",
+        "VERIFY_THEN_NOW",
+        "REST_THEN_DEADLINE"
+      ]
+    },
+    "model": {
+      "kind": "mlp",
+      "input": 10,
+      "hidden": 32,
+      "output": 4,
+      "loss": "huber",
+      "huber_delta": 1.0,
+      "optimizer": "adam",
+      "lr": 0.001,
+      "epochs": 200,
+      "torch_seed": 20261120,
+      "feature_normalization": "train mean/std applied to both splits"
+    },
+    "baseline": {
+      "kind": "fit_constant_mean_per_action",
+      "trained_on": "train split only"
+    },
+    "thresholds": {
+      "heldout_huber_improvement_min": 0.1
+    },
+    "accounts": {
+      "point_error": "held-out normalized Huber (model vs constant baseline)",
+      "selection_gain": "reported as a proxy only; gated by the separate 22.6.2 card"
+    },
+    "exits_order": [
+      "engineering_failure",
+      "not_admitted",
+      "budget_stop",
+      "predictor_insufficient",
+      "predictor_gain_pass"
+    ],
+    "check_reads": 0,
+    "final_reads": 0,
+    "protocol_chunk": "OBSERVE at every tick (labels are counterfactual)"
+  },
+  "criteria_sha256": "5f55b7739bb69334d452e17e841b183b485b2b2c5d47d1d4052dce43b9ead6e5",
+  "plan": {
+    "price_cpu": 22.0,
+    "optimizer_steps": 200,
+    "price_source": "DESIGN-TAIJI_U2_22_6_1_PREDICTOR_20261120.md §3"
+  },
+  "cap_cpu": 40.0,
+  "check_exposure": {
+    "reads": 0
+  },
+  "source_pins": {
+    "scripts/training/run_s2_22_6_1_predictor_20261120.py": "99a184ec49649849543c45dde1c9ed0e8658d7715d30489a33471e681d9c4fd5",
+    "scripts/training/build_s2_22_6_1_labels_20261120.py": "4aedfa997fc696db2c0153b6df07c6605ca96f5000d2eed5da1c4ecf301fb7fc",
+    "scripts/training/curate_s2_22_6_pool_20261120.py": "6742430be20236dcd90197a96e6ef5ce496e277a9e953eb7257f6adb23779261",
+    "taiji/u2_task_world.py": "ae696d423e09be09c936dcbc8e3473e28c2c2c927f843bace21150c52d5d2e45"
+  },
+  "result": {
+    "run": true,
+    "closed": true,
+    "verdict": "predictor_gain_pass",
+    "cost_cpu": 20.69,
+    "report": "reports\\taiji_u2_22_6_1_predictor_run_20261120.json"
+  }
+}

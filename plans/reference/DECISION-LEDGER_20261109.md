@@ -5207,3 +5207,14 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **3. 边界**：本笔只生成数据＋设计，不训练、不读 check/final、不签选择/自主能力；预测器只是 22.6.2 对照的组件。22.5.1 仍 `fit_face_only` 父证据（D-20261119-21）。
 
 **4. 后继**：冻结 22.6.1 合同（判据摘要＋数据/池 sha256 pin＋报价）→ smoke（数据完整性＋基线可复算）→ 训练执行（按常设授权记录授权、帽 30 CPU）→ 判词；通过进 22.6.2，未过按 `predictor_insufficient` 收束（禁同范围第 3 次修订）。
+
+
+### D-20261119-26 22.6.1 预测器合同冻结并执行（`predictor_gain_pass`，held-out Huber 改善 14.25%，20.69≤帽 40 CPU）
+
+**1. 动作**：新增合同 runner [`run_s2_22_6_1_predictor_20261120.py`](../../scripts/training/run_s2_22_6_1_predictor_20261120.py)（freeze/authorize/smoke/run/closeout 五模式，guards 校验判据摘要＋4 源码 pin＋缺授权拒跑），把标签构建重构为可导入的 `build_rows()`（确定性重生成）。合同 [`taiji_u2_22_6_1_predictor_20261120.json`](../../plans/manifests/taiji_u2_22_6_1_predictor_20261120.json)（`criteria_sha256=5f55b773…`、`training_authority=owner:standing-authorization:2026-11-20#recommendation-default`、`result.closed=true`）＋合同测试 [`test_s2_22_6_1_predictor_contract.py`](../../tests/taiji_native/test_s2_22_6_1_predictor_contract.py)。
+
+**2. 读数**：smoke `18.58 CPU` 全过（数据摘要与回执一致、维度一致、基线有限、0 训练步）；run **`20.69 ≤ 帽 40 CPU`**，训 MLP 10→32→4（Huber、Adam 1e-3、200 全批 epoch、固定 seed）。**held-out 归一 Huber：模型 `model_huber` 对常数均值基线改善 `14.25% ≥ 10%` ⇒ 判 `predictor_gain_pass`**；点预测误差与选择收益分账（选择收益归 22.6.2），`0 check/final`。
+
+**3. 定价修正（披露）**：设计卡原估包价 `10`／帽 `30 CPU` 基于标签构建 `2.38 CPU`，但本次实测一次 `build_rows()`（32 world×16 tick×3 目标×定位/渲染）为 **`18.69 CPU`**，原估为**低估**；已把合同包价改为 `22`、帽改为 `40 CPU`（实际 `20.69`），差额按定价误差记账（非超帽）。标签回执中的 `2.38 CPU` 为当时测量口径异常，实测口径以本笔为准。
+
+**4. 边界与后继**：签＝预测器 held-out Huber 改善；**不签**任何选择/自主能力、不读 check/final。后继＝22.6.2 策略对照（可学习策略 vs 固定日程 vs 反应 ν vs 等待控制，以精选池最强固定 `0.83` 为基线、以预测器 argmax 为可学习策略输入）；成功后再 22.6.3 相依改进决策与固定父反事实。
