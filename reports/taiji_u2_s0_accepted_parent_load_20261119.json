@@ -1,0 +1,169 @@
+{
+  "schema": "taiji-u2-s0-accepted-parent-load-v1",
+  "card": "22.5.1/S0 decision support (option 2 factual base)",
+  "created_utc": "2026-11-19T16:11:30.455957+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "scope": "read-only load + recorded-fit reproduction on the v2 fixture fit 32; zero optimizer steps, zero check/final reads, no capability signing",
+  "fixture": "first_a_support_22_5_v2.generate_examples('fit', 32)",
+  "rows": [
+    {
+      "seed": 20261110,
+      "checkpoint": "output\\a_pixel_parallel_20261119T063705Z\\segment.bin",
+      "checkpoint_bytes": 3047545,
+      "recorded_fit_correct": 30,
+      "recorded_fit_denominator": 32,
+      "loaded_fit_correct": 30,
+      "loaded_fit_denominator": 32,
+      "fit_rows_equal": true,
+      "update": 2000,
+      "revision": 2,
+      "schema": "taiji-first-A-learner-v1",
+      "identity": "pixel-salience",
+      "config": {
+        "d": 32,
+        "readout": "pixel-salience",
+        "record_metadata": true,
+        "separate_requests": true,
+        "seed": 20261110
+      },
+      "parameters_digest": "52015842adb711cf900ae2196cc70b5e2dcef932931da47c24db34012069897a",
+      "source_pin_matches": {
+        "taiji/u2_recovery.py": true,
+        "taiji/u2_evidence_subject.py": true,
+        "taiji/u2_evidence_read.py": true,
+        "taiji/u2_evidence_runtime.py": true,
+        "taiji/u2_capacity_control.py": true,
+        "taiji/u2_task_goal.py": true,
+        "taiji/u2_joint_tokens.py": true,
+        "taiji/u2_joint_subject.py": true,
+        "taiji/u2_history.py": true,
+        "taiji/u2_history_store.py": true,
+        "taiji/u2_request_state.py": true,
+        "taiji/u2_task_executor.py": true,
+        "taiji/u2_events.py": true,
+        "taiji/u2_learning_transaction.py": true,
+        "taiji/u2_record_metadata.py": true,
+        "taiji/u2_group_structure.py": true,
+        "taiji/u2_subject.py": false,
+        "taiji/u2_operators.py": true,
+        "taiji/utf8_state.py": true,
+        "scripts/training/first_a_support_22_5.py": true,
+        "scripts/training/task_baselines_22_4_a.py": true
+      },
+      "source_pin_mismatches": [
+        "taiji/u2_subject.py"
+      ],
+      "strict_load": true,
+      "verdict": "load_reproduces_recorded_fit"
+    },
+    {
+      "seed": 20261111,
+      "checkpoint": "output\\a_pixel_parallel_20261119T065049Z\\segment.bin",
+      "checkpoint_bytes": 3047545,
+      "recorded_fit_correct": 14,
+      "recorded_fit_denominator": 32,
+      "loaded_fit_correct": 14,
+      "loaded_fit_denominator": 32,
+      "fit_rows_equal": true,
+      "update": 2000,
+      "revision": 2,
+      "schema": "taiji-first-A-learner-v1",
+      "identity": "pixel-salience",
+      "config": {
+        "d": 32,
+        "readout": "pixel-salience",
+        "record_metadata": true,
+        "separate_requests": true,
+        "seed": 20261111
+      },
+      "parameters_digest": "26ff000b9c5ace3debd3f1b4ef7c49ef70ebb205b642263ffa097e11c3cf6e27",
+      "source_pin_matches": {
+        "taiji/u2_recovery.py": true,
+        "taiji/u2_evidence_subject.py": true,
+        "taiji/u2_evidence_read.py": true,
+        "taiji/u2_evidence_runtime.py": true,
+        "taiji/u2_capacity_control.py": true,
+        "taiji/u2_task_goal.py": true,
+        "taiji/u2_joint_tokens.py": true,
+        "taiji/u2_joint_subject.py": true,
+        "taiji/u2_history.py": true,
+        "taiji/u2_history_store.py": true,
+        "taiji/u2_request_state.py": true,
+        "taiji/u2_task_executor.py": true,
+        "taiji/u2_events.py": true,
+        "taiji/u2_learning_transaction.py": true,
+        "taiji/u2_record_metadata.py": true,
+        "taiji/u2_group_structure.py": true,
+        "taiji/u2_subject.py": false,
+        "taiji/u2_operators.py": true,
+        "taiji/utf8_state.py": true,
+        "scripts/training/first_a_support_22_5.py": true,
+        "scripts/training/task_baselines_22_4_a.py": true
+      },
+      "source_pin_mismatches": [
+        "taiji/u2_subject.py"
+      ],
+      "strict_load": true,
+      "verdict": "load_reproduces_recorded_fit"
+    },
+    {
+      "seed": 20261112,
+      "checkpoint": "output\\a_pixel_parallel_20261119T070447Z\\segment.bin",
+      "checkpoint_bytes": 3047545,
+      "recorded_fit_correct": 31,
+      "recorded_fit_denominator": 32,
+      "loaded_fit_correct": 31,
+      "loaded_fit_denominator": 32,
+      "fit_rows_equal": true,
+      "update": 2000,
+      "revision": 2,
+      "schema": "taiji-first-A-learner-v1",
+      "identity": "pixel-salience",
+      "config": {
+        "d": 32,
+        "readout": "pixel-salience",
+        "record_metadata": true,
+        "separate_requests": true,
+        "seed": 20261112
+      },
+      "parameters_digest": "5a09a44902d985c7035f474564f0e84e0fcd3bfcfc2b4398150fad721b186f48",
+      "source_pin_matches": {
+        "taiji/u2_recovery.py": true,
+        "taiji/u2_evidence_subject.py": true,
+        "taiji/u2_evidence_read.py": true,
+        "taiji/u2_evidence_runtime.py": true,
+        "taiji/u2_capacity_control.py": true,
+        "taiji/u2_task_goal.py": true,
+        "taiji/u2_joint_tokens.py": true,
+        "taiji/u2_joint_subject.py": true,
+        "taiji/u2_history.py": true,
+        "taiji/u2_history_store.py": true,
+        "taiji/u2_request_state.py": true,
+        "taiji/u2_task_executor.py": true,
+        "taiji/u2_events.py": true,
+        "taiji/u2_learning_transaction.py": true,
+        "taiji/u2_record_metadata.py": true,
+        "taiji/u2_group_structure.py": true,
+        "taiji/u2_subject.py": false,
+        "taiji/u2_operators.py": true,
+        "taiji/utf8_state.py": true,
+        "scripts/training/first_a_support_22_5.py": true,
+        "scripts/training/task_baselines_22_4_a.py": true
+      },
+      "source_pin_mismatches": [
+        "taiji/u2_subject.py"
+      ],
+      "strict_load": true,
+      "verdict": "load_reproduces_recorded_fit"
+    }
+  ],
+  "all_load_equivalent": true,
+  "verdict": "accepted_parent_load_equivalent",
+  "cost": {
+    "cpu": 2.44
+  }
+}

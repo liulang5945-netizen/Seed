@@ -1,0 +1,97 @@
+{
+  "schema": "taiji-u2-s0-decision-options-price-v1",
+  "card": "22.5.1/S0 decision options (D-20261119-09 §7)",
+  "created_utc": "2026-11-19T16:17:31.072115+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "measured": {
+    "v1_per_example_cpu": 0.050781,
+    "v2_per_example_cpu": 0.051562,
+    "v2_over_v1_ratio": 1.0154,
+    "frozen_v1_per_update_cpu": 0.708333,
+    "v2_per_update_cpu": 0.71923,
+    "organ_plan_per_call_cpu": 0.001563,
+    "a_gate_fixture64_cpu": 0.4688,
+    "s0_organ_cpu_per_seed_measured": 14.78,
+    "s0_suite_cpu_per_seed_measured": 37.09
+  },
+  "factual_base": {
+    "accepted_parent_load_verdict": "accepted_parent_load_equivalent",
+    "accepted_parent_fit_recorded_vs_loaded": {
+      "20261110": [
+        30,
+        30
+      ],
+      "20261111": [
+        14,
+        14
+      ],
+      "20261112": [
+        31,
+        31
+      ]
+    },
+    "accepted_parent_pin_mismatch": {
+      "20261110": [
+        "taiji/u2_subject.py"
+      ],
+      "20261111": [
+        "taiji/u2_subject.py"
+      ],
+      "20261112": [
+        "taiji/u2_subject.py"
+      ]
+    },
+    "note": "v1 accepted parents 3/3 load strictly and reproduce the recorded fit after the delta-head v1 layout restoration; only taiji/u2_subject.py pin differs."
+  },
+  "options": {
+    "1_d_localization": {
+      "what": "bounded D-side operating-point localization on the two strong accepted v1 parents; organ-only 300-step training, frozen inference-time bias sweep, no architecture/parameter change, no criterion change",
+      "seeds": [
+        20261110,
+        20261112
+      ],
+      "per_seed_cpu": 51.88,
+      "price_cpu": 123.76,
+      "cap_cpu_proposed": 154.7,
+      "cap_wall_minutes": 20,
+      "optimizer_steps": 600,
+      "check_final_reads": 0,
+      "training_authority": null,
+      "model": "priced, not authorized"
+    },
+    "2_v2_a_parent_reearn": {
+      "what": "new A-parent package under pixel-salience-v2 so all three seeds have a strong fit parent before the joint gate; needs a fresh A-gate contract and a new check-exposure ruling (22.5 check 2/2 already used)",
+      "dose_per_seed": 2000,
+      "batch": 8,
+      "seeds": 3,
+      "train_leg_cpu_per_seed": 1438.46,
+      "fixture_leg_cpu_per_seed": 50.62,
+      "check_worker_cpu": 118.0,
+      "formal_leg_cpu": 150.0,
+      "per_seed_cpu": 1757.08,
+      "price_cpu": 5271.24,
+      "cap_cpu_proposed": 6589.05,
+      "check_exposure": "requires owner ruling; 22.5 ledger 2/2 used",
+      "training_authority": null,
+      "model": "priced, not authorized"
+    },
+    "3_v1_single_candidate": {
+      "what": "single strong-seed accepted v1 parent (20261110 fit 30/32 or 20261112 fit 31/32) as the joint-gate main candidate; D criterion restated as child >= parent - 0.02 one-sided upper bound; seed 20261111 excluded by structural parent bound (fit 14/32) and must not be pooled",
+      "training_cpu": 0.0,
+      "prerequisites": [
+        "owner amendment: single primary candidate + relative-parent D criterion",
+        "S2 zero-training design/pricing then still follows"
+      ],
+      "training_authority": null,
+      "model": "zero training"
+    }
+  },
+  "recommendation": "option 1 first (cheapest localization of the failure), then decide between option 3 (zero training) and option 2 (new identity A parent) on its result",
+  "cost": {
+    "cpu": 2.34
+  }
+}
