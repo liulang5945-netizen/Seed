@@ -4191,3 +4191,8 @@ joint24 30 单位、1,000 步预训练→分两批出生 6 单位→再训练 1,
 ## 2026-11-20 会话收口报告（D-20261119-70，零训练）
 
 汇总第 40–54 轮：动作片段 `action_consequence_pass`、不确定校准 `calibration_already_adequate`、多会话连续性/出生继承/休眠退役唤醒三卡有界通过；生长机制 clean 但收益 `growth_benefit_not_established_in_package_22`；单元贡献三探针负（冗余）；autonomous_choice 两法负；recursive uncovered；碰撞族构造可行预算内不可学；正式 check② 未结。成本 ≈3,200 CPU。目标未完成，主线继续。优先级：check② 决策＞recursion/choice 新设计＞生长收益条件化重检＞真机前仿真扩展。
+
+
+## 2026-11-20 反馈信用定位探针（D-20261119-71，`feedback_credit_absent`）
+
+joint24 基座 30 单位后取错分项：信用臂（top-5 单元按 ‖∇p‖+‖∇r‖ 更新）vs 随机 5 单元、同起点同步数同 lr。变体 A（1,200/20 步）天花板（seed1 1.0 vs 0.857，seed2 均 1.0）；变体 B（900/5 步）三 seed 两臂完全相同 ⇒ feedback_credit_absent。判读：单元级信用不可分（图级读出可独立学习＋单元冗余；任意 5 单元均可承担纠正）；与 D-67–69 一致；唯一已证信用定位是 22.5.1 器官级切口。后继条件：功能分化或连接级稀疏约束，否则信用只记器官/模块级。零 check/final。

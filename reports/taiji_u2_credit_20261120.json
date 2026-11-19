@@ -1,0 +1,67 @@
+{
+  "schema": "taiji-u2-credit-v1",
+  "card": "feedback credit localization to responsible units",
+  "created_utc": "2026-11-19T22:16:18.975003+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "base_steps": 900,
+    "correction_steps": 5,
+    "top_k": 5,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "greedy": "importance = ||grad p[:,i]|| + ||grad r[i]||"
+  },
+  "results": [
+    {
+      "seed": 0,
+      "errors": 5,
+      "baseline": 0.0,
+      "credit": 1.0,
+      "random": 1.0,
+      "credit_gain": 1.0,
+      "random_gain": 1.0
+    },
+    {
+      "seed": 1,
+      "errors": 12,
+      "baseline": 0.0,
+      "credit": 0.6667,
+      "random": 0.6667,
+      "credit_gain": 0.6667,
+      "random_gain": 0.6667
+    },
+    {
+      "seed": 2,
+      "errors": 14,
+      "baseline": 0.0,
+      "credit": 1.0,
+      "random": 1.0,
+      "credit_gain": 1.0,
+      "random_gain": 1.0
+    }
+  ],
+  "mean_credit_gain": 0.8889,
+  "mean_random_gain": 0.8889,
+  "mean_margin": 0.0,
+  "gates": {
+    "credit_beats_random_0_03": false,
+    "all_seeds_positive": false,
+    "credit_gain_positive": true
+  },
+  "verdict": "feedback_credit_absent",
+  "discipline": {
+    "optimizer_steps": 2700,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 22.31
+  }
+}
