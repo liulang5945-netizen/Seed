@@ -1,0 +1,180 @@
+{
+  "schema": "taiji-u2-unit-contribution-v1",
+  "card": "newborn-unit causal contribution to joint24 task",
+  "created_utc": "2026-11-19T22:07:10.503529+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "pre_steps": 1000,
+    "post_steps": 1000,
+    "birth_count": 6,
+    "random_control_draws": 5,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "gates": "newborn drop >= 0.02, >= random + 0.01, paired LB > 0"
+  },
+  "results": [
+    {
+      "seed": 0,
+      "base_accuracy": 0.9688,
+      "newborn_ablation_drop": 0.0,
+      "old_random_drop_mean": 0.1375,
+      "old_random_drops": [
+        0.0,
+        0.0312,
+        0.3438,
+        0.0312,
+        0.2812
+      ],
+      "paired_correctness": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "seed": 1,
+      "base_accuracy": 0.9375,
+      "newborn_ablation_drop": -0.0312,
+      "old_random_drop_mean": 0.1125,
+      "old_random_drops": [
+        0.1875,
+        -0.0312,
+        0.0312,
+        0.2188,
+        0.1562
+      ],
+      "paired_correctness": [
+        0,
+        -1,
+        0,
+        -1,
+        0,
+        0,
+        0,
+        0,
+        -1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        -1,
+        0,
+        0,
+        0,
+        -1,
+        0,
+        -1,
+        0,
+        0,
+        0,
+        0,
+        -1,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "seed": 2,
+      "base_accuracy": 1.0,
+      "newborn_ablation_drop": 0.0,
+      "old_random_drop_mean": 0.1437,
+      "old_random_drops": [
+        0.0625,
+        0.0312,
+        0.0938,
+        0.5312,
+        0.0
+      ],
+      "paired_correctness": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        -1,
+        0,
+        0,
+        0,
+        -1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "lower_bound": -0.1458,
+  "gates": {
+    "newborn_drop_0_02": false,
+    "beats_random_control": false,
+    "paired_lower_bound": false
+  },
+  "verdict": "unit_contribution_absent",
+  "discipline": {
+    "optimizer_steps": 6000,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 44.73
+  }
+}

@@ -4171,3 +4171,8 @@ joint24、groups=6、30 单位、3-seed 集成、1,500 步；256 fit 分 128 校
 ## 2026-11-20 跨会话生命周期（D-20261119-66，`multi_session_lifecycle_ready`，子进程 62.15 CPU）
 
 3 进程 session：s1 训练 30 单位；s2 出生 3 单位→训练→训练后置 2 dormant＋1 retired；s3 载入验证持久化并唤醒一个 dormant。3 seed 全过：inheritance exact、lifecycle_persisted、休眠单元活动 0、唤醒后活动 0.40–0.80、logits 最大差 0.57–0.70、唤醒前后参数 digest 不变、退役单元活动 0、准确率不降反升 ⇒ multi_session_lifecycle_ready。设计修正：首版训练前置休眠致 p=0 未学、唤醒不改读出（披露）；机制事实：休眠期不学习、唤醒只恢复门控与参数不补学。与 D-65 合起来覆盖出生/休眠/退役/唤醒跨会话有界 verified；分化/整合、22.8、真机/长跨度仍 uncovered。零 check/final。
+
+
+## 2026-11-20 单元因果贡献探针（D-20261119-67，`unit_contribution_absent`，44.73 CPU）
+
+joint24 30 单位、1,000 步预训练→分两批出生 6 单位→再训练 1,000 步；消融 6 新生儿 vs 3 随机旧单位×5。读数：full 0.97/0.94/1.0；新生儿消融下降 0/−0.03/0，随机旧单位均值 0.11–0.14，配对 LB −0.146 ⇒ 全败 ⇒ unit_contribution_absent。判读：任务已饱和、新生儿冗余；不是死单元。后继：容量边界（12–18 单位中间带或加噪）测贡献，新卡零 check。
