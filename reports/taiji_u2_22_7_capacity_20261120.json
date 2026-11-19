@@ -1,0 +1,80 @@
+{
+  "schema": "taiji-u2-22-7-capacity-v1",
+  "card": "22.7b capacity headroom under sigma=0.15 noisy perception",
+  "created_utc": "2026-11-19T19:49:35.472858+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "sigma": 0.15,
+    "grid_units": [
+      8,
+      16,
+      32,
+      64
+    ],
+    "seeds": [
+      0,
+      1
+    ],
+    "steps": 1000,
+    "batch": 64,
+    "headroom_min": 0.05,
+    "monotone_tolerance": 0.02
+  },
+  "results": [
+    {
+      "groups": 2,
+      "units_per_group": 4,
+      "units": 8,
+      "accuracies": [
+        0.375,
+        0.3125
+      ],
+      "mean": 0.3438
+    },
+    {
+      "groups": 4,
+      "units_per_group": 4,
+      "units": 16,
+      "accuracies": [
+        0.7188,
+        0.6562
+      ],
+      "mean": 0.6875
+    },
+    {
+      "groups": 4,
+      "units_per_group": 8,
+      "units": 32,
+      "accuracies": [
+        0.7188,
+        0.7812
+      ],
+      "mean": 0.75
+    },
+    {
+      "groups": 8,
+      "units_per_group": 8,
+      "units": 64,
+      "accuracies": [
+        0.75,
+        0.7812
+      ],
+      "mean": 0.7656
+    }
+  ],
+  "headroom_32_64": 0.0156,
+  "monotone": true,
+  "verdict": "capacity_headroom_absent",
+  "discipline": {
+    "optimizer_steps": 8000,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 58.2
+  }
+}
