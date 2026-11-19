@@ -6,13 +6,13 @@
 
 ## 按顺序推进只读一份
 
-[MAINLINE](MAINLINE.md)是唯一入口，状态与队首归[MASTER-PLAN](MASTER-PLAN.md)，[ROADMAP-NEXT](reference/ROADMAP-NEXT_20261104.md)同步依赖。[U2完整主体闭环候选](reference/SPEC-TAIJI-CLOSED_LOOP_U2_20261110.md)沿[执行包22](reference/PLAN-TAIJI-CLOSED_LOOP_DEVELOPMENT_20261110.md)推进，22.1局部数学、22.2参考图及22.3恢复工程均已结案。当前22.5.P3.8.2b把已校准的内容反馈与参数验收机制迁移到Native学习接口，六项目标按同一主体逐层取证。S18–S22为长期责任轴，与执行包号独立。
+[MAINLINE](MAINLINE.md)是**唯一主线与完整闭环入口**（统一串联近期 `22.5.1 S0–S5`、收官 `22.5.2–22.8` 与长期 `23–30 → §15–§16`），状态与审批台账归[MASTER-PLAN](MASTER-PLAN.md)，[ROADMAP-NEXT](reference/ROADMAP-NEXT_20261104.md)同步依赖。[U2完整主体闭环候选](reference/SPEC-TAIJI-CLOSED_LOOP_U2_20261110.md)沿[执行包22](reference/PLAN-TAIJI-CLOSED_LOOP_DEVELOPMENT_20261110.md)推进，22.1 局部数学、22.2 参考图、22.3 恢复工程与 22.4 任务/分区/定价均已结案；2026-11-19 **22.5.0 已挣得 A 父**（[`a_parent_earned`](reference/RESULT-TAIJI_U2_22_5_0_A_PARENT_PACKAGE_20261119.md)，中位 check 0.8906），**22.5.1/E5.10r3 已挣得相关性路由门**（[`relevance_gate_earned`](reference/RESULT-TAIJI_U2_22_5_1_RELEVANCE_R3_20261119.md)）。当前执行队首为 **22.5.1 联合门整体（纠正＋可失败保持＋恢复，S0–S5）**；其 `S0` 已执行并停在 owner 三决策点（工程 5/6 绿、三 seed 能力复核负面 `s0_diagnostic_failed`，D-20261119-09），S1–S5 未启动。S18–S22 为长期责任轴，与执行包号独立。
 
-本轮范围、顺序、预算、风险与具名出口见[闭环开发卡](reference/PLAN-TAIJI-CLOSED_LOOP_DEVELOPMENT_20261110.md)。22.3已按[工程结案](reference/VALIDATION-TAIJI-U2_22_3_CLOSEOUT_20261111.md)交付small初始化接受父，学习前置与配对任务已经交付，实际学习尚无正式A父。包20、包21、v2 F学习线与桥/边界线按各自结案保存，阶段编号不表示长期能力完成比例。
+本轮范围、顺序、预算、风险与具名出口见[MAINLINE](MAINLINE.md)与[闭环开发卡](reference/PLAN-TAIJI-CLOSED_LOOP_DEVELOPMENT_20261110.md)。22.3 已按[工程结案](reference/VALIDATION-TAIJI-U2_22_3_CLOSEOUT_20261111.md)交付 small 初始化接受父，22.4 已交付 1,280 world 分区与七分项定价基准，22.5.0 已交付 first-A 任务父；P3.8/P3.9 与包20、包21、v2 F 学习线、桥/边界线按各自结案保存，阶段编号不表示长期能力完成比例。
 
-22.4.1已按[接口与恢复回执](reference/VALIDATION-TAIJI-U2_22_4_1_CLOSEOUT_20261112.md)结案，五个计费名额结清，能力资格为空。连续物理世界与A/B学习前置已按后续回执收束，当前细卡见[学习校准计划](reference/PLAN-TAIJI_U2_LEARNING_CALIBRATION_20261113.md)。
+22.4.1 已按[接口与恢复回执](reference/VALIDATION-TAIJI-U2_22_4_1_CLOSEOUT_20261112.md)结案，五个计费名额结清；连续物理世界与学习校准前置见[学习校准计划](reference/PLAN-TAIJI_U2_LEARNING_CALIBRATION_20261113.md)，当前按[MAINLINE](MAINLINE.md)顺序推进 `22.5.1 → 22.8`。
 
-[N长期实施方案](reference/PLAN-TAIJI-N_LONG_HORIZON_20261111.md)从22接到23–30：组合/持续学习/成长/递归/物理/长期联合研究→29同一主体模型级确认→30用户可独立接管的运行交付。各卡有实施方法、风险处置、数据/资源及有限出口；交付后按运营、影子学习/成长、验收、回滚和退役状态机维持闭环。
+[N长期实施方案](reference/PLAN-TAIJI-N_LONG_HORIZON_20261111.md)从 22 接到 23–30（完整闭环主视图同步整合在[MAINLINE](MAINLINE.md) §4）：组合/跨会话记忆（24 锚定 `22.5.Y`）/成长/递归/物理/长期联合研究→29 同一主体模型级确认→30 用户可独立接管的运行交付。各卡有实施方法、风险处置、数据/资源及有限出口；交付后按运营、影子学习/成长、验收、回滚和退役状态机维持闭环。
 
 原12/13只保留为历史职责来源，不再发布未执行队列；其持续经验/主动性责任由S19–S22与当前执行包承接。基础机制研究、有限Task1与完整根目标的边界见[根目标覆盖](MASTER-PLAN.md#0b-长期目标与阶段边界)。
 

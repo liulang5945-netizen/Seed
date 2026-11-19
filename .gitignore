@@ -353,3 +353,5 @@ reports/taiji_r2_daily_dialogue_recovery_v2_20261021_extension_v1_aggregate_cpu_
 
 # Machine-local Zcode plugin preferences; preserve locally.
 /.zcode/
+# Machine-local DSH plugin root pointer (contains only a plugin cache path).
+/.v2c/
