@@ -4166,3 +4166,8 @@ joint24、groups=6、30 单位、3-seed 集成、1,500 步；256 fit 分 128 校
 ## 2026-11-20 跨会话结构出生与继承（D-20261119-65，`multi_session_birth_ready`，子进程 60.58 CPU）
 
 3 进程 session：s1 30 单位训练→capsule；s2 载入后活入口出生 3 单位并成熟（30→33）继续训练；s3 载入 33 单位 capsule（按 capsule spec 重建）继续。3 seed 全过：inheritance_exact（参数逐位一致）、newborns u0030–32 跨会话继承且身份不变、出生中性差 0.0、准确率不降反升（0.4375→0.875→0.9375 等）⇒ multi_session_birth_ready。判读：跨会话继承已学参数/有效功能＋会话内出生且被后续会话继承，有界 verified。边界：不等于 22.8 完整验收；仅出生不覆盖分化/整合/休眠/退役跨会话；真机/长跨度仍 uncovered。零 check/final。
+
+
+## 2026-11-20 跨会话生命周期（D-20261119-66，`multi_session_lifecycle_ready`，子进程 62.15 CPU）
+
+3 进程 session：s1 训练 30 单位；s2 出生 3 单位→训练→训练后置 2 dormant＋1 retired；s3 载入验证持久化并唤醒一个 dormant。3 seed 全过：inheritance exact、lifecycle_persisted、休眠单元活动 0、唤醒后活动 0.40–0.80、logits 最大差 0.57–0.70、唤醒前后参数 digest 不变、退役单元活动 0、准确率不降反升 ⇒ multi_session_lifecycle_ready。设计修正：首版训练前置休眠致 p=0 未学、唤醒不改读出（披露）；机制事实：休眠期不学习、唤醒只恢复门控与参数不补学。与 D-65 合起来覆盖出生/休眠/退役/唤醒跨会话有界 verified；分化/整合、22.8、真机/长跨度仍 uncovered。零 check/final。

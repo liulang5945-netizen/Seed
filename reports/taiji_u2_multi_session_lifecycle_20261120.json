@@ -1,0 +1,121 @@
+{
+  "schema": "taiji-u2-multi-session-lifecycle-v1",
+  "card": "cross-session dormant/retire persistence and wake probe",
+  "created_utc": "2026-11-19T22:03:53.884083+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "sessions": 3,
+    "birth_session": 2,
+    "wake_session": 3,
+    "retention_max": 0.02
+  },
+  "results": [
+    {
+      "seed": 0,
+      "accuracies": [
+        0.4375,
+        0.875,
+        0.9375
+      ],
+      "inheritance_exact": true,
+      "lifecycle_persisted": true,
+      "neonatal_states": {
+        "u0030": "dormant",
+        "u0031": "dormant",
+        "u0032": "retired"
+      },
+      "wake": {
+        "dormant_before_zero": true,
+        "activity_after": 0.67828327,
+        "logits_change": 0.56819439,
+        "params_unchanged": true,
+        "retired": [
+          "u0032"
+        ],
+        "retired_zero_activity": true
+      },
+      "retention_drop": -0.0625
+    },
+    {
+      "seed": 1,
+      "accuracies": [
+        0.5312,
+        0.8125,
+        0.9688
+      ],
+      "inheritance_exact": true,
+      "lifecycle_persisted": true,
+      "neonatal_states": {
+        "u0030": "dormant",
+        "u0031": "dormant",
+        "u0032": "retired"
+      },
+      "wake": {
+        "dormant_before_zero": true,
+        "activity_after": 0.40430242,
+        "logits_change": 0.6588974,
+        "params_unchanged": true,
+        "retired": [
+          "u0032"
+        ],
+        "retired_zero_activity": true
+      },
+      "retention_drop": -0.1563
+    },
+    {
+      "seed": 2,
+      "accuracies": [
+        0.3438,
+        0.5938,
+        0.875
+      ],
+      "inheritance_exact": true,
+      "lifecycle_persisted": true,
+      "neonatal_states": {
+        "u0030": "dormant",
+        "u0031": "dormant",
+        "u0032": "retired"
+      },
+      "wake": {
+        "dormant_before_zero": true,
+        "activity_after": 0.79713953,
+        "logits_change": 0.70244408,
+        "params_unchanged": true,
+        "retired": [
+          "u0032"
+        ],
+        "retired_zero_activity": true
+      },
+      "retention_drop": -0.25
+    }
+  ],
+  "gates": {
+    "inheritance_exact": true,
+    "lifecycle_persisted": true,
+    "dormant_zero_before_wake": true,
+    "wake_restores_activity": true,
+    "wake_changes_readout": true,
+    "wake_keeps_parameters": true,
+    "retired_zero_activity": true,
+    "retention_within_0_02": true
+  },
+  "verdict": "multi_session_lifecycle_ready",
+  "discipline": {
+    "optimizer_steps": 3600,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 0.03,
+    "children_cpu": 62.15
+  }
+}

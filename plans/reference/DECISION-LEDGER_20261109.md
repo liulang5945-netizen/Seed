@@ -5664,3 +5664,18 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **3. 判读**：该主体能**跨独立进程会话继承已学参数与有效功能**，并在会话内**出生新计算单位**且新生儿被后续会话继承、身份可追溯、出生不损伤旧能力。这把 22.7 的单会话结构证据与 lifetime 轴打通：**「继承式出生＋跨会话延续」有界 verified**。
 
 **4. 边界**：零 check/final；不等于 22.8 完整验收（≥3 session×32 轮 J 轨迹）、不覆盖分化/整合/休眠/退役跨会话（仅出生）；真机/长跨度仍 uncovered。
+
+
+### D-20261119-66 跨会话生命周期：休眠/退役持久化＋唤醒恢复（`multi_session_lifecycle_ready`，子进程 62.15 CPU）
+
+**1. 动作**：新增 worker [`s2_multi_session_lifecycle_worker_20261120.py`](../../scripts/training/s2_multi_session_lifecycle_worker_20261120.py) 与探针 [`probe_s2_multi_session_lifecycle_20261120.py`](../../scripts/training/probe_s2_multi_session_lifecycle_20261120.py)：session 1 训练 30 单位；session 2 出生 3 单位→训练→**训练后置 2 dormant＋1 retired**；session 3 载入后验证生命周期持久化，**唤醒**一个 dormant 单位并测读出变化。3 seed、零 check。
+
+**2. 读数**（子进程 `62.15 ≤ 帽 240 CPU`）：3 seed 全过——
+- `inheritance_exact`（s2 load==s1 save、s3 load==s2 save）、`lifecycle_persisted`（dormant/dormant/retired 状态跨会话保留）；
+- `dormant_zero_before_wake`（唤醒前休眠单元活动 0）、`wake_restores_activity`（唤醒后活动 `0.40–0.80`）、`wake_changes_readout`（logits 最大差 `0.57–0.70`）、`wake_keeps_parameters`（唤醒前后参数 digest 不变）；
+- `retired_zero_activity`、`retention_within_0_02`（准确率不降反升）
+⇒ **`multi_session_lifecycle_ready`**。
+
+**3. 设计修正（披露）**：首版把新生儿**训练前**置 dormant/retired，导致其输出权 `p=0` 从未学习、唤醒后读出不变（`wake_changes_readout=false`）；改为「训练后再休眠/退役」重跑通过。这本身是有价值的机制事实：**休眠期单元不学习；唤醒只恢复门控与参数，不补学**。
+
+**4. 判读**：该主体支持**跨会话可逆休眠与退役**：生命周期状态随 capsule 持久化、唤醒恢复活动并真实改变读出、唤醒不篡改参数、退役单元不产生活动。与 D-65（出生继承）合起来覆盖「出生/休眠/退役/唤醒」跨会话有界 verified；分化/整合跨会话、22.8 完整验收、真机/长跨度仍 `uncovered`。
