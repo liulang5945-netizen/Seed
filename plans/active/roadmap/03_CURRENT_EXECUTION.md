@@ -4156,3 +4156,8 @@ joint24、groups=6、30 单位、3-seed 集成、1,500 步；256 fit 分 128 校
 ## 2026-11-20 多会话连续性可行性（D-20261119-63，`multi_session_continuity_ready`，子进程 59.98 CPU）
 
 每 seed 3 个独立进程 session，后续 session 从 capsule 载入全新 graph 继续训练（400 步/session、joint24、groups=6、30 单位）。3 seed 全部 inheritance_exact（载入 digest==前存 digest）、identities_preserved、retention 不降反升（0.4375→0.9062→0.9375 等）⇒ multi_session_continuity_ready。首版 digest 覆盖范围错误已修正重跑（披露）。lifetime 升级为「≥3 会话跨进程有界 verified」；不等于 22.8 完整验收、不覆盖 100 会话/24h。零 check/final；22.8/23–30 仍锁定。
+
+
+## 2026-11-20 九轴终值增量（D-20261119-64，零训练）
+
+九轴：engineering verified；task verified(fit_face_only，check②未结)；learning verified(路由)/uncovered(内容)；retention verified(严格D breach 披露)；autonomous_choice negative(两法一致)；mature_growth 结构机制 verified/收益未建立；recursive_development uncovered；physical_transfer verified(有界：22.4.2b 推/位置桶)；lifetime verified(有界：≥3 会话跨进程，D-63)；附加 uncertainty_expression verified(有界：ECE 0.028→0.021，D-62)。仍 uncovered：正式 check②/B 父资格/D 口径、autonomous_choice 负结果、recursive、生长收益、真机/多动力学族、100 会话/24h、22.8 与 23–30 准入。建议：不整包接受；优先级 check② 决策＞recursion/choice 新卡＞真机前仿真扩展。

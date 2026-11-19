@@ -5637,3 +5637,14 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **3. 判读**：同一主体在**三个独立进程 session** 间保持参数继承（逐位一致）、身份/谱系不变、旧能力不退化且有增益；`lifetime` 轴从「单次跨会话有界」升级为「**≥3 会话跨进程有界 verified**」。仍不等于 22.8（`>=3 session × 32 轮 J 轨迹` 的完整验收），也不覆盖 100 会话/24h 级。
 
 **4. 边界**：零 check/final；22.8 与 23–30 仍锁定；本证据只增 `lifetime` 轴的有界范围，不改其他判词。
+
+
+### D-20261119-64 九轴终值增量：不确定性表达/多会话 lifetime/physical_transfer 均有界 verified（零训练汇总）
+
+**1. 动作**：把 D-20261119-55／62／63 的新证据写入[待裁汇总](../reference/MEMO-TAIJI_OWNER_DECISIONS_20261120.md)与包 22 总账九轴终值；**零训练、零 check/final**。
+
+**2. 九轴终值（同一父 seed `20261112` 谱系）**：`engineering` verified；`task` verified（fit_face_only，正式 check② 未结）；`learning` verified（路由技能）/uncovered（内容积累）；`retention` verified（严格 D breach 已披露）；`autonomous_choice` **negative**（22.6.2 / 22.6.2b 两法一致）；`mature_growth` 结构机制 verified/收益 `growth_benefit_not_established_in_package_22`；`recursive_development` **uncovered**；`physical_transfer` **verified（有界：22.4.2b 推/位置桶动作片段）**，碰撞/真机 uncovered；`lifetime` **verified（有界：≥3 会话跨进程，D-63）**，100 会话/24h uncovered。附加：`uncertainty_expression` verified（有界：joint24 ECE 0.028→0.021，D-62）。
+
+**3. 仍 uncovered/未结**：① 正式 check② 与 B 父资格、D 口径；② `autonomous_choice` 负结果（需在线闭环/部分观测历史新卡）；③ `recursive_development`（需新相依设计）；④ 生长收益（需等 FLOPs/大出生/未知容量条件）；⑤ 真机与多动力学族；⑥ 100 会话/24h 长跨度；⑦ 22.8 与 23–30 准入。
+
+**4. 建议**：仍不建议整包接受；若继续，优先级＝正式 check② 决策（A/B）＞ recursion/choice 新卡＞真机前仿真扩展。零 check/final、不改既有判词。

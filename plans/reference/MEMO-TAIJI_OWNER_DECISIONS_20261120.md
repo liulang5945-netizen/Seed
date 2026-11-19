@@ -13,8 +13,10 @@
 | `autonomous_choice` | **negative**（22.6.2 `policy_gain_absent`） |
 | `mature_growth` | 结构/机制 verified；收益 `growth_benefit_not_established_in_package_22`（负结果带条件） |
 | `recursive_development` | **uncovered**（两次相依纠正多 seed 不成立） |
-| `physical_transfer` | **verified（有界：22.4.2b 仿真动作片段）**；真机/多动力学族 uncovered |
-| `lifetime` | verified（有界：跨会话不退化＋跨进程恢复）／长跨度 uncovered |
+| `physical_transfer` | **verified（有界：22.4.2b 推/位置桶动作片段）**；碰撞/遮挡与真机 uncovered（D-57/58/59） |
+| `lifetime` | **verified（有界：≥3 会话跨进程，参数逐位继承＋身份不变＋准确率不降反升，D-63）**／100 会话、24h 级 uncovered |
+
+附加证据：`uncertainty_expression` verified（有界：joint24 ECE 0.028→0.021，D-62）。
 
 ## §1 决策点 A：正式资格路径（A 案 vs B 案）
 
