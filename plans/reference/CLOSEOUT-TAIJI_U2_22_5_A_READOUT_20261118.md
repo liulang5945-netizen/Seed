@@ -69,3 +69,14 @@ A 父、任何能力、`pixel_read_feasible`、22.5.1／22.6／22.7 解锁、fin
 **fit 中位 31/32 = 0.969 ≥ 0.80 ⇒ §1 判词 `readout_below_gate` 的 fit 部分翻转，fit 门按预注册口径过**。**探针预筛（spread>0.1@300）被证失准**：12 号被拒而终值 0.969、11 号被拒终值 0.4375——既不必要也不充分，**后继不得再用它预筛种子**。同日上午的 3 个 place 增强直线臂（已回退构建、strict=False 恢复读数、place 非零带披露）为 **8/32、8/32、30/32**——臂不稳定是**种子×配置级**（10 号干净协议过/place 协议塌、12 号反之），非"某种子永不可达"；其 checkpoint 已在记录后清理。全部机器读数与恢复口径见[报告](../../reports/taiji_u2_a_gate_seed_probe_readout_20261119.json)与[恢复脚本](../../scripts/training/probe_a_gate_seed_sweep_20261119.py)，决策登记 D-20261119-01。
 
 **不签**：本补编只翻 fit 门；**check 仍未读（曝光剩最后 1/2）**、A 父仍未得、任何能力不解锁；§6 不签清单继续有效。**唯一后继＝owner 裁决是否消费最后一次 check 曝光**（192 题，判据原文"check ≥0.70"未指明逐种子还是中位——须在读数前钉死口径）。
+
+## 9 check 腿预注册（2026-11-19，读数前冻结）
+
+owner 已裁「同意」消费最后一次 check 曝光。判据在读数前钉死如下：
+
+- **模型**：§8 的 3 个 2000 更新 checkpoint（`output/a_pixel_parallel_20261119T033848Z`／`T045931Z`／`T045222Z` 的 `segment.bin`，seeds 20261110/11/12）。
+- **仪器**：`scripts/training/run_a_gate_c_20261117.py --check-worker`，逐字节不变——192 个 development-check 世界来自冻结分区 `reports/taiji_u2_partition_22_4_3_20261117.json`，worker 内部持标签、只释放聚合计数（correct／accuracy／valid_utf8／eos／per_label）；解码与 fit 同一 `evaluate`（贪心、全串匹配、EOS）；oracle 一致性由 worker 内部强制。
+- **判据**：**三种子 check accuracy 的中位 ≥ 0.70**（与 fit 同取中位；原文"check ≥0.70"的口径歧义就此钉死）。valid_utf8／eos 全量作随读诊断，不进门。
+- **曝光记账**：本腿一次读完 3 个 checkpoint ⇒ **2/2 used、0 remaining**；聚合口径、标签不回传选择器。
+- **帽**：本腿合计 ≤ 3,000 CPU／120 分钟 wall（按冒烟 check 腿 73.8 CPU 为塌缩模型下界、会答模型解码约 10× 估）；超帽判 `budget_stop` 不改判据。
+- **出口**：中位 ≥0.70 ⇒ **`readout_gate_earned`**（读出线正向收官；`pixel-salience`＋d=32 冻结为 A 门读出身份；A 父准入另走 22.4 accepted_parent＋算力配平链，不在本卡签）；中位 <0.70 ⇒ **`check_below_gate`**（读出线负向收束）。两出口都不签 A 父、不签能力、不解锁 22.5.1／22.6／22.7。
