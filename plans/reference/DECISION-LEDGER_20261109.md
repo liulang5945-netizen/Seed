@@ -5020,3 +5020,20 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **5. 签署边界**：**签**＝身份隔离补充修正（delta_head v1 布局恢复）、已接受父加载等价 3/3、两选项实测定价与定位包预注册设计。**不签**＝联合门、A 父（任何身份）、S1 重建结论、能力、22.6/22.7；定位包与 v2 重挣 A 父**均未授权执行**。
 
 **6. 唯一后继**：owner 对 D-20261119-09 §7 三决策点裁定。执行者建议：**先授权①**（154.7 CPU 帽内、只定位不改架构），若 `operating_point_only` 则开预注册标定卡；若 `operating_point_insufficient` 则按纪律收束 D 面并转③；②仅在 owner 决定「三 seed 都要强父」且另立 check 曝光账时启动。裁定前 **0 优化器步、0 check/final、0 能力**。
+
+
+### D-20261119-11 owner 三裁定落地＋D 面定位包 `operating_point_insufficient` 收官：D 面收束、联合门判据改相对父代、主候选固定 v1 seed 20261112
+
+**1. 授权链（2026-11-20 弹窗，owner 三项裁定）**：① **授权按帽执行 D 面定位包**（价 `123.76`、帽 `154.7 CPU／20 min`、600 步器官训练）；② **22.5.1 父身份＝v1 强 seed 单主候选＋相对父代 D 判据**（零训练路线）；③ **阶段账照旧**记定价遗漏事故、不改帽。
+
+**2. 定位包实现与执行**：新 runner [`run_s0_d_localization_20261119.py`](../../scripts/training/run_s0_d_localization_20261119.py)（freeze/authorize/smoke/run/closeout 五模式，缺 `training_authority` fail-closed）＋共享只读父加载器 [`s0_parent_loader_20261119.py`](../../scripts/training/s0_parent_loader_20261119.py)；合同 [`taiji_u2_s0_d_localization_20261119.json`](../../plans/manifests/taiji_u2_s0_d_localization_20261119.json)（`status=frozen`、`training_authority=owner:chat:2026-11-20#popup-d-localization-authorized-cap-154.7`、`result.closed=true`）。smoke **12 项全绿**（0.38 CPU、0 优化器步）；执行输入＝已接受 v1 父 seed `20261110`/`20261112`（strict load＋pin 失配披露），seed `20261111` 因父 fit `14/32` 结构上不可达 D 门而排除；唯一变量＝推理期 gate 偏移 δ（闭包补丁、零模块字节改动、不写回）。**实耗 88.19 CPU／88.88 s**（帽内，余量 66.51），`0 check/final`。
+
+**3. 读数与判读（预注册出口）**：决策级（分母 24）：两 seed 已见 B `24/24`、D `22/24`、多记录 `21/24`；seed 10 未见 B/多记录 **`5/24`**、D `22/24`；seed 12 未见全 `24/22/21`。**δ 九点（−4…+4）读数逐项完全相同** ⇒ 路由 logit 饱和、无 δ* 满足两 seed 两面 `B_hit≥23 ∧ D_hit≥21` ⇒ 判 **`operating_point_insufficient`**（预注册负面）。判读：① H1（阈值/操作点假设）在预注册 δ 族内被**证伪**，D 面失败不是单一阈值问题；② 失败点在**未见模板的窗口选择**（seed 10 未见 B/多记录 5/24），属表示/训练限制（H2），不是 gate 阈值；③ D **决策级**两 seed 两面均 `22/24`（无关记录正确退避），S0 诊断里的 decode 级 D 低不由决策级门控解释——登记为后继假设（混合/记录通道扰动或父代 A 差异），不在本包追因；④ 边界：只否定预注册 ±4 阈值族，不外推「任何阈值都不可能」。结果卡：[RESULT-TAIJI_U2_S0_D_LOCALIZATION_20261119](../reference/RESULT-TAIJI_U2_S0_D_LOCALIZATION_20261119.md)；回执：[run](../../reports/taiji_u2_s0_d_localization_run_20261119.json)／[smoke](../../reports/taiji_u2_s0_d_localization_smoke_20261119.json)。
+
+**4. 出口与范围纪律**：按 D-20261119-09 预承诺，D 面**按范围上限收束**——不得再开第 4 次同范围架构修订（r1/r2/r3 已用满＋特批一次）；联合门「无关记录」判据改为**相对父代**：`drop = D_parent(face) − D_child(face)`，单侧 95% 上界 `≤0.02`，同时报绝对 `D_child` 与 B 纠正率；绝对 `D≥20/24` 不再作为单候选门（结构上受父代 A 精度上界约束）。
+
+**5. 父身份正式化（owner 裁定②的机器化）**：主候选＝已接受 v1 A 父 **seed `20261112`** 的 bundle（`output/a_pixel_parallel_20261119T070447Z/segment.bin`，`pixel-salience`、`d=32`、2,000 更新；记录 check `174/192=0.9062`、fit `31/32`）。选择规则**预声明**：已记录 check 正确数最高者、`fit` 次优打破平局（seed 10 为 `171/192`、`30/32`；seed 11 为 `78/192`、`14/32`）。**联合门 3 seed 统计改为「同一父 bundle × 3 个训练子种子」**（父不重训、不换、不池化；seed 10/11 父不得作为主候选或备选，禁拼 seed 凑全绿）。父 bundle 身份交 S2 合同绑定 sha256＋参数摘要＋记录 fit 复现回执。
+
+**6. 成本**：定位包执行 88.19（帽 154.7）＋smoke 0.38＋只读加载探针 2.58＋定价 2.34；S0 阶段累计诊断类 ≈1,577 CPU。阶段账维持 D-20261119-07／D-09 裁定（24,000 保持、超支永久记事故）。
+
+**7. 签署边界与后继**：**签**＝定位包实现/smoke/执行读数、`operating_point_insufficient` 预注册出口、D 面收束决定、主候选与相对父代判据的正式化。**不签**＝联合门、A 父、任何能力、22.6/22.7、S1 结论。**唯一后继＝owner 对 S1（`R-REBUILD-1`，约 `1,400 CPU`）的裁定**（建议：鉴于已接受父 strict load 3/3 且记录 fit 逐值复现，可**豁免 S1** 并把父身份证据改为 S2 合同绑定 bundle sha256＋参数摘要＋复现回执；若 owner 要完整谱系再生证明则按 `1,400 CPU` 帽授权）。S1 裁定后 S2（零训练设计＋实测定价，无需授权）接续；裁定前 0 训练、0 check/final。
