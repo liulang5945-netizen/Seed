@@ -1,0 +1,1621 @@
+{
+  "schema": "taiji-u2-22-6-scripted-baselines-v1",
+  "card": "22.6.0 C sessions, scripted fixed/reactive baselines",
+  "created_utc": "2026-11-19T18:36:20.518636+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "worlds": 32,
+    "sessions_per_world": 3,
+    "decisions_per_session": 16,
+    "deadline": 15,
+    "costs": {
+      "observe": 0.02,
+      "wait_or_rest": 0.01,
+      "verify": 0.1
+    },
+    "policies": [
+      "answer_no_observe",
+      "rest_then_answer",
+      "observe_t0_answer",
+      "observe_t7_answer",
+      "observe_t14_answer",
+      "observe_deadline_answer",
+      "verify_t0_answer"
+    ],
+    "cap_cpu": 120.0
+  },
+  "aggregate": {
+    "answer_no_observe": {
+      "mean": 0.0,
+      "std": 0.0,
+      "win_rate": 0.0
+    },
+    "rest_then_answer": {
+      "mean": -0.15,
+      "std": 0.0,
+      "win_rate": 0.0
+    },
+    "observe_t0_answer": {
+      "mean": 0.9488,
+      "std": 0.174,
+      "win_rate": 0.9688
+    },
+    "observe_t7_answer": {
+      "mean": 0.8996,
+      "std": 0.1015,
+      "win_rate": 0.0208
+    },
+    "observe_t14_answer": {
+      "mean": 0.84,
+      "std": 0.0,
+      "win_rate": 0.0104
+    },
+    "observe_deadline_answer": {
+      "mean": 0.83,
+      "std": 0.0,
+      "win_rate": 0.0
+    },
+    "verify_t0_answer": {
+      "mean": 0.8488,
+      "std": 0.174,
+      "win_rate": 0.0
+    }
+  },
+  "best_fixed_policy": {
+    "name": "observe_t0_answer",
+    "mean": 0.9488
+  },
+  "wait_value": -0.1187,
+  "n_sessions": 96,
+  "rows": [
+    {
+      "world": 0,
+      "seed": 20262000,
+      "session": 0,
+      "target": "蓝色圆片",
+      "truth": "左边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 0,
+      "seed": 20262000,
+      "session": 1,
+      "target": "紫色圆片",
+      "truth": "左边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 0,
+      "seed": 20262000,
+      "session": 2,
+      "target": "青色圆片",
+      "truth": "中间",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 1,
+      "seed": 20262001,
+      "session": 0,
+      "target": "绿色圆片",
+      "truth": "右边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 1,
+      "seed": 20262001,
+      "session": 1,
+      "target": "紫色圆片",
+      "truth": "中间",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 1,
+      "seed": 20262001,
+      "session": 2,
+      "target": "红色圆片",
+      "truth": "左边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 2,
+      "seed": 20262002,
+      "session": 0,
+      "target": "紫色圆片",
+      "truth": "左边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 2,
+      "seed": 20262002,
+      "session": 1,
+      "target": "黄色圆片",
+      "truth": "中间",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 2,
+      "seed": 20262002,
+      "session": 2,
+      "target": "蓝色圆片",
+      "truth": "中间",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 3,
+      "seed": 20262003,
+      "session": 0,
+      "target": "绿色圆片",
+      "truth": "中间",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 3,
+      "seed": 20262003,
+      "session": 1,
+      "target": "红色圆片",
+      "truth": "左边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 3,
+      "seed": 20262003,
+      "session": 2,
+      "target": "紫色圆片",
+      "truth": "中间",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 4,
+      "seed": 20262004,
+      "session": 0,
+      "target": "黄色圆片",
+      "truth": "中间",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 4,
+      "seed": 20262004,
+      "session": 1,
+      "target": "蓝色圆片",
+      "truth": "右边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 4,
+      "seed": 20262004,
+      "session": 2,
+      "target": "绿色圆片",
+      "truth": "中间",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 5,
+      "seed": 20262005,
+      "session": 0,
+      "target": "紫色圆片",
+      "truth": "左边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 5,
+      "seed": 20262005,
+      "session": 1,
+      "target": "青色圆片",
+      "truth": "右边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 5,
+      "seed": 20262005,
+      "session": 2,
+      "target": "红色圆片",
+      "truth": "左边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 6,
+      "seed": 20262006,
+      "session": 0,
+      "target": "红色圆片",
+      "truth": "右边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 6,
+      "seed": 20262006,
+      "session": 1,
+      "target": "青色圆片",
+      "truth": "中间",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 6,
+      "seed": 20262006,
+      "session": 2,
+      "target": "黄色圆片",
+      "truth": "中间",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 7,
+      "seed": 20262007,
+      "session": 0,
+      "target": "黄色圆片",
+      "truth": "右边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 7,
+      "seed": 20262007,
+      "session": 1,
+      "target": "青色圆片",
+      "truth": "左边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 7,
+      "seed": 20262007,
+      "session": 2,
+      "target": "蓝色圆片",
+      "truth": "中间",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 8,
+      "seed": 20262008,
+      "session": 0,
+      "target": "青色圆片",
+      "truth": "右边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 8,
+      "seed": 20262008,
+      "session": 1,
+      "target": "黄色圆片",
+      "truth": "中间",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 8,
+      "seed": 20262008,
+      "session": 2,
+      "target": "红色圆片",
+      "truth": "中间",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 9,
+      "seed": 20262009,
+      "session": 0,
+      "target": "蓝色圆片",
+      "truth": "左边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 9,
+      "seed": 20262009,
+      "session": 1,
+      "target": "红色圆片",
+      "truth": "右边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 9,
+      "seed": 20262009,
+      "session": 2,
+      "target": "绿色圆片",
+      "truth": "中间",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 10,
+      "seed": 20262010,
+      "session": 0,
+      "target": "黄色圆片",
+      "truth": "中间",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": -0.02,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": -0.12
+      }
+    },
+    {
+      "world": 10,
+      "seed": 20262010,
+      "session": 1,
+      "target": "绿色圆片",
+      "truth": "左边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 10,
+      "seed": 20262010,
+      "session": 2,
+      "target": "青色圆片",
+      "truth": "中间",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 11,
+      "seed": 20262011,
+      "session": 0,
+      "target": "绿色圆片",
+      "truth": "中间",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 11,
+      "seed": 20262011,
+      "session": 1,
+      "target": "青色圆片",
+      "truth": "左边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 11,
+      "seed": 20262011,
+      "session": 2,
+      "target": "黄色圆片",
+      "truth": "左边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 12,
+      "seed": 20262012,
+      "session": 0,
+      "target": "青色圆片",
+      "truth": "右边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 12,
+      "seed": 20262012,
+      "session": 1,
+      "target": "蓝色圆片",
+      "truth": "中间",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 12,
+      "seed": 20262012,
+      "session": 2,
+      "target": "黄色圆片",
+      "truth": "右边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 13,
+      "seed": 20262013,
+      "session": 0,
+      "target": "青色圆片",
+      "truth": "右边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 13,
+      "seed": 20262013,
+      "session": 1,
+      "target": "紫色圆片",
+      "truth": "右边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 13,
+      "seed": 20262013,
+      "session": 2,
+      "target": "黄色圆片",
+      "truth": "中间",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 14,
+      "seed": 20262014,
+      "session": 0,
+      "target": "黄色圆片",
+      "truth": "右边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 14,
+      "seed": 20262014,
+      "session": 1,
+      "target": "蓝色圆片",
+      "truth": "右边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 14,
+      "seed": 20262014,
+      "session": 2,
+      "target": "绿色圆片",
+      "truth": "左边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 15,
+      "seed": 20262015,
+      "session": 0,
+      "target": "绿色圆片",
+      "truth": "中间",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 15,
+      "seed": 20262015,
+      "session": 1,
+      "target": "蓝色圆片",
+      "truth": "左边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 15,
+      "seed": 20262015,
+      "session": 2,
+      "target": "青色圆片",
+      "truth": "中间",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 16,
+      "seed": 20262016,
+      "session": 0,
+      "target": "红色圆片",
+      "truth": "左边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 16,
+      "seed": 20262016,
+      "session": 1,
+      "target": "蓝色圆片",
+      "truth": "左边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 16,
+      "seed": 20262016,
+      "session": 2,
+      "target": "黄色圆片",
+      "truth": "右边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 17,
+      "seed": 20262017,
+      "session": 0,
+      "target": "黄色圆片",
+      "truth": "右边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 17,
+      "seed": 20262017,
+      "session": 1,
+      "target": "红色圆片",
+      "truth": "中间",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 17,
+      "seed": 20262017,
+      "session": 2,
+      "target": "蓝色圆片",
+      "truth": "中间",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 18,
+      "seed": 20262018,
+      "session": 0,
+      "target": "紫色圆片",
+      "truth": "左边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 18,
+      "seed": 20262018,
+      "session": 1,
+      "target": "红色圆片",
+      "truth": "中间",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 18,
+      "seed": 20262018,
+      "session": 2,
+      "target": "绿色圆片",
+      "truth": "右边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 19,
+      "seed": 20262019,
+      "session": 0,
+      "target": "绿色圆片",
+      "truth": "中间",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 19,
+      "seed": 20262019,
+      "session": 1,
+      "target": "青色圆片",
+      "truth": "右边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 19,
+      "seed": 20262019,
+      "session": 2,
+      "target": "红色圆片",
+      "truth": "右边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 20,
+      "seed": 20262020,
+      "session": 0,
+      "target": "黄色圆片",
+      "truth": "中间",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 20,
+      "seed": 20262020,
+      "session": 1,
+      "target": "青色圆片",
+      "truth": "右边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 20,
+      "seed": 20262020,
+      "session": 2,
+      "target": "紫色圆片",
+      "truth": "中间",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 21,
+      "seed": 20262021,
+      "session": 0,
+      "target": "红色圆片",
+      "truth": "右边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 21,
+      "seed": 20262021,
+      "session": 1,
+      "target": "紫色圆片",
+      "truth": "中间",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 21,
+      "seed": 20262021,
+      "session": 2,
+      "target": "黄色圆片",
+      "truth": "中间",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 22,
+      "seed": 20262022,
+      "session": 0,
+      "target": "蓝色圆片",
+      "truth": "右边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 22,
+      "seed": 20262022,
+      "session": 1,
+      "target": "青色圆片",
+      "truth": "右边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 22,
+      "seed": 20262022,
+      "session": 2,
+      "target": "绿色圆片",
+      "truth": "中间",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 23,
+      "seed": 20262023,
+      "session": 0,
+      "target": "黄色圆片",
+      "truth": "中间",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": -0.02,
+        "observe_t7_answer": -0.09,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": -0.12
+      }
+    },
+    {
+      "world": 23,
+      "seed": 20262023,
+      "session": 1,
+      "target": "蓝色圆片",
+      "truth": "左边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 23,
+      "seed": 20262023,
+      "session": 2,
+      "target": "红色圆片",
+      "truth": "右边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 24,
+      "seed": 20262024,
+      "session": 0,
+      "target": "青色圆片",
+      "truth": "中间",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 24,
+      "seed": 20262024,
+      "session": 1,
+      "target": "绿色圆片",
+      "truth": "右边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": -0.02,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": -0.12
+      }
+    },
+    {
+      "world": 24,
+      "seed": 20262024,
+      "session": 2,
+      "target": "蓝色圆片",
+      "truth": "左边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 25,
+      "seed": 20262025,
+      "session": 0,
+      "target": "绿色圆片",
+      "truth": "左边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 25,
+      "seed": 20262025,
+      "session": 1,
+      "target": "红色圆片",
+      "truth": "左边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 25,
+      "seed": 20262025,
+      "session": 2,
+      "target": "青色圆片",
+      "truth": "左边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 26,
+      "seed": 20262026,
+      "session": 0,
+      "target": "蓝色圆片",
+      "truth": "右边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 26,
+      "seed": 20262026,
+      "session": 1,
+      "target": "黄色圆片",
+      "truth": "左边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 26,
+      "seed": 20262026,
+      "session": 2,
+      "target": "红色圆片",
+      "truth": "中间",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 27,
+      "seed": 20262027,
+      "session": 0,
+      "target": "绿色圆片",
+      "truth": "右边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 27,
+      "seed": 20262027,
+      "session": 1,
+      "target": "红色圆片",
+      "truth": "左边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 27,
+      "seed": 20262027,
+      "session": 2,
+      "target": "紫色圆片",
+      "truth": "中间",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 28,
+      "seed": 20262028,
+      "session": 0,
+      "target": "青色圆片",
+      "truth": "中间",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 28,
+      "seed": 20262028,
+      "session": 1,
+      "target": "蓝色圆片",
+      "truth": "右边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 28,
+      "seed": 20262028,
+      "session": 2,
+      "target": "红色圆片",
+      "truth": "左边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 29,
+      "seed": 20262029,
+      "session": 0,
+      "target": "红色圆片",
+      "truth": "中间",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 29,
+      "seed": 20262029,
+      "session": 1,
+      "target": "紫色圆片",
+      "truth": "右边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 29,
+      "seed": 20262029,
+      "session": 2,
+      "target": "黄色圆片",
+      "truth": "左边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 30,
+      "seed": 20262030,
+      "session": 0,
+      "target": "青色圆片",
+      "truth": "右边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 30,
+      "seed": 20262030,
+      "session": 1,
+      "target": "蓝色圆片",
+      "truth": "左边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 30,
+      "seed": 20262030,
+      "session": 2,
+      "target": "红色圆片",
+      "truth": "右边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 31,
+      "seed": 20262031,
+      "session": 0,
+      "target": "青色圆片",
+      "truth": "右边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 31,
+      "seed": 20262031,
+      "session": 1,
+      "target": "绿色圆片",
+      "truth": "左边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    },
+    {
+      "world": 31,
+      "seed": 20262031,
+      "session": 2,
+      "target": "黄色圆片",
+      "truth": "左边",
+      "utilities": {
+        "answer_no_observe": 0.0,
+        "rest_then_answer": -0.15,
+        "observe_t0_answer": 0.98,
+        "observe_t7_answer": 0.91,
+        "observe_t14_answer": 0.84,
+        "observe_deadline_answer": 0.83,
+        "verify_t0_answer": 0.88
+      }
+    }
+  ],
+  "verdict": "baselines_ready",
+  "discipline": {
+    "optimizer_steps": 0,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 7.2
+  }
+}

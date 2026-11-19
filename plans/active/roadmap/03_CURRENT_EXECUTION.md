@@ -3956,3 +3956,8 @@ session1＝联合门子体（train[:64] 训练 256 步）；session2＝同一子
 ## 2026-11-20 22.6.0 C 任务合同冻结并收官（D-20261119-22，`c_task_ready`，零训练 9.64 CPU）
 
 合同 runner 四模式（freeze/smoke/run/closeout）＋4 源码 pin＋判据摘要，合同 [`taiji_u2_22_6_0_c_task_20261120.json`](../../manifests/taiji_u2_22_6_0_c_task_20261120.json)（`criteria_sha256=5a803c96…`）冻结；smoke 3.62 CPU 全过；run 9.64≤cap 40 判 **`c_task_ready`**（C1 fixture_invalid、C2 t14 唯一最优 wait14、C3 唯一最优 wait0、8 seeds 重放逐位一致）；合同测试 4 项全过，`result.closed=true`。零优化器步、零 check/final；只签「C 任务 fixture 合法」，不签 22.6 学习/选择能力，22.5.1 仍 fit_face_only。后继＝22.6.1 预测器设计＋定价。
+
+
+## 2026-11-20 22.6 脚本基线 rollout 与「池子太易」（D-20261119-23，7.25 CPU，零训练）
+
+7 条脚本策略 × 96 session（32 world×3 session×16 决策）：最强固定 `observe_t0_answer` 0.9488（单 session 最优率 0.9688），`wait_value = −0.1187`，t14/t15 观测 96/96 全命中。设计输入：最强固定 0.9488 只留下 0.0512 头空间，而 22.6 主判据要求 ≥0.05 净增益 ⇒ 余量仅 0.0012，直接比较近乎不可行；等待无池级价值。需先冻结**池级准入规则**（≥1/3 session 满足 t0 过期且 deadline 命中、wait_value ≥0.05、最强固定 ≤0.90、truth 非退化；否则池级 fixture_invalid），再重跑基线。零 check/final，不改既有合同判词。

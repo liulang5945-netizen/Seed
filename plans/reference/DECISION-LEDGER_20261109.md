@@ -5174,3 +5174,14 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **3. 边界**：本笔只签「C 任务 fixture 合法可用」，**不签** 22.6 的任何学习/选择能力、不读 check/final、不占 22.6 曝光账；22.5.1 仍为 `fit_face_only` 父证据（D-20261119-21），正式 check② 保留未结。22.6.1（预测器）起涉及训练/选择学习，须按常设授权逐项记录并单独报价。
 
 **4. 后继**：22.6.1 设计（gain/risk/cost 预测器）＋定价 → 22.6.2 策略对照（可学习策略/固定日程/反应 ν/等待控制）→ 22.6.3 两次相依改进决策与固定父反事实；每步先合同后执行，owner 可回溯。
+
+
+### D-20261119-23 22.6 脚本基线 rollout（`baselines_ready`）＋「池子太易」设计输入：需先冻结池级准入规则
+
+**1. 动作**：新增零训练脚本 [`probe_s2_22_6_baselines_20261120.py`](../../scripts/training/probe_s2_22_6_baselines_20261120.py)，在 22.6.0 已冻结 C 任务上跑 7 条脚本固定/反应策略（32 world × 3 session × 16 决策＝96 session，零优化器步、零 check/final），回执 [`taiji_u2_22_6_baselines_20261120.json`](../../reports/taiji_u2_22_6_baselines_20261120.json)＋[备忘](../reference/MEMO-TAIJI_U2_22_6_BASELINES_POOL_20261120.md)，实耗 `7.25 CPU`。
+
+**2. 读数**：最强固定策略 `observe_t0_answer` 均值 `0.9488`（单 session 最优率 `0.9688`）；`observe_t7` `0.8996`、`verify_t0` `0.8488`、`observe_t14` `0.84`、`observe_deadline` `0.83`、`answer_no_observe` `0`、`rest_then_answer` `−0.15`；**`wait_value`（deadline−t0）＝ `−0.1187`**；t14/t15 观测在 96 session 全命中（std=0）。
+
+**3. 判读（重要设计输入）**：① **头空间不足**：最强固定 `0.9488` ⇒ 理论最大增益 `0.0512`，而 22.6 主判据要求对最强固定净增益 `≥0.05`，余量仅 `0.0012` ⇒ 直接开 22.6.2 会构造只能失败/靠运气的比较；② **等待无池级价值**：`wait_value < 0`，C2 的时序价值只在个别 fixture 成立；③ **补救方案（待冻结）**：池级准入规则＝至少 `1/3` session 满足 `observed_t0 != truth` 且 `observed_deadline == truth`、`wait_value ≥0.05`、最强固定均值 `≤0.90`、truth 分布非退化；任一不满足 ⇒ 池级 `fixture_invalid`，不得开 22.6.2。
+
+**4. 边界与后继**：本笔零训练、零 check/final；不改已收官的 22.6.0 合同（其只签 fixture 合法）；不签任何选择/学习能力。后继＝① 池筛选脚本（固定 seed 区间、按 §3 规则选 32 world，零训练可重放）出「池准入回执」；② 池合格后按同协议重跑脚本基线，得到 22.6.2 的「最强固定策略」定价；③ 再进 22.6.1 预测器设计/训练与 22.6.2 策略对照。
