@@ -238,13 +238,13 @@ def measure(
             rows.append(
                 {
                     "id": ex["id"],
-                    "a": bool(a_eos and a_out == item["target"]),
+                    "a": bool(a_eos and a_out == ex["target"]),
                     "b": bool(b_eos and b_out == item["target"]),
                     "d": bool(d_eos and d_out == parent_a_out),
                     "multi": bool(m_eos and m_out == item["target"]),
                     "supersede": bool(s_eos and s_out == item["target"]),
                     "parent_d": bool(parent_d_eos and parent_d_out == parent_a_out),
-                    "parent_a": parent_a_out == item["target"],
+                    "parent_a": parent_a_out == ex["target"],
                 }
             )
     finally:
@@ -622,6 +622,113 @@ def classify(
     return "inconclusive", summary
 
 
+def verify_amendment(contract: dict[str, Any]) -> int:
+    """Re-measure the A rows from saved artifacts (no retraining) and re-derive the verdict.
+
+    The original joint-gate run compared its A rows against the revised B target
+    instead of the parent A truth, which made the A-retention criterion vacuous.
+    This verify-only amendment reloads the saved child artifacts, re-decodes the
+    A face against the A truth, rebuilds the A/parent_a flags in the stored rows,
+    re-derives the verdict with the SAME frozen criteria (criteria digest is
+    unchanged) and reports both D references.  No optimizer step, no check read.
+    """
+    started = time.process_time()
+    guards(contract, "smoke")
+
+    from taiji.u2_subject import U2Config, U2Subject
+
+    run = json.loads(RUN.read_text(encoding="utf-8"))
+    if run.get("criteria_sha256") != contract["criteria_sha256"]:
+        raise ValueError("criteria_digest_mismatch")
+    fit = generate_v2("fit", FIT_EXAMPLES)
+    items = build_b_items(fit, templates=SEEN)
+    parent, _payload, _audit = load_historical(CHECKPOINTS[PARENT_SEED])
+    rows = run["seeds"]
+    for row in rows:
+        artifact = ROOT / row["recovery_probe"]["artifact"]
+        payload = torch.load(artifact, map_location="cpu", weights_only=False)
+        child = U2Subject(U2Config(**payload["config"]))
+        child.load_state_dict(payload["state_dict"])
+        a_correct = 0
+        parent_a_correct = 0
+        main_rows = row["arms"]["main"]["rows"]
+        with torch.no_grad():
+            for index, item in enumerate(items):
+                ex = item["example"]
+                child_out, child_eos = decode_episode(child, ex["public"], ex["id"], records=None)
+                parent_out, parent_eos = decode_episode(
+                    parent, ex["public"], ex["id"], records=None
+                )
+                a_hit = bool(child_eos and child_out == ex["target"])
+                parent_a_hit = bool(parent_eos and parent_out == ex["target"])
+                main_rows[index]["a"] = a_hit
+                main_rows[index]["parent_a"] = parent_a_hit
+                a_correct += int(a_hit)
+                parent_a_correct += int(parent_a_hit)
+        totals = row["arms"]["main"]
+        totals["a_correct"] = a_correct
+        totals["parent_a_correct"] = parent_a_correct
+    verdict, summary = classify(rows, contract["criteria"])
+    per_seed = []
+    for row in rows:
+        main = row["arms"]["main"]
+        n = main["n"]
+        a_pairs = [float(m["parent_a"]) - float(m["a"]) for m in main["rows"]]
+        d_pairs = [float(m["parent_d"]) - float(m["d"]) for m in main["rows"]]
+        per_seed.append(
+            {
+                "seed": row["seed"],
+                "a_child": f"{main['a_correct']}/{n}",
+                "a_parent": f"{main['parent_a_correct']}/{n}",
+                "a_drop_upper_bound": round(bootstrap_upper(a_pairs), 4),
+                "d_child": f"{main['d_correct']}/{main['n']}",
+                "d_parent_same_condition": f"{main['parent_d_correct']}/{main['n']}",
+                "d_relative_drop_upper_bound": round(bootstrap_upper(d_pairs), 4),
+            }
+        )
+    verify = {
+        "schema": "taiji-u2-22-5-1-joint-gate-verify-v1",
+        "card": "22.5.1 joint gate (fit face)",
+        "created_utc": datetime.now(UTC).isoformat(),
+        "run_conditions": {
+            "threads": torch.get_num_threads(),
+            "OMP_NUM_THREADS": os.environ.get("OMP_NUM_THREADS"),
+            "MKL_NUM_THREADS": os.environ.get("MKL_NUM_THREADS"),
+        },
+        "criteria_sha256": contract["criteria_sha256"],
+        "amendment": {
+            "defect": (
+                "joint-gate run compared A rows against the revised B target instead of the "
+                "parent A truth; A-retention was therefore vacuous"
+            ),
+            "fix": (
+                "verify-only re-measurement of the A face from the saved child artifacts; "
+                "no optimizer step, no check read; stored B/D/control/recovery rows unchanged"
+            ),
+            "original_verdict": run["verdict"],
+            "original_run_report": str(RUN.relative_to(ROOT)),
+        },
+        "per_seed": per_seed,
+        "amended_verdict": verdict,
+        "summary": summary,
+        "checks": {
+            "artifacts_reloaded": len(rows),
+            "no_retraining": True,
+            "no_check_read": True,
+            "criteria_unchanged": True,
+        },
+        "cost": {"cpu": round(time.process_time() - started, 2)},
+    }
+    write_report(VERIFY, verify)
+    print(
+        json.dumps(
+            {"amended_verdict": verdict, "per_seed": per_seed, "cost": verify["cost"]},
+            ensure_ascii=False,
+        )
+    )
+    return 0 if verdict == "joint_gate_fit_face_pass" else 1
+
+
 def recover_leg(seed: int, recovery_probe: dict[str, Any]) -> dict[str, Any]:
     path = ARTIFACTS / f"recover-{seed}.json"
     artifact = ROOT / recovery_probe["artifact"]
@@ -745,10 +852,14 @@ def run(contract: dict[str, Any]) -> int:
 def closeout(contract_path: Path) -> int:
     contract = json.loads(contract_path.read_text(encoding="utf-8"))
     report = json.loads(RUN.read_text(encoding="utf-8"))
+    verify_path = ROOT / "reports/taiji_u2_22_5_1_joint_gate_verify_20261120.json"
+    amended = json.loads(verify_path.read_text(encoding="utf-8")) if verify_path.is_file() else {}
     contract["result"] = {
         "run": True,
         "closed": True,
-        "verdict": report["verdict"],
+        "verdict": amended.get("amended_verdict", report["verdict"]),
+        "original_verdict": report["verdict"],
+        "amendment": amended.get("amendment"),
         "cost_cpu": report["cost"]["cpu"],
         "report": str(RUN.relative_to(ROOT)),
         "verify": str(VERIFY.relative_to(ROOT)),
@@ -765,6 +876,7 @@ def main() -> int:
     mode.add_argument("--authorize", metavar="AUTHORITY")
     mode.add_argument("--smoke", action="store_true")
     mode.add_argument("--run", action="store_true")
+    mode.add_argument("--verify", action="store_true")
     mode.add_argument("--closeout", action="store_true")
     parser.add_argument("--out", default=None)
     args = parser.parse_args()
@@ -775,6 +887,8 @@ def main() -> int:
         return authorize(CONTRACT, args.authorize)
     if args.smoke:
         return smoke(contract)
+    if args.verify:
+        return verify_amendment(contract)
     if args.closeout:
         return closeout(CONTRACT)
     return run(contract)
