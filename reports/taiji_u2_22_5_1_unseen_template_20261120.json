@@ -1,0 +1,65 @@
+{
+  "schema": "taiji-u2-22-5-1-unseen-template-v1",
+  "card": "22.5.1 joint-gate children, unseen-template probe (fit 24 items)",
+  "created_utc": "2026-11-19T18:16:15.705269+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "face": {
+    "templates_seen": [
+      "通知：{entity}改为{label}。",
+      "最新记录：{entity}现在在{label}。"
+    ],
+    "template_unseen": "更正消息：现在{label}放着{entity}。",
+    "items": 24
+  },
+  "parent": {
+    "seed": 20261112,
+    "checkpoint": "output\\a_pixel_parallel_20261119T070447Z\\segment.bin",
+    "a_truth": 23
+  },
+  "rows": [
+    {
+      "seed": 20261110,
+      "b_correct": 24,
+      "d_child_same_condition": 22,
+      "d_parent_same_condition": 9,
+      "d_child_truth": 21,
+      "a_parent_truth": 23,
+      "multi_correct": 21,
+      "same_condition_drop_upper_bound": -0.375,
+      "truth_reference_drop_upper_bound": 0.1667,
+      "n": 24
+    },
+    {
+      "seed": 20261111,
+      "b_correct": 24,
+      "d_child_same_condition": 22,
+      "d_parent_same_condition": 9,
+      "d_child_truth": 21,
+      "a_parent_truth": 23,
+      "multi_correct": 21,
+      "same_condition_drop_upper_bound": -0.375,
+      "truth_reference_drop_upper_bound": 0.1667,
+      "n": 24
+    },
+    {
+      "seed": 20261112,
+      "b_correct": 24,
+      "d_child_same_condition": 22,
+      "d_parent_same_condition": 9,
+      "d_child_truth": 21,
+      "a_parent_truth": 23,
+      "multi_correct": 21,
+      "same_condition_drop_upper_bound": -0.375,
+      "truth_reference_drop_upper_bound": 0.1667,
+      "n": 24
+    }
+  ],
+  "scope": "unseen TEMPLATE generalisation on the fit items; not a new task and not a check adjudication; zero training, zero check/final reads, no signing",
+  "cost": {
+    "cpu": 36.78
+  }
+}
