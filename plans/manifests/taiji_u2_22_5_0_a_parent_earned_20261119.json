@@ -46,7 +46,14 @@
     "baseline_attempt1_waste_listed_separately_cpu": 7400.0,
     "stage_position_estimate_cpu": 29700.0,
     "stage_cap_refrozen_cpu": 24000.0,
-    "stage_overrun_treatment": "recorded as incident, no retro raise; honest re-tally in DESIGN-TAIJI_U2_22_5_1_RELEVANCE_GATE_20261119.md section 6, disposition with owner"
+    "stage_overrun_treatment": "recorded as incident, no retro raise; honest re-tally in DESIGN-TAIJI_U2_22_5_1_RELEVANCE_GATE_20261119.md section 6, disposition with owner",
+    "stage_disposition": {
+      "ruling": "permanent_incident_no_retro_raise",
+      "owner_ref": "chat:2026-11-19#popup-stage-disposition",
+      "stage_cap_cpu": 24000.0,
+      "honest_position_cpu": 29700.0,
+      "treatment": "24,000 保持不变、超支 ~24% 永久记预算事故（与 E5.1/A.5 先例一致：花销后不追溯改帽）；阶段帽宣告耗尽，22.5 剩余工作按逐卡实价授权继续；22.6/22.7 开卡时按 d=32 后诚实单价（含 runner 子进程评测段与循环开销）重定各自阶段帽。"
+    }
   },
   "check_exposure": {
     "allocated_22_5": 2,

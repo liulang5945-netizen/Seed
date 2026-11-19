@@ -1,0 +1,31 @@
+{
+  "schema": "taiji-u2-22-5-1-e5-10-r2-v1",
+  "card": "RESULT-TAIJI_U2_22_5_1_RELEVANCE_ARMS_20261119.md section 4",
+  "status": "authorized_pending_execution",
+  "training_authority": true,
+  "owner_ref": "chat:2026-11-19#popup-r2-authorization",
+  "arms": {
+    "A2": "pure alignment: training query becomes the full request f\"{entity}现在在哪里？\"; loss/sentinel/optimizer/score inherit E5.11 verbatim",
+    "B2": "alignment x cosine: A2 plus the consistent-cosine attention patch"
+  },
+  "criteria": {
+    "a": "32/32",
+    "b_min": 20,
+    "d_min": 20,
+    "denominator": 24,
+    "parent_digest": "bit-identical throughout"
+  },
+  "price": {
+    "per_arm_cpu_est": 30.0,
+    "package_cpu_est": 60.0,
+    "cap_cpu": 130.0
+  },
+  "exits": [
+    "degenerate_recurred",
+    "parent_drift",
+    "budget_stop",
+    "relevance_gate_earned"
+  ],
+  "r1_cost_cpu": 59.5,
+  "r1_cap_cpu": 100.0
+}
