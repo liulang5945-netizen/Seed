@@ -141,3 +141,14 @@ HEADS=4 跨会话追加：s1 joint24→s2 动作桶→s3 推方向→s4 位置�
 ## 26. 通路回收通过（D-20261119-81，有界 verified）
 
 删除任务3通路：旧 A/B/C 逐位不变；任务3 掉到常数类基线 0.2188（=该份额，且下降 0.50–0.59）；重新初始化＋再训练恢复 0.78/0.75/0.69，其他通路仍 exact。**通路可新增（D-79）亦可回收/重生长（本条）**；`learning＋retention＋lifetime＋通路级结构新增/回收` 有界成立。共享单元分裂/整合、5+ 任务、真机、22.8 仍 uncovered。
+
+## 27. 九轴更新：通路级新增/回收（D-20261119-82）
+
+| 轴 | 新增有界证据 |
+|---|---|
+| learning | 任务通路级新能力可学（3/4 任务全过、旧通路 drop 0.0） |
+| retention | 通路隔离下旧能力逐位保持（drop 0.0，含跨会话） |
+| lifetime | 任务通路跨会话继承/回收（继承 exact、删除隔离、重初始化恢复） |
+| mature_growth | 通路级结构新增/回收 verified（有界）；**单元级生长收益仍 `growth_benefit_not_established_in_package_22`（不得混写）** |
+
+仍 uncovered：正式 check②、`autonomous_choice`、`recursive_development`、单元级生长收益、共享单元分裂/整合、5+ 任务、真机/多动力学、100 会话/24h、22.8/23–30。

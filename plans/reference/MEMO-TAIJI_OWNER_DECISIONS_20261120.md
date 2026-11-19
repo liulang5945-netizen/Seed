@@ -8,10 +8,10 @@
 |---|---|
 | `engineering` | verified |
 | `task` | verified（`fit_face_only`；正式 check② 未结） |
-| `learning` | verified（路由技能）／uncovered（内容积累） |
+| `learning` | verified（路由技能）＋**任务通路级新能力有界 verified（D-78/79）**；内容积累 uncovered |
 | `retention` | verified（严格 D 口径 breach 已披露） |
 | `autonomous_choice` | **negative**（22.6.2 `policy_gain_absent`） |
-| `mature_growth` | 结构/机制 verified；收益 `growth_benefit_not_established_in_package_22`（负结果带条件） |
+| `mature_growth` | 结构/机制 verified＋**通路级新增/回收有界 verified（D-79/81）**；收益 `growth_benefit_not_established_in_package_22`（**单元级**，不得与通路级混写） |
 | `recursive_development` | **uncovered**（两次相依纠正多 seed 不成立） |
 | `physical_transfer` | **verified（有界：22.4.2b 推/位置桶动作片段）**；碰撞/遮挡与真机 uncovered（D-57/58/59） |
 | `lifetime` | **verified（有界：≥3 会话跨进程，参数逐位继承＋身份不变＋准确率不降反升，D-63）**／100 会话、24h 级 uncovered |

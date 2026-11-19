@@ -4246,3 +4246,8 @@ HEADS=4：s1 joint24→s2 动作桶→s3 推方向→s4 位置词（4 类）；�
 ## 2026-11-20 通路回收通过（D-20261119-81，`pathway_recycle_ready`，22.05 CPU）
 
 修正删除口径（清零通路→logits 恒 0→常数类 0 基线取该类份额）后重跑：others_exact_after_removal✓（旧 A/B/C 逐位不变）；删除后任务3 0.2188=常数类基线且下降 0.59/0.53/0.50≥0.25（removed_collapses✓）；重初始化+再训练恢复 0.7812/0.75/0.6875（recovered✓）；回收后 others 仍 exact✓ ⇒ pathway_recycle_ready。判读：任务通路可按需新增（D-79）与回收/重生长；learning+retention+lifetime+通路级新增/回收有界成立。边界：单主体、4 任务、通路级；共享单元分裂/整合、5+任务、真机、22.8 仍 uncovered。
+
+
+## 2026-11-20 九轴更新：任务通路级新增/回收（D-20261119-82，零训练）
+
+新增有界证据：learning 新增「任务通路级新能力可学」（3/4 任务全过、旧通路 drop 0.0）；retention 新增「通路隔离下旧能力逐位保持」；lifetime 新增「任务通路跨会话继承/回收」；mature_growth 新增「通路级结构新增/回收 verified（有界）」，但明确与单元级生长区分（后者仍 growth_benefit_not_established_in_package_22）。仍 uncovered：正式 check②/B 父资格/D 口径、autonomous_choice negative、recursive_development、单元级生长收益、共享单元分裂/整合、5+任务与干扰、真机/多动力学、100会话/24h、22.8 与 23–30。优先级：check② 决策＞共享单元分化/整合设计＞5+任务压力测试＞生长收益条件化重检＞真机前仿真。
