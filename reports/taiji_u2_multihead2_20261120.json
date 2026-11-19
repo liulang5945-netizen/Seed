@@ -1,0 +1,69 @@
+{
+  "schema": "taiji-u2-multihead2-v1",
+  "card": "cross-session per-task pathway (option 2) probe",
+  "created_utc": "2026-11-19T22:57:16.085997+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "sessions": 3,
+    "heads": 3,
+    "head_hidden": 16,
+    "steps": 700,
+    "base_steps": 1200,
+    "retention_max": 0.02,
+    "third_task_min": 0.6
+  },
+  "results": [
+    {
+      "seed": 0,
+      "old_after_session3": 0.7812,
+      "new_after_session3": 0.7812,
+      "direction_after_session3": 1.0,
+      "old_retention_drop": 0.0,
+      "new_retention_drop": 0.0,
+      "inheritance_exact": true
+    },
+    {
+      "seed": 1,
+      "old_after_session3": 0.9375,
+      "new_after_session3": 0.7812,
+      "direction_after_session3": 1.0,
+      "old_retention_drop": 0.0,
+      "new_retention_drop": 0.0,
+      "inheritance_exact": true
+    },
+    {
+      "seed": 2,
+      "old_after_session3": 0.7188,
+      "new_after_session3": 0.8125,
+      "direction_after_session3": 1.0,
+      "old_retention_drop": 0.0,
+      "new_retention_drop": 0.0,
+      "inheritance_exact": true
+    }
+  ],
+  "gates": {
+    "inheritance_exact": true,
+    "old_retention": true,
+    "new_retention": true,
+    "third_task_learnable": true
+  },
+  "verdict": "multihead2_ready",
+  "discipline": {
+    "optimizer_steps": 7800,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 0.02,
+    "children_cpu": 141.09
+  }
+}
