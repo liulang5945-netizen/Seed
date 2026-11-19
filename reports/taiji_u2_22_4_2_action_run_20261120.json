@@ -1,0 +1,108 @@
+{
+  "schema": "taiji-u2-22-4-2-action-run-v1",
+  "criteria_sha256": "da841ff26c0a86bb41f1506417cd2845cb4ebfdaa4d470730a65e9e7b4874acb",
+  "created_utc": "2026-11-19T21:07:38.053600+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "groups": 4,
+    "units_per_group": 8,
+    "input_dim": 8,
+    "hidden_dim": 8,
+    "output_dim": 3,
+    "lr": 0.003,
+    "steps": 1000,
+    "batch": 64,
+    "warmup": 100,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "train_worlds": 256,
+    "fit_worlds": 32
+  },
+  "arms": {
+    "full": {
+      "0": {
+        "accuracy": 0.5
+      },
+      "1": {
+        "accuracy": 0.5625
+      },
+      "2": {
+        "accuracy": 0.4688
+      }
+    },
+    "action_masked": {
+      "0": {
+        "accuracy": 0.5
+      },
+      "1": {
+        "accuracy": 0.5625
+      },
+      "2": {
+        "accuracy": 0.4688
+      }
+    },
+    "direction_permuted": {
+      "0": {
+        "accuracy": 0.5
+      },
+      "1": {
+        "accuracy": 0.5625
+      },
+      "2": {
+        "accuracy": 0.4688
+      }
+    }
+  },
+  "accuracies": {
+    "full": [
+      0.5,
+      0.5625,
+      0.4688
+    ],
+    "action_masked": [
+      0.5,
+      0.5625,
+      0.4688
+    ],
+    "direction_permuted": [
+      0.5,
+      0.5625,
+      0.4688
+    ]
+  },
+  "baseline_accuracy": 0.4062,
+  "margins": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "paired_lower_bound": 0.0,
+  "checks": {
+    "full_min_accuracy": true,
+    "full_above_baseline": true,
+    "action_margin": false,
+    "paired_lower_bound": false,
+    "all_seeds_same_direction": false,
+    "recovery_exact": true
+  },
+  "verdict": "action_contribution_absent",
+  "budget": {
+    "cap_cpu": 100.0,
+    "cpu": 68.36
+  },
+  "discipline": {
+    "optimizer_steps": 9000,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 68.36
+  }
+}

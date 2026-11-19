@@ -1,0 +1,78 @@
+{
+  "schema": "taiji-u2-22-4-2-action-v1",
+  "card": "RESULT-TAIJI_U2_22_4_2_ACTION_20261120.md",
+  "status": "frozen",
+  "training_authority": "owner:standing-authorization:2026-11-20#recommendation-default",
+  "criteria": {
+    "card": "22.4.2 action-consequence fragment with counterfactual arms",
+    "base": {
+      "groups": 4,
+      "units_per_group": 8,
+      "input_dim": 8,
+      "hidden_dim": 8,
+      "output_dim": 3,
+      "lr": 0.003,
+      "steps": 1000,
+      "batch": 64,
+      "warmup": 100,
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "train_worlds": 256,
+      "fit_worlds": 32
+    },
+    "task": "N=3 pushes, pushed body's final position bin (left/middle/right)",
+    "arms": {
+      "full": "action direction + current-bin proxy present",
+      "action_masked": "both action dims zeroed",
+      "direction_permuted": "direction dim shuffled across samples"
+    },
+    "gates": {
+      "full_min_accuracy": 0.45,
+      "full_above_baseline_min": 0.05,
+      "action_margin_min": 0.05,
+      "paired_lower_bound_min": 0.0,
+      "all_seeds_same_direction": true,
+      "recovery_exact": true
+    },
+    "retention": "N/A - no parent model modified (fresh graph, disclosed)",
+    "exits_order": [
+      "engineering_failure",
+      "not_admitted",
+      "budget_stop",
+      "action_contribution_absent",
+      "action_consequence_pass"
+    ],
+    "check_reads": 0,
+    "final_reads": 0,
+    "price_cpu": 100.0,
+    "cap_cpu": 100.0
+  },
+  "criteria_sha256": "da841ff26c0a86bb41f1506417cd2845cb4ebfdaa4d470730a65e9e7b4874acb",
+  "plan": {
+    "price_cpu": 100.0,
+    "optimizer_steps": 9000,
+    "arms": 3
+  },
+  "cap_cpu": 100.0,
+  "check_exposure": {
+    "reads": 0
+  },
+  "source_pins": {
+    "scripts/training/run_s2_22_4_2_action_fragment_20261120.py": "c9d80701bd92ce168d5468ec2592fc15a721c749ec41a5283be1fa5e2e3a3568",
+    "scripts/training/probe_s2_action_consequence_20261120.py": "9ff85c21d25f0575ef4ea094b031072e720a24474f5c805222262e99fb0ba7b3",
+    "taiji/u2_neural_units.py": "6a8bfc15f44b39cc22cd1570bf43cedaf44e018628572efb528f2a829a5deca9"
+  },
+  "result": {
+    "smoke": "smoke_passed",
+    "run": true,
+    "closed": true,
+    "verdict": "engineering_failure",
+    "engineering_issue": "train_arm received train_rows + fit_rows, so the 32 fit items were part of training; arm accuracies are contaminated and the reported action_contribution_absent verdict is invalid",
+    "raw_receipt": "reports/taiji_u2_22_4_2_action_run_20261120.json",
+    "raw_verdict": "action_contribution_absent",
+    "cost_cpu": 68.36
+  }
+}
