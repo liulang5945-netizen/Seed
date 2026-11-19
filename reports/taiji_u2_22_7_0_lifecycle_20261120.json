@@ -1,0 +1,57 @@
+{
+  "schema": "taiji-u2-22-7-0-lifecycle-v1",
+  "card": "22.7.0-pre structural lifecycle feasibility (RouteB graph)",
+  "created_utc": "2026-11-19T19:03:41.511119+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "spec": {
+    "groups": 2,
+    "units_per_group": 3,
+    "input_dim": 6,
+    "hidden_dim": 6,
+    "output_dim": 3,
+    "seed": 20261120
+  },
+  "readings": {
+    "baseline_digest": "e92f5c54c2574812",
+    "newborn_id": "u0006",
+    "capsule_summary": {
+      "digest": "6a6c7411647fb9692596d208cccae96eab455903c13181dea754e8276d0162a0",
+      "edges": 6,
+      "parameter_version": 0,
+      "proposal_clock": 0,
+      "route": "B",
+      "tensors": 19,
+      "units": 7
+    }
+  },
+  "checks": {
+    "identity_unique": true,
+    "identity_fields": true,
+    "all_mature_at_start": true,
+    "dormant_changes_readout": true,
+    "dormant_identity_preserved": true,
+    "wake_restores_exactly": true,
+    "birth_identity_recorded": true,
+    "birth_is_neutral": true,
+    "retire_immature_is_neutral": true,
+    "retire_mature_changes_readout": true,
+    "retired_listed": true,
+    "capsule_reload_exact": true,
+    "capsule_lifecycle_preserved": true,
+    "capsule_digest_stable": true
+  },
+  "verdict": "lifecycle_pass",
+  "scope": "structural lifecycle only (identity/birth/dormant/wake/retire/capsule); no task capability, no training, no check/final",
+  "discipline": {
+    "optimizer_steps": 0,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 0.03
+  }
+}
