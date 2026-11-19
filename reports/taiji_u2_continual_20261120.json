@@ -1,0 +1,82 @@
+{
+  "schema": "taiji-u2-continual-v1",
+  "card": "cross-session continual learning with replay (joint24 -> action bins)",
+  "created_utc": "2026-11-19T22:23:54.436627+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "old_steps": 1200,
+    "new_steps": 800,
+    "replay_fraction": 0.2,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "gates": "sequential new>=0.43; replay retention drop<=0.02; replay new>=sequential-0.05"
+  },
+  "results": [
+    {
+      "seed": 0,
+      "old_before": 0.9062,
+      "sequential": {
+        "new": 0.75,
+        "old": 0.0312
+      },
+      "replay": {
+        "new": 0.7188,
+        "old": 0.3438
+      },
+      "scratch_new": 0.4062,
+      "replay_retention_drop": 0.5625,
+      "sequential_retention_drop": 0.875
+    },
+    {
+      "seed": 1,
+      "old_before": 0.8125,
+      "sequential": {
+        "new": 0.5625,
+        "old": 0.125
+      },
+      "replay": {
+        "new": 0.6875,
+        "old": 0.1562
+      },
+      "scratch_new": 0.7812,
+      "replay_retention_drop": 0.6562,
+      "sequential_retention_drop": 0.6875
+    },
+    {
+      "seed": 2,
+      "old_before": 0.7812,
+      "sequential": {
+        "new": 0.7812,
+        "old": 0.0625
+      },
+      "replay": {
+        "new": 0.6562,
+        "old": 0.25
+      },
+      "scratch_new": 0.4375,
+      "replay_retention_drop": 0.5312,
+      "sequential_retention_drop": 0.7188
+    }
+  ],
+  "gates": {
+    "sequential_new_learnable": true,
+    "replay_keeps_old": false,
+    "replay_not_worse_than_sequential": false
+  },
+  "verdict": "continual_learning_absent",
+  "discipline": {
+    "optimizer_steps": 8400,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 87.36
+  }
+}
