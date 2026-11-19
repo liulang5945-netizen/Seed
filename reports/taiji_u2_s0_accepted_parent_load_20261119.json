@@ -1,7 +1,7 @@
 {
   "schema": "taiji-u2-s0-accepted-parent-load-v1",
   "card": "22.5.1/S0 decision support (option 2 factual base)",
-  "created_utc": "2026-11-19T16:11:30.455957+00:00",
+  "created_utc": "2026-11-19T16:28:51.732913+00:00",
   "run_conditions": {
     "threads": 1,
     "OMP_NUM_THREADS": null,
@@ -164,6 +164,6 @@
   "all_load_equivalent": true,
   "verdict": "accepted_parent_load_equivalent",
   "cost": {
-    "cpu": 2.44
+    "cpu": 2.58
   }
 }
