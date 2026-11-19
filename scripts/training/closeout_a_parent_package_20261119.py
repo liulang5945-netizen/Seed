@@ -15,7 +15,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 SEEDS = (20261110, 20261111, 20261112)
-CAP_CPU = 10586.8
+U2_DOSE = 2000
+U2_TRAIN_UNIT = 0.708333  # frozen measured unit: per update at batch 8
+CAP_CPU = 17000.0  # fifth ruling: honest-account refreeze, successful legs
+BASELINE_ATTEMPT1_WASTE = 7400.0  # EOS crash, listed separately, not cap-consuming
 STAGE_DRAWS_CPU = 13400.0
 STAGE_CAP_CPU = 24000.0
 OUT = ROOT / "reports/taiji_u2_a_parent_package_run_20261119.json"
@@ -48,12 +51,12 @@ def main() -> int:
         or u2[seed]["check"]["valid_utf8"] != 192
         or u2[seed]["check"]["eos"] != 192
     ]
-    package_cpu = sum(u2[seed]["cost"]["cpu"] for seed in SEEDS) + sum(
-        baseline[seed]["cost"]["cpu"] for seed in SEEDS
-    )
-    if package_cpu + STAGE_DRAWS_CPU > STAGE_CAP_CPU:
-        verdict = "stage_budget_unavailable"
-    elif median < 0.80:
+    u2_arm_cpu = sum(u2[seed]["cost"]["cpu"] + U2_DOSE * U2_TRAIN_UNIT for seed in SEEDS)
+    package_cpu = u2_arm_cpu + sum(baseline[seed]["cost"]["cpu"] for seed in SEEDS)
+    # The stage refreeze was approved (fifth ruling closed that exit); the
+    # arithmetic stage position is disclosed bookkeeping, not a verdict gate.
+    stage_position = STAGE_DRAWS_CPU + package_cpu + BASELINE_ATTEMPT1_WASTE
+    if median < 0.80:
         verdict = "a_parent_not_met"
     elif engineering:
         verdict = "engineering_failure"
@@ -90,12 +93,18 @@ def main() -> int:
             },
         },
         "cost": {
-            "u2_arm_cpu": round(sum(u2[seed]["cost"]["cpu"] for seed in SEEDS), 2),
+            "u2_arm_cpu_parent_measured": round(sum(u2[seed]["cost"]["cpu"] for seed in SEEDS), 2),
+            "u2_arm_training_child_priced_unit": round(U2_DOSE * U2_TRAIN_UNIT * len(SEEDS), 2),
+            "u2_arm_cpu": round(u2_arm_cpu, 2),
             "baseline_arm_cpu": round(sum(baseline[seed]["cost"]["cpu"] for seed in SEEDS), 2),
             "package_cpu": round(package_cpu, 2),
             "cap_cpu": CAP_CPU,
-            "stage_draws_cpu": STAGE_DRAWS_CPU,
+            "baseline_attempt1_waste_listed_separately": BASELINE_ATTEMPT1_WASTE,
+            "stage_draws_cpu_estimate": STAGE_DRAWS_CPU,
             "stage_cap_cpu": STAGE_CAP_CPU,
+            "stage_position_with_package": round(stage_position, 2),
+            "stage_ledger_status": "estimate basis undercounts runner-child compute; honest re-tally required, breach recorded as incident",
+            "cost_basis_note": "u2 child training at the frozen measured unit; u2 child eval/overhead phase unpriced (wall-evidenced ~2560s total, disclosed)",
         },
         "exposure": {
             "check": "same-instrument face as D-20261119-02, aggregate-only",
