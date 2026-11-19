@@ -5141,3 +5141,14 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **3. 判读**：S2 面在 session2 前已 `24/24` ⇒ 增益恒 0 是**天花板效应**（器官是匹配滤波式路由，对新 world 的 B 项直接泛化），不能写成「跨会话学不会新东西」。**成立的部分**：session2 在不相交批次继续训练后 S1/S2 均 `24/24`、继承参数逐位不变 ⇒ **跨会话保持不退化＋身份不被污染**成立。**机制含义**：当前 Task B 的「学习」主要是路由技能而非内容增量写入，24/24 在训练早期饱和；要检验新内容积累需更硬任务面（held-out 谓词/实体、4 体世界或 22.6 C 任务）。
 
 **4. 边界与后继**：零 check/final、不改判词、22.6 仍锁定。后继＝若要补「新内容积累」，预注册新任务面并接受 ceiling 风险；否则把该证据作为「跨会话保持边界」引用，不签跨会话积累新知识。
+
+
+### D-20261119-20 22.6.0 C 任务候选定义＋fixture 有效性验证（零训练 `0.55 CPU`，`fixture_controls_pass`）
+
+**1. 动作**：新增零训练脚本 [`validate_22_6_c_fixture_20261120.py`](../../scripts/training/validate_22_6_c_fixture_20261120.py)，在冻结 3 体 `PhysicalWorld` 上构造 22.6.0 候选 C 任务「限时取证」（16 决策机会、deadline t15、行动 `OBSERVE/WAIT/REST/VERIFY/RECALL/ANSWER`、效用＝正确−操作成本），并验证开卡备忘 §4 的三项 fixture 控制。回执 [`taiji_u2_22_6_c_fixture_validation_20261120.json`](../../reports/taiji_u2_22_6_c_fixture_validation_20261120.json)＋草稿设计卡 [`DESIGN-TAIJI_U2_22_6_0_C_TASK_20261120`](../reference/DESIGN-TAIJI_U2_22_6_0_C_TASK_20261120.md)。**零优化器步、零 check/final、不冻结合同、不签能力**。
+
+**2. 读数（`fixture_controls_pass`）**：① **C1 无任务机会**（seed `20261300`，目标缺席）：常数策略唯一最优 `u=1.0`，任何观测/等待/求证严格更差 ⇒ **`fixture_invalid` 正确触发**；② **C2 WAIT 唯一最优**（seed `20261205`，目标青色圆片、deadline 真值 `中间`、首次正确观测在第 `14` tick）：唯一最优 `wait14_observe_answer`（`u=0.84`），早答全错；③ **C3 立即行动唯一最优**（同 seed 真值改 t0 可见词 `左边`）：唯一最优 `wait0_observe_answer`（`u=0.98`），任何等待严格更差 ⇒ 任务非「永远等待」退化。实耗 `0.55 CPU`。
+
+**3. 结论**：候选 C 任务在冻结世界上**可构造、可重放、三控制互斥成立**，满足 22.6.0「fixture 合法」必要条件的机械验证；草稿给出 session 协议（32 world×3 session×16 决策、无提示时段/反馈变化/等待情形/帮助撤除）与准入判据。**未冻结合同**，开放问题（`world.query` 物理动作语义、VERIFY oracle 定义、效用系数、跨 tick 状态恢复、帮助撤除计分）列出待 owner 裁定。
+
+**4. 边界与后继**：本笔零训练、零 check/final；22.6 仍锁定（前置＝22.5.1 正式化 A/B 裁定）；不占 22.6 曝光账。后继＝owner 裁定 A/B 与开放问题后冻结 22.6.0 合同，再进 22.6.1 预测器设计（训练须单独授权）。

@@ -1,0 +1,157 @@
+{
+  "schema": "taiji-u2-22-6-c-fixture-validation-v1",
+  "card": "22.6.0 C-task fixture feasibility (deadline inquiry)",
+  "created_utc": "2026-11-19T18:28:50.132632+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "ticks": 16,
+    "deadline": 15,
+    "observe_cost": 0.02,
+    "wait_cost": 0.01,
+    "scope": "fixture construction feasibility only; no model inference, no training"
+  },
+  "fixtures": {
+    "C1_no_task_opportunity": {
+      "seed": 20261300,
+      "target": "红色圆片",
+      "truth": "未知",
+      "observed": [
+        "未知",
+        "未知",
+        "未知",
+        "未知",
+        "未知",
+        "未知",
+        "未知",
+        "未知",
+        "未知",
+        "未知",
+        "未知",
+        "未知",
+        "未知",
+        "未知",
+        "未知",
+        "未知"
+      ],
+      "evaluation": {
+        "policies": {
+          "wait0_observe_answer": 0.98,
+          "wait1_observe_answer": 0.97,
+          "wait2_observe_answer": 0.96,
+          "wait3_observe_answer": 0.95,
+          "wait4_observe_answer": 0.94,
+          "wait5_observe_answer": 0.93,
+          "wait6_observe_answer": 0.92,
+          "wait7_observe_answer": 0.91,
+          "wait8_observe_answer": 0.9,
+          "wait9_observe_answer": 0.89,
+          "wait10_observe_answer": 0.88,
+          "wait11_observe_answer": 0.87,
+          "wait12_observe_answer": 0.86,
+          "wait13_observe_answer": 0.85,
+          "wait14_observe_answer": 0.84,
+          "wait15_observe_answer": 0.83,
+          "answer_without_observe": 1.0
+        },
+        "best": 1.0,
+        "winners": [
+          "answer_without_observe"
+        ]
+      },
+      "fixture_invalid": true
+    },
+    "C2_wait_unique_optimal": {
+      "seed": 20261205,
+      "target": "青色圆片",
+      "first_correct_observation_tick": 14,
+      "truth": "中间",
+      "observed": [
+        "左边",
+        "左边",
+        "左边",
+        "左边",
+        "左边",
+        "左边",
+        "左边",
+        "左边",
+        "左边",
+        "左边",
+        "左边",
+        "左边",
+        "左边",
+        "左边",
+        "中间",
+        "中间"
+      ],
+      "evaluation": {
+        "policies": {
+          "wait0_observe_answer": -0.02,
+          "wait1_observe_answer": -0.03,
+          "wait2_observe_answer": -0.04,
+          "wait3_observe_answer": -0.05,
+          "wait4_observe_answer": -0.06,
+          "wait5_observe_answer": -0.07,
+          "wait6_observe_answer": -0.08,
+          "wait7_observe_answer": -0.09,
+          "wait8_observe_answer": -0.1,
+          "wait9_observe_answer": -0.11,
+          "wait10_observe_answer": -0.12,
+          "wait11_observe_answer": -0.13,
+          "wait12_observe_answer": -0.14,
+          "wait13_observe_answer": -0.15,
+          "wait14_observe_answer": 0.84,
+          "wait15_observe_answer": 0.83,
+          "answer_without_observe": 0.0
+        },
+        "best": 0.84,
+        "winners": [
+          "wait14_observe_answer"
+        ]
+      },
+      "wait_unique_optimal": true
+    },
+    "C3_act_now_unique_optimal": {
+      "seed": 20261205,
+      "truth": "左边",
+      "evaluation": {
+        "policies": {
+          "wait0_observe_answer": 0.98,
+          "wait1_observe_answer": -0.02,
+          "wait2_observe_answer": -0.02,
+          "wait3_observe_answer": -0.02,
+          "wait4_observe_answer": -0.02,
+          "wait5_observe_answer": -0.02,
+          "wait6_observe_answer": -0.02,
+          "wait7_observe_answer": -0.02,
+          "wait8_observe_answer": -0.02,
+          "wait9_observe_answer": -0.02,
+          "wait10_observe_answer": -0.02,
+          "wait11_observe_answer": -0.02,
+          "wait12_observe_answer": -0.02,
+          "wait13_observe_answer": -0.02,
+          "wait14_observe_answer": -0.02,
+          "wait15_observe_answer": -0.02,
+          "answer_without_observe": -0.02
+        },
+        "best": 0.98,
+        "winners": [
+          "wait0_observe_answer"
+        ]
+      },
+      "immediate_unique_optimal": true
+    }
+  },
+  "verdict": "fixture_controls_pass",
+  "discipline": {
+    "optimizer_steps": 0,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 0.55
+  }
+}
