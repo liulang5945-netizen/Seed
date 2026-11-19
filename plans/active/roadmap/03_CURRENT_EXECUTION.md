@@ -3926,3 +3926,8 @@ owner 明示「按推荐项先推进、后续回溯修订」，记为常设授�
 ## 2026-11-20 子体身份/谱系证据机器化（D-20261119-16，0.11 CPU、零训练）
 
 只读采集脚本把已接受父 bundle＋3 颗子体 artifact 的身份事实机器化（[回执](../../../reports/taiji_u2_22_5_1_identity_evidence_20261120.json)、[备忘](../../reference/MEMO-TAIJI_U2_22_5_1_IDENTITY_LINEAGE_20261120.md)）：父 sha256 `12f9b187…`／state `5a09a449…`／234,096 参数／fit 31/32 复现；子体 208 个继承键逐位相同、只新增 `record_organ.*` 21 键/10,878 参数、`organ_mix≈1.2024`、恢复 3/3 exact、fit 面 B 24/24、D 22/24、A 23/24（verify 修订后）。九轴中身份/继承/可塑/保持/恢复/成本=verified（fit 面），生长/多模态/自主选择=uncovered。零优化器步、零 check/final、不签能力；22.6 未解锁，正式化路径仍待 owner A/B 裁定。
+
+
+## 2026-11-20 22.6 开卡备忘（草稿，未冻结/未执行；22.6 仍锁定）
+
+[开卡备忘](../../reference/BRIEF-TAIJI_U2_22_6_OPENING_20261120.md) 把 22.6 前置、候选 C 任务（3 体世界限时取证：OBSERVE/RECALL/VERIFY/WAIT/REST/ANSWER，映射 `PhysicalWorld` 事务 API）、fixture 有效性三控制（C1 无任务机会/C2 WAIT 唯一最优/C3 立即行动唯一最优）与实测定价（world 0.0039、prepare 0.0137、decode 0.0273 CPU；包价估 700–1,100 对卡帽 9,600）整理成决策支持。零训练、零 check/final、不冻结合同、不签能力；22.6 解锁仍以 owner 对 22.5.1 正式化（A/B）裁定为前置。D-20261119-17 入账。
