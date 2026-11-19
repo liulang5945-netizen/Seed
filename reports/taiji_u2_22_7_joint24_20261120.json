@@ -1,0 +1,89 @@
+{
+  "schema": "taiji-u2-22-7-joint24-v1",
+  "card": "22.7b multi-attribute (colour x position, 24-class) feasibility",
+  "created_utc": "2026-11-19T19:53:06.215043+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "classes": 24,
+    "label": "colour_index * 4 + position_index",
+    "grid_units": [
+      8,
+      16,
+      32,
+      64
+    ],
+    "seeds": [
+      0,
+      1
+    ],
+    "steps": 1500,
+    "batch": 64,
+    "band": [
+      0.3,
+      0.8
+    ],
+    "headroom_min": 0.05,
+    "chance": 0.0417
+  },
+  "results": [
+    {
+      "groups": 2,
+      "units_per_group": 4,
+      "units": 8,
+      "accuracies": [
+        0.1562,
+        0.2188
+      ],
+      "mean": 0.1875
+    },
+    {
+      "groups": 4,
+      "units_per_group": 4,
+      "units": 16,
+      "accuracies": [
+        0.5938,
+        0.5
+      ],
+      "mean": 0.5469
+    },
+    {
+      "groups": 4,
+      "units_per_group": 8,
+      "units": 32,
+      "accuracies": [
+        0.75,
+        0.625
+      ],
+      "mean": 0.6875
+    },
+    {
+      "groups": 8,
+      "units_per_group": 8,
+      "units": 64,
+      "accuracies": [
+        0.875,
+        0.875
+      ],
+      "mean": 0.875
+    }
+  ],
+  "middle_band_units": {
+    "16": 0.5469,
+    "32": 0.6875
+  },
+  "headroom_32_64": 0.1875,
+  "monotone": true,
+  "verdict": "joint24_family_candidate",
+  "discipline": {
+    "optimizer_steps": 12000,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 84.56
+  }
+}
