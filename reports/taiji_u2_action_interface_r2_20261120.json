@@ -1,0 +1,207 @@
+{
+  "schema": "taiji-u2-action-interface-r2-v1",
+  "card": "physical action-interface feasibility (interior targets)",
+  "created_utc": "2026-11-19T20:59:31.211522+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      3537161815461848802,
+      3537161815461848803,
+      3537161815461848804,
+      3537161815461848805
+    ],
+    "target_selection": "first body with |x| <= 0.55",
+    "directions": [
+      [
+        1.0,
+        0.0
+      ],
+      [
+        -1.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0
+      ]
+    ],
+    "scope_note": "r1 flagged a boundary-clamped case (shift 0.042); r2 keeps thresholds and excludes boundary targets instead of lowering the bar"
+  },
+  "checks": {
+    "target_displacement_above_0_05": false,
+    "other_bodies_below_0_02": true,
+    "direction_controls_sign": true,
+    "target_shift_above_baseline": false
+  },
+  "results": [
+    {
+      "seed": 3537161815461848802,
+      "target_index": 0,
+      "target_x": 0.3456,
+      "direction": [
+        1.0,
+        0.0
+      ],
+      "target_shift": 0.171066,
+      "other_shift": 0.005648,
+      "baseline_shift": 0.008558,
+      "target_dx": 0.170945
+    },
+    {
+      "seed": 3537161815461848802,
+      "target_index": 0,
+      "target_x": 0.3456,
+      "direction": [
+        -1.0,
+        0.0
+      ],
+      "target_shift": 0.179503,
+      "other_shift": 0.005648,
+      "baseline_shift": 0.008558,
+      "target_dx": -0.179388
+    },
+    {
+      "seed": 3537161815461848802,
+      "target_index": 0,
+      "target_x": 0.3456,
+      "direction": [
+        0.0,
+        1.0
+      ],
+      "target_shift": 0.108313,
+      "other_shift": 0.005648,
+      "baseline_shift": 0.008558,
+      "target_dx": -0.005658
+    },
+    {
+      "seed": 3537161815461848803,
+      "target_index": 0,
+      "target_x": 0.2977,
+      "direction": [
+        1.0,
+        0.0
+      ],
+      "target_shift": 0.174683,
+      "other_shift": 0.005499,
+      "baseline_shift": 0.005798,
+      "target_dx": 0.174671
+    },
+    {
+      "seed": 3537161815461848803,
+      "target_index": 0,
+      "target_x": 0.2977,
+      "direction": [
+        -1.0,
+        0.0
+      ],
+      "target_shift": 0.183143,
+      "other_shift": 0.005499,
+      "baseline_shift": 0.005798,
+      "target_dx": -0.183132
+    },
+    {
+      "seed": 3537161815461848803,
+      "target_index": 0,
+      "target_x": 0.2977,
+      "direction": [
+        0.0,
+        1.0
+      ],
+      "target_shift": 0.177372,
+      "other_shift": 0.005499,
+      "baseline_shift": 0.005798,
+      "target_dx": -0.005434
+    },
+    {
+      "seed": 3537161815461848804,
+      "target_index": 1,
+      "target_x": 0.3091,
+      "direction": [
+        1.0,
+        0.0
+      ],
+      "target_shift": 0.052025,
+      "other_shift": 0.009671,
+      "baseline_shift": 0.007705,
+      "target_dx": 0.051521
+    },
+    {
+      "seed": 3537161815461848804,
+      "target_index": 1,
+      "target_x": 0.3091,
+      "direction": [
+        -1.0,
+        0.0
+      ],
+      "target_shift": 0.046984,
+      "other_shift": 0.009671,
+      "baseline_shift": 0.007705,
+      "target_dx": -0.046426
+    },
+    {
+      "seed": 3537161815461848804,
+      "target_index": 1,
+      "target_x": 0.3091,
+      "direction": [
+        0.0,
+        1.0
+      ],
+      "target_shift": 0.042306,
+      "other_shift": 0.009671,
+      "baseline_shift": 0.007705,
+      "target_dx": 0.002694
+    },
+    {
+      "seed": 3537161815461848805,
+      "target_index": 1,
+      "target_x": 0.1601,
+      "direction": [
+        1.0,
+        0.0
+      ],
+      "target_shift": 0.044364,
+      "other_shift": 0.008632,
+      "baseline_shift": 0.010306,
+      "target_dx": 0.043476
+    },
+    {
+      "seed": 3537161815461848805,
+      "target_index": 1,
+      "target_x": 0.1601,
+      "direction": [
+        -1.0,
+        0.0
+      ],
+      "target_shift": 0.054276,
+      "other_shift": 0.008632,
+      "baseline_shift": 0.010306,
+      "target_dx": -0.053553
+    },
+    {
+      "seed": 3537161815461848805,
+      "target_index": 1,
+      "target_x": 0.1601,
+      "direction": [
+        0.0,
+        1.0
+      ],
+      "target_shift": 0.057165,
+      "other_shift": 0.008632,
+      "baseline_shift": 0.010306,
+      "target_dx": -0.005316
+    }
+  ],
+  "verdict": "action_interface_unusable",
+  "discipline": {
+    "optimizer_steps": 0,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 0.19
+  }
+}
