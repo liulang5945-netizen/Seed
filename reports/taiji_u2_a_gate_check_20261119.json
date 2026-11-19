@@ -1,0 +1,141 @@
+{
+  "schema": "taiji-u2-22-5-a-readout-check-v1",
+  "card": "22.5.0.A",
+  "preregistration": "CLOSEOUT-TAIJI_U2_22_5_A_READOUT_20261118.md §9 (pinned in commit 15809ca53 before readings)",
+  "instrument": "scripts/training/run_a_gate_c_20261117.py --check-worker, byte-identical; 192 development-check worlds from reports/taiji_u2_partition_22_4_3_20261117.json; aggregate-only release, labels stay inside the worker",
+  "gate": {
+    "criterion": "median of the three per-seed check accuracies >= 0.70",
+    "fit_2000_correct": {
+      "20261110": 31,
+      "20261111": 14,
+      "20261112": 31
+    },
+    "check_correct": {
+      "20261110": 171,
+      "20261111": 78,
+      "20261112": 174
+    },
+    "check_denominator": 192,
+    "check_median": 0.8906,
+    "threshold": 0.7,
+    "verdict": "readout_gate_earned"
+  },
+  "exposure": {
+    "used": 2,
+    "remaining": 0,
+    "allocated_22_5": 2,
+    "aggregate_only": true,
+    "labels_returned_to_selector": false,
+    "note": "final exposure consumed by owner approval 2026-11-19; smoke used the first"
+  },
+  "cost": {
+    "total_cpu": 343.875,
+    "cpu_cap": 3000.0,
+    "per_seed_cpu": {
+      "20261110": 113.5625,
+      "20261111": 110.453125,
+      "20261112": 119.859375
+    },
+    "within_cap": true
+  },
+  "readings": [
+    {
+      "correct": 171,
+      "denominator": 192,
+      "accuracy": 0.890625,
+      "valid_utf8": 192,
+      "eos": 192,
+      "per_label": {
+        "未知": {
+          "correct": 48,
+          "denominator": 48
+        },
+        "右边": {
+          "correct": 38,
+          "denominator": 43
+        },
+        "中间": {
+          "correct": 49,
+          "denominator": 57
+        },
+        "左边": {
+          "correct": 36,
+          "denominator": 44
+        }
+      },
+      "self_cpu": 113.5625,
+      "self_wall": 18.004041,
+      "seed": 20261110,
+      "checkpoint": "output/a_pixel_parallel_20261119T033848Z/segment.bin"
+    },
+    {
+      "correct": 78,
+      "denominator": 192,
+      "accuracy": 0.40625,
+      "valid_utf8": 192,
+      "eos": 192,
+      "per_label": {
+        "未知": {
+          "correct": 0,
+          "denominator": 48
+        },
+        "右边": {
+          "correct": 39,
+          "denominator": 43
+        },
+        "中间": {
+          "correct": 0,
+          "denominator": 57
+        },
+        "左边": {
+          "correct": 39,
+          "denominator": 44
+        }
+      },
+      "self_cpu": 110.453125,
+      "self_wall": 17.768841,
+      "seed": 20261111,
+      "checkpoint": "output/a_pixel_parallel_20261119T045931Z/segment.bin"
+    },
+    {
+      "correct": 174,
+      "denominator": 192,
+      "accuracy": 0.90625,
+      "valid_utf8": 192,
+      "eos": 192,
+      "per_label": {
+        "未知": {
+          "correct": 48,
+          "denominator": 48
+        },
+        "右边": {
+          "correct": 34,
+          "denominator": 43
+        },
+        "中间": {
+          "correct": 53,
+          "denominator": 57
+        },
+        "左边": {
+          "correct": 39,
+          "denominator": 44
+        }
+      },
+      "self_cpu": 119.859375,
+      "self_wall": 17.769599,
+      "seed": 20261112,
+      "checkpoint": "output/a_pixel_parallel_20261119T045222Z/segment.bin"
+    }
+  ],
+  "run_conditions": {
+    "worker_mode": "subprocess --check-worker",
+    "torch_threads": "default (12)",
+    "decode": "same evaluate() as fit: greedy, full-string match, EOS required",
+    "fixture": "frozen 22.4.3 partition development-check split"
+  },
+  "not_signed": [
+    "A parent",
+    "any capability",
+    "22.5.1/22.6/22.7 unlock"
+  ]
+}

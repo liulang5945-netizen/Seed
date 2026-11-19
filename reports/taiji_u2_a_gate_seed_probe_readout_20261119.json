@@ -29,12 +29,14 @@
     "fit_denominator": 32,
     "fit_median": 0.96875,
     "fit_threshold": 0.8,
-    "verdict": "fit_median_ge_threshold",
+    "verdict": "readout_gate_earned",
     "not_signed": [
-      "check (exposure 1/2 remaining, unread)",
       "A parent",
       "any capability"
-    ]
+    ],
+    "check_median": 0.8906,
+    "check_report": "reports/taiji_u2_a_gate_check_20261119.json",
+    "exposure_after_check": "2/2 used, 0 remaining"
   },
   "probe_300": [
     {
