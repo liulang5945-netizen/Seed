@@ -4071,3 +4071,8 @@ r3（32 单位/lr 3e-3/2,000 步/batch 64，43.02≤帽 150 CPU）：梯度流 �
 ## 2026-11-20 22.7d 活入口出生（D-20261119-46，`engineering_failure`，96.28 CPU）
 
 新出生实现：p_new=0（瞬时中性）＋r_new 继承父行（activity≠0）；三臂、每步投影、出生 logits 逐位一致。读数：中性 3/3、旧能力 0、恢复 exact、引用清理✓；p_grad>0、p_change>0、activity 0.39–0.47>0 但 r_grad=r_change=0（第 1 步 p_new=0 ⇒ r 梯度 ∝p 必为 0，第 2 步起才活）⇒ 活单元门未全过，判 engineering_failure（先于收益判定）；收益读数不可用。死单元已修好一半；门改为 N=5 步（p 第 1 步、r 第 2+ 步、5 步后 p/r 权重变化），22.7e 重测。不改 u2_neural_units.py（pin 保持）；0 check/final。
+
+
+## 2026-11-20 22.7e 无混杂生长净益（D-20261119-47，`growth_gain_absent`，95.98 CPU）
+
+活入口出生＋N=5 步探针（p 第 1 步 grad、r 第 2–5 步 max grad、5 步后 p/r 权重变化）。前置门全过：出生中性 3/3、newborn_live=True（p_grad 0.0034–0.0172、r_grad_max 7.4e-5–1.3e-4、p_change 0.012–0.013、r_change 0.0085–0.0092、activity 0.39–0.47）、旧能力 0、恢复 exact、引用清理✓。三臂 G0 [0.8125,0.625,0.625] vs C1/C2 [0.8125,0.625,0.6563]；净益 [0,0,−0.0313]、均值 −0.0104、配对 LB −0.0625 ⇒ growth_gain_absent。首个无混杂读数；+1 单位仅 +3% 容量不足。后继 22.7f：出生 3 单位；再不行测两次出生/更早出生。0 check/final。
