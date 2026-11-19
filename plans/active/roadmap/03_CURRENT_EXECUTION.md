@@ -3901,3 +3901,8 @@ owner 立项「开始 22.5.A.3 零训练接口复核」。契约 [manifest](../.
 ## 2026-11-20 owner 三裁定落地＋D 面定位包收官（`operating_point_insufficient`，D 面收束）
 
 owner 弹窗三裁：①授权定位包按帽（154.7 CPU／20 min）；②父身份＝v1 强 seed 单主候选＋相对父代 D 判据；③阶段账照旧。定位包（[结果卡](../../reference/RESULT-TAIJI_U2_S0_D_LOCALIZATION_20261119.md)、[合同](../../manifests/taiji_u2_s0_d_localization_20261119.json) `result.closed=true`、[run](../../../reports/taiji_u2_s0_d_localization_run_20261119.json)／[smoke](../../../reports/taiji_u2_s0_d_localization_smoke_20261119.json)）：smoke 12 项全绿（0 步），执行 **88.19 CPU ≤ 帽 154.7**，δ 九点读数**逐项相同**（路由 logit 饱和）⇒ 无 δ* 满足两 seed 两面决策门 ⇒ 预注册判 **`operating_point_insufficient`**：H1 阈值假设被证伪，失败在未见模板窗口选择（表示/训练限制）；D 决策级两 seed 两面 `22/24`。出口：**D 面按范围上限收束**（不再开第 4 次修订）；联合门 D 判据改**相对父代**（单侧 95% 上界 ≤0.02）；主候选固定 v1 seed `20261112`（记录 check `174/192`、fit `31/32`，预声明选择规则），3 seed 统计改为「同一父 × 3 训练子种子」，禁拼 seed。**成本**：定位包 88.19＋smoke 0.38；阶段账照旧记事故。**边界**：不签联合门/A 父/能力；`check/final` 0 读取。**唯一后继**：owner 对 S1（约 1,400 CPU）授权或豁免裁定（建议豁免，改以 S2 合同绑定 bundle sha256＋参数摘要＋复现回执）；S2 零训练设计随后。
+
+
+## 2026-11-20 owner 豁免 S1、开 S2（父身份证据改 bundle 绑定＋记录读数复现，残留风险披露）
+
+owner 弹窗裁「豁免 S1，直接进 S2」。依据：已接受 v1 主候选 seed `20261112` bundle strict load 通过且记录 fit 逐值复现（3/3、`30/14/31`，pin 失配 `taiji/u2_subject.py` 已披露）；S1 生成链重建（约 1,400 CPU）不执行，**残留风险**（生成链未重跑验证）登记入账。父身份证据改由 S2 合同绑定：bundle sha256＋参数树摘要＋键集合摘要＋fit 复现回执；S2 预检失败即 `engineering_failure`/`not_admitted` 并重开 S1。**当前队首＝S2 零训练设计＋实测定价**（无需授权）：单一主候选 v1 seed `20261112`、同一父×3 训练子种子、D 判据相对父代单侧 95% 上界 ≤0.02；须产出设计卡＋冻结合同（`training_authority: null`）＋smoke＋`0` 优化器步＋按实测单价报价与硬帽。**边界**：不签任何能力/父资格/联合门；S3–S5 未启动；check② 仍 2/2 用尽、final 未生成。
