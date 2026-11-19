@@ -5648,3 +5648,19 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **3. 仍 uncovered/未结**：① 正式 check② 与 B 父资格、D 口径；② `autonomous_choice` 负结果（需在线闭环/部分观测历史新卡）；③ `recursive_development`（需新相依设计）；④ 生长收益（需等 FLOPs/大出生/未知容量条件）；⑤ 真机与多动力学族；⑥ 100 会话/24h 长跨度；⑦ 22.8 与 23–30 准入。
 
 **4. 建议**：仍不建议整包接受；若继续，优先级＝正式 check② 决策（A/B）＞ recursion/choice 新卡＞真机前仿真扩展。零 check/final、不改既有判词。
+
+
+### D-20261119-65 跨会话结构出生与继承：`multi_session_birth_ready`（30→33 单位跨 3 进程，子进程 60.58 CPU）
+
+**1. 动作**：新增 worker [`s2_multi_session_birth_worker_20261120.py`](../../scripts/training/s2_multi_session_birth_worker_20261120.py) 与协调探针 [`probe_s2_multi_session_birth_20261120.py`](../../scripts/training/probe_s2_multi_session_birth_20261120.py)：session 1 训练 30 单位→存 capsule；session 2 载入后**活入口出生 3 单位并成熟**（30→33）、记录出生前后中性差、继续训练→存 capsule；session 3 载入 33 单位 capsule（按 capsule spec 重建 graph）继续训练。3 seed、零 check。
+
+**2. 读数**（子进程 `60.58 ≤ 帽 240 CPU`）：3 seed 全部
+- `inheritance_exact=true`（s2 load==s1 save、s3 load==s2 save，参数逐位一致）；
+- `newborns_inherited=true`（u0030–u0032 在 session 3 仍存在且身份不变）；
+- `birth_neutral=true`（出生前后准确率差 0.0）；
+- `retention_within_0_02=true`（准确率 `0.4375→0.875→0.9375`、`0.5312→0.8438→0.9688`、`0.3438→0.5938→0.9062`，不降反升）
+⇒ **`multi_session_birth_ready`**。
+
+**3. 判读**：该主体能**跨独立进程会话继承已学参数与有效功能**，并在会话内**出生新计算单位**且新生儿被后续会话继承、身份可追溯、出生不损伤旧能力。这把 22.7 的单会话结构证据与 lifetime 轴打通：**「继承式出生＋跨会话延续」有界 verified**。
+
+**4. 边界**：零 check/final；不等于 22.8 完整验收（≥3 session×32 轮 J 轨迹）、不覆盖分化/整合/休眠/退役跨会话（仅出生）；真机/长跨度仍 uncovered。

@@ -4161,3 +4161,8 @@ joint24、groups=6、30 单位、3-seed 集成、1,500 步；256 fit 分 128 校
 ## 2026-11-20 九轴终值增量（D-20261119-64，零训练）
 
 九轴：engineering verified；task verified(fit_face_only，check②未结)；learning verified(路由)/uncovered(内容)；retention verified(严格D breach 披露)；autonomous_choice negative(两法一致)；mature_growth 结构机制 verified/收益未建立；recursive_development uncovered；physical_transfer verified(有界：22.4.2b 推/位置桶)；lifetime verified(有界：≥3 会话跨进程，D-63)；附加 uncertainty_expression verified(有界：ECE 0.028→0.021，D-62)。仍 uncovered：正式 check②/B 父资格/D 口径、autonomous_choice 负结果、recursive、生长收益、真机/多动力学族、100 会话/24h、22.8 与 23–30 准入。建议：不整包接受；优先级 check② 决策＞recursion/choice 新卡＞真机前仿真扩展。
+
+
+## 2026-11-20 跨会话结构出生与继承（D-20261119-65，`multi_session_birth_ready`，子进程 60.58 CPU）
+
+3 进程 session：s1 30 单位训练→capsule；s2 载入后活入口出生 3 单位并成熟（30→33）继续训练；s3 载入 33 单位 capsule（按 capsule spec 重建）继续。3 seed 全过：inheritance_exact（参数逐位一致）、newborns u0030–32 跨会话继承且身份不变、出生中性差 0.0、准确率不降反升（0.4375→0.875→0.9375 等）⇒ multi_session_birth_ready。判读：跨会话继承已学参数/有效功能＋会话内出生且被后续会话继承，有界 verified。边界：不等于 22.8 完整验收；仅出生不覆盖分化/整合/休眠/退役跨会话；真机/长跨度仍 uncovered。零 check/final。
