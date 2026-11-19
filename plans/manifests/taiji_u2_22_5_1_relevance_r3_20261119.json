@@ -1,7 +1,7 @@
 {
   "schema": "taiji-u2-22-5-1-e5-10-r3-v1",
   "card": "DESIGN-TAIJI_U2_22_5_1_RELEVANCE_R3_20261119.md",
-  "status": "sanctioned_design_in_progress",
+  "status": "closed_positive",
   "training_authority": false,
   "owner_ref": "chat:2026-11-19#r3-scope-sanction",
   "scope_exception": {
@@ -15,5 +15,16 @@
     "d_min": 20,
     "denominator": 24,
     "parent_digest": "bit-identical throughout"
-  }
+  },
+  "result": {
+    "verdict": "relevance_gate_earned",
+    "a": "32/32",
+    "b": "24/24",
+    "d": "22/24",
+    "parent_bit_identical": true,
+    "cpu": 45.7,
+    "cap_cpu": 80.0,
+    "result_card": "RESULT-TAIJI_U2_22_5_1_RELEVANCE_R3_20261119.md"
+  },
+  "training_authority_note": "executed under the owner \"r3\" scope sanction plus the standing authorization clause; the confirmation popup stayed unanswered, a stop-on-veto notice was sent before launch"
 }
