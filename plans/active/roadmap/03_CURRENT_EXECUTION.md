@@ -4216,3 +4216,8 @@ D-72 实测顺序微调遗忘 0.69–0.88、20% 重放仍 0.53–0.66。架构�
 ## 2026-11-20 多读出任务头通过（D-20261119-75，`multihead_isolation_ready`，45.31 CPU）
 
 MultiHeadGraph 增加 MLP 任务头（4→16→24）：基座 head A 训 joint24→冻结共享单元与 head A→只训新 MLP head B 学动作桶。旧能力 0.969/0.938/1.0 保持后完全相同（drop 0.0 逐位）；新任务 0.4375/0.5625/0.5938 均 ≥0.433 门 ⇒ old_exact✓/new_learnable✓ ⇒ multihead_isolation_ready。**首个「学新＋保持旧」同时成立的证据**（任务头＋冻结共享单元的参数隔离）；核心 u2_neural_units.py 未改。边界：单主体、两任务、head B 全新 MLP；未测多任务>2、任务头回退、跨会话。后继 22.x：跨会话多任务头（capsule 保存读出头、会话切换）＋三任务验证，零 check ≤150 CPU。
+
+
+## 2026-11-20 跨会话三任务头（D-20261119-76，`multihead_sessions_absent`，子进程 136.38 CPU）
+
+3 进程会话：s1 共享单元＋headA(joint24)→s2 冻结单元/A 训 headB(动作桶)→s3 冻结单元/A/B 训 headC(推方向)。读数：inheritance_exact；旧A保持 drop 0.0（0.78/0.94/0.81）、新B保持 drop 0.0（0.375/0.656/0.594）；第三任务 C 0.469/0.813/0.813，seed0<0.60 ⇒ third_task_learnable=false ⇒ multihead_sessions_absent。判读：正——跨会话三头继承＋旧/新逐位保持成立（有界）；负——新任务可学性受冻结共享表征限制（B 亦仅 0.375）。后继：每会话少量共享单元微调（低 lr/冻结比例，监控旧≤0.02）或按任务增 query 槽/专用编码器；第三任务门保持 0.60。零 check/final。
