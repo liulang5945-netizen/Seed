@@ -1,0 +1,79 @@
+{
+  "schema": "taiji-u2-22-6-3-recursive-multiseed-v1",
+  "card": "22.6.3 two-dependent-corrections multi-seed feasibility",
+  "created_utc": "2026-11-19T20:53:58.558395+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "base_steps": 600,
+    "correction_a_steps": 600,
+    "correction_b_steps": 60,
+    "correction_b_samples": 6,
+    "train_worlds": 256,
+    "fit_worlds": 32,
+    "readiness": "min margin >= 0.05 and mean margin >= 0.10"
+  },
+  "results": [
+    {
+      "seed": 0,
+      "base_refine": 0.10000000149011612,
+      "after_a_refine": 0.30000001192092896,
+      "dependent_refine": 0.4000000059604645,
+      "fixed_parent_refine": 0.10000000149011612,
+      "margin": 0.30000000447034836
+    },
+    {
+      "seed": 1,
+      "base_refine": 0.0,
+      "after_a_refine": 0.30000001192092896,
+      "dependent_refine": 0.20000000298023224,
+      "fixed_parent_refine": 0.10000000149011612,
+      "margin": 0.10000000149011612
+    },
+    {
+      "seed": 2,
+      "base_refine": 0.20000000298023224,
+      "after_a_refine": 0.20000000298023224,
+      "dependent_refine": 0.20000000298023224,
+      "fixed_parent_refine": 0.20000000298023224,
+      "margin": 0.0
+    },
+    {
+      "seed": 3,
+      "base_refine": 0.10000000149011612,
+      "after_a_refine": 0.20000000298023224,
+      "dependent_refine": 0.10000000149011612,
+      "fixed_parent_refine": 0.20000000298023224,
+      "margin": -0.10000000149011612
+    },
+    {
+      "seed": 4,
+      "base_refine": 0.20000000298023224,
+      "after_a_refine": 0.20000000298023224,
+      "dependent_refine": 0.10000000149011612,
+      "fixed_parent_refine": 0.10000000149011612,
+      "margin": 0.0
+    }
+  ],
+  "mean_margin": 0.06,
+  "min_margin": -0.1,
+  "verdict": "recursive_multiseed_absent",
+  "discipline": {
+    "optimizer_steps": 12600,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 87.16
+  }
+}

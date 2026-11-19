@@ -5479,3 +5479,14 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **4. 九轴更新**：`mature_growth`＝结构/机制 verified ＋ 收益 `growth_benefit_not_established_in_package_22`（范围受限）。
 
 **5. 转向**：优先用 joint24 中间带重开 **22.6.3 递归发展**（两次相依改进＋固定父反事实）；其次动作/物理轴（`physical_transfer` 仍 uncovered）。生长若再试须按 §3 条件单独立卡。
+
+
+### D-20261119-50 22.6.3 递归发展可行性：两次相依纠正构造**多 seed 不成立**（`recursive_multiseed_absent`）——维持 uncovered
+
+**1. 动作**：新增可行性探针 [`probe_s2_22_6_3_recursive_feasibility_20261120.py`](../../scripts/training/probe_s2_22_6_3_recursive_feasibility_20261120.py)（单 seed）与多 seed 版 [`..._multiseed_20261120.py`](../../scripts/training/probe_s2_22_6_3_recursive_multiseed_20261120.py)；设计：密集纠正 A（颜色组位置 +1）→ 稀疏纠正 B（颜色子集再 +1），固定父反事实＝跳过 A。备忘 [`MEMO-TAIJI_U2_22_6_3_FEASIBILITY_20261120`](../reference/MEMO-TAIJI_U2_22_6_3_FEASIBILITY_20261120.md)。**零 check/final，合计 ≈150 CPU（含 3 次探针尝试）。**
+
+**2. 读数**：单 seed（B=6 样本）相依路径 vs 固定父 `0.40 vs 0.10`（+0.30）；但 B=12 样本时 `0.20 vs 0.20`（0.00）；**多 seed（5 个、B=6）均值 +0.06、最小 −0.10 ⇒ `recursive_multiseed_absent`**。单 seed 的 +0.30 是稀疏样本噪声。
+
+**3. 判读**：链路可跑通，但「稀疏二次反馈」构造的相依性**脆弱**、不可预注册；22.6.3 的阻塞从「可教授面饱和」变为「缺少稳健的 B 依赖 A 结构」。不得靠调样本数凑通过。
+
+**4. 后继**：新设计候选（可逆规则／跨实体泛化／规则冲突消解，后者同时服务「依据来源可信度核验」轴）；均须多 seed 可行性门（min margin ≥0.05、mean ≥0.10）通过后才立 22.6.3 执行卡；否则 22.6.3 维持 `uncovered`。

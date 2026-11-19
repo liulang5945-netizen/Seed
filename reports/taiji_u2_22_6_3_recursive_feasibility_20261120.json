@@ -1,0 +1,46 @@
+{
+  "schema": "taiji-u2-22-6-3-recursive-feasibility-v1",
+  "card": "22.6.3 two dependent corrections feasibility probe",
+  "created_utc": "2026-11-19T20:51:49.270068+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "base_steps": 600,
+    "correction_a_steps": 600,
+    "correction_b_steps": 120,
+    "correction_b_samples": 12,
+    "group_colours": [
+      0,
+      1,
+      2
+    ],
+    "refine_colours": [
+      1,
+      2
+    ],
+    "train_worlds": 256,
+    "fit_worlds": 32,
+    "seeds": [
+      0
+    ]
+  },
+  "readings": {
+    "base_refine_accuracy": 0.1,
+    "after_a_refine_accuracy": 0.3,
+    "dependent_refine_accuracy": 0.2,
+    "fixed_parent_refine_accuracy": 0.2,
+    "dependent_minus_fixed": 0.0
+  },
+  "verdict": "recursive_feasibility_absent",
+  "discipline": {
+    "optimizer_steps": 2640,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 21.09
+  }
+}
