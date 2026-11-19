@@ -5374,3 +5374,14 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 - 若要检验生长收益，需要**容量受限且带中间带**的新任务族（如多属性联合判定：颜色×位置 18 类，或需记忆/组合的更长任务）；须新卡与新探针。
 
 **4. 边界与后继**：零 check/final、不训能力、不冻结新卡；后继＝多属性联合任务族可行性探针（颜色×位置 18 类，零/小额训练），若中间带且容量头空间同时成立，才起草 22.7b 新卡；否则 22.7 的「生长收益」维持 uncovered。
+
+
+### D-20261119-41 22.7b（最小生长收益卡）合同骨架冻结＋零训练 smoke（`designed_pending_owner`，0.80 CPU）
+
+**1. 动作**：在容量受限的 joint24 任务族（D-20261119-40：16/32 单位中间带、32→64 头空间 +0.1875）上新立 **22.7b 最小生长收益卡**（新卡、非复活 22.7 旧窗）：合同 [`taiji_u2_22_7b_growth_joint24_20261120.json`](../../plans/manifests/taiji_u2_22_7b_growth_joint24_20261120.json)（`criteria_sha256=29966a3e…`、`status=designed_pending_owner`、`training_authority=null`）＋runner [`run_s2_22_7b_growth_joint24_20261120.py`](../../scripts/training/run_s2_22_7b_growth_joint24_20261120.py)（freeze/smoke/closeout，`--run` fail-closed）＋[设计卡](../reference/DESIGN-TAIJI_U2_22_7B_GROWTH_JOINT24_20261120.md)＋合同测试 [`test_s2_22_7b_growth_contract.py`](../../tests/taiji_native/test_s2_22_7b_growth_contract.py)。
+
+**2. 预注册**：任务＝first-A 多属性联合判定（颜色×位置 24 类，适配器 v3）；三臂最小对照 `G0_growth`（step 750 中性出生→33 单位）、`C1_no_growth`、`C2_preallocated`；等总步数＋FLOPs 比 ≤1.05；G1/G2/G3/G4/G5/G6 明确 out-of-scope 待裁；门＝生长净益 ≥0.05、配对单侧 95% 下界>0、3 seed 同向、旧能力 ≤0.02、capsule 恢复 exact、引用清理；出口 8 项；包价 200/帽 200 CPU。
+
+**3. 读数**：smoke 全过（`0.80 CPU`、`0` 优化器步）：适配器确定性、标签范围、joint24 回执 `joint24_family_candidate`、三臂/六项 out-of-scope 齐备、authority=null。
+
+**4. 边界与后继**：零训练、零 check/final；**训练须 owner 显式放行或按常设授权记录后回溯**。后继＝实现三臂 runner（中性出生＋`extend_state`＋等步数训练＋旧能力/恢复/清理门）→ 授权后执行；G1–G6 若 owner 要求再补测。

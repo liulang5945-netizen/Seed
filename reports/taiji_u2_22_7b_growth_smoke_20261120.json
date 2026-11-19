@@ -1,0 +1,27 @@
+{
+  "schema": "taiji-u2-22-7b-growth-smoke-v1",
+  "created_utc": "2026-11-19T19:54:55.377926+00:00",
+  "run_conditions": {
+    "threads": 12,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "checks": {
+    "adapter_deterministic": true,
+    "labels_in_range": true,
+    "joint24_family_candidate": true,
+    "three_arms_defined": true,
+    "out_of_scope_documented": true,
+    "authority_null": true,
+    "zero_optimizer_steps": true
+  },
+  "verdict": "smoke_passed",
+  "discipline": {
+    "optimizer_steps": 0,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 0.8
+  }
+}
