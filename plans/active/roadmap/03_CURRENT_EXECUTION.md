@@ -4186,3 +4186,8 @@ joint24 30 单位、1,000 步预训练→分两批出生 6 单位→再训练 1,
 ## 2026-11-20 早出生贡献变体与贡献轴收口（D-20261119-69，`unit_contribution_absent`，34.48 CPU）
 
 基础 12 单位、step 250 出生 3 单位、后训 1,250 步：base 0.781/0.906/0.75；新生儿消融下降 −0.031/−0.031/0.156；随机旧单位 0.17/0.32/0.26；配对 LB −0.094 ⇒ 三门失败 ⇒ unit_contribution_absent。结合 D-67/68 判定：joint24 与当前容量下偶发生长单元难以成为关键因果贡献者（冗余而非死单元），贡献轴按负结果收口；后续条件：新生儿承担独特功能的任务/连接级消融/功能分化设计，不得同范围重试。不改生长收益判词与结构 verified；贡献子项记 negative（范围受限）。零 check/final。
+
+
+## 2026-11-20 会话收口报告（D-20261119-70，零训练）
+
+汇总第 40–54 轮：动作片段 `action_consequence_pass`、不确定校准 `calibration_already_adequate`、多会话连续性/出生继承/休眠退役唤醒三卡有界通过；生长机制 clean 但收益 `growth_benefit_not_established_in_package_22`；单元贡献三探针负（冗余）；autonomous_choice 两法负；recursive uncovered；碰撞族构造可行预算内不可学；正式 check② 未结。成本 ≈3,200 CPU。目标未完成，主线继续。优先级：check② 决策＞recursion/choice 新设计＞生长收益条件化重检＞真机前仿真扩展。
