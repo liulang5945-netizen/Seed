@@ -37,6 +37,8 @@
 | `physical_transfer`（感知-动作-回执因果迁移） | `22.4.2` / `22.8` 物理动作片段 | `27` 三动力学族（推阻/碰撞/遮挡声响；模拟/回放/真机分签）/ `29.4` |
 | `lifetime`（长跨度连续存活与低人工接管） | `22.8` `>=3` session × 32 轮 J 轨迹 | `28`（100 会话或 10,000 事件＋24h 现场）/ `30.4`（非计划救援 `<=1/100` 轮） |
 
+**2026-11-20 当前九轴状态**（同一父 seed `20261112` 谱系、只读汇总，见 [阶段收口账](reference/MEMO-TAIJI_PACKAGE22_CLOSE_20261120.md)）：`engineering=verified`；`task=verified(fit_face_only)`；`learning=verified(路由技能)/uncovered(内容积累)`；`retention=verified(严格 D 口径 breach 已披露)`；`autonomous_choice=negative`（22.6.2）；`mature_growth=结构 verified/收益 growth_not_needed_in_scope`；`recursive_development=uncovered`；`physical_transfer=uncovered`；`lifetime=verified(有界)/uncovered(长跨度)`。
+
 ---
 
 ## 1. 执行铁律、七项准入合同与八种标准出口

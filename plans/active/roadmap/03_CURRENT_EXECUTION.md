@@ -4026,3 +4026,8 @@ r3（32 单位/lr 3e-3/2,000 步/batch 64，43.02≤帽 150 CPU）：梯度流 �
 ## 2026-11-20 22.7 硬度校准未命中→按预设出口结案 no-growth（D-20261119-36，零训练）
 
 两轮硬度校准（r1 低容量 0.30–0.44≈机会；r2 12 单元 0.39→16 单元 1.0 相变；r3 16 单元 100 步 0.47–0.50→200 步 0.95–0.97）证明 first-A 任务面上不存在 0.6–0.85 的中间头空间，七臂生长比较不可测。按 22.7 卡预设出口结案 **`growth_not_needed_in_scope`**：合同 result.verdict 已记、run=false、closed=true、authority 仍 null（未训练）；22.7 结构/生命周期证据（D-29/30）仍成立但只算结构证据；增长收益记 `uncovered/no_growth_needed_in_scope`，不得写成 verified。零 check/final；22.8/23–30 仍锁定；若要测生长收益需新任务族＋owner 裁定。
+
+
+## 2026-11-20 包 22 阶段收口账（D-20261119-37，只读汇总、零训练）
+
+九轴当前值：engineering verified；task verified（fit_face_only）；learning verified（路由技能）/uncovered（内容积累）；retention verified（严格 D 口径 breach 已披露）；autonomous_choice **negative**（22.6.2 policy_gain_absent）；mature_growth 结构 verified/收益 growth_not_needed_in_scope；recursive_development uncovered（22.6.3 受阻）；physical_transfer uncovered；lifetime verified（有界）/uncovered（长跨度）。阶段帽 24,000、已知位置 ≈35,250、本账新增 0。未结项：正式 check②/B 父资格、D 口径歧义、S1 豁免残留、架构门、22.6 策略负、22.7 生长收益、recursive/physical/长跨度 lifetime。待裁：A/B 正式资格、新任务族、22.8/23–30 准入、阶段账处置；执行者建议先做零训练决策支持、不自动解锁长期路线。

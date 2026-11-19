@@ -5336,3 +5336,16 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **3. 决定**：按 22.7 卡自带出口**结案 `growth_not_needed_in_scope`**——本任务面上七臂生长比较不可测（高容量已 1.0 天花板、低容量同步失败），强行开跑只会得到不可解释数字；不得改判据凑增益。合同 `result.verdict=growth_not_needed_in_scope`、`run=false`、`closed=true`、`training_authority` 仍 null（**未训练**）。22.7 的**结构/生命周期证据**（D-20261119-29/30）仍成立，但只算结构证据；「增长收益」在 22.8/包 22 总账记 `uncovered/no_growth_needed_in_scope`，不得写成 verified。
 
 **4. 边界与后继**：零训练、零 check/final；22.8 与 23–30 仍锁定。若 owner 要检验生长收益，需**新任务族**（混淆样本/多属性联合/J 型程序列）并新卡裁定；本笔不改任何既有能力判词。
+
+
+### D-20261119-37 包 22 阶段收口账：九轴资格向量、成本、残留风险与待裁项（只读汇总，零训练）
+
+**1. 动作**：把 22.5.0/22.5.1/22.6.x/22.7.x 已执行部分汇总成[阶段收口账](../reference/MEMO-TAIJI_PACKAGE22_CLOSE_20261120.md)：九轴 `verified / negative / uncovered`（同一父 seed `20261112` 谱系）、成本、残留风险、待裁项与建议。**零训练、零 check/final、不签新能力。**
+
+**2. 九轴当前值**：`engineering` verified；`task` **verified（`fit_face_only`）**；`learning` verified（路由技能）／uncovered（内容积累）；`retention` verified（有披露：严格 D 口径会 breach）；`autonomous_choice` **negative**（22.6.2 `policy_gain_absent`）；`mature_growth` 结构 verified／收益 **`growth_not_needed_in_scope`**；`recursive_development` uncovered（22.6.3 受阻）；`physical_transfer` uncovered；`lifetime` verified（有界）／uncovered（长跨度）。
+
+**3. 成本与风险**：阶段帽 `24,000`，已知位置 `≈35,250`（D-20261119-15），本账新增 `0`。未结项按影响排序：正式 check②/B 父资格、D 口径歧义、S1 豁免残留、架构门未跑、22.6 策略负、22.7 生长收益未证、recursive/physical/长跨度 lifetime 未覆盖。
+
+**4. 待裁与建议**：owner 需裁 (1) 正式资格 A/B（B 帽 540 CPU、选 B 先冻 D 口径）；(2) 是否投新任务族以重开 22.6.3/22.7 增长收益（先做零训练中间带构造可行性探针）；(3) 22.8/23–30 准入；(4) 阶段账处置。执行者建议先做 (1)+(2) 的零训练决策支持，**不自动解锁 22.8/23–30**（九轴仍有 3 个 uncovered）。
+
+**5. 边界**：只读汇总、不改任何既有能力判词；九轴账与 MAINLINE §0.2 状态表同步。
