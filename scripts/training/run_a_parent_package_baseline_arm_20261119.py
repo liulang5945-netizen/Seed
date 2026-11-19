@@ -52,6 +52,11 @@ def main(seed: int) -> int:
         cursor = (cursor + 1) % WORLDS
         if (step + 1) % 50_000 == 0:
             print(f"seed {seed} step {step + 1}/{DOSE} loss {round(last, 4)}", flush=True)
+    # Safety save before evaluation: the first attempt lost three full training
+    # legs to an eval-phase crash (EOS embedding), so the trained state is
+    # persisted before any decode runs.
+    safety = ROOT / "output" / f"a_parent_package_baseline_seed{seed}_trained.pt"
+    torch.save(adapter.state_dict(), safety)
     fit = evaluate(adapter, generate_v2("fit", 32))
     check_examples = _check_examples()
     check_rows = evaluate(adapter, check_examples)

@@ -126,8 +126,15 @@ class ATaskBaselineAdapter(torch.nn.Module):
 
     def accept_byte(self, state: dict, symbol: int) -> dict:
         state = dict(state)
-        state["generated"] = [*state["generated"], self._text_token(symbol)]
-        state["last_byte"] = symbol
+        # The frozen frontend embedding table has no slot for EOS (256); the
+        # decode protocol terminates at EOS, so the accepted symbol never
+        # becomes an input token.  Anything at or above the table size is
+        # recorded without a token.
+        if symbol < 256:
+            state["generated"] = [*state["generated"], self._text_token(symbol)]
+            state["last_byte"] = symbol
+        else:
+            state["terminated"] = True
         return state
 
     # -- teacher-forced training (prereg: one forward+backward per example) --
