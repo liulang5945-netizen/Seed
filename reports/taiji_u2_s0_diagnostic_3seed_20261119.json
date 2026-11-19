@@ -1,0 +1,410 @@
+{
+  "schema": "taiji-u2-s0-diagnostic-3seed-v1",
+  "card": "22.5.1/S0",
+  "created_utc": "2026-11-19T15:28:12.598696+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "config": {
+    "seeds": [
+      20261110,
+      20261111,
+      20261112
+    ],
+    "d": 32,
+    "readout": "pixel-salience-v2",
+    "train_examples": 256,
+    "fit_examples": 32,
+    "a_updates": 600,
+    "a_batch": 4,
+    "organ_steps": 300,
+    "organ_batch": 4,
+    "seen_templates": [
+      "通知：{entity}改为{label}。",
+      "最新记录：{entity}现在在{label}。"
+    ],
+    "unseen_templates": [
+      "更正消息：现在{label}放着{entity}。"
+    ],
+    "partitions": "train/fit only (0 check, 0 final)",
+    "smoke": false
+  },
+  "criteria": {
+    "a_fit_min": 0.75,
+    "b_exact": true,
+    "d_min": 20,
+    "d_denominator": 24,
+    "multi_record_min": 22,
+    "a_retention_drop": 0.0,
+    "cut_equals_frozen": true,
+    "permuted_max": 2,
+    "recovery_exact": true
+  },
+  "seeds": [
+    {
+      "seed": 20261110,
+      "a_fit_accuracy": 1.0,
+      "a_fit_per_label": {
+        "左边": "8/8",
+        "中间": "8/8",
+        "右边": "8/8",
+        "未知": "8/8"
+      },
+      "a_history": [
+        {
+          "step": 150,
+          "loss": 0.5811,
+          "lr": 0.004,
+          "fit_accuracy": 0.25,
+          "per_label": {
+            "左边": "0/8",
+            "中间": "5/8",
+            "右边": "3/8",
+            "未知": "0/8"
+          }
+        },
+        {
+          "step": 300,
+          "loss": 0.1023,
+          "lr": 0.004,
+          "fit_accuracy": 0.5938,
+          "per_label": {
+            "左边": "7/8",
+            "中间": "3/8",
+            "右边": "7/8",
+            "未知": "2/8"
+          }
+        },
+        {
+          "step": 450,
+          "loss": 0.0083,
+          "lr": 0.002911,
+          "fit_accuracy": 0.9688,
+          "per_label": {
+            "左边": "8/8",
+            "中间": "8/8",
+            "右边": "8/8",
+            "未知": "7/8"
+          }
+        },
+        {
+          "step": 600,
+          "loss": 0.0013,
+          "lr": 0.0004,
+          "fit_accuracy": 1.0,
+          "per_label": {
+            "左边": "8/8",
+            "中间": "8/8",
+            "右边": "8/8",
+            "未知": "8/8"
+          }
+        }
+      ],
+      "organ": {
+        "parent_bit_identical": true,
+        "organ_mix": 1.4005
+      },
+      "faces": {
+        "seen": {
+          "a_parent": "32/32",
+          "a_child": "32/32",
+          "a_retention_drop": 0.0,
+          "b_correction": "24/24",
+          "b_accuracy": 1.0,
+          "d_distractor_retention": "15/24",
+          "d_accuracy": 0.625,
+          "multi_record_b": "24/24",
+          "superseding_b": "24/24",
+          "controls": {
+            "frozen_parent_b": "0/24",
+            "organ_cut_b": "0/24",
+            "permuted_feedback_b": "0/24"
+          },
+          "recovery_exact": true
+        },
+        "unseen": {
+          "a_parent": null,
+          "a_child": null,
+          "a_retention_drop": null,
+          "b_correction": "23/24",
+          "b_accuracy": 0.9583,
+          "d_distractor_retention": "8/24",
+          "d_accuracy": 0.3333,
+          "multi_record_b": "23/24",
+          "superseding_b": "23/24",
+          "controls": null,
+          "recovery_exact": null
+        }
+      },
+      "phase_cpu": {
+        "data": 2.53,
+        "a_train": 138.62,
+        "organ_train": 14.78,
+        "evaluate": 37.02
+      },
+      "cost_cpu": 192.95,
+      "cost_wall": 193.54,
+      "checks": {
+        "a_fit": true,
+        "a_retention": true,
+        "cut_equals_frozen": true,
+        "permuted_leak": true,
+        "recovery": true,
+        "seen_b_exact": true,
+        "seen_d_gate": false,
+        "seen_multi": true,
+        "unseen_b_exact": false,
+        "unseen_d_gate": false,
+        "unseen_multi": true,
+        "parent_bit_identical": true
+      },
+      "pass": false
+    },
+    {
+      "seed": 20261111,
+      "a_fit_accuracy": 0.9688,
+      "a_fit_per_label": {
+        "左边": "8/8",
+        "中间": "8/8",
+        "右边": "8/8",
+        "未知": "7/8"
+      },
+      "a_history": [
+        {
+          "step": 150,
+          "loss": 1.1268,
+          "lr": 0.004,
+          "fit_accuracy": 0.2812,
+          "per_label": {
+            "左边": "5/8",
+            "中间": "0/8",
+            "右边": "4/8",
+            "未知": "0/8"
+          }
+        },
+        {
+          "step": 300,
+          "loss": 0.2617,
+          "lr": 0.004,
+          "fit_accuracy": 0.6875,
+          "per_label": {
+            "左边": "6/8",
+            "中间": "8/8",
+            "右边": "5/8",
+            "未知": "3/8"
+          }
+        },
+        {
+          "step": 450,
+          "loss": 0.016,
+          "lr": 0.002911,
+          "fit_accuracy": 0.8438,
+          "per_label": {
+            "左边": "8/8",
+            "中间": "8/8",
+            "右边": "8/8",
+            "未知": "3/8"
+          }
+        },
+        {
+          "step": 600,
+          "loss": 0.0068,
+          "lr": 0.0004,
+          "fit_accuracy": 0.9688,
+          "per_label": {
+            "左边": "8/8",
+            "中间": "8/8",
+            "右边": "8/8",
+            "未知": "7/8"
+          }
+        }
+      ],
+      "organ": {
+        "parent_bit_identical": true,
+        "organ_mix": 1.3177
+      },
+      "faces": {
+        "seen": {
+          "a_parent": "31/32",
+          "a_child": "31/32",
+          "a_retention_drop": 0.0,
+          "b_correction": "24/24",
+          "b_accuracy": 1.0,
+          "d_distractor_retention": "24/24",
+          "d_accuracy": 1.0,
+          "multi_record_b": "24/24",
+          "superseding_b": "24/24",
+          "controls": {
+            "frozen_parent_b": "1/24",
+            "organ_cut_b": "1/24",
+            "permuted_feedback_b": "0/24"
+          },
+          "recovery_exact": true
+        },
+        "unseen": {
+          "a_parent": null,
+          "a_child": null,
+          "a_retention_drop": null,
+          "b_correction": "24/24",
+          "b_accuracy": 1.0,
+          "d_distractor_retention": "24/24",
+          "d_accuracy": 1.0,
+          "multi_record_b": "24/24",
+          "superseding_b": "24/24",
+          "controls": null,
+          "recovery_exact": null
+        }
+      },
+      "phase_cpu": {
+        "data": 2.5,
+        "a_train": 136.78,
+        "organ_train": 14.75,
+        "evaluate": 37.05
+      },
+      "cost_cpu": 191.08,
+      "cost_wall": 191.3,
+      "checks": {
+        "a_fit": true,
+        "a_retention": true,
+        "cut_equals_frozen": true,
+        "permuted_leak": true,
+        "recovery": true,
+        "seen_b_exact": true,
+        "seen_d_gate": true,
+        "seen_multi": true,
+        "unseen_b_exact": true,
+        "unseen_d_gate": true,
+        "unseen_multi": true,
+        "parent_bit_identical": true
+      },
+      "pass": true
+    },
+    {
+      "seed": 20261112,
+      "a_fit_accuracy": 0.6875,
+      "a_fit_per_label": {
+        "左边": "6/8",
+        "中间": "6/8",
+        "右边": "7/8",
+        "未知": "3/8"
+      },
+      "a_history": [
+        {
+          "step": 150,
+          "loss": 0.5388,
+          "lr": 0.004,
+          "fit_accuracy": 0.2812,
+          "per_label": {
+            "左边": "4/8",
+            "中间": "3/8",
+            "右边": "2/8",
+            "未知": "0/8"
+          }
+        },
+        {
+          "step": 300,
+          "loss": 0.3168,
+          "lr": 0.004,
+          "fit_accuracy": 0.375,
+          "per_label": {
+            "左边": "2/8",
+            "中间": "2/8",
+            "右边": "3/8",
+            "未知": "5/8"
+          }
+        },
+        {
+          "step": 450,
+          "loss": 0.6076,
+          "lr": 0.002911,
+          "fit_accuracy": 0.5625,
+          "per_label": {
+            "左边": "2/8",
+            "中间": "6/8",
+            "右边": "7/8",
+            "未知": "3/8"
+          }
+        },
+        {
+          "step": 600,
+          "loss": 0.0372,
+          "lr": 0.0004,
+          "fit_accuracy": 0.6875,
+          "per_label": {
+            "左边": "6/8",
+            "中间": "6/8",
+            "右边": "7/8",
+            "未知": "3/8"
+          }
+        }
+      ],
+      "organ": {
+        "parent_bit_identical": true,
+        "organ_mix": -1.3502
+      },
+      "faces": {
+        "seen": {
+          "a_parent": "22/32",
+          "a_child": "22/32",
+          "a_retention_drop": 0.0,
+          "b_correction": "24/24",
+          "b_accuracy": 1.0,
+          "d_distractor_retention": "19/24",
+          "d_accuracy": 0.7917,
+          "multi_record_b": "24/24",
+          "superseding_b": "24/24",
+          "controls": {
+            "frozen_parent_b": "1/24",
+            "organ_cut_b": "1/24",
+            "permuted_feedback_b": "1/24"
+          },
+          "recovery_exact": true
+        },
+        "unseen": {
+          "a_parent": null,
+          "a_child": null,
+          "a_retention_drop": null,
+          "b_correction": "1/24",
+          "b_accuracy": 0.0417,
+          "d_distractor_retention": "19/24",
+          "d_accuracy": 0.7917,
+          "multi_record_b": "1/24",
+          "superseding_b": "1/24",
+          "controls": null,
+          "recovery_exact": null
+        }
+      },
+      "phase_cpu": {
+        "data": 2.5,
+        "a_train": 136.66,
+        "organ_train": 14.58,
+        "evaluate": 37.09
+      },
+      "cost_cpu": 190.83,
+      "cost_wall": 191.04,
+      "checks": {
+        "a_fit": false,
+        "a_retention": true,
+        "cut_equals_frozen": true,
+        "permuted_leak": true,
+        "recovery": true,
+        "seen_b_exact": true,
+        "seen_d_gate": false,
+        "seen_multi": true,
+        "unseen_b_exact": false,
+        "unseen_d_gate": false,
+        "unseen_multi": false,
+        "parent_bit_identical": true
+      },
+      "pass": false
+    }
+  ],
+  "all_pass": false,
+  "verdict": "s0_diagnostic_failed",
+  "cost": {
+    "cpu": 574.86,
+    "wall": 575.89
+  }
+}
