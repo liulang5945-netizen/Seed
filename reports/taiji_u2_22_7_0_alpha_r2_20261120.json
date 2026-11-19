@@ -1,0 +1,79 @@
+{
+  "schema": "taiji-u2-22-7-0-alpha-r2-v1",
+  "card": "22.7.0-alpha r2 interface feasibility (train split -> fit evaluation)",
+  "created_utc": "2026-11-19T19:14:13.949159+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "r1_defect": "trained on fit[:24] and generalised at chance",
+    "fit_split": "first-A train worlds",
+    "train_worlds": 256,
+    "batch": 24,
+    "eval_split": "first-A fit worlds",
+    "heldout_worlds": 32,
+    "steps": 500,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "chance": 0.25,
+    "exits": [
+      "engineering_failure",
+      "adapter_insufficient",
+      "budget_stop",
+      "adapter_ready"
+    ],
+    "cap_cpu": 60.0,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "runs": [
+    {
+      "seed": 0,
+      "initial_loss": 1.3862642049789429,
+      "final_loss": 1.3856106996536255,
+      "loss_drop": 0.00047141470072604915,
+      "gradient_norm": 0.0010997934732586145,
+      "heldout_accuracy": 0.15625,
+      "reload_exact": true
+    },
+    {
+      "seed": 1,
+      "initial_loss": 1.386440396308899,
+      "final_loss": 1.3856477737426758,
+      "loss_drop": 0.0005716960991134798,
+      "gradient_norm": 0.002617202466353774,
+      "heldout_accuracy": 0.25,
+      "reload_exact": true
+    },
+    {
+      "seed": 2,
+      "initial_loss": 1.38630211353302,
+      "final_loss": 1.3698821067810059,
+      "loss_drop": 0.011844464919819987,
+      "gradient_norm": 0.0006073134136386216,
+      "heldout_accuracy": 0.15625,
+      "reload_exact": true
+    }
+  ],
+  "checks": {
+    "gradients_flow": true,
+    "loss_drops": false,
+    "heldout_above_chance": false,
+    "reload_exact": true
+  },
+  "verdict": "adapter_insufficient",
+  "scope": "interface milestone only; no growth, no capability signing, 22.7 locked",
+  "discipline": {
+    "optimizer_steps": 1500,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 7.5
+  }
+}
