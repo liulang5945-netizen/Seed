@@ -1,0 +1,52 @@
+{
+  "schema": "taiji-u2-action-consequence-v1",
+  "card": "action-consequence task feasibility (N=3 pushes, position bin)",
+  "created_utc": "2026-11-19T21:03:52.168485+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "train_worlds": 256,
+    "fit_worlds": 32,
+    "pushes": 3,
+    "steps": 500,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "output_classes": 3,
+    "chance": 0.3333,
+    "feature_note": "adapter v3 summary + action direction/intensity in free dims"
+  },
+  "label_distribution": {
+    "0": 0.3594,
+    "1": 0.2773,
+    "2": 0.3633
+  },
+  "changed_fraction": 0.6055,
+  "baseline_accuracy": 0.375,
+  "accuracies": [
+    0.4688,
+    0.375,
+    0.4688
+  ],
+  "mean_accuracy": 0.4375,
+  "gates": {
+    "label_balance": true,
+    "changed_fraction": true,
+    "baseline_below_0_6": true,
+    "learnable": true
+  },
+  "verdict": "action_consequence_ready",
+  "discipline": {
+    "optimizer_steps": 1500,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 18.22
+  }
+}
