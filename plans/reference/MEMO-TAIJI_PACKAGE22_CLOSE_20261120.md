@@ -49,3 +49,7 @@
 ## 6. 更新（D-20261119-48）：生长机制线主机质已净、收益 uncovered
 
 22.7e/f/g 三个无混杂负结果（前置门全过：中性出生、活单元、旧能力 0、恢复 exact、引用清理；净益均值 −0.0104/−0.0104/−0.0521，均 `growth_gain_absent`）。**mature_growth 轴更新为：结构/机制 verified ＋ 收益 `uncovered`（范围受限）**；详见 [生长线收口备忘](../reference/MEMO-TAIJI_U2_22_7_GROWTH_LINE_20261120.md)。不再以「22.7 硬度校准」单一理由描述该轴。
+
+## 7. 终局更新（D-20261119-49）：生长收益裁决
+
+`mature_growth` 最终记为：**结构/机制 verified ＋ 收益 `growth_benefit_not_established_in_package_22`**（负结果带条件，非「生长无用」）。重检前置条件见[裁决备忘](../reference/MEMO-TAIJI_U2_GROWTH_BENEFIT_VERDICT_20261120.md) §3；转向优先 22.6.3 递归发展或动作/物理轴。

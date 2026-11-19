@@ -5466,3 +5466,16 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **4. 九轴更新**：`mature_growth` = **结构/机制 verified ＋收益 `uncovered`（范围受限，3 个干净负结果）**；22.7 原卡 `growth_not_needed_in_scope` 不改判，22.7b–g 保留为独立负结果。
 
 **5. 后继**：新卡按优先级测大出生/等 FLOPs；仍无正结果则转 22.6.3 递归与动作/物理轴。不改 `u2_neural_units.py`（pin 保持）。
+
+
+### D-20261119-49 生长收益裁决：`growth_benefit_not_established_in_package_22`（负结果带条件）＋转向建议
+
+**1. 动作**：汇总 22.7e/f/g 三个无混杂负结果与口径分析，写[裁决备忘](../reference/MEMO-TAIJI_U2_GROWTH_BENEFIT_VERDICT_20261120.md)。**零训练、零 check/final。**
+
+**2. 裁决**：包 22 架构/joint24/等步数口径下，生长收益记为 **`growth_benefit_not_established_in_package_22`**；这是负结果，不得写成「生长无用」或「生长收益 verified」。理由：等步数下 `C2_preallocated` 在最终容量上天然多获得训练步数；本架构线性读出加容量不产生「非预分配不可学」障碍，预分配占优是结构性的。
+
+**3. 重新检验前置条件**（任一满足才可新卡，否则禁同范围重跑）：①等 FLOPs 口径；②最终容量未知的按序增长任务；③32→64 大跳跃（需扩单代上限，属 `u2_neural_units.py` 设计变更）；④计算受限在线场景。
+
+**4. 九轴更新**：`mature_growth`＝结构/机制 verified ＋ 收益 `growth_benefit_not_established_in_package_22`（范围受限）。
+
+**5. 转向**：优先用 joint24 中间带重开 **22.6.3 递归发展**（两次相依改进＋固定父反事实）；其次动作/物理轴（`physical_transfer` 仍 uncovered）。生长若再试须按 §3 条件单独立卡。
