@@ -3906,3 +3906,8 @@ owner 弹窗三裁：①授权定位包按帽（154.7 CPU／20 min）；②父�
 ## 2026-11-20 owner 豁免 S1、开 S2（父身份证据改 bundle 绑定＋记录读数复现，残留风险披露）
 
 owner 弹窗裁「豁免 S1，直接进 S2」。依据：已接受 v1 主候选 seed `20261112` bundle strict load 通过且记录 fit 逐值复现（3/3、`30/14/31`，pin 失配 `taiji/u2_subject.py` 已披露）；S1 生成链重建（约 1,400 CPU）不执行，**残留风险**（生成链未重跑验证）登记入账。父身份证据改由 S2 合同绑定：bundle sha256＋参数树摘要＋键集合摘要＋fit 复现回执；S2 预检失败即 `engineering_failure`/`not_admitted` 并重开 S1。**当前队首＝S2 零训练设计＋实测定价**（无需授权）：单一主候选 v1 seed `20261112`、同一父×3 训练子种子、D 判据相对父代单侧 95% 上界 ≤0.02；须产出设计卡＋冻结合同（`training_authority: null`）＋smoke＋`0` 优化器步＋按实测单价报价与硬帽。**边界**：不签任何能力/父资格/联合门；S3–S5 未启动；check② 仍 2/2 用尽、final 未生成。
+
+
+## 2026-11-20 常设授权确立＋22.5.1 联合门 fit 面执行（`joint_gate_fit_face_pass`，verify 修订）
+
+owner 明示「按推荐项先推进、后续回溯修订」，记为常设授权 `owner:standing-authorization:2026-11-20#recommendation-default`（记录决定/理由/实价/硬帽，不放松 fail-closed 门）。S2：设计卡＋定价（包价 1,102.71／帽 1,378.38 CPU）＋合同冻结＋[smoke](../../../reports/taiji_u2_22_5_1_joint_gate_smoke_20261120.json)（0 步、22.12 CPU）全过。S3 授权后 S4 执行：3 子种子同一父 seed 20261112、实耗 **1,359.22 CPU ≤ 帽 1,400**（[run](../../../reports/taiji_u2_22_5_1_joint_gate_run_20261120.json)）——B/纠正 24/24、反馈净益 1.0（LB 1.0）、A 保持 23/24 对 23/24（上界 0.0）、D 相对父代 22/24 对 9/24（上界 −0.375）、多记录 21/24、版本覆盖 24/24、因果切断 0/24 与置换 0/24、可失败探针 1.0、恢复 3/3 exact、父代逐位不变。**verify-only 修订**：首次 run 的 A 行误对 B 修订目标，A 保持空判；用已保存子体重测 A 面（0 步、0 check、判据不变，54.42 CPU）重算仍 `joint_gate_fit_face_pass`（[verify](../../../reports/taiji_u2_22_5_1_joint_gate_verify_20261120.json)），修订留痕。**边界**：fit 面证据，非正式 check② 裁决；B 父资格/架构门未签；22.6 未解锁；D 口径歧义（父代同条件 vs 父代 A 真值，后者会判 d_backoff_breach）已并列披露。成本合计 ≈1,449 CPU，阶段账照旧记事故。**唯一后继**：owner 回溯三选一（fit_face_only 豁免 check② 解锁 22.6／新曝光正式裁决／先做更严 D 零训练复核）；执行者建议 (a)+(c) 并行，不自动解锁 22.6。

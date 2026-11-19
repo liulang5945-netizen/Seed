@@ -5048,3 +5048,22 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **3. S2 开卡（零训练，无需授权）**：当前队首＝`22.5.1` 联合门 **S2 零训练设计＋实测定价**。口径按 D-20261119-11：单一主候选＝v1 seed `20261112` bundle；3 seed 统计＝同一父 bundle × 3 训练子种子（禁拼 seed/换父）；D 判据＝相对父代单侧 95% 上界 `≤0.02`（同时报绝对 D 与 B 纠正率）；B 纠正门、可失败保持门、恢复腿、等算力强基线按 MAINLINE §2 原有口径。S2 须产出：设计卡＋冻结合同（`source_pins`、`criteria_sha256`、中位 vs 逐 seed 口径写死、`training_authority: null`）、smoke 全过、`0` 优化器步、按已执行卡实测单价报价＋硬帽。
 
 **4. 边界与后继**：本笔不签任何能力/父资格/联合门；S3（owner 授权正式执行）与 S4/S5 未启动；`check②` 仍 `2/2` 用尽、`final` 未生成。**唯一后继＝执行 S2 零训练设计与定价并呈报 owner**（无需新授权即可开展）。
+
+
+### D-20261119-13 常设授权确立＋22.5.1 联合门 fit 面执行（`joint_gate_fit_face_pass`，含 verify-only 修订；22.6 未解锁）
+
+**1. owner 常设授权（2026-11-20）**：owner 明示「遇到需要裁定的点直接按推荐项先往前推，后续回溯并修订」。记为本卡常设授权 `owner:standing-authorization:2026-11-20#recommendation-default`：执行者在决策点可按推荐项推进，但须在合同/台账记录决定、理由、实价与硬帽；owner 保留回溯修订权。**不放松**任何 fail-closed 门（缺 `training_authority` 拒跑、判据摘要/源码 pin 校验、0 check/final 读取、超帽即停）。
+
+**2. S2 完成（零训练）**：设计卡 [`DESIGN-TAIJI_U2_22_5_1_JOINT_GATE_20261120`](../reference/DESIGN-TAIJI_U2_22_5_1_JOINT_GATE_20261120.md)＋[定价回执](../../reports/taiji_u2_22_5_1_joint_gate_price_20261120.json)（单臂 256 步 `5.59 CPU`、单面 decode 矩阵 `40.44 CPU`，包价 `1,102.71`、帽 `1,378.38 CPU／45 min`）＋合同 [`taiji_u2_22_5_1_joint_gate_20261120.json`](../../plans/manifests/taiji_u2_22_5_1_joint_gate_20261120.json) 冻结＋[smoke](../../reports/taiji_u2_22_5_1_joint_gate_smoke_20261120.json) 全过（`22.12 CPU`、`0` 优化器步、父 fit 复现 `31/32`、出生 decode 与父逐字节一致）。
+
+**3. S3 授权**：合同记录 `training_authority=owner:standing-authorization:2026-11-20#recommendation-default`，`guards("run")` 通过；`check②` 仍 `2/2` 用尽、`final` 未生成。
+
+**4. S4 执行与判词**：3 子种子（同一父 bundle）全臂执行，实耗 **`1,359.22 ≤ 帽 1,400 CPU`**／`1,370 s wall`。读数（三 seed 一致）：B/纠正 **24/24**；反馈净益 **1.0**（95% 下界 1.0，3 seed 同向）；A 保持 child/parent **23/24 / 23/24**（单侧上界 0.0）；D child **22/24** 对父代同条件 **9/24**（相对下降上界 −0.375）；多记录 21/24、版本覆盖 24/24；因果切断 `record_organ` 0/24、`fast` 24/24、`record_injection` 24/24；置换反馈 0/24；可失败保持探针下降 1.0；独立进程恢复 3/3 `recover_exact`；父代逐位不变。**判 `joint_gate_fit_face_pass`**（[结果卡](../reference/RESULT-TAIJI_U2_22_5_1_JOINT_GATE_20261120.md)）。
+
+**5. verify-only 修订（必须披露）**：首次 run 的 A 行误对「B 修订目标」比较而非 A 真值，使 A 保持判据空转；按 E5.1 先例新增 `--verify` 模式，用已保存子体 artifact 重测 A 面（`0` 优化器步、`0` check 读取、判据摘要不变），重算判词仍 `joint_gate_fit_face_pass`，修订成本 `54.42 CPU`；合同 `result.amendment` 永久留痕。**不重跑训练、不改 B/D 读数**。
+
+**6. 签署边界与口径披露**：**签**＝fit 面联合门读数与判词。**不签**＝正式 `check②` 裁决（曝光已尽）、**B 父资格正式化**（spec 要求 check② 整包裁决）、架构优越性门（`not_run`，等算力配平前置未满足）、`22.6` 解锁、`final`、生成链可复现（S1 豁免残留风险）。**D 口径歧义**：冻结口径以「父代同条件行为」为参考（22/24 vs 9/24，通过）；若改「父代 A 真值」参考（parent A 23/24 vs child D 22/24），drop `1/24=0.0417`、上界约 `0.083>0.02` ⇒ 会判 `d_backoff_breach`；两口径并列入卡，不埋。
+
+**7. 成本**：S2（定价/smoke/设计）约 `35 CPU`＋S4 `1,359.22`＋verify `54.42` ≈ `1,449 CPU`；对包价 `1,102.71` 超出、对帽 `1,378.38` 未超。阶段账按既有裁定「超支永久记事故」处理，本卡实耗单列。
+
+**8. 唯一后继（owner 回溯裁定）**：(a) 认可 fit 面证据、按具名 `fit_face_only` 豁免 check② 并解锁 22.6（登记残留风险）；(b) 另批一次 check② 曝光做正式整包裁决（需新曝光账与定价）；(c) 先按更严 D 口径零训练复核（`verify` 扩展，估 <80 CPU）再裁。执行者建议 (a)+(c) 并行呈报，**不自动解锁 22.6**。
