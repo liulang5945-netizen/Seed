@@ -1,0 +1,377 @@
+{
+  "schema": "taiji-u2-s0-d-localization-run-v1",
+  "card": "22.5.1/S0 D-side localization",
+  "created_utc": "2026-11-19T17:00:57.523972+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "criteria_sha256": "80026e3febdb2bd4f52e1e30b6e55f496ef4ed3dfb79f0469a7e16e529dae6ff",
+  "training_authority": "owner:chat:2026-11-20#popup-d-localization-authorized-cap-154.7",
+  "rows": [
+    {
+      "seed": 20261110,
+      "parent_audit": {
+        "schema": "taiji-first-A-learner-v1",
+        "identity": "pixel-salience",
+        "config": {
+          "d": 32,
+          "readout": "pixel-salience",
+          "record_metadata": true,
+          "separate_requests": true,
+          "seed": 20261110
+        },
+        "parameters_digest": "52015842adb711cf900ae2196cc70b5e2dcef932931da47c24db34012069897a",
+        "source_pin_matches": {
+          "taiji/u2_recovery.py": true,
+          "taiji/u2_evidence_subject.py": true,
+          "taiji/u2_evidence_read.py": true,
+          "taiji/u2_evidence_runtime.py": true,
+          "taiji/u2_capacity_control.py": true,
+          "taiji/u2_task_goal.py": true,
+          "taiji/u2_joint_tokens.py": true,
+          "taiji/u2_joint_subject.py": true,
+          "taiji/u2_history.py": true,
+          "taiji/u2_history_store.py": true,
+          "taiji/u2_request_state.py": true,
+          "taiji/u2_task_executor.py": true,
+          "taiji/u2_events.py": true,
+          "taiji/u2_learning_transaction.py": true,
+          "taiji/u2_record_metadata.py": true,
+          "taiji/u2_group_structure.py": true,
+          "taiji/u2_subject.py": false,
+          "taiji/u2_operators.py": true,
+          "taiji/utf8_state.py": true,
+          "scripts/training/first_a_support_22_5.py": true,
+          "scripts/training/task_baselines_22_4_a.py": true
+        },
+        "source_pin_mismatches": [
+          "taiji/u2_subject.py"
+        ],
+        "strict_load": true
+      },
+      "organ": {
+        "parent_bit_identical": true,
+        "organ_mix": 1.2572
+      },
+      "decision": {
+        "-4": {
+          "seen": {
+            "b": 24,
+            "d": 22,
+            "multi": 21,
+            "n": 24
+          },
+          "unseen": {
+            "b": 5,
+            "d": 22,
+            "multi": 5,
+            "n": 24
+          }
+        },
+        "-3": {
+          "seen": {
+            "b": 24,
+            "d": 22,
+            "multi": 21,
+            "n": 24
+          },
+          "unseen": {
+            "b": 5,
+            "d": 22,
+            "multi": 5,
+            "n": 24
+          }
+        },
+        "-2": {
+          "seen": {
+            "b": 24,
+            "d": 22,
+            "multi": 21,
+            "n": 24
+          },
+          "unseen": {
+            "b": 5,
+            "d": 22,
+            "multi": 5,
+            "n": 24
+          }
+        },
+        "-1": {
+          "seen": {
+            "b": 24,
+            "d": 22,
+            "multi": 21,
+            "n": 24
+          },
+          "unseen": {
+            "b": 5,
+            "d": 22,
+            "multi": 5,
+            "n": 24
+          }
+        },
+        "0": {
+          "seen": {
+            "b": 24,
+            "d": 22,
+            "multi": 21,
+            "n": 24
+          },
+          "unseen": {
+            "b": 5,
+            "d": 22,
+            "multi": 5,
+            "n": 24
+          }
+        },
+        "1": {
+          "seen": {
+            "b": 24,
+            "d": 22,
+            "multi": 21,
+            "n": 24
+          },
+          "unseen": {
+            "b": 5,
+            "d": 22,
+            "multi": 5,
+            "n": 24
+          }
+        },
+        "2": {
+          "seen": {
+            "b": 24,
+            "d": 22,
+            "multi": 21,
+            "n": 24
+          },
+          "unseen": {
+            "b": 5,
+            "d": 22,
+            "multi": 5,
+            "n": 24
+          }
+        },
+        "3": {
+          "seen": {
+            "b": 24,
+            "d": 22,
+            "multi": 21,
+            "n": 24
+          },
+          "unseen": {
+            "b": 5,
+            "d": 22,
+            "multi": 5,
+            "n": 24
+          }
+        },
+        "4": {
+          "seen": {
+            "b": 24,
+            "d": 22,
+            "multi": 21,
+            "n": 24
+          },
+          "unseen": {
+            "b": 5,
+            "d": 22,
+            "multi": 5,
+            "n": 24
+          }
+        }
+      },
+      "cost_cpu": 41.48
+    },
+    {
+      "seed": 20261112,
+      "parent_audit": {
+        "schema": "taiji-first-A-learner-v1",
+        "identity": "pixel-salience",
+        "config": {
+          "d": 32,
+          "readout": "pixel-salience",
+          "record_metadata": true,
+          "separate_requests": true,
+          "seed": 20261112
+        },
+        "parameters_digest": "5a09a44902d985c7035f474564f0e84e0fcd3bfcfc2b4398150fad721b186f48",
+        "source_pin_matches": {
+          "taiji/u2_recovery.py": true,
+          "taiji/u2_evidence_subject.py": true,
+          "taiji/u2_evidence_read.py": true,
+          "taiji/u2_evidence_runtime.py": true,
+          "taiji/u2_capacity_control.py": true,
+          "taiji/u2_task_goal.py": true,
+          "taiji/u2_joint_tokens.py": true,
+          "taiji/u2_joint_subject.py": true,
+          "taiji/u2_history.py": true,
+          "taiji/u2_history_store.py": true,
+          "taiji/u2_request_state.py": true,
+          "taiji/u2_task_executor.py": true,
+          "taiji/u2_events.py": true,
+          "taiji/u2_learning_transaction.py": true,
+          "taiji/u2_record_metadata.py": true,
+          "taiji/u2_group_structure.py": true,
+          "taiji/u2_subject.py": false,
+          "taiji/u2_operators.py": true,
+          "taiji/utf8_state.py": true,
+          "scripts/training/first_a_support_22_5.py": true,
+          "scripts/training/task_baselines_22_4_a.py": true
+        },
+        "source_pin_mismatches": [
+          "taiji/u2_subject.py"
+        ],
+        "strict_load": true
+      },
+      "organ": {
+        "parent_bit_identical": true,
+        "organ_mix": 1.3041
+      },
+      "decision": {
+        "-4": {
+          "seen": {
+            "b": 24,
+            "d": 22,
+            "multi": 21,
+            "n": 24
+          },
+          "unseen": {
+            "b": 24,
+            "d": 22,
+            "multi": 21,
+            "n": 24
+          }
+        },
+        "-3": {
+          "seen": {
+            "b": 24,
+            "d": 22,
+            "multi": 21,
+            "n": 24
+          },
+          "unseen": {
+            "b": 24,
+            "d": 22,
+            "multi": 21,
+            "n": 24
+          }
+        },
+        "-2": {
+          "seen": {
+            "b": 24,
+            "d": 22,
+            "multi": 21,
+            "n": 24
+          },
+          "unseen": {
+            "b": 24,
+            "d": 22,
+            "multi": 21,
+            "n": 24
+          }
+        },
+        "-1": {
+          "seen": {
+            "b": 24,
+            "d": 22,
+            "multi": 21,
+            "n": 24
+          },
+          "unseen": {
+            "b": 24,
+            "d": 22,
+            "multi": 21,
+            "n": 24
+          }
+        },
+        "0": {
+          "seen": {
+            "b": 24,
+            "d": 22,
+            "multi": 21,
+            "n": 24
+          },
+          "unseen": {
+            "b": 24,
+            "d": 22,
+            "multi": 21,
+            "n": 24
+          }
+        },
+        "1": {
+          "seen": {
+            "b": 24,
+            "d": 22,
+            "multi": 21,
+            "n": 24
+          },
+          "unseen": {
+            "b": 24,
+            "d": 22,
+            "multi": 21,
+            "n": 24
+          }
+        },
+        "2": {
+          "seen": {
+            "b": 24,
+            "d": 22,
+            "multi": 21,
+            "n": 24
+          },
+          "unseen": {
+            "b": 24,
+            "d": 22,
+            "multi": 21,
+            "n": 24
+          }
+        },
+        "3": {
+          "seen": {
+            "b": 24,
+            "d": 22,
+            "multi": 21,
+            "n": 24
+          },
+          "unseen": {
+            "b": 24,
+            "d": 22,
+            "multi": 21,
+            "n": 24
+          }
+        },
+        "4": {
+          "seen": {
+            "b": 24,
+            "d": 22,
+            "multi": 21,
+            "n": 24
+          },
+          "unseen": {
+            "b": 24,
+            "d": 22,
+            "multi": 21,
+            "n": 24
+          }
+        }
+      },
+      "cost_cpu": 41.2
+    }
+  ],
+  "delta_star": null,
+  "decode": null,
+  "budget_ok": true,
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "verdict": "operating_point_insufficient",
+  "cost": {
+    "cpu": 88.19,
+    "wall": 88.88,
+    "cap_cpu": 154.7
+  }
+}

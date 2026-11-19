@@ -1,6 +1,6 @@
-# 设计卡：22.5.1 / S0 后续 D 面定位包（路由操作点单变量；已设计＋已定价，训练未授权）
+# 设计卡：22.5.1 / S0 后续 D 面定位包（路由操作点单变量；已设计＋已定价＋已授权执行＋已收官）
 
-> 文档状态：[设计卡] — 2026-11-20。对象＝D-20261119-09 §7 决策点① 的推荐选项（`<=10%` 窗口预算的局部定位包）。**本卡当前 `training_authority=null`：只完成零训练设计与实测定价，未跑任何优化器步、未读 check/final。** 定价回执见 [`taiji_u2_s0_decision_options_price_20261119.json`](../../reports/taiji_u2_s0_decision_options_price_20261119.json)，事实底座见 [`taiji_u2_s0_accepted_parent_load_20261119.json`](../../reports/taiji_u2_s0_accepted_parent_load_20261119.json)。
+> 文档状态：[设计卡→已执行] — 2026-11-20。对象＝D-20261119-09 §7 决策点① 的推荐选项（`<=10%` 窗口预算的局部定位包）。**本卡已按 owner 弹窗授权执行并收官：`operating_point_insufficient`（负面），实耗 88.19 CPU ≤ 帽 154.7，0 check/final。** 结果卡见 [RESULT-TAIJI_U2_S0_D_LOCALIZATION_20261119.md](RESULT-TAIJI_U2_S0_D_LOCALIZATION_20261119.md)，判决与后继见 D-20261119-11。定价回执见 [`taiji_u2_s0_decision_options_price_20261119.json`](../../reports/taiji_u2_s0_decision_options_price_20261119.json)，事实底座见 [`taiji_u2_s0_accepted_parent_load_20261119.json`](../../reports/taiji_u2_s0_accepted_parent_load_20261119.json)，合同 [`taiji_u2_s0_d_localization_20261119.json`](../manifests/taiji_u2_s0_d_localization_20261119.json)（`result.closed=true`）。
 
 ## 1. 立项依据（为什么需要定位，而不是再加一次修订）
 
@@ -62,6 +62,6 @@ S0 三 seed 复核（[结果卡](RESULT-TAIJI_U2_S0_ARCH_REPAIR_20261119.md)）�
 
 ## 6. 授权状态与唯一后继
 
-- **授权**：本卡需 owner 对该卡明示 `training_authority`（600 步器官训练属优化器步）。当前 `training_authority=null`，`--run` 未实现且不得开跑。
-- **唯一后继**：owner 授权 → 按 §4 执行并出结果卡（`operating_point_only` → 另立标定卡；`operating_point_insufficient` → D 面收束 + 选项③裁定）→ 更新 MAINLINE/MASTER-PLAN/03/决策台账。
+- **授权与执行（2026-11-20 更新）**：owner 弹窗授权按帽执行（`154.7 CPU／20 min`），合同 `training_authority=owner:chat:2026-11-20#popup-d-localization-authorized-cap-154.7`；smoke 12 项全绿（0.38 CPU、0 优化器步）后执行，实耗 **88.19 CPU／88.88s**，判 **`operating_point_insufficient`**（δ 九点平台；seed 10 未见模板 B/多记录 `5/24`，D 决策 `22/24` 两 seed 两面一致）。结果与归因见 [结果卡](RESULT-TAIJI_U2_S0_D_LOCALIZATION_20261119.md)。
+- **唯一后继（按预注册与 owner 裁定）**：D 面按范围上限收束（不再开第 4 次架构修订）；联合门「无关记录」判据转**相对父代**修正案；主候选固定为已接受 v1 父 seed `20261112`；下一步＝owner 对 S1（`R-REBUILD-1`，约 `1,400 CPU`）授权或豁免的裁定，S2 零训练设计＋定价随后。
 - **边界**：本包不签联合门、A 父、任何能力、22.6/22.7；不改 S0 已出读数；不消耗 check②。

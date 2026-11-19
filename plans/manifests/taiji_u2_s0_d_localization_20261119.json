@@ -1,0 +1,113 @@
+{
+  "schema": "taiji-u2-s0-d-localization-v1",
+  "card": "DESIGN-TAIJI_U2_S0_D_LOCALIZATION_20261119.md",
+  "status": "frozen",
+  "training_authority": "owner:chat:2026-11-20#popup-d-localization-authorized-cap-154.7",
+  "criteria": {
+    "card": "22.5.1/S0 D-side localization",
+    "seeds": [
+      20261110,
+      20261112
+    ],
+    "parents": {
+      "20261110": {
+        "checkpoint": "output\\a_pixel_parallel_20261119T063705Z\\segment.bin",
+        "identity": "pixel-salience",
+        "recorded_fit_correct": 30
+      },
+      "20261112": {
+        "checkpoint": "output\\a_pixel_parallel_20261119T070447Z\\segment.bin",
+        "identity": "pixel-salience",
+        "recorded_fit_correct": 31
+      }
+    },
+    "excluded_seeds": {
+      "20261111": "accepted parent fit 14/32; D gate >=20/24 is structurally unreachable"
+    },
+    "train_examples": 768,
+    "fit_examples": 32,
+    "organ_steps": 300,
+    "organ_batch": 4,
+    "seen_templates": [
+      "通知：{entity}改为{label}。",
+      "最新记录：{entity}现在在{label}。"
+    ],
+    "unseen_templates": [
+      "更正消息：现在{label}放着{entity}。"
+    ],
+    "delta_grid": [
+      -4,
+      -3,
+      -2,
+      -1,
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "decision_gate": {
+      "b_hit_min": 23,
+      "d_hit_min": 21,
+      "denominator": 24,
+      "faces": [
+        "seen",
+        "unseen"
+      ],
+      "seeds": [
+        20261110,
+        20261112
+      ]
+    },
+    "decode_gate": {
+      "b_correct": 24,
+      "d_min": 20,
+      "faces": [
+        "seen",
+        "unseen"
+      ]
+    },
+    "exits": [
+      "engineering_failure",
+      "budget_stop",
+      "operating_point_insufficient",
+      "operating_point_decision_only",
+      "operating_point_only"
+    ],
+    "optimizer_steps_max": 600,
+    "check_reads": 0,
+    "final_reads": 0,
+    "training_authority": null
+  },
+  "criteria_sha256": "80026e3febdb2bd4f52e1e30b6e55f496ef4ed3dfb79f0469a7e16e529dae6ff",
+  "plan": {
+    "price_cpu": 123.76,
+    "price_source": "reports/taiji_u2_s0_decision_options_price_20261119.json",
+    "optimizer_steps": 600
+  },
+  "cap_cpu": 154.7,
+  "cap_wall_minutes": 20.0,
+  "check_exposure": {
+    "allocated": 0,
+    "used": 0,
+    "reads": 0
+  },
+  "source_pins": {
+    "scripts/training/run_s0_d_localization_20261119.py": "8a961850bfd7c22e97e0b9db86f791debe438d0b3e6a14fc39d8a820234aa820",
+    "scripts/training/s0_parent_loader_20261119.py": "7c363387fd9801862592dcf9d01e81baef293bfbd25f7360475de089da5a68c8",
+    "scripts/training/first_a_support_22_5_v2.py": "a8af1b7c947b203f091993a5141d4aa1e8f0084780e0d34c5e1de5bdabc9fd2b",
+    "scripts/training/first_a_support_22_5.py": "33d9301f98859934c1413e25765c55e6bc7b64dfa410d65b03f0e5a198041b4c",
+    "taiji/u2_22_5_pipeline.py": "7ab354f43275f3197c848ee0d2ff1513bd22fe51982644176abe51690429007f",
+    "taiji/u2_subject.py": "f7e4c484481410bde36735ffe23ce4ca5df59e1e62d89adb956974569860b560",
+    "taiji/u2_record_organ.py": "edcfd68fa31f1efdbf5bd7e9aa656b691f690905cfadf0324c535effa8fa9e7d",
+    "taiji/u2_pixel_read.py": "8d1c309ed60f956e156f5851a4dff9fe8f8ff5e09b43a0248b2b638cc3f09ffd"
+  },
+  "result": {
+    "run": true,
+    "closed": true,
+    "verdict": "operating_point_insufficient",
+    "delta_star": null,
+    "cost_cpu": 88.19,
+    "report": "reports\\taiji_u2_s0_d_localization_run_20261119.json"
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "schema": "taiji-u2-s0-d-localization-smoke-v1",
+  "card": "22.5.1/S0 D-side localization",
+  "created_utc": "2026-11-19T16:59:22.197864+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "discipline": {
+    "optimizer_steps": 0,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "parent_audit": {
+    "schema": "taiji-first-A-learner-v1",
+    "identity": "pixel-salience",
+    "config": {
+      "d": 32,
+      "readout": "pixel-salience",
+      "record_metadata": true,
+      "separate_requests": true,
+      "seed": 20261110
+    },
+    "parameters_digest": "52015842adb711cf900ae2196cc70b5e2dcef932931da47c24db34012069897a",
+    "source_pin_matches": {
+      "taiji/u2_recovery.py": true,
+      "taiji/u2_evidence_subject.py": true,
+      "taiji/u2_evidence_read.py": true,
+      "taiji/u2_evidence_runtime.py": true,
+      "taiji/u2_capacity_control.py": true,
+      "taiji/u2_task_goal.py": true,
+      "taiji/u2_joint_tokens.py": true,
+      "taiji/u2_joint_subject.py": true,
+      "taiji/u2_history.py": true,
+      "taiji/u2_history_store.py": true,
+      "taiji/u2_request_state.py": true,
+      "taiji/u2_task_executor.py": true,
+      "taiji/u2_events.py": true,
+      "taiji/u2_learning_transaction.py": true,
+      "taiji/u2_record_metadata.py": true,
+      "taiji/u2_group_structure.py": true,
+      "taiji/u2_subject.py": false,
+      "taiji/u2_operators.py": true,
+      "taiji/utf8_state.py": true,
+      "scripts/training/first_a_support_22_5.py": true,
+      "scripts/training/task_baselines_22_4_a.py": true
+    },
+    "source_pin_mismatches": [
+      "taiji/u2_subject.py"
+    ],
+    "strict_load": true
+  },
+  "checks": {
+    "parent_identity": true,
+    "strict_load": true,
+    "pins_disclosed": true,
+    "birth_bit_identical": true,
+    "organ_keys_added": true,
+    "birth_decode_identical": true,
+    "delta_formula": true,
+    "delta_monotone": true,
+    "plan_route_prob_scalar": true,
+    "plan_record_weights": true,
+    "emit_shapes": true,
+    "delta_patch_installed": true
+  },
+  "verdict": "smoke_passed",
+  "cpu": 0.38
+}
