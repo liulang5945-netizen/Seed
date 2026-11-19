@@ -1,85 +1,84 @@
 {
   "schema": "taiji-u2-firstbyte-probe-v1",
   "card": "22.5.0.A",
-  "checkpoint": "output/a_pixel_parallel_20261118T063729Z/segment.bin",
+  "checkpoint": "output/a_pixel_parallel_20261118T070729Z/segment.bin",
   "middle_rows": [
     {
       "target": "中间",
-      "argmax_symbol": 256,
-      "argmax_hex": "0x100",
-      "argmax_prob": -0.2295,
-      "E4-中": -2.6705,
-      "E5-左右": -2.0011,
-      "E6-未": -7.8322
+      "argmax_symbol": 229,
+      "argmax_hex": "0xe5",
+      "argmax_prob": -0.4803,
+      "E4-中": -1.1036,
+      "E5-左右": -0.4803,
+      "E6-未": -3.0698
     },
     {
       "target": "中间",
-      "argmax_symbol": 256,
-      "argmax_hex": "0x100",
-      "argmax_prob": -0.3142,
-      "E4-中": -2.3571,
-      "E5-左右": -1.7451,
-      "E6-未": -9.1158
+      "argmax_symbol": 229,
+      "argmax_hex": "0xe5",
+      "argmax_prob": -0.4644,
+      "E4-中": -1.0317,
+      "E5-左右": -0.4644,
+      "E6-未": -4.3576
     },
     {
       "target": "中间",
-      "argmax_symbol": 256,
-      "argmax_hex": "0x100",
-      "argmax_prob": -0.3617,
-      "E4-中": -2.3279,
-      "E5-左右": -1.5834,
-      "E6-未": -8.1952
+      "argmax_symbol": 229,
+      "argmax_hex": "0xe5",
+      "argmax_prob": -0.4657,
+      "E4-中": -1.1171,
+      "E5-左右": -0.4657,
+      "E6-未": -3.2
     },
     {
       "target": "中间",
-      "argmax_symbol": 256,
-      "argmax_hex": "0x100",
-      "argmax_prob": -0.7012,
-      "E4-中": -1.6953,
-      "E5-左右": -1.1388,
-      "E6-未": -11.4723
+      "argmax_symbol": 229,
+      "argmax_hex": "0xe5",
+      "argmax_prob": -0.4812,
+      "E4-中": -0.9753,
+      "E5-左右": -0.4812,
+      "E6-未": -5.8544
     },
     {
       "target": "中间",
-      "argmax_symbol": 256,
-      "argmax_hex": "0x100",
-      "argmax_prob": -0.5501,
-      "E4-中": -1.8437,
-      "E5-左右": -1.3289,
-      "E6-未": -11.8457
+      "argmax_symbol": 229,
+      "argmax_hex": "0xe5",
+      "argmax_prob": -0.4862,
+      "E4-中": -0.9605,
+      "E5-左右": -0.4862,
+      "E6-未": -6.6729
     },
     {
       "target": "中间",
-      "argmax_symbol": 256,
-      "argmax_hex": "0x100",
-      "argmax_prob": -0.7112,
-      "E4-中": -1.675,
-      "E5-左右": -1.1348,
-      "E6-未": -12.1387
+      "argmax_symbol": 229,
+      "argmax_hex": "0xe5",
+      "argmax_prob": -0.491,
+      "E4-中": -0.95,
+      "E5-左右": -0.491,
+      "E6-未": -8.0366
     },
     {
       "target": "中间",
-      "argmax_symbol": 256,
-      "argmax_hex": "0x100",
-      "argmax_prob": -0.8731,
-      "E4-中": -1.5784,
-      "E5-左右": -0.9783,
-      "E6-未": -13.4774
+      "argmax_symbol": 229,
+      "argmax_hex": "0xe5",
+      "argmax_prob": -0.4658,
+      "E4-中": -0.9913,
+      "E5-左右": -0.4658,
+      "E6-未": -7.8754
     },
     {
       "target": "中间",
-      "argmax_symbol": 256,
-      "argmax_hex": "0x100",
-      "argmax_prob": -0.6694,
-      "E4-中": -1.7116,
-      "E5-左右": -1.1802,
-      "E6-未": -11.5968
+      "argmax_symbol": 229,
+      "argmax_hex": "0xe5",
+      "argmax_prob": -0.4944,
+      "E4-中": -0.9455,
+      "E5-左右": -0.4944,
+      "E6-未": -7.5976
     }
   ],
   "e4_finite_anywhere": true,
   "argmax_histogram": {
-    "0xe5": 2,
-    "0xe6": 8,
-    "0x100": 22
+    "0xe5": 24,
+    "0xe6": 8
   }
 }

@@ -1,0 +1,225 @@
+{
+  "schema": "taiji-a-gate-seed-sweep-readout-v2",
+  "card": "22.5.0.A",
+  "protocol": {
+    "fixture": "taiji-first-A-v2-3body",
+    "worlds": 768,
+    "batch": 8,
+    "d": 32,
+    "readout": "pixel-salience",
+    "eos_masked_in_loss": false,
+    "lr": 0.005,
+    "warmup_steps": 200,
+    "grad_clip": 1.0,
+    "seeds": [
+      20261110,
+      20261111,
+      20261112
+    ],
+    "total_updates": 2000,
+    "composition": "probe(300) + resume(1700) == straight(2000) after the 2026-11-19 cursor/warmup fixes (scripts/training/run_a_gate_pixel_parallel_20261118.py); seed 20261110's morning resume ran pre-fix with a warmup restart",
+    "cross_schedule_evidence": "seed 20261110 straight 2000 with lr 1e-2, no warmup/clip reached the same 31/32 (commit 9f55b5d82)"
+  },
+  "gate": {
+    "fit_readings": [
+      31,
+      14,
+      31
+    ],
+    "fit_denominator": 32,
+    "fit_median": 0.96875,
+    "fit_threshold": 0.8,
+    "verdict": "fit_median_ge_threshold",
+    "not_signed": [
+      "check (exposure 1/2 remaining, unread)",
+      "A parent",
+      "any capability"
+    ]
+  },
+  "probe_300": [
+    {
+      "run": "a_pixel_parallel_20261119T032742Z",
+      "seed": 20261110,
+      "d": 32,
+      "updates": 300,
+      "fit_correct": 16,
+      "fit_denominator": 32,
+      "delta_spread": 0.20852,
+      "probe": {
+        "train": 0.7656,
+        "fit": 0.5
+      }
+    },
+    {
+      "run": "a_pixel_parallel_20261119T033848Z",
+      "seed": 20261110,
+      "d": 32,
+      "updates": 1700,
+      "fit_correct": 31,
+      "fit_denominator": 32,
+      "delta_spread": 0.231792,
+      "probe": {
+        "train": 1.0,
+        "fit": 0.9688
+      }
+    },
+    {
+      "run": "a_pixel_parallel_20261119T034124Z",
+      "seed": 20261111,
+      "d": 32,
+      "updates": 300,
+      "fit_correct": 8,
+      "fit_denominator": 32,
+      "delta_spread": 0.009584,
+      "probe": {
+        "train": 0.5,
+        "fit": 0.2969
+      }
+    },
+    {
+      "run": "a_pixel_parallel_20261119T035058Z",
+      "seed": 20261112,
+      "d": 32,
+      "updates": 300,
+      "fit_correct": 13,
+      "fit_denominator": 32,
+      "delta_spread": 0.083213,
+      "probe": {
+        "train": 0.6406,
+        "fit": 0.375
+      }
+    },
+    {
+      "run": "a_pixel_parallel_20261119T034353Z",
+      "seed": 20261211,
+      "d": 32,
+      "updates": 300,
+      "fit_correct": 9,
+      "fit_denominator": 32,
+      "delta_spread": 0.086417,
+      "probe": {
+        "train": 0.5625,
+        "fit": 0.4062
+      }
+    },
+    {
+      "run": "a_pixel_parallel_20261119T035325Z",
+      "seed": 20261212,
+      "d": 32,
+      "updates": 300,
+      "fit_correct": 8,
+      "fit_denominator": 32,
+      "delta_spread": 0.011663,
+      "probe": {
+        "train": 0.4219,
+        "fit": 0.25
+      }
+    },
+    {
+      "run": "a_pixel_parallel_20261119T034612Z",
+      "seed": 20261311,
+      "d": 32,
+      "updates": 300,
+      "fit_correct": 11,
+      "fit_denominator": 32,
+      "delta_spread": 0.093679,
+      "probe": {
+        "train": 0.5781,
+        "fit": 0.4219
+      }
+    },
+    {
+      "run": "a_pixel_parallel_20261119T035556Z",
+      "seed": 20261312,
+      "d": 32,
+      "updates": 300,
+      "fit_correct": 10,
+      "fit_denominator": 32,
+      "delta_spread": 0.06256,
+      "probe": {
+        "train": 0.4688,
+        "fit": 0.3125
+      }
+    },
+    {
+      "run": "a_pixel_parallel_20261119T034831Z",
+      "seed": 20261411,
+      "d": 32,
+      "updates": 300,
+      "fit_correct": 10,
+      "fit_denominator": 32,
+      "delta_spread": 0.065343,
+      "probe": {
+        "train": 0.625,
+        "fit": 0.25
+      }
+    }
+  ],
+  "probe_300_unfinished": "base 20261112 offset 300 (seed 20261412) was never probed; owner stopped the sweep",
+  "probe_criterion_finding": "spread>0.1 @300 misprunes: seed 20261112-o0 spread 0.083 (refused) reaches 0.969 @2000; seed 20261111-o0 spread 0.0096 (refused) reaches 0.4375 @2000; criterion neither necessary nor sufficient - discontinued",
+  "final_2000": [
+    {
+      "seed": 20261110,
+      "fit_correct": 31,
+      "fit_denominator": 32,
+      "delta_spread": 0.231792,
+      "linear_probe": null,
+      "checkpoint": "output/a_pixel_parallel_20261119T033848Z/segment.bin",
+      "note": "morning resume by owner, pre-fix runner: warmup restarted at resume (lr dip 200 steps); reading robust across the dip"
+    },
+    {
+      "seed": 20261111,
+      "fit_correct": 14,
+      "fit_denominator": 32,
+      "delta_spread": 0.029976,
+      "linear_probe": {
+        "train": 0.6094,
+        "fit": 0.4375
+      },
+      "checkpoint": "output/a_pixel_parallel_20261119T045931Z/segment.bin",
+      "note": "rerun after same-second directory collision lost the first attempt's reading"
+    },
+    {
+      "seed": 20261112,
+      "fit_correct": 31,
+      "fit_denominator": 32,
+      "delta_spread": 0.223311,
+      "linear_probe": {
+        "train": 1.0,
+        "fit": 0.9688
+      },
+      "checkpoint": "output/a_pixel_parallel_20261119T045222Z/segment.bin",
+      "note": "probe mispruned this arm (spread 0.083 @300 < 0.1); resumed after fix, 0.969 @2000"
+    }
+  ],
+  "place_augmented_straight_2000": {
+    "caveat": "run by owner 2026-11-19 morning with an uncommitted pixel_readout.place-augmented build, reverted before recording; readings recovered with strict=False (place tensor nonzero, byte path caveat); checkpoints deleted after recording",
+    "rows": [
+      {
+        "seed": 20261110,
+        "fit_correct": 8,
+        "delta_spread": 0.018705,
+        "place_max_abs": 0.9306877
+      },
+      {
+        "seed": 20261111,
+        "fit_correct": 8,
+        "delta_spread": 0.009595,
+        "place_max_abs": 0.9771624
+      },
+      {
+        "seed": 20261112,
+        "fit_correct": 30,
+        "delta_spread": 0.225491,
+        "place_max_abs": 1.4926126
+      }
+    ],
+    "arm_instability_reading": "each seed passes under one configuration and fails under another (10: clean-pass/place-fail; 12: place-pass/clean-pass-after-misprune) - instability is seed x configuration level, not a permanently dead seed"
+  },
+  "run_conditions": {
+    "recovery_readout_threads": 4,
+    "runner_main_torch_threads": 12,
+    "runner_worker_threads": 1,
+    "resume_fix_end_to_end_validated": "seed 20261112 resume reading matches healthy straight-run signature"
+  }
+}
