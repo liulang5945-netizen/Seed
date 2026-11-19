@@ -21,6 +21,7 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import os
 import random
 import sys
 import time
@@ -192,6 +193,9 @@ def diagnosis(contract) -> int:
 def run_arm(contract, which: str) -> int:
     started = time.process_time()
     torch.set_num_threads(1)
+    steps = int(os.environ.get("TAIJI_E5_STEPS", str(STEPS)))
+    smoke = steps != STEPS
+    aligned = which in ("A2", "B2")
     data = a5.atomic_load(ROOT / contract["data_root"])
     if value_digest(data) != contract["data_digest"]:
         raise ValueError("data_digest_mismatch")
@@ -205,19 +209,22 @@ def run_arm(contract, which: str) -> int:
     parent_keys = {k for k in model.state_dict() if not k.startswith("record_organ.")}
     before = value_digest({k: v for k, v in model.state_dict().items() if k in parent_keys})
     organ = model.record_organ
-    if which == "A":
+    if which in ("A", "B2"):
         organ.attention = MethodType(_cosine_attention, organ)
     optimizer = torch.optim.Adam(organ.parameters(), lr=0.01, weight_decay=1e-4)
     rng = random.Random(20261110)
-    for _ in range(STEPS):
+    for _ in range(steps):
         item = rng.choice(train_items)
         other = rng.choice(train_items)
         index = rng.randrange(len(templates))
         record = item["records"][index]
         entity = item["entity"].encode()
+        # r2 alignment: the organ is trained on the same query distribution it
+        # faces at evaluation (the full request), instead of the bare entity.
+        query = f"{item['entity']}{SUFFIX}".encode() if aligned else entity
         windows = windows_of(record)
-        attention = organ.attention(entity, record)
-        if which == "A":
+        attention = organ.attention(query, record)
+        if which in ("A", "A2", "B2"):
             hits = [i for i, w in enumerate(windows) if w == item["target"]]
             if not hits or other["entity"] == item["entity"]:
                 continue
@@ -232,7 +239,7 @@ def run_arm(contract, which: str) -> int:
             templates[index].format(entity=other["entity"], label=other["target"].decode()).encode()
         )
         if other["entity"] != item["entity"]:
-            attention_negative = organ.attention(entity, negative)
+            attention_negative = organ.attention(query, negative)
             loss = loss - torch.log(attention_negative[-1].clamp_min(1e-9))
         optimizer.zero_grad(set_to_none=True)
         loss.backward()
@@ -284,13 +291,15 @@ def run_arm(contract, which: str) -> int:
         "card": "22.5.1/E5.10r1",
         "arm": which,
         "subject": SUBJECT,
-        "mechanism": (
-            "consistent-cosine attention (instance patch, disclosed no-extra-scale deviation)"
-            if which == "A"
-            else "direct match supervision (entity-window log-sum CE + sentinel on true mismatch)"
-        ),
+        "mechanism": {
+            "A": "consistent-cosine attention (instance patch, disclosed no-extra-scale deviation)",
+            "B": "direct match supervision (entity-window log-sum CE + sentinel on true mismatch)",
+            "A2": "pure query alignment: trained on the full request, dot scores, E5.11 loss verbatim",
+            "B2": "alignment x cosine: A2 protocol plus the consistent-cosine attention patch",
+        }[which],
         "wiring": "route reads current request (defect fix a7c992e95)",
-        "steps": STEPS,
+        "steps": steps,
+        "smoke": smoke,
         "a_correct": a_correct,
         "a_denominator": len(data["fit"]),
         "b_correct": b_correct,
@@ -303,7 +312,8 @@ def run_arm(contract, which: str) -> int:
         "verdict": f"arm_{which.lower()}_passes" if passed else f"arm_{which.lower()}_fails",
         "cpu": round(time.process_time() - started, 2),
     }
-    out = ROOT / f"reports/taiji_u2_e5_10r1_arm_{which.lower()}_20261119.json"
+    suffix = "-wiring-smoke" if smoke else ""
+    out = ROOT / f"reports/taiji_u2_e5_10r1_arm_{which.lower()}{suffix}_20261119.json"
     out.write_bytes(json.dumps(payload, ensure_ascii=False, indent=2).encode() + b"\n")
     print(
         json.dumps(
@@ -329,7 +339,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     mutex = parser.add_mutually_exclusive_group(required=True)
     mutex.add_argument("--diagnosis", action="store_true")
-    mutex.add_argument("--arm", choices=("A", "B"))
+    mutex.add_argument("--arm", choices=("A", "B", "A2", "B2"))
     args = parser.parse_args()
     contract = json.loads(CONTRACT.read_text(encoding="utf-8"))
     if args.diagnosis:
