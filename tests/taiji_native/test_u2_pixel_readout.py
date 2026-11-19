@@ -2,6 +2,7 @@
 
 from dataclasses import replace
 from functools import cache
+from pathlib import Path
 
 import pytest
 import torch
@@ -29,6 +30,9 @@ from taiji.u2_pixel_read import (
 from taiji.u2_subject import U2Config, U2Subject
 
 IDENTITIES = (READOUT_V1, READOUT_V2)
+ACCEPTED_PARENT = Path(__file__).resolve().parents[2] / (
+    "output/a_pixel_parallel_20261119T063705Z/segment.bin"
+)
 
 
 def make(readout=READOUT_V2):
@@ -83,6 +87,41 @@ def test_identity_isolation_keeps_v1_byte_layout_frozen():
         "out.bias": (32,),
     }
     assert model.pixel_unit_owners == unit_registry()
+
+
+def test_v1_identity_keeps_the_pre_s0_delta_head_layout():
+    """The accepted parent's strict load requires the v1 delta-head bias vectors.
+
+    The S0 revision removed both biases; that removal belongs to the new v2
+    identity only.  Rebuilding the v1 bias vectors here guards the accepted
+    checkpoint layout (see S1 / the accepted-parent load probe).
+    """
+    v1_parameters = set(dict(make(READOUT_V1).named_parameters()))
+    v2_parameters = set(dict(make(READOUT_V2).named_parameters()))
+    assert {
+        "delta_head.0.weight",
+        "delta_head.0.bias",
+        "delta_head.2.weight",
+        "delta_head.2.bias",
+    } <= v1_parameters
+    assert {"delta_head.0.bias", "delta_head.2.bias"}.isdisjoint(v2_parameters)
+
+
+@pytest.mark.skipif(
+    not ACCEPTED_PARENT.is_file(),
+    reason="local accepted A parent checkpoint is gitignored by policy",
+)
+def test_accepted_a_parent_loads_strictly_under_the_v1_identity():
+    from taiji.u2_history import atomic_load
+
+    payload = atomic_load(ACCEPTED_PARENT)
+    assert payload["description"]["config"]["readout"] == READOUT_V1
+    model = U2Subject(U2Config(**payload["description"]["config"]))
+    first = next(iter(payload["parameters"].values()))
+    model = model.to(dtype=first.dtype, device=first.device)
+    model.load_state_dict(payload["parameters"])
+    model.parameter_revision = payload["revision"]
+    assert model.parameter_revision == payload["revision"]
 
 
 def test_identity_isolation_registers_the_s0_revision_separately():

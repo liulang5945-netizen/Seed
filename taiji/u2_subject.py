@@ -675,16 +675,23 @@ class U2Subject(_WorldKernel):
                 # Dedicated logit path for the readout delta: the shared byte head
                 # has weights that the class prior dominates, so the delta gets its
                 # own rows.  Zero-initialised, so birth stays neutral.
-                # A single linear map on the delta is provably the same function as
-                # adding a second linear head, so the delta path gets a small MLP:
-                # it can form the interaction between the readout and the emission
-                # context that a sum of two linear maps cannot.  The last layer is
-                # zero-initialised, so birth stays neutral.
-                self.delta_head = nn.Sequential(
-                    nn.Linear(d, 4 * d, bias=False),
-                    nn.GELU(),
-                    nn.Linear(4 * d, 257, bias=False),
-                )
+                # Identity rule: the frozen v1 identity keeps the exact pre-S0
+                # delta head (including its two bias vectors) so accepted parent
+                # checkpoints load strictly; the S0 v2 identity uses the
+                # bias-free revision that removes the double-zero saddle point.
+                if config.readout == "pixel-salience":
+                    self.delta_head = nn.Sequential(
+                        nn.Linear(d, 4 * d), nn.GELU(), nn.Linear(4 * d, 257)
+                    )
+                    delta_output = cast(nn.Linear, self.delta_head[2])
+                    nn.init.zeros_(delta_output.weight)
+                    nn.init.zeros_(delta_output.bias)
+                else:
+                    self.delta_head = nn.Sequential(
+                        nn.Linear(d, 4 * d, bias=False),
+                        nn.GELU(),
+                        nn.Linear(4 * d, 257, bias=False),
+                    )
             if getattr(config, "record_organ", False):
                 # A record-reading organ: new tensors only, deterministically seeded
                 # inside fork_rng and born neutral so attaching it leaves the parent
