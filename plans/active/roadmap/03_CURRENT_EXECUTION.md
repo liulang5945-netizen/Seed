@@ -4206,3 +4206,8 @@ joint24 基座 30 单位后取错分项：信用臂（top-5 单元按 ‖∇p‖
 ## 2026-11-20 持续学习结构性阻碍（D-20261119-73，零训练结论）
 
 D-72 实测顺序微调遗忘 0.69–0.88、20% 重放仍 0.53–0.66。架构分析：RouteBGraph 单一 readout 是所有任务唯一出口；冻结旧单元无法阻止新单元 p 列改变旧读出（除非 p 恒 0 即不可学），冻结读出则新任务无判别方向 ⇒ **参数隔离在当前单读出架构不可实现**。需任务专属/条件读出或多模块独立读出，属架构变更（u2_neural_units 新 pin 新卡）。learning(新)＋retention(旧) 组合在架构前记为范围受限 negative，不得靠重放比例/调门凑过。零 check/final。
+
+
+## 2026-11-20 多读出任务头可行性（D-20261119-74，`multihead_isolation_absent`，45.09 CPU）
+
+架构选项①：MultiHeadGraph（u2_multihead.py，不改 u2_neural_units）——基座 head A 训 joint24→冻结共享单元与 head A→只训新 head B 学动作桶。读数：旧能力 0.969/0.938/1.0 保持后完全相同（drop 0.0 逐位）；新任务 0.4375/0.5625/0.4062（>0.333 但 seed2 <0.433 门）⇒ old_exact ✓ / new_learnable ✗ ⇒ multihead_isolation_absent。判读：任务头＋冻结单元可**精确保持旧能力**（架构级出路），失败仅因线性头容量不足（direct 仅 4 维）。后继：head B 改 MLP(4→16→24) 或增 query 槽，预注册门 old=0 逐位、新≥0.43 且 3 seed 全过、参数配平；通过后 learning+retention 首次可有界 verified（≤150 CPU 新卡）。

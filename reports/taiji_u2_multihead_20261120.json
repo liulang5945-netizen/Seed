@@ -1,0 +1,57 @@
+{
+  "schema": "taiji-u2-multihead-v1",
+  "card": "task-specific readout heads with frozen units (option 1 feasibility)",
+  "created_utc": "2026-11-19T22:27:54.331783+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "base_steps": 1200,
+    "head_steps": 600,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "note": "units and head A frozen; only head B trained on the new task"
+  },
+  "results": [
+    {
+      "seed": 0,
+      "old_before": 0.9688,
+      "old_after": 0.9688,
+      "retention_drop": 0.0,
+      "new_accuracy": 0.4375
+    },
+    {
+      "seed": 1,
+      "old_before": 0.9375,
+      "old_after": 0.9375,
+      "retention_drop": 0.0,
+      "new_accuracy": 0.5625
+    },
+    {
+      "seed": 2,
+      "old_before": 1.0,
+      "old_after": 1.0,
+      "retention_drop": 0.0,
+      "new_accuracy": 0.4062
+    }
+  ],
+  "gates": {
+    "old_exact": true,
+    "new_learnable": false,
+    "new_task_nonzero": true
+  },
+  "verdict": "multihead_isolation_absent",
+  "discipline": {
+    "optimizer_steps": 5400,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 45.09
+  }
+}

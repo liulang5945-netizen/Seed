@@ -5755,3 +5755,14 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **3. 判读**：D-72 的灾难性遗忘不是调参问题，而是**架构缺少任务隔离出口**；在加多读出/模块化之前，`learning（新能力）＋retention（旧能力）` 的组合只能记为**范围受限 negative**，不得靠重放比例或调门凑过。
 
 **4. 后继（新卡/owner 裁定）**：① 多任务读出或任务条件读出（架构变更＋新 pin）；② 独立模块各自读出＋统一门控（更接近 22.5.1 organ 结构）；③ 更小学习率/冻结比例的组合需新预注册，仍不得同范围重试。零 check/final。
+
+
+### D-20261119-74 多读出任务头可行性：旧能力**逐位保持**、新任务部分可学（`multihead_isolation_absent`，45.09 CPU）
+
+**1. 动作**：新增架构选项①实现 [`taiji/u2_multihead.py`](../../taiji/u2_multihead.py)（`MultiHeadGraph`：在 RouteBGraph 上增加任务头列表，不改 `u2_neural_units.py`）＋探针 [`probe_s2_multihead_20261120.py`](../../scripts/training/probe_s2_multihead_20261120.py)：基座用 head A 训 joint24 → **冻结共享单元与 head A** → 只训新 head B 学动作后果（3 类桶）。3 seed、零 check。
+
+**2. 读数**：旧能力 `0.9688/0.9375/1.0` → **保持后完全相同（retention_drop = 0.0，逐位）**；新任务 `0.4375/0.5625/0.4062`（> 机会 0.333，但 seed2 低于 0.433 门）⇒ 门 `old_exact ✓`、`new_learnable ✗` ⇒ **`multihead_isolation_absent`**。
+
+**3. 判读**：**关键进展**——「任务专属读出头＋冻结共享单元」能**精确保持旧能力**（0 遗忘），这是 D-72/73 灾难性遗忘问题的架构级出路；当前失败仅因**线性任务头容量不足**（`direct` 仅 query_slots=4 维），新任务只学到 0.41–0.56。不是方向错误。
+
+**4. 后继（22.x 多读出头正式卡草案）**：head B 改为 **MLP（4→16→24）** 或增加 query 槽；预注册门：旧能力保持 = 0（逐位）、新任务 ≥ 机会+0.1 且 3 seed 全过、head B 训练步数/参数与基线配平；通过后 `learning(新)＋retention(旧)` 首次可记**有界 verified（单主体、joint24＋动作两任务）**。需新卡与预算（≤150 CPU）。
