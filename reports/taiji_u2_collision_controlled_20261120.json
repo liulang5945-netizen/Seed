@@ -1,0 +1,58 @@
+{
+  "schema": "taiji-u2-collision-controlled-v1",
+  "card": "controlled-geometry collision probe (paired toward/away)",
+  "created_utc": "2026-11-19T21:26:18.755526+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "train_pairs": 192,
+    "fit_pairs": 32,
+    "distance_window": [
+      0.45,
+      0.75
+    ],
+    "pushes": 3,
+    "steps": 1200,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "groups": 6,
+    "units": 30
+  },
+  "collision_rate": 0.4141,
+  "toward_collision_rate": 0.8281,
+  "away_collision_rate": 0.0,
+  "baseline_accuracy": 0.5859,
+  "full_accuracies": [
+    0.5781,
+    0.5781,
+    0.5859
+  ],
+  "masked_accuracies": [
+    0.5807,
+    0.5859,
+    0.5859
+  ],
+  "mean_full": 0.5807,
+  "mean_masked": 0.5842,
+  "gates": {
+    "balanced": true,
+    "direction_separates": true,
+    "learnable": false,
+    "direction_contribution": false
+  },
+  "verdict": "controlled_collision_absent",
+  "discipline": {
+    "optimizer_steps": 7200,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 63.91
+  }
+}
