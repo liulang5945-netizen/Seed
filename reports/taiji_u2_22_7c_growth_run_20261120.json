@@ -1,0 +1,205 @@
+{
+  "schema": "taiji-u2-22-7c-growth-run-v1",
+  "criteria_sha256": "d5b21eabfcf960174f9064805b5ce7b1d3eb70f0fa8733a8755d1518c24da728",
+  "created_utc": "2026-11-19T20:25:48.732470+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "task": {
+    "name": "first-A joint colour x position (24 classes)",
+    "adapter": "v3 raw-media palette histogram",
+    "headroom_receipt": "reports/taiji_u2_22_7_joint24_20261120.json",
+    "chance": 0.0417
+  },
+  "arms": {
+    "G0_growth": {
+      "0": {
+        "arm": "G0_growth",
+        "seed": 0,
+        "accuracy": 0.78125,
+        "retention_drop": 0.0,
+        "birth_neutral_diff": 0.0,
+        "birth": {
+          "before_units": 32,
+          "after_units": 33,
+          "newborn_id": "u0032",
+          "parent_ids": [
+            "u0000"
+          ],
+          "birth_version": 1
+        },
+        "recovery_exact": true,
+        "units_final": 33,
+        "mature_units": 33,
+        "immature_units": 0
+      },
+      "1": {
+        "arm": "G0_growth",
+        "seed": 1,
+        "accuracy": 0.625,
+        "retention_drop": 0.0,
+        "birth_neutral_diff": 0.0,
+        "birth": {
+          "before_units": 32,
+          "after_units": 33,
+          "newborn_id": "u0032",
+          "parent_ids": [
+            "u0000"
+          ],
+          "birth_version": 1
+        },
+        "recovery_exact": true,
+        "units_final": 33,
+        "mature_units": 33,
+        "immature_units": 0
+      },
+      "2": {
+        "arm": "G0_growth",
+        "seed": 2,
+        "accuracy": 0.625,
+        "retention_drop": 0.0,
+        "birth_neutral_diff": 0.0,
+        "birth": {
+          "before_units": 32,
+          "after_units": 33,
+          "newborn_id": "u0032",
+          "parent_ids": [
+            "u0000"
+          ],
+          "birth_version": 1
+        },
+        "recovery_exact": true,
+        "units_final": 33,
+        "mature_units": 33,
+        "immature_units": 0
+      }
+    },
+    "C1_no_growth": {
+      "0": {
+        "arm": "C1_no_growth",
+        "seed": 0,
+        "accuracy": 0.78125,
+        "retention_drop": 0.0,
+        "birth_neutral_diff": 0.0,
+        "birth": null,
+        "recovery_exact": null,
+        "units_final": 32,
+        "mature_units": 32,
+        "immature_units": 0
+      },
+      "1": {
+        "arm": "C1_no_growth",
+        "seed": 1,
+        "accuracy": 0.625,
+        "retention_drop": 0.0,
+        "birth_neutral_diff": 0.0,
+        "birth": null,
+        "recovery_exact": null,
+        "units_final": 32,
+        "mature_units": 32,
+        "immature_units": 0
+      },
+      "2": {
+        "arm": "C1_no_growth",
+        "seed": 2,
+        "accuracy": 0.625,
+        "retention_drop": 0.0,
+        "birth_neutral_diff": 0.0,
+        "birth": null,
+        "recovery_exact": null,
+        "units_final": 32,
+        "mature_units": 32,
+        "immature_units": 0
+      }
+    },
+    "C2_preallocated": {
+      "0": {
+        "arm": "C2_preallocated",
+        "seed": 0,
+        "accuracy": 0.78125,
+        "retention_drop": 0.0,
+        "birth_neutral_diff": 0.0,
+        "birth": {
+          "before_units": 32,
+          "after_units": 33,
+          "newborn_id": "u0032",
+          "parent_ids": [
+            "u0000"
+          ],
+          "birth_version": 1
+        },
+        "recovery_exact": null,
+        "units_final": 33,
+        "mature_units": 33,
+        "immature_units": 0
+      },
+      "1": {
+        "arm": "C2_preallocated",
+        "seed": 1,
+        "accuracy": 0.625,
+        "retention_drop": 0.0,
+        "birth_neutral_diff": 0.0,
+        "birth": {
+          "before_units": 32,
+          "after_units": 33,
+          "newborn_id": "u0032",
+          "parent_ids": [
+            "u0000"
+          ],
+          "birth_version": 1
+        },
+        "recovery_exact": null,
+        "units_final": 33,
+        "mature_units": 33,
+        "immature_units": 0
+      },
+      "2": {
+        "arm": "C2_preallocated",
+        "seed": 2,
+        "accuracy": 0.625,
+        "retention_drop": 0.0,
+        "birth_neutral_diff": 0.0,
+        "birth": {
+          "before_units": 32,
+          "after_units": 33,
+          "newborn_id": "u0032",
+          "parent_ids": [
+            "u0000"
+          ],
+          "birth_version": 1
+        },
+        "recovery_exact": null,
+        "units_final": 33,
+        "mature_units": 33,
+        "immature_units": 0
+      }
+    }
+  },
+  "gains": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "mean_gain": 0.0,
+  "paired_lower_bound": 0.0,
+  "retention_drop_upper_bound": 0.0,
+  "recovery_exact": true,
+  "birth_neutral": true,
+  "references_cleanup": true,
+  "flops_ratio": 1.0312,
+  "verdict": "growth_gain_absent",
+  "budget": {
+    "cap_cpu": 250.0,
+    "cpu": 97.12
+  },
+  "discipline": {
+    "optimizer_steps": 13500,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 97.12
+  }
+}

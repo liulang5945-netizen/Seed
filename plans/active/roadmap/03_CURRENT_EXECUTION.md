@@ -4061,3 +4061,8 @@ r3（32 单位/lr 3e-3/2,000 步/batch 64，43.02≤帽 150 CPU）：梯度流 �
 ## 2026-11-20 出生非中性根因修复（D-20261119-44，`birth_neutral_with_projection`，24.19 CPU）
 
 根因：22.7b 训练环漏 `project_parameters_()`，c/eta/b/w 漂出参数化空间；`with_neutral_birth` 对拷贝旧参数做投影把其夹回合法域 → 旧读出改变。每步投影后 3/3 seed 出生前后 logits **最大差 0.0、argmax 翻转 0**（32 项）⇒ `birth_neutral_with_projection`。修正 D-42「with_neutral_birth 违反 SPEC §5」表述为「训练协议漏投影」；22.7b 判词 retention_breach 不变、归因更新。后继＝22.7c 新卡（投影训练＋出生逐位一致前置门）再测生长收益，不复活旧卡。零 check/final；不改 u2_neural_units.py 源码（pin 保持）。
+
+
+## 2026-11-20 22.7c 投影训练生长对照（D-20261119-45，`growth_gain_absent`，97.12 CPU）
+
+每步投影后出生逐位一致前置门通过；三臂逐项一致（0.78125/0.625/0.625×3 seed）、净益 [0,0,0]、均值 0、配对 LB 0 ⇒ growth_gain_absent；旧能力损伤 0、恢复 exact、引用清理通过。归因：with_neutral_birth 双零（r_new=0 且 p_new=0）→ activity=0 → p 梯度∝activity=0、r 梯度∝p=0 ⇒ **新生儿永久不可学（死单元）**；这不是生长无用，是出生初始化缺陷。修正方向：p_new=0 保持瞬时中性、r_new 小随机/继承父行使 activity≠0，p 第一步即获梯度；前置门升级为「logits 逐位一致＋N 步内梯度/权重可测变化」；通过后 22.7d 重测。不改 u2_neural_units.py（pin 保持）；0 check/final。

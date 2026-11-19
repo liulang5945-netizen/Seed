@@ -5418,3 +5418,16 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **4. 判读与修正**：D-20261119-42 的「`with_neutral_birth` 违反 SPEC §5」表述**被本条修正**为「训练协议漏投影导致出生态越界」；22.7b 判词（`retention_breach`）不变——其协议即未投影，结果有效，但归因更新。后继＝**22.7c 新卡**：投影训练＋「出生前后 logits 逐位一致」前置门，再测生长收益；不复活 22.7b，不改其判词。
 
 **5. 边界**：零 check/final；不改 `taiji/u2_neural_units.py` 源码（既有合同 pin 保持有效），修复落在**训练协议与前置门**。
+
+
+### D-20261119-45 22.7c 投影训练生长对照：`growth_gain_absent`（增益 0）；归因＝双零初始化使新生儿为**死单元**
+
+**1. 动作**：新卡 22.7c（joint24、每步投影、出生逐位一致前置门、三臂等步数 1,500、3 seed、帽 250 CPU），合同 [`taiji_u2_22_7c_growth_joint24_20261120.json`](../../plans/manifests/taiji_u2_22_7c_growth_joint24_20261120.json)＋runner [`run_s2_22_7c_growth_joint24_20261120.py`](../../scripts/training/run_s2_22_7c_growth_joint24_20261120.py)＋[结果卡](../reference/RESULT-TAIJI_U2_22_7C_GROWTH_20261120.md)。**0 check/final。**
+
+**2. 读数**（`97.12 ≤ 帽 250 CPU`）：三臂逐项完全一致（seed 0/1/2：`0.78125/0.625/0.625`）；出生前置门通过（`birth_neutral_diff=0.0`、旧能力损伤 0、恢复 exact、引用清理 ✓）；**净益 `[0,0,0]`均值 0、配对 LB 0 ⇒ `growth_gain_absent`**。
+
+**3. 归因**：`with_neutral_birth` 同时置 `r_new=0` 与 `p_new=0`——`drive=0 ⇒ z=0 ⇒ activity=0`，故 `p_new` 梯度 ∝ activity 为 0、`r_new` 梯度 ∝ `p_new` 为 0，**双零把输入/输出通路同时关闭，新生儿永久不可学**。三臂相同即死单元证据。这不是「生长无用」，是出生初始化设计缺陷。
+
+**4. 修正方向（须新卡 22.7d）**：出生保持 `p_new=0`（瞬时中性），但 `r_new` 取小随机或继承父行向量使 `activity_new≠0`，`p_new` 第一步即获梯度；前置门升级为 ①出生前后 logits 逐位一致 ②出生后 N 步内 `r_new/p_new` 梯度非零且权重可测变化。通过后再测生长收益。
+
+**5. 边界**：不签生长收益/损失；不改 `u2_neural_units.py` 源码（pin 保持）；22.7 原卡仍 `growth_not_needed_in_scope`，22.7b/22.7c 均不复活。
