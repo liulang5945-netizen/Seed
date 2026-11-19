@@ -4006,3 +4006,8 @@ session1＝联合门子体（train[:64] 训练 256 步）；session2＝同一子
 ## 2026-11-20 22.7.0-α 接口探针 r1/r2（D-20261119-32，`adapter_insufficient`；r3 预注册）
 
 r1（fit[:24]→fit[24:]）：梯度流 ✓、loss 降 99%（过拟合 24 题）、评测 0.125/0.125/0.625≈机会、capsule 跨进程重载 3/3 逐位一致。r2（train 256→fit 32，batch 24/lr 1e-3/500 步）：梯度流 ✓、loss 仅降 0.05–1.2%、评测 ≈机会、重载 3/3。两轮判 `adapter_insufficient`：**接口侧成立，可学习性未立**（8 单位图＋统计特征不足），不能作七臂任务面。r3 预注册：32 单位、lr 3e-3、2,000 步、batch 64、cosine 100，判据不变（loss 降≥20%、fit 评测≥0.5 且≥2/3 seed、重载一致、0 check、≤150 CPU）；仍不达标则换任务面并报 owner，不改判据。零 check/final、22.7 仍锁定。
+
+
+## 2026-11-20 22.7.0-α r3＋适配器诊断（D-20261119-33，仍 `adapter_insufficient`，根因是特征无信号）
+
+r3（32 单位/lr 3e-3/2,000 步/batch 64，43.02≤帽 150 CPU）：梯度流 ✓、重载 3/3 一致，但 loss 仅降 6.0%/3.4%/3.5%、评测 0.1875≈机会 ⇒ `adapter_insufficient`。线性 softmax 探针诊断同一 48 维特征：train 0.3672、fit 0.1875≈机会 ⇒ **`adapter_signal_insufficient`**，即适配器统计特征抹掉了「哪个颜色在哪个位置」的判别信息。下一步：感知式适配器 v2（原始媒体 rgb 16×3＋coordinates → 颜色×位置三分桶直方图，不用标签/oracle），先线性探针预验（≥0.6），再做 r4（同图配置、判据不变、帽 150 CPU）；若仍无信号则改任务面并报 owner。零 check/final、22.7 仍锁定。

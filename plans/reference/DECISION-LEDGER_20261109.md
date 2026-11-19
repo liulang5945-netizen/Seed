@@ -5288,3 +5288,16 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **4. r3 预注册（下一轮，帽 150 CPU）**：单位图 4 groups×8 units＝32、lr 3e-3、steps 2,000、batch 64、cosine warmup 100；判据＝梯度流、loss 降 ≥20%、fit 32 评测 ≥0.5 且 ≥2/3 seed、capsule 重载逐位一致、`0 check/final`；出口同 r2。若仍不达标 ⇒ 「单位图＋统计适配器在 first-A 不可学」，α 换任务面（2 类判定或 C 池）并报 owner，**不得改判据凑通过**。
 
 **5. 边界**：零 check/final、22.7 仍锁定、不签能力；r1/r2 回执保留；设计卡 §2 同步 α 状态。
+
+
+### D-20261119-33 22.7.0-α r3＋适配器信息量诊断（`adapter_insufficient`；根因＝特征无标签信号，需适配器 v2）
+
+**1. 动作**：按 D-32 预注册执行 r3（32 单位、lr 3e-3、2,000 步、batch 64、cosine warmup 100）[`probe_s2_22_7_0_alpha_r3_20261120.py`](../../scripts/training/probe_s2_22_7_0_alpha_r3_20261120.py)，并新增零图诊断 [`probe_s2_22_7_0_alpha_adapter_20261120.py`](../../scripts/training/probe_s2_22_7_0_alpha_adapter_20261120.py) 用线性 softmax 探针检验 48 维统计适配器是否含标签信号。回执 [`r3`](../../reports/taiji_u2_22_7_0_alpha_r3_20261120.json)／[`adapter probe`](../../reports/taiji_u2_22_7_0_alpha_adapter_probe_20261120.json)。**`0 check/final`。**
+
+**2. 读数**：r3（实耗 `43.02 ≤ 帽 150 CPU`，3 seed）梯度流 ✓、重载 3/3 逐位一致，但 loss 仅降 `6.0%/3.4%/3.5%`（<20%）、评测 `0.1875/0.1875/0.1875`≈机会（0.25）⇒ 仍 `adapter_insufficient`。**诊断**：同一 48 维特征上线性 softmax 探针 train `0.3672`、fit `0.1875`（≈机会）⇒ **特征几乎不含标签信号**（`adapter_signal_insufficient`，`2.81 CPU`）。
+
+**3. 判读**：两轮图训练都失败的主因是**适配器特征无判别信息**（全局统计抹掉了「哪个颜色的物体在左/中/右」），不是单位图优化能力。继续调图超参无意义；下一步必须换**感知式适配器 v2**：从世界原始媒体（rgb 16 采样×3 通道＋coordinates）构造「颜色×位置三分桶」直方图特征（只读媒体/坐标，不用标签或 oracle），再用线性探针预验（≥0.6 才允许 r4）。
+
+**4. 后继（预注册）**：r4＝适配器 v2＋r3 同图配置（32 单位/lr 3e-3/2,000 步/batch 64），判据不变（loss 降≥20%、fit 评测≥0.5 且≥2/3 seed、重载一致、0 check、帽 150 CPU）；若适配器 v2 探针仍≈机会 ⇒ α 任务面改用更简单 2 类判定或 C 池，并报 owner 裁定，**不得改判据凑通过**。
+
+**5. 边界**：零 check/final、22.7 仍锁定、不签能力；r1/r2/r3/adapter 回执全部保留。

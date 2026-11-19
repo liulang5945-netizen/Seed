@@ -1,0 +1,18 @@
+{
+  "schema": "taiji-u2-22-7-0-alpha-adapter-probe-v1",
+  "card": "alpha adapter informativeness diagnostic (linear softmax probe)",
+  "created_utc": "2026-11-19T19:18:04.595863+00:00",
+  "features": 48,
+  "train_accuracy": 0.3672,
+  "fit_accuracy": 0.1875,
+  "chance": 0.25,
+  "verdict": "adapter_signal_insufficient",
+  "discipline": {
+    "graph_optimizer_steps": 0,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 2.81
+  }
+}
