@@ -1,0 +1,40 @@
+{
+  "schema": "taiji-u2-22-7-0-lifecycle-ext-v1",
+  "card": "22.7.0-pre lifecycle extension (cross-process / refs / state growth)",
+  "created_utc": "2026-11-19T19:06:41.185442+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "checks": {
+    "state_old_prefix_preserved": true,
+    "state_newborn_zero": true,
+    "newborn_state_neutral_after_forward": true,
+    "newborn_is_immature": true,
+    "no_dangling_parent_ids": true,
+    "no_active_edge_touches_retired": true,
+    "gating_cut_for_non_mature": true,
+    "capsule_summary_consistent": true,
+    "reload_subprocess_ok": true,
+    "reload_bitwise_exact": true,
+    "reload_counts_preserved": true
+  },
+  "readings": {
+    "in_process_digest": "3c2189f084e0b7611bce1ae39d20962fd516544062d6d5dfc3a7a593cce82440",
+    "reload_digest": "3c2189f084e0b7611bce1ae39d20962fd516544062d6d5dfc3a7a593cce82440",
+    "retired_units": 1,
+    "dormant_units": 1,
+    "units": 7
+  },
+  "verdict": "lifecycle_ext_pass",
+  "scope": "structural lifecycle extension only; no task capability, no training",
+  "discipline": {
+    "optimizer_steps": 0,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 0.02
+  }
+}
