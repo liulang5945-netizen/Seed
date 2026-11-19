@@ -1,0 +1,76 @@
+{
+  "schema": "taiji-u2-unit-differentiation-v1",
+  "card": "exclusive task-bound units: new task reads only its own bound units",
+  "created_utc": "2026-11-19T23:43:15.040554+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "tasks": [
+      "joint24",
+      "action bins"
+    ],
+    "bound_units_per_task": 6,
+    "old_steps": 1000,
+    "new_steps": 600,
+    "gates": "old drop<=1e-9; new>=0.433; ablate drop>=0.20; old under ablation drop<=1e-9; modulation>=1.5"
+  },
+  "results": [
+    {
+      "seed": 0,
+      "old_before": 0.9688,
+      "old_after": 0.9688,
+      "old_retention_drop": 0.0,
+      "new_accuracy": 0.4688,
+      "new_ablated": 0.4688,
+      "ablate_drop": 0.0,
+      "old_under_ablation_drop": 0.0,
+      "bound_modulation": 0.1441
+    },
+    {
+      "seed": 1,
+      "old_before": 0.9375,
+      "old_after": 0.9375,
+      "old_retention_drop": 0.0,
+      "new_accuracy": 0.7812,
+      "new_ablated": 0.3125,
+      "ablate_drop": 0.46875,
+      "old_under_ablation_drop": 0.0,
+      "bound_modulation": 0.0376
+    },
+    {
+      "seed": 2,
+      "old_before": 0.9375,
+      "old_after": 0.9375,
+      "old_retention_drop": 0.0,
+      "new_accuracy": 0.7812,
+      "new_ablated": 0.3125,
+      "ablate_drop": 0.46875,
+      "old_under_ablation_drop": 0.0,
+      "bound_modulation": 0.2304
+    }
+  ],
+  "gates": {
+    "old_retention": true,
+    "new_learnable": true,
+    "necessary_bound_units": false,
+    "isolation_under_ablation": true,
+    "bound_units_selective": false
+  },
+  "verdict": "unit_differentiation_partial",
+  "discipline": {
+    "optimizer_steps": 4800,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 43.95
+  }
+}
