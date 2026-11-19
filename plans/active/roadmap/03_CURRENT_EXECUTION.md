@@ -4121,3 +4121,8 @@ groups=6（全通道路由）＋严格 split（训练 256/fit 只评测）＋四
 ## 2026-11-20 九轴账更新＋四项待裁（D-20261119-56，零训练）
 
 九轴：engineering verified；task verified(fit_face_only，check②未结)；learning verified(路由)/uncovered(内容)；retention verified(严格D breach 披露)；autonomous_choice negative；mature_growth 结构机制 verified/收益 growth_benefit_not_established_in_package_22；recursive_development uncovered；physical_transfer **verified(有界：22.4.2b 仿真动作片段)**；lifetime verified(有界)/长跨度 uncovered。待裁：A 正式资格路径（A 维持/B 需冻 D 口径）、B 22.8与23–30准入、C 真机/多动力学族、D 阶段账处置。建议：A 维持、不解锁长期、真机前先扩仿真多动力学族（零外部依赖、帽150 CPU）、阶段账不改帽。零 check/final。
+
+
+## 2026-11-20 碰撞动力学可行性负结果（D-20261119-57，`collision_dynamics_absent`）
+
+朝最近邻推 3 次（方向随机旋转、强度 0.3–1.0），标签＝邻体位移>0.02；groups=6、30 单位、1,200 步、3 seed、零 check、56.48 CPU。碰撞率 0.527（范围内）、基线 0.527、full 均值 0.621 vs 方向屏蔽 0.616：learnable 差 0.006（需≥0.627）、direction_contribution +0.005<0.05 ⇒ collision_dynamics_absent。判读：标签由最近邻距离主导、动作方向被几何淹没；需控制接触几何/强度阈值的新构造才能测碰撞因果，不得调阈值凑过。physical_transfer 维持 verified（有界：推/位置桶片段）；碰撞/遮挡、真机仍 uncovered。

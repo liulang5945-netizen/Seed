@@ -1,0 +1,52 @@
+{
+  "schema": "taiji-u2-collision-v1",
+  "card": "collision-dynamics feasibility probe",
+  "created_utc": "2026-11-19T21:22:11.589603+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "train_worlds": 256,
+    "fit_worlds": 32,
+    "pushes": 3,
+    "collision_shift": 0.02,
+    "steps": 1200,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "groups": 6,
+    "units": 30
+  },
+  "collision_rate": 0.5273,
+  "baseline_accuracy": 0.5273,
+  "full_accuracies": [
+    0.625,
+    0.6367,
+    0.6016
+  ],
+  "masked_accuracies": [
+    0.6133,
+    0.6406,
+    0.5938
+  ],
+  "mean_full": 0.6211,
+  "mean_masked": 0.6159,
+  "gates": {
+    "collision_rate_in_range": true,
+    "learnable": false,
+    "direction_contribution": false
+  },
+  "verdict": "collision_dynamics_absent",
+  "discipline": {
+    "optimizer_steps": 7200,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 56.48
+  }
+}
