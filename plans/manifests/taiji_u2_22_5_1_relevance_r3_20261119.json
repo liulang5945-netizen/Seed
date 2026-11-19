@@ -1,0 +1,19 @@
+{
+  "schema": "taiji-u2-22-5-1-e5-10-r3-v1",
+  "card": "DESIGN-TAIJI_U2_22_5_1_RELEVANCE_R3_20261119.md",
+  "status": "sanctioned_design_in_progress",
+  "training_authority": false,
+  "owner_ref": "chat:2026-11-19#r3-scope-sanction",
+  "scope_exception": {
+    "justification": "MAINLINE §5 2-revision ratchet reached (r1+r2); owner sanctions a third, representation-layer redesign because the attribution is qualitative (pooled projections cannot express substring matching at any tested scale) and the in-repo pixel-salience precedent proves the multiplicative-match class works in this subject.",
+    "supersedes": "pooled dot/cos attention gate (r1/r2 mechanisms)"
+  },
+  "mechanism": "per-character multiplicative matched filter (see card)",
+  "gates": {
+    "a": "32/32",
+    "b_min": 20,
+    "d_min": 20,
+    "denominator": 24,
+    "parent_digest": "bit-identical throughout"
+  }
+}

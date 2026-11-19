@@ -1,0 +1,21 @@
+{
+  "schema": "taiji-u2-e5-10-r3-birth-probe-v1",
+  "card": "22.5.1/E5.10r3",
+  "organ": "fresh (untrained byte embeddings)",
+  "match": {
+    "n": 24,
+    "mean": 1.0,
+    "std": 0.0
+  },
+  "mismatch": {
+    "n": 24,
+    "mean": 0.2305,
+    "std": 0.2926
+  },
+  "preregistered_criteria": {
+    "match_mean_min": 0.99,
+    "mismatch_mean_max": 0.7
+  },
+  "verdict": "birth_statistic_separates",
+  "cpu": 0.125
+}

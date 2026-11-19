@@ -127,6 +127,92 @@ def _stats(rows: list[float]) -> dict:
     }
 
 
+def _char_rows(organ, text: bytes) -> torch.Tensor:
+    spans = spans_of(text)
+    rows = []
+    for i in range(len(spans)):
+        end = spans[i + 1] if i + 1 < len(spans) else len(text)
+        rows.append(organ.byte(torch.tensor(list(text[spans[i] : end]), dtype=torch.long)).mean(0))
+    return torch.stack(rows) if rows else torch.zeros(0, organ.byte.embedding_dim)
+
+
+def _match_statistic(organ, entity: bytes, record: bytes) -> torch.Tensor:
+    """Max-over-offsets min-over-chars cosine: verbatim substring => exactly 1.0."""
+    query = _char_rows(organ, entity)
+    corpus = _char_rows(organ, record)
+    m, n = len(query), len(corpus)
+    if m == 0 or n < m:
+        return torch.tensor(-1.0)
+    unit_query = query / query.norm(dim=-1, keepdim=True).clamp_min(1e-9)
+    unit_corpus = corpus / corpus.norm(dim=-1, keepdim=True).clamp_min(1e-9)
+    best = torch.tensor(-1.0)
+    for k in range(n - m + 1):
+        block = unit_corpus[k : k + m]
+        per_char = (unit_query * block).sum(-1)
+        best = torch.maximum(best, per_char.min())
+    return best
+
+
+def _r3_route_factory(tau: torch.Tensor, bias: torch.Tensor):
+    def route(self, request: bytes, record: bytes):
+        suffix = SUFFIX.encode()
+        entity = request[: len(request) - len(suffix)] if request.endswith(suffix) else request
+        statistic = _match_statistic(self, entity, record)
+        windows = windows_of(record)
+        if not windows:
+            return None
+        logit = tau * statistic + bias
+        if float(torch.sigmoid(logit)) < 0.5:
+            return None
+        attention = type(self).attention(self, request, record)
+        return windows[int(attention[:-1].argmax())]
+
+    return route
+
+
+def birth_probe(contract) -> int:
+    started = time.process_time()
+    torch.set_num_threads(1)
+    data = a5.atomic_load(ROOT / contract["data_root"])
+    templates = contract["task_b"]["templates"]
+    fit_items = items_of(data["fit"], templates)
+    model = U2Subject(_organ_config(contract, True)).metadata_candidate().request_candidate()
+    organ = model.record_organ
+    match_rows, mismatch_rows = [], []
+    for index, item in enumerate(fit_items):
+        other = fit_items[(index + 1) % len(fit_items)]
+        record = item["records"][index % len(templates)]
+        negative = (
+            templates[index % len(templates)]
+            .format(entity=other["entity"], label=other["target"].decode())
+            .encode()
+        )
+        entity = item["entity"].encode()
+        match_rows.append(float(_match_statistic(organ, entity, record)))
+        mismatch_rows.append(float(_match_statistic(organ, entity, negative)))
+    match_stats, mismatch_stats = _stats(match_rows), _stats(mismatch_rows)
+    separated = (
+        match_stats.get("mean", 0.0) >= 0.99
+        and mismatch_stats.get("mean", 9.0) <= 0.7
+        and match_stats["n"] == 24
+        and mismatch_stats["n"] == 24
+    )
+    payload = {
+        "schema": "taiji-u2-e5-10-r3-birth-probe-v1",
+        "card": "22.5.1/E5.10r3",
+        "organ": "fresh (untrained byte embeddings)",
+        "match": match_stats,
+        "mismatch": mismatch_stats,
+        "preregistered_criteria": {"match_mean_min": 0.99, "mismatch_mean_max": 0.7},
+        "verdict": "birth_statistic_separates" if separated else "birth_statistic_fails",
+        "cpu": round(time.process_time() - started, 4),
+    }
+    out = ROOT / "reports/taiji_u2_e5_10_r3_birth_probe_20261119.json"
+    out.write_bytes(json.dumps(payload, ensure_ascii=False, indent=2).encode() + b"\n")
+    print(json.dumps(payload, ensure_ascii=False))
+    return 0
+
+
 def diagnosis(contract) -> int:
     started = time.process_time()
     torch.set_num_threads(1)
@@ -195,7 +281,7 @@ def run_arm(contract, which: str) -> int:
     torch.set_num_threads(1)
     steps = int(os.environ.get("TAIJI_E5_STEPS", str(STEPS)))
     smoke = steps != STEPS
-    aligned = which in ("A2", "B2")
+    aligned = which in ("A2", "B2", "R3")
     data = a5.atomic_load(ROOT / contract["data_root"])
     if value_digest(data) != contract["data_digest"]:
         raise ValueError("data_digest_mismatch")
@@ -211,7 +297,19 @@ def run_arm(contract, which: str) -> int:
     organ = model.record_organ
     if which in ("A", "B2"):
         organ.attention = MethodType(_cosine_attention, organ)
-    optimizer = torch.optim.Adam(organ.parameters(), lr=0.01, weight_decay=1e-4)
+    scalars: list[torch.Tensor] = []
+    if which == "R3":
+        tau = torch.tensor(4.0, requires_grad=True)
+        bias = torch.tensor(-3.0, requires_grad=True)
+        scalars = [tau, bias]
+        organ.route = MethodType(_r3_route_factory(tau, bias), organ)
+    optimizer = torch.optim.Adam(
+        [
+            {"params": organ.parameters(), "weight_decay": 1e-4},
+            {"params": scalars, "weight_decay": 0.0},
+        ],
+        lr=0.01,
+    )
     rng = random.Random(20261110)
     for _ in range(steps):
         item = rng.choice(train_items)
@@ -224,7 +322,24 @@ def run_arm(contract, which: str) -> int:
         query = f"{item['entity']}{SUFFIX}".encode() if aligned else entity
         windows = windows_of(record)
         attention = organ.attention(query, record)
-        if which in ("A", "A2", "B2"):
+        negative = (
+            templates[index].format(entity=other["entity"], label=other["target"].decode()).encode()
+        )
+        if which == "R3":
+            functional = torch.nn.functional
+            statistic = _match_statistic(organ, entity, record)
+            loss = functional.binary_cross_entropy_with_logits(
+                scalars[0] * statistic + scalars[1], torch.tensor(1.0)
+            )
+            if other["entity"] != item["entity"]:
+                negative_statistic = _match_statistic(organ, entity, negative)
+                loss = loss + functional.binary_cross_entropy_with_logits(
+                    scalars[0] * negative_statistic + scalars[1], torch.tensor(0.0)
+                )
+            hits = [i for i, w in enumerate(windows) if w == item["target"]]
+            if hits:
+                loss = loss - torch.log(attention[hits].sum().clamp_min(1e-9))
+        elif which in ("A", "A2", "B2"):
             hits = [i for i, w in enumerate(windows) if w == item["target"]]
             if not hits or other["entity"] == item["entity"]:
                 continue
@@ -235,10 +350,7 @@ def run_arm(contract, which: str) -> int:
                 loss = -torch.log(attention[entity_hits].sum().clamp_min(1e-9))
             else:
                 loss = -torch.log(attention[-1].clamp_min(1e-9))
-        negative = (
-            templates[index].format(entity=other["entity"], label=other["target"].decode()).encode()
-        )
-        if other["entity"] != item["entity"]:
+        if which != "R3" and other["entity"] != item["entity"]:
             attention_negative = organ.attention(query, negative)
             loss = loss - torch.log(attention_negative[-1].clamp_min(1e-9))
         optimizer.zero_grad(set_to_none=True)
@@ -295,6 +407,8 @@ def run_arm(contract, which: str) -> int:
             "A": "consistent-cosine attention (instance patch, disclosed no-extra-scale deviation)",
             "B": "direct match supervision (entity-window log-sum CE + sentinel on true mismatch)",
             "A2": "pure query alignment: trained on the full request, dot scores, E5.11 loss verbatim",
+            "R3": "per-character multiplicative matched-filter route (min-char cosine, max offset) "
+            "+ direct route CE + aligned pointer supervision",
             "B2": "alignment x cosine: A2 protocol plus the consistent-cosine attention patch",
         }[which],
         "wiring": "route reads current request (defect fix a7c992e95)",
@@ -339,11 +453,14 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     mutex = parser.add_mutually_exclusive_group(required=True)
     mutex.add_argument("--diagnosis", action="store_true")
-    mutex.add_argument("--arm", choices=("A", "B", "A2", "B2"))
+    mutex.add_argument("--birth-probe", action="store_true")
+    mutex.add_argument("--arm", choices=("A", "B", "A2", "B2", "R3"))
     args = parser.parse_args()
     contract = json.loads(CONTRACT.read_text(encoding="utf-8"))
     if args.diagnosis:
         return diagnosis(contract)
+    if args.birth_probe:
+        return birth_probe(contract)
     return run_arm(contract, args.arm)
 
 
