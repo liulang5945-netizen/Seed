@@ -4031,3 +4031,8 @@ r3（32 单位/lr 3e-3/2,000 步/batch 64，43.02≤帽 150 CPU）：梯度流 �
 ## 2026-11-20 包 22 阶段收口账（D-20261119-37，只读汇总、零训练）
 
 九轴当前值：engineering verified；task verified（fit_face_only）；learning verified（路由技能）/uncovered（内容积累）；retention verified（严格 D 口径 breach 已披露）；autonomous_choice **negative**（22.6.2 policy_gain_absent）；mature_growth 结构 verified/收益 growth_not_needed_in_scope；recursive_development uncovered（22.6.3 受阻）；physical_transfer uncovered；lifetime verified（有界）/uncovered（长跨度）。阶段帽 24,000、已知位置 ≈35,250、本账新增 0。未结项：正式 check②/B 父资格、D 口径歧义、S1 豁免残留、架构门、22.6 策略负、22.7 生长收益、recursive/physical/长跨度 lifetime。待裁：A/B 正式资格、新任务族、22.8/23–30 准入、阶段账处置；执行者建议先做零训练决策支持、不自动解锁长期路线。
+
+
+## 2026-11-20 噪声感知任务族中间带找到（D-20261119-38，σ=0.15 基线 0.75，85.31 CPU）
+
+32 单位图＋适配器 v3 特征＋固定种子高斯噪声扫描：σ 0→1.0、0.05→0.9844、0.10→0.8594、**0.15→0.75（0.7188/0.7812，命中 0.60–0.85 目标带）**、0.20→0.7031、0.30→0.5625 ⇒ `middle_band_found`，曲线平滑单调（非原任务相变）。采用条件：σ=0.15 冻结、训练噪声逐 batch 重采样/评测固定种子、全臂同规则同 seed 表；**先做容量扫描证明生长头空间**（8/16/32/64，32→64 留 ≥0.05），否则只用于 22.6.3 递归。22.7 仍 `growth_not_needed_in_scope`（不改判）、22.6.3 仍受阻；22.7b 为新卡、准入待 owner 或常设授权记录。零 check/final。

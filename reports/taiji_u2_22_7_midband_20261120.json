@@ -1,0 +1,99 @@
+{
+  "schema": "taiji-u2-22-7-midband-v1",
+  "card": "22.7 noisy-perception middle-band feasibility",
+  "created_utc": "2026-11-19T19:46:09.661853+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "base": "4x8 units, 1000 steps, batch 64, lr 0.003",
+    "train_worlds": 256,
+    "fit_worlds": 32,
+    "sigmas": [
+      0.0,
+      0.05,
+      0.1,
+      0.15,
+      0.2,
+      0.3
+    ],
+    "seeds": [
+      0,
+      1
+    ],
+    "noise": "train noise resampled per batch; evaluation noise fixed",
+    "target_band": [
+      0.6,
+      0.85
+    ]
+  },
+  "results": [
+    {
+      "sigma": 0.0,
+      "accuracies": [
+        1.0,
+        1.0
+      ],
+      "mean": 1.0
+    },
+    {
+      "sigma": 0.05,
+      "accuracies": [
+        0.9688,
+        1.0
+      ],
+      "mean": 0.9844
+    },
+    {
+      "sigma": 0.1,
+      "accuracies": [
+        0.8125,
+        0.9062
+      ],
+      "mean": 0.8594
+    },
+    {
+      "sigma": 0.15,
+      "accuracies": [
+        0.7188,
+        0.7812
+      ],
+      "mean": 0.75
+    },
+    {
+      "sigma": 0.2,
+      "accuracies": [
+        0.7188,
+        0.6875
+      ],
+      "mean": 0.7031
+    },
+    {
+      "sigma": 0.3,
+      "accuracies": [
+        0.6562,
+        0.4688
+      ],
+      "mean": 0.5625
+    }
+  ],
+  "selection": {
+    "sigma": 0.15,
+    "accuracies": [
+      0.7188,
+      0.7812
+    ],
+    "mean": 0.75
+  },
+  "verdict": "middle_band_found",
+  "discipline": {
+    "optimizer_steps": 12000,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 85.31
+  }
+}
