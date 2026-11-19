@@ -3966,3 +3966,8 @@ session1＝联合门子体（train[:64] 训练 256 步）；session2＝同一子
 ## 2026-11-20 22.6 开发池准入（D-20261119-24，`pool_admitted`，50.02 CPU，零训练）
 
 池筛选脚本按 D-20261119-23 规则扫描 642 个候选 world（seed 20263000..20264000），入选 32 个冻结开发池：stale 比例 0.3333、wait_value +0.1833、最强固定 `observe_deadline_answer 0.83`、头空间 0.17（≥0.05 净增益有 0.12 余量）；精选池基线 observe_t0 0.6467、observe_t7 0.5767、verify_t0 0.5467、no_observe 0、rest −0.15。原均匀池不可比较问题解决，22.6.2 对照现在有意义。零 optimizer 步、零 check/final，不改 22.6.0 合同判词。后继＝22.6.1 预测器设计＋定价 → 22.6.2 策略对照（基线 0.83）→ 22.6.3。
+
+
+## 2026-11-20 22.6.1 预测器标签数据集＋设计卡（D-20261119-25，2.38 CPU，零训练）
+
+在 32 world 开发池上生成 1,536 个决策点的四动作实现效用标签（ANSWER_NOW 0.5681、OBSERVE_THEN_DEADLINE 0.7550、VERIFY_THEN_NOW 0.5423、REST_THEN_DEADLINE 0.4931）＋10 维无泄漏特征，24 train/8 held-out 按 world 划分；数据 `output/s2_22_6_1/labels.jsonl`，回执与设计卡已出（包价估 ≈10／帽 30 CPU、Huber 基线 −10% 主判据、点误差与选择收益分账）。零优化器步、零 check/final；不签选择/自主能力。后继＝冻结 22.6.1 合同＋smoke＋训练执行（常设授权）→ 22.6.2 对照（基线 0.83）。

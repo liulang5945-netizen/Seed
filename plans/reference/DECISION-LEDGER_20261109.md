@@ -5196,3 +5196,14 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **3. 判读**：原均匀池「最强固定 0.9488、wait_value −0.1187、头空间 0.0512」不可比较；精选池把最强固定降到 `0.83`、等待价值转正，**22.6.2 的可学习策略对照现在在统计上有意义**。该 32 world 清单随 22.6.1 预测器设计冻结为开发池；22.6.2 对照必须在此池上按同协议重跑并冻结读数。
 
 **4. 边界与后继**：本笔零训练、零 check/final；不改 22.6.0 合同判词（其只签 fixture 合法）；不签任何选择/学习能力。后继＝22.6.1 预测器设计（标签来自本池 session 数据）＋定价 → 22.6.2 策略对照（以 `0.83` 为最强固定基线）→ 22.6.3 相依改进决策。
+
+
+### D-20261119-25 22.6.1 预测器标签数据集（零训练 `2.38 CPU`）＋设计卡草稿
+
+**1. 动作**：新增零训练数据集生成脚本 [`build_s2_22_6_1_labels_20261120.py`](../../scripts/training/build_s2_22_6_1_labels_20261120.py)，在 32 world 开发池上生成 22.6.1 预测器数据集：32×3×16＝**1,536** 决策点，四候选动作（`ANSWER_NOW / OBSERVE_THEN_DEADLINE / VERIFY_THEN_NOW / REST_THEN_DEADLINE`）的**实现效用**标签＋10 维无泄漏特征；24 train／8 held-out 按 world 划分。回执 [`taiji_u2_22_6_1_labels_20261120.json`](../../reports/taiji_u2_22_6_1_labels_20261120.json)、数据 `output/s2_22_6_1/labels.jsonl`、设计卡 [`DESIGN-TAIJI_U2_22_6_1_PREDICTOR_20261120`](../reference/DESIGN-TAIJI_U2_22_6_1_PREDICTOR_20261120.md)。`0` 优化器步、`0 check/final`。
+
+**2. 读数**：1,536 行；标签均值 `ANSWER_NOW 0.5681`、`OBSERVE_THEN_DEADLINE 0.7550`、`VERIFY_THEN_NOW 0.5423`、`REST_THEN_DEADLINE 0.4931`；实耗 `2.38 CPU`。设计卡冻结：MLP 10→32→4、Huber、held-out 归一 Huber 比 fit 常数均值基线低 `≥10%`、点预测误差与选择收益分账、包价估 `≈10`／硬帽 `30 CPU`、出口 `predictor_gain_pass/predictor_insufficient/engineering_failure/budget_stop`。
+
+**3. 边界**：本笔只生成数据＋设计，不训练、不读 check/final、不签选择/自主能力；预测器只是 22.6.2 对照的组件。22.5.1 仍 `fit_face_only` 父证据（D-20261119-21）。
+
+**4. 后继**：冻结 22.6.1 合同（判据摘要＋数据/池 sha256 pin＋报价）→ smoke（数据完整性＋基线可复算）→ 训练执行（按常设授权记录授权、帽 30 CPU）→ 判词；通过进 22.6.2，未过按 `predictor_insufficient` 收束（禁同范围第 3 次修订）。

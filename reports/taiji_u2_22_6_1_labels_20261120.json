@@ -1,0 +1,67 @@
+{
+  "schema": "taiji-u2-22-6-1-labels-v1",
+  "card": "22.6.1 predictor label dataset (zero training)",
+  "created_utc": "2026-11-19T18:44:44.993116+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "pool_source": "reports\\taiji_u2_22_6_pool_admission_20261120.json",
+    "worlds": 32,
+    "train_worlds": 24,
+    "heldout_worlds": 8,
+    "sessions_per_world": 3,
+    "decisions": 16,
+    "actions": [
+      "ANSWER_NOW",
+      "OBSERVE_THEN_DEADLINE",
+      "VERIFY_THEN_NOW",
+      "REST_THEN_DEADLINE"
+    ],
+    "continuation": "frozen per-action continuation (see module docstring)",
+    "costs": {
+      "observe": 0.02,
+      "wait": 0.01,
+      "verify": 0.1
+    },
+    "default_behavior_policy": "OBSERVE at every tick (labels are counterfactual)",
+    "features": [
+      "tick",
+      "decisions_left",
+      "staleness",
+      "observations",
+      "verify_left",
+      "cost_so_far"
+    ],
+    "label_means": {
+      "ANSWER_NOW": 0.5681,
+      "OBSERVE_THEN_DEADLINE": 0.755,
+      "VERIFY_THEN_NOW": 0.5423,
+      "REST_THEN_DEADLINE": 0.4931
+    },
+    "label_std": {
+      "ANSWER_NOW": 0.4229,
+      "OBSERVE_THEN_DEADLINE": 0.0461,
+      "VERIFY_THEN_NOW": 0.3895,
+      "REST_THEN_DEADLINE": 0.4342
+    }
+  },
+  "n_rows": 1536,
+  "feature_dim": 10,
+  "label_dim": 4,
+  "rows_sha256": "cd66478f6f02ec788d6c9cbfc9bb2d55dba0737454178e2f79a848bf2382bb84",
+  "discipline": {
+    "optimizer_steps": 0,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 2.39
+  },
+  "dataset": {
+    "path": "output\\s2_22_6_1\\labels.jsonl",
+    "sha256": "c778f70b0b9190b889aca899a279174e0d9775de8e97e9188c07cd23092a15f8"
+  }
+}
