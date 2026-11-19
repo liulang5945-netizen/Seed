@@ -1,6 +1,7 @@
-"""22.5.0.A 像素显著度读出：接线、出生中性、可学性与恢复回归。"""
+"""22.5.0.A / S0 像素显著度读出：双身份接线、出生中性、可学性与恢复回归。"""
 
 from dataclasses import replace
+from functools import cache
 
 import pytest
 import torch
@@ -14,15 +15,28 @@ from scripts.training.first_a_support_22_5 import (
     task_loss,
 )
 from taiji.u2_history import value_digest
-from taiji.u2_pixel_read import PixelSalienceReadout, pixel_grid, raster
+from taiji.u2_pixel_read import (
+    READOUT_V1,
+    READOUT_V2,
+    PixelSalienceReadout,
+    PixelSalienceReadoutV2,
+    build_readout,
+    pixel_grid,
+    raster,
+    unit_registry,
+    unit_registry_v2,
+)
 from taiji.u2_subject import U2Config, U2Subject
 
+IDENTITIES = (READOUT_V1, READOUT_V2)
 
-def make(readout="pixel-salience"):
+
+def make(readout=READOUT_V2):
     config = replace(U2Config.small(), seed=20261110, readout=readout)
     return U2Subject(config).metadata_candidate().request_candidate()
 
 
+@cache
 def first_example():
     return generate_examples("train", 4)[0]
 
@@ -51,9 +65,48 @@ def test_pixel_raster_and_grid_match_sensor_layout():
     assert torch.allclose(grid, expected)
 
 
-def test_pixel_readout_is_born_neutral_and_red_direction_is_live():
+def test_identity_isolation_keeps_v1_byte_layout_frozen():
+    """The accepted 22.5.0 A parent keeps its exact v1 layout (S0/S1 discipline)."""
+    config = replace(U2Config.small(), seed=20261110, readout=READOUT_V1, d=32)
+    model = U2Subject(config).metadata_candidate().request_candidate()
+    shape = {name: tuple(t.shape) for name, t in model.pixel_readout.state_dict().items()}
+    assert shape == {
+        "byte.weight": (256, 16),
+        "position": (1, 64, 16),
+        "text.weight": (16, 32),
+        "text.bias": (16,),
+        "pixel.weight": (16, 3),
+        "pixel.bias": (16,),
+        "null": (16,),
+        "log_temp": (),
+        "out.weight": (32, 6),
+        "out.bias": (32,),
+    }
+    assert model.pixel_unit_owners == unit_registry()
+
+
+def test_identity_isolation_registers_the_s0_revision_separately():
+    """The S0 upgrade is a new identity with its own ledger and no shared checkpoint."""
+    v1 = make(READOUT_V1).pixel_readout
+    v2 = make(READOUT_V2).pixel_readout
+    assert isinstance(v1, PixelSalienceReadout)
+    assert isinstance(v2, PixelSalienceReadoutV2)
+    assert v2.state_dict().keys() != v1.state_dict().keys()
+    with pytest.raises(RuntimeError):
+        v1.load_state_dict(v2.state_dict())
+    assert make(READOUT_V2).pixel_unit_owners == unit_registry_v2()
+    assert all(key.startswith(f"{READOUT_V1}:") for key in unit_registry())
+    assert all(key.startswith(f"{READOUT_V2}:") for key in unit_registry_v2())
+    with pytest.raises(ValueError, match="Invalid readout identity"):
+        build_readout("pixel-salience-v3", 8)
+    with pytest.raises(ValueError, match="Invalid readout identity"):
+        replace(U2Config.small(), readout="unknown")
+
+
+@pytest.mark.parametrize("identity", IDENTITIES)
+def test_pixel_readout_is_born_neutral_and_red_direction_is_live(identity):
     parent = make("patch")
-    child = make("pixel-salience")
+    child = make(identity)
     example = first_example()
     parent_state = prepare(parent, example["public"], example["id"])
     child_state = prepare(child, example["public"], example["id"])
@@ -67,8 +120,9 @@ def test_pixel_readout_is_born_neutral_and_red_direction_is_live():
     assert finite_delta(parent_probability, shifted_probability) > 0.0
 
 
-def test_pixel_delta_is_bound_to_request_and_cached_recompute_is_exact():
-    model = make()
+@pytest.mark.parametrize("identity", IDENTITIES)
+def test_pixel_delta_is_bound_to_request_and_cached_recompute_is_exact(identity):
+    model = make(identity)
     with torch.no_grad():
         model.pixel_readout.out.weight.fill_(0.01)
     example = first_example()
@@ -86,8 +140,9 @@ def test_pixel_delta_is_bound_to_request_and_cached_recompute_is_exact():
     assert not torch.equal(cached, other_state["pixel_delta"])
 
 
-def test_zero_initialized_injection_learns_upstream_after_first_credit():
-    model = make()
+@pytest.mark.parametrize("identity", IDENTITIES)
+def test_zero_initialized_injection_learns_upstream_after_first_credit(identity):
+    model = make(identity)
     example = first_example()
     parameters = dict(model.pixel_readout.named_parameters())
     optimizer = torch.optim.Adam(model.pixel_readout.parameters(), lr=0.01)
@@ -108,8 +163,9 @@ def test_zero_initialized_injection_learns_upstream_after_first_credit():
     assert parameters["byte.weight"].grad.abs().sum() > 0
 
 
-def test_pixel_readout_save_load_preserves_rows(tmp_path):
-    model = make()
+@pytest.mark.parametrize("identity", IDENTITIES)
+def test_pixel_readout_save_load_preserves_rows(identity, tmp_path):
+    model = make(identity)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
     examples = generate_examples("fit", 4)
     rows = []
@@ -124,19 +180,23 @@ def test_pixel_readout_save_load_preserves_rows(tmp_path):
         state = prepare(restored, example["public"], example["id"])
         restored_rows.append(output(restored, state)[0].detach())
     assert value_digest(rows) == value_digest(restored_rows)
-    assert payload["description"]["config"]["readout"] == "pixel-salience"
+    assert payload["description"]["config"]["readout"] == identity
 
 
-def test_pixel_operator_rejects_empty_request():
-    operator = PixelSalienceReadout()
+@pytest.mark.parametrize(
+    "operator_class", (PixelSalienceReadout, PixelSalienceReadoutV2), ids=["v1", "v2"]
+)
+def test_pixel_operator_rejects_empty_request(operator_class):
+    operator = operator_class()
     blocks = torch.zeros(16, 48)
     coordinates = torch.zeros(16, 8)
     with pytest.raises(ValueError, match="empty_request"):
         operator(blocks, pixel_grid(coordinates), torch.tensor([], dtype=torch.long))
 
 
-def test_utterance_derived_state_can_be_exported_and_restored():
-    model = make()
+@pytest.mark.parametrize("identity", IDENTITIES)
+def test_utterance_derived_state_can_be_exported_and_restored(identity):
+    model = make(identity)
     example = first_example()
     state = prepare(model, example["public"], example["id"])
     bundle = model.export_bundle(state)

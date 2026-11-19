@@ -102,7 +102,7 @@ class U2Config:
             raise ValueError("Invalid binding version")
         if self.correction not in {"off", "v1", "v2"}:
             raise ValueError("Invalid correction adapter version")
-        if self.readout not in {"patch", "pixel-salience"}:
+        if self.readout not in {"patch", "pixel-salience", "pixel-salience-v2"}:
             raise ValueError("Invalid readout identity")
         if self.correction != "off" and self.binding == "v2":
             raise ValueError("Correction adapter is not defined for binding v2")
@@ -663,14 +663,15 @@ class U2Subject(_WorldKernel):
                 self.correction_adapter = MLP(2 * d, d, d)
                 nn.init.zeros_(self.correction_adapter.last.weight)
                 nn.init.zeros_(self.correction_adapter.last.bias)
-            if config.readout == "pixel-salience":
+            if config.readout in {"pixel-salience", "pixel-salience-v2"}:
                 # Born after every inherited tensor, zero-initialised output: a
                 # parent's weights reproduce bit for bit until the task loss
-                # credits these units.  No teacher, no external label.
-                from .u2_pixel_read import PixelSalienceReadout, unit_registry
+                # credits these units.  No teacher, no external label.  The
+                # identity decides which frozen operator (v1 / S0 v2) is built;
+                # the two share no checkpoint and must earn separate evidence.
+                from .u2_pixel_read import build_readout
 
-                self.pixel_readout = PixelSalienceReadout(out_dim=d)
-                self.pixel_unit_owners = unit_registry()
+                self.pixel_readout, self.pixel_unit_owners = build_readout(config.readout, d)
                 # Dedicated logit path for the readout delta: the shared byte head
                 # has weights that the class prior dominates, so the delta gets its
                 # own rows.  Zero-initialised, so birth stays neutral.
@@ -680,17 +681,17 @@ class U2Subject(_WorldKernel):
                 # context that a sum of two linear maps cannot.  The last layer is
                 # zero-initialised, so birth stays neutral.
                 self.delta_head = nn.Sequential(
-                    nn.Linear(d, 4 * d), nn.GELU(), nn.Linear(4 * d, 257)
+                    nn.Linear(d, 4 * d, bias=False),
+                    nn.GELU(),
+                    nn.Linear(4 * d, 257, bias=False),
                 )
-                delta_output = cast(nn.Linear, self.delta_head[2])
-                nn.init.zeros_(delta_output.weight)
-                nn.init.zeros_(delta_output.bias)
-        if getattr(config, "record_organ", False):
-            # A record-reading organ: new tensors only, so attaching it leaves the
-            # parent bit-identical.  Routing happens in output(), not in the harness.
-            from .u2_record_organ import RecordOrgan
+            if getattr(config, "record_organ", False):
+                # A record-reading organ: new tensors only, deterministically seeded
+                # inside fork_rng and born neutral so attaching it leaves the parent
+                # bit-identical.  Routing and differentiable mixture live in output().
+                from .u2_record_organ import RecordOrgan
 
-            self.record_organ = RecordOrgan()
+                self.record_organ = RecordOrgan()
         self.generation = 0
         self.parameter_revision = 0
         widths = config.group_units or (config.units,) * config.groups
@@ -737,6 +738,17 @@ class U2Subject(_WorldKernel):
         if version not in {"v1", "v2"}:
             raise ValueError("Invalid correction adapter version")
         return self._fork_candidate(correction=version)
+
+    def record_organ_candidate(self) -> U2Subject:
+        """Fork the graph with a born-neutral matched-filter record organ.
+
+        Every inherited parent tensor keeps its exact bit value; ``organ_mix``
+        starts at 0.0 so the forked subject reproduces its parent bit for bit
+        until feedback credits the organ.
+        """
+        if self.c.record_organ:
+            raise ValueError("Record organ is already enabled")
+        return self._fork_candidate(record_organ=True)
 
     def _fork_candidate(self, **options) -> U2Subject:
         model = U2Subject(replace(self.c, **options)).to(
@@ -939,10 +951,21 @@ class U2Subject(_WorldKernel):
     def record_read(self, state: Any, goal: Any, previous: Any = 256, queries: Any = None) -> Any:
         if state["revision"] != self.parameter_revision:
             raise ValueError("Record state requires causal rebuilding under current parameters")
-        tokens, ids, valid = self.record_units(state)
         c = self.c
         queries = state["H"] if queries is None else queries
         count = queries.shape[1]
+        if not state["records"]:
+            # Mathematically identical fast path: with zero records, log_softmax over
+            # the lone null slot is identically 0.0, so context == record_null_value
+            # and all query/goal convolutions have zero effect and zero gradient.
+            null_out = self.record_output(self.record_null_value)
+            read_rows = null_out[None, None].expand(c.branches, count, -1)
+            log_alpha = self.native_w.new_zeros((c.branches, count, 1))
+            log_beta = self.native_w.new_zeros((c.branches, count, 0, 0))
+            ids = torch.zeros((0, 0), dtype=torch.long, device=self.native_w.device)
+            valid = torch.zeros((0, 0), dtype=torch.bool, device=self.native_w.device)
+            return read_rows, log_alpha, log_beta, ids, valid
+        tokens, ids, valid = self.record_units(state)
         goal_units = self.text_units(state["goal_raw"])
         if goal_units.numel():
             scores = self.record_goal_query(queries) @ goal_units.T / math.sqrt(c.d)
@@ -981,8 +1004,18 @@ class U2Subject(_WorldKernel):
             read_rows.append(self.record_output(context))
             log_alpha_rows.append(log_alpha)
             log_beta_rows.append(log_beta)
+        stacked_reads = torch.stack(read_rows, 1)
+        if self.c.record_organ and "record_organ" not in getattr(self, "_verification_cuts", ()):
+            # When RecordOrgan takes over record reading (active -> 1.0), shield the
+            # legacy recurrent path H from untrained record_read perturbations on
+            # distractors; at birth (active == 0.0) this is bit-identical to parent.
+            organ_active = self.record_organ.active_strength()
+            null_out = self.record_output(self.record_null_value)[None, None].expand_as(
+                stacked_reads
+            )
+            stacked_reads = stacked_reads * (1.0 - organ_active) + null_out * organ_active
         return (
-            torch.stack(read_rows, 1),
+            stacked_reads,
             torch.stack(log_alpha_rows, 1),
             torch.stack(log_beta_rows, 1),
             ids,
@@ -1099,7 +1132,7 @@ class U2Subject(_WorldKernel):
         )
         result["logw"] = (prior["logw"] + logp).log_softmax(0)
         tokens = self.encode(observations, coordinates, outcome)
-        if self.c.readout == "pixel-salience":
+        if self._pixel_readout_active():
             from .u2_pixel_read import pixel_grid
 
             result["pixel_blocks"] = observations["rgb"].detach()
@@ -1232,6 +1265,28 @@ class U2Subject(_WorldKernel):
         query = bounded(self.f_query(self.views(state, goal, action)))
         return self.f_output(torch.zeros_like(torch.einsum("bkv,bmk->bmv", state["F"], query)))
 
+    def _pixel_readout_active(self) -> bool:
+        """True for every registered pixel-readout identity (v1 and S0 v2)."""
+        return self.c.readout in {"pixel-salience", "pixel-salience-v2"}
+
+    def _pixel_delta(self, state: Any) -> torch.Tensor | None:
+        if not self._pixel_readout_active():
+            return None
+        delta = state.get("pixel_delta")
+        if delta is None and state.get("pixel_blocks") is not None:
+            from .u2_pixel_read import pixel_grid
+
+            raw = state["answer_request"]["raw"] if self.c.separate_requests else state["goal_raw"]
+            grid = state.get("pixel_grid")
+            if grid is None:
+                grid = pixel_grid(state["pixel_coordinates"])
+            delta = self.pixel_readout(
+                state["pixel_blocks"],
+                grid,
+                torch.tensor(list(raw), dtype=torch.long, device=self.native_w.device),
+            )
+        return cast(torch.Tensor | None, delta)
+
     def branch_context(self, state: Any, goal: Any, action: Any) -> Any:
         h = self.read_h(state, goal)
         o = self.read_o(state, h)
@@ -1252,30 +1307,15 @@ class U2Subject(_WorldKernel):
         if "fast" in getattr(self, "_verification_cuts", ()):
             fast = self.f_output(torch.zeros_like(torch.einsum("bkv,bk->bv", state["F"], query)))
         context = self.joint_readout(torch.cat([h, o, fast], -1))
-        if self.c.readout == "pixel-salience":
-            delta = state.get("pixel_delta")
-            if delta is None and state.get("pixel_blocks") is not None:
-                from .u2_pixel_read import pixel_grid
-
-                raw = (
-                    state["answer_request"]["raw"]
-                    if self.c.separate_requests
-                    else state["goal_raw"]
-                )
-                grid = state.get("pixel_grid")
-                if grid is None:
-                    grid = pixel_grid(state["pixel_coordinates"])
-                delta = self.pixel_readout(
-                    state["pixel_blocks"],
-                    grid,
-                    torch.tensor(list(raw), dtype=torch.long, device=context.device),
-                )
-            if delta is not None:
-                context = context + delta
+        delta = self._pixel_delta(state)
+        if delta is not None:
+            context = context + delta
         return context
 
     def begin_utterance(self, state: Any) -> Any:
         child = dict(state)
+        child.pop("organ_plan", None)
+        child.pop("organ_window", None)
         records = state["records"]
         positions = max((len(r.raw) for r in records), default=0)
         child["cursor"] = initial_cursor(
@@ -1297,7 +1337,7 @@ class U2Subject(_WorldKernel):
         # computing it once removes three redundant text convolutions per example.
         raw_goal = child["answer_request"]["raw"] if self.c.separate_requests else child["goal_raw"]
         child["utterance_goal"] = self.goal(raw_goal)
-        if self.c.readout == "pixel-salience" and state.get("pixel_blocks") is not None:
+        if self._pixel_readout_active() and state.get("pixel_blocks") is not None:
             # The readout's inputs (raster, grid, request) are constant across the
             # bytes of one utterance, so its contribution is computed once here and
             # reused by every branch_context call.
@@ -1312,7 +1352,24 @@ class U2Subject(_WorldKernel):
                 grid,
                 torch.tensor(list(raw), dtype=torch.long, device=self.native_w.device),
             )
+        if (
+            self.c.record_organ
+            and records
+            and "record_organ" not in getattr(self, "_verification_cuts", ())
+        ):
+            request_bytes = self._organ_request_bytes(child)
+            child["organ_plan"] = self.record_organ.plan(request_bytes, records)
         return child
+
+    def _organ_request_bytes(self, state: Any) -> bytes:
+        raw_request = (
+            state["answer_request"]["raw"] if self.c.separate_requests else state["goal_raw"]
+        )
+        return (
+            raw_request
+            if isinstance(raw_request, bytes)
+            else bytes(int(v) for v in raw_request.tolist())
+        )
 
     def output(self, state: Any, goal: Any, action: Any, previous: Any = None) -> Any:
         previous = state["previous_byte"] if previous is None else previous
@@ -1340,8 +1397,8 @@ class U2Subject(_WorldKernel):
             context = context + delta
         previous_value = self.previous_embedding(previous)[None].expand(self.c.branches, -1)
         branch_logits = self.byte_head(torch.cat([context, previous_value], -1))
-        if self.c.readout == "pixel-salience":
-            delta = state.get("pixel_delta")
+        if self._pixel_readout_active():
+            delta = self._pixel_delta(state)
             if delta is not None:
                 branch_logits = branch_logits + self.delta_head(delta)
         branch_logits = branch_logits.log_softmax(-1)
@@ -1355,43 +1412,56 @@ class U2Subject(_WorldKernel):
             self.c.max_output_bytes - state["data_bytes"],
             device=self.native_w.device,
         )
-        organ = self._record_organ_logits(state)
-        if organ is not None:
-            # Route by evidence: with a released record the organ's binding replaces
-            # the parent head, and the copy/continuation gates are forced open so the
-            # emission cannot mix the parent's answer back in.
-            branch_logits = organ[None].expand_as(branch_logits)
-            lam = torch.zeros_like(lam)
-            gamma = torch.ones_like(gamma)
+        if (
+            self.c.record_organ
+            and "record_organ" not in getattr(self, "_verification_cuts", ())
+            and state.get("records")
+        ):
+            # Yield record-copying authority smoothly from the untrained legacy copy_gate
+            # to RecordOrgan as organ_mix activates (0.0 at birth => bit-exact parent):
+            # lam -> 0 stops cursor continuation, gamma -> 1 zeroes legacy copy mass (1 - gamma).
+            organ_active = self.record_organ.active_strength()
+            lam = lam * (1.0 - organ_active)
+            gamma = gamma + (1.0 - gamma) * organ_active
         out = emission(state["cursor"], alpha, beta, lam, gamma, branch_logits, ids, valid, mask)
-        return out["log_output"], context, {"mixture": out, "ids": ids, "valid": valid}
+        log_output = self._apply_record_organ(state, out["log_output"], mask)
+        return log_output, context, {"mixture": out, "ids": ids, "valid": valid}
+
+    def _apply_record_organ(
+        self, state: Any, parent_logp: torch.Tensor, mask: torch.Tensor
+    ) -> torch.Tensor:
+        organ = getattr(self, "record_organ", None)
+        if organ is None or "record_organ" in getattr(self, "_verification_cuts", ()):
+            return parent_logp
+        records = state.get("records")
+        if not records:
+            return parent_logp
+        from .u2_record_organ import mix_log_probabilities
+
+        plan = state.get("organ_plan")
+        if plan is None:
+            plan = organ.plan(self._organ_request_bytes(state), records)
+        route_prob, organ_probs = organ.emit(plan, int(state["data_bytes"]), mask=mask)
+        if plan.get("legacy_hard"):
+            # Frozen E5-style hard route (see RecordOrgan._legacy_override_plan):
+            # the patched route owns the distribution exactly as the pre-S0
+            # hard-binding path did, with no parent mass and no mixture.
+            if float(route_prob.detach()) <= 0.0:
+                return parent_logp
+            return cast(torch.Tensor, organ_probs.clamp_min(1e-30).log())
+        return mix_log_probabilities(parent_logp, route_prob, organ_probs, mask)
 
     def _record_organ_logits(self, state: Any) -> Any:
+        """Legacy helper kept for backward compatibility; new routing uses _apply_record_organ."""
         organ = getattr(self, "record_organ", None)
-        if organ is None:
+        if organ is None or "record_organ" in getattr(self, "_verification_cuts", ()):
             return None
         records = state.get("records")
         if not records:
             return None
-        # Route on the current request, not the standing goal: under the
-        # separate-requests profile the request bytes live in answer_request,
-        # and the goal text is constant across items - routing on it gives the
-        # organ no entity information at all (the E5.10/E5.11 gate "degeneracy").
-        raw_request = (
-            state["answer_request"]["raw"] if self.c.separate_requests else state["goal_raw"]
-        )
-        request_bytes = (
-            raw_request
-            if isinstance(raw_request, bytes)
-            else bytes(int(v) for v in raw_request.tolist())
-        )
-        window = state.get("organ_window")
+        window = organ.route(self._organ_request_bytes(state), records[0].raw)
         if window is None:
-            window = organ.route(request_bytes, records[0].raw)
-            if window is None:
-                # The sentinel wins: this record should not override the observation.
-                return None
-            state["organ_window"] = window
+            return None
         return organ.log_distribution(window, int(state["data_bytes"]))
 
     def accept_byte(self, state: Any, symbol: Any, output: Any) -> Any:
@@ -1401,6 +1471,8 @@ class U2Subject(_WorldKernel):
         )
         if symbol == 256:
             child["utterance_active"] = False
+            child.pop("organ_plan", None)
+            child.pop("organ_window", None)
             if self.c.separate_requests:
                 from .u2_request_state import finish_utterance
 
@@ -1948,8 +2020,10 @@ class U2Subject(_WorldKernel):
     def optional_state_keys(self) -> frozenset[str]:
         """Derived utterance fields are optional for old and rebuilt bundles."""
         keys = {"utterance_goal"}
-        if self.c.readout == "pixel-salience":
+        if self._pixel_readout_active():
             keys.update(("pixel_blocks", "pixel_coordinates", "pixel_grid", "pixel_delta"))
+        if self.c.record_organ:
+            keys.add("organ_plan")
         return frozenset(keys)
 
     def has_valid_state_keys(self, state: Any) -> bool:
