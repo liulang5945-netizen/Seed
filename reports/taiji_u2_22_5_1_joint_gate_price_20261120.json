@@ -1,0 +1,58 @@
+{
+  "schema": "taiji-u2-22-5-1-joint-gate-price-v1",
+  "card": "22.5.1 joint gate (fit face) S2 pricing",
+  "created_utc": "2026-11-19T17:21:31.213387+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "measured": {
+    "arm_train_cpu_256_steps_batch2": 5.594,
+    "measure_cpu_24_items": 40.438,
+    "items_per_face": 24,
+    "organ_mix_after_arm": 1.2024
+  },
+  "protocol": {
+    "parent_seed": 20261112,
+    "parent_checkpoint": "output\\a_pixel_parallel_20261119T070447Z\\segment.bin",
+    "child_seeds": [
+      20261110,
+      20261111,
+      20261112
+    ],
+    "feedback_examples": 64,
+    "fit_examples": 32,
+    "steps": 256,
+    "batch_worlds": 2,
+    "arms": [
+      "main",
+      "frozen_update",
+      "permuted_feedback"
+    ],
+    "extra_measures": [
+      "cut:record_organ",
+      "cut:fast",
+      "cut:record_injection",
+      "overwrite_probe"
+    ],
+    "fit_face_only": true,
+    "check_final_reads": 0
+  },
+  "price": {
+    "arm_train_cpu": 5.59,
+    "measure_cpu": 40.44,
+    "run_cpu_per_seed": 325.06,
+    "run_cpu_total": 975.19,
+    "verify_cpu_total": 100.52,
+    "recover_cpu_total": 12.0,
+    "engineering_allowance": 15.0,
+    "package_cpu": 1102.71,
+    "cap_cpu_proposed": 1378.38,
+    "wall_minutes_proposed": 28.0
+  },
+  "formal_training_authority": null,
+  "cost": {
+    "cpu": 46.73
+  }
+}
