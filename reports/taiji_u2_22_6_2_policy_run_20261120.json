@@ -1,0 +1,59 @@
+{
+  "schema": "taiji-u2-22-6-2-policy-run-v1",
+  "criteria_sha256": "809ba8c5f274760db1a59f2656a4642dccac048f8af377e17dfe80c9a75f655d",
+  "created_utc": "2026-11-19T18:53:46.049567+00:00",
+  "run_conditions": {
+    "threads": 12,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "summary": {
+    "means": {
+      "learnable": {
+        "0": 0.6637,
+        "1": 0.6637,
+        "2": 0.6637
+      },
+      "fixed_observe_t0": {
+        "0": 0.6467,
+        "1": 0.6467,
+        "2": 0.6467
+      },
+      "fixed_wait_deadline": {
+        "0": 0.83,
+        "1": 0.83,
+        "2": 0.83
+      },
+      "reactive_stability": {
+        "0": 0.6267,
+        "1": 0.6267,
+        "2": 0.6267
+      },
+      "wait_control": {
+        "0": -0.15,
+        "1": -0.15,
+        "2": -0.15
+      }
+    },
+    "strongest_fixed_arm": "fixed_wait_deadline",
+    "gains": [
+      -0.1663,
+      -0.1663,
+      -0.1663
+    ],
+    "mean_gain": -0.1663,
+    "paired_lower_bound": -0.1998
+  },
+  "verdict": "policy_gain_absent",
+  "budget": {
+    "cap_cpu": 130.0,
+    "cpu": 93.48
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 93.48
+  }
+}

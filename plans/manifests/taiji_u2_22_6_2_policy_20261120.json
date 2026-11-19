@@ -1,0 +1,99 @@
+{
+  "schema": "taiji-u2-22-6-2-policy-v1",
+  "card": "DESIGN-TAIJI_U2_22_6_2_POLICY_20261120.md",
+  "status": "frozen",
+  "training_authority": "owner:standing-authorization:2026-11-20#recommendation-default",
+  "criteria": {
+    "card": "22.6.2 strategy comparison (C sessions)",
+    "pool": {
+      "admission_receipt": "reports/taiji_u2_22_6_pool_admission_20261120.json",
+      "admission_sha256": "7f1e77ab3626aed5c8aec20db038821c892e7ae782b7d6953d04fdd2de981dc1",
+      "worlds": 32,
+      "sessions_per_world": 3,
+      "decisions": 16
+    },
+    "arms": [
+      "learnable",
+      "fixed_observe_t0",
+      "fixed_wait_deadline",
+      "reactive_stability",
+      "wait_control"
+    ],
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "learnable_policy": {
+      "source": "22.6.1 predictor recipe retrained inside this card (identical seed)",
+      "model": {
+        "input": 10,
+        "hidden": 32,
+        "output": 4,
+        "loss": "huber",
+        "epochs": 200
+      },
+      "rule": "greedy argmax over predicted action utilities"
+    },
+    "strongest_fixed_expected": 0.83,
+    "thresholds": {
+      "net_gain_min": 0.05,
+      "paired_lower_bound_min": 0.0,
+      "all_seeds_positive": true
+    },
+    "exits_order": [
+      "engineering_failure",
+      "not_admitted",
+      "budget_stop",
+      "policy_gain_absent",
+      "policy_gain_pass"
+    ],
+    "check_reads": 0,
+    "final_reads": 0,
+    "costs": {
+      "observe": 0.02,
+      "wait": 0.01,
+      "verify": 0.1
+    }
+  },
+  "criteria_sha256": "809ba8c5f274760db1a59f2656a4642dccac048f8af377e17dfe80c9a75f655d",
+  "plan": {
+    "price_cpu": 97.5,
+    "optimizer_steps": 200,
+    "price_source": "runner docstring"
+  },
+  "cap_cpu": 130.0,
+  "check_exposure": {
+    "reads": 0
+  },
+  "source_pins": {
+    "scripts/training/run_s2_22_6_2_policy_20261120.py": "7912bfec03aacfefdbcaccf78b1bf49e21f10a68945fa71a793d7572ec784a3a",
+    "scripts/training/build_s2_22_6_1_labels_20261120.py": "cef82568f05b84747fdc9d8d884bbf26a77e723cf1aacadc1ef26302db1de14b",
+    "scripts/training/run_s2_22_6_1_predictor_20261120.py": "99a184ec49649849543c45dde1c9ed0e8658d7715d30489a33471e681d9c4fd5",
+    "scripts/training/curate_s2_22_6_pool_20261120.py": "6742430be20236dcd90197a96e6ef5ce496e277a9e953eb7257f6adb23779261"
+  },
+  "result": {
+    "run": true,
+    "closed": true,
+    "verdict": "policy_gain_absent",
+    "cost_cpu": 93.48,
+    "report": "reports\\taiji_u2_22_6_2_policy_run_20261120.json"
+  },
+  "amendment": {
+    "defect": "unused local `answer_at` in the fixed_observe_t0 branch (non-semantic)",
+    "fix": "removed the unused local; no behavior change",
+    "recorded_result_unchanged": {
+      "run": true,
+      "closed": true,
+      "verdict": "policy_gain_absent",
+      "cost_cpu": 93.48,
+      "report": "reports\\taiji_u2_22_6_2_policy_run_20261120.json"
+    },
+    "previous_source_pins": {
+      "scripts/training/run_s2_22_6_2_policy_20261120.py": "0522c66f45070c36f9766ba889406708df4bd4139a2b8b05e166671bcecedaed",
+      "scripts/training/build_s2_22_6_1_labels_20261120.py": "cef82568f05b84747fdc9d8d884bbf26a77e723cf1aacadc1ef26302db1de14b",
+      "scripts/training/run_s2_22_6_1_predictor_20261120.py": "99a184ec49649849543c45dde1c9ed0e8658d7715d30489a33471e681d9c4fd5",
+      "scripts/training/curate_s2_22_6_pool_20261120.py": "6742430be20236dcd90197a96e6ef5ce496e277a9e953eb7257f6adb23779261"
+    }
+  }
+}
