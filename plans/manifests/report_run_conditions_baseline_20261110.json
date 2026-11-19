@@ -4,7 +4,7 @@
   "generated": "2026-11-10",
   "status": "report_level_claim_not_machine_verifiable",
   "note": "旧报告一律不回写、不补字段：列在这里只表示它们的结论依赖未记录的运行条件，按『报告级声明、不可机器复核』引用。新报告若带相等／摘要字段而缺运行条件，由 check_report_run_conditions.py 判失败。",
-  "count": 620,
+  "count": 649,
   "files": {
     "plans/manifests/n1_plan163_transition_template_rebalanced_schedule_20261020.json": [
       "equal"
@@ -1964,6 +1964,103 @@
     ],
     "reports/taiji_w7_r5c_s6_workbench_structural_scheduler_20260830.json": [
       "digest"
+    ],
+    "plans/manifests/taiji_u2_22_4_accepted_parent_20261117.json": [
+      "digest"
+    ],
+    "plans/manifests/taiji_u2_22_5_0_closeout_20261117.json": [
+      "digest"
+    ],
+    "plans/manifests/taiji_u2_a1_read_20261115.json": [
+      "digest"
+    ],
+    "plans/manifests/taiji_u2_a1b_colour_20261115.json": [
+      "digest"
+    ],
+    "plans/manifests/taiji_u2_a2_byte_20261115.json": [
+      "digest"
+    ],
+    "plans/manifests/taiji_u2_a3_interface_20261116.json": [
+      "digest"
+    ],
+    "plans/manifests/taiji_u2_a4_column_read_20261116.json": [
+      "unchanged"
+    ],
+    "plans/manifests/taiji_u2_aparent_review_20261115.json": [
+      "digest"
+    ],
+    "plans/manifests/taiji_u2_bind_2_design_20261115.json": [
+      "unchanged",
+      "digest"
+    ],
+    "plans/manifests/taiji_u2_evidence_A_execution_20261112.json": [
+      "digest"
+    ],
+    "plans/manifests/taiji_u2_evidence_A_execution_20261112_v2.json": [
+      "digest"
+    ],
+    "plans/manifests/taiji_u2_evidence_A_price_20261112.json": [
+      "digest"
+    ],
+    "plans/manifests/taiji_u2_p3_10_execution_20261114.json": [
+      "unchanged"
+    ],
+    "plans/manifests/taiji_u2_p3_14_content_supervision_20261114.json": [
+      "unchanged"
+    ],
+    "plans/manifests/taiji_u2_p3_27_prototype_20261114.json": [
+      "unchanged"
+    ],
+    "plans/manifests/taiji_u2_p4_1_column_supervision_20261114.json": [
+      "unchanged"
+    ],
+    "plans/manifests/taiji_u2_p4_1_column_supervision_20261115.json": [
+      "unchanged"
+    ],
+    "reports/taiji_u2_22_5_a_readout_repair_20261117.json": [
+      "unchanged"
+    ],
+    "reports/taiji_u2_22_5_a_readout_repair_weighted_20261117.json": [
+      "unchanged"
+    ],
+    "reports/taiji_u2_22_6_0_fixture_20261115.json": [
+      "digest"
+    ],
+    "reports/taiji_u2_a5_content_probe_20261116.json": [
+      "max_abs_delta"
+    ],
+    "reports/taiji_u2_e5_1_capacity_run_20261118.json": [
+      "digest"
+    ],
+    "reports/taiji_u2_p3_9_2_restore_20261114.json": [
+      "digest"
+    ],
+    "reports/taiji_u2_u1_unit_read_recover_20261116.json": [
+      "digest"
+    ],
+    "reports/taiji_u2_u1r1_position_recover_20261116.json": [
+      "digest"
+    ],
+    "reports/taiji_u2_u1r2_focus_feasibility_20261116.json": [
+      "state_digest"
+    ],
+    "reports/taiji_u2_u1r2_scale_focus_20261116.json": [
+      "unchanged"
+    ],
+    "reports/taiji_u2_u1r2_scale_supervision_recover_20261116.json": [
+      "digest"
+    ],
+    "reports/taiji_u2_v1_hard_selection_recover_20261117.json": [
+      "digest"
     ]
-  }
+  },
+  "amendments": [
+    {
+      "date": "2026-11-19",
+      "action": "claim_level_admission",
+      "files_added": 29,
+      "reason": "11-12→11-18 各卡（A.1/A.1b/A.2/A.3/A.4、bind_2、evidence_A、p3/p4 执行、u1/u1r1/u1r2/v1 recover、e5_1_capacity、22_5_a_readout_repair、22_6_0_fixture 等）生成报告时未记录运行条件。按「旧报告一律不回写、不补字段」的同一纪律，不事后伪造 threads 记录，降级为报告级声明；其结论引用须按 report_level_claim_not_machine_verifiable 口径。后继新报告必须经 check_report_run_conditions.write_report() 落盘（缺条件即写盘失败）。",
+      "audit": "python scripts/training/check_report_run_conditions.py --check 于修订后复跑判绿"
+    }
+  ]
 }

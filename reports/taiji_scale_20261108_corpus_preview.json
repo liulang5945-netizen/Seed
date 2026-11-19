@@ -1,0 +1,36 @@
+{
+ "form_counts": {
+  "written": {
+   "heading": 65,
+   "list_item": 144,
+   "table_row": 104,
+   "prose": 217,
+   "code_comment": 20
+  },
+  "unknown": {
+   "heading": 72,
+   "list_item": 155,
+   "table_row": 116,
+   "prose": 207,
+   "code_comment": 0
+  },
+  "unrelated": {
+   "heading": 0,
+   "list_item": 0,
+   "table_row": 0,
+   "prose": 0,
+   "code_comment": 0,
+   "json_string": 550
+  }
+ },
+ "length_buckets_written": {
+  "<32": 30,
+  "32-64": 99,
+  "64-128": 165,
+  "128-256": 136,
+  ">256": 120
+ },
+ "written": 550,
+ "unknown": 550,
+ "unrelated": 550
+}
