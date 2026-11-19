@@ -4106,3 +4106,8 @@ r3（32 单位/lr 3e-3/2,000 步/batch 64，43.02≤帽 150 CPU）：梯度流 �
 ## 2026-11-20 22.4.2 动作片段卡工程失败（D-20261119-53）
 
 三臂 full/action_masked/direction_permuted 准确率完全相同（0.5/0.5625/0.4688，margin 0），原判 action_contribution_absent；复核发现 train_arm 把 32 条 fit 样本混入训练 ⇒ 判词作废，记 engineering_failure（68.36 CPU）。不签动作贡献有无；physical_transfer 仍 uncovered，但动作后果任务面由 D-52 证明可构造可学。三臂一致提示动作维可能未被使用，后继 22.4.2b：固定 split＋特征消融诊断（动作维单独/置零/置换、当前桶代理去留），帽 150 CPU、零 check。
+
+
+## 2026-11-20 通道路由缺陷定位（D-20261119-54）
+
+`encode_legal_inputs` 按 `group % 6` 选通道：groups=4 时 goal/feedback 从未被路由（实测改 dims 37–38 输出差 0.0；groups=6 时差 8.45e-3）⇒ 22.4.2 三臂一致的第二根因（动作维在 goal 通道）。影响披露：α r4/joint24/22.7b–g 均 groups=4，输入仅覆盖 0–31 维；任务仍可学、判词不作废，但属范围限制须在总账披露。修复：动作轴改用 groups=6（6×5=30 单位）或把动作维放进已用通道。后继 22.4.2b：固定 split＋groups=6＋特征消融，帽 150 CPU、零 check。

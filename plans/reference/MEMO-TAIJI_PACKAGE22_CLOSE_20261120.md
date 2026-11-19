@@ -53,3 +53,7 @@
 ## 7. 终局更新（D-20261119-49）：生长收益裁决
 
 `mature_growth` 最终记为：**结构/机制 verified ＋ 收益 `growth_benefit_not_established_in_package_22`**（负结果带条件，非「生长无用」）。重检前置条件见[裁决备忘](../reference/MEMO-TAIJI_U2_GROWTH_BENEFIT_VERDICT_20261120.md) §3；转向优先 22.6.3 递归发展或动作/物理轴。
+
+## 8. 范围限制披露（D-20261119-54）：groups=4 的输入通道覆盖
+
+`_BaseGraph` 按 `group % 6` 路由通道：22.5.1 之后用 `groups=4` 的卡（α r4、joint24、22.7b–g）输入只覆盖 48 维中的 0–31 维（goal/feedback 未路由）。任务可学性结果不作废，但属**特征覆盖不完整**的范围限制；动作轴须改用 `groups=6`。详见 D-20261119-54。
