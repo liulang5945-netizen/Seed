@@ -5949,3 +5949,19 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **3. 预算与门**：主体 5 任务＋30 共享单元、每任务绑定 2 单元（40 单元）；3 seed；零 check；**价 ≤200 CPU**；三条件预注册，不调阈值；通过记有界 verified，仅条件 3 通过记 `partial`，全负停止同范围。
 
 **4. 授权记录**：按常设授权 `owner:standing-authorization:2026-11-20#recommendation-default` 采用推荐项（显式绑定路线）先推进；owner 可回溯修订。判读边界：即使通过也只是「显式绑定」的单元级分化，不等于自发分化/共享单元分裂整合/22.8。
+
+
+### D-20261119-88 单元级分化最小实现：`unit_differentiation_partial`（43.55 CPU）
+
+**1. 动作**：新增 [`taiji/u2_task_bound_units.py`](../../taiji/u2_task_bound_units.py)（`TaskBoundGraph`：任务-单元绑定＋按任务门控；`masked_unit_step` 只训练绑定单元自身行列）＋探针 [`probe_s2_unit_differentiation_20261120.py`](../../scripts/training/probe_s2_unit_differentiation_20261120.py)：任务 A=joint24（30 共享单元）→出生 2 个绑定单元给任务 B=动作桶（B 时门控开、A 时门控关）→训练 B（头/query/编码器＋绑定单元行列）。3 seed、零 check。
+
+**2. 读数**：
+- `old_retention=true`：A 保持 **drop 0.0**（门控隔离有效）；
+- `new_learnable=true`：B `0.75/0.6875/0.7188`（≥0.433）；
+- `isolation_under_ablation=true`：消融绑定单元时 A 不受影响；
+- `bound_units_selective=true`（调制比极大，但见下）；
+- **`necessary_bound_units=false`：消融绑定单元 B 准确率完全不变（drop 0.0）** ⇒ **`unit_differentiation_partial`**。
+
+**3. 判读**：绑定与门控机制**能精确保持旧任务**、新任务也能学，但**绑定单元不是必要的**——B 的信息经共享单元即可进入读出，新生儿单元属冗余（与 D-67–69 一致）。「专属活动」指标在 2 任务极小数下退化（方差近 0 导致比值虚高），不能据此签「分化」；**条件 1（专属必要性）未过，故不签单元级分化**。
+
+**4. 后继变量（新卡）**：让新任务**只能看到自己的绑定单元**（head>0 门控屏蔽共享单元），使绑定单元成为唯一通路，再测必要性；若 B 仍可学且消融绑定单元掉 ≥0.20、A 逐位不变，则可签「显式绑定单元级分化」；否则记「单元级分化在当前容量/路由下不可达」。零 check、≤150 CPU。

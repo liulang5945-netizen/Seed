@@ -4276,3 +4276,8 @@ HEADS=5：s1 joint24→s2 动作桶→s3 推方向→s4 位置词→s5 实体颜
 ## 2026-11-20 单元级任务分化设计草案（D-20261119-87，零训练）
 
 设计三条件：专属必要性（消融绑定单元只降本任务≥0.20、其他任务逐位不变）、专属活动（绑定单元本任务调制比≥1.5）、不损伤旧能力（旧任务 drop 0.0）。最小实现：MultiHeadGraph2 加任务-单元绑定＋按任务门控，新任务出生 k=2 绑定单元、共享单元冻结；5 任务＋30 单元→40 单元、3 seed、零 check、价≤200 CPU。按常设授权先推进；通过记有界 verified，仅条件3记 partial，全负停止同范围。边界：显式绑定≠自发分化/共享单元分裂整合/22.8。
+
+
+## 2026-11-20 单元级分化最小实现（D-20261119-88，`unit_differentiation_partial`，43.55 CPU）
+
+TaskBoundGraph（任务-单元绑定＋按任务门控）＋masked_unit_step（只训绑定单元行列）：A=joint24（30单元）→出生 2 绑定单元给 B=动作桶，B 门控开/A 关，训 B 600 步。3 seed：old_retention✓（A drop 0.0）、new_learnable✓（B 0.75/0.6875/0.7188）、isolation_under_ablation✓、bound_units_selective 数值虚高（2 任务方差近 0 退化）；但 necessary_bound_units✗（消融绑定单元 B 完全不变 drop 0.0）⇒ unit_differentiation_partial。判读：绑定/门控能精确保持旧任务、新任务可学，但绑定单元冗余（与 D-67–69 一致），条件1 未过不签分化。后继：新任务只允许看自身绑定单元（屏蔽共享单元），使绑定成为唯一通路再测必要性；零 check ≤150 CPU。
