@@ -1,0 +1,359 @@
+{
+  "schema": "taiji-u2-22-6-pool-admission-v1",
+  "card": "22.6 C-session pool curation (D-20261119-23 rules)",
+  "created_utc": "2026-11-19T18:38:30.502704+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "rules": {
+    "seed_range": [
+      20263000,
+      20264000
+    ],
+    "target_worlds": 32,
+    "sessions_per_world": 3,
+    "min_stale_fraction": 0.3333333333333333,
+    "min_wait_value": 0.05,
+    "max_best_fixed": 0.9,
+    "cap_cpu": 240.0
+  },
+  "verdict": "pool_admitted",
+  "scanned_worlds": 642,
+  "admitted_worlds": [
+    {
+      "seed": 20263021,
+      "stale_sessions": 1,
+      "stale_fraction": 0.3333,
+      "wait_value": 0.1833,
+      "best_fixed": 0.84,
+      "distinct_truths": 2,
+      "admissible": true
+    },
+    {
+      "seed": 20263029,
+      "stale_sessions": 1,
+      "stale_fraction": 0.3333,
+      "wait_value": 0.1833,
+      "best_fixed": 0.84,
+      "distinct_truths": 2,
+      "admissible": true
+    },
+    {
+      "seed": 20263033,
+      "stale_sessions": 1,
+      "stale_fraction": 0.3333,
+      "wait_value": 0.1833,
+      "best_fixed": 0.84,
+      "distinct_truths": 2,
+      "admissible": true
+    },
+    {
+      "seed": 20263071,
+      "stale_sessions": 1,
+      "stale_fraction": 0.3333,
+      "wait_value": 0.1833,
+      "best_fixed": 0.84,
+      "distinct_truths": 2,
+      "admissible": true
+    },
+    {
+      "seed": 20263082,
+      "stale_sessions": 1,
+      "stale_fraction": 0.3333,
+      "wait_value": 0.1833,
+      "best_fixed": 0.84,
+      "distinct_truths": 2,
+      "admissible": true
+    },
+    {
+      "seed": 20263087,
+      "stale_sessions": 1,
+      "stale_fraction": 0.3333,
+      "wait_value": 0.1833,
+      "best_fixed": 0.84,
+      "distinct_truths": 2,
+      "admissible": true
+    },
+    {
+      "seed": 20263097,
+      "stale_sessions": 1,
+      "stale_fraction": 0.3333,
+      "wait_value": 0.1833,
+      "best_fixed": 0.84,
+      "distinct_truths": 2,
+      "admissible": true
+    },
+    {
+      "seed": 20263140,
+      "stale_sessions": 1,
+      "stale_fraction": 0.3333,
+      "wait_value": 0.1833,
+      "best_fixed": 0.84,
+      "distinct_truths": 3,
+      "admissible": true
+    },
+    {
+      "seed": 20263164,
+      "stale_sessions": 1,
+      "stale_fraction": 0.3333,
+      "wait_value": 0.1833,
+      "best_fixed": 0.84,
+      "distinct_truths": 2,
+      "admissible": true
+    },
+    {
+      "seed": 20263171,
+      "stale_sessions": 1,
+      "stale_fraction": 0.3333,
+      "wait_value": 0.1833,
+      "best_fixed": 0.84,
+      "distinct_truths": 2,
+      "admissible": true
+    },
+    {
+      "seed": 20263189,
+      "stale_sessions": 1,
+      "stale_fraction": 0.3333,
+      "wait_value": 0.1833,
+      "best_fixed": 0.84,
+      "distinct_truths": 2,
+      "admissible": true
+    },
+    {
+      "seed": 20263218,
+      "stale_sessions": 1,
+      "stale_fraction": 0.3333,
+      "wait_value": 0.1833,
+      "best_fixed": 0.84,
+      "distinct_truths": 2,
+      "admissible": true
+    },
+    {
+      "seed": 20263272,
+      "stale_sessions": 1,
+      "stale_fraction": 0.3333,
+      "wait_value": 0.1833,
+      "best_fixed": 0.84,
+      "distinct_truths": 2,
+      "admissible": true
+    },
+    {
+      "seed": 20263286,
+      "stale_sessions": 1,
+      "stale_fraction": 0.3333,
+      "wait_value": 0.1833,
+      "best_fixed": 0.84,
+      "distinct_truths": 3,
+      "admissible": true
+    },
+    {
+      "seed": 20263307,
+      "stale_sessions": 1,
+      "stale_fraction": 0.3333,
+      "wait_value": 0.1833,
+      "best_fixed": 0.83,
+      "distinct_truths": 2,
+      "admissible": true
+    },
+    {
+      "seed": 20263358,
+      "stale_sessions": 1,
+      "stale_fraction": 0.3333,
+      "wait_value": 0.1833,
+      "best_fixed": 0.84,
+      "distinct_truths": 2,
+      "admissible": true
+    },
+    {
+      "seed": 20263454,
+      "stale_sessions": 1,
+      "stale_fraction": 0.3333,
+      "wait_value": 0.1833,
+      "best_fixed": 0.84,
+      "distinct_truths": 3,
+      "admissible": true
+    },
+    {
+      "seed": 20263467,
+      "stale_sessions": 1,
+      "stale_fraction": 0.3333,
+      "wait_value": 0.1833,
+      "best_fixed": 0.84,
+      "distinct_truths": 2,
+      "admissible": true
+    },
+    {
+      "seed": 20263496,
+      "stale_sessions": 1,
+      "stale_fraction": 0.3333,
+      "wait_value": 0.1833,
+      "best_fixed": 0.84,
+      "distinct_truths": 3,
+      "admissible": true
+    },
+    {
+      "seed": 20263507,
+      "stale_sessions": 1,
+      "stale_fraction": 0.3333,
+      "wait_value": 0.1833,
+      "best_fixed": 0.84,
+      "distinct_truths": 2,
+      "admissible": true
+    },
+    {
+      "seed": 20263511,
+      "stale_sessions": 1,
+      "stale_fraction": 0.3333,
+      "wait_value": 0.1833,
+      "best_fixed": 0.84,
+      "distinct_truths": 3,
+      "admissible": true
+    },
+    {
+      "seed": 20263529,
+      "stale_sessions": 1,
+      "stale_fraction": 0.3333,
+      "wait_value": 0.1833,
+      "best_fixed": 0.84,
+      "distinct_truths": 3,
+      "admissible": true
+    },
+    {
+      "seed": 20263531,
+      "stale_sessions": 1,
+      "stale_fraction": 0.3333,
+      "wait_value": 0.1833,
+      "best_fixed": 0.84,
+      "distinct_truths": 2,
+      "admissible": true
+    },
+    {
+      "seed": 20263535,
+      "stale_sessions": 1,
+      "stale_fraction": 0.3333,
+      "wait_value": 0.1833,
+      "best_fixed": 0.84,
+      "distinct_truths": 2,
+      "admissible": true
+    },
+    {
+      "seed": 20263547,
+      "stale_sessions": 1,
+      "stale_fraction": 0.3333,
+      "wait_value": 0.1833,
+      "best_fixed": 0.84,
+      "distinct_truths": 2,
+      "admissible": true
+    },
+    {
+      "seed": 20263548,
+      "stale_sessions": 1,
+      "stale_fraction": 0.3333,
+      "wait_value": 0.1833,
+      "best_fixed": 0.84,
+      "distinct_truths": 3,
+      "admissible": true
+    },
+    {
+      "seed": 20263579,
+      "stale_sessions": 1,
+      "stale_fraction": 0.3333,
+      "wait_value": 0.1833,
+      "best_fixed": 0.84,
+      "distinct_truths": 3,
+      "admissible": true
+    },
+    {
+      "seed": 20263601,
+      "stale_sessions": 1,
+      "stale_fraction": 0.3333,
+      "wait_value": 0.1833,
+      "best_fixed": 0.84,
+      "distinct_truths": 3,
+      "admissible": true
+    },
+    {
+      "seed": 20263615,
+      "stale_sessions": 1,
+      "stale_fraction": 0.3333,
+      "wait_value": 0.1833,
+      "best_fixed": 0.84,
+      "distinct_truths": 3,
+      "admissible": true
+    },
+    {
+      "seed": 20263629,
+      "stale_sessions": 1,
+      "stale_fraction": 0.3333,
+      "wait_value": 0.1833,
+      "best_fixed": 0.84,
+      "distinct_truths": 3,
+      "admissible": true
+    },
+    {
+      "seed": 20263636,
+      "stale_sessions": 1,
+      "stale_fraction": 0.3333,
+      "wait_value": 0.1833,
+      "best_fixed": 0.84,
+      "distinct_truths": 3,
+      "admissible": true
+    },
+    {
+      "seed": 20263641,
+      "stale_sessions": 1,
+      "stale_fraction": 0.3333,
+      "wait_value": 0.1833,
+      "best_fixed": 0.84,
+      "distinct_truths": 2,
+      "admissible": true
+    }
+  ],
+  "curated_baselines": {
+    "answer_no_observe": {
+      "mean": 0.0,
+      "std": 0.0
+    },
+    "rest_then_answer": {
+      "mean": -0.15,
+      "std": 0.0
+    },
+    "observe_t0_answer": {
+      "mean": 0.6467,
+      "std": 0.4714
+    },
+    "observe_t7_answer": {
+      "mean": 0.5767,
+      "std": 0.4714
+    },
+    "observe_t14_answer": {
+      "mean": 0.8296,
+      "std": 0.1015
+    },
+    "observe_deadline_answer": {
+      "mean": 0.83,
+      "std": 0.0
+    },
+    "verify_t0_answer": {
+      "mean": 0.5467,
+      "std": 0.4714
+    }
+  },
+  "strongest_fixed": {
+    "name": "observe_deadline_answer",
+    "mean": 0.83
+  },
+  "wait_value": 0.1833,
+  "mean_stale_fraction": 0.3333,
+  "headroom": 0.17,
+  "discipline": {
+    "optimizer_steps": 0,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 50.02
+  }
+}
