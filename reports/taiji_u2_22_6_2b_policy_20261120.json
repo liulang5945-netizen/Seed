@@ -1,0 +1,90 @@
+{
+  "schema": "taiji-u2-22-6-2b-policy-v1",
+  "card": "22.6.2b contextual cost-sensitive policy over the C-task pool",
+  "created_utc": "2026-11-19T21:31:14.780691+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "pool_worlds": 32,
+    "train_worlds": 24,
+    "heldout_worlds": 8,
+    "actions": [
+      "answer_no_observe",
+      "rest_then_answer",
+      "observe_t0_answer",
+      "observe_t7_answer",
+      "observe_t14_answer",
+      "observe_deadline_answer",
+      "verify_t0_answer"
+    ],
+    "beta_grid": [
+      0.0,
+      0.05,
+      0.1,
+      0.2
+    ],
+    "bootstrap_members": 5,
+    "epochs": 300,
+    "seeds": [
+      0,
+      1,
+      2
+    ]
+  },
+  "fixed_means_heldout": {
+    "answer_no_observe": 0.0,
+    "rest_then_answer": -0.15,
+    "observe_t0_answer": 0.6467,
+    "observe_t7_answer": 0.5767,
+    "observe_t14_answer": 0.84,
+    "observe_deadline_answer": 0.83,
+    "verify_t0_answer": 0.5467
+  },
+  "best_fixed": {
+    "name": "observe_t14_answer",
+    "mean": 0.84
+  },
+  "results": [
+    {
+      "seed": 0,
+      "beta": 0.2,
+      "learned_mean": 0.7467,
+      "greedy_mean": 0.7592,
+      "paired_lower_bound": -0.2008
+    },
+    {
+      "seed": 1,
+      "beta": 0.2,
+      "learned_mean": 0.8192,
+      "greedy_mean": 0.8187,
+      "paired_lower_bound": -0.0929
+    },
+    {
+      "seed": 2,
+      "beta": 0.1,
+      "learned_mean": 0.8237,
+      "greedy_mean": 0.7592,
+      "paired_lower_bound": -0.0879
+    }
+  ],
+  "mean_learned": 0.7965,
+  "gain_over_best_fixed": -0.0435,
+  "gates": {
+    "gain_0_05": false,
+    "all_seeds_positive": false,
+    "paired_lower_bound": false,
+    "greedy_comparison_reported": true
+  },
+  "verdict": "policy_gain_absent",
+  "discipline": {
+    "optimizer_steps": 27000,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 21.62
+  }
+}
