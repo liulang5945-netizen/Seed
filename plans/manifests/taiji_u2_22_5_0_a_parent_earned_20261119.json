@@ -1,0 +1,64 @@
+{
+  "schema": "taiji-u2-22-5-0-a-parent-earned-v1",
+  "card": "RESULT-TAIJI_U2_22_5_0_A_PARENT_PACKAGE_20261119.md",
+  "status": "earned_pending_2251_joint_gate",
+  "verdict": "a_parent_earned",
+  "decision_ref": "D-20261119-04",
+  "task_face": "first-A (taiji-first-A-v2-3body, 192-world development-check face, aggregate-only)",
+  "subject_identity": "pixel-salience + d=32 (readout_gate_earned, frozen D-20261119-02)",
+  "criterion": "yi_median_check_min_0_80 (owner ruling 1)",
+  "readings": {
+    "u2_check_correct": {
+      "20261110": 171,
+      "20261111": 78,
+      "20261112": 174
+    },
+    "u2_check_median": 0.890625,
+    "preflight_recovery_utf8_eos_all_green": true,
+    "flops_parity_baseline_check_accuracy": {
+      "20261110": 0.3698,
+      "20261111": 0.3646,
+      "20261112": 0.2969
+    },
+    "flops_ratio_u2_over_baseline": 10.5199
+  },
+  "engineering_parents": {
+    "engineering_22_3": {
+      "ref": "plans\\manifests\\taiji_u2_22_3_accepted_parent_20261111.json",
+      "sha256": "250c1ab38ce044796668ec4e9276c280262bd3f5473aa0caed51b6977a39b2fa"
+    },
+    "engineering_22_4": {
+      "ref": "plans\\manifests\\taiji_u2_22_4_accepted_parent_20261117.json",
+      "sha256": "ba7c0d7ea6381fe154fc36e4ebc031282c62dd5340e490bba27842961075bf7a",
+      "authorized": false
+    }
+  },
+  "run_evidence": {
+    "report": "reports/taiji_u2_a_parent_package_run_20261119.json",
+    "report_sha256": "92231e4a290de0e3daeead27bbd98bb9ac8c1af3bcb5f67428bac092225b78bf",
+    "package_contract": "plans/manifests/taiji_u2_22_5_0_a_parent_package_20261119.json",
+    "package_contract_sha256": "a3a50929a007e634e372b4258eeb72180f60ab7ed0ddb7c3da072b650b413b30",
+    "criterion_readout_closeout": "CLOSEOUT-TAIJI_U2_22_5_A_READOUT_20261118.md sections 8-10"
+  },
+  "budget_ledger": {
+    "package_success_legs_cpu": 11240.25,
+    "cap_cpu_fifth_ruling": 17000.0,
+    "baseline_attempt1_waste_listed_separately_cpu": 7400.0,
+    "stage_position_estimate_cpu": 29700.0,
+    "stage_cap_refrozen_cpu": 24000.0,
+    "stage_overrun_treatment": "recorded as incident, no retro raise; honest re-tally in DESIGN-TAIJI_U2_22_5_1_RELEVANCE_GATE_20261119.md section 6, disposition with owner"
+  },
+  "check_exposure": {
+    "allocated_22_5": 2,
+    "used": 2,
+    "remaining": 0
+  },
+  "not_yet": [
+    "22.5.1 joint gate (correction + retention)",
+    "22.6 unlock",
+    "external capability claims",
+    "C/D/J faces"
+  ],
+  "authorized": false,
+  "note": "capability claim of this manifest is limited to the first-A face: the same subject learns to criterion with full recovery while a FLOPs-matched weight-tied baseline cannot; signing beyond this face requires the 22.5.1 joint gate."
+}
