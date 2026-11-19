@@ -77,3 +77,7 @@
 | lifetime | verified（有界）／长跨度 uncovered |
 
 待裁四项与建议见 [待裁汇总](../reference/MEMO-TAIJI_OWNER_DECISIONS_20261120.md)。
+
+## 11. 碰撞/多动力学族收口（D-20261119-59）
+
+自由推与受控几何两个探针均未通过（后者数据可分 oracle≈0.93 但预算内模型未学到方向×几何合取）⇒ 该族记 `collision_family_uncovered_with_evidence`；`physical_transfer` 维持**有界 verified（22.4.2b 推/位置桶）**，真机与多动力学族仍 `uncovered`。

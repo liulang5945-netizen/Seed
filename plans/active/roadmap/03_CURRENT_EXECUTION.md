@@ -4131,3 +4131,8 @@ groups=6（全通道路由）＋严格 split（训练 256/fit 只评测）＋四
 ## 2026-11-20 受控几何碰撞探针（D-20261119-58，`controlled_collision_absent`，63.91 CPU）
 
 筛距离窗口 [0.45,0.75] 的 world，每 world 一对推（正对/背离邻体，强度固定），标签＝邻体位移>0.06；groups=6、30 单位、1,200 步、3 seed、零 check。碰撞率 0.414 平衡✓；方向可分：正对 0.828 vs 背离 0.000（oracle≈0.93）；full [0.578,0.578,0.586] vs 屏蔽 [0.581,0.586,0.586] ≈ 多数类基线 0.586 ⇒ learnable 与 direction_contribution 均失败 ⇒ controlled_collision_absent。判读：数据构造成功，失败在模型未学到「方向×几何」合取（屏蔽方向不掉分）；需更大容量/步数或线性可分标签的新卡，不得调阈值。physical_transfer 维持 verified（有界：推/位置桶）；碰撞/遮挡、真机仍 uncovered。
+
+
+## 2026-11-20 碰撞/多动力学族收口（D-20261119-59，零训练）
+
+两探针：自由推标签由邻距主导（方向贡献 +0.005）；受控几何数据可分（正对 0.828 vs 背离 0.000、oracle≈0.93、平衡）但 30 单位/1,200 步未学到方向×几何合取 ⇒ 碰撞族记 `collision_family_uncovered_with_evidence`（构造可行、预算内不可学）。physical_transfer 维持 verified（有界：22.4.2b 推/位置桶）；真机/多动力学族仍 uncovered。后继条件：更大容量/更多步数（新预算）、线性可分碰撞标签（注明非完整因果）、或 27 阶段真机（owner 裁定）。零 check/final。
