@@ -5431,3 +5431,14 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **4. 修正方向（须新卡 22.7d）**：出生保持 `p_new=0`（瞬时中性），但 `r_new` 取小随机或继承父行向量使 `activity_new≠0`，`p_new` 第一步即获梯度；前置门升级为 ①出生前后 logits 逐位一致 ②出生后 N 步内 `r_new/p_new` 梯度非零且权重可测变化。通过后再测生长收益。
 
 **5. 边界**：不签生长收益/损失；不改 `u2_neural_units.py` 源码（pin 保持）；22.7 原卡仍 `growth_not_needed_in_scope`，22.7b/22.7c 均不复活。
+
+
+### D-20261119-46 22.7d 活入口出生：`engineering_failure`（p 通路已活、单步 r 梯度门过严，96.28 CPU）
+
+**1. 动作**：新增出生实现 [`taiji/u2_neural_birth.py`](../../taiji/u2_neural_birth.py)（`p_new=0` 保持瞬时中性＋`r_new` 继承父行使 activity≠0；不改 `u2_neural_units.py`）与 22.7d 新卡 [`run_s2_22_7d_growth_joint24_20261120.py`](../../scripts/training/run_s2_22_7d_growth_joint24_20261120.py)（三臂、每步投影、出生 logits 逐位一致＋1 步活单元探针），结果卡 [`RESULT-TAIJI_U2_22_7D_GROWTH_20261120`](../reference/RESULT-TAIJI_U2_22_7D_GROWTH_20261120.md)。**0 check/final。**
+
+**2. 读数**（`96.28 ≤ 帽 250 CPU`）：出生中性 3/3（`diff=0.0`）、旧能力损伤 0、恢复 exact、引用清理 ✓；活入口部分成立（`p_grad 0.0034–0.0172>0`、`p_change 0.0028>0`、`newborn_activity 0.39–0.47>0`），但 **`r_grad=r_change=0`**——第 1 步 `p_new=0`，`r` 梯度 ∝ `p_new` 必为 0（第 2 步起才活）。判 **`engineering_failure`**（活单元门未全过，先于收益判定）；收益读数 `[−0.0313,0,−0.0313]` 不可用。
+
+**3. 判读**：死单元问题**已修好一半**（p 可学、活动非零）；门口径过严，应改「N=5 步内 p 第 1 步 grad 非零、r 第 2+ 步 grad 非零、5 步后 p/r 权重变化>0」。本卡不签生长收益/损失。
+
+**4. 后继（22.7e）**：同一活入口出生＋N=5 步探针（步数计入 1,500 配平），通过后按预注册门测净益；不复活 22.7b/c/d，不改 `u2_neural_units.py`（pin 保持）。

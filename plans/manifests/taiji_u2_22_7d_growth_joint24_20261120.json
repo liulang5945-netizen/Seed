@@ -1,0 +1,99 @@
+{
+  "schema": "taiji-u2-22-7d-growth-v1",
+  "card": "DESIGN-TAIJI_U2_22_7D_GROWTH_JOINT24_20261120.md",
+  "status": "frozen",
+  "training_authority": "owner:standing-authorization:2026-11-20#recommendation-default",
+  "criteria": {
+    "card": "22.7d growth benefit with projected training on joint 24-class task",
+    "base": {
+      "groups": 4,
+      "units_per_group": 8,
+      "input_dim": 8,
+      "hidden_dim": 8,
+      "output_dim": 24,
+      "lr": 0.003,
+      "steps": 1500,
+      "midpoint_step": 750,
+      "batch": 64,
+      "warmup": 100,
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "train_worlds": 256,
+      "fit_worlds": 32
+    },
+    "task": {
+      "name": "first-A joint colour x position (24 classes)",
+      "adapter": "v3 raw-media palette histogram",
+      "headroom_receipt": "reports/taiji_u2_22_7_joint24_20261120.json",
+      "chance": 0.0417
+    },
+    "arms": {
+      "G0_growth": "warm 32 units; live-entry birth (p=0, r inherited) + maturity at step 750 -> 33 units; continue to 1500 total steps",
+      "C1_no_growth": "32 units; 1500 total steps",
+      "C2_preallocated": "33 units from step 0; 1500 total steps"
+    },
+    "out_of_scope": {
+      "G1": "random content-blind gate birth",
+      "G2": "permuted gate birth",
+      "G3": "GradMax direction + fixed schedule",
+      "G4": "replay only",
+      "G5": "fixed-capacity strong optimisation",
+      "G6": "preallocated final capacity snapshot"
+    },
+    "parity": {
+      "rule": "equal total optimizer steps; optimizer recreated at midpoint for all arms; FLOPs ratio (33/32) reported",
+      "flops_ratio_max": 1.05
+    },
+    "gates": {
+      "growth_gain_min": 0.05,
+      "paired_lower_bound_min": 0.0,
+      "all_seeds_same_direction": true,
+      "retention_drop_upper_bound_max": 0.02,
+      "recovery_exact": true,
+      "birth_neutral_exact": true,
+      "newborn_live": true,
+      "references_cleanup": true
+    },
+    "exits_order": [
+      "engineering_failure",
+      "not_admitted",
+      "budget_stop",
+      "credit_insufficient",
+      "retention_breach",
+      "recovery_failure",
+      "growth_gain_absent",
+      "growth_gain_pass"
+    ],
+    "check_reads": 0,
+    "final_reads": 0,
+    "price_cpu": 250.0,
+    "cap_cpu": 250.0
+  },
+  "criteria_sha256": "9ad43fc974d822236a34a1189e61fb425b86bfb1b78add75a432bf66243bbf82",
+  "plan": {
+    "price_cpu": 250.0,
+    "optimizer_steps": 13500,
+    "arms": 3
+  },
+  "cap_cpu": 250.0,
+  "check_exposure": {
+    "reads": 0
+  },
+  "source_pins": {
+    "scripts/training/run_s2_22_7b_growth_joint24_20261120.py": "c07b3587e9c3157d155c0dc6d15e69537b9cc9dbabf5408c9390307c54e76361",
+    "scripts/training/probe_s2_22_7_joint24_20261120.py": "4c6695e59ca7c4de2d62c6a17e4da08149b285632736cd43f1b770505587245f",
+    "scripts/training/probe_s2_22_7_0_alpha_adapter_v3_20261120.py": "40fea6e7745d8eced5ef4fd780964702e248cfd63c52d8d051a1ca52260bf723",
+    "taiji/u2_neural_units.py": "6a8bfc15f44b39cc22cd1570bf43cedaf44e018628572efb528f2a829a5deca9"
+  },
+  "result": {
+    "smoke": "smoke_passed",
+    "run": true,
+    "closed": true,
+    "verdict": "engineering_failure",
+    "mean_gain": -0.020833,
+    "cost_cpu": 96.28
+  }
+}

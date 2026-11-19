@@ -4066,3 +4066,8 @@ r3（32 单位/lr 3e-3/2,000 步/batch 64，43.02≤帽 150 CPU）：梯度流 �
 ## 2026-11-20 22.7c 投影训练生长对照（D-20261119-45，`growth_gain_absent`，97.12 CPU）
 
 每步投影后出生逐位一致前置门通过；三臂逐项一致（0.78125/0.625/0.625×3 seed）、净益 [0,0,0]、均值 0、配对 LB 0 ⇒ growth_gain_absent；旧能力损伤 0、恢复 exact、引用清理通过。归因：with_neutral_birth 双零（r_new=0 且 p_new=0）→ activity=0 → p 梯度∝activity=0、r 梯度∝p=0 ⇒ **新生儿永久不可学（死单元）**；这不是生长无用，是出生初始化缺陷。修正方向：p_new=0 保持瞬时中性、r_new 小随机/继承父行使 activity≠0，p 第一步即获梯度；前置门升级为「logits 逐位一致＋N 步内梯度/权重可测变化」；通过后 22.7d 重测。不改 u2_neural_units.py（pin 保持）；0 check/final。
+
+
+## 2026-11-20 22.7d 活入口出生（D-20261119-46，`engineering_failure`，96.28 CPU）
+
+新出生实现：p_new=0（瞬时中性）＋r_new 继承父行（activity≠0）；三臂、每步投影、出生 logits 逐位一致。读数：中性 3/3、旧能力 0、恢复 exact、引用清理✓；p_grad>0、p_change>0、activity 0.39–0.47>0 但 r_grad=r_change=0（第 1 步 p_new=0 ⇒ r 梯度 ∝p 必为 0，第 2 步起才活）⇒ 活单元门未全过，判 engineering_failure（先于收益判定）；收益读数不可用。死单元已修好一半；门改为 N=5 步（p 第 1 步、r 第 2+ 步、5 步后 p/r 权重变化），22.7e 重测。不改 u2_neural_units.py（pin 保持）；0 check/final。

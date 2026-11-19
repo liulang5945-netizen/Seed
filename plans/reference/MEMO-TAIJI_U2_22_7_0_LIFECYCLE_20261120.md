@@ -62,3 +62,7 @@
 ## 8. 追加（D-20261119-45）：双零初始化使新生儿不可学
 
 22.7c（投影训练）三臂逐项一致证明：`with_neutral_birth` 同时置 `r_new=0` 与 `p_new=0`，`activity_new=0` ⇒ `p_new` 梯度为 0、`r_new` 梯度也为 0，**新生儿永久死单元**。结构上「中性出生」成立，但生长机制缺少可塑性入口；修正需 `p_new=0`（瞬时中性）＋`r_new` 非零（活输入通路），并加「出生后梯度/权重变化」前置门。
+
+## 9. 追加（D-20261119-46）：活入口出生的第一版实现
+
+`taiji/u2_neural_birth.py` 提供 `live_entry_birth`（`p_new=0`＋`r_new` 继承父行）与 `newborn_liveness` 探针。22.7d 读数为 `engineering_failure`：p 通路已活（grad/change/activity 非零），但单步探针要求 r 梯度非零不成立（r 梯度依赖 p_new，第一步后 p 才离开 0）——**实现可用、门口径需改为 N=5 步**。

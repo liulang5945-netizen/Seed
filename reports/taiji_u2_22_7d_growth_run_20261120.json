@@ -1,0 +1,263 @@
+{
+  "schema": "taiji-u2-22-7d-growth-run-v1",
+  "criteria_sha256": "9ad43fc974d822236a34a1189e61fb425b86bfb1b78add75a432bf66243bbf82",
+  "created_utc": "2026-11-19T20:31:52.242691+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "task": {
+    "name": "first-A joint colour x position (24 classes)",
+    "adapter": "v3 raw-media palette histogram",
+    "headroom_receipt": "reports/taiji_u2_22_7_joint24_20261120.json",
+    "chance": 0.0417
+  },
+  "arms": {
+    "G0_growth": {
+      "0": {
+        "arm": "G0_growth",
+        "seed": 0,
+        "accuracy": 0.78125,
+        "retention_drop": 0.0,
+        "birth_neutral_diff": 0.0,
+        "liveness": {
+          "p_grad_norm": 0.0033697986509650946,
+          "r_grad_norm": 0.0,
+          "p_change_norm": 0.0028280767146497965,
+          "r_change_norm": 0.0,
+          "newborn_activity_max": 0.391829252243042
+        },
+        "birth": {
+          "newborn_index": 32,
+          "parent_id": "u0000",
+          "parent_r_norm": 0.9668483138084412,
+          "inherited_r_norm": 0.6530085802078247,
+          "p_new_norm": 0.0,
+          "before_units": 32,
+          "after_units": 33,
+          "newborn_id": "u0032",
+          "parent_ids": [
+            "u0000"
+          ],
+          "birth_version": 1
+        },
+        "recovery_exact": true,
+        "units_final": 33,
+        "mature_units": 33,
+        "immature_units": 0
+      },
+      "1": {
+        "arm": "G0_growth",
+        "seed": 1,
+        "accuracy": 0.625,
+        "retention_drop": 0.0,
+        "birth_neutral_diff": 0.0,
+        "liveness": {
+          "p_grad_norm": 0.017228959128260612,
+          "r_grad_norm": 0.0,
+          "p_change_norm": 0.002828416647389531,
+          "r_change_norm": 0.0,
+          "newborn_activity_max": 0.4656268060207367
+        },
+        "birth": {
+          "newborn_index": 32,
+          "parent_id": "u0000",
+          "parent_r_norm": 0.8969867825508118,
+          "inherited_r_norm": 0.7046878337860107,
+          "p_new_norm": 0.0,
+          "before_units": 32,
+          "after_units": 33,
+          "newborn_id": "u0032",
+          "parent_ids": [
+            "u0000"
+          ],
+          "birth_version": 1
+        },
+        "recovery_exact": true,
+        "units_final": 33,
+        "mature_units": 33,
+        "immature_units": 0
+      },
+      "2": {
+        "arm": "G0_growth",
+        "seed": 2,
+        "accuracy": 0.625,
+        "retention_drop": 0.0,
+        "birth_neutral_diff": 0.0,
+        "liveness": {
+          "p_grad_norm": 0.01187172345817089,
+          "r_grad_norm": 0.0,
+          "p_change_norm": 0.0028284129220992327,
+          "r_change_norm": 0.0,
+          "newborn_activity_max": 0.4121938943862915
+        },
+        "birth": {
+          "newborn_index": 32,
+          "parent_id": "u0000",
+          "parent_r_norm": 0.9480443000793457,
+          "inherited_r_norm": 0.5854961276054382,
+          "p_new_norm": 0.0,
+          "before_units": 32,
+          "after_units": 33,
+          "newborn_id": "u0032",
+          "parent_ids": [
+            "u0000"
+          ],
+          "birth_version": 1
+        },
+        "recovery_exact": true,
+        "units_final": 33,
+        "mature_units": 33,
+        "immature_units": 0
+      }
+    },
+    "C1_no_growth": {
+      "0": {
+        "arm": "C1_no_growth",
+        "seed": 0,
+        "accuracy": 0.78125,
+        "retention_drop": 0.0,
+        "birth_neutral_diff": 0.0,
+        "liveness": {},
+        "birth": null,
+        "recovery_exact": null,
+        "units_final": 32,
+        "mature_units": 32,
+        "immature_units": 0
+      },
+      "1": {
+        "arm": "C1_no_growth",
+        "seed": 1,
+        "accuracy": 0.625,
+        "retention_drop": 0.0,
+        "birth_neutral_diff": 0.0,
+        "liveness": {},
+        "birth": null,
+        "recovery_exact": null,
+        "units_final": 32,
+        "mature_units": 32,
+        "immature_units": 0
+      },
+      "2": {
+        "arm": "C1_no_growth",
+        "seed": 2,
+        "accuracy": 0.625,
+        "retention_drop": 0.0,
+        "birth_neutral_diff": 0.0,
+        "liveness": {},
+        "birth": null,
+        "recovery_exact": null,
+        "units_final": 32,
+        "mature_units": 32,
+        "immature_units": 0
+      }
+    },
+    "C2_preallocated": {
+      "0": {
+        "arm": "C2_preallocated",
+        "seed": 0,
+        "accuracy": 0.8125,
+        "retention_drop": 0.0,
+        "birth_neutral_diff": 0.0,
+        "liveness": {},
+        "birth": {
+          "newborn_index": 32,
+          "parent_id": "u0000",
+          "parent_r_norm": 0.5425516366958618,
+          "inherited_r_norm": 0.5425516366958618,
+          "p_new_norm": 0.0,
+          "before_units": 32,
+          "after_units": 33,
+          "newborn_id": "u0032",
+          "parent_ids": [
+            "u0000"
+          ],
+          "birth_version": 1
+        },
+        "recovery_exact": null,
+        "units_final": 33,
+        "mature_units": 33,
+        "immature_units": 0
+      },
+      "1": {
+        "arm": "C2_preallocated",
+        "seed": 1,
+        "accuracy": 0.625,
+        "retention_drop": 0.0,
+        "birth_neutral_diff": 0.0,
+        "liveness": {},
+        "birth": {
+          "newborn_index": 32,
+          "parent_id": "u0000",
+          "parent_r_norm": 0.43718838691711426,
+          "inherited_r_norm": 0.43718838691711426,
+          "p_new_norm": 0.0,
+          "before_units": 32,
+          "after_units": 33,
+          "newborn_id": "u0032",
+          "parent_ids": [
+            "u0000"
+          ],
+          "birth_version": 1
+        },
+        "recovery_exact": null,
+        "units_final": 33,
+        "mature_units": 33,
+        "immature_units": 0
+      },
+      "2": {
+        "arm": "C2_preallocated",
+        "seed": 2,
+        "accuracy": 0.65625,
+        "retention_drop": 0.0,
+        "birth_neutral_diff": 0.0,
+        "liveness": {},
+        "birth": {
+          "newborn_index": 32,
+          "parent_id": "u0000",
+          "parent_r_norm": 0.3801734149456024,
+          "inherited_r_norm": 0.3801734149456024,
+          "p_new_norm": 0.0,
+          "before_units": 32,
+          "after_units": 33,
+          "newborn_id": "u0032",
+          "parent_ids": [
+            "u0000"
+          ],
+          "birth_version": 1
+        },
+        "recovery_exact": null,
+        "units_final": 33,
+        "mature_units": 33,
+        "immature_units": 0
+      }
+    }
+  },
+  "gains": [
+    -0.03125,
+    0.0,
+    -0.03125
+  ],
+  "mean_gain": -0.020833,
+  "paired_lower_bound": -0.09375,
+  "retention_drop_upper_bound": 0.0,
+  "recovery_exact": true,
+  "birth_neutral": true,
+  "newborn_live": false,
+  "references_cleanup": true,
+  "flops_ratio": 1.0312,
+  "verdict": "engineering_failure",
+  "budget": {
+    "cap_cpu": 250.0,
+    "cpu": 96.28
+  },
+  "discipline": {
+    "optimizer_steps": 13500,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 96.28
+  }
+}
