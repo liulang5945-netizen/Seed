@@ -1,8 +1,8 @@
 {
   "schema": "taiji-u2-22-5-0-a-parent-package-v1",
   "card": "DESIGN-TAIJI_U2_22_5_0_A_PARENT_PACKAGE_20261119.md",
-  "status": "priced_pending_owner_decisions",
-  "training_authority": false,
+  "status": "authorized_implementation_in_progress",
+  "training_authority": true,
   "protocol": {
     "dose_per_seed": 2000,
     "batch": 8,
@@ -94,5 +94,32 @@
     "used": 2,
     "remaining": 0,
     "note": "formal gate reuses the same partition instrument as D-20261119-02; if owner rules a fresh exposure ledger is required, add it before execution"
+  },
+  "owner_rulings": {
+    "date": "2026-11-19",
+    "ref": "chat:2026-11-19#A-parent-package-three-points-plus-popup",
+    "criterion": "yi_median_check_min_0_80",
+    "stage_budget_refreeze_cpu": 24000.0,
+    "parity": "with_package",
+    "parity_task_face": "adapter_a_task",
+    "prior_diagnostic_draw_cpu": 13400.0
+  },
+  "adapter_prereg": {
+    "status": "frozen_before_implementation",
+    "base_identity": "plans/manifests/taiji_u2_22_4_4_baseline_identity_c_20261117.json (untouched)",
+    "class": "A2TaskAdapter over WeightTiedTransformerBaseline(28, 3) + SharedFrontend",
+    "visible_channels": "first-A public packets: rgb[16,48]/audio[7,33]/proprio[1,16] + goal text + request bytes",
+    "disclosed_deprivations": [
+      "outcome tensor and per-modality coordinate streams are not encodable with the frozen component set (no outcome encoder in the identity); the baseline does not consume them",
+      "short modalities are clamped-repeat padded to the rgb length 16 (audio t>6 repeats frame 6, proprio repeats frame 0)",
+      "position table is frozen at 8 rows; positions t>7 reuse row 7"
+    ],
+    "token_layout": "per-step 32-dim tokens fused from the three modality encoders + metadata + goal-context (same math as SharedFrontend.step_tokens, native lengths), then request-byte tokens (text slot only), then generated-byte tokens appended during decode",
+    "loss": "teacher-forced CE over [*target, 256] at the generation positions, single forward+backward per example, batch 1",
+    "decode": "greedy argmax, 65-byte budget, EOS=256; same evaluate() instrument as the U2 arm via the task interface",
+    "optimizer": "frozen identity recipe: Adam lr 0.001 betas (0.9,0.999) eps 1e-8",
+    "init": "torch.manual_seed(seed) then WeightTiedTransformerBaseline(28, 3); frozen init rule apply_frozen_init",
+    "parity_method": "FlopCounterMode per-example forward+backward on identical first-A examples for both arms; baseline dose = U2 dose x (U2 FLOPs / baseline FLOPs), measured and frozen before execution",
+    "dose_floor_note": "the fragment-based 20874/seed estimate is superseded by the measured adapter-parity dose"
   }
 }
