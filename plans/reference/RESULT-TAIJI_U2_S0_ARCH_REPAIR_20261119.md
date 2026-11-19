@@ -13,10 +13,11 @@
 
 | 项 | 状态 | 内容与证据 |
 |---|---|---|
-| 1 读出身份隔离 | **完成** | [`taiji/u2_pixel_read.py`](../../taiji/u2_pixel_read.py) 同时冻结 v1（`PixelSalienceReadout`，与原 HEAD 逐字节同构）与 S0 v2（`PixelSalienceReadoutV2`，新 identity `pixel-salience-v2`）；[`u2_subject.py`](../../taiji/u2_subject.py) 以 `build_readout()` 按身份装配，v1 路径参数名/形状/初始化流不变；注册表 v1 三单元与 v2 三单元分别为 `pixel-salience:*` / `pixel-salience-v2:*`；回归 [`test_u2_pixel_readout.py`](../../tests/taiji_native/test_u2_pixel_readout.py) 双身份全绿并断言 v1 布局逐名逐形状冻结 |
+| 1 读出身份隔离 | **完成（含补充修正，D-20261119-10）** | [`taiji/u2_pixel_read.py`](../../taiji/u2_pixel_read.py) 同时冻结 v1（`PixelSalienceReadout`，与原 HEAD 逐字节同构）与 S0 v2（`PixelSalienceReadoutV2`，新 identity `pixel-salience-v2`）；[`u2_subject.py`](../../taiji/u2_subject.py) 以 `build_readout()` 按身份装配；注册表 v1 三单元与 v2 三单元分别为 `pixel-salience:*` / `pixel-salience-v2:*`；回归 [`test_u2_pixel_readout.py`](../../tests/taiji_native/test_u2_pixel_readout.py) 双身份全绿并断言 v1 布局逐名逐形状冻结。**补充修正**：S0 初版同时把 `delta_head` 两个 bias 移除，导致已接受 A 父 strict load 被拒（`Unexpected key(s): delta_head.0.bias/2.bias`）；现已按身份恢复——v1 保留原 bias 布局（逐字节同 HEAD），v2 保留 bias-free 修订；[加载探针](../../reports/taiji_u2_s0_accepted_parent_load_20261119.json) 三 seed **strict load 3/3 通过且记录 fit 逐值复现（30/14/31）**，唯一源码 pin 失配 `taiji/u2_subject.py`（S0 变更，已披露） |
 | 2 E5.1 活 pin 债务 | **完成** | E5.1 已闭卡（D-20261118-04），`a7c992e95` 改 `u2_subject.py` 后活 pin 必失配；[`test_e5_1_capacity.py`](../../tests/taiji_native/test_e5_1_capacity.py) 改为只校合同摘要（`criteria_sha256`、闭卡状态、合同记录字段、纯摘要篡改性质），不再重跑退役活 pin 门；台账补注于测试模块 docstring 与 D-20261119-09 |
 | 3 E5.10r3 兼容冒烟 | **完成（含发现，判据修正）** | 冻结脚本 `run_e5_10r1_relevance_arms_20261119.py --arm R3`（3 步）在现码端到端运行：**A 32/32、B 15/24、D 22/24、父代 digest 不变、CPU 9.7**，三次重复逐项相同（确定性）。发现：**旧身份 3 步冒烟本身是非确定性的**——在 HEAD 代码下重复运行读 B=20/2/16/13/18、D=22/22/20（6 次），根因是 E5.9 时代 `RecordOrgan` 在 `fork_rng` 之外构造、消耗未播种全局 RNG；S0 已把 organ 构造移入身份种子的 `fork_rng`（确定性）。冻结回执中的 B=16 是单次抽样之一，**不能作为 `B>=16` 的可复现门**；本卡把该项判据修正为「脚本可运行＋A 32/32＋D≥22＋父代不变＋读数落在旧身份观测带内（B 2–20）」，并以 `reports/taiji_u2_s0_compat_e5_10r3_smoke_20261119.json` 留痕。另新增冻结 E5 接口兼容层：实例级 `organ.route` 补丁经 `plan()/emit()` 继续生效（`legacy_hard` 分支），回归见 `test_u2_record_organ.py::test_frozen_e5_route_override_is_honoured_through_plan` |
 | 4 3 seed 诊断复核 | **负面（具名）** | 见 §3 |
+| 4b 已接受父加载等价（补充，零训练） | **完成（D-20261119-10）** | 修复 `delta_head` v1 布局后，三颗已接受 A 父 strict load 全部通过并逐值复现记录的 fit 读数（`30/14/31`）；仅 `taiji/u2_subject.py` 一个源码 pin 失配并披露。`check/final` 0 读取。回执 [`taiji_u2_s0_accepted_parent_load_20261119.json`](../../reports/taiji_u2_s0_accepted_parent_load_20261119.json) |
 | 5 静态与回归门 | **完成** | `pytest` 子集 46 项全绿（含双身份读出、器官、22.5.1 管线、E5.1 摘要、主线合同、项目身份、请求状态）；`ruff check taiji tests/taiji_native` 0；`mypy` 4 文件 0 错；`audit_plan_single_mainline.py --json` rc 0；新增报告全部走 `write_report()` 并记录 `threads` |
 | 6 提交并冻结 | **完成** | 提交集见 §6；`taiji/` 冻结后供 S1/S2 生成不可变 `source_pins` |
 
@@ -58,7 +59,7 @@
 - **出口**：`negative`（具名 `s0_diagnostic_failed`）——三 seed 中 2 个未过 S0 诊断门；工程子项可签「S0 工程收口完成」。
 - **签**：读出身份隔离（v1/v2 无共享）、E5.1 摘要化、E5 路由接口兼容层、S0 诊断确定性与可复跑性、三 seed 面板与回执、静态/回归门。
 - **不签**：22.5.1 联合门、A 父（任何身份）、S1 `R-REBUILD-1` 结论、能力、22.6/22.7、对 `D>=20/24` 的稳健性正面声明。
-- **后继**：S1/S2 不启动。唯一后继＝owner 在 D-20261119-09 §7 的三个决策点中裁定。
+- **后继**：S1/S2 不启动。唯一后继＝owner 在 D-20261119-09 §7 的三个决策点中裁定；决策支持包已出（D-20261119-10，[定位包设计卡](DESIGN-TAIJI_U2_S0_D_LOCALIZATION_20261119.md)：价格 `123.76`／帽 `154.7 CPU／20 min`，600 步器官训练、0 check；选项② v2 重挣 A 父价格 `5,271.24`／帽 `6,589.05 CPU`；选项③ 零训练）。
 
 ## 6. 提交与冻结
 

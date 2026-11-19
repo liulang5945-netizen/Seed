@@ -5002,3 +5002,21 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 - **① D 面处置**（建议：先做**定位包**）——在 22.5.1 立项前开一个 `<=10%` 窗口预算的定位包：冻结父与数据，只测「路由操作点/阈值」的 seed 分布并用 pre-registered 复算验证，零新参数、零新架构；若定位包仍不能把 seed 10/12 的 D 抬到门内，按范围上限收束 D 面，联合门的「无关记录」判据改为**相对父代不减**（`D_child >= D_parent - 0.02` 单侧 95% 上界）并如实降级声明。
 - **② 父身份**（建议：二选一前先定价）——22.5.1 合同要求输入父＝已接受 A 父；现有 v1 accepted 父三 seed check `171/78/174` 中 seed `20261111` fit 仅 14/32（D 结构上不可达门），而 S0 的 v2 身份把 seed `20261111` 修到 31/32。要么让 v2 **重新挣 A 父**（新身份 A 门，估 ≥4,250 CPU，须另卡授权），要么 22.5.1 以 v1 强 seed（`20261110`/`20261112`）为单一主候选并冻结 D 判据为相对父代；不得拼不同 seed 凑「全绿主体」。
 - **③ 阶段账**（建议：照旧）——S0 诊断超支 ≈1,004 CPU 记定价遗漏事故、不加帽、不追溯改判据，后续每卡按实测单价单列报价＋硬帽。
+
+
+### D-20261119-10 S0 决策支持包：delta_head 身份补充修正、已接受父加载等价 3/3、D 面定位包与 v2 重挣 A 父定价（均未授权执行）
+
+**1. 依据与范围**：D-20261119-09 呈报 owner 三决策点后，本轮只做**零训练决策支持**：补完 S0 身份隔离（发现并修复 `delta_head` 布局破坏 v1 谱系）、验证已接受 v1 A 父在现码下可严格加载并复现记录读数、为决策点①（D 面定位包）与②（v2 重挣 A 父）做实测定价。**0 正式训练、0 check/final 读取、0 能力签署**。
+
+**2. 工程发现与修复**：D-09 的「读出身份隔离」只隔离了 `pixel_readout` 类，而同一 S0 提交还把 `delta_head` 两个 Linear 的 bias 移除——已接受 A 父 checkpoint 含 `delta_head.0.bias`/`delta_head.2.bias`，strict load 被拒（`Unexpected key(s)`），即 **v1 历史谱系实际上未受保护**。已按身份恢复：[`taiji/u2_subject.py`](../../taiji/u2_subject.py) 在 `readout=="pixel-salience"` 时重建与 HEAD 逐字节同构的 delta head（含两 bias、零初始化、同一 RNG 消耗顺序），`pixel-salience-v2` 保留 S0 的 bias-free 修订；回归 [`test_u2_pixel_readout.py`](../../tests/taiji_native/test_u2_pixel_readout.py) 新增 v1/v2 delta-head 键布局断言与「已接受父 strict load」用例（本地缺 checkpoint 时 skip，不伪造）。
+
+**3. 已接受父加载等价（零训练，2.44 CPU）**：新探针 [`probe_s0_accepted_parent_load_20261119.py`](../../scripts/training/probe_s0_accepted_parent_load_20261119.py) 用只读历史加载器（schema/architecture/v1 readout 断言＋strict state load＋逐文件 pin 对比）加载三颗已接受父，并以接受时的同一仪器/同一 v2 fixture 复现 fit 读数：seed `20261110` 记录 `30/32`→加载后 `30/32`、seed `20261111` `14/32`→`14/32`、seed `20261112` `31/32`→`31/32`，**3/3 strict load 通过且逐值复现**；唯一源码 pin 失配为 `taiji/u2_subject.py`（S0 变更，披露于回执 [`taiji_u2_s0_accepted_parent_load_20261119.json`](../../reports/taiji_u2_s0_accepted_parent_load_20261119.json)）。判 `accepted_parent_load_equivalent`。**范围**：只证「现码按 v1 身份可加载并复现记录行为」，不替代 S1 的「按冻结生成链重建」验证。
+
+**4. 决策支持定价（丢弃模型一次性 backward 实测＋已执行卡实价，回执 [`taiji_u2_s0_decision_options_price_20261119.json`](../../reports/taiji_u2_s0_decision_options_price_20261119.json)）**：
+- **① D 面定位包**（[设计卡](../../plans/reference/DESIGN-TAIJI_U2_S0_D_LOCALIZATION_20261119.md)）：2 个强父 seed（`20261110/20261112`，seed `20261111` 父 fit `14/32` 结构上不可达 D 门，排除）；唯一变量＝推理期路由操作点偏移 δ（闭包补丁，模块字节零改动，不训练不写回）；器官训练 300 步×2＋全 decode 复核，优化器步 `600`、`0 check`；预注册出口 `operating_point_only`／`operating_point_insufficient`（后者按纪律收束 D 面并转选项③）。**价格 123.76 CPU，帽 154.7 CPU／20 min**。`training_authority=null`。
+- **② v2 重挣 A 父**：v2/v1 每例实测比 `1.0154`（`0.050781`→`0.051562 CPU/例`），按冻结算子 `0.708333 CPU/更新` 折 v2 `0.71923`；2000 更新×batch 8×3 seed＋fixture/正式腿/check worker；**价格 5,271.24 CPU，帽 6,589.05 CPU**；另需新 A 门合同与**新一轮 check 曝光裁定**（22.5 曝光 `2/2` 已尽）。
+- **③ v1 强 seed 单主候选**：零训练，前提＝owner 修订单主候选与「相对父代不减」D 判据；S2 定价照常随后。
+
+**5. 签署边界**：**签**＝身份隔离补充修正（delta_head v1 布局恢复）、已接受父加载等价 3/3、两选项实测定价与定位包预注册设计。**不签**＝联合门、A 父（任何身份）、S1 重建结论、能力、22.6/22.7；定位包与 v2 重挣 A 父**均未授权执行**。
+
+**6. 唯一后继**：owner 对 D-20261119-09 §7 三决策点裁定。执行者建议：**先授权①**（154.7 CPU 帽内、只定位不改架构），若 `operating_point_only` 则开预注册标定卡；若 `operating_point_insufficient` 则按纪律收束 D 面并转③；②仅在 owner 决定「三 seed 都要强父」且另立 check 曝光账时启动。裁定前 **0 优化器步、0 check/final、0 能力**。
