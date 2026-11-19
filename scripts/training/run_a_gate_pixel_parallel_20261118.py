@@ -7,6 +7,11 @@ gradient for its shard.  The main process keeps the authoritative model, an Adam
 optimizer and the batch order, so optimiser semantics are unchanged.
 
 No model code is modified and the bundle format is untouched.
+
+Resuming (argv[3]) continues the frozen schedule exactly: the saved cumulative
+`update`/`cursor` (examples seen, so the position in `order` is preserved) and
+the warmup ramp both carry across segments, making probe+resume bit-identical
+to a straight run of the summed updates.
 """
 
 from __future__ import annotations
@@ -93,20 +98,27 @@ def main(argv: list[str] | None = None) -> int:
         d=int(os.environ.get("TAIJI_D", 8)),
     )
     model = U2Subject(config).metadata_candidate().request_candidate()
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.01, betas=(0.9, 0.999))
+    optimizer = torch.optim.Adam(
+        model.parameters(), lr=float(os.environ.get("TAIJI_LR", 0.01)), betas=(0.9, 0.999)
+    )
     order = torch.randperm(WORLDS, generator=torch.Generator().manual_seed(RUN_SEED + 9)).tolist()
     cursor = 0
+    base_step = 0
+    examples_seen = 0
     resume = Path(argv[3]) if len(argv) > 3 else None
     if resume is not None:
         model, optimizer, loaded = load_learner(resume)
         order = [int(index) for index in loaded.get("order", order)]
-        cursor = int(loaded.get(cursor, 0))
+        examples_seen = int(loaded.get("cursor", 0))
+        cursor = examples_seen % WORLDS
+        base_step = int(loaded.get("update", 0))
     flat = parameters_to_vector(model.parameters()).detach()
     wall = time.perf_counter()
     with mp.Pool(workers, initializer=_init, initargs=(workers,)) as pool:
-        for _ in range(updates):
+        for step in range(updates):
             shards = [[order[(cursor + offset) % WORLDS]] for offset in range(batch)]
             cursor = (cursor + batch) % WORLDS
+            examples_seen += batch
             results = pool.map(_grad, [(flat, shard) for shard in shards])
             gradient = torch.stack([row[1] for row in results]).mean(0)
             optimizer.zero_grad(set_to_none=True)
@@ -115,6 +127,10 @@ def main(argv: list[str] | None = None) -> int:
                 size = parameter.numel()
                 parameter.grad = gradient[offset : offset + size].view_as(parameter).clone()
                 offset += size
+            torch.nn.utils.clip_grad_norm_(list(model.parameters()), 1.0)
+            warm = min(1.0, (base_step + step + 1) / float(os.environ.get("TAIJI_WARMUP", 200)))
+            for group in optimizer.param_groups:
+                group["lr"] = float(os.environ.get("TAIJI_LR", 0.01)) * warm
             optimizer.step()
             flat = parameters_to_vector(model.parameters()).detach()
     elapsed = time.perf_counter() - wall
@@ -122,6 +138,10 @@ def main(argv: list[str] | None = None) -> int:
     result = evaluate(model, fit)
     stamp = time.strftime("%Y%m%dT%H%M%SZ", time.gmtime())
     directory = ROOT / "output" / f"a_pixel_parallel_{stamp}"
+    suffix = 0
+    while (directory / "segment.bin").exists():
+        suffix += 1
+        directory = ROOT / "output" / f"a_pixel_parallel_{stamp}r{suffix}"
     directory.mkdir(parents=True, exist_ok=True)
     train_for_digest = generate_examples("train", WORLDS)
     checkpoint = directory / "segment.bin"
@@ -130,8 +150,8 @@ def main(argv: list[str] | None = None) -> int:
         model,
         optimizer,
         "native",
-        updates,
-        updates * batch,
+        base_step + updates,
+        examples_seen,
         order,
         value_digest(train_for_digest),
     )
@@ -142,7 +162,9 @@ def main(argv: list[str] | None = None) -> int:
         "eos_masked_in_loss": MASK_EOS,
         "byte_weight": BYTE_WEIGHT,
         "updates": updates,
+        "total_updates": base_step + updates,
         "seed": RUN_SEED,
+        "lr": float(os.environ.get("TAIJI_LR", 0.01)),
         "workers": workers,
         "batch": batch,
         "wall_seconds": round(elapsed, 2),
