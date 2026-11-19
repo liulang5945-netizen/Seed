@@ -1,0 +1,78 @@
+{
+  "schema": "taiji-u2-22-4-2b-action-run-v1",
+  "criteria_sha256": "a78053fde94ba684bad9b19dbcf3b48c49e55fba52240db8bb8a91b5696c663f",
+  "created_utc": "2026-11-19T21:15:05.024263+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "groups": 6,
+    "units_per_group": 5,
+    "input_dim": 8,
+    "hidden_dim": 8,
+    "output_dim": 3,
+    "lr": 0.003,
+    "steps": 1200,
+    "batch": 64,
+    "warmup": 100,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "train_worlds": 256,
+    "fit_worlds": 32
+  },
+  "accuracies": {
+    "full": [
+      0.75,
+      0.8125,
+      0.7812
+    ],
+    "action_masked": [
+      0.4062,
+      0.4062,
+      0.4688
+    ],
+    "direction_permuted": [
+      0.4688,
+      0.4062,
+      0.4688
+    ],
+    "proxy_removed": [
+      0.75,
+      0.8438,
+      0.7812
+    ]
+  },
+  "baseline_accuracy": 0.4062,
+  "margins": [
+    0.2812,
+    0.4062,
+    0.3125
+  ],
+  "paired_lower_bound": 0.0625,
+  "checks": {
+    "full_min_accuracy": true,
+    "full_above_baseline": true,
+    "action_margin": true,
+    "paired_lower_bound": true,
+    "all_seeds_same_direction": true,
+    "recovery_exact": true
+  },
+  "verdict": "action_consequence_pass",
+  "budget": {
+    "cap_cpu": 150.0,
+    "cpu": 105.19
+  },
+  "discipline": {
+    "optimizer_steps": 14400,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 105.19
+  }
+}

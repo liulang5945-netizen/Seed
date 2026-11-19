@@ -1,0 +1,22 @@
+{
+  "schema": "taiji-u2-22-4-2b-action-smoke-v1",
+  "created_utc": "2026-11-19T21:13:13.632073+00:00",
+  "checks": {
+    "rows_built": true,
+    "features_48": true,
+    "labels_in_range": true,
+    "four_arms": true,
+    "groups_six": true,
+    "authority_state_ok": true,
+    "zero_optimizer_steps": true
+  },
+  "verdict": "smoke_passed",
+  "discipline": {
+    "optimizer_steps": 0,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 0.19
+  }
+}

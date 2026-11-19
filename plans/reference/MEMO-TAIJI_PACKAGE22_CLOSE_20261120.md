@@ -57,3 +57,7 @@
 ## 8. 范围限制披露（D-20261119-54）：groups=4 的输入通道覆盖
 
 `_BaseGraph` 按 `group % 6` 路由通道：22.5.1 之后用 `groups=4` 的卡（α r4、joint24、22.7b–g）输入只覆盖 48 维中的 0–31 维（goal/feedback 未路由）。任务可学性结果不作废，但属**特征覆盖不完整**的范围限制；动作轴须改用 `groups=6`。详见 D-20261119-54。
+
+## 9. 更新（D-20261119-55）：physical_transfer 有界 verified
+
+22.4.2b 动作片段通过（`action_consequence_pass`）：动作方向对后果预测有真实因果贡献（full 0.781 vs 删/置换动作维 0.41–0.45，配对 95% LB 0.0625>0）。`physical_transfer` 轴更新为 **verified（有界：仿真动作片段，N=3 推、位置桶、单主体）**；真机与多动力学族仍 `uncovered`。既有动作卡 22.4.2 的 `engineering_failure` 与 D-20261119-54 通道路由披露均保留。

@@ -1,0 +1,77 @@
+{
+  "schema": "taiji-u2-22-4-2b-action-v1",
+  "card": "RESULT-TAIJI_U2_22_4_2B_ACTION_20261120.md",
+  "status": "frozen",
+  "training_authority": "owner:standing-authorization:2026-11-20#recommendation-default",
+  "criteria": {
+    "card": "22.4.2b action-consequence fragment, groups=6 + strict split",
+    "base": {
+      "groups": 6,
+      "units_per_group": 5,
+      "input_dim": 8,
+      "hidden_dim": 8,
+      "output_dim": 3,
+      "lr": 0.003,
+      "steps": 1200,
+      "batch": 64,
+      "warmup": 100,
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "train_worlds": 256,
+      "fit_worlds": 32
+    },
+    "task": "N=3 pushes, pushed body's final position bin (left/middle/right)",
+    "channel_routing": "groups=6 routes all six legal channels (D-20261119-54)",
+    "arms": {
+      "full": "action direction + current-bin proxy present",
+      "action_masked": "action dims (37, 38) zeroed",
+      "direction_permuted": "direction dim (37) shuffled across samples",
+      "proxy_removed": "current-bin proxy dim (38) zeroed"
+    },
+    "gates": {
+      "full_min_accuracy": 0.45,
+      "full_above_baseline_min": 0.05,
+      "action_margin_min": 0.05,
+      "paired_lower_bound_min": 0.0,
+      "all_seeds_same_direction": true,
+      "recovery_exact": true
+    },
+    "retention": "N/A - fresh graph, no parent modified (disclosed)",
+    "exits_order": [
+      "engineering_failure",
+      "not_admitted",
+      "budget_stop",
+      "action_contribution_absent",
+      "action_consequence_pass"
+    ],
+    "check_reads": 0,
+    "final_reads": 0,
+    "price_cpu": 150.0,
+    "cap_cpu": 150.0
+  },
+  "criteria_sha256": "a78053fde94ba684bad9b19dbcf3b48c49e55fba52240db8bb8a91b5696c663f",
+  "plan": {
+    "price_cpu": 150.0,
+    "optimizer_steps": 14400,
+    "arms": 4
+  },
+  "cap_cpu": 150.0,
+  "check_exposure": {
+    "reads": 0
+  },
+  "source_pins": {
+    "scripts/training/run_s2_22_4_2b_action_20261120.py": "a93ceac440689b30f526cbc5c93d769c24cc90d512d56be148c8f7b4cf683a22",
+    "scripts/training/probe_s2_action_consequence_20261120.py": "9ff85c21d25f0575ef4ea094b031072e720a24474f5c805222262e99fb0ba7b3",
+    "taiji/u2_neural_units.py": "6a8bfc15f44b39cc22cd1570bf43cedaf44e018628572efb528f2a829a5deca9"
+  },
+  "result": {
+    "smoke": "smoke_passed",
+    "run": true,
+    "closed": true,
+    "verdict": "action_consequence_pass",
+    "cost_cpu": 105.19
+  }
+}

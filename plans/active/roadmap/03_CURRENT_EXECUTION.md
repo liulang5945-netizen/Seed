@@ -4111,3 +4111,8 @@ r3（32 单位/lr 3e-3/2,000 步/batch 64，43.02≤帽 150 CPU）：梯度流 �
 ## 2026-11-20 通道路由缺陷定位（D-20261119-54）
 
 `encode_legal_inputs` 按 `group % 6` 选通道：groups=4 时 goal/feedback 从未被路由（实测改 dims 37–38 输出差 0.0；groups=6 时差 8.45e-3）⇒ 22.4.2 三臂一致的第二根因（动作维在 goal 通道）。影响披露：α r4/joint24/22.7b–g 均 groups=4，输入仅覆盖 0–31 维；任务仍可学、判词不作废，但属范围限制须在总账披露。修复：动作轴改用 groups=6（6×5=30 单位）或把动作维放进已用通道。后继 22.4.2b：固定 split＋groups=6＋特征消融，帽 150 CPU、零 check。
+
+
+## 2026-11-20 22.4.2b 动作片段通过（D-20261119-55，`action_consequence_pass`，105.19 CPU）
+
+groups=6（全通道路由）＋严格 split（训练 256/fit 只评测）＋四臂反事实。full [0.750,0.813,0.781] 均值 0.781；action_masked [0.406,0.406,0.469]；direction_permuted [0.469,0.406,0.469]；proxy_removed 持平 full。动作边际 [0.281,0.406,0.313]（3 seed 同向）、配对单侧 95% LB 0.0625>0、恢复 exact、6 项 check 全过 ⇒ action_consequence_pass。判读：动作方向有真实因果贡献（删/置换即掉回基线），非特征增宽代签；范围＝仿真动作片段（N=3 推、位置桶）、单主体，不等于真机迁移/完整因果理解。九轴 physical_transfer＝verified（有界：仿真动作片段）；真机/多动力学族仍 uncovered。0 check/final。
