@@ -4251,3 +4251,8 @@ HEADS=4：s1 joint24→s2 动作桶→s3 推方向→s4 位置词（4 类）；�
 ## 2026-11-20 九轴更新：任务通路级新增/回收（D-20261119-82，零训练）
 
 新增有界证据：learning 新增「任务通路级新能力可学」（3/4 任务全过、旧通路 drop 0.0）；retention 新增「通路隔离下旧能力逐位保持」；lifetime 新增「任务通路跨会话继承/回收」；mature_growth 新增「通路级结构新增/回收 verified（有界）」，但明确与单元级生长区分（后者仍 growth_benefit_not_established_in_package_22）。仍 uncovered：正式 check②/B 父资格/D 口径、autonomous_choice negative、recursive_development、单元级生长收益、共享单元分裂/整合、5+任务与干扰、真机/多动力学、100会话/24h、22.8 与 23–30。优先级：check② 决策＞共享单元分化/整合设计＞5+任务压力测试＞生长收益条件化重检＞真机前仿真。
+
+
+## 2026-11-20 五条任务通路压力测试（D-20261119-83，`multihead4_ready`，实际 226.23 CPU > 价200）
+
+HEADS=5：s1 joint24→s2 动作桶→s3 推方向→s4 位置词→s5 实体颜色(6类)；后续冻结共享与既有通路。3 seed 全过：inheritance exact（4 边界）；旧 A/B/C/D 保留 drop 0.0；新 E 1.0/1.0/1.0 ≥0.55 ⇒ multihead4_ready。实际子进程 CPU 226.23 超预注册价 200（+26.23，13.1%），按纪律披露记超价事故、不改判据。判读：通路可扩至 5 任务、旧四任务逐位保持、新任务独立可学；6+任务/干扰矩阵/共享单元分裂整合/真机/22.8 仍 uncovered。

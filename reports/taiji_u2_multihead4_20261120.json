@@ -1,0 +1,91 @@
+{
+  "schema": "taiji-u2-multihead4-v1",
+  "card": "five cross-session per-task pathways stress probe",
+  "created_utc": "2026-11-19T23:25:09.154461+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "sessions": 5,
+    "heads": 5,
+    "head_hidden": 16,
+    "steps": 700,
+    "base_steps": 1200,
+    "retention_max": 0.02,
+    "third_task_min": 0.6,
+    "fourth_task_min": 0.45
+  },
+  "results": [
+    {
+      "seed": 0,
+      "final": {
+        "old": 0.7812,
+        "new": 0.8438,
+        "direction": 1.0,
+        "position": 0.8125,
+        "color": 1.0
+      },
+      "old_retention_drop": 0.0,
+      "new_retention_drop": 0.0,
+      "direction_retention_drop": 0.0,
+      "position_retention_drop": 0.0,
+      "inheritance_exact": true
+    },
+    {
+      "seed": 1,
+      "final": {
+        "old": 0.9375,
+        "new": 0.7812,
+        "direction": 1.0,
+        "position": 0.7812,
+        "color": 1.0
+      },
+      "old_retention_drop": 0.0,
+      "new_retention_drop": 0.0,
+      "direction_retention_drop": 0.0,
+      "position_retention_drop": 0.0,
+      "inheritance_exact": true
+    },
+    {
+      "seed": 2,
+      "final": {
+        "old": 0.7188,
+        "new": 0.7188,
+        "direction": 1.0,
+        "position": 0.7812,
+        "color": 1.0
+      },
+      "old_retention_drop": 0.0,
+      "new_retention_drop": 0.0,
+      "direction_retention_drop": 0.0,
+      "position_retention_drop": 0.0,
+      "inheritance_exact": true
+    }
+  ],
+  "gates": {
+    "inheritance_exact": true,
+    "old_retention": true,
+    "new_retention": true,
+    "third_task_learnable": true,
+    "fourth_task_learnable": true,
+    "fifth_task_learnable": true,
+    "three_retentions_exact": true
+  },
+  "verdict": "multihead4_ready",
+  "discipline": {
+    "optimizer_steps": 7800,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 0.0,
+    "children_cpu": 226.23
+  }
+}

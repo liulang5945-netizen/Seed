@@ -152,3 +152,7 @@ HEADS=4 跨会话追加：s1 joint24→s2 动作桶→s3 推方向→s4 位置�
 | mature_growth | 通路级结构新增/回收 verified（有界）；**单元级生长收益仍 `growth_benefit_not_established_in_package_22`（不得混写）** |
 
 仍 uncovered：正式 check②、`autonomous_choice`、`recursive_development`、单元级生长收益、共享单元分裂/整合、5+ 任务、真机/多动力学、100 会话/24h、22.8/23–30。
+
+## 28. 五条任务通路（D-20261119-83，有界 verified；超价披露）
+
+HEADS=5 跨会话：旧 A/B/C/D 保留 drop 0.0，新 E（实体颜色 6 类）1.0/1.0/1.0，继承 exact ⇒ `multihead4_ready`。**实际 CPU 226.23 > 价 200（+13.1%）**，按纪律披露、记超价事故不改判据。6+ 任务、干扰矩阵、共享单元分裂/整合、真机、22.8 仍 uncovered。
