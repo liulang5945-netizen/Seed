@@ -387,8 +387,14 @@ def smoke(contract: dict[str, Any]) -> int:
         == contract["criteria"]["parent"]["preflight_fit_correct"],
     }
     birth_child = parent.record_organ_candidate()
-    frozen_child, frozen_info = train_arm(parent, CHILD_SEEDS[0], "frozen_update", [])
-    checks["frozen_update_fork"] = frozen_info.get("lr") == 0.0
+    smoke_feedback = generate_v2("train", 8)
+    frozen_child, frozen_info = train_record_organ_on_parent(
+        parent,
+        smoke_feedback,
+        BOrganTrainConfig(seed=CHILD_SEEDS[0], steps=0, batch_size=BATCH, lr=0.0, min_lr=0.0),
+        templates=SEEN,
+    )
+    checks["frozen_update_fork"] = frozen_info.get("parent_bit_identical") is True
     checks["birth_inherits_parent"] = all(
         torch.equal(parent.state_dict()[name], birth_child.state_dict()[name])
         for name in parent.state_dict()
