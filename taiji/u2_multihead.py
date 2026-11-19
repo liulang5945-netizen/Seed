@@ -19,16 +19,24 @@ from taiji.u2_neural_units import RouteBGraph, UnitGraphSpec
 class MultiHeadGraph(RouteBGraph):
     """RouteBGraph with a ModuleList of readout heads and a ``head`` index."""
 
-    def __init__(self, spec: UnitGraphSpec, heads: int = 2) -> None:
+    def __init__(self, spec: UnitGraphSpec, heads: int = 2, head_hidden: int = 0) -> None:
         super().__init__(spec)
         first = self.readout
-        extra = nn.ModuleList(
-            [
-                nn.Linear(spec.query_slots, spec.output_dim, bias=False, dtype=spec.torch_dtype)
-                for _ in range(max(0, heads - 1))
-            ]
-        )
-        self.heads = nn.ModuleList([first, *extra])
+        extra_modules = []
+        for _ in range(max(0, heads - 1)):
+            if head_hidden > 0:
+                extra_modules.append(
+                    nn.Sequential(
+                        nn.Linear(spec.query_slots, head_hidden, bias=True, dtype=spec.torch_dtype),
+                        nn.Tanh(),
+                        nn.Linear(head_hidden, spec.output_dim, bias=False, dtype=spec.torch_dtype),
+                    )
+                )
+            else:
+                extra_modules.append(
+                    nn.Linear(spec.query_slots, spec.output_dim, bias=False, dtype=spec.torch_dtype)
+                )
+        self.heads = nn.ModuleList([first, *extra_modules])
 
     def forward(  # type: ignore[override]
         self,

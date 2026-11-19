@@ -1,7 +1,7 @@
 {
   "schema": "taiji-u2-multihead-v1",
   "card": "task-specific readout heads with frozen units (option 1 feasibility)",
-  "created_utc": "2026-11-19T22:27:54.331783+00:00",
+  "created_utc": "2026-11-19T22:30:16.476814+00:00",
   "run_conditions": {
     "threads": 1,
     "OMP_NUM_THREADS": null,
@@ -37,21 +37,21 @@
       "old_before": 1.0,
       "old_after": 1.0,
       "retention_drop": 0.0,
-      "new_accuracy": 0.4062
+      "new_accuracy": 0.5938
     }
   ],
   "gates": {
     "old_exact": true,
-    "new_learnable": false,
+    "new_learnable": true,
     "new_task_nonzero": true
   },
-  "verdict": "multihead_isolation_absent",
+  "verdict": "multihead_isolation_ready",
   "discipline": {
     "optimizer_steps": 5400,
     "check_reads": 0,
     "final_reads": 0
   },
   "cost": {
-    "cpu": 45.09
+    "cpu": 45.31
   }
 }

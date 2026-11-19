@@ -120,7 +120,7 @@ def main() -> int:
     results = []
     for seed in SEEDS:
         torch.manual_seed(20261120 + seed)
-        graph = MultiHeadGraph(spec(seed), heads=2)
+        graph = MultiHeadGraph(spec(seed), heads=2, head_hidden=16)
         train_base(graph, old_features, old_labels, seed)
         old_before = accuracy(graph, old_fit_features, old_fit_labels, head=0)
         freeze_module(graph.units)

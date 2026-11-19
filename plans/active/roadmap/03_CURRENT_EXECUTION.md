@@ -4211,3 +4211,8 @@ D-72 实测顺序微调遗忘 0.69–0.88、20% 重放仍 0.53–0.66。架构�
 ## 2026-11-20 多读出任务头可行性（D-20261119-74，`multihead_isolation_absent`，45.09 CPU）
 
 架构选项①：MultiHeadGraph（u2_multihead.py，不改 u2_neural_units）——基座 head A 训 joint24→冻结共享单元与 head A→只训新 head B 学动作桶。读数：旧能力 0.969/0.938/1.0 保持后完全相同（drop 0.0 逐位）；新任务 0.4375/0.5625/0.4062（>0.333 但 seed2 <0.433 门）⇒ old_exact ✓ / new_learnable ✗ ⇒ multihead_isolation_absent。判读：任务头＋冻结单元可**精确保持旧能力**（架构级出路），失败仅因线性头容量不足（direct 仅 4 维）。后继：head B 改 MLP(4→16→24) 或增 query 槽，预注册门 old=0 逐位、新≥0.43 且 3 seed 全过、参数配平；通过后 learning+retention 首次可有界 verified（≤150 CPU 新卡）。
+
+
+## 2026-11-20 多读出任务头通过（D-20261119-75，`multihead_isolation_ready`，45.31 CPU）
+
+MultiHeadGraph 增加 MLP 任务头（4→16→24）：基座 head A 训 joint24→冻结共享单元与 head A→只训新 MLP head B 学动作桶。旧能力 0.969/0.938/1.0 保持后完全相同（drop 0.0 逐位）；新任务 0.4375/0.5625/0.5938 均 ≥0.433 门 ⇒ old_exact✓/new_learnable✓ ⇒ multihead_isolation_ready。**首个「学新＋保持旧」同时成立的证据**（任务头＋冻结共享单元的参数隔离）；核心 u2_neural_units.py 未改。边界：单主体、两任务、head B 全新 MLP；未测多任务>2、任务头回退、跨会话。后继 22.x：跨会话多任务头（capsule 保存读出头、会话切换）＋三任务验证，零 check ≤150 CPU。
