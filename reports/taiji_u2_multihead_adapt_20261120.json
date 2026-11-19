@@ -1,0 +1,71 @@
+{
+  "schema": "taiji-u2-multihead-sessions-v1",
+  "card": "cross-session three-head isolation (joint24, action bins, push direction)",
+  "created_utc": "2026-11-19T22:49:17.345008+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "note": "sessions 2/3 allow shared unit updates at lr*0.1",
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "sessions": 3,
+    "heads": 3,
+    "head_hidden": 16,
+    "task_a": "joint24",
+    "task_b": "action bins (3 classes)",
+    "task_c": "push direction (2 classes)",
+    "retention_max": 0.02,
+    "third_task_min": 0.6
+  },
+  "results": [
+    {
+      "seed": 0,
+      "old_after_session3": 0.125,
+      "new_after_session3": 0.6875,
+      "direction_after_session3": 1.0,
+      "inheritance_exact": true,
+      "old_retention_drop": 0.6562,
+      "new_retention_drop": 0.0313
+    },
+    {
+      "seed": 1,
+      "old_after_session3": 0.1562,
+      "new_after_session3": 0.4688,
+      "direction_after_session3": 1.0,
+      "inheritance_exact": true,
+      "old_retention_drop": 0.7813,
+      "new_retention_drop": 0.25
+    },
+    {
+      "seed": 2,
+      "old_after_session3": 0.25,
+      "new_after_session3": 0.6875,
+      "direction_after_session3": 1.0,
+      "inheritance_exact": true,
+      "old_retention_drop": 0.5625,
+      "new_retention_drop": -0.0313
+    }
+  ],
+  "gates": {
+    "inheritance_exact": true,
+    "old_exact": false,
+    "new_exact": false,
+    "third_task_learnable": true
+  },
+  "verdict": "multihead_adapt_absent",
+  "discipline": {
+    "optimizer_steps": 7200,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 0.03,
+    "children_cpu": 142.09
+  }
+}

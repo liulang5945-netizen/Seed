@@ -5791,3 +5791,14 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 - 因此「无限任务头」不成立：新任务可学性受**共享单元表征质量**限制。
 
 **4. 后继（22.x）**：① 每会话允许**少量共享单元微调**（低 lr、冻结比例）以提升新任务表征，同时监控旧能力 ≤0.02；② 或按任务增加 query 槽/专用输入编码器（架构选项②）；③ 第三任务门槛保持 0.60，不得调低。新卡、零 check、≤200 CPU。
+
+
+### D-20261119-77 共享单元小步微调：第三任务可学但旧能力被破坏（`multihead_adapt_absent`，子进程 142.09 CPU）
+
+**1. 动作**：新增 worker [`s2_multihead_adapt_worker_20261120.py`](../../scripts/training/s2_multihead_adapt_worker_20261120.py) 与探针 [`probe_s2_multihead_adapt_20261120.py`](../../scripts/training/probe_s2_multihead_adapt_20261120.py)：s2/s3 允许**共享单元以 1/10 lr 更新**（任务头正常 lr），其余同 D-76 三任务头协议；3 seed、零 check。
+
+**2. 读数**：跨会话继承 exact；第三任务 C `1.0/1.0/1.0`（**可学 ✓**）；但**旧能力 A 掉到 `0.125/0.156/0.25`（损伤 0.66/0.78/0.56）**、新能力 B 损伤 `0.031/0.25/−0.031` ⇒ `old_exact=false`、`new_exact=false`、`third_task_learnable=true` ⇒ **`multihead_adapt_absent`**。
+
+**3. 判读（权衡曲线）**：冻结共享单元 → 旧能力 0 损伤但新任务受表征限制（D-76）；轻微解冻 → 新任务满分但旧能力崩（本条）。**这不是调 lr 能解决的**：旧任务依赖共享单元活动经冻结 head A 的固定映射，单元一动映射即失效。⇒ 需要**任务专用表征入口**（架构选项②：每任务独立 query/输入编码器/模块，共享单元冻结）才能同时满足两者。
+
+**4. 后继**：实现选项②（`MultiHeadGraph2`：per-task query/encoder + 共享冻结单元），预注册门：旧 A/B 逐位保持（drop 0）、第三任务 C ≥0.60、3 seed；零 check、≤200 CPU。
