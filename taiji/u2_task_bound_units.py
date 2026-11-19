@@ -18,13 +18,20 @@ from taiji.u2_multihead2 import MultiHeadGraph2
 class TaskBoundGraph(MultiHeadGraph2):
     """MultiHeadGraph2 with per-task unit sets (shared + task-bound newborns)."""
 
-    def __init__(self, spec, heads: int = 3, head_hidden: int = 16) -> None:
+    def __init__(
+        self, spec, heads: int = 3, head_hidden: int = 16, exclusive_tasks: bool = False
+    ) -> None:
         super().__init__(spec, heads=heads, head_hidden=head_hidden)
+        self.exclusive_tasks = exclusive_tasks
         self.task_units: dict[int, list[int]] = {index: [] for index in range(heads)}
         self.shared_units: list[int] = list(range(self.units.n_units))
 
     def gate_mask(self, head: int, device=None) -> torch.Tensor:
         mask = torch.zeros(self.units.n_units, device=device)
+        if head > 0 and self.exclusive_tasks:
+            for unit in self.task_units.get(head, []):
+                mask[unit] = 1.0
+            return mask
         mask[self.shared_units] = 1.0
         for unit in self.task_units.get(head, []):
             mask[unit] = 1.0

@@ -4281,3 +4281,8 @@ HEADS=5：s1 joint24→s2 动作桶→s3 推方向→s4 位置词→s5 实体颜
 ## 2026-11-20 单元级分化最小实现（D-20261119-88，`unit_differentiation_partial`，43.55 CPU）
 
 TaskBoundGraph（任务-单元绑定＋按任务门控）＋masked_unit_step（只训绑定单元行列）：A=joint24（30单元）→出生 2 绑定单元给 B=动作桶，B 门控开/A 关，训 B 600 步。3 seed：old_retention✓（A drop 0.0）、new_learnable✓（B 0.75/0.6875/0.7188）、isolation_under_ablation✓、bound_units_selective 数值虚高（2 任务方差近 0 退化）；但 necessary_bound_units✗（消融绑定单元 B 完全不变 drop 0.0）⇒ unit_differentiation_partial。判读：绑定/门控能精确保持旧任务、新任务可学，但绑定单元冗余（与 D-67–69 一致），条件1 未过不签分化。后继：新任务只允许看自身绑定单元（屏蔽共享单元），使绑定成为唯一通路再测必要性；零 check ≤150 CPU。
+
+
+## 2026-11-20 独占绑定单元变体（D-20261119-89，`unit_differentiation_absent`，43.94 CPU）
+
+TaskBoundGraph 加 exclusive_tasks（head>0 只看本任务绑定单元、屏蔽共享）：3 seed 旧 A 保持 drop 0.0✓；但 B 0.3125/0.375/0.375 未过 0.433（new_learnable✗）；消融下降 0.094/−0.094/0.156 不稳（necessary✗）⇒ unit_differentiation_absent。判读：失败在容量非隔离——2 个绑定单元各接一通道组、4 维 query 表达力不足；D-88 partial 与本条 absent 共同说明 2 个显式绑定单元既冗余又不充分。方法披露：bound_units_selective 在近零方差下虚高（1e5–1e7）不作为判据。后继（同范围最后一次）：k=6–8 绑定单元独占模式重测；仍失败则记「单元级分化不可达」停止该轴，转 6+任务或 check② 准备。
