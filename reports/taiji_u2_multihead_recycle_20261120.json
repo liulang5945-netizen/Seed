@@ -1,7 +1,7 @@
 {
   "schema": "taiji-u2-pathway-recycle-v1",
   "card": "task-pathway recycling probe (zero, then fresh re-init, then retrain)",
-  "created_utc": "2026-11-19T23:14:11.676474+00:00",
+  "created_utc": "2026-11-19T23:17:46.890977+00:00",
   "run_conditions": {
     "threads": 1,
     "OMP_NUM_THREADS": null,
@@ -16,9 +16,12 @@
     "capsules": "output/s2_multihead3/seed*_session4.pt",
     "retrain_steps": 700,
     "retention_max": 0.02,
-    "removed_max": 0.3,
+    "majority_tolerance": 0.05,
+    "removed_drop_min": 0.25,
     "recovered_min": 0.45
   },
+  "majority_class_rate": 0.4688,
+  "zero_constant_rate": 0.2188,
   "results": [
     {
       "seed": 0,
@@ -32,7 +35,7 @@
         "old": 0.7812,
         "new": 0.7812,
         "direction": 1.0,
-        "position": 0.5
+        "position": 0.2188
       },
       "recovered": {
         "old": 0.7812,
@@ -53,7 +56,7 @@
         "old": 0.9375,
         "new": 0.7188,
         "direction": 1.0,
-        "position": 0.1875
+        "position": 0.2188
       },
       "recovered": {
         "old": 0.9375,
@@ -86,17 +89,17 @@
   ],
   "gates": {
     "others_exact_after_removal": true,
-    "removed_task_collapses": false,
+    "removed_task_collapses": true,
     "recovered_learnable": true,
     "others_exact_after_recovery": true
   },
-  "verdict": "pathway_recycle_absent",
+  "verdict": "pathway_recycle_ready",
   "discipline": {
     "optimizer_steps": 2100,
     "check_reads": 0,
     "final_reads": 0
   },
   "cost": {
-    "cpu": 21.95
+    "cpu": 22.05
   }
 }

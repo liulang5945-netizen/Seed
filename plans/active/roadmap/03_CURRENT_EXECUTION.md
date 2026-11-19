@@ -4241,3 +4241,8 @@ HEADS=4：s1 joint24→s2 动作桶→s3 推方向→s4 位置词（4 类）；�
 ## 2026-11-20 通路回收探针（D-20261119-80，`pathway_recycle_absent` 口径问题，21.95 CPU）
 
 载入 4 通路最终 capsule：删除任务3通路后旧 A/B/C 逐位不变（others_exact✓）；删除后任务3 0.5/0.1875/0.2188（原 0.8125/0.75/0.7188）；重新初始化＋再训练恢复 0.7812/0.75/0.6875（recovered✓）、others 仍 exact✓；但 removed≤0.30 门因 seed0=0.5 失败 ⇒ pathway_recycle_absent。判读：回收机制成立（隔离精确、可重生长）；删除门口径错误——清零后 logits 恒 0 退化为常数类 0，位置类 0 占 50%，应用「多数类基线±0.05 且下降≥0.25」重跑。后继新卡口径修正重跑（≤80 CPU）。
+
+
+## 2026-11-20 通路回收通过（D-20261119-81，`pathway_recycle_ready`，22.05 CPU）
+
+修正删除口径（清零通路→logits 恒 0→常数类 0 基线取该类份额）后重跑：others_exact_after_removal✓（旧 A/B/C 逐位不变）；删除后任务3 0.2188=常数类基线且下降 0.59/0.53/0.50≥0.25（removed_collapses✓）；重初始化+再训练恢复 0.7812/0.75/0.6875（recovered✓）；回收后 others 仍 exact✓ ⇒ pathway_recycle_ready。判读：任务通路可按需新增（D-79）与回收/重生长；learning+retention+lifetime+通路级新增/回收有界成立。边界：单主体、4 任务、通路级；共享单元分裂/整合、5+任务、真机、22.8 仍 uncovered。

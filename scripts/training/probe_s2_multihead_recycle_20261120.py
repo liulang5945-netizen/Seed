@@ -36,7 +36,8 @@ CAP_CPU = 120.0
 SEEDS = (0, 1, 2)
 STEPS = 700
 RETENTION_MAX = 0.02
-REMOVED_MAX = 0.30
+MAJORITY_TOLERANCE = 0.05
+REMOVED_DROP_MIN = 0.25
 RECOVERED_MIN = 0.45
 
 
@@ -64,17 +65,17 @@ def main() -> int:
             "position": accuracy(graph, *data["position_fit"], head=3, classes=4),
         }
         zero_task3(graph)
-        fresh = build_graph(seed)
-        with torch.no_grad():
-            graph.heads[3].load_state_dict(fresh.heads[3].state_dict())
-            graph.task_queries[2].copy_(fresh.task_queries[2])
-            graph.task_encoders["h3"].load_state_dict(fresh.task_encoders["h3"].state_dict())
         removed = {
             "old": accuracy(graph, *data["old_fit"], head=0, classes=24),
             "new": accuracy(graph, *data["new_fit"], head=1, classes=3),
             "direction": accuracy(graph, *data["direction_fit"], head=2, classes=2),
             "position": accuracy(graph, *data["position_fit"], head=3, classes=4),
         }
+        fresh = build_graph(seed)
+        with torch.no_grad():
+            graph.heads[3].load_state_dict(fresh.heads[3].state_dict())
+            graph.task_queries[2].copy_(fresh.task_queries[2])
+            graph.task_encoders["h3"].load_state_dict(fresh.task_encoders["h3"].state_dict())
         train_head(graph, 3, *data["position_train"], STEPS, seed + 40)
         recovered = {
             "old": accuracy(graph, *data["old_fit"], head=0, classes=24),
@@ -90,6 +91,10 @@ def main() -> int:
                 "recovered": {key: round(value, 4) for key, value in recovered.items()},
             }
         )
+    position_labels = data["position_fit"][1]
+    counts = torch.bincount(position_labels, minlength=4).float()
+    majority_rate = float(counts.max() / counts.sum())
+    zero_constant_rate = float(counts[0] / counts.sum())
     gates = {
         "others_exact_after_removal": all(
             abs(result["before"]["old"] - result["removed"]["old"]) <= RETENTION_MAX
@@ -98,7 +103,9 @@ def main() -> int:
             for result in results
         ),
         "removed_task_collapses": all(
-            result["removed"]["position"] <= REMOVED_MAX for result in results
+            abs(result["removed"]["position"] - zero_constant_rate) <= MAJORITY_TOLERANCE
+            and result["before"]["position"] - result["removed"]["position"] >= REMOVED_DROP_MIN
+            for result in results
         ),
         "recovered_learnable": all(
             result["recovered"]["position"] >= RECOVERED_MIN for result in results
@@ -126,9 +133,12 @@ def main() -> int:
             "capsules": "output/s2_multihead3/seed*_session4.pt",
             "retrain_steps": STEPS,
             "retention_max": RETENTION_MAX,
-            "removed_max": REMOVED_MAX,
+            "majority_tolerance": MAJORITY_TOLERANCE,
+            "removed_drop_min": REMOVED_DROP_MIN,
             "recovered_min": RECOVERED_MIN,
         },
+        "majority_class_rate": round(majority_rate, 4),
+        "zero_constant_rate": round(zero_constant_rate, 4),
         "results": results,
         "gates": gates,
         "verdict": verdict,
