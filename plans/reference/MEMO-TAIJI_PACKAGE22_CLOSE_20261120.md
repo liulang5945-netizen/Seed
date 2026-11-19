@@ -81,3 +81,7 @@
 ## 11. 碰撞/多动力学族收口（D-20261119-59）
 
 自由推与受控几何两个探针均未通过（后者数据可分 oracle≈0.93 但预算内模型未学到方向×几何合取）⇒ 该族记 `collision_family_uncovered_with_evidence`；`physical_transfer` 维持**有界 verified（22.4.2b 推/位置桶）**，真机与多动力学族仍 `uncovered`。
+
+## 12. 不确定性表达（D-20261119-62，有界 verified）
+
+22.6.4b 校准卡：joint24、groups=6、30 单位、3-seed 集成，test acc 0.9531、ECE 0.028→0.021、Brier 同步下降，判 `calibration_already_adequate`。**不确定性表达 = verified（有界：joint24 置信校准）**；连续中文表达、拒答/求助策略、跨任务校准仍 `uncovered`。

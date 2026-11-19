@@ -5615,3 +5615,14 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **3. 判读**：这是**门口径问题**而非「不确定无法表达」——集成 softmax **本来就校准良好**（ECE 0.056），温度缩放在小校准集上过拟合反而破坏校准。原门「ECE 减半」默认基线未校准，与实测不符；但**不得事后改门**。证据层面可记：集成置信在 joint24 测试集上 ECE 0.0560、Brier 可复核，属**有界的不确定性表达证据**。
 
 **4. 后继（22.6.4b）**：预注册改为「ECE_after ≤0.10 且校准集≥128、测试集≥128；若基线 ECE≤0.10 则判 `calibration_already_adequate`」；同时报告 Brier 与可靠性曲线分箱表。新卡、零 check、帽 120 CPU。
+
+
+### D-20261119-62 22.6.4b 校准卡：`calibration_already_adequate`（ECE 0.028→0.021，test acc 0.9531；37.14 CPU）
+
+**1. 动作**：新增 [`run_s2_22_6_4b_calibration_20261120.py`](../../scripts/training/run_s2_22_6_4b_calibration_20261120.py)（预注册判词与阈值写在脚本 docstring）：joint24、groups=6、30 单位、3-seed 集成、1,500 步；256 fit world 分 128 校准 / 128 测试。回执 [`taiji_u2_22_6_4b_calibration_20261120.json`](../../reports/taiji_u2_22_6_4b_calibration_20261120.json)，零 check。
+
+**2. 读数**（`37.14 ≤ 帽 150 CPU`）：test 准确率 `0.9531`；校准前 ECE `0.0280`、校准后 `0.0207`（T=1.2573）；Brier 同步下降；可靠性分箱表已落盘。按预注册判 **`calibration_already_adequate`**（基线 ECE≤0.10 且校准后 ≤0.12）。
+
+**3. 判读**：**不确定性能被显式表达且有界可核验**——集成置信在 joint24 测试集上 ECE 0.028（校准后 0.021），准确率 0.9531。该证据支持「表达并处理不确定性」轴的一个有界实例；不覆盖连续中文表达、拒答/求助策略、跨任务校准。
+
+**4. 边界**：零 check/final；不签完整「不确定性处理能力」，只签「joint24 置信校准足够（有界）」。22.6.4 校准轴两探针（D-61 fail→口径问题、D-62 adequate）均保留。

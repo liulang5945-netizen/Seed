@@ -1,0 +1,81 @@
+{
+  "schema": "taiji-u2-22-6-4b-calibration-v1",
+  "card": "22.6.4b uncertainty calibration evidence probe",
+  "created_utc": "2026-11-19T21:37:36.209221+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "train_worlds": 256,
+    "eval_worlds": 256,
+    "calibration_items": 128,
+    "test_items": 128,
+    "ensemble_members": 3,
+    "nexus": "joint24, groups=6, 30 units",
+    "thresholds": "improved: before>0.10 and after<=0.5*before; adequate: before<=0.10 and after<=0.12"
+  },
+  "temperature": 1.2573,
+  "test_accuracy": 0.9531,
+  "ece_before": 0.028,
+  "ece_after": 0.0207,
+  "brier_before": 0.0797,
+  "brier_after": 0.0775,
+  "reliability_after": [
+    {
+      "bin": [
+        0.5,
+        0.6
+      ],
+      "count": 1,
+      "confidence": 0.583,
+      "accuracy": 0.0
+    },
+    {
+      "bin": [
+        0.6,
+        0.7
+      ],
+      "count": 4,
+      "confidence": 0.6402,
+      "accuracy": 0.75
+    },
+    {
+      "bin": [
+        0.7,
+        0.8
+      ],
+      "count": 5,
+      "confidence": 0.7766,
+      "accuracy": 0.8
+    },
+    {
+      "bin": [
+        0.8,
+        0.9
+      ],
+      "count": 4,
+      "confidence": 0.8597,
+      "accuracy": 0.5
+    },
+    {
+      "bin": [
+        0.9,
+        1.0
+      ],
+      "count": 114,
+      "confidence": 0.9907,
+      "accuracy": 0.9912
+    }
+  ],
+  "verdict": "calibration_already_adequate",
+  "discipline": {
+    "optimizer_steps": 4500,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 37.14
+  }
+}
