@@ -4746,3 +4746,8 @@ J1：30 单位 RouteB 仅 appearance、48 步/轮×8×3＝1,152 步，3 seed fit
 ## 2026-11-20 24.4 四类纠错（D-20261119-182，`correction_partial`（回退类可恢复；稳定性子项设计缺陷已披露），200.08 CPU，0 check）
 
 冻结 23.0b 父；10 会话×20 事件无重复；会话 1–8 训练读取头，会话 9–10 四子集各 10 条（stale/revocation/misleading/contradiction）；每类 2 次有效交互；3 seed、只读 fit、零 check。读数：stale 恢复 0.70/0.40/0.60（seed1 未达 0.50✗）；revocation 0.60/0.60/0.80（✓）；misleading/contradiction 的『原标签』在 2 次交互后反而上升（misleading 0.2→0.6 等）；旧技能损伤 0.0✓ ⇒ correction_partial。判读与披露：回退类纠错在 2 次交互内可恢复（revocation 3/3、stale 2/3）；稳定性子项设计失败——misleading/contradiction 臂实际是训练回原标签、未构造真正冲突/误导反馈，stability=✓ 属无效读数，不得据此签抗误导/抗矛盾；旧保持 0.0 仍来自父冻结。后继：24.5 只剩总账；建议直接对 24 做范围限定收口（experience_learning_partial：24.1 接口有界、24.2/24.3 无净益/无成本收益、24.4 仅回退类可恢复、稳定性未测）；读取结构升级卡列为 24 后第一优先；主窗 17,000 CPU 待授权；累计 24≈870 CPU；不签 24 通过/final/C/D/J/模型成型；零 check/final。
+
+
+## 2026-11-20 包 24 范围限定收口（D-20261119-183，`experience_learning_partial`，零训练零 check）
+
+收口卡 CLOSEOUT-TAIJI_U2_24_20261120.md：判 experience_learning_partial——记忆接口有界成立（24.1 memory_interface_ready：即时读回 0.960–0.990、最近64条 0.61–0.75、撤线索掉 0.44–0.55、F 64×16 恒定、W 256 有界）；巩固净益未成立（24.2 priority−fast-only +0.010 非持续）；前缀成本收益未成立（24.3 最佳前缀8 与 full 差0.0 但成本 160=160 无节省）；抗误导/抗矛盾未测（24.4 稳定性子项构造失败、无效读数），仅回退类纠错可恢复（revocation 0.60–0.80、stale 2/3）。累计 24 实际≈870 CPU；check≤2 与 final≤1 均未使用、final_not_authorized。边界：长延迟旧事件 0.10–0.28 受冻结父 4 维 direct_query 读出容量限制（与 22.8 J3、23 内容上限同源）。25 前置：显式继承本判词；结构升级卡优先（加宽 direct/query 或逐令牌读出、≈1,500 CPU、新 pin）；旧技能只取 23.0b 父；25 重新定价单卡授权；24.3/24.4 无效/弱读数不得作为 25 正面输入。不签 24 通过/final/C/D/J/模型成型；零 check/final。

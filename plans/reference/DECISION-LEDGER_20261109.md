@@ -7070,3 +7070,14 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **3. 判读与披露**：**回退类纠错在 2 次交互内可恢复**（revocation 3/3、stale 2/3）；**稳定性子项设计失败**——misleading/contradiction 臂实际是「训练回原标签」，未构造真正的冲突/误导反馈，stability=✓ 属**无效读数**，本卡不得据此签「抗误导/抗矛盾」；旧保持 0.0 仍来自父冻结。
 
 **4. 后继**：24.5 只剩总账；建议直接对 24 做范围限定收口（`experience_learning_partial`：24.1 接口有界、24.2/24.3 无净益/无成本收益、24.4 仅回退类可恢复、稳定性未测）；「读取结构升级卡」列为 24 后第一优先；主窗 17,000 CPU 仍待 owner 授权；累计 24 实际 ≈870 CPU；不签 24 通过/final/C/D/J/模型成型；零 check/final。
+
+
+### D-20261119-183 包 24 范围限定收口：`experience_learning_partial`；25 前置（零训练、零 check）
+
+**1. 动作**：写 [24 收口卡](../reference/CLOSEOUT-TAIJI_U2_24_20261120.md)。判 **`experience_learning_partial`**：记忆接口有界成立；巩固净益、前缀成本收益、抗误导/抗矛盾均未成立；回退类纠错 2 次交互内可恢复。
+
+**2. 总账**：24.0 合同冻结；24.1 `memory_interface_ready`（即时读回 0.960–0.990、最近 64 条 0.61–0.75、撤线索掉 0.44–0.55、F 64×16 恒定、W 256 有界；242.91 CPU）；24.2 `consolidation_partial`（priority−fast-only +0.010、非持续；218.73 CPU）；24.3 `prefix_maintenance_partial`（最佳前缀 8 与 full 差 0.0 但成本 160=160 无节省；207.88 CPU）；24.4 `correction_partial`（revocation 0.60–0.80、stale 2/3；稳定性子项构造失败、无效读数；200.08 CPU）。累计 24 实际 ≈870 CPU；check≤2 与 final≤1 均未使用（final_not_authorized）。
+
+**3. 边界**：成立——有界 F/W/撤线索 Recall 接口、回退类纠错 2 次交互内恢复、父冻结下旧技能 0.0；不成立——巩固净益、前缀成本收益、抗误导/抗矛盾；长延迟旧事件 0.10–0.28 受冻结父 4 维 `direct_query` 读出容量限制（与 22.8 J3、23 内容上限同源）。
+
+**4. 25 前置**：①显式继承 `experience_learning_partial`；②**结构升级卡优先**（加宽 direct/query 或逐令牌读出，≈1,500 CPU、新 pin），否则结构压力证据被 4 维容量限制污染；③旧技能只取 23.0b 父；④25 重新定价、单卡授权；⑤24.3/24.4 的无效/弱读数不得作为 25 正面输入。不签 24 通过/final/C/D/J/模型成型；零 check/final。
