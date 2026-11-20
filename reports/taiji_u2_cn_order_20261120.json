@@ -1,0 +1,89 @@
+{
+  "schema": "taiji-u2-cn-order-v1",
+  "card": "Chinese word-order sensitivity: bag vs character-sequence ticks",
+  "created_utc": "2026-11-20T14:05:55.220114+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      20261120,
+      20261121,
+      20261122
+    ],
+    "train_templates": [
+      0,
+      1,
+      2
+    ],
+    "fit_template": 3,
+    "fit_offset": 10000000,
+    "classes": 4,
+    "max_len": 12
+  },
+  "rows": [
+    {
+      "seed": 20261120,
+      "arms": {
+        "bag_units": 0.4322916567325592,
+        "seq_units": 0.5,
+        "bag_raw": 0.5,
+        "seq_raw": 1.0
+      },
+      "retention_damage": {
+        "s1": 0.0,
+        "s2": 0.0,
+        "s3": 0.0
+      }
+    },
+    {
+      "seed": 20261121,
+      "arms": {
+        "bag_units": 0.4166666567325592,
+        "seq_units": 0.4166666567325592,
+        "bag_raw": 0.5,
+        "seq_raw": 1.0
+      },
+      "retention_damage": {
+        "s1": 0.0,
+        "s2": 0.0,
+        "s3": 0.0
+      }
+    },
+    {
+      "seed": 20261122,
+      "arms": {
+        "bag_units": 0.3333333432674408,
+        "seq_units": 0.5,
+        "bag_raw": 0.5,
+        "seq_raw": 1.0
+      },
+      "retention_damage": {
+        "s1": 0.0,
+        "s2": 0.0,
+        "s3": 0.0
+      }
+    }
+  ],
+  "means": {
+    "bag_units": 0.3940972189108531,
+    "seq_units": 0.4722222189108531,
+    "bag_raw": 0.5,
+    "seq_raw": 1.0
+  },
+  "gates": {
+    "order_signal": false,
+    "retention": true
+  },
+  "verdict": "chinese_word_order_partial",
+  "disclosure": "labels depend on the second mentioned colour; bag encoding cannot recover order; sequence ticks carry order through the graph",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 204.33
+  }
+}
