@@ -1,0 +1,61 @@
+{
+  "schema": "taiji-u2-23-0b-joint-v1",
+  "card": "23.0b jointly trained three-skill parent",
+  "created_utc": "2026-11-20T08:37:37.027341+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      20261120,
+      20261121,
+      20261122
+    ],
+    "steps": {
+      "s1": 1152,
+      "s2": 2000,
+      "s3": 1500
+    },
+    "batch": 32,
+    "target": 0.8,
+    "joint": true
+  },
+  "rows": [
+    {
+      "seed": 20261120,
+      "s1": 0.984375,
+      "s2": 0.859375,
+      "s3": 1.0,
+      "recovery_diff": 0.0
+    },
+    {
+      "seed": 20261121,
+      "s1": 0.9921875,
+      "s2": 0.859375,
+      "s3": 1.0,
+      "recovery_diff": 0.0
+    },
+    {
+      "seed": 20261122,
+      "s1": 0.9921875,
+      "s2": 0.875,
+      "s3": 1.0,
+      "recovery_diff": 0.0
+    }
+  ],
+  "gates": {
+    "k1_three_skills": true,
+    "k3_identity": true
+  },
+  "verdict": "joint_parent_ready",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "optimizer_steps": 13956
+  },
+  "cost": {
+    "cpu": 136.28
+  }
+}
