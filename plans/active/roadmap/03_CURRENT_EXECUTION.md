@@ -4941,3 +4941,8 @@ A3 首版 `cn_vocab2_partial` 作废：留出模板含训练中未出现的字�
 ## 2026-11-21 A3c 预注册（D-20261121-222，待批，零训练零 check）
 
 写 A3c 预注册 DESIGN-TAIJI_U2_A3C_20261121.md：8 色、训练 5 自然模板、留出 5 自然模板（用字全为训练已见字，A3 教训）；逐字符 tick（MAX_LEN 24）经冻结父；三臂 pos_attn/mean_pool/replay；train 1,280/fit 320、fit 分区、3 seed。读前冻结门：G1 replay ≥0.80、G2 pos_attn ≥0.60、G3 pos_attn ≥ mean_pool+0.10、G4 旧技能损伤 ≤0.02/恢复 ≤1e-10；出口 a3c_verified/a3c_partial/presentation_failure/budget_stop/engineering_failure；基线 A3b 0.701。≤1,500 CPU、零 check；未批准、未运行；中文扩展若不过则收束于 A3b 0.701。
+
+
+## 2026-11-21 架构级持久状态预注册（D-20261121-223，待批，零训练零 check）
+
+写 DESIGN-TAIJI_U2_PERSISTENT_STATE_ARCH_20261121.md：方案 A（推荐先做，加法式）——per_sample_state 模式，z/a 由 [N]→[B,N]、H 由 [G,D]→[B,G,D]，默认关闭、旧行为逐位不变、不改更新规则/连接/生命周期、旧胶囊保留+新 v2 字段；门 G1 state_final 在 t=5/t=10 解码 ≥0.60 且无断崖、G2 external_history_select ≥0.80、G3 旧三技能损伤 ≤0.02/恢复 ≤1e-10/旧胶囊可载旧图、G4 关闭新模式时现有探针逐位不变；出口 per_sample_state_verified/negative/engineering_failure。方案 B（备选）：16 槽×32 维、多头写/读、3000 步、写后重建辅助损失。纪律：A1 口径、无下标碰撞、目标不恒 t0、fit 分区、≤1,500 CPU/方案、零 check、A 改核须登记新候选版本（capsule v2、lineage）、不构成结构生长。待裁：批 A、是否同时批 B、A 判负后记忆轴是否最终收束。

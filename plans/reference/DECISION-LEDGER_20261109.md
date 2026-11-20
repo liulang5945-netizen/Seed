@@ -7553,3 +7553,16 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **3. 边界**：≤1,500 CPU、零 check/final、3 seed；新 pin 拟 `run_s2_cn_vocab3_20261121.py`；不改单位核心；A1 口径（单句内令牌序列读出、不涉 state_carry）；若不过则中文扩展收束于 A3b 0.701。
 
 **4. 状态**：**未批准、未运行**；等 owner「A3c 可跑」后执行；不签自然中文/对话/生成/26-27/结构收益/final/C/D/J；零 check。
+
+
+### D-20261121-223 架构级持久状态预注册（方案 A 按样本状态 / 方案 B 改进有界存储；待批；零训练、零 check）
+
+**1. 动作**：写 [架构级持久状态预注册](../reference/DESIGN-TAIJI_U2_PERSISTENT_STATE_ARCH_20261121.md)。
+
+**2. 方案 A（推荐先做，加法式）**：`per_sample_state` 模式——`z/a` 由 `[N]` 改为 `[B,N]`、`H` 由 `[G,D]` 改为 `[B,G,D]`；默认关闭、旧行为逐位不变；不改更新规则/连接/生命周期；旧胶囊保留、新增 v2 字段。门：G1 `state_final` 在 t=5/t=10 解码 ≥0.60 且无断崖；G2 `external_history_select` 对照 ≥0.80；G3 旧三技能损伤 ≤0.02、恢复 ≤1e-10、旧胶囊可载旧图；G4 关闭新模式时现有探针读数逐位不变。出口：全过⇒`per_sample_state_verified`（有界）；G1 不过⇒`per_sample_state_negative`（记忆轴收束）；工程失败⇒`engineering_failure`。
+
+**3. 方案 B（备选）**：16 槽×32 维、多头写/读、3,000 步、写后重建辅助损失；门同 A 的 G1 与 mean/history 对照；失败记录「最小可学习有界存储不可行」。
+
+**4. 纪律**：A1 口径（state_final 才算状态保持、全历史只作 external_history_select 对照）；无下标碰撞、目标不恒 t0、fit 分区；≤1,500 CPU/方案、零 check/final、3 seed；A 若改核心须登记新候选版本（capsule v2、lineage），不改更新规则、不构成结构生长、不签 25/26。
+
+**5. 待裁**：①批方案 A（≤1,500 CPU）；②是否同时批方案 B；③若 A 判负，记忆轴是否按「外置历史可读、单位状态不承载」最终收束、不再投入。不签记忆保持/长时记忆/结构收益/25-26/final/C/D/J；零训练、零 check。
