@@ -411,3 +411,7 @@ Q2 差集文档落盘：共享 units/输入编码/z、a；A 独有 `w_g/ell/h_re
 ## 89. 22.6 结案（D-20261119-148，autonomous_choice_negative / recursive_negative）
 
 依据 22.6 条件预研六张回执：22.6.0 `c_task_ready`（9.64 CPU；C1 拒收/C2 wait14/C3 wait0，8 seeds 重放一致）、22.6.1 `predictor_gain_pass`（Huber 0.23398 vs 0.27287，改善 0.1425）、22.6.2/2b `policy_gain_absent`（learnable 0.6637 vs fixed wait-deadline 0.8300，Δ=−0.1663，两法同向）、22.6.3 `recursive_feasibility_absent`＋`recursive_multiseed_absent`（dependent−fixed 0.0；mean 0.06/min −0.10）、22.6.4b `calibration_already_adequate`。主终点未达、递归两次相依改进未建立 ⇒ 22.6 结案为范围限定负：`autonomous_choice=negative`、`recursive_development=negative`（只覆盖 22.6.0 C 任务与 22.6.3 构造，不推广）；铁律 7 三探针止损已触发，不追加预算、不改门。主线队首推进 22.7（成熟生长，须先处理 `growth_benefit_not_established_in_package_22`）。
+
+## 90. 22.7 S0 预注册（D-20261119-149，零训练、零 check）
+
+按 D-49 条件①（等 FLOPs）重开生长收益：joint24 16→32 单位，七臂 G0（信用出生）/G1 盲门/G2 置换/G3 GradMax/G4 仅重放/G5 固定强优化/G6 同终容预分配；门 H1 净益 ≥0.05 且配对 95% 下界>0（5 seed 同向）、H2 删除移除 ≥50% 且绝对降 ≥0.02、H3 保持 ≤0.02、H4 出生中性 FP64≤1e-10/FP32≤1e-5、H5 活新生儿 N=5、H6 恢复、H7 出生→成熟→休眠→唤醒。切片 4,000 CPU（S1 300/S2 3,500/S3 200），check 0；等 FLOPs 消除等步数下预分配多训练的结构性优势；未过记 `growth_benefit_absent`（等 FLOPs）并禁同范围重跑。未清项：16→32 与每群每代≤3 冲突（2 次出生或 owner 裁定）、FLOPs 估计器手算复核、活单元门先于行为窗、起点须在 [0.30,0.80]。

@@ -1,5 +1,6 @@
 # MASTER-PLAN（唯一权威主线）
 
+> 文档状态：[主线] — 2026-11-20（**22.7 S0 预注册**：等 FLOPs 口径生长收益重检，16→32 单位七臂 G0–G6、门 H1–H7、切片 4,000 CPU、check 0，D-20261119-149，最新）。
 > 文档状态：[主线] — 2026-11-20（**22.6 结案：`autonomous_choice_negative / recursive_negative`**，依据预研六卡（c_task_ready/predictor_gain_pass/policy_gain_absent×2/recursive absent×2/calibration adequate），零新增训练、0 check；队首推进 22.7，D-20261119-148，最新）。
 > 文档状态：[主线] — 2026-11-20（**22.5.2 结案：S2 `arch_negative`**，U2-B 0.8625 vs GRU 0.9750，Δ=−0.1101（95% 区间 [−0.1937,−0.0375]），学习父保留交付 22.6，D-20261119-147，最新）。
 > 文档状态：[主线] — 2026-11-20（**22.5.2 S1 等 FLOPs 配平 `parity_admissible`**：四个 GRU 候选均在带内、chosen hidden16/841步/ratio1.0001，Q2 差集落盘，D-20261119-146，最新）。

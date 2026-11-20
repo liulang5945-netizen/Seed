@@ -4576,3 +4576,8 @@ joint24 三 tick 证据到达流（t0 查询/t1 颜色/t2 位置），U2-A/U2-B/
 ## 2026-11-20 22.6 结案（D-20261119-148，`autonomous_choice_negative / recursive_negative`，零新增训练、0 check）
 
 汇总条件预研六张回执：22.6.0 c_task_ready（9.64 CPU；C1 拒收/C2 wait14/C3 wait0，8 seeds 重放一致）、22.6.1 predictor_gain_pass（Huber 0.23398 vs 0.27287，改善 0.1425≥0.10）、22.6.2/2b policy_gain_absent（learnable 0.6637 vs fixed wait-deadline 0.8300，Δ=−0.1663，两法同向）、22.6.3 两卡 absent（dependent−fixed 0.0；mean 0.06/min −0.10）、22.6.4b calibration_already_adequate。主终点未达、递归相依改进未建立 ⇒ 22.6 结案：autonomous_choice=negative、recursive_development=negative（范围限定：22.6.0 C 任务与 22.6.3 构造，不推广）；铁律 7 止损触发，不追加预算/不改门。主线队首推进至 22.7（成熟生长，须先处理 growth_benefit_not_established_in_package_22）。
+
+
+## 2026-11-20 22.7 S0 预注册（D-20261119-149，零训练、零 check）
+
+按 D-49 条件①（等 FLOPs）重开生长收益卡：任务 joint24 容量带（16→32 单位），七臂 G0–G6，门 H1 净益 ≥0.05 且 95% 配对下界>0（5 seed 同向）、H2 删除移除 ≥50% 且绝对降 ≥0.02、H3 保持 ≤0.02、H4 出生中性、H5 活新生儿 N=5、H6 恢复、H7 出生→成熟→休眠→唤醒；切片 4,000 CPU（300/3,500/200），check 0。等 FLOPs 下预分配臂步数更少，消除等步数口径的结构性优势；未过记 growth_benefit_absent（等 FLOPs），禁同范围重跑。未清项：16→32 与每群每代≤3 规则冲突（需 2 次出生或 owner 裁定）、FLOPs 估计器可复核、活单元门先于行为窗、起点须在 [0.30,0.80]。未冻结未运行。
