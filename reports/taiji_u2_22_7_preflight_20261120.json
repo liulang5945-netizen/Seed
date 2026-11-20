@@ -1,0 +1,134 @@
+{
+  "schema": "taiji-u2-22-7-preflight-v1",
+  "card": "22.7 S1 preflight: two-generation growth caps, neutrality, liveness, recovery, equal-FLOPs plan",
+  "created_utc": "2026-11-20T07:12:41.564605+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "growth_plan": "16 -> 20 -> 24 units (one birth of +1 per group per generation)",
+    "caps": {
+      "max_per_group_per_generation": 3,
+      "max_fraction_per_generation": 0.25,
+      "max_generations": 2
+    },
+    "fractions": [
+      0.0625,
+      0.05
+    ],
+    "neutrality_tolerances": {
+      "fp64": 1e-10,
+      "fp32": 1e-05
+    },
+    "ticks": 1,
+    "steps_reference": 1500
+  },
+  "neutrality": {
+    "fp64": {
+      "readout_max_abs_diff": 0.0,
+      "z_old_max_abs_diff": 0.0,
+      "z_newborn_max_abs": 0.12427501663253927
+    },
+    "fp32": {
+      "readout_max_abs_diff": 0.0,
+      "z_old_max_abs_diff": 0.0,
+      "z_newborn_max_abs": 0.12427501380443573
+    }
+  },
+  "liveness": {
+    "newborn_count": 8,
+    "total_units": 24,
+    "p_grad_first_min": 0.0014402038650587201,
+    "r_grad_max_min": 0.00018483842723071575,
+    "p_change_min": 0.026636693626642227,
+    "r_change_min": 0.00019681453704833984,
+    "activity_max_min": 0.12483105063438416,
+    "newborn_live": true
+  },
+  "recovery": {
+    "max_abs_digest_diff": 0.0,
+    "unit_count": 24,
+    "routes": [
+      "B",
+      "B"
+    ]
+  },
+  "flops": {
+    "flops_per_sample_start": 4224,
+    "flops_per_sample_mid": 4848,
+    "flops_per_sample_final": 5568,
+    "budget_reference": 7272000,
+    "arms": {
+      "G0/G1/G2/G3": {
+        "steps_start": 750,
+        "steps_mid": 846,
+        "steps_final": 0,
+        "flops_total": 7269408,
+        "units": [
+          16,
+          20,
+          24
+        ]
+      },
+      "G4_replay": {
+        "steps_start": 1721,
+        "steps_mid": 0,
+        "steps_final": 0,
+        "flops_total": 7269504,
+        "units": [
+          16,
+          16,
+          16
+        ]
+      },
+      "G5_strong": {
+        "steps_start": 0,
+        "steps_mid": 1306,
+        "steps_final": 0,
+        "flops_total": 7271808,
+        "units": [
+          16,
+          24,
+          24
+        ]
+      },
+      "G6_prealloc": {
+        "steps_start": 0,
+        "steps_mid": 1306,
+        "steps_final": 0,
+        "flops_total": 7271808,
+        "units": [
+          16,
+          24,
+          24
+        ]
+      }
+    },
+    "ratios": {
+      "G0/G1/G2/G3": 0.9996,
+      "G4_replay": 0.9997,
+      "G5_strong": 1.0,
+      "G6_prealloc": 1.0
+    },
+    "all_in_band": true
+  },
+  "gates": {
+    "neutral_fp64": true,
+    "neutral_fp32": true,
+    "newborn_live": true,
+    "recovery_exact": true,
+    "growth_caps": true,
+    "parity_in_band": true
+  },
+  "verdict": "preflight_ready",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "optimizer_steps": 5
+  },
+  "cost": {
+    "cpu": 1.3
+  }
+}

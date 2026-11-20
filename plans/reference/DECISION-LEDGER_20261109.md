@@ -6685,3 +6685,14 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **2. 与旧判词的关系**：本卡是 D-49 条件①下的**单次重检**，不改写 `growth_benefit_not_established_in_package_22`；等 FLOPs 下允许预分配臂步数更少，消除「预分配多训练」的结构性优势。若 H1 未过记 `growth_benefit_absent`（等 FLOPs 口径），禁止同范围重跑；再试须满足条件②③④并新卡。
 
 **3. 未清项**：①起点 16→32 与 22.7.0「每群每代 ≤3 单位」规则冲突，须在 S1 前决定改为 2 次出生或由 owner 裁定；②FLOPs 估计器 N 可变项须可手算复核；③活单元门与恢复门先于行为窗；④16 单位起点须落在 [0.30,0.80] 可学带内。
+
+
+### D-20261119-150 22.7 S1 预检：`preflight_ready`，生长方案修正为 16→20→24（1.27 CPU，0 check）
+
+**1. 动作**：新增 [`preflight_22_7_20261120.py`](../../scripts/training/preflight_22_7_20261120.py) 与 [结果卡](../reference/RESULT-TAIJI_U2_22_7_PREFLIGHT_20261120.md)。S0 拟 16→32（每群+4）与 22.7.0「每群每代 ≤3 且 ≤25%」冲突，按预注册未清项处理：**修正为 16→20（每群+1，25%）→24（每群+1，20%）**，2 代、每群每代 +1，全部落在上限内；删除检验回 16 单位。**零 check/final，极小训练（10 步活单元，固定随机种子可复现）。**
+
+**2. 读数**：出生中性 FP64/FP32 读出 diff **0.0**、旧单元 z diff **0.0**（新生 z 非零属正常活性）；活新生儿 8 个（N=10，固定种子）：p 首步梯度 min 1.44e-3、r 第 2+ 步 min 1.85e-4、p/r 权重变化 min 2.66e-2/1.97e-4、activity min 0.125；capsule 恢复 state_dict 摘要 diff 0.0（24 单元）；等 FLOPs 七臂比值 G0–G3 0.9996、G4 0.9997、G5/G6 1.0000，全部在 [0.90,1.10] ⇒ **`preflight_ready`**。
+
+**3. 边界**：S1 只证「可以开窗」，**不签生长收益**；未改核心 `u2_neural_units.py`；`live_entry_birth` 的 `float(tensor.norm())` 告警为既有提示，不影响读数。
+
+**4. 后继**：S2 七臂行为窗（5 seed、等 FLOPs、fit 32、删除回 16 单位、成熟→休眠→唤醒、旧保持 ≤0.02），帽 3,500 CPU；H1 净益 ≥0.05 且配对 95% 下界>0 方可签 `growth_benefit_verified`，否则记 `growth_benefit_absent`（等 FLOPs 口径）并禁同范围重跑。
