@@ -1,0 +1,155 @@
+{
+  "schema": "taiji-u2-wm-gap3-v1",
+  "card": "retention re-test with positional-attention readout",
+  "created_utc": "2026-11-20T14:31:04.539308+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      20261120,
+      20261121,
+      20261122
+    ],
+    "gaps": [
+      5,
+      10,
+      20,
+      40
+    ],
+    "train": 512,
+    "fit": 128,
+    "fit_offset": 10000000,
+    "steps": 1500
+  },
+  "rows": [
+    {
+      "seed": 20261120,
+      "gaps": {
+        "5": {
+          "stateless_reset": 0.3203125,
+          "replay": 0.8671875,
+          "state_carry": 0.8125
+        },
+        "10": {
+          "stateless_reset": 0.296875,
+          "replay": 0.890625,
+          "state_carry": 0.8828125
+        },
+        "20": {
+          "stateless_reset": 0.40625,
+          "replay": 0.8984375,
+          "state_carry": 0.625
+        },
+        "40": {
+          "stateless_reset": 0.3671875,
+          "replay": 0.875,
+          "state_carry": 0.875
+        }
+      },
+      "retention_damage": {
+        "s1": 0.0,
+        "s2": 0.0,
+        "s3": 0.0
+      }
+    },
+    {
+      "seed": 20261121,
+      "gaps": {
+        "5": {
+          "stateless_reset": 0.3671875,
+          "replay": 0.8984375,
+          "state_carry": 0.953125
+        },
+        "10": {
+          "stateless_reset": 0.265625,
+          "replay": 0.9453125,
+          "state_carry": 0.9609375
+        },
+        "20": {
+          "stateless_reset": 0.328125,
+          "replay": 0.9453125,
+          "state_carry": 0.9140625
+        },
+        "40": {
+          "stateless_reset": 0.265625,
+          "replay": 0.9453125,
+          "state_carry": 0.890625
+        }
+      },
+      "retention_damage": {
+        "s1": 0.0,
+        "s2": 0.0,
+        "s3": 0.0
+      }
+    },
+    {
+      "seed": 20261122,
+      "gaps": {
+        "5": {
+          "stateless_reset": 0.421875,
+          "replay": 0.9296875,
+          "state_carry": 0.8984375
+        },
+        "10": {
+          "stateless_reset": 0.359375,
+          "replay": 0.9453125,
+          "state_carry": 0.9453125
+        },
+        "20": {
+          "stateless_reset": 0.3125,
+          "replay": 0.921875,
+          "state_carry": 0.921875
+        },
+        "40": {
+          "stateless_reset": 0.2890625,
+          "replay": 0.9375,
+          "state_carry": 0.953125
+        }
+      },
+      "retention_damage": {
+        "s1": 0.0,
+        "s2": 0.0,
+        "s3": 0.0
+      }
+    }
+  ],
+  "means": {
+    "5": {
+      "stateless_reset": 0.3697916666666667,
+      "replay": 0.8984375,
+      "state_carry": 0.8880208333333334
+    },
+    "10": {
+      "stateless_reset": 0.3072916666666667,
+      "replay": 0.9270833333333334,
+      "state_carry": 0.9296875
+    },
+    "20": {
+      "stateless_reset": 0.3489583333333333,
+      "replay": 0.921875,
+      "state_carry": 0.8203125
+    },
+    "40": {
+      "stateless_reset": 0.3072916666666667,
+      "replay": 0.9192708333333334,
+      "state_carry": 0.90625
+    }
+  },
+  "boundary": 40,
+  "gates": {
+    "task_learnable": true,
+    "retention": true
+  },
+  "verdict": "memory_gap3_verified",
+  "disclosure": "positional-attention readout on frozen per-tick unit activities; replay gets target + last tick",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 256.31
+  }
+}
