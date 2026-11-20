@@ -6799,3 +6799,18 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **3. 判读**：冻结基座 `direct_query` 仅 **4 维**（`query_slots=4`）；线性/MLP 独立头均无法在旧子集达到判据 ⇒ **信息在 4 维表示内不可分**——基座 0.9 是单位与读出联合适配的结果，冻结后新头无法复用。这是**读出维度/接口的结构限制**，不是纠错机制失败；突破须加宽 direct/query（结构变更、新 pin、新设计），不能在本架构内继续加训练步数。按 J3b 预注册，J3 有意义保持**停止该线**，维持 partial-positive，不升级为「纠错与保持同时成立」。
 
 **4. 22.8 分账终值（本阶段）**：J1 `appearance_dose_verified`（有界，1,152 步 0.81–0.91）；J2 动作有界（0.69–0.80、边际 0.36–0.44）；J3 partial-positive；J4 恢复有界（3/3 diff 0.0）；J5 range-limited negative（恰等最强固定，三次同型负）；J6 分账齐全；J7 occlusion 退化仅记录。**22.8 整体仍 partial**；check 1/final 未动。后继：不再在本架构内重试 J3/J5，进入 **22.8.4 无条件全局收束**（零训练），输出九轴资格表与 23 立项依据，并明确 `final_not_authorized`；不签 final/C/D/J/模型成型。
+
+
+### D-20261119-160 包 22 全局收束（22.8.4）：`package22_closed_partial`、九轴资格表与 23 立项依据（零训练、0 check）
+
+**1. 动作**：写 [包 22 全局收束卡](../reference/CLOSEOUT-TAIJI_U2_22_GLOBAL_20261120.md)：汇总 22.5.0–22.8 判词、22.8 七项分账终值、九轴资格表、曝光/final 状态、包 22 财务账与 23 立项条件。**零训练、零 check/final。**
+
+**2. 总账**：22.5.0 `a_parent_earned`；22.5.1 **`joint_gate_check2_pass / b_parent_earned`**；22.5.2 **`arch_negative`**；22.6 **`autonomous_choice_negative / recursive_negative`**；22.7 **机制/因果 verified＋收益 `growth_benefit_absent`（等 FLOPs）**；22.8 **`joint_life_segment_partial`**（J1 `appearance_dose_verified` 1,152 步 0.81–0.91、J2 动作 0.69–0.80＋边际 0.36–0.44、J3 partial-positive（4 维 direct 限制）、J4 恢复 3/3 diff 0.0、J5 range-limited negative、J6 齐全、J7 退化）。包级判词 **`package22_closed_partial`**。
+
+**3. 九轴**：`engineering=verified`；`task=verified`（22.5.1 正式 check②＋22.8 J1 fit 有界）；`learning=routing verified＋通路新增有界/内容积累 uncovered`；`retention=verified（check② 范围）＋J3 partial-positive`；`autonomous_choice=negative（C 任务/C 池）＋平稳合成有界`；`mature_growth=机制/因果 verified＋收益 absent（等 FLOPs）`；`recursive_development=negative（两形态）＋显式循环/记忆槽 partial`；`physical_transfer=verified（有界仿真动作）＋碰撞/真机 uncovered`；`lifetime=verified（有界 ≥3 跨进程会话）＋长跨度 uncovered`。
+
+**4. 曝光-final**：check② 22.5.1 用 1（remaining=0）；22.8 分配的 check 1 次未用；`final` 未生成/未读/未获当次 R-SEAL-1 授权 ⇒ **`final_not_authorized`**；不签 final/C/D/J/模型成型/独立接管。
+
+**5. 财务**：旧账 ≈36,804；本阶段新增可核验回执 ≈408.6（14 份）；合计 ≈37,213 对帽 24,000 超 ≈13,213（55.1%），不追溯改帽、永久记事故。
+
+**6. 23 立项依据**：以 22.8 的 30 单位 RouteB 新候选为起点、登记身份断点（B 父原生死线保留）；J1/J2/J4 可作旧技能，J3/J5 负结果必须显式继承；J3 旧保持需加宽 direct/query 的结构卡前置；23 须新阶段立项、重新定价与授权；不新增 22.9；J5、unit-level 分化/生长收益本阶段不重开。
