@@ -7542,3 +7542,14 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **5. 剩余选项（需 owner 决定其一）**：①A3c 中文再扩展（新预注册、≤1,500 CPU、零 check）；②架构级持久状态（按样本 z/a/H 或可学习有界存储，需 owner 立项）；③按现状收束为「有界能力包」并写交付说明。
 
 **6. 不签**：候选通过/模型成型/final/C/D/J/长时记忆/动作闭环/结构收益/开放中文/自主选择；零 check。
+
+
+### D-20261121-222 A3c 预注册（自然措辞中文语序；待批；零训练、零 check）
+
+**1. 动作**：写 [A3c 预注册](../reference/DESIGN-TAIJI_U2_A3C_20261121.md)。8 色、训练 5 自然模板、留出 5 自然模板（**用字全为训练已见字**，A3 教训）；逐字符 tick（MAX_LEN 24）经冻结父；三臂 pos_attn/mean_pool/replay；train 1,280 / fit 320、fit 分区、3 seed。
+
+**2. 读前冻结门**：G1 replay ≥0.80（否则 `presentation_failure`）；G2 pos_attn ≥0.60；G3 pos_attn ≥ mean_pool+0.10；G4 旧技能损伤 ≤0.02、恢复 ≤1e-10。出口：全过⇒`a3c_verified`（有界）；G2/G3 不过⇒`a3c_partial`；G1 不过⇒`presentation_failure`；超帽⇒`budget_stop`；工程失败⇒`engineering_failure`。基线：A3b 0.701。
+
+**3. 边界**：≤1,500 CPU、零 check/final、3 seed；新 pin 拟 `run_s2_cn_vocab3_20261121.py`；不改单位核心；A1 口径（单句内令牌序列读出、不涉 state_carry）；若不过则中文扩展收束于 A3b 0.701。
+
+**4. 状态**：**未批准、未运行**；等 owner「A3c 可跑」后执行；不签自然中文/对话/生成/26-27/结构收益/final/C/D/J；零 check。
