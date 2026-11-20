@@ -6890,3 +6890,14 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **3. 判读**：同一 30 单位主体可同时持有 appearance/dynamics/occlusion 三类技能（0.86–1.00），23 旧技能门有可用起点；本卡**联合训练、不声称顺序保持**，23.0 的 K2 顺序失败结论不变；23 主窗须测后续学习后三技能损伤 ≤0.02（23.4/主门）。
 
 **4. 状态**：23 旧技能门解锁（父级有界）；23 主窗（34,500 CPU、check≤2/final≤1）仍待 owner 明示授权；不签 23 通过/final/C/D/J/模型成型；零 check/final；不改包 22 判词。
+
+
+### D-20261119-167 23.1 数据合同冻结：`data_contract_frozen`（244.3 CPU，零训练、零 check）
+
+**1. 动作**：新增 [`taiji/native_composition.py`](../../taiji/native_composition.py) 与 [`run_s2_23_1_contract_20261120.py`](../../scripts/training/run_s2_23_1_contract_20261120.py)，并冻结合同 `plans/manifests/taiji_u2_23_1_composition_contract_20261120.json`。fixture `taiji-23-composition-v1`：896 world×3 题＝2,688 条，train 1,536（Q1/Q2/Q3）、fit/check/final 各 384（Q2/Q3/Q4 或同构封存）。
+
+**2. 验收**：C1 规模 ✓（1,536/384/384/384）；C2 三轴无泄漏 ✓；C3 oracle 独立重算 **1.0** ✓；C4 分区 digest 两次一致 ✓；C5 中文/答案空间 ✓ ⇒ **`data_contract_frozen`**。digest：train `5297bde6…`、fit `b24abb21…`、check `99c50717…`、final `6667dbe7…`；244.3 CPU。
+
+**3. 判读**：23 数据面可执行、可复现、无泄漏、oracle 真值 1.0；2,688 条与 MAINLINE 口径对齐（本卡按 896 world×3 题实现，合同显式记录）；冻结后任何模板/方向/顺序改动即作废须新卡；23.2 可进入实现。
+
+**4. 状态**：23.0b 三技能父＋23.1 数据合同就绪；**23 主窗（34,500 CPU、check≤2/final≤1）仍待 owner 明示授权**；本卡零训练、零 check；不签 23 通过/final/C/D/J/模型成型。

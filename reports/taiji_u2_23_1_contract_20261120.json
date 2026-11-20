@@ -1,0 +1,48 @@
+{
+  "schema": "taiji-u2-23-1-contract-v1",
+  "card": "23.1 composition data contract generation and acceptance",
+  "created_utc": "2026-11-20T08:50:32.512076+00:00",
+  "protocol": {
+    "fixture": "taiji-23-composition-v1",
+    "worlds": 896,
+    "items_per_world": 3,
+    "partitions": [
+      "train",
+      "fit",
+      "check",
+      "final"
+    ]
+  },
+  "counts": {
+    "train": 1536,
+    "fit": 384,
+    "check": 384,
+    "final": 384
+  },
+  "digests": {
+    "train": "5297bde63d1dac9f0cfbb9660de1ba863b6c0802c6895fdc91cf7b7a8f259be4",
+    "fit": "b24abb21ac4ec5cf72bd1d70015e9a89e909e091d1c619ef23794287ec08f643",
+    "check": "99c5071725191ee6bb1432ac03b28868b19055ca8cf10231209b13264c701ab5",
+    "final": "6667dbe7202aaa1d991ad6253665e49c0090ce44fb7cdff93169ae987043478d"
+  },
+  "reproducible": true,
+  "leakage": false,
+  "oracle_accuracy": 1.0,
+  "gates": {
+    "c1_sizes": true,
+    "c2_no_leakage": true,
+    "c3_oracle": true,
+    "c4_reproducible": true,
+    "c5_text": true
+  },
+  "verdict": "data_contract_frozen",
+  "contract": "plans\\manifests\\taiji_u2_23_1_composition_contract_20261120.json",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "training_steps": 0
+  },
+  "cost": {
+    "cpu": 244.3
+  }
+}

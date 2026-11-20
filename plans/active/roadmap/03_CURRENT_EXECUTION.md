@@ -4666,3 +4666,8 @@ J1：30 单位 RouteB 仅 appearance、48 步/轮×8×3＝1,152 步，3 seed fit
 ## 2026-11-20 23.0b 联合训练三技能父（D-20261119-166，`joint_parent_ready`，136.28 CPU，0 check）
 
 同一 30 单位 RouteB＋三头，把 23.0 的 4,652 步按技能混排联合训练；3 seed、fit 128、零 check、136.28 CPU（帽 600）。读数：S1 0.9844/0.9922/0.9922、S2 0.8594/0.8594/0.8750、S3 1.0000（全≥0.80）；恢复 diff 3/3 0.0 ⇒ joint_parent_ready。判读：同一主体可同时持有三类技能（0.86–1.00），23 旧技能门有可用起点；本卡联合训练、不声称顺序保持，23.0 的 K2 顺序失败结论不变；23 主窗须测后续学习后三技能损伤 ≤0.02（23.4/主门）。状态：23 旧技能门解锁（父级有界）；主窗 34,500 CPU、check≤2/final≤1 仍待 owner 明示授权；不签 23 通过/final/C/D/J/模型成型；零 check/final；不改包 22 判词。
+
+
+## 2026-11-20 23.1 数据合同冻结（D-20261119-167，`data_contract_frozen`，244.3 CPU，零训练零 check）
+
+新增 taiji/native_composition.py 与 run_s2_23_1_contract_20261120.py；fixture taiji-23-composition-v1：896 world×3 题=2,688 条，train 1,536（Q1/Q2/Q3）、fit/check/final 各 384（Q2/Q3/Q4 或同构封存）。验收：C1 规模✓ 1,536/384/384/384；C2 三轴无泄漏✓；C3 oracle 独立重算 1.0✓；C4 分区 digest 两次一致✓；C5 中文/答案空间✓ ⇒ data_contract_frozen；digest train 5297bde6…、fit b24abb21…、check 99c50717…、final 6667dbe7…；244.3 CPU。判读：23 数据面可执行、可复现、无泄漏、oracle 真值 1.0；2,688 条与 MAINLINE 口径对齐（按 896 world×3 题实现，合同显式记录）；冻结后改动即作废须新卡；23.2 可进入实现。状态：23.0b 三技能父＋23.1 数据合同就绪；主窗 34,500 CPU、check≤2/final≤1 仍待 owner 明示授权；零训练零 check；不签 23 通过/final/C/D/J/模型成型。
