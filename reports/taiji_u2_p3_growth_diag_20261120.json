@@ -1,0 +1,120 @@
+{
+  "schema": "taiji-u2-p3-growth-diag-v1",
+  "card": "P3 growth diagnostic: 30 vs 48 units on balanced counting",
+  "created_utc": "2026-11-20T12:26:31.654762+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      20261120,
+      20261121,
+      20261122
+    ],
+    "arms": {
+      "units30": [
+        6,
+        5
+      ],
+      "units48": [
+        12,
+        4
+      ]
+    },
+    "count_steps": 1500,
+    "gain_min": 0.05
+  },
+  "rows": [
+    {
+      "seed": 20261120,
+      "arms": {
+        "units30": {
+          "fit": 0.3515625,
+          "skills": {
+            "s1": 0.984375,
+            "s2": 0.859375,
+            "s3": 1.0
+          },
+          "recovery_diff": 0.0
+        },
+        "units48": {
+          "fit": 0.28125,
+          "skills": {
+            "s1": 0.9765625,
+            "s2": 0.859375,
+            "s3": 1.0
+          },
+          "recovery_diff": 0.0
+        }
+      }
+    },
+    {
+      "seed": 20261121,
+      "arms": {
+        "units30": {
+          "fit": 0.3203125,
+          "skills": {
+            "s1": 0.9921875,
+            "s2": 0.859375,
+            "s3": 1.0
+          },
+          "recovery_diff": 0.0
+        },
+        "units48": {
+          "fit": 0.3125,
+          "skills": {
+            "s1": 0.984375,
+            "s2": 0.8671875,
+            "s3": 1.0
+          },
+          "recovery_diff": 0.0
+        }
+      }
+    },
+    {
+      "seed": 20261122,
+      "arms": {
+        "units30": {
+          "fit": 0.34375,
+          "skills": {
+            "s1": 0.9921875,
+            "s2": 0.875,
+            "s3": 1.0
+          },
+          "recovery_diff": 0.0
+        },
+        "units48": {
+          "fit": 0.40625,
+          "skills": {
+            "s1": 0.984375,
+            "s2": 0.8671875,
+            "s3": 0.9921875
+          },
+          "recovery_diff": 0.0
+        }
+      }
+    }
+  ],
+  "gains": [
+    -0.0703125,
+    -0.0078125,
+    0.0625
+  ],
+  "mean_gain": -0.005208333333333333,
+  "gates": {
+    "d1_gain": false,
+    "d2_skills": true,
+    "d3_retention": true
+  },
+  "verdict": "pressure_not_structural",
+  "disclosure": "diagnostic only under standing recommendation-default; does not sign growth benefit or open any 25 growth arm; 48-unit is a new candidate version",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 277.94
+  }
+}
