@@ -4401,3 +4401,8 @@ UnitScan 忠实重测：tick1 0.625/0.5417/0.625（中间信用门过）；tick2
 ## 2026-11-20 工作记忆写回通过（D-20261119-112，`working_memory_writeback_ready`，48.94 CPU）
 
 同向/反向二分类：tick1 预测 direction1 并 one-hot 写回 tick2（特征维 39–40），tick2 预测 same。3 seed 全过：direction 1.0；oracle 1.0（任务可学）；自写回 1.0 vs 零写回 0.60/0.61/0.64（增益≈0.36–0.40）；shuffled 0.4914≤0.55；necessity 过 ⇒ working_memory_writeback_ready。判读：显式工作记忆写回成立——单 tick 不可能的任务上自写回恢复满分，零写回跌到 0.60–0.64、shuffled 跌到机会 ⇒ 收益来自写回通道本身；对比 D-108 隐状态不可组合，写成显式输入即可组合。披露：same 标签不平衡（0.2414、多数类 0.7586），零写回臂低于多数类（倾向 same=1），判据以自写回 vs 零写回与 oracle 为准；后续同类卡加平衡采样/多数类基线。边界：单主体/二分类两步/手工注入写回通道；不等于一般递归，不改任务轴与 check②。
+
+
+## 2026-11-20 工作记忆写回平衡复测（D-20261119-113，`working_memory_writeback_partial`，48.97 CPU）
+
+1:1 平衡采样（same_rate=0.5）复测：direction 1.0；oracle 1.0；自写回 1.0 vs 零写回 0.6094/0.5625/0.6406（增益≥0.36）；necessity✓；shuffled 0.6406/0.5234/0.6484（seed0/2 >0.55 门）⇒ partial。判读：正向更强——平衡下自写回仍 1.0、零写回 0.56–0.64，收益不靠标签不平衡；但控制门缺陷——随机 one-hot 写回被部分利用（疑似「写回维非零＝信息存在」捷径），严格判据下不签平衡版 verified；D-112 不平衡版原判维持（已披露）。后继：shuffled 改为匹配频次的标签置换、或增加 invalid 标记消除捷径，新卡零 check ≤150 CPU。**

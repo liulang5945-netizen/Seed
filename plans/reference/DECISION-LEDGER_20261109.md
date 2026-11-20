@@ -6248,3 +6248,17 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **4. 披露**：`same` 标签不平衡（`same_rate=0.2414`，多数类 0.7586）；零写回臂（0.60–0.64）**低于**多数类基线，说明该臂未利用多数先验而倾向输出 same=1；因此判据以「自写回 vs 零写回」与 oracle 为准，未用多数类作对照。后续同类卡应加平衡采样或报多数类基线。
 
 **5. 边界**：单主体、二分类两步任务、显式写回通道（手工注入 39–40 维）；不等于一般顺序推理/递归发展（D-102/D-108 仍 negative），不改变任务轴 `fit_face_only` 与 check②。
+
+
+### D-20261119-113 工作记忆写回**平衡数据复测**：`working_memory_writeback_partial`（48.97 CPU）
+
+**1. 动作**：新增 [`probe_s2_learnable_two_step_balanced_20261120.py`](../../scripts/training/probe_s2_learnable_two_step_balanced_20261120.py)：同 D-112 任务与四臂，但 `same` 标签做 **1:1 平衡采样**（训练/拟合各半，`same_rate=0.5`），复测四门。3 seed、零 check。
+
+**2. 读数**：direction `1.0`；oracle `1.0`（任务可学 ✓）；自写回 `1.0`；零写回 `0.6094/0.5625/0.6406`（增益 ≥0.36 ✓）；necessity ✓；**shuffled `0.6406/0.5234/0.6484`——seed0/2 超过 0.55 门** ⇒ `task_learnable ✓`、`self_over_zero ✓`、`necessity ✓`、`shuffled_control ✗` ⇒ **`working_memory_writeback_partial`**。
+
+**3. 判读**：
+- **正向更强**：平衡分布下自写回仍 **1.0**、零写回跌到 0.56–0.64，说明写回通道的收益不是靠标签不平衡得来的；
+- **控制门缺陷**：shuffled 臂在平衡分布下达到 0.52–0.65（2/3 seed >0.55），说明随机 one-hot 写回被模型部分利用（可能把「写回维非零」当作信息存在标记）；因此严格判据下我**不**把平衡分布版本签为 verified。
+- **结论**：D-112（不平衡分布）的 `working_memory_writeback_ready` 维持原判（已披露标签不平衡）；平衡分布复测记 **partial**，需改进 shuffled 控制设计后再签。
+
+**4. 后继条件**：① shuffled 控制改用「方向标签随机置换但 one-hot 形式与频次匹配」的严格对照；② 或在写回维增加「无效」标记（无写回时显式置 invalid），消除「非零即信息」捷径；③ 新卡、新 pin、预注册，零 check、价 ≤150 CPU；通过后把平衡版本升级。
