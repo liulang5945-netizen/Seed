@@ -7094,3 +7094,14 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **4. 预算与边界**：≤1,500 CPU、零 check/final；新 pin（拟 `run_s2_readout_upgrade_20261120.py`）；新结构登记为新候选版本（lineage：22.8 RouteB 新主体→加宽读出 v2），旧父/旧读出保留可回退；25/26 前置；不签 25/26/final/C/D/J/模型成型。
 
 **5. 待裁**：①准入（A 主案或改 B）；②1,500 CPU；③新 schema/lineage 命名；④是否允许重建 23.0b 三技能父（新父包、旧父保留）。
+
+
+### D-20261119-185 读取结构升级卡：`readout_upgrade_partial`（S1/S2 有界成立、S3 未达阈值；344.14 CPU，0 check）
+
+**1. 动作**：新增 [`run_s2_readout_upgrade_20261120.py`](../../scripts/training/run_s2_readout_upgrade_20261120.py) 与 [结果卡](../reference/RESULT-TAIJI_U2_READOUT_UPGRADE_20261120.md)。S1 中性（单位 core 不动、旧读出不变、capsule 兼容）；S2 重建三技能父；S3 活动读出（30 维、hidden 64）vs 4 维 direct（hidden 64）在 Q2/Q3；3 seed、零 check。
+
+**2. 读数**：S1 **✓**（单位摘要逐 seed 相同、旧读出相同、恢复 diff 0.0）；S2 **✓**（三技能 0.859–1.000）；S3 **Q3 0.391/0.375/0.406（<0.46 ✗）**、增益 +0.008/+0.039/+0.125（seed0 未达 0.05 ✗）；retention 0.0 ✓ ⇒ **`readout_upgrade_partial`**；344.14 CPU。
+
+**3. 判读（重要修正）**：接口加宽**已中性且安全**（additive、不改核心、capsule 兼容）；但「4 维 direct 是唯一瓶颈」被修正——单步注意力＋更宽 hidden 的 Q3 只有 0.375–0.406，**并不比 23.2c 两步注意力（0.406–0.422）更好** ⇒ **读出结构（两步注意力）比单纯加宽维度更关键**，此前把内容上限主要归因于 4 维 direct 属过度归因；25 的结构压力诊断须**同时固定两步注意力结构**，不能只靠加宽。
+
+**4. 后继**：升级提案记 partial（S1/S2 有界、S3 未达）；25 前置改为「加宽读出＋两步注意力」组合或直接把两步注意力写入 25 合同；主窗预算未变；累计升级卡 ≈344 CPU；不签 25/26/final/C/D/J/模型成型；零 check/final。

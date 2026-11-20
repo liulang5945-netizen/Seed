@@ -1,0 +1,112 @@
+{
+  "schema": "taiji-u2-readout-upgrade-v1",
+  "card": "readout upgrade: per-token unit activity vs 4-dim direct query",
+  "created_utc": "2026-11-20T11:53:20.583008+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      20261120,
+      20261121,
+      20261122
+    ],
+    "steps": 2000,
+    "batch": 32,
+    "hidden": 64,
+    "q3_min": 0.46,
+    "gain_min": 0.05
+  },
+  "rows": [
+    {
+      "seed": 20261120,
+      "units_digest_before": "4562635bc90fd9c975916b08b95dfe5943236a9d02e3485e445415a93a6cbed6",
+      "units_digest_after": "4562635bc90fd9c975916b08b95dfe5943236a9d02e3485e445415a93a6cbed6",
+      "old_readouts_after": {
+        "s1": 0.984375,
+        "s2": 0.859375,
+        "s3": 1.0
+      },
+      "skill": {
+        "s1": 0.984375,
+        "s2": 0.859375,
+        "s3": 1.0
+      },
+      "recovery_diff": 0.0,
+      "activity": {
+        "q2": 0.3046875,
+        "q3": 0.390625
+      },
+      "direct": {
+        "q2": 0.234375,
+        "q3": 0.3828125
+      }
+    },
+    {
+      "seed": 20261121,
+      "units_digest_before": "0da513373d414aec1e84b4120c7793fd293129a3cb48c5aab42cb91f41de5759",
+      "units_digest_after": "0da513373d414aec1e84b4120c7793fd293129a3cb48c5aab42cb91f41de5759",
+      "old_readouts_after": {
+        "s1": 0.9921875,
+        "s2": 0.859375,
+        "s3": 1.0
+      },
+      "skill": {
+        "s1": 0.9921875,
+        "s2": 0.859375,
+        "s3": 1.0
+      },
+      "recovery_diff": 0.0,
+      "activity": {
+        "q2": 0.2578125,
+        "q3": 0.375
+      },
+      "direct": {
+        "q2": 0.296875,
+        "q3": 0.3359375
+      }
+    },
+    {
+      "seed": 20261122,
+      "units_digest_before": "828ebc90f882b247926357883861a4fcd0510d0513819bed7efde182f1891617",
+      "units_digest_after": "828ebc90f882b247926357883861a4fcd0510d0513819bed7efde182f1891617",
+      "old_readouts_after": {
+        "s1": 0.9921875,
+        "s2": 0.875,
+        "s3": 1.0
+      },
+      "skill": {
+        "s1": 0.9921875,
+        "s2": 0.875,
+        "s3": 1.0
+      },
+      "recovery_diff": 0.0,
+      "activity": {
+        "q2": 0.296875,
+        "q3": 0.40625
+      },
+      "direct": {
+        "q2": 0.25,
+        "q3": 0.28125
+      }
+    }
+  ],
+  "gates": {
+    "s1_units_unchanged": true,
+    "s1_old_readouts_unchanged": true,
+    "s2_three_skills": true,
+    "s3_q3": false,
+    "s3_gain": false,
+    "retention": true
+  },
+  "verdict": "readout_upgrade_partial",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 333.3
+  }
+}
