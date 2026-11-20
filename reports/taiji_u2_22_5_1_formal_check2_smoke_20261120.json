@@ -1,0 +1,69 @@
+{
+  "schema": "taiji-u2-22-5-1-formal-check2-smoke-v1",
+  "card": "22.5.1 formal check2 joint gate",
+  "created_utc": "2026-11-20T04:55:03.975872+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "discipline": {
+    "optimizer_steps": 0,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "parent_audit": {
+    "schema": "taiji-first-A-learner-v1",
+    "identity": "pixel-salience",
+    "config": {
+      "d": 32,
+      "readout": "pixel-salience",
+      "record_metadata": true,
+      "separate_requests": true,
+      "seed": 20261112
+    },
+    "parameters_digest": "5a09a44902d985c7035f474564f0e84e0fcd3bfcfc2b4398150fad721b186f48",
+    "source_pin_matches": {
+      "taiji/u2_recovery.py": true,
+      "taiji/u2_evidence_subject.py": true,
+      "taiji/u2_evidence_read.py": true,
+      "taiji/u2_evidence_runtime.py": true,
+      "taiji/u2_capacity_control.py": true,
+      "taiji/u2_task_goal.py": true,
+      "taiji/u2_joint_tokens.py": true,
+      "taiji/u2_joint_subject.py": true,
+      "taiji/u2_history.py": true,
+      "taiji/u2_history_store.py": true,
+      "taiji/u2_request_state.py": true,
+      "taiji/u2_task_executor.py": true,
+      "taiji/u2_events.py": true,
+      "taiji/u2_learning_transaction.py": true,
+      "taiji/u2_record_metadata.py": true,
+      "taiji/u2_group_structure.py": true,
+      "taiji/u2_subject.py": false,
+      "taiji/u2_operators.py": true,
+      "taiji/utf8_state.py": true,
+      "scripts/training/first_a_support_22_5.py": true,
+      "scripts/training/task_baselines_22_4_a.py": true
+    },
+    "source_pin_mismatches": [
+      "taiji/u2_subject.py"
+    ],
+    "strict_load": true
+  },
+  "child_organ_mix": {
+    "20261110": 1.2024,
+    "20261111": 1.2694,
+    "20261112": 1.2515
+  },
+  "checks": {
+    "parent_strict_load": true,
+    "parent_identity": true,
+    "parent_fit_recorded": true,
+    "distinct_pairing_enforced": true,
+    "bootstrap_wired": true,
+    "saved_children_strict_and_bit_identical": true
+  },
+  "verdict": "smoke_passed",
+  "cpu": 15.17
+}

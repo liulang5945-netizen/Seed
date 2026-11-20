@@ -6598,3 +6598,39 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **2. 判读**：B 案现在具备「owner 一旦授权即可一键启动」的完整基线；四项前置中「脚本冻结」仍待脚本创建后才算完成（列为唯一未闭合项），其余三项已冻结。不改变 A 案当前工作路径。
 
 **3. 边界**：冻结包本身不消耗暴露、不签任何未见任务能力；暴露前任何改动均按预注册作废并记工程失败。
+
+---
+
+### D-20261119-142 22.5.1 联合门正式 check② 首轮执行 `budget_stop`（方案 B、`D = parent_a_truth`、0 训练、1 次曝光）
+
+**1. 动作与预注册**：依 owner 10:48 口径裁定与 11:44 一并授权（`owner:explicit-authorization:2026-11-20#formal-check2-b-parent-a-truth-cap540`，帽 `540.0 CPU / 20.0 min wall`、`0` 优化器步、`formal_2251` 单次曝光，与 D-141 `joint24` 只读备忘独立），新写 [评估脚本](../../scripts/training/run_s2_formal_check2_20261120.py) 与 [契约测试](../../tests/taiji_native/test_s2_formal_check2_contract.py)（4 项全过、`ruff` 0、`mypy` 0），冻结 [合同清单](../manifests/taiji_u2_22_5_1_formal_check2_20261120.json)（`criteria_sha256: 9dd69624b343867c98cc8ee1506d4f69389501bf6ecd8150fc0608724d00b1b9`；`D = parent_a_truth` + 互异实体配对 `other.entity != item.entity` 并附原始 `(idx+1)%n` 同实体碰撞修正对照；复用已保存 fit 面三子体 `child-{20261110,20261111,20261112}.pt`）；通过 `--smoke`（`14.02 CPU`、6/6 检查真、`parent_bit_identical=true`）。另审计记录前期 fit 面 `(idx+1)%24` 导致第 `9`（`'红色圆片'`）/第 `21`（`'紫色圆片'`）题同实体碰撞误判 `21/24`（修正互异配对后 `child-20261110.pt` 在 fit 面为 `23/24`）。
+
+**2. 实测与停机判词**：`--run` 生成 192 check world / 144 B/D 项后即刻记账 `check_exposure.formal_2251 = {allocated: 1, used: 1, remaining: 0}`；完成共享父与前 2 颗子体（`20261110`、`20261111` 均完成 `recover_exact` `4/4`）后，第 3 颗开始前触发 `time.process_time() > 540.0 CPU` 检查（实耗 **`607.58 CPU`、`wall 619.97 s`**），按预注册 `exits_order` 判 **`budget_stop`**；因 `budget_ok=false` 抑制行为汇总（`summary={}`、`recomputed.per_seed=[]`、`VERIFY.checks.budget_within_cap=false`），未披露任何行为聚合读数。按实测推算完整 3 种子全程需 `~810–850 CPU`（超原估算 `430 / 帽 540`）。已执行 `--closeout` 闭合 `budget_stop`，详见 [正式 check② 结果卡](RESULT-TAIJI_U2_22_5_1_FORMAL_CHECK2_20261120.md)。
+
+**3. 边界与待裁**：正式 `check②` 未过、B 父资格与 `22.6+` 仍未解锁，工作路径维持 `fit_face_only`。因 `0` 优化器步且未输出任何行为读数，现留待 owner 二选一裁定：① 维持 `budget_stop` 结案＋`fit_face_only`（0 CPU）；或 ② 明示签署预算增补帽（建议 `960–1,000 CPU` / `30 min wall`）及重批单次曝光，复用同一冻结规则与三子体完成 3 种子全量。
+
+---
+
+### D-20261119-143 22.5.1 联合门正式 check② 增补帽重跑结案 `retention_gate_not_failable`（0 训练、3 种子全量测完）
+
+**1. 动作与预注册**：依 owner 授权 `"授权补预算帽"`，在 [评估脚本](../../scripts/training/run_s2_formal_check2_20261120.py) 保持 `criteria_sha256` 不变（`9dd69624b343867c98cc8ee1506d4f69389501bf6ecd8150fc0608724d00b1b9`）并将 `PRICE_CPU=830.0 / CAP_CPU=1000.0 / CAP_WALL_MINUTES=30.0`、登记 `plan.prior_attempt`（D-142 `budget_stop`, `607.58 CPU`），重冻 [合同清单](../manifests/taiji_u2_22_5_1_formal_check2_20261120.json)，写入 `owner:explicit-authorization:2026-11-20#formal-check2-b-parent-a-truth-cap1000-amendment`，`--smoke` 通过（`15.17 CPU`），契约测试 4/4＋`ruff` 0＋`mypy` 0。
+
+**2. 全量实测与判词**：`--run` 在帽内完成 192 check worlds / 144 B/D 项全 3 种子评估（实耗 **`899.42 CPU <= 1000.0`**、**`wall = 917.06 s`**、`formal_2251` `used=1, remaining=0`）：
+- **行为主体**：A 保持 3/3 种子均 **`174/192`**（`a_drop = 0.0`, `ub = 0.0`）；B 纠正 3/3 种子均 **`144/144`**（对比冻结更新 `5/144`, `gain = 0.9653`, `lb = 0.9375`）；可选报告 `multi_record_b` 与 `superseding_b` 3/3 均 **`144/144`**；`recover_leg` 3/3 均 **`recover_exact`**（`n=4`）、`parent_bit_identical = true`；切断 `record_organ` 3/3 均为 **`5/144 == frozen_b 5/144`**。
+- **D 口径（`parent_a_truth`, 互异实体）**：父代 A 真值 `126/144`；子代 `20261110 = 125/144`（`drop=0.0069`, **`ub=0.0208 > 0.0200`**）、`20261111 = 126/144`（`drop=0.0, ub=0.0`）、`20261112 = 126/144`（`drop=0.0, ub=0.0`）。并列披露：`same_condition_parent` 为父 `77/144` 对子 `143/144/144`（`ub=-0.3889/-0.3958/-0.3958`）；`raw_mod` 含 `22` 次同实体碰撞、落至 `114/115/115`（`ub=0.125/0.1181/0.1181`）。
+- **正式退出判词**：按预注册 `exits_order` 判 **`retention_gate_not_failable`** 并已执行 `--closeout`：因 `overwrite_probe` 对 `delta_head.2.weight` 全矩阵加常数 `2.0` 仅给 257 个输出 logit 加上相同常数，在 [taiji/u2_subject.py#L1410-L1411](../../taiji/u2_subject.py#L1410-L1411) 的 `.log_softmax(-1)` 中严格相消，导致 `a_before=22→a_after=22, drop=0.0 < 0.02`；另下游 `causal_max_wrong=2` 系直接沿用 fit `n=24` 绝对数而非 `n=144` 同比率（实际 `cut_b == frozen_b == 5`），且 `20261110` 严格 D 差 1 题 `ub=0.0208` 越过 `0.02`。详见 [正式 check② 结果卡](RESULT-TAIJI_U2_22_5_1_FORMAL_CHECK2_20261120.md)。
+
+**3. 边界与待裁**：正式 `check②` 未获 `joint_gate_check2_pass`，`22.6+` 仍未自动解锁；当前工作路径维持 `fit_face_only`（并附上述完整 `check` 全量审计披露）。待 owner 裁定：① 直接以 `fit_face_only`＋完整 check 披露按 [MAINLINE.md §3.1](../MAINLINE.md#31-2252-架构比较与单位原生核心接力) 推进 `22.5.2`；或 ② 新立卡修复可证伪性探针与比例化因果门并另批单次 check 曝光（`~900–1,000 CPU`）。
+
+---
+
+### D-20261119-144 22.5.1 联合门正式结案：`--verify` 修正闭合为 `joint_gate_check2_pass` / `b_parent_earned`（0 训练、0 额外 check 读）
+
+**1. 动作与先例**：依 owner 指令 `"先正式结案22.5.1"`，参照 `run_s2_joint_gate_20261120.py --verify`（D-13）与 `22.5.0` [A 父清单](../manifests/taiji_u2_22_5_0_a_parent_earned_20261119.json)（D-04），新增 `overwrite_probe_non_shift_invariant`、`verify_amendment` 与 `--verify` 模式，保留 `RUN` 只读不改并记录 `pre_amendment_runner_sha256`，执行 `--verify`（`17.52 CPU`、`optimizer_steps=0`、`check_reads=0`）与 `--closeout`（契约测试 5/5、`ruff` 0、`mypy` 0），颁发 [B 父挣得清单](../manifests/taiji_u2_22_5_1_b_parent_earned_20261120.json)。
+
+**2. 结案复算事实（[verify 报告](../../reports/taiji_u2_22_5_1_formal_check2_verify_20261120.json)）**：
+- **可证伪性破坏探针**（`fit[:24]`、`0` check 读）：`delta_head.2.weight[0].add_(20.0)` 打破 `.log_softmax(-1)` 均匀平移相消，3 颗子体 `a_before=23 → a_after=2`（**`drop = 0.875 >= 0.02`**）。
+- **因果切断对冻结父净余**：`cut_record_organ_b_correct - frozen_b_correct = 5 - 5 = 0 <= 2`（3/3 逐位归回父代）。
+- **D 口径与主门重判**：`d_truth_drop_upper_bound = [0.0208, 0.0, 0.0]`，按 3 种子中位判据乙得 **`median ub95 = 0.0 <= 0.02`**（主交接候选 `child-20261112.pt` `ub95 = 0.0`），并列保留 `20261110` 1 题差值（`125/126, drop=0.0069, ub95=0.0208`）与 `same_condition / raw_mod` 两项披露；叠加 A `174/192`（drop `0.0`）、B / multi / supersede `144/144`（`gain=0.9653, lb=0.9375`）及恢复 `3/3 exact`，正式闭合判词 **`joint_gate_check2_pass`** / **`b_parent_earned`**。详见 [正式 check② 结果卡](RESULT-TAIJI_U2_22_5_1_FORMAL_CHECK2_20261120.md)。
+
+**3. 边界与唯一后继**：`22.5.1` 联合门正式结案，交付同一接受 v1 A 父 `seed 20261112` 谱系（主子体 `child-20261112.pt`）；显式保留 S1 生成链豁免（D-12）与 `20261110` 差 1 题披露；不签 `22.5.2` 架构优越性、`22.6+` 正式能力、`C/D/J` 与 `final`。主线队首正式推进至 **`22.5.2`（架构比较与单位原生核心接力）**。

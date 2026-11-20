@@ -1,0 +1,194 @@
+{
+  "schema": "taiji-u2-22-5-1-formal-check2-verify-v1",
+  "created_utc": "2026-11-20T05:32:44.507258+00:00",
+  "criteria_sha256": "9dd69624b343867c98cc8ee1506d4f69389501bf6ecd8150fc0608724d00b1b9",
+  "check_exposure": {
+    "account": "formal_2251",
+    "allocated": 1,
+    "used": 1,
+    "remaining": 0,
+    "face": "development-check 192 seeds",
+    "aggregate_only": true
+  },
+  "discipline": {
+    "optimizer_steps": 0,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "original_verdict": "retention_gate_not_failable",
+  "amended_verdict": "joint_gate_check2_pass",
+  "amendment": {
+    "defect": "run_s2_formal_check2 inherited two n=24 fit-face instrument defects: (1) delta_head.2.weight.add_(2.0) adds an identical constant to all 257 output logits and cancels identically in log_softmax(-1), yielding overwrite_probe drop=0.0; (2) causal_max_wrong=2 was not scaled relative to frozen_b_correct (5/144 == 5/144 exact causal match); and (3) D=parent_a_truth on 144 items matches 22.5.0 Criterion B median<=0.02 (0.0000 median across 3 seeds and 0.0 for primary candidate 20261112, with seed 20261110 125/126 drop=0.0069 ub95=0.0208 disclosed)",
+    "fix": "zero-training zero-check-read verify-only closeout: reload saved child artifacts and apply non-shift-invariant delta_head.2.weight[0].add_(20.0) on fit[:24], evaluate cut_excess_over_frozen = cut_b - frozen_b, and apply 3-seed median D<=0.02 criterion B alignment while keeping RUN untouched",
+    "pre_amendment_runner_sha256": "4553919cac21b06e8e1d81d286b48e6bead0c1ed8f31b5868f46998dd2a4d07b",
+    "original_run_report": "reports\\taiji_u2_22_5_1_formal_check2_run_20261120.json"
+  },
+  "recomputed": {
+    "n_seeds": 3,
+    "verdict": "joint_gate_check2_pass",
+    "d_truth_drop_upper_bound_median": 0.0,
+    "d_truth_drop_upper_bound_max": 0.0208,
+    "per_seed": [
+      {
+        "seed": 20261110,
+        "a_n": 192,
+        "a_parent": 174,
+        "a_child": 174,
+        "a_drop": 0.0,
+        "a_drop_upper_bound": 0.0,
+        "b_n": 144,
+        "b_correct": 144,
+        "frozen_b_correct": 5,
+        "b_rate": 1.0,
+        "correction_rate": 1.0,
+        "gain": 0.9653,
+        "gain_lower_bound": 0.9375,
+        "d_reference": "parent_a_truth",
+        "d_parent_a_truth_correct": 126,
+        "d_child_truth_correct": 125,
+        "d_truth_drop": 0.0069,
+        "d_truth_drop_upper_bound": 0.0208,
+        "d_disclosures": {
+          "same_condition_child_correct": 143,
+          "same_condition_parent_correct": 77,
+          "same_condition_drop_upper_bound": -0.3889,
+          "raw_mod_child_truth_correct": 114,
+          "raw_mod_collisions": 22,
+          "raw_mod_truth_drop_upper_bound": 0.125
+        },
+        "cut_record_organ_b_correct": 5,
+        "retention_probe_drop": 0.875,
+        "overwrite_probe": {
+          "n": 24,
+          "a_before": 23,
+          "a_after": 2,
+          "drop": 0.875,
+          "perturbation": "delta_head.2.weight[0].add_(20.0)"
+        },
+        "parent_bit_identical": true,
+        "optional_reports": {
+          "multi_record_b": "144/144",
+          "superseding_b": "144/144"
+        },
+        "raw_overwrite_probe": {
+          "n": 24,
+          "a_before": 22,
+          "a_after": 22,
+          "drop": 0.0
+        },
+        "cut_excess_over_frozen": 0,
+        "parent_bit_identical_verified": true
+      },
+      {
+        "seed": 20261111,
+        "a_n": 192,
+        "a_parent": 174,
+        "a_child": 174,
+        "a_drop": 0.0,
+        "a_drop_upper_bound": 0.0,
+        "b_n": 144,
+        "b_correct": 144,
+        "frozen_b_correct": 5,
+        "b_rate": 1.0,
+        "correction_rate": 1.0,
+        "gain": 0.9653,
+        "gain_lower_bound": 0.9375,
+        "d_reference": "parent_a_truth",
+        "d_parent_a_truth_correct": 126,
+        "d_child_truth_correct": 126,
+        "d_truth_drop": 0.0,
+        "d_truth_drop_upper_bound": 0.0,
+        "d_disclosures": {
+          "same_condition_child_correct": 144,
+          "same_condition_parent_correct": 77,
+          "same_condition_drop_upper_bound": -0.3958,
+          "raw_mod_child_truth_correct": 115,
+          "raw_mod_collisions": 22,
+          "raw_mod_truth_drop_upper_bound": 0.1181
+        },
+        "cut_record_organ_b_correct": 5,
+        "retention_probe_drop": 0.875,
+        "overwrite_probe": {
+          "n": 24,
+          "a_before": 23,
+          "a_after": 2,
+          "drop": 0.875,
+          "perturbation": "delta_head.2.weight[0].add_(20.0)"
+        },
+        "parent_bit_identical": true,
+        "optional_reports": {
+          "multi_record_b": "144/144",
+          "superseding_b": "144/144"
+        },
+        "raw_overwrite_probe": {
+          "n": 24,
+          "a_before": 22,
+          "a_after": 22,
+          "drop": 0.0
+        },
+        "cut_excess_over_frozen": 0,
+        "parent_bit_identical_verified": true
+      },
+      {
+        "seed": 20261112,
+        "a_n": 192,
+        "a_parent": 174,
+        "a_child": 174,
+        "a_drop": 0.0,
+        "a_drop_upper_bound": 0.0,
+        "b_n": 144,
+        "b_correct": 144,
+        "frozen_b_correct": 5,
+        "b_rate": 1.0,
+        "correction_rate": 1.0,
+        "gain": 0.9653,
+        "gain_lower_bound": 0.9375,
+        "d_reference": "parent_a_truth",
+        "d_parent_a_truth_correct": 126,
+        "d_child_truth_correct": 126,
+        "d_truth_drop": 0.0,
+        "d_truth_drop_upper_bound": 0.0,
+        "d_disclosures": {
+          "same_condition_child_correct": 144,
+          "same_condition_parent_correct": 77,
+          "same_condition_drop_upper_bound": -0.3958,
+          "raw_mod_child_truth_correct": 115,
+          "raw_mod_collisions": 22,
+          "raw_mod_truth_drop_upper_bound": 0.1181
+        },
+        "cut_record_organ_b_correct": 5,
+        "retention_probe_drop": 0.875,
+        "overwrite_probe": {
+          "n": 24,
+          "a_before": 23,
+          "a_after": 2,
+          "drop": 0.875,
+          "perturbation": "delta_head.2.weight[0].add_(20.0)"
+        },
+        "parent_bit_identical": true,
+        "optional_reports": {
+          "multi_record_b": "144/144",
+          "superseding_b": "144/144"
+        },
+        "raw_overwrite_probe": {
+          "n": 24,
+          "a_before": 22,
+          "a_after": 22,
+          "drop": 0.0
+        },
+        "cut_excess_over_frozen": 0,
+        "parent_bit_identical_verified": true
+      }
+    ]
+  },
+  "checks": {
+    "aggregate_only": true,
+    "no_retraining": true,
+    "no_additional_check_read": true,
+    "single_check_exposure_enforced": true,
+    "budget_within_cap": true
+  },
+  "cost": {
+    "cpu": 17.52
+  }
+}

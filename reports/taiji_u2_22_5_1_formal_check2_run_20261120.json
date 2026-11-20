@@ -1,0 +1,225 @@
+{
+  "schema": "taiji-u2-22-5-1-formal-check2-run-v1",
+  "card": "22.5.1 formal check2 joint gate (Proposal B, D = parent_a_truth)",
+  "created_utc": "2026-11-20T05:11:21.722477+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "criteria_sha256": "9dd69624b343867c98cc8ee1506d4f69389501bf6ecd8150fc0608724d00b1b9",
+  "parent_audit": {
+    "schema": "taiji-first-A-learner-v1",
+    "identity": "pixel-salience",
+    "config": {
+      "d": 32,
+      "readout": "pixel-salience",
+      "record_metadata": true,
+      "separate_requests": true,
+      "seed": 20261112
+    },
+    "parameters_digest": "5a09a44902d985c7035f474564f0e84e0fcd3bfcfc2b4398150fad721b186f48",
+    "source_pin_matches": {
+      "taiji/u2_recovery.py": true,
+      "taiji/u2_evidence_subject.py": true,
+      "taiji/u2_evidence_read.py": true,
+      "taiji/u2_evidence_runtime.py": true,
+      "taiji/u2_capacity_control.py": true,
+      "taiji/u2_task_goal.py": true,
+      "taiji/u2_joint_tokens.py": true,
+      "taiji/u2_joint_subject.py": true,
+      "taiji/u2_history.py": true,
+      "taiji/u2_history_store.py": true,
+      "taiji/u2_request_state.py": true,
+      "taiji/u2_task_executor.py": true,
+      "taiji/u2_events.py": true,
+      "taiji/u2_learning_transaction.py": true,
+      "taiji/u2_record_metadata.py": true,
+      "taiji/u2_group_structure.py": true,
+      "taiji/u2_subject.py": false,
+      "taiji/u2_operators.py": true,
+      "taiji/utf8_state.py": true,
+      "scripts/training/first_a_support_22_5.py": true,
+      "scripts/training/task_baselines_22_4_a.py": true
+    },
+    "source_pin_mismatches": [
+      "taiji/u2_subject.py"
+    ],
+    "strict_load": true
+  },
+  "preflight": {
+    "fit_correct": 31,
+    "recorded_fit_correct": 31,
+    "frozen_candidate_equals_parent": true
+  },
+  "check_exposure": {
+    "account": "formal_2251",
+    "allocated": 1,
+    "used": 1,
+    "remaining": 0,
+    "face": "development-check 192 seeds",
+    "aggregate_only": true
+  },
+  "discipline": {
+    "optimizer_steps": 0,
+    "check_reads": 1,
+    "final_reads": 0,
+    "aggregate_only": true
+  },
+  "recovery": [
+    {
+      "seed": 20261110,
+      "verdict": "recover_exact",
+      "n": 4
+    },
+    {
+      "seed": 20261111,
+      "verdict": "recover_exact",
+      "n": 4
+    },
+    {
+      "seed": 20261112,
+      "verdict": "recover_exact",
+      "n": 4
+    }
+  ],
+  "summary": {
+    "per_seed": [
+      {
+        "seed": 20261110,
+        "a_n": 192,
+        "a_parent": 174,
+        "a_child": 174,
+        "a_drop": 0.0,
+        "a_drop_upper_bound": 0.0,
+        "b_n": 144,
+        "b_correct": 144,
+        "frozen_b_correct": 5,
+        "b_rate": 1.0,
+        "correction_rate": 1.0,
+        "gain": 0.9653,
+        "gain_lower_bound": 0.9375,
+        "d_reference": "parent_a_truth",
+        "d_parent_a_truth_correct": 126,
+        "d_child_truth_correct": 125,
+        "d_truth_drop": 0.0069,
+        "d_truth_drop_upper_bound": 0.0208,
+        "d_disclosures": {
+          "same_condition_child_correct": 143,
+          "same_condition_parent_correct": 77,
+          "same_condition_drop_upper_bound": -0.3889,
+          "raw_mod_child_truth_correct": 114,
+          "raw_mod_collisions": 22,
+          "raw_mod_truth_drop_upper_bound": 0.125
+        },
+        "cut_record_organ_b_correct": 5,
+        "retention_probe_drop": 0.0,
+        "overwrite_probe": {
+          "n": 24,
+          "a_before": 22,
+          "a_after": 22,
+          "drop": 0.0
+        },
+        "parent_bit_identical": true,
+        "optional_reports": {
+          "multi_record_b": "144/144",
+          "superseding_b": "144/144"
+        }
+      },
+      {
+        "seed": 20261111,
+        "a_n": 192,
+        "a_parent": 174,
+        "a_child": 174,
+        "a_drop": 0.0,
+        "a_drop_upper_bound": 0.0,
+        "b_n": 144,
+        "b_correct": 144,
+        "frozen_b_correct": 5,
+        "b_rate": 1.0,
+        "correction_rate": 1.0,
+        "gain": 0.9653,
+        "gain_lower_bound": 0.9375,
+        "d_reference": "parent_a_truth",
+        "d_parent_a_truth_correct": 126,
+        "d_child_truth_correct": 126,
+        "d_truth_drop": 0.0,
+        "d_truth_drop_upper_bound": 0.0,
+        "d_disclosures": {
+          "same_condition_child_correct": 144,
+          "same_condition_parent_correct": 77,
+          "same_condition_drop_upper_bound": -0.3958,
+          "raw_mod_child_truth_correct": 115,
+          "raw_mod_collisions": 22,
+          "raw_mod_truth_drop_upper_bound": 0.1181
+        },
+        "cut_record_organ_b_correct": 5,
+        "retention_probe_drop": 0.0,
+        "overwrite_probe": {
+          "n": 24,
+          "a_before": 22,
+          "a_after": 22,
+          "drop": 0.0
+        },
+        "parent_bit_identical": true,
+        "optional_reports": {
+          "multi_record_b": "144/144",
+          "superseding_b": "144/144"
+        }
+      },
+      {
+        "seed": 20261112,
+        "a_n": 192,
+        "a_parent": 174,
+        "a_child": 174,
+        "a_drop": 0.0,
+        "a_drop_upper_bound": 0.0,
+        "b_n": 144,
+        "b_correct": 144,
+        "frozen_b_correct": 5,
+        "b_rate": 1.0,
+        "correction_rate": 1.0,
+        "gain": 0.9653,
+        "gain_lower_bound": 0.9375,
+        "d_reference": "parent_a_truth",
+        "d_parent_a_truth_correct": 126,
+        "d_child_truth_correct": 126,
+        "d_truth_drop": 0.0,
+        "d_truth_drop_upper_bound": 0.0,
+        "d_disclosures": {
+          "same_condition_child_correct": 144,
+          "same_condition_parent_correct": 77,
+          "same_condition_drop_upper_bound": -0.3958,
+          "raw_mod_child_truth_correct": 115,
+          "raw_mod_collisions": 22,
+          "raw_mod_truth_drop_upper_bound": 0.1181
+        },
+        "cut_record_organ_b_correct": 5,
+        "retention_probe_drop": 0.0,
+        "overwrite_probe": {
+          "n": 24,
+          "a_before": 22,
+          "a_after": 22,
+          "drop": 0.0
+        },
+        "parent_bit_identical": true,
+        "optional_reports": {
+          "multi_record_b": "144/144",
+          "superseding_b": "144/144"
+        }
+      }
+    ],
+    "gains": [
+      0.9653,
+      0.9653,
+      0.9653
+    ]
+  },
+  "budget_ok": true,
+  "verdict": "retention_gate_not_failable",
+  "cost": {
+    "cpu": 899.42,
+    "wall": 917.06,
+    "cap_cpu": 1000.0
+  }
+}

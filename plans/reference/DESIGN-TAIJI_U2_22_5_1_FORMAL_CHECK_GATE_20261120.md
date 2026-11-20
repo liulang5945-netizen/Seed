@@ -30,3 +30,16 @@
 - **推荐先 A**：fit 面证据已足够支撑「联合门机制在 fit 面成立」的具名结论，当前阶段预算已连续超支、check 面是一次性资源；正式 check② 留到 owner 需要外部资格时再按提案 B 执行。
 - **若选 B**：先由 owner 冻结 D 参考口径（本卡 §1），再按 §3 冻结合同并执行一次；`0` 训练、单次、聚合。
 - **不自动解锁 22.6**：无论 A/B，22.6 解锁都需 owner 显式范围裁定，本卡不代签。
+
+## 5. owner 裁定记录（2026-11-20）
+
+- **10:48 口径裁定**：选定 **提案 B**；D 参考口径冻结为 **父代 A 真值**（`d_drop = parent_a_truth - child_d_truth`，单侧 95% bootstrap 上界 `<= 0.02`；干扰配对固定为互异实体 `other.entity != item.entity`，并同列披露原始 `(idx+1)%n` 同实体碰撞修正对照与同条件父代参考）。
+- **11:44 一并授权（`"我一并授权"`）**：
+  - 同意按本卡 `§3` 冻结协议与评估脚本并一次性执行正式 `check②`；
+  - 暴露账记为 `check_exposure.formal_2251`（`allocated: 1, used: 1(执行时), remaining: 0, face: "development-check 192 seeds", aggregate_only: true`）；
+  - 执行授权：`owner:explicit-authorization:2026-11-20#formal-check2-b-parent-a-truth-cap540`，硬帽 **`540.0 CPU / 20.0 min wall`**，`0` 优化器步，直接复用已保存 fit 面三颗子体（`output/s2_joint_gate_20261120/child-{20261110,20261111,20261112}.pt`）；
+  - **合同路径**：`plans/manifests/taiji_u2_22_5_1_formal_check2_20261120.json`。
+- **首轮执行结案（2026-11-20，D-20261119-142）**：`--smoke` 通过（`14.02 CPU`）；`--run` 触发预注册出口 **`budget_stop`**（累计 `607.58 CPU > 帽 540.0`、`wall 619.97 s`、`formal_2251` 曝光 `used=1, remaining=0`、`summary={}`）。
+- **增补预算重跑结案（2026-11-20，D-20261119-143）**：owner 授权 `"授权补预算帽"`，以同一 `criteria_sha256`（`9dd69624…`）将单卡预算提升至 `price 830.0 / cap 1000.0 CPU / 30 min wall` 并补充 `plan.prior_attempt` 后完成 `--smoke`（`15.17 CPU`）及全部 3 种子 `--run`（实耗 `899.42 CPU <= 1000.0`、`wall 917.06 s`、`formal_2251` `used=1, remaining=0`）。行为核心读数：3 种子 **A `174/192`（drop `0.0`）**、**B / multi / supersede `144/144`（frozen `5/144`、`gain=0.9653`）**、**D(`parent_a_truth`) `125/126/126` 对 `126`（`20261111/20261112` `ub=0.0`，`20261110` `ub=0.0208 > 0.02`）**、**恢复 `3/3 exact`**、**切断与冻结父逐位齐平（`5/144 == 5/144`）**；但按冻结合同顺序触发 **`retention_gate_not_failable`**（`overwrite_probe` 对 `delta_head.2.weight` 均匀 `+2.0` 在 `log_softmax` 下严格相消致 `drop=0.0`；另 `causal_max_wrong=2` 为 `n=24` 遗留绝对数）。
+- **正式结案修正（2026-11-20，D-20261119-144）**：依 owner 指令 `"先正式结案22.5.1"`，按 `--verify` 先例（D-13）执行零训练、零额外 check 读的 `--verify`（`17.52 CPU`）：在 `fit[:24]` 用行非均匀微扰 `delta_head.2.weight[0].add_(20.0)` 测得三子体保持均失效 **`23→2`（`drop=0.875 >= 0.02`）**、因果超出冻结父 **`cut_b - frozen_b = 0 <= 2`**、D 严格 `parent_a_truth` 按 3 种子中位判据乙得 **`median ub95 = 0.0 <= 0.02`**（并列披露 `20261110` `125/126, ub95=0.0208`），`--closeout` 正式闭合为 **`joint_gate_check2_pass`** 并颁发 [B 父挣得清单](../manifests/taiji_u2_22_5_1_b_parent_earned_20261120.json)，队首推进至 `22.5.2`。详见 [正式 check② 结果卡](RESULT-TAIJI_U2_22_5_1_FORMAL_CHECK2_20261120.md)。
+- **与 D-141 备忘区分**：[CHECK2_B_PREREQUISITES_20261120.md](CHECK2_B_PREREQUISITES_20261120.md)（D-141）冻结的是 30 单元 `joint24` 留出 8 个 C 池世界的探针，与本卡 `§3` 的 22.5.1 联合门正式 `check②` 裁决无关，保留为只读备忘、不消耗暴露。

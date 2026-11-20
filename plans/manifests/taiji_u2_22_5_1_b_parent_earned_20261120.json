@@ -1,0 +1,208 @@
+{
+  "schema": "taiji-u2-22-5-1-b-parent-earned-v1",
+  "card": "RESULT-TAIJI_U2_22_5_1_FORMAL_CHECK2_20261120.md",
+  "status": "earned_pending_2252_architecture_comparison",
+  "verdict": "b_parent_earned",
+  "joint_gate_verdicts": {
+    "fit_face": "joint_gate_fit_face_pass",
+    "check2_raw_exit": "retention_gate_not_failable",
+    "check2_verify_amended": "joint_gate_check2_pass"
+  },
+  "decision_ref": "D-20261119-144",
+  "task_face": "22.5.1 B/D/A joint gate (development-fit 24 items + development-check 192 worlds / 144 non-unknown B/D items, aggregate-only, 0 optimizer steps on check②)",
+  "subject_identity": "accepted v1 A parent (pixel-salience, d=32, seed 20261112) + RecordOrgan child (seeds 20261110, 20261111, 20261112; primary handoff candidate child-20261112.pt)",
+  "criterion": "Proposal B, D = parent_a_truth with distinct_entity_next (other.entity != item.entity); verify-only closeout amendment fixing delta_head.2.weight[0].add_(20.0) log_softmax shift invariance, causal cut excess over frozen_b_correct <= 2, and 3-seed median d_truth_drop_upper_bound <= 0.02 (D-20261119-144)",
+  "parent_lineage": {
+    "accepted_a_parent_manifest": {
+      "ref": "plans/manifests/taiji_u2_22_5_0_a_parent_earned_20261119.json",
+      "sha256": "1500ca714c53b8382032fe6c7fd65f9d544ec86447725a1cf2dae2ed20776295"
+    },
+    "accepted_a_parent_checkpoint": {
+      "seed": 20261112,
+      "ref": "output/a_pixel_parallel_20261119T070447Z/segment.bin",
+      "sha256": "12f9b18786a9bd56b6b26811f23a73cffb8eaaa0811be7d86a4e9b98f0ca5dab"
+    },
+    "primary_handoff_seed": 20261112,
+    "child_artifacts": {
+      "20261110": {
+        "ref": "output/s2_joint_gate_20261120/child-20261110.pt",
+        "sha256": "71b97ff9f18a52039a00ada76a677eb25ec2c6a3fafb7313b421e30076dbfc72"
+      },
+      "20261111": {
+        "ref": "output/s2_joint_gate_20261120/child-20261111.pt",
+        "sha256": "8b72f2fcfbe12fae534d99bbf2693bb48354239d339aa0bfd783b2bdbe42f08f"
+      },
+      "20261112": {
+        "ref": "output/s2_joint_gate_20261120/child-20261112.pt",
+        "sha256": "86ca0a2d5743ec9df60ad69a160ad4bd3e386b5c6cc941d2f7a22d775bb8b50b"
+      }
+    }
+  },
+  "readings": {
+    "fit_face_verify_summary": {
+      "n_b_items": 24,
+      "b_rate_all_3_seeds": 1.0,
+      "correction_rate_all_3_seeds": 1.0,
+      "gain_all_3_seeds": 1.0,
+      "gain_lower_bound_all_3_seeds": 1.0,
+      "a_drop_upper_bound_all_3_seeds": 0.0,
+      "d_same_condition_relative_drop_all_3_seeds": -0.5417,
+      "d_same_condition_drop_upper_bound_all_3_seeds": -0.375,
+      "causal_cuts_all_3_seeds": {
+        "record_organ_cut_b_correct": 0,
+        "fast_cut_b_correct": 24,
+        "record_injection_cut_b_correct": 24,
+        "permuted_b_correct": 0
+      },
+      "parent_bit_identical_all_3_seeds": true
+    },
+    "check2_formal_face": {
+      "check_worlds": 192,
+      "check_b_items": 144,
+      "parent_a_192": 174,
+      "parent_b_frozen_144": 5,
+      "parent_d_a_truth_144": 126,
+      "parent_d_same_condition_144": 77,
+      "per_seed": {
+        "20261110": {
+          "a_child": 174,
+          "a_drop_upper_bound": 0.0,
+          "b_correct": 144,
+          "gain": 0.9653,
+          "gain_lower_bound": 0.9375,
+          "d_child_truth_distinct": 125,
+          "d_truth_drop": 0.0069,
+          "d_truth_drop_upper_bound": 0.0208,
+          "d_disclosures": {
+            "same_condition_child_correct": 143,
+            "same_condition_drop_upper_bound": -0.3889,
+            "raw_mod_child_truth_correct": 114,
+            "raw_mod_collisions": 22,
+            "raw_mod_truth_drop_upper_bound": 0.125
+          },
+          "cut_record_organ_b_correct": 5,
+          "cut_excess_over_frozen": 0,
+          "multi_record_b": "144/144",
+          "superseding_b": "144/144",
+          "overwrite_probe_verify_fit": {
+            "n": 24,
+            "a_before": 23,
+            "a_after": 2,
+            "drop": 0.875,
+            "perturbation": "delta_head.2.weight[0].add_(20.0)"
+          },
+          "recovery": "recover_exact",
+          "parent_bit_identical": true
+        },
+        "20261111": {
+          "a_child": 174,
+          "a_drop_upper_bound": 0.0,
+          "b_correct": 144,
+          "gain": 0.9653,
+          "gain_lower_bound": 0.9375,
+          "d_child_truth_distinct": 126,
+          "d_truth_drop": 0.0,
+          "d_truth_drop_upper_bound": 0.0,
+          "d_disclosures": {
+            "same_condition_child_correct": 144,
+            "same_condition_drop_upper_bound": -0.3958,
+            "raw_mod_child_truth_correct": 115,
+            "raw_mod_collisions": 22,
+            "raw_mod_truth_drop_upper_bound": 0.1181
+          },
+          "cut_record_organ_b_correct": 5,
+          "cut_excess_over_frozen": 0,
+          "multi_record_b": "144/144",
+          "superseding_b": "144/144",
+          "overwrite_probe_verify_fit": {
+            "n": 24,
+            "a_before": 23,
+            "a_after": 2,
+            "drop": 0.875,
+            "perturbation": "delta_head.2.weight[0].add_(20.0)"
+          },
+          "recovery": "recover_exact",
+          "parent_bit_identical": true
+        },
+        "20261112": {
+          "a_child": 174,
+          "a_drop_upper_bound": 0.0,
+          "b_correct": 144,
+          "gain": 0.9653,
+          "gain_lower_bound": 0.9375,
+          "d_child_truth_distinct": 126,
+          "d_truth_drop": 0.0,
+          "d_truth_drop_upper_bound": 0.0,
+          "d_disclosures": {
+            "same_condition_child_correct": 144,
+            "same_condition_drop_upper_bound": -0.3958,
+            "raw_mod_child_truth_correct": 115,
+            "raw_mod_collisions": 22,
+            "raw_mod_truth_drop_upper_bound": 0.1181
+          },
+          "cut_record_organ_b_correct": 5,
+          "cut_excess_over_frozen": 0,
+          "multi_record_b": "144/144",
+          "superseding_b": "144/144",
+          "overwrite_probe_verify_fit": {
+            "n": 24,
+            "a_before": 23,
+            "a_after": 2,
+            "drop": 0.875,
+            "perturbation": "delta_head.2.weight[0].add_(20.0)"
+          },
+          "recovery": "recover_exact",
+          "parent_bit_identical": true
+        }
+      },
+      "d_truth_drop_upper_bound_median": 0.0,
+      "d_truth_drop_upper_bound_max": 0.0208
+    }
+  },
+  "run_evidence": {
+    "fit_joint_gate_run": {
+      "ref": "reports/taiji_u2_22_5_1_joint_gate_run_20261120.json",
+      "sha256": "a2218d52a2a0e6a12edf4c8f467a5b6978df80aae4724214ccdd70dddc9c28a0"
+    },
+    "fit_joint_gate_verify": {
+      "ref": "reports/taiji_u2_22_5_1_joint_gate_verify_20261120.json",
+      "sha256": "50713f948648b2a58bfdc13d515129f7bd6e1819fd2da2739b2d9c9ccd85b796"
+    },
+    "formal_check2_contract": {
+      "ref": "plans/manifests/taiji_u2_22_5_1_formal_check2_20261120.json",
+      "sha256": "55795fd11ab3a57cbb038efc8d18e7924442449b4530add8c4f6d275c49c6b32"
+    },
+    "formal_check2_run": {
+      "ref": "reports/taiji_u2_22_5_1_formal_check2_run_20261120.json",
+      "sha256": "e51d148d7fbb887f49f257f8dd34158465afd6392f51558ee1fe69fa0d1dc785"
+    },
+    "formal_check2_verify": {
+      "ref": "reports/taiji_u2_22_5_1_formal_check2_verify_20261120.json",
+      "sha256": "0299d40a262f78364a1c7c7a2511db8564b181cd2d63f3f4e96b358b55b01201"
+    }
+  },
+  "check_exposure": {
+    "account": "formal_2251",
+    "allocated": 1,
+    "used": 1,
+    "remaining": 0,
+    "face": "development-check 192 seeds",
+    "aggregate_only": true,
+    "verify_additional_check_reads": 0
+  },
+  "budget_ledger": {
+    "formal_check2_round1_budget_stop_cpu": 621.6,
+    "formal_check2_round2_run_cpu": 899.42,
+    "formal_check2_round2_smoke_cpu": 15.17,
+    "formal_check2_verify_cpu": 17.52,
+    "formal_check2_total_cpu": 1553.71
+  },
+  "disclosed_boundaries": [
+    "S1 A-parent generation chain rebuild was waived by owner (D-20261119-12); strict_load and fit reproduction passed on all check② preflights (internal parent metadata retains legacy source_pin_mismatches=['taiji/u2_subject.py']).",
+    "Raw formal check② exited retention_gate_not_failable because delta_head.2.weight.add_(2.0) cancels under log_softmax(-1); verify-only amendment D-20261119-144 fixed the perturbation to delta_head.2.weight[0].add_(20.0) on fit[:24] (drop=0.875) and scaled causal cut to cut_b - frozen_b = 0.",
+    "Under D=parent_a_truth, primary candidate 20261112 and seed 20261111 achieved 126/126 (drop=0.0, ub95=0.0); seed 20261110 had 125/126 (drop=0.0069, ub95=0.0208 > 0.02), closed under the 3-seed median Criterion B rule (median ub95=0.0 <= 0.02).",
+    "22.5.2 compute-parity architecture comparison, 22.6+, C/D/J tasks, and final remain unsigned pending subsequent package cards."
+  ],
+  "authorized": false,
+  "note": "22.5.1 formal B-parent qualification earned under D-20261119-144; next queue head is 22.5.2 architecture comparison and native-unit core handoff."
+}

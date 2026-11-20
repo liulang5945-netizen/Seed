@@ -11,9 +11,9 @@
 | 轴 | 当前值 |
 |---|---|
 | `engineering` | verified |
-| `task` | verified（`fit_face_only`；正式 check② 未结） |
+| `task` | **verified（`22.5.0 first-A` ＋ `22.5.1` 正式结案 `joint_gate_check2_pass / b_parent_earned`, D-144）** |
 | `learning` | verified（路由技能）＋**任务通路级新能力有界 verified（D-78/79）**；内容积累 uncovered |
-| `retention` | verified（严格 D 口径 breach 已披露） |
+| `retention` | **verified（check 面 A 3/3 `174/192` `ub=0.0`；D 中位 `ub=0.0 <= 0.02`；`--verify` 行微扰 `drop=0.875`）**（并列披露 `20261110` `125/126` `ub=0.0208`） |
 | `autonomous_choice` | **negative**（22.6.2 `policy_gain_absent`） |
 | `mature_growth` | 结构/机制 verified＋**通路级新增/回收有界 verified（D-79/81）**；收益 `growth_benefit_not_established_in_package_22`（**单元级**，不得与通路级混写） |
 | `recursive_development` | **uncovered**（两次相依纠正多 seed 不成立） |
@@ -22,11 +22,9 @@
 
 附加证据：`uncertainty_expression` verified（有界：joint24 ECE 0.028→0.021，D-62）。
 
-## §1 决策点 A：正式资格路径（A 案 vs B 案）
+## §1 决策点 A：正式资格路径（已于 D-20261119-144 正式结案 `22.5.1`，队首转 `22.5.2`）
 
-- **A 案**：`fit_face_only` 豁免，0 CPU；当前工作路径已按此记录（D-20261119-21）。
-- **B 案**：1 次 check 曝光，192 seeds，包价 430、帽 540 CPU；需先冻结 D 口径（严格 D 会 breach，已披露）。
-- **建议**：若目标要求「正式资格」，选 B 并先冻 D 口径（同条件参考）；若接受 fit 面证据，维持 A。**执行者默认 A 不动，等 owner 裁定。**
+- **正式结案（D-20261119-144）**：依 owner 指令 `"先正式结案22.5.1"`，经零训练、零额外 check 读 `--verify`（`17.52 CPU`）与 `--closeout` 正式闭合为 **`joint_gate_check2_pass`**，并颁发 [B 父挣得清单](../manifests/taiji_u2_22_5_1_b_parent_earned_20261120.json)（主交接 `child-20261112.pt`）。`check②` 全 3 种子实测 **A 3/3 `174/192`（drop `0.0`）**、**B / multi / supersede 3/3 `144/144`（`gain=0.9653`）**、**D(`parent_a_truth`) `125/126/126` 对 `126`**、**恢复 `3/3 exact`**；并列保留 S1 豁免（D-12）、原始 `add_(2.0)` 常数相消与 `20261110` `ub=0.0208` 披露（见 [正式 check② 结果卡](RESULT-TAIJI_U2_22_5_1_FORMAL_CHECK2_20261120.md)）。**本项已关闭；队首推进至 `22.5.2`。**
 
 ## §2 决策点 B：22.8 与 23–30 准入
 
@@ -61,7 +59,7 @@
 
 | 编号 | 事项 | 推荐 | 备注 |
 |---|---|---|---|
-| A | 正式 check②：维持 A 案（`fit_face_only`，0 暴露）或采纳 B 案（1 次暴露） | **维持 A**；若授权 B，先补四项前置 | B 需 D 参考已冻结（已具备，D-98）、候选/评估脚本冻结预注册、预算定价、失败出口执行卡 |
+| A | 正式 check②：已于 D-20261119-144 正式结案 `22.5.1`（`joint_gate_check2_pass / b_parent_earned`） | **已结案**：队首推进至 `22.5.2` | 经 `--verify`（`17.52 CPU`, 0 训练, 0 额外 check 读）修可证伪性行微扰（`drop=0.875`）、因果净余 `0<=2` 与 3 种子 D 中位 `ub=0.0<=0.02`（并列披露 `20261110` `ub=0.0208`），颁发 [B 父清单](../manifests/taiji_u2_22_5_1_b_parent_earned_20261120.json)；详见[结果卡](RESULT-TAIJI_U2_22_5_1_FORMAL_CHECK2_20261120.md) |
 | B | 22.8 与 23–30 准入 | 暂不开放 | 现有九轴尚未闭合 |
 | C | 真机/多动力学投资 | 建议延后至仿真碰撞族有解 | 碰撞族构造可行但预算内不可学（D-57–59） |
 | D | 阶段账处置 | 维持「超支永久事故、不改帽」 | 待 owner 决定是否调整 |

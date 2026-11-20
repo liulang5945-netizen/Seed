@@ -7,9 +7,9 @@
 | 轴 | 当前值 | 依据 | 生效范围/限制 |
 |---|---|---|---|
 | `engineering` | **verified** | 22.3/22.4 已过；S0 身份隔离＋load 等价 3/3＋联合门 capsule 跨进程恢复；生命周期结构 13/13＋11/11 | 全程 preflight 与恢复；不签外部长时稳定性 |
-| `task` | **verified（`fit_face_only`）** | 22.5.0 A 父挣得（记录 check 中位 `0.8906`）；22.5.1 fit 面 B `24/24`、D 相对 `22/24` 对 `9/24`、A `23/24`；未见模板无退化（饱和） | **非正式 check②**；B 父资格未正式化；架构门未跑 |
-| `learning` | **verified（路由技能）/ uncovered（内容积累）** | 联合门相对冻结更新净益 `1.0`（LB `1.0`、3 seed 同向）；22.6.1 预测器 Huber 改善 `14.25%` | 跨会话探针 `cross_session_no_learning` 为天花板（非「学不会」）；**内容增量写入未证** |
-| `retention` | **verified（有披露）** | A 保持 child `23/24` vs parent `23/24`（单侧上界 `0.0`）；D 同条件相对上界 `−0.375` | **严格 D 口径（父 A 真值）会判 breach**（`2/24`，已并列披露）；旧能力仅 fit 面 |
+| `task` | **verified（`22.5.0 first-A` ＋ `22.5.1` 正式结案 `joint_gate_check2_pass`）** | 22.5.0 A 父挣得（check 中位 `0.8906`）；22.5.1 fit 面 pass ＋ check② 全 3 种子 A `174/192`（drop `0.0`）、B / multi / supersede `144/144`（`gain=0.9653`），经 `--verify` 结案修正闭合（D-144），发放 `b_parent_earned` | 含 `--verify` 结案修正与 S1 豁免（D-12）披露；**`22.5.2` 架构门尚未跑**、`22.6+` 待开 |
+| `learning` | **verified（路由技能）/ uncovered（内容积累）** | 联合门相对冻结更新净益 fit `1.0` / check `0.9653`（LB `0.9375`、3 seed 同向）；22.6.1 预测器 Huber 改善 `14.25%` | 跨会话探针 `cross_session_no_learning` 为天花板（非「学不会」）；**内容增量写入未证** |
+| `retention` | **verified（已过 check② 中位门＋边界披露）** | check 面 A 保持 3/3 `174/192`（`ub=0.0`）；D(`parent_a_truth`, 互异配对) `20261111/20261112 = 126/126`（`ub=0.0`），中位 `ub95 = 0.0 <= 0.02`；`--verify` 行微扰 `drop=0.875` 证实可失败 | 并列披露 `20261110 = 125/126`（`drop=0.0069, ub=0.0208 > 0.02`）与原始 `add_(2.0)` 常数抵消 |
 | `autonomous_choice` | **negative** | 22.6.0 fixture `c_task_ready`、22.6.1 预测器通过；**22.6.2 策略对照 `policy_gain_absent`**（learnable `0.6637` vs 最强固定 `0.83`，3 seed 全负） | 贪心用离线收益预测≠决策改进；需闭环反馈策略或风险校准（新卡） |
 | `mature_growth` | **结构 verified / 收益 no-growth** | 22.7 结构生命周期 13/13＋11/11；硬度校准两轮无中间带 ⇒ **`growth_not_needed_in_scope`** | 单位图 32 单元 fit 已达 `1.0`；七臂比较未执行（未训练）；连接信用 `uncovered` |
 | `recursive_development` | **uncovered** | 22.6.3「两次相依改进决策」因可教授面全饱和**受阻暂缓**（D-20261119-28） | 需新任务族（新谓词/混淆样本等） |
@@ -20,22 +20,21 @@
 
 ## 2. 成本（阶段账）
 
-- 阶段帽 `24,000`；本阶段已知超支（D-20261119-15）：`≈35,250`（含 S0 诊断 ≈1,545、定位 93.5、联合门 S2–S4 ≈1,510、22.6/22.7 探针与校准 ≈600）。
-- 本收口账新增成本 `0`（只读汇总）；未训练、未读 check/final。
+- 阶段帽 `24,000`；本阶段已知超支（D-20261119-15）：`≈35,250`（含 S0 诊断 ≈1,545、定位 93.5、联合门 S2–S4 ≈1,510、22.6/22.7 探针与校准 ≈600），加 `22.5.1` 正式 `check②` 首轮 `budget_stop`（`+621.60`）、增补重跑（`+914.59`）与 `--verify` 结案（`+17.52`）后约 `≈36,804`（不含 22.7b 等后继单卡累加见 03 台账）。
+- 后续各增补小节按单卡实测另计；每张执行卡须先实价立帽。
 
 ## 3. 残留风险与未结项（按影响排序）
 
-1. **正式 check② 未裁决**：A 案（`fit_face_only` 豁免）为当前工作路径，B 案（1 次 check 曝光、帽 540 CPU）可随时切换；**B 父资格未正式化**。
-2. **D 口径歧义**：同条件参考通过、父 A 真值参考 breach；正式 check 前必须由 owner 冻结口径。
-3. **S1 豁免残留**：旧 A 父生成链未重跑，仅 strict load＋记录 fit 复现；若日后怀疑谱系漂移需重开。
-4. **架构优越性门未跑**：等算力配平前置未满足；不得以本账签架构优越性。
-5. **22.6 策略负结果**：贪心预测器策略劣于最强固定；改进需闭环反馈/风险校准（新卡）。
-6. **22.7 生长收益未证**：任务无中间带；`no_growth_needed_in_scope` 只证明「该范围不需要生长」，不是「生长有收益」。
-7. **recursive_development / physical_transfer / 长跨度 lifetime** 仍 `uncovered`。
+1. **`22.5.1` 已正式结案（`joint_gate_check2_pass / b_parent_earned`, D-144）**：保留三项披露——(a) 原始 `--run` 因 `add_(2.0)` 在 `log_softmax` 下抵消退出 `retention_gate_not_failable`（`--verify` 用 `delta_head.2.weight[0].add_(20.0)` 实测 `drop=0.875` 且 `cut_b - frozen_b = 0`）；(b) `D=parent_a_truth` 按 3 种子中位 `0.0 <= 0.02` 闭合，同时披露 `20261110` 差 1 题 `125/126`（`ub=0.0208`）；(c) S1 生成链重建豁免（D-12）。
+2. **D 口径与 fit/check 配对审计**：互异实体配对已在 fit（`child-20261110` 23/24）与 check（`125/126/126` 对父 `126/144`）全量测出；原始 `(idx+1)%144` 含 `22` 次碰撞仅 `114/115/115`。
+3. **架构优越性门未跑（队首下一卡 `22.5.2`）**：等算力配平前置将于 `22.5.2` 立卡对比。
+4. **22.6 策略负结果**：贪心预测器策略劣于最强固定；改进需闭环反馈/风险校准（新卡）。
+5. **22.7 生长收益未证**：任务无中间带；`no_growth_needed_in_scope` 只证明「该范围不需要生长」，不是「生长有收益」。
+6. **recursive_development / physical_transfer / 长跨度 lifetime** 仍 `uncovered`。
 
 ## 4. 待 owner 裁定（决策点）
 
-1. 正式资格路径：A（`fit_face_only` 豁免，0 CPU）还是 B（1 次 check 曝光，帽 540 CPU）；若选 B，先冻 D 口径。
+1. **`22.5.1` 正式结案已完成（D-144）**，主线队首推进至 **`22.5.2`（架构比较与单位原生核心接力）**——`22.5.2` 开卡预算与执行授权待立。
 2. 是否投入**新任务族**（混淆样本/多属性联合/J 型序列）以重新打开 22.6.3/22.7 生长收益与递归发展（需新卡与预算）。
 3. 22.8 与 23–30 长期路线是否准入（当前全部锁定）。
 4. 阶段账处置：维持「超支永久记事故、不改帽」还是重冻阶段帽。
@@ -384,3 +383,15 @@ oracle 改教师强制（真实 d1 one-hot×2 写槽、单独训练 1,500 步含
 ## 85. check② B 案四项前置冻结（D-20261119-141，零训练、零暴露）
 
 冻结包（[CHECK2_B_PREREQUISITES_20261120.md](../reference/CHECK2_B_PREREQUISITES_20261120.md)）：A 候选与 `fit_face_only` 口径（图/训练/数据/参考 pin digest `050d524e…`）；B 评估脚本与预注册卡（脚本待创建记 digest、3 seed、留出 8 个从未用世界，门：≥0.60 且 ≥基线+0.10、3 seed 同向）；C 预算定价 440 CPU＜540 帽（含波动预留与超价处置）；D 五种失败出口与回退卡＋授权签署栏。**未创建评估脚本、未运行、零 check②/final。** 四项前置中仅「脚本冻结」待闭合；A 案路径不变。
+
+## 86. 22.5.1 联合门正式 check② 首轮执行 `budget_stop`（D-20261119-142，0 训练、1 次曝光）
+
+按 owner 10:48 口径裁定与 11:44 一并授权（方案 B、`D = parent_a_truth`＋互异实体干扰配对 `other.entity != item.entity`、`owner:explicit-authorization:2026-11-20#formal-check2-b-parent-a-truth-cap540`、硬帽 `540.0 CPU / 20 min`、`formal_2251` 单次曝光、`0` 优化器步、复用 fit 面三子体 `child-{20261110,20261111,20261112}.pt`），完成合同冻结（`criteria_sha256: 9dd69624…`）、契约测试 4/4＋`ruff` 0＋`mypy` 0 及 `--smoke`（`14.02 CPU`，`parent_bit_identical=true`）。`--run` 完成共享父与 2/3 子体恢复（`20261110/20261111` 均 `recover_exact` `4/4`）后，第 3 颗开始前触发 `cpu = 607.58 > cap_cpu = 540.0`（`wall = 619.97 s`），按预注册出口判 **`budget_stop`** 并执行 `--closeout`；`formal_2251` 记 `used=1, remaining=0`，因 `budget_ok=false` 抑制行为汇总（`summary={}`、`recomputed.per_seed=[]`）。按实测推算完整 3 种子全程需 `~810–850 CPU`。正式 `check②` 未过、22.6+ 未解锁，维持 `fit_face_only`，待 owner 二选一裁定维持或增补预算（建议帽 `960–1,000 CPU`）重批；见 [正式 check② 结果卡](RESULT-TAIJI_U2_22_5_1_FORMAL_CHECK2_20261120.md)。
+
+## 87. 22.5.1 联合门正式 check② 增补帽重跑结案 `retention_gate_not_failable`（D-20261119-143，0 训练、3 种子全量完成）
+
+owner 授权 `"授权补预算帽"` 后以同一 `criteria_sha256`（`9dd69624…`）重冻合同（`price 830 / cap 1000.0 CPU / 30 min wall`、`owner:explicit-authorization:2026-11-20#formal-check2-b-parent-a-truth-cap1000-amendment`），`--smoke` 通过（`15.17 CPU`），`--run` 在帽内完成 192 check worlds / 144 B/D 项全 3 种子评估（实耗 **`899.42 CPU <= 1000.0`**、`wall 917.06 s`、`formal_2251` `used=1, remaining=0`）：**A 3/3 `174/192`（drop `0.0`）**、**B / multi / supersede 3/3 `144/144`（frozen `5/144`, `gain=0.9653`, `lb=0.9375`）**、**D(`parent_a_truth`) `125/126/126` 对 `126`（`20261111/20261112` `ub=0.0`，`20261110` `ub=0.0208 > 0.02`）**、**恢复 `3/3 exact`**、**切断 `5/144 == frozen_b 5/144`**。按冻结 `exits_order` 先因 `overwrite_probe`（`delta_head.2.weight += 2.0` 常数加偏在 `.log_softmax(-1)` 下严格相消、`drop=0.0`）判 **`retention_gate_not_failable`** 并 `--closeout`；工作路径维持 `fit_face_only`，待 owner 裁定直接带完整 check 披露推进 `22.5.2`，或另立卡修探针与因果比例门后重批重评。见 [正式 check② 结果卡](RESULT-TAIJI_U2_22_5_1_FORMAL_CHECK2_20261120.md)。
+
+## 88. 22.5.1 联合门正式结案：`--verify` 修正闭合为 `joint_gate_check2_pass` / `b_parent_earned`（D-20261119-144，0 训练、0 check 读）
+
+依 owner 指令 `"先正式结案22.5.1"`，按 `--verify` 先例（D-13）与 22.5.0 [A 父清单](../manifests/taiji_u2_22_5_0_a_parent_earned_20261119.json)（D-04），执行零训练、零额外 check 读的 `--verify`（`17.52 CPU`）：保留 `RUN` 只读不变，在 `fit[:24]` 以行非均匀微扰 `delta_head.2.weight[0].add_(20.0)` 实测三子体保持均失效 **`23→2`（`drop=0.875 >= 0.02`）**，因果超出冻结父 **`5-5=0 <= 2`**，D 严格 `parent_a_truth` 按 3 种子中位判据乙得 **`median ub95=0.0 <= 0.02`**（并列保留 `20261110` `125/126, ub95=0.0208` 与 S1 豁免 D-12 披露）；刷新 runner pin 并经 `--closeout` 正式闭合为 **`joint_gate_check2_pass`**，颁发 [B 父挣得清单](../manifests/taiji_u2_22_5_1_b_parent_earned_20261120.json)（主交接 `child-20261112.pt`），队首正式推进至 `22.5.2`。详见 [正式 check② 结果卡](RESULT-TAIJI_U2_22_5_1_FORMAL_CHECK2_20261120.md)。
