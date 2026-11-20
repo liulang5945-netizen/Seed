@@ -256,3 +256,7 @@ HEADS=9 跨会话：旧 A–H 全部 retention drop 0.0，新 I（颜色 parity�
 ## 53. 顺序计算式递归 Scan 重测（D-20261119-108，忠实 negative）
 
 用已验证 UnitScan（每样本独立、状态携带）重测：tick1 `0.63/0.54/0.63`（中间信用过）；tick2 `0.33/0.46/0.46`（≈机会）、shuffled/无关控制与单 tick 基线均不劣于序列 ⇒ 仅 1/4 门过 ⇒ `sequential_recursion_absent`。判读：**忠实负结果**——会学第一步中间预测，但第二步无法把已预测中间桶与增量组合；状态携带不等于可组合。收口 negative，后继需工作记忆写回/逐 tick 强监督/专用记忆槽并核验因果作用（新设计新 pin 预注册）。`recursive_development` 维持 negative（两形态）＋其余 uncovered。
+
+## 54. 工作记忆写回设计草案（D-20261119-109，零训练）
+
+针对 D-108「状态可携带但不可组合」：把 tick1 预测桶**显式写回**为 tick2 输入（one-hot 写 48 维特征 39–41 空闲维）。三模式：自写回（argmax detach）/oracle 写回/对照（零、shuffled）。四门：自写回 tick2≥0.55 且比零写回高≥0.10；清零写回降≥0.10（必要性）；oracle≥0.65（任务可学）；shuffled≤0.45（控制）。价 ≤200 CPU、3 seed、零 check；全过记 `working_memory_writeback_ready`，oracle 不过 0.65 记 `task_not_learnable`。

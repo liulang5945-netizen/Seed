@@ -4381,3 +4381,8 @@ HEADS=9：…→s9 颜色 parity（2 类派生）；3 seed 全过：inheritance 
 ## 2026-11-20 顺序计算式递归（扫描接口重测，D-20261119-108，`sequential_recursion_absent`，41.52 CPU）
 
 UnitScan 忠实重测：tick1 0.625/0.5417/0.625（中间信用门过）；tick2 0.333/0.458/0.458（≈机会）；shuffled tick2 0.5/0.417/0.417；unrelated 0.417/0.542/0.542；单 tick 基线 0.417/0.542/0.458；序列增益 −0.083/−0.083/0 ⇒ 仅 intermediate_credit 过 ⇒ sequential_recursion_absent。判读：忠实负结果——能学第一步中间预测，但第二步无法把已预测中间桶与第二步增量组合（状态被携带但读出无法组合）；与 D-102 重复输入不同（每 tick 新信息、单 tick 不可完成）。收口：该形态 negative 停止同范围；后继需工作记忆写回（tick1 预测桶作为 tick2 输入）/逐 tick 强监督/专用工作记忆槽＋因果核验，新设计新 pin 预注册。recursive_development 仍 negative（两形态）＋其余 uncovered。
+
+
+## 2026-11-20 工作记忆写回设计草案（D-20261119-109，零训练）
+
+针对 D-108『状态可携带但读出不可组合』：把 tick1 预测桶显式写回 tick2 输入特征（one-hot 写 48 维特征 39–41 空闲维，已核对 build_row）。三模式：自写回（argmax detach）/oracle 写回/对照（零、shuffled）。四门：自写回 tick2≥0.55 且比零写回高≥0.10；清零写回降≥0.10（必要性）；oracle≥0.65（任务可学）；shuffled≤0.45（控制）。复用 UnitScan、1500 步、3 seed、零 check、价≤200 CPU；全过记 working_memory_writeback_ready 有界，否则 partial/negative，oracle 不过 0.65 记 task_not_learnable 停止。与 D-102 无中间结果、D-108 隐状态携带区别：本设计把中间结果写成下一步可见输入。
