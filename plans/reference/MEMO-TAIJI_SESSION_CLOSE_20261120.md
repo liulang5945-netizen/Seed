@@ -98,3 +98,24 @@ A 正式资格 A/B；B 22.8 与 23–30 准入；C 真机/多动力学族；D �
 **结论**：单主体、9 任务、9 头配置下，通路级「按需新增 → 旧任务逐位保持 → 互不干扰 → 可逆停用」完整成立（有界），扩展曲线 3→9 任务一致、未触上限。**披露**：派生任务（象限/交叉/颜色 mod 3/parity）常数类基线较高（0.75/0.3125/0.53125），删除门余量小，后续复用应改口径。
 
 **未覆盖**：10+ 任务、单元级分化（partial，D-88–90）、共享单元分裂/整合、递归发展（uncovered）、正式 check②（A 案维持）、真机/长跨度、22.8 与 23–30。
+
+## 10. 九轴终值（第 84 轮）与剩余方向
+
+| 轴 | 终值 |
+|---|---|
+| engineering | verified |
+| task | verified（`fit_face_only`；正式 check② 未读；A 维持，B 零成本前置已冻结） |
+| learning | 路由技能 verified＋**通路级新能力有界 verified（3→9 任务）**；内容积累 uncovered |
+| retention | fit 面 verified（严格 D breach 披露）＋**通路隔离逐位保持（drop 0.0）** |
+| autonomous_choice | **negative（两法一致）** |
+| mature_growth | 结构机制 verified＋**通路级新增/回收/互不干扰/可逆停用有界 verified（3→9 条）**；单元级收益 `growth_benefit_not_established_in_package_22`；单元级分化 `partial` |
+| recursive_development | **negative**（重复输入迭代 D-102＋结构稀疏细化 D-50）；顺序计算/显式循环形态 uncovered |
+| physical_transfer | **有界 verified（推/位置桶）**；碰撞/遮挡/真机 uncovered |
+| lifetime | **有界 verified**（≥3 跨进程会话、出生继承、休眠/退役/唤醒、通路跨会话新增/回收） |
+| （附加）uncertainty_expression | 有界 verified（ECE 0.028→0.021） |
+
+**规模成长分项判读**：单位/连接/状态/通信均有机制与有界证据；**有效功能在单元级未建立**、在通路级有界成立——**不得混写**。
+
+**剩余可行方向（优先级）**：① 正式 check② 决策（A 维持 / B 六前置后一次性）；② 顺序计算式递归或显式循环模块（新设计）；③ `autonomous_choice` 在线闭环新设计；④ 共享单元分裂/整合；⑤ 真机/多动力学族；⑥ 100 会话/24h；⑦ 22.8 与 23–30 准入。
+
+**总判定**：目标**未完成**；已有证据链覆盖结构、学习、保持、跨会话、通路级生长与不确定表达；`task` 未见泛化、单元级生长收益、递归、自动选择、真机与长跨度仍未闭合。

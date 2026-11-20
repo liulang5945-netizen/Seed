@@ -232,3 +232,7 @@ HEADS=9 跨会话：旧 A–H 全部 retention drop 0.0，新 I（颜色 parity�
 ## 47. 递归深度两变体（D-20261119-102，negative；该定义收口）
 
 原卡（1,200+600）与低初值变体（300+900）均无深度收益：tick 增益 `0/−0.0625/0`（天花板）与 `−0.0625/0/0`（低初值，T=1 等算力基线更高）；shuffled 控制正确抹掉。判读：重复同一输入的多 tick 推理无深度收益，训练只强化单 tick；与 D-50（结构稀疏细化两版负）合并 ⇒ **当前架构两条递归路线均不成立**，该定义下 negative 收口。后继需顺序计算任务、逐 tick 中间答案监督或显式循环模块（新设计新 pin 预注册）。
+
+## 48. 会话收口报告 v4（D-20261119-103，零训练）
+
+九轴终值定稿：engineering/task/learning/retention/physical/lifetime/uncertainty 有界或范围受限 verified；autonomous_choice negative；recursive_development negative（两路线）；mature_growth：通路级机制有界 verified、单元级收益未建立、单元级分化 partial。规模成长分项不混写（单元级有效功能未建立）。剩余方向优先级：check② 决策＞顺序计算式递归/显式循环＞autonomous_choice 在线闭环＞共享单元分裂整合＞真机/多动力学＞100 会话/24h＞22.8/23–30。目标未完成。

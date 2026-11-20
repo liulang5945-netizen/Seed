@@ -6132,3 +6132,23 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **3. 判读**：在本实现下「重复同一输入的多 tick 推理」**没有深度收益**——训练确实让单 tick 读出变强（低初值变体 tick1 从 0.06–0.38 升到 0.69–1.0），但后续 tick 不再带来额外信息；收益来自训练本身，被 T=1 等算力基线解释。与 D-50（结构稀疏细化两版负）合并看：**当前架构的“递归发展”在「重复输入迭代」与「结构细化」两条路线上都不成立**。
 
 **4. 收口与后继条件**：该定义下递归轴按 negative 收口，不再同范围重试。后继若继续需改变问题表述：① **任务需要顺序计算**（多步组合/链式推理，单 tick 原则上做不完）；② **逐 tick 监督不同中间答案**（而非同一标签）；③ 显式循环模块（绑定权重＋每步新输入 token）。三者均需新设计、新 pin、预注册，不得以重复 tick 结果代签。
+
+
+### D-20261119-103 会话收口报告 v4：九轴终值与剩余方向清单（零训练）
+
+**1. 动作**：在[会话收口报告](../reference/MEMO-TAIJI_SESSION_CLOSE_20261120.md)新增 §10「九轴终值（第 84 轮）」与「剩余可行方向优先级」。**零训练、零 check/final。**
+
+**2. 九轴终值（同父 seed `20261112` 谱系）**：
+- `engineering` verified；
+- `task` verified（`fit_face_only`；正式 check② 未读，A 案维持，B 案零成本前置已冻结）；
+- `learning`：路由技能 verified＋**任务通路级新能力有界 verified（3→9 任务）**／内容积累 uncovered；
+- `retention`：fit 面 verified（严格 D breach 已披露）＋**通路隔离下旧能力逐位保持（drop 0.0，9 任务）**；
+- `autonomous_choice` **negative**（两法一致）；
+- `mature_growth`：结构机制 verified＋**通路级新增/回收/互不干扰/可逆停用有界 verified（3→9 条）**；**单元级生长收益 `growth_benefit_not_established_in_package_22`**；**单元级分化 partial（D-88–90）**；
+- `recursive_development` **negative**（重复输入迭代 D-102＋结构稀疏细化 D-50 两路线均负；顺序计算/显式循环形态仍 uncovered）；
+- `physical_transfer` **有界 verified（推/位置桶）**；碰撞/遮挡/多动力学与真机 uncovered；
+- `lifetime` **有界 verified**（≥3 跨进程会话、出生继承、休眠/退役/唤醒、任务通路跨会话新增/回收）；
+- 附加 `uncertainty_expression` 有界 verified（ECE 0.028→0.021）。
+- 规模成长分项：单位/连接/状态/通信均有机制与有界证据；**有效功能（单元级）未建立**，通路级有效功能有界成立——两者不得混写。
+
+**3. 剩余可行方向优先级（建议）**：① 正式 check② 决策（A 维持 / B 六前置后一次性）；② 顺序计算式递归或显式循环模块（新设计，与重复 tick 区分）；③ `autonomous_choice` 在线闭环新设计；④ 共享单元分裂/整合；⑤ 真机/多动力学族；⑥ 100 会话/24h 长跨度；⑦ 22.8 与 23–30 准入。

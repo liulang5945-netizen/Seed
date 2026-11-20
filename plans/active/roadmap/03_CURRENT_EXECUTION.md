@@ -4351,3 +4351,8 @@ HEADS=9：…→s9 颜色 parity（2 类派生）；3 seed 全过：inheritance 
 ## 2026-11-20 递归深度两变体（D-20261119-102，`recursive_depth_absent`，62.05+56.08 CPU）
 
 原卡（预训练1,200+递归600）tick 准确率天花板（1.0/0.94/1.0），深度增益 0/−0.06/0；低初值变体（预训练300+递归900）tick1 从 0.06–0.38 升到 0.69–1.0 但增益 −0.06/0/0，T=1 等算力基线反而更高 ⇒ 递归深度 absent。判读：重复同一输入的多 tick 推理无深度收益，训练让单 tick 变强但后续 tick 无额外信息；与 D-50（结构稀疏细化两版负）合并 ⇒ 当前架构两条递归路线均不成立。收口：该定义下 negative，停止同范围；后继需顺序计算任务/逐 tick 中间答案监督/显式循环模块（新设计新 pin 预注册），不得以重复 tick 结果代签。
+
+
+## 2026-11-20 会话收口报告 v4（D-20261119-103，零训练）
+
+九轴终值：engineering verified；task verified(fit_face_only，check② 未读、A 维持/B 零成本前置已冻结)；learning 路由 verified＋通路级新能力有界 verified（3→9 任务）/内容积累 uncovered；retention fit 面 verified＋通路隔离逐位保持（drop 0.0）；autonomous_choice negative；mature_growth 结构 verified＋通路级新增/回收/互不干扰/可逆停用有界 verified，单元级收益未建立、单元级分化 partial；recursive_development negative（重复输入 D-102＋结构细化 D-50，顺序计算/显式循环 uncovered）；physical_transfer 有界 verified（推/位置桶）、碰撞/真机 uncovered；lifetime 有界 verified（≥3 会话、出生继承、休眠退役唤醒、通路跨会话新增回收）；uncertainty_expression 有界 verified。规模成长分项：单位/连接/状态/通信有机制证据，有效功能单元级未建立、通路级有界成立（不混写）。剩余方向优先级：check②决策＞顺序计算式递归/显式循环＞autonomous_choice 在线闭环＞共享单元分裂整合＞真机/多动力学＞100会话/24h＞22.8/23–30。零 check/final。
