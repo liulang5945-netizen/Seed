@@ -1,0 +1,70 @@
+{
+  "schema": "taiji-u2-sequential-loop-v1",
+  "card": "state-ablated 3-step loop: only the write-back channel carries step-1 information",
+  "created_utc": "2026-11-20T01:57:33.066941+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "variant": "state reset after every step (z/a zeroed, write-back only)",
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "steps": 1200,
+    "train_triples": 108,
+    "fit_triples": 108,
+    "gates": "depth gain>=0.10; zero writeback drop>=0.10; shuffled-content drop>=0.10; oracle>=0.85; swapped order drop>=0.10"
+  },
+  "results": [
+    {
+      "seed": 0,
+      "self_k3": 0.8056,
+      "zero_k3": 0.6759,
+      "shuffled_writeback_k3": 0.7778,
+      "oracle_k3": 0.8148,
+      "swapped_order_k3": 0.6759,
+      "no_memory_baseline": 0.5,
+      "depth_gain": 0.3056
+    },
+    {
+      "seed": 1,
+      "self_k3": 0.8426,
+      "zero_k3": 0.713,
+      "shuffled_writeback_k3": 0.7778,
+      "oracle_k3": 0.9167,
+      "swapped_order_k3": 0.713,
+      "no_memory_baseline": 0.5,
+      "depth_gain": 0.3426
+    },
+    {
+      "seed": 2,
+      "self_k3": 0.7407,
+      "zero_k3": 0.6667,
+      "shuffled_writeback_k3": 0.7315,
+      "oracle_k3": 0.8426,
+      "swapped_order_k3": 0.6667,
+      "no_memory_baseline": 0.5,
+      "depth_gain": 0.2407
+    }
+  ],
+  "gates": {
+    "depth_gain": true,
+    "writeback_necessity": false,
+    "writeback_content": false,
+    "oracle_reference": false,
+    "order_dependence": false
+  },
+  "verdict": "sequential_loop_absent",
+  "discipline": {
+    "optimizer_steps": 3600,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 33.17
+  }
+}
