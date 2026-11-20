@@ -1,0 +1,23 @@
+{
+  "schema": "taiji-u2-22-8-segment-index-v1",
+  "card": "22.8 S1 frozen segment index (3 sessions x 32 rounds)",
+  "status": "frozen_blocked",
+  "criteria": {
+    "sessions": 3,
+    "rounds": 32,
+    "allocation": {
+      "appearance": 8,
+      "dynamics": 8,
+      "occlusion_conflict": 6,
+      "correction": 4,
+      "no_prompt": 6
+    },
+    "master_seed": 20261120,
+    "rounds_sha256": "271d908271aa512f9d2f2b206878a342c15c34f3b0ad4ec1757245f457ccfb6a",
+    "gate": "J1-J6 per DESIGN-TAIJI_U2_22_8_JOINT_LIFE_20261120.md"
+  },
+  "blocker": "absent",
+  "check_reads": 0,
+  "final_reads": 0,
+  "criteria_sha256": "e2b7dd8af6bc2ba21faa309dd456e187bdb85620f2ee3e0a24a26efe1a098481"
+}

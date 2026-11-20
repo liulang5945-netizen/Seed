@@ -1,0 +1,115 @@
+{
+  "schema": "taiji-u2-22-8-s1-v1",
+  "card": "22.8 S1 candidate mapping audit + segment index freeze",
+  "created_utc": "2026-11-20T07:28:50.825969+00:00",
+  "protocol": {
+    "sessions": 3,
+    "rounds": 32,
+    "allocation": {
+      "appearance": 8,
+      "dynamics": 8,
+      "occlusion_conflict": 6,
+      "correction": 4,
+      "no_prompt": 6
+    },
+    "master_seed": 20261120,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "segment_index": {
+    "rounds": 96,
+    "rounds_sha256": "271d908271aa512f9d2f2b206878a342c15c34f3b0ad4ec1757245f457ccfb6a",
+    "first_rounds": [
+      {
+        "session": 1,
+        "round": 1,
+        "type": "dynamics",
+        "world_seed": 20262131
+      },
+      {
+        "session": 1,
+        "round": 2,
+        "type": "dynamics",
+        "world_seed": 20262130
+      },
+      {
+        "session": 1,
+        "round": 3,
+        "type": "correction",
+        "world_seed": 20262144
+      },
+      {
+        "session": 1,
+        "round": 4,
+        "type": "appearance",
+        "world_seed": 20262123
+      }
+    ]
+  },
+  "mapping_audit": {
+    "parent_path": "output\\s2_joint_gate_20261120\\child-20261112.pt",
+    "parent_sha256": "86ca0a2d5743ec9df60ad69a160ad4bd3e386b5c6cc941d2f7a22d775bb8b50b",
+    "parent_config": {
+      "d": 32,
+      "groups": 2,
+      "units": 12,
+      "objects": 3,
+      "branches": 2,
+      "key": 3,
+      "side": 16,
+      "patch": 4,
+      "audio_samples": 256,
+      "fft": 64,
+      "hop": 32,
+      "embedding": 4,
+      "max_record_bytes": 512,
+      "max_output_bytes": 64,
+      "seed": 20261112,
+      "record_metadata": true,
+      "base_units": null,
+      "group_units": null,
+      "separate_requests": true,
+      "binding": "v1",
+      "correction": "off",
+      "readout": "pixel-salience",
+      "record_organ": true
+    },
+    "native_tensor_count": 229,
+    "route_tensor_count": 19,
+    "shared_names": [],
+    "shared_shapes": {},
+    "mapping": "absent",
+    "native_units": 12,
+    "route_units": 30
+  },
+  "smoke": {
+    "appearance_shape": [
+      32,
+      48
+    ],
+    "appearance_labels": [
+      0,
+      1,
+      3,
+      6,
+      7
+    ],
+    "dynamics_rows": 32,
+    "dynamics_feature_dim": 48,
+    "capsule_schema": "taiji-u2-neural-unit-capsule-v1",
+    "capsule_digest": "44e0ed32a382398c"
+  },
+  "gates": {
+    "fixture_frozen": true,
+    "mapping_present": false
+  },
+  "verdict": "candidate_mapping_missing",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "optimizer_steps": 0
+  },
+  "cost": {
+    "cpu": 1.89
+  }
+}

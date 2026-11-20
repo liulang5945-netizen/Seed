@@ -6716,3 +6716,14 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **2. 与既有证据关系**：22.4.2b（动作有界）、22.6.0（C 任务 fixture）、22.5.1（B 父）作为片段/父证据，本卡检验**联合连续轨迹**而非重复单卡；22.7 的 `growth_benefit_absent` 不阻断 22.8（本卡不需要生长增益）。
 
 **3. 未清项（S1 前）**：①五类片段数据流/顺序表/分母冻结；②单主体承载方式（新增头/通路的 neutr al birth 与迁移差集）；③3 session bundle 落盘/恢复/lineage 格式；④check 1 与 final 的当次曝光记录。不签 final 通过、C/D/J 全任务、模型成型、独立接管交付。
+
+
+### D-20261119-153 22.8 S1：`candidate_mapping_missing`（B 父原生核心与 RouteB 任务面无参数映射；片段索引已冻结）
+
+**1. 动作**：新增 [`preflight_22_8_20261120.py`](../../scripts/training/preflight_22_8_20261120.py) 与 [结果卡](../reference/RESULT-TAIJI_U2_22_8_S1_20261120.md)。读取 22.5.1 B 父 `output/s2_joint_gate_20261120/child-20261112.pt`，与 22.x 任务面 30 单位 `RouteBGraph` 逐参数比对；冻结 3 session×32 轮片段索引；跑零训练 smoke。**零 check/final。**
+
+**2. 读数**：父为**原生核心**（config `d=32/groups=2/units=12/pixel-salience/record_organ`，**229 张量**：`native_w/r/p/q/k/v`、字节头、actor/critic 等）；RouteB 为 **19 张量**（`units.r/p/w/c/eta/b`、`query`、`state_mix`、`readout`）；**共享参数名 0**、映射 **absent** ⇒ **`candidate_mapping_missing`**。片段索引冻结：96 轮、五类 8/8/6/4/6、`rounds_sha256=271d9082…`；smoke 段落解析与 capsule schema 可运行（1.89 CPU）。
+
+**3. 判读**：按路径备案 D-20261114-01 §3.1，无经验证映射的跨图迁移**不得伪称同一主体连续成长**。22.8 S2 因此在「B 父同主体」表述下不可开跑；需要 owner 在三条路径中裁定：**A（推荐）** 22.8 改用 30 单位 RouteB 新主体并登记身份断点、B 父保留为独立原生核心线；B 定义原生核心→RouteB 映射并验证数值/行为保持（高研究成本、当前无证据、需新卡新 pin）；C 22.8 改用原生核心接口实现 J 任务（需重写、成本最高）。
+
+**4. 边界**：片段索引已冻结，裁定后 S2 可直接开跑；check 1 次与 final 均未动；不签 final/C/D/J/模型成型；不改写 22.5.1 判词。

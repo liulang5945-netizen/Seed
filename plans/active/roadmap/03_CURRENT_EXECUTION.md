@@ -4596,3 +4596,8 @@ G0 信用出生 [0.4688,0.6875,0.6563,0.6875,0.6250]（0.6425）；控制均值 
 ## 2026-11-20 22.8 S0 预注册（D-20261119-152，零训练、零 check）
 
 22.8 同主体联合生命片段：B 父谱系（child-20261112.pt）3 seed×3 session×32 轮，五类片段（appearance/dynamics/occlusion-conflict/correction/no-prompt）分账；门 J1 appearance≥0.60 且≥多数类+0.10、J2 dynamics≥0.45 且动作边际≥0.05、J3 纠错净益≥0.05/95%下界>0/旧保持≤0.02、J4 3/3 恢复逐位+lineage 连续、J5 no-prompt 净效用≥最强固定+0.05/空转≤0.30、J6 分账齐全；总判 verified/partial/negative；兜底 engineering_failure/budget_stop/final_not_authorized。切片 3,850 CPU（250/3,000/400/200），check 1 次、final 仅当次 R-SEAL-1。与 22.4.2b/22.6.0/22.5.1 为片段/父证据关系，不重复单卡；22.7 生长负结果不阻断。未清项：五类片段数据流冻结、新增头/通路迁移差集、3 session 恢复/lineage、曝光记录。不签 final/C/D/J/模型成型。
+
+
+## 2026-11-20 22.8 S1（D-20261119-153，`candidate_mapping_missing`，1.89 CPU，零训练零 check）
+
+读取 22.5.1 B 父 child-20261112.pt：原生核心 config d=32/groups=2/units=12/pixel-salience/record_organ、229 张量（native_w/r/p/q/k/v、字节头、actor/critic 等）；22.x 任务面 RouteBGraph 19 张量（units.r/p/w/c/eta/b、query、state_mix、readout）；共享参数名 0、映射 absent ⇒ candidate_mapping_missing。片段索引已冻结：3 session×32 轮=96 轮、五类 8/8/6/4/6、rounds_sha256=271d9082…；smoke 段落解析/capsule 可运行。判读：按路径备案无映射不得伪称同主体 ⇒ S2 在『B 父同主体』下不可开跑；需 owner 裁定 A（推荐：改 30 单位 RouteB 新主体并登记身份断点、B 父保留独立原生死线）/B（定义映射，高成本）/C（原生核心重写接口）。片段索引已冻结，裁定后可直接开跑；check 1/final 未动；不签 final/C/D/J/模型成型。
