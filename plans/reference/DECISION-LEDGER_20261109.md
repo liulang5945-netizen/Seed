@@ -6838,3 +6838,16 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **3. 门**：K1 三类 fit **≥0.80（3 seed 逐 seed）**；K2 后训 S2 后 S1 损伤 ≤0.02、后训 S3 后 S1/S2 损伤 ≤0.02；K3 3/3 capsule 恢复 diff ≤1e-10、lineage 连续。总判 `precondition_ready/partial/absent`；兜底 `budget_stop`。
 
 **4. 预算与边界**：3 seed×13,956 步、**≤1,500 CPU**、零 check/final；新 pin 拟 `run_s2_23_0_precondition_20261120.py`；依赖 23 准入（D-20261119-161 待裁四项），**未准入不运行**；不签 23 通过/final/C/D/J/模型成型。
+
+
+### D-20261119-163 23 S0 预注册：中文与多世界组合泛化（设计，零训练、零 check）
+
+**1. 动作**：写 [23 S0 预注册](../reference/DESIGN-TAIJI_U2_23_S0_COMPOSITION_20261120.md)：唯一目标＝在 22.8 同一主体上证明「关系读取＋最多 2 步组合＋中文内容/来源/时间联合表达」可泛化到未见措辞/关系方向/组合，并对照等算力强基线、保持 23.0 的 ≥3 旧技能 ≤0.02。契约照 §4.2：每世界 train 512/fit 128/check 128/final 128（2,688 world），三轴交叉留出；check ≤2、final ≤1。
+
+**2. 组件**：复用 `first_a_support_22_5_v2.generate_examples`、`u2_evidence_read.py`、`u2_joint_tokens.py`、`native_composition_fixture.py`；拟新增 `taiji/native_composition.py`；辅助头只训练期用、评估前摘除。23.1 全历史 oracle **≥0.95**（否则 engineering_failure）。
+
+**3. 子卡与门**：23.1 数据/可辨性（oracle ≥0.95、无泄漏）；23.2 2 跳读取（增益 ≥0.05、95% LB>0、3 seed 同向；跨单位 vs 直接查询消融差 ≥0.05）；23.3 中文联合生成（全分母 Q≥0.80、来源/时间 ≥0.80、摘头掉幅 ≤0.05）；23.4 反馈置换（净益 ≥0.05、旧技能保持 ≤0.02）；23.5 等 CPU/FLOPs GRU/TF（≤10%）。总判 `composition_verified/partial/negative`。
+
+**4. 预算切片（建议待裁）**：23.0 1,500＋23.1 3,000＋23.2 8,000＋23.3 12,000＋23.4–23.5 10,000＝**34,500**（<48,000 首窗帽）；check ≤2、final ≤1（final 仅当次授权，否则 final_not_authorized）。
+
+**5. 负出口**：`language_scope_insufficient`（无来源/背模板/2 跳增益<0.05 且等算力基线不劣）；`composition_partial`；`composition_negative`；`engineering_failure`；`budget_stop`。依赖 23 准入与 23.0 `precondition_ready`；未准入不运行；不签 23 通过/final/C/D/J/模型成型。
