@@ -280,3 +280,7 @@ HEADS=9 跨会话：旧 A–H 全部 retention drop 0.0，新 I（颜色 parity�
 ## 59. 严格写回控制（D-20261119-114，partial；对照污染披露）
 
 平衡数据＋invalid 标记＋滚动置换 shuffled：oracle/自写回 1.0、零写回 0.56–0.66、necessity✓，但 shuffled 0.54–0.68 仍有 2/3 seed>0.55 ⇒ partial。**归因**：`build_partition` 方向由 seed 奇偶决定、配对取相邻行 → 相邻方向确定性交替，滚动/随机写回仍与 r2 方向系统相关，对照被污染（非机制证据亦非反证）。后继：配对前打乱行序或方向全局随机置换后重建 same、控制门 0.5±0.05、新 pin 零 check ≤150 CPU；通过前 D-112 原判维持。
+
+## 60. 去污染严格写回控制通过（D-20261119-115，有界 verified）
+
+平衡 1:1＋invalid 标记＋配对前打乱行序＋独立置换 shuffled：oracle/自写回 1.0、零写回 0.492–0.523、shuffled 0.500–0.516（≤0.55）、necessity ✓ ⇒ `working_memory_writeback_ready`（49.14 CPU）。**只有正确写回带来满分**，零写回/shuffled 均≈0.5 ⇒ D-114 对照污染归因获证；「显式工作记忆写回」升级为平衡＋严格控制下有界 verified。边界：单主体、二分类两步、手工注入写回（39–40＋invalid 41）；不等于一般递归/顺序推理。

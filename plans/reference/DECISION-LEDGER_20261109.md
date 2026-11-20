@@ -6273,3 +6273,14 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **3. 判据失败归因（披露）**：滚动置换后 shuffled 仍高于 0.5，说明**对照本身被数据构造污染**——`build_partition` 的 `direction = +1 if seed % 2 == 0 else −1`，配对取相邻行，方向在相邻对间有确定性交替；滚动/随机化写回仍与 `r2` 的方向存在系统相关，因此 shuffled 臂系统性高于机会。**这不是写回机制的证据，也不是反证**，而是**对照设计缺陷**。
 
 **4. 后继条件**：① 配对前**打乱行序**（消除相邻方向交替相关性），再做频次匹配的 shuffled 对照；② 或把方向标签做**全局随机置换**并在置换后重新构造 `same`；③ 重新预注册控制门（shuffled 必须落在 0.5±0.05）、新 pin、零 check、价 ≤150 CPU。通过后把平衡＋严格控制版本签为有界 verified；在此之前 D-112 的不平衡版原判维持。
+
+
+### D-20261119-115 去污染严格控制通过：`working_memory_writeback_ready`（平衡＋invalid＋随机置换对照；49.14 CPU）
+
+**1. 动作**：新增 [`probe_s2_writeback_decon_20261120.py`](../../scripts/training/probe_s2_writeback_decon_20261120.py)：在 D-114 基础上**配对前随机打乱行序**（消除 `build_partition` 方向奇偶与相邻配对的系统相关），shuffled 控制改为**独立随机置换的真实方向**；平衡 1:1、invalid 标记保留。3 seed、零 check。
+
+**2. 读数**（3 seed 全过）：`same_rate=0.5`；direction `1.0`；oracle `1.0`；**自写回 `1.0`**；**零写回 `0.4922/0.5234/0.4922`**（增益 ≈0.48–0.51 ≥0.15 ✓）；**shuffled `0.5156/0.5/0.5`（≤0.55 ✓，回到机会水平）**；necessity ✓ ⇒ **`working_memory_writeback_ready`**。
+
+**3. 判读**：**去污染后对照干净**——在平衡分布、invalid 标记与独立置换控制下，**只有正确写回带来满分**（self/oracle 1.0），零写回与 shuffled 均≈0.5。这补上了 D-113/114 的控制缺陷，把「**显式工作记忆写回**」从「不平衡披露下的有界 verified」升级为**平衡＋严格控制下的有界 verified**；D-114 的对照污染归因得到证实（打乱配对后 shuffled 即回落到 0.5）。
+
+**4. 边界**：单主体、二分类两步任务、显式写回通道（手工注入特征维 39–40＋invalid 41）；不等于一般顺序推理/递归发展（D-102/D-108 仍 negative），不改变任务轴 `fit_face_only` 与 check②。

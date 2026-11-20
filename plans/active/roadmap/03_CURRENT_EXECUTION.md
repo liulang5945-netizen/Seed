@@ -4411,3 +4411,8 @@ UnitScan 忠实重测：tick1 0.625/0.5417/0.625（中间信用门过）；tick2
 ## 2026-11-20 严格写回控制（D-20261119-114，`partial`，48.33 CPU）
 
 平衡数据＋invalid 标记（41 维）＋shuffled 改为滚动置换真实方向：oracle 1.0、自写回 1.0、零写回 0.6016/0.5625/0.6641、necessity✓；shuffled 0.6641/0.5391/0.6797 仍 2/3 seed>0.55 ⇒ partial。归因（披露）：对照被数据构造污染——build_partition 的 direction 由 seed 奇偶决定、配对取相邻行，方向在相邻对间确定性交替，滚动/随机写回仍与 r2 方向系统相关，shuffled 系统性偏高；非写回证据亦非反证。后继：配对前打乱行序、或方向全局随机置换后重建 same、重新预注册控制门（0.5±0.05），新 pin 零 check ≤150 CPU；通过前 D-112 原判维持。
+
+
+## 2026-11-20 去污染严格控制通过（D-20261119-115，`working_memory_writeback_ready`，49.14 CPU）
+
+平衡 1:1＋invalid 标记＋配对前打乱行序＋独立随机置换 shuffled：same_rate 0.5；direction 1.0；oracle 1.0；自写回 1.0 vs 零写回 0.4922/0.5234/0.4922（增益≈0.48–0.51）；shuffled 0.5156/0.5/0.5≤0.55（回机会）；necessity✓ ⇒ working_memory_writeback_ready。判读：去污染后对照干净——只有正确写回带来满分，零写回/shuffled 均≈0.5；D-114 对照污染归因获证（打乱配对后 shuffled 回落）。升级为平衡＋严格控制下有界 verified；边界：单主体/二分类两步/手工注入写回，不等于一般递归，不改任务轴与 check②。
