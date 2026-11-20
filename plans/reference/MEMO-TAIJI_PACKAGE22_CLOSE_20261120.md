@@ -443,3 +443,7 @@ B 父 `child-20261112.pt` 为原生核心（config d=32/groups=2/units=12/pixel-
 ## 97. 22.8S2b 纠错参数隔离（D-20261119-156，correction_isolation_verified，K2 弱检验披露）
 
 30 单位 RouteB 先训 appearance 基座（3 session×32 轮×8 步），冻结全部基座参数并清空残留梯度；head_old/head_correct 独立读出，旧标签 200 步、纠正子集翻转标签 200 步。读数：纠正 0.0→0.500/0.125/0.125（K1✓）；旧头 0.0417→0.0417（损伤 0.0，K2✓ 但旧头停在机会线、旧能力未获有意义检验）；冻结单位梯度 0、两头有梯度、capsule 恢复 diff 0.0（K3✓）⇒ `correction_isolation_verified`（19.77 CPU、零 check）。判读：参数隔离下纠正写入可学且不改变冻结基座（修复 S2 共享参数致旧损伤的机制方向）；但『纠错与保持同时成立』未获有意义检验，不得这样写。22.8 分账：J2/J4/J6 有界、J3 partial-positive、J1/J5 range-limited negative、整体仍 partial，不签 joint_life_segment_verified；check 1/final 未动。后继：新卡先让旧头达判据（≥0.40）再纠正复测保持；不事后加步数；J1/J5/occlusion 按归因卡另立 pin。
+
+## 98. 22.8S2b2 有意义保持卡（D-20261119-157，old_head_not_learnable）
+
+先让旧头在旧子集达到判据≥0.40（最多1200步）再施加纠正复测保持。读数：旧头 1200 步后 0.0833/0.0417/0.0417（机会线 0.042），未达判据 ⇒ `old_head_not_learnable`；纠正头未训练（不构成纠失败）；K3 仍成立（冻结单位梯度 0、恢复 diff 0.0）；19.61 CPU、零 check。判读：旧头在冻结的 4 维 direct query 上学不出 18 类旧子集映射，结合 S2 J1 appearance 0.125–0.188，判基座太弱（每 session≈192 步）⇒ **J3 有意义保持以 J1 剂量修复为前提**，S2b 的 partial-positive 保持有效但不能升级为「纠错与保持同时成立」。22.8 分账：J3 维持 partial-positive；J1 升级为 J3 前置；整体仍 partial。后继按序：22.8J1 剂量卡（≤400 CPU、目标 ≥0.60 且 ≥多数类+0.10）→ 重跑 J3b（≤200）→ J5 本阶段不重试/occlusion 低优先 → 22.8.4 无条件全局收束。check 1/final 未动；不签 final/C/D/J/模型成型。

@@ -6764,3 +6764,16 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **4. 22.8 分账更新**：J2/J4/J6 维持有界；J3 由纯失败改为 **partial-positive（参数隔离纠正可学 K1/K3＋旧保持未获有意义检验）**；J1（剂量不足）/J5（固定策略）维持 range-limited negative；22.8 整体仍 **partial**，不签 `joint_life_segment_verified`；check 1/final 未动。
 
 **5. 后继**：若要让 J3 完整成立，需新卡先让旧头达到判据（如 ≥0.40）再施加纠正、复测保持；不事后加步数凑线。J1 剂量、J5 固定策略、occlusion 非退化按归因卡另立新 pin。不签 final/C/D/J/模型成型。
+
+
+### D-20261119-157 22.8S2b2 有意义保持卡：`old_head_not_learnable`，J1 剂量成为 J3 前置（19.61 CPU，0 check）
+
+**1. 动作**：新增 [`run_s2_22_8b2_retention_20261120.py`](../../scripts/training/run_s2_22_8b2_retention_20261120.py) 与 [结果卡](../reference/RESULT-TAIJI_U2_22_8S2B2_RETENTION_20261120.md)。先让旧头在旧子集达到判据 ≥0.40（最多 1,200 步），再施加纠正并复测保持；达不到判据则记 `old_head_not_learnable`，不把 0 损伤当通过。3 seed、零 check/final。
+
+**2. 读数**：旧头 1,200 步后准确率 **0.0833/0.0417/0.0417**（机会线 0.042），**未达 0.40** ⇒ `old_head_not_learnable`；纠正头未训练（不构成纠失败）；K3 工程项仍成立（冻结单位梯度 0、恢复 diff 0.0）；19.61 CPU。
+
+**3. 判读**：旧头在冻结的 4 维 direct query 上无法学出 18 类旧子集映射，结合 S2 J1 appearance 仅 0.125–0.188，可判**基座太弱**（每 session 8 轮×8 步≈192 步），direct 未携带足够 joint24 信息。因此 **J3 的「有意义保持」以 J1 剂量修复为前提**：基座未学会 appearance 前不存在可保持的旧能力；S2b 的 partial-positive（纠正可学、不写冻结基座）保持有效，但不能升级为「纠错与保持同时成立」。
+
+**4. 22.8 分账**：J3 维持 partial-positive（K1/K3；旧保持未获有意义检验），本卡只把「为何不能检验」取证到账；J1 剂量卡升级为 J3 前置；22.8 整体仍 partial；check 1/final 未动；不签 final/C/D/J/模型成型。
+
+**5. 后继（按序）**：①`22.8J1` appearance 剂量/课程（≤400 CPU、零 check，目标 ≥0.60 且 ≥多数类+0.10）；②若通过→重跑 J3b（≤200 CPU）；③J5 本阶段不重试；occlusion 低优先；随后进入 22.8.4 无条件全局收束。
