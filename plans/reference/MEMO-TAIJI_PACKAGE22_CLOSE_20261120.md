@@ -236,3 +236,7 @@ HEADS=9 跨会话：旧 A–H 全部 retention drop 0.0，新 I（颜色 parity�
 ## 48. 会话收口报告 v4（D-20261119-103，零训练）
 
 九轴终值定稿：engineering/task/learning/retention/physical/lifetime/uncertainty 有界或范围受限 verified；autonomous_choice negative；recursive_development negative（两路线）；mature_growth：通路级机制有界 verified、单元级收益未建立、单元级分化 partial。规模成长分项不混写（单元级有效功能未建立）。剩余方向优先级：check② 决策＞顺序计算式递归/显式循环＞autonomous_choice 在线闭环＞共享单元分裂整合＞真机/多动力学＞100 会话/24h＞22.8/23–30。目标未完成。
+
+## 49. 顺序计算式递归设计草案（D-20261119-104，零训练）
+
+任务改为**两步动作序列最终位置预测**（bin1=r1.final_bin；bin2=bin1+(r2.final_bin−r2.current_bin)）：tick1 看 r1 预测中间桶、tick2 看 r2 预测最终桶、状态跨 tick 保留；单 tick 基线只看 r2 且位置代理清零。四门：序列 acc(bin2)≥0.55 且比单 tick 高≥0.10、shuffled 顺序低≥0.10、tick1 acc(bin1)≥0.50、tick2 换无关样本≤0.45。价 ≤200 CPU、3 seed、零 check。与 D-102（重复输入无深度收益）、D-50（结构细化负）明确区分：每 tick 新信息且必须携带中间状态。

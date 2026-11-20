@@ -4356,3 +4356,8 @@ HEADS=9：…→s9 颜色 parity（2 类派生）；3 seed 全过：inheritance 
 ## 2026-11-20 会话收口报告 v4（D-20261119-103，零训练）
 
 九轴终值：engineering verified；task verified(fit_face_only，check② 未读、A 维持/B 零成本前置已冻结)；learning 路由 verified＋通路级新能力有界 verified（3→9 任务）/内容积累 uncovered；retention fit 面 verified＋通路隔离逐位保持（drop 0.0）；autonomous_choice negative；mature_growth 结构 verified＋通路级新增/回收/互不干扰/可逆停用有界 verified，单元级收益未建立、单元级分化 partial；recursive_development negative（重复输入 D-102＋结构细化 D-50，顺序计算/显式循环 uncovered）；physical_transfer 有界 verified（推/位置桶）、碰撞/真机 uncovered；lifetime 有界 verified（≥3 会话、出生继承、休眠退役唤醒、通路跨会话新增回收）；uncertainty_expression 有界 verified。规模成长分项：单位/连接/状态/通信有机制证据，有效功能单元级未建立、通路级有界成立（不混写）。剩余方向优先级：check②决策＞顺序计算式递归/显式循环＞autonomous_choice 在线闭环＞共享单元分裂整合＞真机/多动力学＞100会话/24h＞22.8/23–30。零 check/final。
+
+
+## 2026-11-20 顺序计算式递归设计草案（D-20261119-104，零训练）
+
+两步动作序列最终位置预测：bin1=r1.final_bin、bin2=bin1+(r2.final_bin−r2.current_bin)；tick1 看 r1 预测 bin1、tick2 看 r2 预测 bin2，状态跨 tick 保留；单 tick 基线只看 r2 且位置代理清零。四门：序列 acc(bin2)≥0.55 且比单 tick 高≥0.10；shuffled 顺序低≥0.10；tick1 acc(bin1)≥0.50；tick2 换无关样本≤0.45。3 seed、零 check、价≤200 CPU；全过记 sequential_recursion_ready 有界、部分 partial、全负停止。与 D-102 重复输入、D-50 结构细化明确区分：每 tick 新信息且必须携带中间状态。
