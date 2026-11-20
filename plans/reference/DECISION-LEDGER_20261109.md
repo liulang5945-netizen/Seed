@@ -6864,3 +6864,18 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **4. 出口**：`data_contract_frozen`（C1–C5 全过）→ 23.2；失败 `data_contract_invalid` / `engineering_failure`。复用 `first_a_support_22_5_v2.py`（Q1 不改）、`u2_task_episode.py`（只读）、`native_composition_fixture.py`（只读参考）；拟新增 `taiji/native_composition.py` 与 `scripts/training/run_s2_23_1_20261120.py`（23.1 冻结后）。
 
 **5. 边界**：零训练、零 check；check/final 生成到封存路径、只记 digest，首次读取即扣；依赖 23 准入与 23.0 `precondition_ready`；未准入不运行；不签 23 通过/final/C/D/J/模型成型。
+
+
+### D-20261119-165 23.0 前置卡 `precondition_partial`：三类技能均可学、顺序学习严重遗忘（209.09 CPU，0 check）
+
+**1. 授权**：按常设授权把 23 准入保守落为「仅 23.0 前置卡先行」（≤1,500 CPU、零 check）；主窗（34,500 CPU、check≤2/final≤1）仍待 owner 明示授权。owner 可回溯修订。
+
+**2. 动作**：新增 [`run_s2_23_0_precondition_20261120.py`](../../scripts/training/run_s2_23_0_precondition_20261120.py) 与 [结果卡](../reference/RESULT-TAIJI_U2_23_0_PRECONDITION_20261120.md)。30 单位 RouteB＋三头；S1 appearance 1,152 步→S2 dynamics 2,000 步→S3 occlusion 非退化 1,500 步；共享单位不重置、独立头、优化器仅更新共享单位＋当前头；3 seed、零 check。
+
+**3. 读数**：K1 **✓**——S1 0.9766/0.9297/0.8281、S2 0.8750/0.8359/0.8594、S3 1.0000（全 ≥0.80）；K2 **✗**——顺序后 S1 损伤 **0.8359/0.8984/0.7422**、S2 损伤 0.4688/0.3828/0.2578；K3 ✓（3/3 恢复 diff 0.0）；209.09 CPU。
+
+**4. 判读**：三类技能在 30 单位主体上**都能学会**（旧技能门不是能力问题）；朴素顺序学习**灾难性遗忘**（共享单位被覆盖，冻结旧头也救不回），与 D-72/73、22.8 J3 方向一致。按预注册**不**改用联合训练绕过保持，因此「三技能同时存在」在本卡未成立；23 旧技能门不能按「顺序学习后仍保持」满足。
+
+**5. 后继选项**：**A（推荐）** 新卡 `23.0b` 联合训练三技能父（≤600 CPU，门 K1 三类 ≥0.80、K3 恢复；23 只测后续学习不伤父技能）；B `23.0c` 保持机制下顺序习得（损伤 ≤0.02，中高成本，受 4 维 direct 限制风险）；C 23 缩门为 2/1 类（偏离 MAINLINE ≥3 类）。建议 A，B 另立不阻塞 23。
+
+**6. 边界**：不签 23 通过/final/C/D/J/模型成型；不改包 22 判词；主窗仍待 owner 预算与 check/final 授权；零 check/final。

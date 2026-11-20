@@ -1,0 +1,77 @@
+{
+  "schema": "taiji-u2-23-0-precondition-v1",
+  "card": "23.0 precondition: three old skills on one RouteB subject",
+  "created_utc": "2026-11-20T08:29:51.759655+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      20261120,
+      20261121,
+      20261122
+    ],
+    "steps": {
+      "s1": 1152,
+      "s2": 2000,
+      "s3": 1500
+    },
+    "batch": 32,
+    "target": 0.8,
+    "retention_max": 0.02
+  },
+  "rows": [
+    {
+      "seed": 20261120,
+      "s1": 0.9765625,
+      "s1_after_s2": 0.1796875,
+      "s1_after_s3": 0.140625,
+      "s2": 0.875,
+      "s2_after_s3": 0.40625,
+      "s3": 1.0,
+      "s1_damage": 0.8359375,
+      "s2_damage": 0.46875,
+      "recovery_diff": 0.0
+    },
+    {
+      "seed": 20261121,
+      "s1": 0.9296875,
+      "s1_after_s2": 0.328125,
+      "s1_after_s3": 0.03125,
+      "s2": 0.8359375,
+      "s2_after_s3": 0.453125,
+      "s3": 1.0,
+      "s1_damage": 0.8984375,
+      "s2_damage": 0.3828125,
+      "recovery_diff": 0.0
+    },
+    {
+      "seed": 20261122,
+      "s1": 0.828125,
+      "s1_after_s2": 0.140625,
+      "s1_after_s3": 0.0859375,
+      "s2": 0.859375,
+      "s2_after_s3": 0.6015625,
+      "s3": 1.0,
+      "s1_damage": 0.7421875,
+      "s2_damage": 0.2578125,
+      "recovery_diff": 0.0
+    }
+  ],
+  "gates": {
+    "k1_three_skills": true,
+    "k2_retention": false,
+    "k3_identity": true
+  },
+  "verdict": "precondition_partial",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "optimizer_steps": 13956
+  },
+  "cost": {
+    "cpu": 209.09
+  }
+}
