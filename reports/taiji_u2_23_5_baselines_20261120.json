@@ -1,0 +1,179 @@
+{
+  "schema": "taiji-u2-23-5-baselines-v1",
+  "card": "23.5 equal-compute GRU/Transformer baselines",
+  "created_utc": "2026-11-20T10:15:15.968596+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      20261120,
+      20261121,
+      20261122
+    ],
+    "steps": 1500,
+    "batch": 32,
+    "noninferior_margin": 0.05
+  },
+  "rows": [
+    {
+      "seed": 20261120,
+      "arms": {
+        "u2": {
+          "fit": 0.35546875,
+          "params": 1932,
+          "flops": 11592.0,
+          "cpu": 1.52
+        },
+        "gru": {
+          "fit": 0.32421875,
+          "params": 1948,
+          "flops": 4200.0,
+          "cpu": 1.55
+        },
+        "transformer": {
+          "fit": 0.2734375,
+          "params": 3020,
+          "flops": 12840.0,
+          "cpu": 2.84
+        }
+      },
+      "retention": {
+        "baseline": {
+          "s1": 0.984375,
+          "s2": 0.859375,
+          "s3": 1.0
+        },
+        "after": {
+          "s1": 0.984375,
+          "s2": 0.859375,
+          "s3": 1.0
+        },
+        "damage": {
+          "s1": 0.0,
+          "s2": 0.0,
+          "s3": 0.0
+        }
+      }
+    },
+    {
+      "seed": 20261121,
+      "arms": {
+        "u2": {
+          "fit": 0.328125,
+          "params": 1932,
+          "flops": 11592.0,
+          "cpu": 1.14
+        },
+        "gru": {
+          "fit": 0.29296875,
+          "params": 1948,
+          "flops": 4200.0,
+          "cpu": 1.12
+        },
+        "transformer": {
+          "fit": 0.32421875,
+          "params": 3020,
+          "flops": 12840.0,
+          "cpu": 2.05
+        }
+      },
+      "retention": {
+        "baseline": {
+          "s1": 0.9921875,
+          "s2": 0.859375,
+          "s3": 1.0
+        },
+        "after": {
+          "s1": 0.9921875,
+          "s2": 0.859375,
+          "s3": 1.0
+        },
+        "damage": {
+          "s1": 0.0,
+          "s2": 0.0,
+          "s3": 0.0
+        }
+      }
+    },
+    {
+      "seed": 20261122,
+      "arms": {
+        "u2": {
+          "fit": 0.34765625,
+          "params": 1932,
+          "flops": 11592.0,
+          "cpu": 1.12
+        },
+        "gru": {
+          "fit": 0.26953125,
+          "params": 1948,
+          "flops": 4200.0,
+          "cpu": 1.12
+        },
+        "transformer": {
+          "fit": 0.26953125,
+          "params": 3020,
+          "flops": 12840.0,
+          "cpu": 2.05
+        }
+      },
+      "retention": {
+        "baseline": {
+          "s1": 0.9921875,
+          "s2": 0.875,
+          "s3": 1.0
+        },
+        "after": {
+          "s1": 0.9921875,
+          "s2": 0.875,
+          "s3": 1.0
+        },
+        "damage": {
+          "s1": 0.0,
+          "s2": 0.0,
+          "s3": 0.0
+        }
+      }
+    }
+  ],
+  "u2_fit": [
+    0.35546875,
+    0.328125,
+    0.34765625
+  ],
+  "gru_fit": [
+    0.32421875,
+    0.29296875,
+    0.26953125
+  ],
+  "transformer_fit": [
+    0.2734375,
+    0.32421875,
+    0.26953125
+  ],
+  "gap_vs_strongest": [
+    0.03125,
+    0.00390625,
+    0.078125
+  ],
+  "mean_gap": 0.037760416666666664,
+  "cpu_ratio_gru_over_u2": 1.0026455026455026,
+  "flop_ratio_gru_over_u2_estimated_linear_only": 0.36231884057971014,
+  "cpu_ratio_transformer_over_u2": 1.8359788359788358,
+  "gates": {
+    "noninferior": true,
+    "near_equal_compute_gru": true,
+    "retention": true
+  },
+  "verdict": "baseline_comparison_verified",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 216.02
+  }
+}
