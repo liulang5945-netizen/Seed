@@ -372,3 +372,7 @@ oracle 改教师强制（真实 d1 one-hot×2 写槽、单独训练 1,500 步含
 ## 82. 会话收口报告 v9（D-20261119-138，零训练）
 
 递归/记忆槽定稿：重复输入 negative、顺序两步 negative、两步写回有界 verified、显式循环 partial（组合通道）、专用记忆槽 partial（单通道充分性成立、oracle 0.889–0.944 差门）。九轴终值：工程/任务 verified（check② 未读）；学习 routing＋通路新增有界/内容积累 uncovered；保持 fit-face＋通路按位一致；自动选择三段式；成熟生长结构＋通路级有界、单元级分化 range-limited negative；递归两形态负＋写回有界＋循环/记忆槽 partial；物理有界/碰撞 uncovered；寿命有界；不确定性有界。剩余推进只依赖 owner 裁定项；已负轴停止同范围。
+
+## 83. 给 owner 的状态简报 v2（D-20261119-139，零训练）
+
+一页式简报（[MEMO-TAIJI_STATUS_BRIEF_20261120.md](../reference/MEMO-TAIJI_STATUS_BRIEF_20261120.md)）：8 项已完成有界证据、7 轴负结果收口、可裁 A–E（A 维持 fit_face_only；B 暂不开放；C 延后；D 不改帽；E 已按常设授权完成首卡）、无裁定安全下一步（冻结 B 前置不运行、新 pin 组合通道/更强 oracle ≤250 CPU、仿真多动力学可行性）、纪律声明。待裁汇总顶部已链接。
