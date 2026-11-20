@@ -312,3 +312,7 @@ D-119 实测（相关 0.98–0.99、可互替、合并无损）＋D-86/71 分析
 ## 67. 在线闭环 UCB1（D-20261119-123，negative 但前进）
 
 24 训练/8 留出世界、部分观测 64 分箱、7 策略、bandit σ0.05、UCB1、8 epoch：online 0.597/0.581/0.591；**beats_wait ✓**（wait −0.15；+0.73–0.75）、**learning ✓**（遗憾 0.468→0.258 等）、**diversity ✓**；**beats_best_fixed ✗**（best fixed 0.84，需 ≥0.79）⇒ `autonomous_choice_online_absent`。判读：在线学习成立（显著超等待与随机 0.47、遗憾持续下降），失败在「64 分箱＋每箱样本少」的探索-利用不足；比 D-60 前进（超等待/随机）但门不过。后继：分箱 8–16、回合 16–24、跨箱共享或 Thompson；再失败停止并记 `policy_gain_absent`（第三次）。
+
+## 68. 在线选择 v2（D-20261119-124，`policy_gain_absent` 第三次，轴收口）
+
+分箱 12/回合 16/c=2/pooled 先验：online 0.742/0.835/0.738（v1 0.58–0.60 显著提升）；beats_wait✓、diversity✓；beats_best_fixed✗（需 all ≥0.79，seed1 0.835 达标、seed0/2 未达）、learning✗（降 0.032–0.045 差门一点）⇒ absent。三次尝试（D-60/D-123/本条）一致：C 池上策略无法稳定超最佳固定 0.84；按预注册出口**停止同范围**，`autonomous_choice` 维持 **negative（三次独立尝试）**。后续须换环境（更大池/更宽策略集/真实反馈）或换问题（信用衰减下策略切换），新设计预注册；否则 range-limited negative 保持。

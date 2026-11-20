@@ -4451,3 +4451,8 @@ split_unit（继承+p 对半）+merge_units（参数合并不重训）：30→31
 ## 2026-11-20 在线闭环 UCB1（D-20261119-123，`autonomous_choice_online_absent`，19.80 CPU）
 
 32 世界中 24 训练/8 留出；部分观测 64 分箱、7 策略、bandit 带噪反馈（σ0.05）、UCB1 c=1.0、8 epoch。读数：online 0.5971/0.5812/0.5912；beats_wait✓（wait −0.15，+0.73–0.75）；learning✓（遗憾降 0.19–0.21）；diversity✓（4–5 策略、wait 9%）；beats_best_fixed✗（best fixed 0.84，需≥0.79）⇒ autonomous_choice_online_absent。判读：在线学习成立（显著超等待与随机 0.47、遗憾持续下降），但留出世界未超最佳固定策略；失败模式＝上下文过细（64 箱）＋每箱样本少（≈800 回合）导致探索-利用不足。比 D-60 前进（至少超等待/随机）但判据不过。后继：分箱 8–16、回合 16–24、跨箱共享先验或 Thompson 采样；新卡零 check ≤200 CPU；再失败停止并记 policy_gain_absent（第三次）。
+
+
+## 2026-11-20 在线选择 v2（D-20261119-124，`policy_gain_absent` 第三次，轴收口，19.67 CPU）
+
+12 箱/16 epoch/c=2/pooled 先验：online 0.7421/0.8354/0.7379（v1 0.58–0.60 显著提升）；beats_wait✓、diversity✓；beats_best_fixed✗（需 all≥0.79，seed1 0.835 达标 seed0/2 未达）；learning✗（遗憾降 0.032–0.045，差 0.05 门一点）⇒ absent。判定与收口：三次尝试（D-60 离线、D-123 v1、本条 v2）一致显示 C 池上策略无法稳定超最佳固定 0.84；最好成绩 0.74–0.84（seed1 追平）、显著优等待与随机、在线在学，但判据不允许以接近/部分 seed 达标签 verified ⇒ 按预注册出口停止同范围，autonomous_choice 维持 negative（三次独立尝试）。后续条件：换更大世界池/更宽策略集/真实后果反馈或换问题（信用衰减下策略切换），新设计新 pin 预注册；否则 range-limited negative 保持。

@@ -1,0 +1,74 @@
+{
+  "schema": "taiji-u2-online-choice-v1",
+  "card": "online UCB1 with coarser bins, more episodes and a pooled prior",
+  "created_utc": "2026-11-20T01:34:05.884437+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "variant": "bins=12, epochs=16, c=2.0, pooled prior",
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "train_worlds": 24,
+    "heldout_worlds": 8,
+    "epochs": 16,
+    "noise": 0.05,
+    "actions": 7,
+    "gates": "online>=best_fixed-0.05; online>=wait+0.10; regret_last<=regret_first-0.05; actions>=3 & wait<=0.8"
+  },
+  "results": [
+    {
+      "seed": 0,
+      "online": 0.7421,
+      "best_fixed": 0.84,
+      "wait": -0.15,
+      "random": 0.47,
+      "regret_first": 0.3325,
+      "regret_last": 0.2878,
+      "actions_used": 3,
+      "wait_share": 0.0631
+    },
+    {
+      "seed": 1,
+      "online": 0.8354,
+      "best_fixed": 0.84,
+      "wait": -0.15,
+      "random": 0.47,
+      "regret_first": 0.3313,
+      "regret_last": 0.2998,
+      "actions_used": 3,
+      "wait_share": 0.0631
+    },
+    {
+      "seed": 2,
+      "online": 0.7379,
+      "best_fixed": 0.84,
+      "wait": -0.15,
+      "random": 0.47,
+      "regret_first": 0.3455,
+      "regret_last": 0.3014,
+      "actions_used": 4,
+      "wait_share": 0.0647
+    }
+  ],
+  "gates": {
+    "beats_best_fixed": false,
+    "beats_wait": true,
+    "learning": false,
+    "diversity": true
+  },
+  "verdict": "autonomous_choice_online_absent",
+  "discipline": {
+    "optimizer_steps": 0,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 19.67
+  }
+}
