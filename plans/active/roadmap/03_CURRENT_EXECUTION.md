@@ -4806,3 +4806,8 @@ S1 中性检查：新增逐令牌活动读出（30 维单位活动、hidden 64�
 ## 2026-11-20 跨步工作记忆探针（D-20261119-194，`memory_carry_verified`（有界），217.84 CPU，0 check）
 
 5 tick（t0 目标/t1–t3 干扰/t4 查询），冻结 23.0b 父，单位状态跨 tick 携带（next_state 串联），两步注意力读出逐 tick 30 维活动；三臂 no_state（只看 t4）/replay（t0+t4 上界）/state_carry（全 5 tick）；3 seed、只读 fit、零 check。读数：no_state 0.4479、replay 0.9583、state_carry 0.9583；增益 +0.5859/+0.4766/+0.4688（3 seed 全部 ≥0.05）；G1 replay ≥0.80✓、G2 state_carry−no_state ≥0.05 且 ≥0.60✓、G3 旧三技能实测损伤 0.0✓ ⇒ memory_carry_verified。判读与披露：单位持续状态确实携带跨步信息——state_carry 与 replay 上界完全同水平（0.9583），3 个干扰 tick 后无损恢复目标位置；但仅是 5 tick/3 类/单目标的短窗工作记忆、不等于长时保持；no_state 0.4479 高于 chance 0.33（残留/偏置偏差、已披露、不影响 G2）；state_carry 与 replay 数值相同说明读出主要依赖 t0 活动（保持而非更新）；不签 26 通过、不签长时记忆、不签 final/C/D/J/模型成型。后继：拉长干扰 tick 到 10/20/40 测保持衰减边界；加目标需在干扰中更新的变体；26 信息缺口压力可在该测试床上重开（需 owner 准入）；累计本卡≈218 CPU；零 check/final。
+
+
+## 2026-11-20 记忆保持衰减探针（D-20261119-195，`memory_decay_partial`，259.47 CPU，0 check）
+
+目标 t0、干扰 G−1 tick、最后查询；G ∈ {5,10,20,40}；三臂 no_state（只看最后 tick）/replay（t0+最后，上界）/state_carry（全部串联）；特征 64 维、两步注意力读出、冻结 23.0b 父；3 seed、只读 fit、零 check。读数：carry 0.789/0.820/0.789/0.734；replay 0.956/0.971/0.893/0.888；no_state 0.424–0.495；carry−no_state +0.24～+0.40；carry−replay −0.10～−0.17（未达 ≤0.05）⇒ boundary_found✗、retention✓ ⇒ memory_decay_partial。判读与披露：单位状态承载可读跨步信息，40 干扰 tick 后仍 0.734（≫ no_state 0.495）；但比 replay 低 0.10–0.17，存在信息损失，且损失不随 gap 单调恶化（更像读出难稳定定位目标、非指数遗忘）；与工作记忆卡 0.958 不完全一致（特征维度/tick 编码不同、5-tick 0.789 vs 0.958）——实现敏感性已披露；两卡共同结论『carry ≫ no_state』、差异在『是否无损等于 replay』；不得跨卡拼出无损长时记忆；不签长时保持、不签 26 通过、不签 final/C/D/J/模型成型。后继：记忆轴可写『有界工作记忆 ≥40 tick、可读但非无损』；下一步加目标在干扰中更新的变体，或用可定位读出判断损失是否来自定位；26 信息缺口压力可在此测试床重开（需 owner 准入）；累计本卡≈259 CPU；零 check/final。

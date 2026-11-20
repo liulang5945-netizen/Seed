@@ -1,0 +1,154 @@
+{
+  "schema": "taiji-u2-wm-gap-v1",
+  "card": "working-memory retention decay over gaps 5/10/20/40",
+  "created_utc": "2026-11-20T12:46:02.756570+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      20261120,
+      20261121,
+      20261122
+    ],
+    "gaps": [
+      5,
+      10,
+      20,
+      40
+    ],
+    "train": 512,
+    "fit": 128,
+    "steps": 1500
+  },
+  "rows": [
+    {
+      "seed": 20261120,
+      "gaps": {
+        "5": {
+          "no_state": 0.453125,
+          "replay": 0.96875,
+          "state_carry": 0.78125
+        },
+        "10": {
+          "no_state": 0.40625,
+          "replay": 0.984375,
+          "state_carry": 0.828125
+        },
+        "20": {
+          "no_state": 0.4296875,
+          "replay": 0.75,
+          "state_carry": 0.765625
+        },
+        "40": {
+          "no_state": 0.5234375,
+          "replay": 0.9765625,
+          "state_carry": 0.71875
+        }
+      },
+      "retention_damage": {
+        "s1": 0.0,
+        "s2": 0.0,
+        "s3": 0.0
+      }
+    },
+    {
+      "seed": 20261121,
+      "gaps": {
+        "5": {
+          "no_state": 0.46875,
+          "replay": 0.953125,
+          "state_carry": 0.828125
+        },
+        "10": {
+          "no_state": 0.40625,
+          "replay": 0.9765625,
+          "state_carry": 0.8515625
+        },
+        "20": {
+          "no_state": 0.421875,
+          "replay": 0.9609375,
+          "state_carry": 0.84375
+        },
+        "40": {
+          "no_state": 0.46875,
+          "replay": 0.9609375,
+          "state_carry": 0.75
+        }
+      },
+      "retention_damage": {
+        "s1": 0.0,
+        "s2": 0.0,
+        "s3": 0.0
+      }
+    },
+    {
+      "seed": 20261122,
+      "gaps": {
+        "5": {
+          "no_state": 0.4921875,
+          "replay": 0.9453125,
+          "state_carry": 0.7578125
+        },
+        "10": {
+          "no_state": 0.4609375,
+          "replay": 0.953125,
+          "state_carry": 0.78125
+        },
+        "20": {
+          "no_state": 0.4765625,
+          "replay": 0.96875,
+          "state_carry": 0.7578125
+        },
+        "40": {
+          "no_state": 0.4921875,
+          "replay": 0.7265625,
+          "state_carry": 0.734375
+        }
+      },
+      "retention_damage": {
+        "s1": 0.0,
+        "s2": 0.0,
+        "s3": 0.0
+      }
+    }
+  ],
+  "means": {
+    "5": {
+      "no_state": 0.4713541666666667,
+      "replay": 0.9557291666666666,
+      "state_carry": 0.7890625
+    },
+    "10": {
+      "no_state": 0.4244791666666667,
+      "replay": 0.9713541666666666,
+      "state_carry": 0.8203125
+    },
+    "20": {
+      "no_state": 0.4427083333333333,
+      "replay": 0.8932291666666666,
+      "state_carry": 0.7890625
+    },
+    "40": {
+      "no_state": 0.4947916666666667,
+      "replay": 0.8880208333333334,
+      "state_carry": 0.734375
+    }
+  },
+  "boundary": 0,
+  "gates": {
+    "boundary_found": false,
+    "retention": true
+  },
+  "verdict": "memory_decay_partial",
+  "disclosure": "same frozen parent and readout as the working-memory card; gap is distractor ticks between target and query",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 259.47
+  }
+}
