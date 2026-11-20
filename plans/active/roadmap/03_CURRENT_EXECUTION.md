@@ -4311,3 +4311,8 @@ HEADS=7：s1 joint24→s2 动作桶→s3 推方向→s4 位置词→s5 颜色→
 ## 2026-11-20 七通路干扰矩阵（D-20261119-94，`pathway_interference_ready`，10.03 CPU）
 
 载入 7 通路最终 capsule：依次停用任一通路测 7×7 矩阵，再重新载入未改动 capsule。3 seed 全过：others_unchanged=true（其余六条 others_max_delta=0.0）；disabled_collapses=true（停用通路=常数类基线；交叉二值通路常数基线 0.75、下降恰 0.25 达门）；reenabled_exact=true（重新载入后七任务逐位恢复）⇒ pathway_interference_ready。判读：7 通路无交叉干扰、停用可逆；与 D-84/92 一致。边界：单主体/7任务/通路级；8+任务、单元级停用交叉、真机、22.8 未测；交叉任务判据余量小，后续改口径。
+
+
+## 2026-11-20 八条任务通路（D-20261119-95，`multihead7_ready`，子进程 353.77≤价360）
+
+HEADS=8：…→s8 颜色 mod 3（3 类派生）；3 seed 全过：inheritance exact（7 边界）；旧 A–G 全部 retention drop 0.0（保持门改为 all_retentions_exact 覆盖全部旧任务）；新 H 1.0/1.0/1.0≥0.50 ⇒ multihead7_ready；成本 353.77≤360 未超价。披露：D-93 七任务卡的 three_retentions_exact 门只检查 A/B/C，属门实现遗漏；其回执数据 position/color/quadrant drop 均 0.0，按同口径也应通过；本卡已修正门覆盖全部旧任务。边界：单主体/8任务/8头；F/G/H 派生标签不替代未见任务验收；9+任务、8×8干扰矩阵、共享单元分裂整合、真机、22.8 未测。
