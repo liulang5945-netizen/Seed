@@ -1,0 +1,73 @@
+{
+  "schema": "taiji-u2-online-choice-v1",
+  "card": "online UCB1 policy over the C-task pool with bandit feedback",
+  "created_utc": "2026-11-20T01:32:25.676914+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "train_worlds": 24,
+    "heldout_worlds": 8,
+    "epochs": 8,
+    "noise": 0.05,
+    "actions": 7,
+    "gates": "online>=best_fixed-0.05; online>=wait+0.10; regret_last<=regret_first-0.05; actions>=3 & wait<=0.8"
+  },
+  "results": [
+    {
+      "seed": 0,
+      "online": 0.5971,
+      "best_fixed": 0.84,
+      "wait": -0.15,
+      "random": 0.47,
+      "regret_first": 0.4678,
+      "regret_last": 0.2579,
+      "actions_used": 5,
+      "wait_share": 0.0903
+    },
+    {
+      "seed": 1,
+      "online": 0.5812,
+      "best_fixed": 0.84,
+      "wait": -0.15,
+      "random": 0.47,
+      "regret_first": 0.475,
+      "regret_last": 0.2853,
+      "actions_used": 5,
+      "wait_share": 0.0903
+    },
+    {
+      "seed": 2,
+      "online": 0.5912,
+      "best_fixed": 0.84,
+      "wait": -0.15,
+      "random": 0.47,
+      "regret_first": 0.4735,
+      "regret_last": 0.2633,
+      "actions_used": 4,
+      "wait_share": 0.0868
+    }
+  ],
+  "gates": {
+    "beats_best_fixed": false,
+    "beats_wait": true,
+    "learning": true,
+    "diversity": true
+  },
+  "verdict": "autonomous_choice_online_absent",
+  "discipline": {
+    "optimizer_steps": 0,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 19.8
+  }
+}

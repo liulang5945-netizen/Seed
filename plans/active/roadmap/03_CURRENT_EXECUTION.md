@@ -4446,3 +4446,8 @@ split_unit（继承+p 对半）+merge_units（参数合并不重训）：30→31
 ## 2026-11-20 在线闭环自主选择设计草案（D-20261119-122，零训练）
 
 32 世界×7 策略；每回合部分观测→选策略→只收所选策略带噪反馈（σ0.05）→在线更新；等待效用 0＋唤醒条件。方法：上下文分箱 UCB1；对照：固定 wait/oracle 最佳单策略/随机/D-60 离线策略。门：在线≥best-fixed−0.05；在线≥wait+0.10；后 50% 回合遗憾较前 50% 降≥0.05；≥3 策略被选且 wait≤0.8。3 seed、零 check、价≤200 CPU；全过记 autonomous_choice_online_ready 有界；门2不过重记 policy_gain_absent 并停止同范围。与 D-60 区别：离线整表 vs 在线 bandit 反馈＋部分观测＋唤醒等待。边界：32 世界仿真池，不等于真实开放世界自主性。
+
+
+## 2026-11-20 在线闭环 UCB1（D-20261119-123，`autonomous_choice_online_absent`，19.80 CPU）
+
+32 世界中 24 训练/8 留出；部分观测 64 分箱、7 策略、bandit 带噪反馈（σ0.05）、UCB1 c=1.0、8 epoch。读数：online 0.5971/0.5812/0.5912；beats_wait✓（wait −0.15，+0.73–0.75）；learning✓（遗憾降 0.19–0.21）；diversity✓（4–5 策略、wait 9%）；beats_best_fixed✗（best fixed 0.84，需≥0.79）⇒ autonomous_choice_online_absent。判读：在线学习成立（显著超等待与随机 0.47、遗憾持续下降），但留出世界未超最佳固定策略；失败模式＝上下文过细（64 箱）＋每箱样本少（≈800 回合）导致探索-利用不足。比 D-60 前进（至少超等待/随机）但判据不过。后继：分箱 8–16、回合 16–24、跨箱共享先验或 Thompson 采样；新卡零 check ≤200 CPU；再失败停止并记 policy_gain_absent（第三次）。
