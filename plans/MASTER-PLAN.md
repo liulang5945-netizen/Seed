@@ -1,5 +1,6 @@
 # MASTER-PLAN（唯一权威主线）
 
+> 文档状态：[主线] — 2026-11-20（**22.5.2 S1 等 FLOPs 配平 `parity_admissible`**：四个 GRU 候选均在带内、chosen hidden16/841步/ratio1.0001，Q2 差集落盘，D-20261119-146，最新）。
 > 文档状态：[主线] — 2026-11-20（**22.5.2 S0 预注册草案完成**：等 FLOPs 架构比较 Q1/Q2、解析配平、切片 3,500 CPU、零 check，D-20261119-145，最新）。
 > 文档状态：[主线] — 2026-11-20（**`22.5.1` 联合门正式结案：`--verify` 修正闭合为 `joint_gate_check2_pass` / `b_parent_earned`，最新**，D-20261119-144）。依 owner 指令 `"先正式结案22.5.1"`，按 `run_s2_joint_gate_20261120.py --verify`（D-13）与 22.5.0 [A 父清单](manifests/taiji_u2_22_5_0_a_parent_earned_20261119.json)（D-04）先例，执行零训练、零额外 check 读 `--verify`（`17.52 CPU`）：保持 `RUN` 原始读数与全部披露只读不改，在 `fit[:24]` 用行非均匀微扰 `delta_head.2.weight[0].add_(20.0)` 打破 `.log_softmax(-1)` 常数抵消并实测三子体保持均跌 **`23→2`（`drop=0.875 >= 0.02`）**，因果超出冻结父 **`5-5=0 <= 2`**，D 严格 `parent_a_truth` 按 3 种子中位判据乙得 **`median ub95=0.0 <= 0.02`**（并列披露 `20261110` 差 1 题 `ub=0.0208`）；`--closeout` 正式闭合 **`joint_gate_check2_pass`**，颁发 [B 父清单](manifests/taiji_u2_22_5_1_b_parent_earned_20261120.json)（主交接 `child-20261112.pt`）。**签**：`22.5.1` B 学习父正式资格（保留 S1 豁免 D-12 与 `20261110` 边界披露）。**不签**：`22.5.2` 架构优越性、`22.6+`、`C/D/J` 与 `final`。**唯一后继＝[`22.5.2` 架构比较与单位原生核心接力](MAINLINE.md#31-2252-架构比较与单位原生核心接力)**。见[正式 check② 结果卡](reference/RESULT-TAIJI_U2_22_5_1_FORMAL_CHECK2_20261120.md)与[复算报告](../reports/taiji_u2_22_5_1_formal_check2_verify_20261120.json)。
 

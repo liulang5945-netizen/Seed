@@ -399,3 +399,7 @@ owner 授权 `"授权补预算帽"` 后以同一 `criteria_sha256`（`9dd69624�
 ## 86. 22.5.2 S0 预注册（D-20261119-145，零训练、零 check）
 
 22.5.2 架构比较 S0 设计卡落盘：Q1＝等 FLOPs 下 U2 Route-B 对 GRU 基线的 fit 优势（Δ≥0.05、配对 95% 下界>0，5 seed）；Q2＝Route-A/B 唯一前向与迁移差集（文档交付）。任务＝三 tick 观测流→joint24（256/32 世界、T=3 UnitScan）；**解析 FLOPs 配平**（U2 矩阵乘＋GRU 门，反向 2×，比值 [0.90,1.10]），实测 CPU 只记账；门 G1–G4 与 `comparison_not_admitted` 兜底；切片 3,500 CPU（300/3,000/200），余 15,700 不自动花；check 额度未动。与 P3.9 的 6 tick 合成窗、64 更新、process_time 配平失败明确区分。未冻结、未运行。
+
+## 87. 22.5.2 Q2 差集与 S1 配平（D-20261119-146，parity_admissible）
+
+Q2 差集文档落盘：共享 units/输入编码/z、a；A 独有 `w_g/ell/h_readout`（H 在读出路径）；B 独有 `query/state_mix/readout`（H 仅 scratch）；读出参数不可逐值迁移、跨路线行为等价不假设、无映射须新身份。S1 解析 FLOPs 配平：GRU hidden 16/24/32/48 全部落在 [0.90,1.10]（steps 841/501/340/200，ratio 1.0001/0.9994/0.9999/1.051），chosen hidden16/841步/ratio1.0001；三臂 smoke 总价 1.44 CPU ⇒ `parity_admissible`。判读：P3.9 `compute_parity_unavailable` 由解析配平解决；S1 只证可配平。下一步 S2 行为窗（5 seed×三臂 1,200 步，帽 3,000 CPU、零 check）。

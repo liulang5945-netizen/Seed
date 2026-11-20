@@ -4561,3 +4561,8 @@ owner 授权 `"授权补预算帽"`，以同一 `criteria_sha256`（`9dd69624…
 ## 2026-11-20 22.5.2 S0 预注册（D-20261119-145，零训练、零 check）
 
 新写 DESIGN-TAIJI_U2_22_5_2_ARCH_COMPARISON_20261120.md：主问 Q1 等 FLOPs 下 U2 Route-B 对 GRU 基线的 fit 优势 ≥0.05 且 95% 配对下界 >0；次问 Q2 A/B 唯一前向与迁移差集（文档交付）。任务＝三 tick 观测流→joint24（256 训练/32 fit 世界、T=3 用 UnitScan）；三臂配对 5 seed；**等 FLOPs 配平以解析估计器为准**（U2 矩阵乘+GRU 门，反向 2×，总训练 FLOPs 比值 [0.90,1.10]），实测 CPU 只记账；门 G1 主/G2 探索/G3 工程/G4 成本与兜底 comparison_not_admitted；切片预算 3,500 CPU（300/3,000/200），余 15,700 不自动花；check 读取 0。与 P3.9 差异：真实多 tick 任务、1,200 步、解析配平、5 seed 配对 bootstrap，配平失败与架构负结果分开记账。未冻结未运行。
+
+
+## 2026-11-20 22.5.2 Q2 差集与 S1 配平（D-20261119-146，`parity_admissible`，1.44 CPU，0 check）
+
+Q2：新写 DIFF-TAIJI_U2_ROUTE_AB_20261120.md 逐源码列 A/B 唯一前向与迁移差集（共享 units/输入编码/z、a；A 独有 w_g/ell/h_readout 且 H 在读出路径；B 独有 query/state_mix/readout 且 H 仅 scratch；读出参数不可逐值迁移、行为等价不假设、无映射须新身份）。S1：新增 flops_22_5_2_20261120.py——解析 FLOPs 估计器（逐项公式、反向 2×）＋三臂 50 步 smoke；四个 GRU hidden 候选全部在 [0.90,1.10]（hidden16 steps841 ratio1.0001 chosen；24/32/48 亦在带），smoke CPU A0.16/B0.11/GRU0.03、总价 1.44；⇒ parity_admissible。判读：P3.9 的 compute_parity_unavailable 由解析配平解决，配平判据不再依赖 process_time；S1 只证可配平不证优劣。下一步 S2 行为窗（5 seed×三臂 1,200 步，帽 3,000 CPU、零 check）。

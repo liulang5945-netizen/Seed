@@ -162,6 +162,8 @@
 包 22 余项以各前卡同一谱系 `accepted_parent` 解锁（总预算口径见 [包 22 §2.9](reference/PLAN-TAIJI-CLOSED_LOOP_DEVELOPMENT_20261110.md#29-横切执行合同)，包 22 合计规划帽 `54,000 CPU / 108,000 wall`）：
 
 ### 3.1 `22.5.2` 架构比较与单位原生核心接力
+- **S1（2026-11-20，D-20261119-146）**：Q2 差集文档落盘（[DIFF-TAIJI_U2_ROUTE_AB](reference/DIFF-TAIJI_U2_ROUTE_AB_20261120.md)）；解析 FLOPs 配平 **`parity_admissible`**（GRU hidden 16/24/32/48 均在 [0.90,1.10]，chosen hidden 16、841 步、ratio 1.0001；三臂 smoke 1.44 CPU）。下一步 S2 行为窗（5 seed×三臂 1,200 步，帽 3,000 CPU、零 check）。
+
 - **S0（2026-11-20，D-20261119-145）**：预注册草案已落盘（[设计卡](reference/DESIGN-TAIJI_U2_22_5_2_ARCH_COMPARISON_20261120.md)）——主问 Q1 等 FLOPs 下 U2 Route-B vs GRU 基线（Δ≥0.05、配对 95% 下界>0），次问 Q2 A/B 唯一前向与迁移差集；**等 FLOPs 配平以解析估计器为准**（比值 [0.90,1.10]），实测 CPU 只记账；切片 3,500 CPU，check 读取 0；未冻结、未运行。
 
 - **预算（并入 `22.5`）**：计划 16,000＋余量 3,200＝**19,200 CPU** / 38,400 wall，check② `<=2`。

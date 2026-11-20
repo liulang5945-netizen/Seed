@@ -6645,3 +6645,14 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **3. 与 P3.9 的差异**：P3.9 用 6 tick 合成合法输入、64 次更新、process_time 配平失败；本卡用真实 joint24 多 tick、1,200 步、解析 FLOPs 配平、5 seed 配对与 bootstrap 区间，并把「配平不可达」与「架构负结果」分开记账。
 
 **4. 出口**：`arch_advantage_verified`／`arch_inconclusive`／`arch_negative`／`comparison_not_admitted`／`engineering_failure`／`budget_stop`。不签 22.6+、C/D/J、final、模型成型。
+
+
+### D-20261119-146 22.5.2 Q2 差集文档与 S1 等 FLOPs 配平：`parity_admissible`（1.44 CPU，0 check）
+
+**1. Q2 差集（零训练）**：写 [DIFF-TAIJI_U2_ROUTE_AB_20261120.md](../reference/DIFF-TAIJI_U2_ROUTE_AB_20261120.md)——逐源码列差：共享＝合法输入编码＋单位群（`r/p/c/eta/b/w`）＋`z/a` 递推；A 独有＝`w_g(G,8,8)`、`ell(G)`、`h_readout(8,out)`，读出经 H（H 在路径上）；B 独有＝`query(q,8)`、`state_mix(2)`、`readout(q,out)`，H 仅 scratch。迁移差集：`units.*`、输入编码、`z/a` 可逐值迁移；读出参数**不可逐值映射**，跨路线行为等价未证明且不假设；无映射须登记新身份。
+
+**2. S1 配平与 smoke**：新增 [`flops_22_5_2_20261120.py`](../../scripts/training/flops_22_5_2_20261120.py)：解析 FLOPs 估计器（逐项列公式、反向 2×、multiply-add=1 FLOP）＋三臂 50 步 smoke（U2-A/U2-B/GRU-16）。读数：**全部四个 GRU hidden 候选均在 [0.90,1.10] 带内**（hidden 16/24/32/48 对应 steps 841/501/340/200，ratio 1.0001/0.9994/0.9999/1.051）；chosen＝**GRU hidden 16、841 步、ratio 1.0001**；smoke CPU U2-A 0.16／U2-B 0.11／GRU 0.03；总价 **1.44 CPU**；三条臂前向/反向/参数化均跑通（last_loss 2.99/3.06/2.69，仅 smoke 不作学习结论）⇒ **`parity_admissible`**。
+
+**3. 判读**：**P3.9 的 `compute_parity_unavailable` 由解析配平解决**——配平判据不再依赖低分辨率 `process_time`；带内同时有 4 个候选，说明配平不是唯一解、后续可做 hidden 敏感性。S1 只证「可配平」，不证架构优劣；S2 行为窗（5 seed×三臂、1,200 步）为下一步，帽 3,000 CPU、零 check。
+
+**4. 边界**：Q2 文档不签行为；S1 smoke 不签学习；未读 check/final；22.5.2 仍未冻结执行窗。

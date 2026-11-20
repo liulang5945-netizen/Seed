@@ -1,0 +1,147 @@
+{
+  "schema": "taiji-u2-22-5-2-parity-v1",
+  "card": "22.5.2 S1 analytic FLOPs parity search and smoke",
+  "created_utc": "2026-11-20T06:18:05.639939+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "ticks": 3,
+    "batch": 24,
+    "steps_reference": 1200,
+    "parity_band": [
+      0.9,
+      1.1
+    ],
+    "criterion": "analytic training FLOPs ratio in band; measured CPU for accounting only",
+    "backward_factor": 3
+  },
+  "flops": {
+    "u2_a_per_sample_training": 24228,
+    "u2_b_per_sample_training": 20484,
+    "u2_a_breakdown": {
+      "per_tick": {
+        "input_encode (6 channels x 8x8 + projection 8x8)": 768,
+        "unit_drive x*r (N x D)": 240,
+        "unit_incoming (N x N)": 900,
+        "unit_contribution p (H x N)": 240,
+        "w_g drive (G x 8 x 8)": 384,
+        "H update (G x 8)": 48
+      },
+      "per_sample": {
+        "H mean over ticks": 144,
+        "h_readout (H x out)": 192
+      }
+    },
+    "u2_b_breakdown": {
+      "per_tick": {
+        "input_encode (6 channels x 8x8 + projection 8x8)": 768,
+        "unit_drive x*r (N x D)": 240,
+        "unit_incoming (N x N)": 900,
+        "p projection (H x N)": 240,
+        "query (q x H)": 32,
+        "readout (q x out)": 96
+      },
+      "per_sample": {}
+    },
+    "gru_breakdown": {
+      "16": {
+        "gate matmuls 3 x hidden x (input+hidden)": 3072,
+        "gate elementwise (3 x hidden)": 48,
+        "output head hidden x out": 384
+      },
+      "24": {
+        "gate matmuls 3 x hidden x (input+hidden)": 5184,
+        "gate elementwise (3 x hidden)": 72,
+        "output head hidden x out": 576
+      },
+      "32": {
+        "gate matmuls 3 x hidden x (input+hidden)": 7680,
+        "gate elementwise (3 x hidden)": 96,
+        "output head hidden x out": 768
+      },
+      "48": {
+        "gate matmuls 3 x hidden x (input+hidden)": 13824,
+        "gate elementwise (3 x hidden)": 144,
+        "output head hidden x out": 1152
+      }
+    },
+    "u2_b_total_training": 24580800
+  },
+  "candidates": [
+    {
+      "hidden": 16,
+      "steps": 841,
+      "flops_per_sample_per_step": 29232,
+      "train_flops_total": 24584112,
+      "ratio_vs_B": 1.0001,
+      "in_band": true
+    },
+    {
+      "hidden": 24,
+      "steps": 501,
+      "flops_per_sample_per_step": 49032,
+      "train_flops_total": 24565032,
+      "ratio_vs_B": 0.9994,
+      "in_band": true
+    },
+    {
+      "hidden": 32,
+      "steps": 340,
+      "flops_per_sample_per_step": 72288,
+      "train_flops_total": 24577920,
+      "ratio_vs_B": 0.9999,
+      "in_band": true
+    },
+    {
+      "hidden": 48,
+      "steps": 200,
+      "flops_per_sample_per_step": 129168,
+      "train_flops_total": 25833600,
+      "ratio_vs_B": 1.051,
+      "in_band": true
+    }
+  ],
+  "chosen": {
+    "hidden": 16,
+    "steps": 841,
+    "flops_per_sample_per_step": 29232,
+    "train_flops_total": 24584112,
+    "ratio_vs_B": 1.0001,
+    "in_band": true
+  },
+  "smoke": [
+    {
+      "route": "U2-A",
+      "params": 2500,
+      "smoke_steps": 50,
+      "last_loss": 2.9933,
+      "cpu": 0.16
+    },
+    {
+      "route": "U2-B",
+      "params": 2048,
+      "smoke_steps": 50,
+      "last_loss": 3.0579,
+      "cpu": 0.11
+    },
+    {
+      "route": "GRU-16",
+      "params": 3576,
+      "smoke_steps": 50,
+      "last_loss": 2.694,
+      "cpu": 0.03
+    }
+  ],
+  "verdict": "parity_admissible",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "optimizer_steps": 150
+  },
+  "cost": {
+    "cpu": 1.44
+  }
+}
