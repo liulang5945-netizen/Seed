@@ -1,0 +1,132 @@
+{
+  "schema": "taiji-u2-23-3-generation-v1",
+  "card": "23.3 joint content/source/time generation on the token interface",
+  "created_utc": "2026-11-20T09:33:40.313926+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      20261120,
+      20261121,
+      20261122
+    ],
+    "steps": 1500,
+    "batch": 32,
+    "content_min": 0.6,
+    "provenance_min": 0.8,
+    "aux_gap_max": 0.05
+  },
+  "rows": [
+    {
+      "seed": 20261120,
+      "arm_a": {
+        "content": 0.328125,
+        "source": 0.55078125,
+        "time": 0.59765625
+      },
+      "arm_b": {
+        "content": 0.34375,
+        "source": 0.55078125,
+        "time": 0.55078125
+      },
+      "aux_gap": 0.015625,
+      "retention": {
+        "baseline": {
+          "s1": 0.984375,
+          "s2": 0.859375,
+          "s3": 1.0
+        },
+        "after": {
+          "s1": 0.984375,
+          "s2": 0.859375,
+          "s3": 1.0
+        },
+        "damage": {
+          "s1": 0.0,
+          "s2": 0.0,
+          "s3": 0.0
+        }
+      }
+    },
+    {
+      "seed": 20261121,
+      "arm_a": {
+        "content": 0.30078125,
+        "source": 0.4609375,
+        "time": 0.5859375
+      },
+      "arm_b": {
+        "content": 0.296875,
+        "source": 0.4609375,
+        "time": 0.484375
+      },
+      "aux_gap": 0.00390625,
+      "retention": {
+        "baseline": {
+          "s1": 0.9921875,
+          "s2": 0.859375,
+          "s3": 1.0
+        },
+        "after": {
+          "s1": 0.9921875,
+          "s2": 0.859375,
+          "s3": 1.0
+        },
+        "damage": {
+          "s1": 0.0,
+          "s2": 0.0,
+          "s3": 0.0
+        }
+      }
+    },
+    {
+      "seed": 20261122,
+      "arm_a": {
+        "content": 0.359375,
+        "source": 0.515625,
+        "time": 0.55078125
+      },
+      "arm_b": {
+        "content": 0.37890625,
+        "source": 0.5390625,
+        "time": 0.48828125
+      },
+      "aux_gap": 0.01953125,
+      "retention": {
+        "baseline": {
+          "s1": 0.9921875,
+          "s2": 0.875,
+          "s3": 1.0
+        },
+        "after": {
+          "s1": 0.9921875,
+          "s2": 0.875,
+          "s3": 1.0
+        },
+        "damage": {
+          "s1": 0.0,
+          "s2": 0.0,
+          "s3": 0.0
+        }
+      }
+    }
+  ],
+  "gates": {
+    "g1_content": false,
+    "g2_provenance": false,
+    "g3_aux_gap": true,
+    "g4_retention": true
+  },
+  "verdict": "generation_bounded_negative",
+  "disclosure": "provenance labels are deterministic per seed (not read from a Chinese source phrase); Q4 rows are evaluation-only and unused for training",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 293.14
+  }
+}

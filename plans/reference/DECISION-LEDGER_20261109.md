@@ -6947,3 +6947,14 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **4. 门（有界子门，不替代 23 主门）**：G1 内容 ≥0.60（fit 128、3 seed 逐 seed）；G2 来源/时间各 ≥0.80；G3 摘头掉幅 ≤0.05；G4 旧技能损伤 ≤0.02；总判 generation_bounded_verified/partial/negative；兜底 budget_stop。23 主门 Q≥0.80 不在本卡签。
 
 **5. 预算与边界**：3 seed×1,500 步×2 臂≈600–900 CPU、帽 12,000（23.3 切片）、零 check/final；新 pin `run_s2_23_3_generation_20261120.py`；不改 23.1 合同/23.2c 判词；主窗仍待 owner 授权；不签 23 主门/final/C/D/J/模型成型。
+
+
+### D-20261119-172 23.3 中文联合生成：`generation_bounded_negative`，来源/时间标签构造缺陷披露（293.14 CPU，0 check）
+
+**1. 动作**：新增 [`run_s2_23_3_generation_20261120.py`](../../scripts/training/run_s2_23_3_generation_20261120.py) 与 [结果卡](../reference/RESULT-TAIJI_U2_23_3_GENERATION_20261120.md)。冻结 23.0b 父；23.2c 令牌接口；联合头同时输出内容（4 类）、来源（2）、时间（2）；臂 A 直接训练、臂 B 加辅助头训练后摘除；各 1,500 步、3 seed、零 check。
+
+**2. 读数**：内容 **0.3281/0.3008/0.3594**（G1 ✗ <0.60）；来源 0.55/0.46/0.52、时间 0.60/0.59/0.55（G2 ✗ ≈机会 0.50）；摘头差 0.016/0.004/0.020（G3 ✓ ≤0.05）；旧技能损伤 0.0（G4 ✓）⇒ **`generation_bounded_negative`**；293.14 CPU。
+
+**3. 关键披露（构造缺陷）**：provenance 按 `seed` 哈希确定性赋值，但输入（对象令牌＋方向查询）**不包含 seed/来源/时间信息**——模型原理上无法推出 provenance，信息量 0 bit。因此 **G2 失败不是模型负结果**，且三分之二 loss 是噪声、压低内容训练信号；本卡不把 G2 记入任何能力判词，内容 0.30–0.36 也不能单独作为 23.3 负结论。
+
+**4. 后继 23.3b（预注册要点）**：provenance 写入输入（查询向量增加来源/时间请求 one-hot 或输入含观测）；内容只用 Q2/Q3 并单列 q2/q3 与未知 precision/recall；门不变（G1 ≥0.60、G2 ≥0.80、G3 ≤0.05、G4 ≤0.02）；≤900 CPU、零 check；通过则重记 23.3 有界 verified。不签 23 主门/final/C/D/J/模型成型；主窗仍待 owner 授权；零 check/final。
