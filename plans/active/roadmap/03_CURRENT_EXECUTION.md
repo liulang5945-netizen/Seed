@@ -4671,3 +4671,8 @@ J1：30 单位 RouteB 仅 appearance、48 步/轮×8×3＝1,152 步，3 seed fit
 ## 2026-11-20 23.1 数据合同冻结（D-20261119-167，`data_contract_frozen`，244.3 CPU，零训练零 check）
 
 新增 taiji/native_composition.py 与 run_s2_23_1_contract_20261120.py；fixture taiji-23-composition-v1：896 world×3 题=2,688 条，train 1,536（Q1/Q2/Q3）、fit/check/final 各 384（Q2/Q3/Q4 或同构封存）。验收：C1 规模✓ 1,536/384/384/384；C2 三轴无泄漏✓；C3 oracle 独立重算 1.0✓；C4 分区 digest 两次一致✓；C5 中文/答案空间✓ ⇒ data_contract_frozen；digest train 5297bde6…、fit b24abb21…、check 99c50717…、final 6667dbe7…；244.3 CPU。判读：23 数据面可执行、可复现、无泄漏、oracle 真值 1.0；2,688 条与 MAINLINE 口径对齐（按 896 world×3 题实现，合同显式记录）；冻结后改动即作废须新卡；23.2 可进入实现。状态：23.0b 三技能父＋23.1 数据合同就绪；主窗 34,500 CPU、check≤2/final≤1 仍待 owner 明示授权；零训练零 check；不签 23 通过/final/C/D/J/模型成型。
+
+
+## 2026-11-20 23.2 两跳关系读取（D-20261119-168，`relation_read_partial`，233.23 CPU，0 check）
+
+重建 23.0b 三技能父并冻结；Q2/Q3 train 1,024/fit 256、符号特征 48 维；交叉单位臂（4 维 direct→MLP 4→16→4）vs 消融臂（48→16→4），各 1,200 步、3 seed。读数：跨单位 Q3 0.3281/0.3672/0.3984、直接臂 Q3 0.3828/0.3594/0.3672；Q3 增益 −0.0547/+0.0078/+0.0313（均值 −0.005，无同向正增益）；Q2 增益同样不存在；旧技能损伤 0.0（父冻结）⇒ relation_read_partial。判读：两跳读取未成立；瓶颈先在特征/任务侧（消融臂也只有 0.36–0.38，48 维把每体位置压 3 桶、需比较最近方向体，1,200 步学不动），不是单位图特有缺陷；保持 0.0 只说明冻结父未破坏。后继 23.2b：每体连续 x/y＋颜色/方向/题型 one-hot、两臂 48→32→4/1,500 步、门不变、≤800 CPU、零 check；若直接臂仍学不动则记任务不可辨并回 23.1 特征层或缩门。主窗仍待 owner 授权；不签 23 通过/final/C/D/J/模型成型。
