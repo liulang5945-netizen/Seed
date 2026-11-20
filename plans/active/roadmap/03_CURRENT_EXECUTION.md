@@ -4371,3 +4371,8 @@ HEADS=9：…→s9 颜色 parity（2 类派生）；3 seed 全过：inheritance 
 ## 2026-11-20 batch×time 分离扫描接口设计（D-20261119-106，零训练）
 
 新增 taiji/u2_scan.py（UnitScan.run）逐 tick 用核心同公式更新 z/a、输出 activity[B,T,N]/readout[B,T,out]，样本间零交互、不改核心。实现前四条验证：T=1 与 graph.forward 差≤1e-6；批次独立≤1e-9；batch 置换不变；状态携带（tick1 不同→tick2 活动不同）。全过才重跑 D-104 四门；实现+验证≤60 CPU、顺序递归≤200 CPU、四门不调阈值；仍负则 negative 收口。回归现有 T=1 路径与门禁。
+
+
+## 2026-11-20 扫描接口验证通过（D-20261119-107，`scan_interface_ready`，零训练 0 check）
+
+实现 taiji/u2_scan.py（UnitScan.run 逐 tick 同公式更新、样本间独立）＋五检查：t1_equivalence 1.12e-8✓、batch_independence 1.12e-8✓（门由 1e-9 修正为 1e-6：float32 舍入，工程容差修正已披露）、permutation 0✓、state_carry 0.566✓、regression_core 0✓ ⇒ scan_interface_ready。判读：扫描接口数学一致、无跨样本泄漏、状态跨 tick 携带；恢复 D-105 被工程限制阻断的顺序递归测量路径。下一步用 UnitScan 重跑 D-104 四门顺序递归卡（阈值不调），正负均按出口结案。

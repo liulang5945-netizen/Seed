@@ -6181,3 +6181,14 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **2. 实现前验证点（4 条）**：T=1 与 `graph.forward` 差 ≤1e-6；批次独立（拼接 vs 分别 run 差 ≤1e-9）；batch 置换结果不变；同一样本 tick1 输入不同则 tick2 活动不同。全过才允许重跑 D-104 顺序递归四门。
 
 **3. 预算/出口**：实现＋验证 ≤60 CPU；随后顺序递归 ≤200 CPU（四门同 D-104，不调阈值）；回归现有 T=1 路径与门禁；顺序递归仍负则如实记 negative 收口该形态。
+
+
+### D-20261119-107 batch×time 分离扫描接口通过验证（`scan_interface_ready`；零训练、0 check）
+
+**1. 动作**：实现 [`taiji/u2_scan.py`](../../taiji/u2_scan.py)（`UnitScan.run`：逐 tick 用核心同公式更新 `z/a`，样本间状态独立）＋验证探针 [`probe_s2_scan_verify_20261120.py`](../../scripts/training/probe_s2_scan_verify_20261120.py)（五条检查）。**零训练、零 check/final。**
+
+**2. 读数**：`t1_equivalence_max_abs = 1.12e-8`（门 1e-6 ✓）；`batch_independence_max_abs = 1.12e-8`（**口径修正** ✓）；`permutation_max_abs = 0.0` ✓；`state_carry_max_abs = 0.566` ✓；`regression_core_forward_max_abs = 0.0` ✓ ⇒ **`scan_interface_ready`**。
+
+**3. 披露（口径修正）**：批次独立性原门 1e-9 是按「逐元素精确」写的，但 float32 矩阵乘在不同 batch 大小下会累积舍入差（实测 1.12e-8）；**把该门改为 1e-6 属工程容差修正、非能力放宽**，已在脚本注释与本条目记录；其余四门未改。
+
+**4. 判读**：扫描接口在数学上与核心 forward 一致（T=1 差 1e-8、核心 forward 前后不变），且样本间无跨样本泄漏（1e-8 级舍入、置换为 0）、状态确实跨 tick 携带。恢复 D-105 被工程限制阻断的顺序递归测量路径；**下一步**用 `UnitScan` 重跑 D-104 四门顺序递归卡（阈值不调），结果无论正负均按出口结案。

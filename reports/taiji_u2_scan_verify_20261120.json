@@ -1,0 +1,33 @@
+{
+  "schema": "taiji-u2-scan-verify-v1",
+  "card": "UnitScan batch x time separated scan verification",
+  "created_utc": "2026-11-20T00:52:50.744413+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "checks": {
+    "t1_equivalence_max_abs": 1.1175870895385742e-08,
+    "batch_independence_max_abs": 1.1175870895385742e-08,
+    "permutation_max_abs": 0.0,
+    "state_carry_max_abs": 0.5661498308181763,
+    "regression_core_max_abs": 0.0
+  },
+  "gates": {
+    "t1_equivalence": true,
+    "batch_independence": true,
+    "permutation_invariance": true,
+    "state_carry": true,
+    "regression_core_forward": true
+  },
+  "verdict": "scan_interface_ready",
+  "discipline": {
+    "optimizer_steps": 0,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 0.0
+  }
+}

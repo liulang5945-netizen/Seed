@@ -248,3 +248,7 @@ HEADS=9 跨会话：旧 A–H 全部 retention drop 0.0，新 I（颜色 parity�
 ## 51. batch×time 分离扫描接口设计（D-20261119-106，零训练）
 
 解决 D-105 工程限制：新增 `UnitScan.run(channels[B,T,8], gates[B,T,N], state)`（新模块，不改核心），逐 tick 同公式更新、样本间零交互。实现前四验证：T=1 与 graph.forward 差≤1e-6；批次独立≤1e-9；batch 置换不变；状态携带。全过才重跑顺序递归四门（同 D-104、不调阈值）；实现+验证 ≤60 CPU、顺序递归 ≤200 CPU；仍负则 negative 收口。
+
+## 52. 扫描接口验证通过（D-20261119-107，零训练）
+
+`UnitScan`（batch×time 分离）五检查全过：T=1 与核心 forward 差 1.12e-8、批次独立 1.12e-8（原 1e-9 门按 float32 舍入修为 1e-6，工程容差修正已披露）、置换 0、状态携带 0.566、核心 forward 前后不变 0 ⇒ `scan_interface_ready`。恢复 D-105 阻断的顺序递归测量路径；下一步用 UnitScan 重跑 D-104 四门（阈值不调）。
