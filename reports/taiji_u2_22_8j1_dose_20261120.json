@@ -1,0 +1,53 @@
+{
+  "schema": "taiji-u2-22-8j1-dose-v1",
+  "card": "22.8J1 appearance dose card (48 steps/round x 8 rounds x 3 sessions)",
+  "created_utc": "2026-11-20T07:46:30.639407+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      20261120,
+      20261121,
+      20261122
+    ],
+    "sessions": 3,
+    "appearance_rounds": 8,
+    "steps_per_round": 48,
+    "batch": 32,
+    "target": 0.6,
+    "majority": 0.0703125
+  },
+  "rows": [
+    {
+      "seed": 20261120,
+      "steps": 1152,
+      "fit_accuracy": 0.90625
+    },
+    {
+      "seed": 20261121,
+      "steps": 1152,
+      "fit_accuracy": 0.84375
+    },
+    {
+      "seed": 20261122,
+      "steps": 1152,
+      "fit_accuracy": 0.8125
+    }
+  ],
+  "gates": {
+    "accuracy": true,
+    "above_majority": true
+  },
+  "verdict": "appearance_dose_verified",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "optimizer_steps": 3456
+  },
+  "cost": {
+    "cpu": 22.83
+  }
+}

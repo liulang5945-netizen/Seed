@@ -1,0 +1,82 @@
+{
+  "schema": "taiji-u2-22-8b2-retention-v1",
+  "card": "22.8J3b meaningful old-ability retention on a dose-trained base",
+  "created_utc": "2026-11-20T07:49:02.889940+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      20261120,
+      20261121,
+      20261122
+    ],
+    "old_criterion": 0.4,
+    "max_old_steps": 1200,
+    "correction_steps": 200
+  },
+  "rows": [
+    {
+      "seed": 20261120,
+      "old_steps": 1200,
+      "old_ready": false,
+      "old_accuracy_at_criterion": 0.0416666679084301,
+      "old_before": 0.0416666679084301,
+      "old_after": 0.0416666679084301,
+      "retention_damage": 0.0,
+      "corrected_before": 0.0,
+      "corrected_after": 0.0,
+      "correction_gain": 0.0,
+      "corrected_steps": 0,
+      "frozen_units_grad_sum": 0,
+      "recovery_diff": 0.0
+    },
+    {
+      "seed": 20261121,
+      "old_steps": 1200,
+      "old_ready": false,
+      "old_accuracy_at_criterion": 0.1666666716337204,
+      "old_before": 0.1666666716337204,
+      "old_after": 0.1666666716337204,
+      "retention_damage": 0.0,
+      "corrected_before": 0.125,
+      "corrected_after": 0.125,
+      "correction_gain": 0.0,
+      "corrected_steps": 0,
+      "frozen_units_grad_sum": 0,
+      "recovery_diff": 0.0
+    },
+    {
+      "seed": 20261122,
+      "old_steps": 1200,
+      "old_ready": false,
+      "old_accuracy_at_criterion": 0.0833333358168602,
+      "old_before": 0.0833333358168602,
+      "old_after": 0.0833333358168602,
+      "retention_damage": 0.0,
+      "corrected_before": 0.0,
+      "corrected_after": 0.0,
+      "correction_gain": 0.0,
+      "corrected_steps": 0,
+      "frozen_units_grad_sum": 0,
+      "recovery_diff": 0.0
+    }
+  ],
+  "gates": {
+    "old_head_learnable": false,
+    "retention_after_meaningful_old_ability": false,
+    "correction_gain": false,
+    "frozen_units_no_grad": true,
+    "recovery_exact": true
+  },
+  "verdict": "old_head_not_learnable",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 14.08
+  }
+}

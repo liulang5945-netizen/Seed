@@ -6777,3 +6777,14 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **4. 22.8 分账**：J3 维持 partial-positive（K1/K3；旧保持未获有意义检验），本卡只把「为何不能检验」取证到账；J1 剂量卡升级为 J3 前置；22.8 整体仍 partial；check 1/final 未动；不签 final/C/D/J/模型成型。
 
 **5. 后继（按序）**：①`22.8J1` appearance 剂量/课程（≤400 CPU、零 check，目标 ≥0.60 且 ≥多数类+0.10）；②若通过→重跑 J3b（≤200 CPU）；③J5 本阶段不重试；occlusion 低优先；随后进入 22.8.4 无条件全局收束。
+
+
+### D-20261119-158 22.8J1 剂量卡 `appearance_dose_verified`；J3b 复现 `old_head_not_learnable`（14.08–22.83 CPU，0 check）
+
+**1. J1（[结果卡](../reference/RESULT-TAIJI_U2_22_8J1_DOSE_20261120.md)，22.83 CPU）**：30 单位 RouteB 仅 appearance、每轮 48 步×8×3＝**1,152 步**（与 22.x 单卡同量级），3 seed fit **0.9063/0.8438/0.8125**（多数类 0.0703）⇒ `appearance_dose_verified`。**S2 的 J1 失败确系剂量不足**，不是能力缺失；同一主体 1,152 步下三 seed 全过 0.60。
+
+**2. J3b（14.08 CPU）**：基座按 J1 剂量训练（修正 lr 调度后 4,608 步），冻结参数与梯度；旧头线性 4→24 训练 1,200 步仍 **0.0417/0.1667/0.0833**（判据 0.40）⇒ 再次 `old_head_not_learnable`；纠正未训练（不构成纠失败）；K3（冻结单位梯度 0、恢复 0.0）成立。**诊断**：冻结 `direct_query` 仅 **4 维**，线性头在 18 类旧子集上容量不足；补充实测同一 4 维特征全批量线性头在 32 个 fit 样本上 300 步可达 0.469，说明特征可学但线性头+子集+小批量下达不到 0.40；基座读出 0.9 是因为单位与读出在训练中联合适配。
+
+**3. 后继 J3c（预注册要点）**：同 J3b 协议，旧头/纠正头改**小型 MLP 4→16→24**（容量足以在 4 维 direct 上表达 24 类），门不变（旧头 ≥0.40、纠正增益 ≥0.05、旧保持 ≤0.02、冻结单位梯度 0、恢复 exact），≤300 CPU、零 check；仍不可学则记录「4 维 direct 是纠正/保持结构瓶颈」，J3 维持 partial-positive 并停止该线。
+
+**4. 22.8 分账**：J1 改为 `appearance_dose_verified`（有界）；J2/J4/J6 有界；J3 维持 partial-positive；J5 range-limited negative；22.8 整体仍 partial；check 1/final 未动；不签 final/C/D/J/模型成型。
