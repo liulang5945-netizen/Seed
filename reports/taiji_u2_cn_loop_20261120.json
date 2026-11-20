@@ -1,0 +1,84 @@
+{
+  "schema": "taiji-u2-cn-loop-v1",
+  "card": "Chinese instruction -> action -> simulated feedback closed loop",
+  "created_utc": "2026-11-20T14:59:26.784975+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      20261120,
+      20261121,
+      20261122
+    ],
+    "classes": 12,
+    "train": 512,
+    "fit": 128,
+    "fit_offset": 10000000,
+    "steps": 1500,
+    "feedback_noise": 0.7
+  },
+  "rows": [
+    {
+      "seed": 20261120,
+      "arms": {
+        "no_feedback": 0.453125,
+        "with_feedback": 0.375,
+        "replay": 0.875
+      },
+      "retention_damage": {
+        "s1": 0.0,
+        "s2": 0.0,
+        "s3": 0.0
+      }
+    },
+    {
+      "seed": 20261121,
+      "arms": {
+        "no_feedback": 0.4140625,
+        "with_feedback": 0.3125,
+        "replay": 0.7578125
+      },
+      "retention_damage": {
+        "s1": 0.0,
+        "s2": 0.0,
+        "s3": 0.0
+      }
+    },
+    {
+      "seed": 20261122,
+      "arms": {
+        "no_feedback": 0.265625,
+        "with_feedback": 0.3046875,
+        "replay": 0.8203125
+      },
+      "retention_damage": {
+        "s1": 0.0,
+        "s2": 0.0,
+        "s3": 0.0
+      }
+    }
+  ],
+  "means": {
+    "no_feedback": 0.3776041666666667,
+    "with_feedback": 0.3307291666666667,
+    "replay": 0.8177083333333334
+  },
+  "gates": {
+    "replay_learnable": true,
+    "feedback_gain": false,
+    "feedback_level": false,
+    "retention": true
+  },
+  "verdict": "feedback_loop_partial",
+  "disclosure": "second attempt sees previous action and a noisy (70%) success bit; the simulator scores exact action match",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 209.78
+  }
+}
