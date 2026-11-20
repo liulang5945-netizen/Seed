@@ -1,0 +1,105 @@
+{
+  "schema": "taiji-u2-pressure-counting-v1",
+  "card": "P1/P2 counting pressure task: oracle + frozen two-step readout sweep",
+  "created_utc": "2026-11-20T12:17:53.635391+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      20261120,
+      20261121,
+      20261122
+    ],
+    "bodies": 5,
+    "train": 512,
+    "fit": 128,
+    "steps": [
+      1500,
+      3000,
+      6000
+    ],
+    "unit_growth": "not_run_pending_owner"
+  },
+  "rows": [
+    {
+      "seed": 20261120,
+      "majority": 0.1953125,
+      "oracle_ok": true,
+      "oracle_accuracy": 1.0,
+      "label_hist": {
+        "2": 100,
+        "0": 82,
+        "3": 81,
+        "1": 72,
+        "5": 90,
+        "4": 87
+      },
+      "results": {
+        "steps_1500": 0.328125,
+        "steps_3000": 0.2734375,
+        "steps_6000": 0.34375
+      }
+    },
+    {
+      "seed": 20261121,
+      "majority": 0.1875,
+      "oracle_ok": true,
+      "oracle_accuracy": 1.0,
+      "label_hist": {
+        "4": 85,
+        "2": 91,
+        "1": 72,
+        "0": 78,
+        "3": 96,
+        "5": 90
+      },
+      "results": {
+        "steps_1500": 0.28125,
+        "steps_3000": 0.2265625,
+        "steps_6000": 0.3125
+      }
+    },
+    {
+      "seed": 20261122,
+      "majority": 0.197265625,
+      "oracle_ok": true,
+      "oracle_accuracy": 1.0,
+      "label_hist": {
+        "4": 80,
+        "1": 68,
+        "2": 95,
+        "3": 81,
+        "0": 87,
+        "5": 101
+      },
+      "results": {
+        "steps_1500": 0.3984375,
+        "steps_3000": 0.390625,
+        "steps_6000": 0.328125
+      }
+    }
+  ],
+  "means": {
+    "steps_1500": 0.3359375,
+    "steps_3000": 0.296875,
+    "steps_6000": 0.328125
+  },
+  "improvement": -0.0078125,
+  "gates": {
+    "p1_oracle": true,
+    "p1_balance": true,
+    "p2_ceiling": true
+  },
+  "verdict": "pressure_measurable_pending_p3",
+  "disclosure": "P3 (30->48 unit diagnostic) intentionally NOT run; requires owner approval",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 163.45
+  }
+}
