@@ -4831,3 +4831,8 @@ S1 中性检查：新增逐令牌活动读出（30 维单位活动、hidden 64�
 ## 2026-11-20 更正：记忆探针种子泄漏（D-20261119-199，零训练零 check）
 
 发现 `run_s2_working_memory/wm_gap/wm_update/wm_load/wm_heavy` 的 fit 用 `build(FIT, seed+1)`、train 用 `build(TRAIN, seed)`，fit 种子区间与 train 完全重叠（fit 第 j 条 = train 第 j+1 条）⇒ fit 读数被泄漏抬高。修复：fit 改用 `seed+FIT_OFFSET`（10,000,000）后全部重跑。更正后：①工作记忆（5 tick）no_state 0.318、replay=carry 0.9375、增益 +0.609/+0.664/+0.586 ⇒ memory_carry_verified 仍成立（有界）；②记忆衰减（5/10/20/40）carry 0.458/0.490/0.497/0.430 vs replay 0.945/0.945/0.865/0.859、no_state 0.286–0.352 ⇒ 撤回『≥40 tick 可读、无急剧衰减』，长时保持未建立；③更新（20 tick）carry 0.880 vs replay 0.924（差 0.044）、no_state 0.339 ⇒ memory_update_verified 仍成立（有界）；④负载（1/3/5）load1 carry 0.680 vs replay 0.844（差 0.164）、load3/5 近机会 ⇒ 撤回『无容量压力』、比较无效；⑤重负载/顺序：所有臂 0.30–0.41（含重放上界）⇒ 任务无效（memory_load_invalid）。规则：合成探针必须显式分区种子并在卡内记录；fit 读数不得高于 replay 上界，出现即查泄漏。194/195/196/198 已加更正横幅，195/198 原判读作废；更正后可签仅 5-tick 保持与 20-tick 最新信号裁决；不签长时记忆/容量压力/26-27 通过/final/C/D/J/模型成型；零 check/final。
+
+
+## 2026-11-20 修正后保持衰减（D-20261119-200，`memory_gap_window5`，251.09 CPU，0 check）
+
+干净 fixture、fit 种子与 train 不相交（FIT_OFFSET=10,000,000）；G ∈ {5,10,20,40}；三臂 stateless_reset（最后 tick+状态重置）/replay（t0+最后，上界）/state_carry（全 tick 串联）；先验 replay ≥0.80；3 seed、只读 fit、零 check。读数：carry 0.893/0.711/0.451/0.365 vs replay 0.940/0.945/0.930/0.833；stateless ≈0.29–0.33；boundary=5；retention 0.0✓ ⇒ memory_gap_window5——有界保持窗≈5 tick，10 tick 起急剧下降、20/40 tick 接近机会。判读：与 194 卡一致（5-tick 0.9375=replay 干净分区下仍成立），正式取代此前「≥40 tick 可读非无损」的泄漏结论；更新卡（20 tick 0.880）不矛盾（只需从带标记最新 tick 读出）；记忆轴最终表述改为『短窗工作记忆：保持 ≈5 tick；带标记更新 20 tick ≈上界；长时保持（≥10 tick）未建立；覆写机制未证』；26 信息缺口压力仍不可测（保持窗内无压力、窗外是能力缺失而非结构压力）⇒ 26/27 维持暂停。不签长时记忆、26/27 通过、结构收益、final/C/D/J/模型成型；累计本卡≈251 CPU；零 check/final。

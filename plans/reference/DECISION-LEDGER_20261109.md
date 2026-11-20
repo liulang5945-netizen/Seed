@@ -7274,3 +7274,14 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **4. 规则**：合成探针必须显式分区种子并在结果卡记录 train/fit 种子区间；fit 读数不得高于 replay 上界，出现即先查泄漏；194/195/196/198 已加更正横幅，195/198 原判读作废，重负载卡记为 invalid；九轴记忆使用按更正后重述。
 
 **5. 更正后可签**：5-tick 工作记忆保持（有界）、20-tick 最新信号裁决（有界，不证覆写）；**不可签**长时保持、容量压力、26/27 通过、final/C/D/J/模型成型；零 check/final。
+
+
+### D-20261119-200 修正后保持衰减：`memory_gap_window5`（保持窗 ≈5 tick；251.09 CPU，0 check）
+
+**1. 动作**：新增 [`run_s2_wm_gap2_20261120.py`](../../scripts/training/run_s2_wm_gap2_20261120.py) 与 [结果卡](../reference/RESULT-TAIJI_U2_WM_GAP2_20261120.md)。干净 fixture、fit 种子与 train 不相交；G ∈ {5,10,20,40}；三臂 stateless_reset/replay/state_carry；先验 replay ≥0.80；3 seed、零 check。
+
+**2. 读数**：carry **0.893/0.711/0.451/0.365** vs replay **0.940/0.945/0.930/0.833**；stateless ≈0.29–0.33；boundary = **5**；retention 0.0 ✓ ⇒ **`memory_gap_window5`**：**有界保持窗 ≈5 tick**；10 tick 起急剧下降、20/40 tick 接近机会。
+
+**3. 判读**：与 194 卡一致（5-tick 0.9375=replay 在干净分区下仍成立）；正式取代此前「≥40 tick 可读非无损」的泄漏结论；更新卡（20 tick 0.880）不矛盾——更新任务只需从带标记的最新 tick 读出；记忆轴最终表述改为「短窗工作记忆：保持 ≈5 tick；带标记更新 20 tick ≈上界；长时保持（≥10 tick）未建立；覆写机制未证」；26 信息缺口压力仍不可测（保持窗内无压力、窗外是能力缺失而非结构压力）⇒ 26/27 维持暂停。
+
+**4. 边界**：不签长时记忆、26/27 通过、结构收益、final/C/D/J/模型成型；累计本卡 ≈251 CPU；零 check/final。

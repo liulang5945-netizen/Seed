@@ -1,0 +1,155 @@
+{
+  "schema": "taiji-u2-wm-gap2-v1",
+  "card": "clean-fixture working-memory retention over gaps 5/10/20/40",
+  "created_utc": "2026-11-20T13:37:09.846570+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      20261120,
+      20261121,
+      20261122
+    ],
+    "gaps": [
+      5,
+      10,
+      20,
+      40
+    ],
+    "train": 512,
+    "fit": 128,
+    "fit_offset": 10000000,
+    "steps": 1500
+  },
+  "rows": [
+    {
+      "seed": 20261120,
+      "gaps": {
+        "5": {
+          "stateless_reset": 0.3359375,
+          "replay": 0.9296875,
+          "state_carry": 0.828125
+        },
+        "10": {
+          "stateless_reset": 0.2890625,
+          "replay": 0.9375,
+          "state_carry": 0.734375
+        },
+        "20": {
+          "stateless_reset": 0.34375,
+          "replay": 0.9296875,
+          "state_carry": 0.34375
+        },
+        "40": {
+          "stateless_reset": 0.328125,
+          "replay": 0.765625,
+          "state_carry": 0.34375
+        }
+      },
+      "retention_damage": {
+        "s1": 0.0,
+        "s2": 0.0,
+        "s3": 0.0
+      }
+    },
+    {
+      "seed": 20261121,
+      "gaps": {
+        "5": {
+          "stateless_reset": 0.3125,
+          "replay": 0.953125,
+          "state_carry": 0.9375
+        },
+        "10": {
+          "stateless_reset": 0.2734375,
+          "replay": 0.9453125,
+          "state_carry": 0.578125
+        },
+        "20": {
+          "stateless_reset": 0.3203125,
+          "replay": 0.9453125,
+          "state_carry": 0.421875
+        },
+        "40": {
+          "stateless_reset": 0.25,
+          "replay": 0.859375,
+          "state_carry": 0.3359375
+        }
+      },
+      "retention_damage": {
+        "s1": 0.0,
+        "s2": 0.0,
+        "s3": 0.0
+      }
+    },
+    {
+      "seed": 20261122,
+      "gaps": {
+        "5": {
+          "stateless_reset": 0.3515625,
+          "replay": 0.9375,
+          "state_carry": 0.9140625
+        },
+        "10": {
+          "stateless_reset": 0.3359375,
+          "replay": 0.953125,
+          "state_carry": 0.8203125
+        },
+        "20": {
+          "stateless_reset": 0.328125,
+          "replay": 0.9140625,
+          "state_carry": 0.5859375
+        },
+        "40": {
+          "stateless_reset": 0.296875,
+          "replay": 0.875,
+          "state_carry": 0.4140625
+        }
+      },
+      "retention_damage": {
+        "s1": 0.0,
+        "s2": 0.0,
+        "s3": 0.0
+      }
+    }
+  ],
+  "means": {
+    "5": {
+      "stateless_reset": 0.3333333333333333,
+      "replay": 0.9401041666666666,
+      "state_carry": 0.8932291666666666
+    },
+    "10": {
+      "stateless_reset": 0.2994791666666667,
+      "replay": 0.9453125,
+      "state_carry": 0.7109375
+    },
+    "20": {
+      "stateless_reset": 0.3307291666666667,
+      "replay": 0.9296875,
+      "state_carry": 0.4505208333333333
+    },
+    "40": {
+      "stateless_reset": 0.2916666666666667,
+      "replay": 0.8333333333333334,
+      "state_carry": 0.3645833333333333
+    }
+  },
+  "boundary": 5,
+  "gates": {
+    "task_learnable": true,
+    "retention": true
+  },
+  "verdict": "memory_gap_verified",
+  "disclosure": "fit uses disjoint seeds; replay must reach 0.80 before carry is interpreted",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 251.09
+  }
+}
