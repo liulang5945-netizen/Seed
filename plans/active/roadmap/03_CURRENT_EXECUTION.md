@@ -4601,3 +4601,8 @@ G0 信用出生 [0.4688,0.6875,0.6563,0.6875,0.6250]（0.6425）；控制均值 
 ## 2026-11-20 22.8 S1（D-20261119-153，`candidate_mapping_missing`，1.89 CPU，零训练零 check）
 
 读取 22.5.1 B 父 child-20261112.pt：原生核心 config d=32/groups=2/units=12/pixel-salience/record_organ、229 张量（native_w/r/p/q/k/v、字节头、actor/critic 等）；22.x 任务面 RouteBGraph 19 张量（units.r/p/w/c/eta/b、query、state_mix、readout）；共享参数名 0、映射 absent ⇒ candidate_mapping_missing。片段索引已冻结：3 session×32 轮=96 轮、五类 8/8/6/4/6、rounds_sha256=271d9082…；smoke 段落解析/capsule 可运行。判读：按路径备案无映射不得伪称同主体 ⇒ S2 在『B 父同主体』下不可开跑；需 owner 裁定 A（推荐：改 30 单位 RouteB 新主体并登记身份断点、B 父保留独立原生死线）/B（定义映射，高成本）/C（原生核心重写接口）。片段索引已冻结，裁定后可直接开跑；check 1/final 未动；不签 final/C/D/J/模型成型。
+
+
+## 2026-11-20 22.8 S2 路径 A 联合生命片段（D-20261119-154，`joint_life_segment_partial`，75.0 CPU，0 check）
+
+主体修订（常设授权路径 A）：S1 证 B 父原生核心 229 张量 vs RouteB 19 张量共享参数名 0 ⇒ 22.8 主体改为 30 单位 RouteB 新候选、登记身份断点，B 父保留独立原生核心线。S2：3 seed×3 session×32 轮、五类片段 8/8/6/4/6、每轮 8 步、共享 30 单位＋5 任务头、会话间 capsule 恢复、session3 起标签纠正。读数：appearance 0.125/0.188/0.125（J1✗ 欠训练）；dynamics 0.781/0.797/0.688、边际 0.438/0.391/0.359（J2✓）；恢复 3/3 session diff 0.0（J4✓）；correction 增益 +0.328/+0.250/+0.563 但旧子集损伤 0.208/0.359/0.385（J3✗）；no-prompt 0.9175/0.9128/0.9175 恰等最强固定 0.9175、空转 0（J5✗）；occlusion 1.0 仅分账。⇒ 3/6 门 ⇒ joint_life_segment_partial。判读：动作后果与恢复成立；中文任务欠训练；纠错增益成立但旧损伤大（共享头/单位、无参数隔离，D-72/73 同型）；无提示退化为固定策略（D-60/123/124 同型）。不签 verified/final/C/D/J/模型成型；后继须新卡新 pin（appearance 预算/课程、纠错隔离、no-prompt 新设计、occlusion 非退化）；check 1/final 未动；S1+S2 ≈77 CPU ≪3,850 切片。

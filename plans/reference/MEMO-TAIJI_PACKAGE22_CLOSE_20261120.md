@@ -431,3 +431,7 @@ Q2 差集文档落盘：共享 units/输入编码/z、a；A 独有 `w_g/ell/h_re
 ## 94. 22.8 S1 与阻塞（D-20261119-153，candidate_mapping_missing）
 
 B 父 `child-20261112.pt` 为原生核心（config d=32/groups=2/units=12/pixel-salience/record_organ，229 张量：native_w/r/p/q/k/v、字节头、actor/critic 等）；22.x 任务面 30 单位 RouteBGraph 为 19 张量（units.r/p/w/c/eta/b、query、state_mix、readout）；**共享参数名 0、映射 absent** ⇒ `candidate_mapping_missing`（1.89 CPU、零训练零 check）。片段索引已冻结：96 轮（3 session×32，五类 8/8/6/4/6）、`rounds_sha256=271d9082…`。判读：按路径备案 D-20261114-01 §3.1，无映射不得伪称同主体 ⇒ S2 在『B 父同主体』下不可开跑；需 owner 裁定 A（推荐：RouteB 新主体＋登记身份断点，B 父保留独立原生核心线）/B（定义并验证映射，高研究成本）/C（原生核心重写 J 接口，成本最高）。check 1 与 final 未动；不签 final/C/D/J/模型成型。
+
+## 95. 22.8 路径 A 主体修订与 S2（D-20261119-154，joint_life_segment_partial）
+
+按常设授权采用路径 A：22.8 主体改为 30 单位 RouteB 新候选、登记身份断点，B 父保留独立原生核心线（S1：B 父 229 张量 vs RouteB 19 张量共享参数名 0、无映射）。S2：3 seed×3 session×32 轮、五类片段 8/8/6/4/6、每轮 8 步、共享 30 单位＋5 任务头、会话间 capsule 恢复、session3 起标签纠正；75.0 CPU、零 check。读数：appearance 0.125/0.188/0.125（J1✗ 欠训练）；dynamics 0.781/0.797/0.688＋边际 0.438/0.391/0.359（J2✓）；恢复 3/3 diff 0.0（J4✓）；correction 增益 +0.328/+0.250/+0.563 但旧子集损伤 0.208/0.359/0.385（J3✗）；no-prompt 恰等最强固定 0.9175、空转 0（J5✗）；occlusion 1.0 仅分账。⇒ 3/6 门 ⇒ `joint_life_segment_partial`。判读：动作后果与跨会话恢复成立；中文任务欠训练；纠错无参数隔离致旧损伤（D-72/73 同型）；无提示退化为固定策略（D-60/123/124 同型）。不签 verified/final/C/D/J/模型成型；后继须新卡新 pin（appearance 预算/课程、纠错隔离、no-prompt 新设计、occlusion 非退化）；check 1/final 未动。

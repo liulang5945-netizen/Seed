@@ -1,0 +1,424 @@
+{
+  "schema": "taiji-u2-22-8-s2-v1",
+  "card": "22.8 S2 path-A joint life segment on a RouteB subject",
+  "created_utc": "2026-11-20T07:36:09.568744+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      20261120,
+      20261121,
+      20261122
+    ],
+    "sessions": 3,
+    "rounds": 32,
+    "steps_per_round": 8,
+    "types": [
+      [
+        "appearance",
+        8
+      ],
+      [
+        "dynamics",
+        8
+      ],
+      [
+        "occlusion",
+        6
+      ],
+      [
+        "correction",
+        4
+      ],
+      [
+        "no_prompt",
+        6
+      ]
+    ]
+  },
+  "rows": [
+    {
+      "seed": 20261120,
+      "sessions": [
+        {
+          "session": 1,
+          "before": {
+            "appearance": 0.09375,
+            "dynamics": 0.234375,
+            "dynamics_masked": 0.234375,
+            "action_margin": 0.0,
+            "occlusion": 0.0,
+            "no_prompt_utility": 0.7071875000000002,
+            "best_fixed_utility": 0.9175000000000001,
+            "idle_rate": 0.13541666666666666
+          },
+          "after": {
+            "appearance": 0.03125,
+            "dynamics": 0.390625,
+            "dynamics_masked": 0.390625,
+            "action_margin": 0.0,
+            "occlusion": 1.0,
+            "no_prompt_utility": 0.9175000000000001,
+            "best_fixed_utility": 0.9175000000000001,
+            "idle_rate": 0.0
+          }
+        },
+        {
+          "session": 2,
+          "before": {
+            "appearance": 0.03125,
+            "dynamics": 0.390625,
+            "dynamics_masked": 0.390625,
+            "action_margin": 0.0,
+            "occlusion": 1.0,
+            "no_prompt_utility": 0.9175000000000001,
+            "best_fixed_utility": 0.9175000000000001,
+            "idle_rate": 0.0
+          },
+          "after": {
+            "appearance": 0.09375,
+            "dynamics": 0.703125,
+            "dynamics_masked": 0.390625,
+            "action_margin": 0.3125,
+            "occlusion": 1.0,
+            "no_prompt_utility": 0.9175000000000001,
+            "best_fixed_utility": 0.9175000000000001,
+            "idle_rate": 0.0
+          }
+        },
+        {
+          "session": 3,
+          "before": {
+            "appearance": 0.09375,
+            "dynamics": 0.703125,
+            "dynamics_masked": 0.390625,
+            "action_margin": 0.3125,
+            "occlusion": 1.0,
+            "no_prompt_utility": 0.9175000000000001,
+            "best_fixed_utility": 0.9175000000000001,
+            "idle_rate": 0.0
+          },
+          "after": {
+            "appearance": 0.125,
+            "dynamics": 0.78125,
+            "dynamics_masked": 0.34375,
+            "action_margin": 0.4375,
+            "occlusion": 1.0,
+            "no_prompt_utility": 0.9175000000000001,
+            "best_fixed_utility": 0.9175000000000001,
+            "idle_rate": 0.0
+          }
+        }
+      ],
+      "final": {
+        "appearance": 0.125,
+        "dynamics": 0.78125,
+        "dynamics_masked": 0.34375,
+        "action_margin": 0.4375,
+        "occlusion": 1.0,
+        "no_prompt_utility": 0.9175000000000001,
+        "best_fixed_utility": 0.9175000000000001,
+        "idle_rate": 0.0
+      },
+      "recovery": [
+        {
+          "session": 1,
+          "max_abs_digest_diff": 0.0
+        },
+        {
+          "session": 2,
+          "max_abs_digest_diff": 0.0
+        },
+        {
+          "session": 3,
+          "max_abs_digest_diff": 0.0
+        }
+      ],
+      "correction": {
+        "corrected_subset_gain": 0.328125,
+        "corrected_subset_after": 0.328125,
+        "old_subset_after": 0.7916666865348816,
+        "retention_damage": 0.2083333134651184
+      }
+    },
+    {
+      "seed": 20261121,
+      "sessions": [
+        {
+          "session": 1,
+          "before": {
+            "appearance": 0.0,
+            "dynamics": 0.375,
+            "dynamics_masked": 0.375,
+            "action_margin": 0.0,
+            "occlusion": 0.0,
+            "no_prompt_utility": 0.4492708333333333,
+            "best_fixed_utility": 0.9175000000000001,
+            "idle_rate": 0.4166666666666667
+          },
+          "after": {
+            "appearance": 0.03125,
+            "dynamics": 0.671875,
+            "dynamics_masked": 0.421875,
+            "action_margin": 0.25,
+            "occlusion": 1.0,
+            "no_prompt_utility": 0.9175000000000001,
+            "best_fixed_utility": 0.9175000000000001,
+            "idle_rate": 0.0
+          }
+        },
+        {
+          "session": 2,
+          "before": {
+            "appearance": 0.03125,
+            "dynamics": 0.671875,
+            "dynamics_masked": 0.421875,
+            "action_margin": 0.25,
+            "occlusion": 1.0,
+            "no_prompt_utility": 0.9175000000000001,
+            "best_fixed_utility": 0.9175000000000001,
+            "idle_rate": 0.0
+          },
+          "after": {
+            "appearance": 0.09375,
+            "dynamics": 0.703125,
+            "dynamics_masked": 0.375,
+            "action_margin": 0.328125,
+            "occlusion": 1.0,
+            "no_prompt_utility": 0.9175000000000001,
+            "best_fixed_utility": 0.9175000000000001,
+            "idle_rate": 0.0
+          }
+        },
+        {
+          "session": 3,
+          "before": {
+            "appearance": 0.09375,
+            "dynamics": 0.703125,
+            "dynamics_masked": 0.375,
+            "action_margin": 0.328125,
+            "occlusion": 1.0,
+            "no_prompt_utility": 0.9175000000000001,
+            "best_fixed_utility": 0.9175000000000001,
+            "idle_rate": 0.0
+          },
+          "after": {
+            "appearance": 0.1875,
+            "dynamics": 0.796875,
+            "dynamics_masked": 0.40625,
+            "action_margin": 0.390625,
+            "occlusion": 1.0,
+            "no_prompt_utility": 0.9128125000000002,
+            "best_fixed_utility": 0.9175000000000001,
+            "idle_rate": 0.0
+          }
+        }
+      ],
+      "final": {
+        "appearance": 0.1875,
+        "dynamics": 0.796875,
+        "dynamics_masked": 0.40625,
+        "action_margin": 0.390625,
+        "occlusion": 1.0,
+        "no_prompt_utility": 0.9128125000000002,
+        "best_fixed_utility": 0.9175000000000001,
+        "idle_rate": 0.0
+      },
+      "recovery": [
+        {
+          "session": 1,
+          "max_abs_digest_diff": 0.0
+        },
+        {
+          "session": 2,
+          "max_abs_digest_diff": 0.0
+        },
+        {
+          "session": 3,
+          "max_abs_digest_diff": 0.0
+        }
+      ],
+      "correction": {
+        "corrected_subset_gain": 0.25,
+        "corrected_subset_after": 0.25,
+        "old_subset_after": 0.640625,
+        "retention_damage": 0.359375
+      }
+    },
+    {
+      "seed": 20261122,
+      "sessions": [
+        {
+          "session": 1,
+          "before": {
+            "appearance": 0.03125,
+            "dynamics": 0.390625,
+            "dynamics_masked": 0.390625,
+            "action_margin": 0.0,
+            "occlusion": 1.0,
+            "no_prompt_utility": 0.13843750000000002,
+            "best_fixed_utility": 0.9175000000000001,
+            "idle_rate": 0.7083333333333334
+          },
+          "after": {
+            "appearance": 0.03125,
+            "dynamics": 0.375,
+            "dynamics_masked": 0.375,
+            "action_margin": 0.0,
+            "occlusion": 1.0,
+            "no_prompt_utility": 0.9175000000000001,
+            "best_fixed_utility": 0.9175000000000001,
+            "idle_rate": 0.0
+          }
+        },
+        {
+          "session": 2,
+          "before": {
+            "appearance": 0.03125,
+            "dynamics": 0.375,
+            "dynamics_masked": 0.375,
+            "action_margin": 0.0,
+            "occlusion": 1.0,
+            "no_prompt_utility": 0.9175000000000001,
+            "best_fixed_utility": 0.9175000000000001,
+            "idle_rate": 0.0
+          },
+          "after": {
+            "appearance": 0.03125,
+            "dynamics": 0.6875,
+            "dynamics_masked": 0.359375,
+            "action_margin": 0.328125,
+            "occlusion": 1.0,
+            "no_prompt_utility": 0.9175000000000001,
+            "best_fixed_utility": 0.9175000000000001,
+            "idle_rate": 0.0
+          }
+        },
+        {
+          "session": 3,
+          "before": {
+            "appearance": 0.03125,
+            "dynamics": 0.6875,
+            "dynamics_masked": 0.359375,
+            "action_margin": 0.328125,
+            "occlusion": 1.0,
+            "no_prompt_utility": 0.9175000000000001,
+            "best_fixed_utility": 0.9175000000000001,
+            "idle_rate": 0.0
+          },
+          "after": {
+            "appearance": 0.125,
+            "dynamics": 0.6875,
+            "dynamics_masked": 0.328125,
+            "action_margin": 0.359375,
+            "occlusion": 1.0,
+            "no_prompt_utility": 0.9175000000000001,
+            "best_fixed_utility": 0.9175000000000001,
+            "idle_rate": 0.0
+          }
+        }
+      ],
+      "final": {
+        "appearance": 0.125,
+        "dynamics": 0.6875,
+        "dynamics_masked": 0.328125,
+        "action_margin": 0.359375,
+        "occlusion": 1.0,
+        "no_prompt_utility": 0.9175000000000001,
+        "best_fixed_utility": 0.9175000000000001,
+        "idle_rate": 0.0
+      },
+      "recovery": [
+        {
+          "session": 1,
+          "max_abs_digest_diff": 0.0
+        },
+        {
+          "session": 2,
+          "max_abs_digest_diff": 0.0
+        },
+        {
+          "session": 3,
+          "max_abs_digest_diff": 0.0
+        }
+      ],
+      "correction": {
+        "corrected_subset_gain": 0.5625,
+        "corrected_subset_after": 0.5625,
+        "old_subset_after": 0.6145833134651184,
+        "retention_damage": 0.3854166865348816
+      }
+    }
+  ],
+  "finals": [
+    {
+      "appearance": 0.125,
+      "dynamics": 0.78125,
+      "dynamics_masked": 0.34375,
+      "action_margin": 0.4375,
+      "occlusion": 1.0,
+      "no_prompt_utility": 0.9175000000000001,
+      "best_fixed_utility": 0.9175000000000001,
+      "idle_rate": 0.0
+    },
+    {
+      "appearance": 0.1875,
+      "dynamics": 0.796875,
+      "dynamics_masked": 0.40625,
+      "action_margin": 0.390625,
+      "occlusion": 1.0,
+      "no_prompt_utility": 0.9128125000000002,
+      "best_fixed_utility": 0.9175000000000001,
+      "idle_rate": 0.0
+    },
+    {
+      "appearance": 0.125,
+      "dynamics": 0.6875,
+      "dynamics_masked": 0.328125,
+      "action_margin": 0.359375,
+      "occlusion": 1.0,
+      "no_prompt_utility": 0.9175000000000001,
+      "best_fixed_utility": 0.9175000000000001,
+      "idle_rate": 0.0
+    }
+  ],
+  "correction": [
+    {
+      "corrected_subset_gain": 0.328125,
+      "corrected_subset_after": 0.328125,
+      "old_subset_after": 0.7916666865348816,
+      "retention_damage": 0.2083333134651184
+    },
+    {
+      "corrected_subset_gain": 0.25,
+      "corrected_subset_after": 0.25,
+      "old_subset_after": 0.640625,
+      "retention_damage": 0.359375
+    },
+    {
+      "corrected_subset_gain": 0.5625,
+      "corrected_subset_after": 0.5625,
+      "old_subset_after": 0.6145833134651184,
+      "retention_damage": 0.3854166865348816
+    }
+  ],
+  "gates": {
+    "j1_appearance": false,
+    "j2_actions": true,
+    "j3_correction": false,
+    "j4_recovery": true,
+    "j5_no_prompt": false,
+    "j6_breakdown": true
+  },
+  "verdict": "joint_life_segment_partial",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 75.0
+  }
+}
