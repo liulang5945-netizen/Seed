@@ -1,0 +1,84 @@
+{
+  "schema": "taiji-u2-cn-continuous-v1",
+  "card": "Chinese continuous task: hold the first instruction over 5 ticks",
+  "created_utc": "2026-11-20T14:47:58.023050+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      20261120,
+      20261121,
+      20261122
+    ],
+    "ticks": 5,
+    "train": 512,
+    "fit": 128,
+    "fit_offset": 10000000,
+    "steps": 1500,
+    "classes": 16
+  },
+  "rows": [
+    {
+      "seed": 20261120,
+      "arms": {
+        "stateless_reset": 0.09375,
+        "replay": 1.0,
+        "state_carry": 0.9921875
+      },
+      "retention_damage": {
+        "s1": 0.0,
+        "s2": 0.0,
+        "s3": 0.0
+      }
+    },
+    {
+      "seed": 20261121,
+      "arms": {
+        "stateless_reset": 0.0625,
+        "replay": 1.0,
+        "state_carry": 1.0
+      },
+      "retention_damage": {
+        "s1": 0.0,
+        "s2": 0.0,
+        "s3": 0.0
+      }
+    },
+    {
+      "seed": 20261122,
+      "arms": {
+        "stateless_reset": 0.0859375,
+        "replay": 0.9921875,
+        "state_carry": 0.9921875
+      },
+      "retention_damage": {
+        "s1": 0.0,
+        "s2": 0.0,
+        "s3": 0.0
+      }
+    }
+  ],
+  "means": {
+    "stateless_reset": 0.08072916666666667,
+    "replay": 0.9973958333333334,
+    "state_carry": 0.9947916666666666
+  },
+  "gates": {
+    "replay_learnable": true,
+    "carry_learnable": true,
+    "near_replay": true,
+    "retention": true
+  },
+  "verdict": "chinese_continuous_verified",
+  "disclosure": "each tick is one high-density Chinese instruction bag; positional-attention readout over per-tick unit activities",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 208.14
+  }
+}
