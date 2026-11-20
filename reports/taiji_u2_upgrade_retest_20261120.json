@@ -1,0 +1,93 @@
+{
+  "schema": "taiji-u2-upgrade-retest-v1",
+  "card": "upgraded positional-attention readout retests: Chinese lexical and multimodal fusion",
+  "created_utc": "2026-11-20T14:40:26.384439+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      20261120,
+      20261121,
+      20261122
+    ],
+    "fit_offset": 10000000,
+    "steps": 1500,
+    "lex_train": 512,
+    "lex_fit": 128,
+    "fusion_train": 512,
+    "fusion_fit": 128
+  },
+  "rows": [
+    {
+      "seed": 20261120,
+      "arms": {
+        "lexical": 0.375,
+        "lexical_replay": 0.3828125,
+        "fusion": 0.09375,
+        "fusion_scene_only": 0.078125,
+        "fusion_instruction_only": 0.1171875
+      },
+      "retention_damage": {
+        "s1": 0.0,
+        "s2": 0.0,
+        "s3": 0.0
+      }
+    },
+    {
+      "seed": 20261121,
+      "arms": {
+        "lexical": 0.28125,
+        "lexical_replay": 0.296875,
+        "fusion": 0.15625,
+        "fusion_scene_only": 0.1171875,
+        "fusion_instruction_only": 0.0859375
+      },
+      "retention_damage": {
+        "s1": 0.0,
+        "s2": 0.0,
+        "s3": 0.0
+      }
+    },
+    {
+      "seed": 20261122,
+      "arms": {
+        "lexical": 0.4296875,
+        "lexical_replay": 0.390625,
+        "fusion": 0.0859375,
+        "fusion_scene_only": 0.140625,
+        "fusion_instruction_only": 0.1015625
+      },
+      "retention_damage": {
+        "s1": 0.0,
+        "s2": 0.0,
+        "s3": 0.0
+      }
+    }
+  ],
+  "means": {
+    "lexical": 0.3619791666666667,
+    "lexical_replay": 0.3567708333333333,
+    "fusion": 0.11197916666666667,
+    "fusion_scene_only": 0.11197916666666667,
+    "fusion_instruction_only": 0.1015625
+  },
+  "gates": {
+    "lexical_learnable": false,
+    "lexical_level": false,
+    "fusion_gain": false,
+    "fusion_level": false,
+    "retention": true
+  },
+  "verdict": "upgrade_retest_partial",
+  "disclosure": "character sequence ticks and positional-attention readout; fusion uses scene tick then instruction tick (single character projection)",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 221.77
+  }
+}

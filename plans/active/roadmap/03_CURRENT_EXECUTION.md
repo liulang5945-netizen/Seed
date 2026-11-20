@@ -4866,3 +4866,8 @@ S1 中性检查：新增逐令牌活动读出（30 维单位活动、hidden 64�
 ## 2026-11-20 读出升级后的保持窗重测（D-20261119-206，`memory_gap3_verified`，256.31 CPU，0 check）
 
 与 gap2 同 fixture/同分区（干净 fit 种子），唯一变量是读出改为位置嵌入＋两步注意力；三臂 stateless_reset/replay/state_carry 都换升级读出；G ∈ {5,10,20,40}；3 seed、只读 fit、零 check。读数：carry 0.888/0.930/0.820/0.906 vs replay 0.898/0.927/0.922/0.919、stateless 0.307–0.370；相对 gap2（0.893/0.711/0.451/0.365）在 10/20/40 tick 提升 +0.219/+0.369/+0.541；boundary=40；retention 0.0✓ ⇒ memory_gap3_verified——保持窗从≈5 tick 扩到 ≥40 tick。判读与披露：读出升级是保持窗主因——同一冻结单位/任务仅换读出 40 tick 保持 0.365→0.906，说明单位状态一直携带信息、此前短窗是读出无法定位造成的假边界；G=20 局部 0.820（差 −0.102 略超门）非单调属方差，故报 40 但不称严格单调保持；仍是有界实验（≤40 合成 tick、3 位置类、单目标）；不改单位结构——读出工程增益、不能签结构生长/25/26；不签长时记忆、26/27 通过、final/C/D/J/模型成型。后继：读出升级应成为后续探针默认，下一卡重测中文词汇接地/语序与多模态融合（≤1,500 CPU、零 check）；累计本卡≈256 CPU；零 check/final。
+
+
+## 2026-11-20 升级读出下的中文/多模态重测（D-20261119-207，`upgrade_retest_invalid`，221.77 CPU，0 check）
+
+词汇任务改为逐字符 tick（16 tick）、融合任务改为场景 tick＋指令 tick 两 tick 序列、统一位置注意力读出；3 seed、只读 fit、零 check。读数：lexical 0.3620、lexical_replay 0.3568（<0.80 未达可学门）；fusion 0.1120、scene_only 0.1120、instruction_only 0.1016（12 类 chance 0.083）；retention 0.0✓ ⇒ upgrade_retest_invalid。判读与披露：本次不是『升级读出对中文无效』的证据，而是重测表述失败——16 个字符 tick 下连 raw replay 都只有 0.357（padding 多、信息稀疏），fusion 两 tick 序列同样不可学；D-201/D-202/D-203 仍按各自原判、不被本卡覆盖；升级读出适用范围收窄——仅在序列适中、信息密度高任务上验证有效（词序 12 tick、记忆 5–40 tick），不宣称普遍有效。后继：重试应回到单 tick 高密度编码与同 tick 拼接再换读出池化；本卡记 invalid、不写入能力总表正面证据；不签中文/多模态改善、26/27、final/C/D/J/模型成型；零 check/final。
