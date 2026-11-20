@@ -1,0 +1,290 @@
+{
+  "schema": "taiji-u2-22-7-window-v1",
+  "card": "22.7 S2 equal-FLOPs seven-arm growth window on joint24",
+  "created_utc": "2026-11-20T07:24:27.526130+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      20261120,
+      20261121,
+      20261122,
+      20261123,
+      20261124
+    ],
+    "start_units": 16,
+    "mid_units": 20,
+    "phase1_steps": 750,
+    "steps_mid": 846,
+    "steps_g4": 1721,
+    "steps_preallocated": 1500,
+    "budget_flops": 7272000,
+    "gates": "H1 net gain>=0.05 and paired bootstrap LB>0; H2 deletion>=0.02 and >=50%; H3 retention<=0.02"
+  },
+  "rows": {
+    "G0": [
+      {
+        "seed": 20261120,
+        "pre_growth_fit": 0.0,
+        "grown_fit": 0.46875,
+        "retention_after": 0.9333333373069763,
+        "deletion": {
+          "before": 0.46875,
+          "after": 0.0625,
+          "drop": 0.40625
+        },
+        "lifecycle": {
+          "dormant_fit": 0.46875,
+          "wake_fit": 0.46875,
+          "equal_after_wake": true,
+          "lifecycle_ok": true
+        }
+      },
+      {
+        "seed": 20261121,
+        "pre_growth_fit": 0.03125,
+        "grown_fit": 0.6875,
+        "retention_after": 1.0,
+        "deletion": {
+          "before": 0.6875,
+          "after": 0.09375,
+          "drop": 0.59375
+        },
+        "lifecycle": {
+          "dormant_fit": 0.6875,
+          "wake_fit": 0.6875,
+          "equal_after_wake": true,
+          "lifecycle_ok": true
+        }
+      },
+      {
+        "seed": 20261122,
+        "pre_growth_fit": 0.09375,
+        "grown_fit": 0.65625,
+        "retention_after": 0.8999999761581421,
+        "deletion": {
+          "before": 0.65625,
+          "after": 0.03125,
+          "drop": 0.625
+        },
+        "lifecycle": {
+          "dormant_fit": 0.65625,
+          "wake_fit": 0.65625,
+          "equal_after_wake": true,
+          "lifecycle_ok": true
+        }
+      },
+      {
+        "seed": 20261123,
+        "pre_growth_fit": 0.15625,
+        "grown_fit": 0.6875,
+        "retention_after": 0.8999999761581421,
+        "deletion": {
+          "before": 0.6875,
+          "after": 0.0,
+          "drop": 0.6875
+        },
+        "lifecycle": {
+          "dormant_fit": 0.6875,
+          "wake_fit": 0.6875,
+          "equal_after_wake": true,
+          "lifecycle_ok": true
+        }
+      },
+      {
+        "seed": 20261124,
+        "pre_growth_fit": 0.0625,
+        "grown_fit": 0.625,
+        "retention_after": 1.0,
+        "deletion": {
+          "before": 0.625,
+          "after": 0.0625,
+          "drop": 0.5625
+        },
+        "lifecycle": {
+          "dormant_fit": 0.625,
+          "wake_fit": 0.625,
+          "equal_after_wake": true,
+          "lifecycle_ok": true
+        }
+      }
+    ],
+    "G1": [
+      {
+        "seed": 20261120,
+        "fit": 0.53125
+      },
+      {
+        "seed": 20261121,
+        "fit": 0.5625
+      },
+      {
+        "seed": 20261122,
+        "fit": 0.625
+      },
+      {
+        "seed": 20261123,
+        "fit": 0.375
+      },
+      {
+        "seed": 20261124,
+        "fit": 0.5
+      }
+    ],
+    "G2": [
+      {
+        "seed": 20261120,
+        "fit": 0.5
+      },
+      {
+        "seed": 20261121,
+        "fit": 0.5625
+      },
+      {
+        "seed": 20261122,
+        "fit": 0.625
+      },
+      {
+        "seed": 20261123,
+        "fit": 0.40625
+      },
+      {
+        "seed": 20261124,
+        "fit": 0.46875
+      }
+    ],
+    "G3": [
+      {
+        "seed": 20261120,
+        "fit": 0.5
+      },
+      {
+        "seed": 20261121,
+        "fit": 0.5625
+      },
+      {
+        "seed": 20261122,
+        "fit": 0.65625
+      },
+      {
+        "seed": 20261123,
+        "fit": 0.40625
+      },
+      {
+        "seed": 20261124,
+        "fit": 0.5
+      }
+    ],
+    "G4": [
+      {
+        "seed": 20261120,
+        "fit": 0.53125
+      },
+      {
+        "seed": 20261121,
+        "fit": 0.59375
+      },
+      {
+        "seed": 20261122,
+        "fit": 0.625
+      },
+      {
+        "seed": 20261123,
+        "fit": 0.375
+      },
+      {
+        "seed": 20261124,
+        "fit": 0.5
+      }
+    ],
+    "G5": [
+      {
+        "seed": 20261120,
+        "fit": 0.71875
+      },
+      {
+        "seed": 20261121,
+        "fit": 0.75
+      },
+      {
+        "seed": 20261122,
+        "fit": 0.65625
+      },
+      {
+        "seed": 20261123,
+        "fit": 0.59375
+      },
+      {
+        "seed": 20261124,
+        "fit": 0.65625
+      }
+    ],
+    "G6": [
+      {
+        "seed": 20261120,
+        "fit": 0.59375
+      },
+      {
+        "seed": 20261121,
+        "fit": 0.65625
+      },
+      {
+        "seed": 20261122,
+        "fit": 0.75
+      },
+      {
+        "seed": 20261123,
+        "fit": 0.625
+      },
+      {
+        "seed": 20261124,
+        "fit": 0.65625
+      }
+    ]
+  },
+  "control_means": {
+    "G1": 0.51875,
+    "G2": 0.5125,
+    "G3": 0.525,
+    "G4": 0.525,
+    "G5": 0.675,
+    "G6": 0.65625
+  },
+  "strongest_control": "G5",
+  "delta_mean": -0.0498,
+  "delta_lb95": -0.1625,
+  "deletion_drops": [
+    0.4062,
+    0.5938,
+    0.625,
+    0.6875,
+    0.5625
+  ],
+  "deletion_fractions": [
+    0.8667,
+    0.9048,
+    1.1111,
+    1.2941,
+    1.0
+  ],
+  "retention_damage": 0.0,
+  "gates": {
+    "h1_net_gain": false,
+    "h2_deletion": true,
+    "h3_retention": true,
+    "h4_h5_preflight": true,
+    "h7_lifecycle": true
+  },
+  "verdict": "growth_benefit_absent",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "optimizer_steps": 16585
+  },
+  "cost": {
+    "cpu": 88.73
+  }
+}

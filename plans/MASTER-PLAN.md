@@ -1,5 +1,6 @@
 # MASTER-PLAN（唯一权威主线）
 
+> 文档状态：[主线] — 2026-11-20（**22.7 结案：S2 `growth_benefit_absent`（等 FLOPs）**，G0 0.6425 vs 预分配强控制 0.6750、Δ=−0.0498（下界 −0.1625）；删除/保持/生命周期过，机制因果 verified；禁同范围重跑，D-20261119-151，最新）。
 > 文档状态：[主线] — 2026-11-20（**22.7 S1 `preflight_ready`**：方案修正 16→20→24、生长上限合规、出生中性 0.0、活新生儿全过、等 FLOPs 0.9996–1.0000；1.27 CPU、check 0，D-20261119-150，最新）。
 > 文档状态：[主线] — 2026-11-20（**22.7 S0 预注册**：等 FLOPs 口径生长收益重检，16→32 单位七臂 G0–G6、门 H1–H7、切片 4,000 CPU、check 0，D-20261119-149，最新）。
 > 文档状态：[主线] — 2026-11-20（**22.6 结案：`autonomous_choice_negative / recursive_negative`**，依据预研六卡（c_task_ready/predictor_gain_pass/policy_gain_absent×2/recursive absent×2/calibration adequate），零新增训练、0 check；队首推进 22.7，D-20261119-148，最新）。
