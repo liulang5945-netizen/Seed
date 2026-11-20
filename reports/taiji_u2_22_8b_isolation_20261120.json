@@ -1,0 +1,74 @@
+{
+  "schema": "taiji-u2-22-8b-isolation-v1",
+  "card": "22.8S2b correction isolation with frozen shared units and independent heads",
+  "created_utc": "2026-11-20T07:41:39.809847+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      20261120,
+      20261121,
+      20261122
+    ],
+    "sessions": 3,
+    "rounds": 32,
+    "steps_per_round": 8,
+    "correction_steps": 200,
+    "old_steps": 200
+  },
+  "rows": [
+    {
+      "seed": 20261120,
+      "old_before": 0.0416666679084301,
+      "old_after": 0.0416666679084301,
+      "retention_damage": 0.0,
+      "corrected_before": 0.0,
+      "corrected_after": 0.5,
+      "correction_gain": 0.5,
+      "frozen_units_grad_sum": 0,
+      "heads_have_grad": true,
+      "recovery_diff": 0.0
+    },
+    {
+      "seed": 20261121,
+      "old_before": 0.0416666679084301,
+      "old_after": 0.0416666679084301,
+      "retention_damage": 0.0,
+      "corrected_before": 0.0,
+      "corrected_after": 0.125,
+      "correction_gain": 0.125,
+      "frozen_units_grad_sum": 0,
+      "heads_have_grad": true,
+      "recovery_diff": 0.0
+    },
+    {
+      "seed": 20261122,
+      "old_before": 0.0416666679084301,
+      "old_after": 0.0416666679084301,
+      "retention_damage": 0.0,
+      "corrected_before": 0.0,
+      "corrected_after": 0.125,
+      "correction_gain": 0.125,
+      "frozen_units_grad_sum": 0,
+      "heads_have_grad": true,
+      "recovery_diff": 0.0
+    }
+  ],
+  "gates": {
+    "k1_gain": true,
+    "k2_retention": true,
+    "k3_engineering": true
+  },
+  "verdict": "correction_isolation_verified",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "optimizer_steps": 1488
+  },
+  "cost": {
+    "cpu": 19.77
+  }
+}

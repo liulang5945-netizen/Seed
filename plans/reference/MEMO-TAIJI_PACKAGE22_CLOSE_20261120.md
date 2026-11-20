@@ -439,3 +439,7 @@ B 父 `child-20261112.pt` 为原生核心（config d=32/groups=2/units=12/pixel-
 ## 96. 22.8 S2 失败归因与 S2b 预注册（D-20261119-155，零训练）
 
 归因：J1 appearance 0.125–0.188 为剂量不足（每 session 8 轮×8 步≈192 步 vs 单卡 1,200–1,500，非学不会）；J3 增益 +0.25–0.56 但旧损伤 0.21–0.39＝无参数隔离（纠正写入共享单位/同一 head3，D-72/73 同型）；J5 恰等最强固定 0.9175、空转 0＝固定策略极强（D-60/123/124 同型）；occlusion 1.0 为退化任务仅分账。优先：S2b 纠错隔离（≤300 CPU，最可能翻正）→ J1 剂量（≤400，新 pin）→ occlusion 非退化（≤200）→ J5 本阶段不重试（三步负）。S2b 协议：共享单位冻结、head_correct/head_old 独立；K1 增益≥0.05（3 seed 同向）、K2 旧保持≤0.02、K3 冻结后 units 无梯度/两头有梯度/恢复 exact。通过则 J3 改记参数隔离有界 verified；否则维持失败并停止同范围。不重测 J1/J5、不改 S2 判词；22.8 维持 partial；check 1/final 未动；不签 final/C/D/J/模型成型。
+
+## 97. 22.8S2b 纠错参数隔离（D-20261119-156，correction_isolation_verified，K2 弱检验披露）
+
+30 单位 RouteB 先训 appearance 基座（3 session×32 轮×8 步），冻结全部基座参数并清空残留梯度；head_old/head_correct 独立读出，旧标签 200 步、纠正子集翻转标签 200 步。读数：纠正 0.0→0.500/0.125/0.125（K1✓）；旧头 0.0417→0.0417（损伤 0.0，K2✓ 但旧头停在机会线、旧能力未获有意义检验）；冻结单位梯度 0、两头有梯度、capsule 恢复 diff 0.0（K3✓）⇒ `correction_isolation_verified`（19.77 CPU、零 check）。判读：参数隔离下纠正写入可学且不改变冻结基座（修复 S2 共享参数致旧损伤的机制方向）；但『纠错与保持同时成立』未获有意义检验，不得这样写。22.8 分账：J2/J4/J6 有界、J3 partial-positive、J1/J5 range-limited negative、整体仍 partial，不签 joint_life_segment_verified；check 1/final 未动。后继：新卡先让旧头达判据（≥0.40）再纠正复测保持；不事后加步数；J1/J5/occlusion 按归因卡另立 pin。
