@@ -1,0 +1,69 @@
+{
+  "schema": "taiji-u2-sequential-recursion-scan-v1",
+  "card": "two-step action pairs with UnitScan per-sample recurrence",
+  "created_utc": "2026-11-20T00:55:31.368448+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "steps": 1500,
+    "pairs": 128,
+    "fit_pairs": 24,
+    "implementation": "UnitScan batch x time separated (D-20261119-107)",
+    "gates": "seq acc>=0.55 & >=single+0.10; shuffled drop>=0.10; tick1>=0.50; unrelated tick2<=0.45"
+  },
+  "results": [
+    {
+      "seed": 0,
+      "tick1": 0.625,
+      "tick2": 0.3333,
+      "shuffled_tick2": 0.5,
+      "unrelated_tick2": 0.4167,
+      "single_tick": 0.4167,
+      "sequence_gain": -0.0833,
+      "shuffled_drop": -0.1667
+    },
+    {
+      "seed": 1,
+      "tick1": 0.5417,
+      "tick2": 0.4583,
+      "shuffled_tick2": 0.4167,
+      "unrelated_tick2": 0.5417,
+      "single_tick": 0.5417,
+      "sequence_gain": -0.0833,
+      "shuffled_drop": 0.0417
+    },
+    {
+      "seed": 2,
+      "tick1": 0.625,
+      "tick2": 0.4583,
+      "shuffled_tick2": 0.4167,
+      "unrelated_tick2": 0.5417,
+      "single_tick": 0.4583,
+      "sequence_gain": 0.0,
+      "shuffled_drop": 0.0417
+    }
+  ],
+  "gates": {
+    "sequential_over_single": false,
+    "order_dependence": false,
+    "intermediate_credit": true,
+    "tick2_information": false
+  },
+  "verdict": "sequential_recursion_absent",
+  "discipline": {
+    "optimizer_steps": 9000,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 41.52
+  }
+}

@@ -4376,3 +4376,8 @@ HEADS=9：…→s9 颜色 parity（2 类派生）；3 seed 全过：inheritance 
 ## 2026-11-20 扫描接口验证通过（D-20261119-107，`scan_interface_ready`，零训练 0 check）
 
 实现 taiji/u2_scan.py（UnitScan.run 逐 tick 同公式更新、样本间独立）＋五检查：t1_equivalence 1.12e-8✓、batch_independence 1.12e-8✓（门由 1e-9 修正为 1e-6：float32 舍入，工程容差修正已披露）、permutation 0✓、state_carry 0.566✓、regression_core 0✓ ⇒ scan_interface_ready。判读：扫描接口数学一致、无跨样本泄漏、状态跨 tick 携带；恢复 D-105 被工程限制阻断的顺序递归测量路径。下一步用 UnitScan 重跑 D-104 四门顺序递归卡（阈值不调），正负均按出口结案。
+
+
+## 2026-11-20 顺序计算式递归（扫描接口重测，D-20261119-108，`sequential_recursion_absent`，41.52 CPU）
+
+UnitScan 忠实重测：tick1 0.625/0.5417/0.625（中间信用门过）；tick2 0.333/0.458/0.458（≈机会）；shuffled tick2 0.5/0.417/0.417；unrelated 0.417/0.542/0.542；单 tick 基线 0.417/0.542/0.458；序列增益 −0.083/−0.083/0 ⇒ 仅 intermediate_credit 过 ⇒ sequential_recursion_absent。判读：忠实负结果——能学第一步中间预测，但第二步无法把已预测中间桶与第二步增量组合（状态被携带但读出无法组合）；与 D-102 重复输入不同（每 tick 新信息、单 tick 不可完成）。收口：该形态 negative 停止同范围；后继需工作记忆写回（tick1 预测桶作为 tick2 输入）/逐 tick 强监督/专用工作记忆槽＋因果核验，新设计新 pin 预注册。recursive_development 仍 negative（两形态）＋其余 uncovered。

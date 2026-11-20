@@ -252,3 +252,7 @@ HEADS=9 跨会话：旧 A–H 全部 retention drop 0.0，新 I（颜色 parity�
 ## 52. 扫描接口验证通过（D-20261119-107，零训练）
 
 `UnitScan`（batch×time 分离）五检查全过：T=1 与核心 forward 差 1.12e-8、批次独立 1.12e-8（原 1e-9 门按 float32 舍入修为 1e-6，工程容差修正已披露）、置换 0、状态携带 0.566、核心 forward 前后不变 0 ⇒ `scan_interface_ready`。恢复 D-105 阻断的顺序递归测量路径；下一步用 UnitScan 重跑 D-104 四门（阈值不调）。
+
+## 53. 顺序计算式递归 Scan 重测（D-20261119-108，忠实 negative）
+
+用已验证 UnitScan（每样本独立、状态携带）重测：tick1 `0.63/0.54/0.63`（中间信用过）；tick2 `0.33/0.46/0.46`（≈机会）、shuffled/无关控制与单 tick 基线均不劣于序列 ⇒ 仅 1/4 门过 ⇒ `sequential_recursion_absent`。判读：**忠实负结果**——会学第一步中间预测，但第二步无法把已预测中间桶与增量组合；状态携带不等于可组合。收口 negative，后继需工作记忆写回/逐 tick 强监督/专用记忆槽并核验因果作用（新设计新 pin 预注册）。`recursive_development` 维持 negative（两形态）＋其余 uncovered。
