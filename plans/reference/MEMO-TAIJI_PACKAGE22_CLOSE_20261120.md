@@ -407,3 +407,7 @@ Q2 差集文档落盘：共享 units/输入编码/z、a；A 独有 `w_g/ell/h_re
 ## 88. 22.5.2 S2 行为窗与结案（D-20261119-147，arch_negative）
 
 三 tick joint24、等 FLOPs（U2 1200 步／GRU-16 841 步，比 1.0001）、5 配对 seed：U2-A 0.8188、U2-B 0.8625、GRU-16 0.9750；Δ(B−GRU) 均值 −0.1101、95% 区间 [−0.1937,−0.0375]（上界<0）；多数类 0.0703（学习门成立）；32.23 CPU（帽 3,000）、零 check。判词 `arch_negative`（G1 未过且区间整体为负；取 negative 非 inconclusive 系因区间排除 0，非改门值）；按预定规则保留 B 父交付 22.6；架构结论限定本窗口（三 tick joint24/GRU-16/等 FLOPs），不推广为「单位图不可行」。22.5.2 结案，队首推进至 22.6。
+
+## 89. 22.6 结案（D-20261119-148，autonomous_choice_negative / recursive_negative）
+
+依据 22.6 条件预研六张回执：22.6.0 `c_task_ready`（9.64 CPU；C1 拒收/C2 wait14/C3 wait0，8 seeds 重放一致）、22.6.1 `predictor_gain_pass`（Huber 0.23398 vs 0.27287，改善 0.1425）、22.6.2/2b `policy_gain_absent`（learnable 0.6637 vs fixed wait-deadline 0.8300，Δ=−0.1663，两法同向）、22.6.3 `recursive_feasibility_absent`＋`recursive_multiseed_absent`（dependent−fixed 0.0；mean 0.06/min −0.10）、22.6.4b `calibration_already_adequate`。主终点未达、递归两次相依改进未建立 ⇒ 22.6 结案为范围限定负：`autonomous_choice=negative`、`recursive_development=negative`（只覆盖 22.6.0 C 任务与 22.6.3 构造，不推广）；铁律 7 三探针止损已触发，不追加预算、不改门。主线队首推进 22.7（成熟生长，须先处理 `growth_benefit_not_established_in_package_22`）。

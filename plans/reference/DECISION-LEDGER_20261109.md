@@ -6667,3 +6667,12 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **3. 判词与出口**：预注册 G1 未过且区间整体为负 ⇒ **`arch_negative`**（明示：G1 未过；取 negative 而非 inconclusive 因区间排除 0 且方向为负，非改门值）。按 MAINLINE §3.1「学习门通过、架构优越性未过 ⇒ 仍交付学习父进 22.6」：**B 父（`child-20261112.pt`）保留交付 22.6**；架构结论限定于本窗口（三 tick joint24、GRU-16、等 FLOPs），不推广为「单位图不可行」。
 
 **4. 22.5.2 收口**：S0 预注册（D-145）、Q2 差集＋S1 配平（D-146）、S2 行为窗（本条）齐备。**22.5.2 结案**：架构优越性未建立（`arch_negative`，范围限定），学习父交付；主线队首推进至 **22.6**。不签 22.6+ 能力、C/D/J、final、模型成型。
+
+
+### D-20261119-148 22.6 结案：`autonomous_choice_negative / recursive_negative`（零新增训练、0 check）
+
+**1. 动作**：汇总 22.6 条件预研的六张已落盘回执，形成[结案结果卡](../reference/RESULT-TAIJI_U2_22_6_CLOSEOUT_20261120.md)：22.6.0 `c_task_ready`（9.64 CPU；C1 拒收/C2 wait14/C3 wait0，8 seeds 重放一致）、22.6.1 `predictor_gain_pass`（Huber 0.23398 vs 0.27287，改善 0.1425≥0.10）、22.6.2/2b `policy_gain_absent`（learnable 0.6637 vs fixed wait-deadline 0.8300，两种方法同向）、22.6.3 `recursive_feasibility_absent`＋`recursive_multiseed_absent`（dependent−fixed 0.0；mean 0.06/min −0.10）、22.6.4b `calibration_already_adequate`。**零新增训练、零 check/final。**
+
+**2. 主终点核对**：learnable 净效用未超最强固定策略（Δ=−0.1663），且 3 seed 全同向负；两次独立策略方法一致 ⇒ 主终点未达。递归子卡两次相依改进未建立（min margin −0.10）。
+
+**3. 收口**：22.6 结案为范围限定负结果——`autonomous_choice=negative`、`recursive_development=negative`（与 D-60/123/124、D-102/108 一致）；铁律 7 三探针止损已触发，不追加预算、不新增局部探针、不改门值。范围限定：只覆盖 22.6.0 冻结的 C 任务与 22.6.3 构造，不推广为「自主选择/递归不可能」。主线队首推进至 **22.7**（成熟生长，须先处理 `growth_benefit_not_established_in_package_22`）。不签 22.7+、C/D/J、final、模型成型；不改变 22.5.1 判词。

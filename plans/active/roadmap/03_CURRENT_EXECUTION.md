@@ -4571,3 +4571,8 @@ Q2：新写 DIFF-TAIJI_U2_ROUTE_AB_20261120.md 逐源码列 A/B 唯一前向与�
 ## 2026-11-20 22.5.2 S2 行为窗与结案（D-20261119-147，`arch_negative`，32.23 CPU，0 check）
 
 joint24 三 tick 证据到达流（t0 查询/t1 颜色/t2 位置），U2-A/U2-B/GRU-16（U2 1200 步、GRU 841 步，FLOPs 比 1.0001），5 配对 seed：U2-A 0.8188、U2-B 0.8625、GRU-16 0.9750；Δ(B−GRU) 均值 −0.1101、95% 区间 [−0.1937, −0.0375]（上界<0）；多数类 0.0703（学习门成立）；32.23 CPU（帽 3,000）、零 check/final。判词 arch_negative（G1 未过且区间整体为负；取 negative 而非 inconclusive 系因区间排除 0，非改门值）；按预定规则保留 B 父交付 22.6，架构结论限定本窗口、不推广为单位图不可行。22.5.2 结案（S0 预注册/D-145＋Q2 差集与 S1 配平/D-146＋S2 本条）；主线队首推进至 22.6。
+
+
+## 2026-11-20 22.6 结案（D-20261119-148，`autonomous_choice_negative / recursive_negative`，零新增训练、0 check）
+
+汇总条件预研六张回执：22.6.0 c_task_ready（9.64 CPU；C1 拒收/C2 wait14/C3 wait0，8 seeds 重放一致）、22.6.1 predictor_gain_pass（Huber 0.23398 vs 0.27287，改善 0.1425≥0.10）、22.6.2/2b policy_gain_absent（learnable 0.6637 vs fixed wait-deadline 0.8300，Δ=−0.1663，两法同向）、22.6.3 两卡 absent（dependent−fixed 0.0；mean 0.06/min −0.10）、22.6.4b calibration_already_adequate。主终点未达、递归相依改进未建立 ⇒ 22.6 结案：autonomous_choice=negative、recursive_development=negative（范围限定：22.6.0 C 任务与 22.6.3 构造，不推广）；铁律 7 止损触发，不追加预算/不改门。主线队首推进至 22.7（成熟生长，须先处理 growth_benefit_not_established_in_package_22）。
