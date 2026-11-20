@@ -1,0 +1,65 @@
+{
+  "schema": "taiji-u2-working-memory-v1",
+  "card": "explicit working-memory write-back of tick1 prediction into tick2 input",
+  "created_utc": "2026-11-20T01:00:37.365821+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "steps": 1500,
+    "memory_dims": [
+      39,
+      40,
+      41
+    ],
+    "gates": "self>=0.55 & self-zero>=0.10; necessity drop>=0.10; oracle>=0.65; shuffled<=0.45"
+  },
+  "results": [
+    {
+      "seed": 0,
+      "tick1": 0.5417,
+      "self": 0.4583,
+      "zero": 0.25,
+      "shuffled": 0.4167,
+      "oracle": 0.5
+    },
+    {
+      "seed": 1,
+      "tick1": 0.6667,
+      "self": 0.5833,
+      "zero": 0.4583,
+      "shuffled": 0.5,
+      "oracle": 0.625
+    },
+    {
+      "seed": 2,
+      "tick1": 0.5,
+      "self": 0.5417,
+      "zero": 0.4583,
+      "shuffled": 0.5,
+      "oracle": 0.5417
+    }
+  ],
+  "gates": {
+    "self_over_zero": false,
+    "necessity": false,
+    "oracle_reference": false,
+    "shuffled_control": false
+  },
+  "verdict": "task_not_learnable",
+  "discipline": {
+    "optimizer_steps": 4500,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 40.69
+  }
+}

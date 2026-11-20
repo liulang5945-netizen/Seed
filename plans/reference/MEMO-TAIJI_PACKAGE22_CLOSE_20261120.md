@@ -260,3 +260,7 @@ HEADS=9 跨会话：旧 A–H 全部 retention drop 0.0，新 I（颜色 parity�
 ## 54. 工作记忆写回设计草案（D-20261119-109，零训练）
 
 针对 D-108「状态可携带但不可组合」：把 tick1 预测桶**显式写回**为 tick2 输入（one-hot 写 48 维特征 39–41 空闲维）。三模式：自写回（argmax detach）/oracle 写回/对照（零、shuffled）。四门：自写回 tick2≥0.55 且比零写回高≥0.10；清零写回降≥0.10（必要性）；oracle≥0.65（任务可学）；shuffled≤0.45（控制）。价 ≤200 CPU、3 seed、零 check；全过记 `working_memory_writeback_ready`，oracle 不过 0.65 记 `task_not_learnable`。
+
+## 55. 工作记忆写回卡（D-20261119-110，`task_not_learnable`）
+
+自写回 tick2 `0.458/0.583/0.542` vs 零写回 `0.25/0.458/0.458`、shuffled `0.417/0.5/0.5`、oracle `0.5/0.625/0.542`（<0.65 门）⇒ 四门全败、oracle 参考失败 ⇒ `task_not_learnable`。**弱正向**：自写回 3/3 seed 优于零写回（+0.21/+0.125/+0.083）且优于 shuffled，写回通道被使用；但 oracle 亦低，任务本身在当前容量/数据下不可学，故**不签**工作记忆 verified。后继：先构造可学两步任务（数据对 ≥1,000、二分类同向/反向、oracle 教师课程），新卡新 pin 预注册。
