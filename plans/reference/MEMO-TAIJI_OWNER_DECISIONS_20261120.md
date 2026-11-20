@@ -1,5 +1,7 @@
 # 待裁事项汇总（2026-11-20）：四项决策与执行者建议
 
+> check② B 案四项前置冻结包：[CHECK2_B_PREREQUISITES_20261120.md](CHECK2_B_PREREQUISITES_20261120.md)（D-20261119-141，零暴露）。
+>
 > 一页式状态简报 v2：[MEMO-TAIJI_STATUS_BRIEF_20261120.md](MEMO-TAIJI_STATUS_BRIEF_20261120.md)（D-20261119-139，零训练）。
 
 > 文档状态：[决策输入/只读汇总] — 2026-11-20。**零训练、零 check/final。** 依据：包 22 收口账与各卡回执；九轴当前值见 §0。
