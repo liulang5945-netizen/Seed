@@ -1,0 +1,69 @@
+{
+  "schema": "taiji-u2-sequential-loop-v1",
+  "card": "explicit 3-step loop, final-step same13 readout via working-memory write-back",
+  "created_utc": "2026-11-20T01:54:12.793799+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "steps": 1200,
+    "train_triples": 108,
+    "fit_triples": 108,
+    "gates": "depth gain>=0.10; zero writeback drop>=0.10; shuffled-content drop>=0.10; oracle>=0.85; swapped order drop>=0.10"
+  },
+  "results": [
+    {
+      "seed": 0,
+      "self_k3": 0.9537,
+      "zero_k3": 0.5648,
+      "shuffled_writeback_k3": 0.8241,
+      "oracle_k3": 0.9537,
+      "swapped_order_k3": 0.4444,
+      "no_memory_baseline": 0.5,
+      "depth_gain": 0.4537
+    },
+    {
+      "seed": 1,
+      "self_k3": 0.9815,
+      "zero_k3": 0.8519,
+      "shuffled_writeback_k3": 0.9259,
+      "oracle_k3": 0.9815,
+      "swapped_order_k3": 0.4444,
+      "no_memory_baseline": 0.5,
+      "depth_gain": 0.4815
+    },
+    {
+      "seed": 2,
+      "self_k3": 0.9259,
+      "zero_k3": 0.7222,
+      "shuffled_writeback_k3": 0.6667,
+      "oracle_k3": 0.9444,
+      "swapped_order_k3": 0.463,
+      "no_memory_baseline": 0.5,
+      "depth_gain": 0.4259
+    }
+  ],
+  "gates": {
+    "depth_gain": true,
+    "writeback_necessity": true,
+    "writeback_content": false,
+    "oracle_reference": true,
+    "order_dependence": true
+  },
+  "verdict": "sequential_loop_partial",
+  "discipline": {
+    "optimizer_steps": 3600,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 33.78
+  }
+}
