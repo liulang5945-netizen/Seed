@@ -403,3 +403,7 @@ owner 授权 `"授权补预算帽"` 后以同一 `criteria_sha256`（`9dd69624�
 ## 87. 22.5.2 Q2 差集与 S1 配平（D-20261119-146，parity_admissible）
 
 Q2 差集文档落盘：共享 units/输入编码/z、a；A 独有 `w_g/ell/h_readout`（H 在读出路径）；B 独有 `query/state_mix/readout`（H 仅 scratch）；读出参数不可逐值迁移、跨路线行为等价不假设、无映射须新身份。S1 解析 FLOPs 配平：GRU hidden 16/24/32/48 全部落在 [0.90,1.10]（steps 841/501/340/200，ratio 1.0001/0.9994/0.9999/1.051），chosen hidden16/841步/ratio1.0001；三臂 smoke 总价 1.44 CPU ⇒ `parity_admissible`。判读：P3.9 `compute_parity_unavailable` 由解析配平解决；S1 只证可配平。下一步 S2 行为窗（5 seed×三臂 1,200 步，帽 3,000 CPU、零 check）。
+
+## 88. 22.5.2 S2 行为窗与结案（D-20261119-147，arch_negative）
+
+三 tick joint24、等 FLOPs（U2 1200 步／GRU-16 841 步，比 1.0001）、5 配对 seed：U2-A 0.8188、U2-B 0.8625、GRU-16 0.9750；Δ(B−GRU) 均值 −0.1101、95% 区间 [−0.1937,−0.0375]（上界<0）；多数类 0.0703（学习门成立）；32.23 CPU（帽 3,000）、零 check。判词 `arch_negative`（G1 未过且区间整体为负；取 negative 非 inconclusive 系因区间排除 0，非改门值）；按预定规则保留 B 父交付 22.6；架构结论限定本窗口（三 tick joint24/GRU-16/等 FLOPs），不推广为「单位图不可行」。22.5.2 结案，队首推进至 22.6。

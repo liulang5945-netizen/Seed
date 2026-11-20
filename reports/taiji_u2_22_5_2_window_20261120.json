@@ -1,0 +1,86 @@
+{
+  "schema": "taiji-u2-22-5-2-window-v1",
+  "card": "22.5.2 S2 equal-FLOPs behaviour window: U2-A / U2-B / GRU-16 on three-tick joint24",
+  "created_utc": "2026-11-20T06:44:19.338270+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1"
+  },
+  "protocol": {
+    "seeds": [
+      20261120,
+      20261121,
+      20261122,
+      20261123,
+      20261124
+    ],
+    "u2_steps": 1200,
+    "gru_steps": 841,
+    "batch": 48,
+    "ticks": 3,
+    "evidence_stream": "t0 query/goal, t1 colour, t2 position",
+    "majority_baseline": 0.0703,
+    "gate": "mean delta (U2-B - GRU) >= 0.05 and paired bootstrap 95% lower bound > 0",
+    "bootstrap": 2000
+  },
+  "rows": [
+    {
+      "seed": 20261120,
+      "u2_a": 0.6875,
+      "u2_b": 0.9062,
+      "gru": 0.9375,
+      "delta_b_minus_gru": -0.0312,
+      "cpu": 5.61
+    },
+    {
+      "seed": 20261121,
+      "u2_a": 0.8125,
+      "u2_b": 0.9688,
+      "gru": 1.0,
+      "delta_b_minus_gru": -0.0312,
+      "cpu": 5.64
+    },
+    {
+      "seed": 20261122,
+      "u2_a": 0.8125,
+      "u2_b": 0.9375,
+      "gru": 1.0,
+      "delta_b_minus_gru": -0.0625,
+      "cpu": 5.66
+    },
+    {
+      "seed": 20261123,
+      "u2_a": 0.8438,
+      "u2_b": 0.7812,
+      "gru": 0.9688,
+      "delta_b_minus_gru": -0.1875,
+      "cpu": 5.59
+    },
+    {
+      "seed": 20261124,
+      "u2_a": 0.9375,
+      "u2_b": 0.7188,
+      "gru": 0.9688,
+      "delta_b_minus_gru": -0.25,
+      "cpu": 5.58
+    }
+  ],
+  "delta_mean": -0.1101,
+  "delta_lb95": -0.1937,
+  "delta_ub95": -0.0375,
+  "gates": {
+    "g1_advantage": false,
+    "g3_engineering": true,
+    "g4_cost": true
+  },
+  "verdict": "arch_negative",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "optimizer_steps": 16205
+  },
+  "cost": {
+    "cpu": 32.23
+  }
+}

@@ -4566,3 +4566,8 @@ owner 授权 `"授权补预算帽"`，以同一 `criteria_sha256`（`9dd69624…
 ## 2026-11-20 22.5.2 Q2 差集与 S1 配平（D-20261119-146，`parity_admissible`，1.44 CPU，0 check）
 
 Q2：新写 DIFF-TAIJI_U2_ROUTE_AB_20261120.md 逐源码列 A/B 唯一前向与迁移差集（共享 units/输入编码/z、a；A 独有 w_g/ell/h_readout 且 H 在读出路径；B 独有 query/state_mix/readout 且 H 仅 scratch；读出参数不可逐值迁移、行为等价不假设、无映射须新身份）。S1：新增 flops_22_5_2_20261120.py——解析 FLOPs 估计器（逐项公式、反向 2×）＋三臂 50 步 smoke；四个 GRU hidden 候选全部在 [0.90,1.10]（hidden16 steps841 ratio1.0001 chosen；24/32/48 亦在带），smoke CPU A0.16/B0.11/GRU0.03、总价 1.44；⇒ parity_admissible。判读：P3.9 的 compute_parity_unavailable 由解析配平解决，配平判据不再依赖 process_time；S1 只证可配平不证优劣。下一步 S2 行为窗（5 seed×三臂 1,200 步，帽 3,000 CPU、零 check）。
+
+
+## 2026-11-20 22.5.2 S2 行为窗与结案（D-20261119-147，`arch_negative`，32.23 CPU，0 check）
+
+joint24 三 tick 证据到达流（t0 查询/t1 颜色/t2 位置），U2-A/U2-B/GRU-16（U2 1200 步、GRU 841 步，FLOPs 比 1.0001），5 配对 seed：U2-A 0.8188、U2-B 0.8625、GRU-16 0.9750；Δ(B−GRU) 均值 −0.1101、95% 区间 [−0.1937, −0.0375]（上界<0）；多数类 0.0703（学习门成立）；32.23 CPU（帽 3,000）、零 check/final。判词 arch_negative（G1 未过且区间整体为负；取 negative 而非 inconclusive 系因区间排除 0，非改门值）；按预定规则保留 B 父交付 22.6，架构结论限定本窗口、不推广为单位图不可行。22.5.2 结案（S0 预注册/D-145＋Q2 差集与 S1 配平/D-146＋S2 本条）；主线队首推进至 22.6。
