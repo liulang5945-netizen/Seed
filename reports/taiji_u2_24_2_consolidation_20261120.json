@@ -1,0 +1,187 @@
+{
+  "schema": "taiji-u2-24-2-consolidation-v1",
+  "card": "24.2 consolidation replay comparison (priority/random/recent/frozen/fast-only)",
+  "created_utc": "2026-11-20T11:17:53.386623+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      20261120,
+      20261121,
+      20261122
+    ],
+    "sessions": 10,
+    "events_per_session": 20,
+    "steps": 300,
+    "windows": 2
+  },
+  "rows": [
+    {
+      "seed": 20261120,
+      "arms": {
+        "fast_only": {
+          "0": 0.296875,
+          "1": 0.2734375
+        },
+        "priority": {
+          "0": 0.28125,
+          "1": 0.28125
+        },
+        "random": {
+          "0": 0.28125,
+          "1": 0.3125
+        },
+        "recent": {
+          "0": 0.2109375,
+          "1": 0.3359375
+        },
+        "frozen_slow": {
+          "0": 0.2734375,
+          "1": 0.21875
+        }
+      },
+      "no_recent": [
+        0.3125,
+        0.2421875
+      ],
+      "w_new_plus_0_gap": [
+        -0.03125,
+        0.0390625
+      ],
+      "retention": {
+        "baseline": {
+          "s1": 0.984375,
+          "s2": 0.859375,
+          "s3": 1.0
+        },
+        "after": {
+          "s1": 0.984375,
+          "s2": 0.859375,
+          "s3": 1.0
+        },
+        "damage": {
+          "s1": 0.0,
+          "s2": 0.0,
+          "s3": 0.0
+        }
+      }
+    },
+    {
+      "seed": 20261121,
+      "arms": {
+        "fast_only": {
+          "0": 0.3203125,
+          "1": 0.3203125
+        },
+        "priority": {
+          "0": 0.2421875,
+          "1": 0.2890625
+        },
+        "random": {
+          "0": 0.2578125,
+          "1": 0.296875
+        },
+        "recent": {
+          "0": 0.2265625,
+          "1": 0.2578125
+        },
+        "frozen_slow": {
+          "0": 0.1875,
+          "1": 0.203125
+        }
+      },
+      "no_recent": [
+        0.2734375,
+        0.296875
+      ],
+      "w_new_plus_0_gap": [
+        -0.03125,
+        -0.0078125
+      ],
+      "retention": {
+        "baseline": {
+          "s1": 0.9921875,
+          "s2": 0.859375,
+          "s3": 1.0
+        },
+        "after": {
+          "s1": 0.9921875,
+          "s2": 0.859375,
+          "s3": 1.0
+        },
+        "damage": {
+          "s1": 0.0,
+          "s2": 0.0,
+          "s3": 0.0
+        }
+      }
+    },
+    {
+      "seed": 20261122,
+      "arms": {
+        "fast_only": {
+          "0": 0.28125,
+          "1": 0.3046875
+        },
+        "priority": {
+          "0": 0.3828125,
+          "1": 0.3828125
+        },
+        "random": {
+          "0": 0.390625,
+          "1": 0.3515625
+        },
+        "recent": {
+          "0": 0.3359375,
+          "1": 0.3359375
+        },
+        "frozen_slow": {
+          "0": 0.234375,
+          "1": 0.2421875
+        }
+      },
+      "no_recent": [
+        0.2734375,
+        0.1796875
+      ],
+      "w_new_plus_0_gap": [
+        0.109375,
+        0.203125
+      ],
+      "retention": {
+        "baseline": {
+          "s1": 0.9921875,
+          "s2": 0.875,
+          "s3": 1.0
+        },
+        "after": {
+          "s1": 0.9921875,
+          "s2": 0.875,
+          "s3": 1.0
+        },
+        "damage": {
+          "s1": 0.0,
+          "s2": 0.0,
+          "s3": 0.0
+        }
+      }
+    }
+  ],
+  "mean_gain": 0.0,
+  "gates": {
+    "consolidation_gain": false,
+    "persistent": false,
+    "retention": true
+  },
+  "verdict": "consolidation_partial",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 218.73
+  }
+}
