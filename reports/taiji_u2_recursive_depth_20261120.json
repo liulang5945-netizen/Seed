@@ -1,0 +1,88 @@
+{
+  "schema": "taiji-u2-recursive-depth-v1",
+  "card": "iterative inference depth within persistent unit state (T<=4)",
+  "created_utc": "2026-11-20T00:36:53.464988+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "ticks": 4,
+    "base_steps": 1200,
+    "recursive_steps": 600,
+    "depth_gain_min": 0.05,
+    "shuffled_gain_max": 0.02,
+    "baseline": "T=1 trained for the same extra steps"
+  },
+  "results": [
+    {
+      "seed": 0,
+      "pretrained_tick1": 1.0,
+      "tick_accuracies": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "depth_gain": 0.0,
+      "shuffled_gain": -1.0,
+      "credit_first_loss": 0.0693,
+      "credit_last_loss": 0.0022,
+      "baseline_tick1": 0.875,
+      "baseline_gain_vs_pretrained": -0.125
+    },
+    {
+      "seed": 1,
+      "pretrained_tick1": 0.9375,
+      "tick_accuracies": [
+        0.9375,
+        0.875,
+        0.875,
+        0.875
+      ],
+      "depth_gain": -0.0625,
+      "shuffled_gain": -0.9375,
+      "credit_first_loss": 0.0354,
+      "credit_last_loss": 0.004,
+      "baseline_tick1": 0.9375,
+      "baseline_gain_vs_pretrained": 0.0
+    },
+    {
+      "seed": 2,
+      "pretrained_tick1": 0.8125,
+      "tick_accuracies": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "depth_gain": 0.0,
+      "shuffled_gain": -1.0,
+      "credit_first_loss": 0.0659,
+      "credit_last_loss": 0.0249,
+      "baseline_tick1": 0.5,
+      "baseline_gain_vs_pretrained": -0.3125
+    }
+  ],
+  "gates": {
+    "depth_gain": false,
+    "feedback_dependence": true,
+    "credit_alive": true,
+    "baseline_control": true
+  },
+  "verdict": "recursive_depth_absent",
+  "discipline": {
+    "optimizer_steps": 10800,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 62.05
+  }
+}
