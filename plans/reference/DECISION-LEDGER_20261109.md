@@ -6851,3 +6851,16 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **4. 预算切片（建议待裁）**：23.0 1,500＋23.1 3,000＋23.2 8,000＋23.3 12,000＋23.4–23.5 10,000＝**34,500**（<48,000 首窗帽）；check ≤2、final ≤1（final 仅当次授权，否则 final_not_authorized）。
 
 **5. 负出口**：`language_scope_insufficient`（无来源/背模板/2 跳增益<0.05 且等算力基线不劣）；`composition_partial`；`composition_negative`；`engineering_failure`；`budget_stop`。依赖 23 准入与 23.0 `precondition_ready`；未准入不运行；不签 23 通过/final/C/D/J/模型成型。
+
+
+### D-20261119-164 23.1 数据合同草案：中文组合世界、三轴留出与 oracle 接口（零训练、零 check）
+
+**1. 动作**：写 [23.1 数据合同草案](../reference/DESIGN-TAIJI_U2_23_1_DATA_CONTRACT_20261120.md)，把 23 数据合同定义到可执行级：新 fixture `taiji-23-composition-v1`（Q1 单跳位置、Q2 单跳关系、Q3 两跳有序关系、Q4 来源/时间），答案空间、中文模板、三轴（措辞/关系方向/组合顺序）交叉留出算法、分区 digest 与 oracle 接口。
+
+**2. 关键冻结项**：每 world 四类问题共用同一世界状态；训练暴露 {左,右} 方向，fit/check 暴露 {前,后}；两跳训练暴露一组顺序、fit/check 暴露反向与未见对；措辞每组 3 改写、训练只暴露 1–2 组；`(template_group, direction, pair_order)` 三元组分区不交（无泄漏）；分区 digest 两次一致方可冻结。
+
+**3. Oracle 接口**：`oracle_answer(world_snapshot, question)` 直接读符号状态、不经模型/媒体；fit oracle 符号真值必须 =1.0（否则 `engineering_failure`），全历史 oracle ≥0.95 才可进 23.2。
+
+**4. 出口**：`data_contract_frozen`（C1–C5 全过）→ 23.2；失败 `data_contract_invalid` / `engineering_failure`。复用 `first_a_support_22_5_v2.py`（Q1 不改）、`u2_task_episode.py`（只读）、`native_composition_fixture.py`（只读参考）；拟新增 `taiji/native_composition.py` 与 `scripts/training/run_s2_23_1_20261120.py`（23.1 冻结后）。
+
+**5. 边界**：零训练、零 check；check/final 生成到封存路径、只记 digest，首次读取即扣；依赖 23 准入与 23.0 `precondition_ready`；未准入不运行；不签 23 通过/final/C/D/J/模型成型。

@@ -4651,3 +4651,8 @@ J1：30 单位 RouteB 仅 appearance、48 步/轮×8×3＝1,152 步，3 seed fit
 ## 2026-11-20 23 S0 预注册（D-20261119-163，设计，零训练零 check）
 
 唯一目标：在 22.8 同一主体上证明「关系读取＋最多2步组合＋中文内容/来源/时间联合表达」可泛化到未见措辞/关系方向/组合，并对照等算力强基线、保持 23.0 的三类旧技能 ≤0.02。契约照 MAINLINE §4.2：每世界 train 512/fit 128/check 128/final 128（2,688 world）、三轴交叉留出；check ≤2、final ≤1。复用 generate_examples/u2_evidence_read/u2_joint_tokens/native_composition_fixture，拟新增 taiji/native_composition.py；辅助头训练期用、评估前摘除。子卡与门：23.1 数据合同＋全历史 oracle ≥0.95＋无泄漏；23.2 2 跳读取（增益 ≥0.05、95% LB>0、3 seed 同向；跨单位 vs 直接查询消融差 ≥0.05）；23.3 中文联合生成（Q≥0.80、来源/时间 ≥0.80、摘头掉幅 ≤0.05）；23.4 反馈置换（净益 ≥0.05、旧技能保持 ≤0.02）；23.5 等 CPU/FLOPs GRU/TF（≤10%）。预算切片：1,500＋3,000＋8,000＋12,000＋10,000＝34,500（<48,000 帽）；check ≤2、final ≤1（final 仅当次授权）。负出口：language_scope_insufficient/composition_partial/composition_negative/engineering_failure/budget_stop/final_not_authorized。依赖 23 准入与 23.0 precondition_ready；未准入不运行；不签 23 通过/final/C/D/J/模型成型。
+
+
+## 2026-11-20 23.1 数据合同草案（D-20261119-164，设计，零训练零 check）
+
+新 fixture taiji-23-composition-v1：Q1 单跳位置（复用 first-A v2）、Q2 单跳关系、Q3 两跳有序关系、Q4 来源/时间；每 world 四问共用同一场景。三轴留出：措辞（每组 3 改写入训练只暴露 1–2 组）、关系方向（训练 {左,右}、fit/check {前,后}）、组合顺序（训练一组、fit/check 反向与未见对）；(template_group,direction,pair_order) 三 元组分区不交；分区 digest 两次一致才冻结。oracle_answer 直接读符号状态、不经模型/媒体；fit 符号真值必须=1.0（否则 engineering_failure）、全历史 oracle ≥0.95 才进 23.2。出口 data_contract_frozen/ data_contract_invalid/engineering_failure；复用 first_a_support_22_5_v2（Q1 不改）、u2_task_episode（只读）、native_composition_fixture（只读参考），拟新增 taiji/native_composition.py 与 run_s2_23_1_20261120.py。零训练零 check；check/final 只记 digest；依赖 23 准入与 23.0 precondition_ready；不签 23 通过/final/C/D/J/模型成型。
