@@ -1,0 +1,146 @@
+{
+  "schema": "taiji-u2-24-1-memory-v1",
+  "card": "24.1 bounded fast store F + sparse edge set W with cue Recall",
+  "created_utc": "2026-11-20T10:36:45.621563+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      20261120,
+      20261121,
+      20261122
+    ],
+    "events": 200,
+    "f_slots": 64,
+    "f_dim": 16,
+    "slots_per_event": 4,
+    "edges_per_event": 4,
+    "w_max_edges": 256
+  },
+  "rows": [
+    {
+      "seed": 20261120,
+      "clean_recall": 0.75,
+      "immediate_recall": 0.99,
+      "blank_recall": 0.203125,
+      "cue_drop": 0.546875,
+      "store_size_initial": [
+        64,
+        16
+      ],
+      "store_size_after": [
+        64,
+        16
+      ],
+      "store_writes": 200,
+      "edges": 256,
+      "edges_bounded": true,
+      "retention": {
+        "baseline": {
+          "s1": 0.984375,
+          "s2": 0.859375,
+          "s3": 1.0
+        },
+        "after": {
+          "s1": 0.984375,
+          "s2": 0.859375,
+          "s3": 1.0
+        },
+        "damage": {
+          "s1": 0.0,
+          "s2": 0.0,
+          "s3": 0.0
+        }
+      }
+    },
+    {
+      "seed": 20261121,
+      "clean_recall": 0.75,
+      "immediate_recall": 0.965,
+      "blank_recall": 0.296875,
+      "cue_drop": 0.453125,
+      "store_size_initial": [
+        64,
+        16
+      ],
+      "store_size_after": [
+        64,
+        16
+      ],
+      "store_writes": 200,
+      "edges": 256,
+      "edges_bounded": true,
+      "retention": {
+        "baseline": {
+          "s1": 0.9921875,
+          "s2": 0.859375,
+          "s3": 1.0
+        },
+        "after": {
+          "s1": 0.9921875,
+          "s2": 0.859375,
+          "s3": 1.0
+        },
+        "damage": {
+          "s1": 0.0,
+          "s2": 0.0,
+          "s3": 0.0
+        }
+      }
+    },
+    {
+      "seed": 20261122,
+      "clean_recall": 0.609375,
+      "immediate_recall": 0.96,
+      "blank_recall": 0.171875,
+      "cue_drop": 0.4375,
+      "store_size_initial": [
+        64,
+        16
+      ],
+      "store_size_after": [
+        64,
+        16
+      ],
+      "store_writes": 200,
+      "edges": 256,
+      "edges_bounded": true,
+      "retention": {
+        "baseline": {
+          "s1": 0.9921875,
+          "s2": 0.875,
+          "s3": 1.0
+        },
+        "after": {
+          "s1": 0.9921875,
+          "s2": 0.875,
+          "s3": 1.0
+        },
+        "damage": {
+          "s1": 0.0,
+          "s2": 0.0,
+          "s3": 0.0
+        }
+      }
+    }
+  ],
+  "gates": {
+    "write_read": true,
+    "no_store_growth": true,
+    "edges_bounded": true,
+    "cue_dependency": true,
+    "retention": true
+  },
+  "verdict": "memory_interface_ready",
+  "disclosure": "F is a hand-coded key-value store and W is interface-only here; this card checks contract/accounting, not learned memory (24.2 tests consolidation contribution)",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 242.91
+  }
+}
