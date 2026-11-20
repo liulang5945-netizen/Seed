@@ -4556,3 +4556,8 @@ owner 授权 `"授权补预算帽"`，以同一 `criteria_sha256`（`9dd69624…
 ## 2026-11-20 22.5.1 联合门正式结案：`--verify` 修正闭合为 `joint_gate_check2_pass` / `b_parent_earned`（D-20261119-144，0 训练、0 check 读）
 
 依 owner 指令 `"先正式结案22.5.1"`，按 `run_s2_joint_gate_20261120.py --verify`（D-13）与 [A 父清单](../../manifests/taiji_u2_22_5_0_a_parent_earned_20261119.json)（D-04）先例，执行 `python scripts\training\run_s2_formal_check2_20261120.py --verify`（`17.52 CPU`, `optimizer_steps=0`, `check_reads=0`）：保留 `RUN` 只读不变，在 `fit[:24]` 用行非均匀微扰 `delta_head.2.weight[0].add_(20.0)` 破除 `log_softmax` 常数抵消，测得 3 颗已保存子体保持均失效 **`23→2`（`drop=0.875 >= 0.02`）**；因果切断以 `cut_b - frozen_b` 记为 `0 <= 2`；D 严格 `parent_a_truth` 按 3 种子中位判据乙得 **`median ub95 = 0.0 <= 0.02`**（并列披露 `20261110` `125/126, ub95=0.0208`）；刷新 runner source pin 并由 `--closeout` 正式闭合为 **`joint_gate_check2_pass`**；颁发 [B 父挣得清单](../../manifests/taiji_u2_22_5_1_b_parent_earned_20261120.json)（主交接候选 `child-20261112.pt`），将主线队首从 `22.5.1` 推进至 **`22.5.2`**（契约测试 5/5、`ruff` 0、`mypy` 0）。详见 [正式 check② 结果卡](../../reference/RESULT-TAIJI_U2_22_5_1_FORMAL_CHECK2_20261120.md) 与 [verify 报告](../../../reports/taiji_u2_22_5_1_formal_check2_verify_20261120.json)。
+
+
+## 2026-11-20 22.5.2 S0 预注册（D-20261119-145，零训练、零 check）
+
+新写 DESIGN-TAIJI_U2_22_5_2_ARCH_COMPARISON_20261120.md：主问 Q1 等 FLOPs 下 U2 Route-B 对 GRU 基线的 fit 优势 ≥0.05 且 95% 配对下界 >0；次问 Q2 A/B 唯一前向与迁移差集（文档交付）。任务＝三 tick 观测流→joint24（256 训练/32 fit 世界、T=3 用 UnitScan）；三臂配对 5 seed；**等 FLOPs 配平以解析估计器为准**（U2 矩阵乘+GRU 门，反向 2×，总训练 FLOPs 比值 [0.90,1.10]），实测 CPU 只记账；门 G1 主/G2 探索/G3 工程/G4 成本与兜底 comparison_not_admitted；切片预算 3,500 CPU（300/3,000/200），余 15,700 不自动花；check 读取 0。与 P3.9 差异：真实多 tick 任务、1,200 步、解析配平、5 seed 配对 bootstrap，配平失败与架构负结果分开记账。未冻结未运行。

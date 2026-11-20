@@ -6634,3 +6634,14 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 - **D 口径与主门重判**：`d_truth_drop_upper_bound = [0.0208, 0.0, 0.0]`，按 3 种子中位判据乙得 **`median ub95 = 0.0 <= 0.02`**（主交接候选 `child-20261112.pt` `ub95 = 0.0`），并列保留 `20261110` 1 题差值（`125/126, drop=0.0069, ub95=0.0208`）与 `same_condition / raw_mod` 两项披露；叠加 A `174/192`（drop `0.0`）、B / multi / supersede `144/144`（`gain=0.9653, lb=0.9375`）及恢复 `3/3 exact`，正式闭合判词 **`joint_gate_check2_pass`** / **`b_parent_earned`**。详见 [正式 check② 结果卡](RESULT-TAIJI_U2_22_5_1_FORMAL_CHECK2_20261120.md)。
 
 **3. 边界与唯一后继**：`22.5.1` 联合门正式结案，交付同一接受 v1 A 父 `seed 20261112` 谱系（主子体 `child-20261112.pt`）；显式保留 S1 生成链豁免（D-12）与 `20261110` 差 1 题披露；不签 `22.5.2` 架构优越性、`22.6+` 正式能力、`C/D/J` 与 `final`。主线队首正式推进至 **`22.5.2`（架构比较与单位原生核心接力）**。
+
+
+### D-20261119-145 22.5.2 S0 预注册：等 FLOPs 架构比较与路线 A/B 差集交付
+
+**1. 动作**：写 [22.5.2 S0 预注册](../reference/DESIGN-TAIJI_U2_22_5_2_ARCH_COMPARISON_20261120.md)：主问 Q1＝等 FLOPs 下 U2 Route-B 直读对最强常规序列基线（GRU）的 fit 优势是否 ≥0.05 且配对 95% 下界 >0；次问 Q2＝Route-A vs Route-B 唯一前向与迁移差集（文档交付，行为只在区间排除 0 时报告）。**未冻结、未运行、零 check/final 读取、不占额度。**
+
+**2. 关键设计**：①任务＝三 tick 观测流→joint24（256 训练/32 fit 世界，C 池已录取 seed，T=3 用 UnitScan 保证样本独立）；②三臂配对 5 seed；③**等 FLOPs 配平以解析估计器为准**（U2 逐 tick 矩阵乘、GRU 门计算，反向 2×；总训练 FLOPs 比值 [0.90,1.10]），实测 CPU 只记账不作判据——直接修正 P3.9 `compute_parity_unavailable` 的教训；④门 G1–G4 与兜底 `comparison_not_admitted`；⑤切片预算 3,500 CPU（定价 300／窗 3,000／收束 200），余 15,700 不自动花；check 额度未动。
+
+**3. 与 P3.9 的差异**：P3.9 用 6 tick 合成合法输入、64 次更新、process_time 配平失败；本卡用真实 joint24 多 tick、1,200 步、解析 FLOPs 配平、5 seed 配对与 bootstrap 区间，并把「配平不可达」与「架构负结果」分开记账。
+
+**4. 出口**：`arch_advantage_verified`／`arch_inconclusive`／`arch_negative`／`comparison_not_admitted`／`engineering_failure`／`budget_stop`。不签 22.6+、C/D/J、final、模型成型。

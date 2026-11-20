@@ -395,3 +395,7 @@ owner 授权 `"授权补预算帽"` 后以同一 `criteria_sha256`（`9dd69624�
 ## 88. 22.5.1 联合门正式结案：`--verify` 修正闭合为 `joint_gate_check2_pass` / `b_parent_earned`（D-20261119-144，0 训练、0 check 读）
 
 依 owner 指令 `"先正式结案22.5.1"`，按 `--verify` 先例（D-13）与 22.5.0 [A 父清单](../manifests/taiji_u2_22_5_0_a_parent_earned_20261119.json)（D-04），执行零训练、零额外 check 读的 `--verify`（`17.52 CPU`）：保留 `RUN` 只读不变，在 `fit[:24]` 以行非均匀微扰 `delta_head.2.weight[0].add_(20.0)` 实测三子体保持均失效 **`23→2`（`drop=0.875 >= 0.02`）**，因果超出冻结父 **`5-5=0 <= 2`**，D 严格 `parent_a_truth` 按 3 种子中位判据乙得 **`median ub95=0.0 <= 0.02`**（并列保留 `20261110` `125/126, ub95=0.0208` 与 S1 豁免 D-12 披露）；刷新 runner pin 并经 `--closeout` 正式闭合为 **`joint_gate_check2_pass`**，颁发 [B 父挣得清单](../manifests/taiji_u2_22_5_1_b_parent_earned_20261120.json)（主交接 `child-20261112.pt`），队首正式推进至 `22.5.2`。详见 [正式 check② 结果卡](RESULT-TAIJI_U2_22_5_1_FORMAL_CHECK2_20261120.md)。
+
+## 86. 22.5.2 S0 预注册（D-20261119-145，零训练、零 check）
+
+22.5.2 架构比较 S0 设计卡落盘：Q1＝等 FLOPs 下 U2 Route-B 对 GRU 基线的 fit 优势（Δ≥0.05、配对 95% 下界>0，5 seed）；Q2＝Route-A/B 唯一前向与迁移差集（文档交付）。任务＝三 tick 观测流→joint24（256/32 世界、T=3 UnitScan）；**解析 FLOPs 配平**（U2 矩阵乘＋GRU 门，反向 2×，比值 [0.90,1.10]），实测 CPU 只记账；门 G1–G4 与 `comparison_not_admitted` 兜底；切片 3,500 CPU（300/3,000/200），余 15,700 不自动花；check 额度未动。与 P3.9 的 6 tick 合成窗、64 更新、process_time 配平失败明确区分。未冻结、未运行。

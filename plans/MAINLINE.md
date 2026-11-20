@@ -162,6 +162,8 @@
 包 22 余项以各前卡同一谱系 `accepted_parent` 解锁（总预算口径见 [包 22 §2.9](reference/PLAN-TAIJI-CLOSED_LOOP_DEVELOPMENT_20261110.md#29-横切执行合同)，包 22 合计规划帽 `54,000 CPU / 108,000 wall`）：
 
 ### 3.1 `22.5.2` 架构比较与单位原生核心接力
+- **S0（2026-11-20，D-20261119-145）**：预注册草案已落盘（[设计卡](reference/DESIGN-TAIJI_U2_22_5_2_ARCH_COMPARISON_20261120.md)）——主问 Q1 等 FLOPs 下 U2 Route-B vs GRU 基线（Δ≥0.05、配对 95% 下界>0），次问 Q2 A/B 唯一前向与迁移差集；**等 FLOPs 配平以解析估计器为准**（比值 [0.90,1.10]），实测 CPU 只记账；切片 3,500 CPU，check 读取 0；未冻结、未运行。
+
 - **预算（并入 `22.5`）**：计划 16,000＋余量 3,200＝**19,200 CPU** / 38,400 wall，check② `<=2`。
 - **内容与门限**：按等 FLOPs 或等时间（`<=10%`）配平对比 U2 与最强常规序列基线；按 [路径备案](reference/DECISION-TAIJI_NEURAL_CORE_PATH_20261114.md) 在 `taiji/u2_neural_units.py` 明确路线 A（兼容 `H` 嵌入）与路线 B（器官直接查询单位状态）的唯一前向与迁移差集。若学习门通过而架构优越性（`>=0.05`, 95% 下界 `>0`）未过，仍交付学习父进 `22.6`，架构结论单记 `negative/inconclusive`。
 

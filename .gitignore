@@ -355,3 +355,6 @@ reports/taiji_r2_daily_dialogue_recovery_v2_20261021_extension_v1_aggregate_cpu_
 /.zcode/
 # Machine-local DSH plugin root pointer (contains only a plugin cache path).
 /.v2c/
+
+# Windows sandbox ACL repair reports (local, machine-specific).
+.acl-recovery/
