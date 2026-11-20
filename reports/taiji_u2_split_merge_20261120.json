@@ -1,0 +1,107 @@
+{
+  "schema": "taiji-u2-split-merge-v1",
+  "card": "shared-unit split into two (fine-tuned) then merged back without retraining",
+  "created_utc": "2026-11-20T01:23:36.999641+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "base_steps": 1200,
+    "pair_steps": 200,
+    "gates": "retention<=0.02; modulation>=1.5 or |corr|<=0.5; both ablations>=0.10; merge<=0.02; units 30->31->30"
+  },
+  "results": [
+    {
+      "seed": 0,
+      "base_accuracy": 0.9688,
+      "split_accuracy": 0.9688,
+      "split_retention_drop": 0.0,
+      "pair_correlation": 0.9852,
+      "modulation_parent": 0.6726,
+      "modulation_child": 0.628,
+      "parent_ablation_drop": 0.0,
+      "child_ablation_drop": 0.0,
+      "merged_accuracy": 0.9688,
+      "merge_delta": 0.0,
+      "units": [
+        30,
+        31,
+        30
+      ],
+      "ids": [
+        "u0000",
+        "u0030",
+        "u0000"
+      ]
+    },
+    {
+      "seed": 1,
+      "base_accuracy": 0.9375,
+      "split_accuracy": 0.9375,
+      "split_retention_drop": 0.0,
+      "pair_correlation": 0.992,
+      "modulation_parent": 1.1776,
+      "modulation_child": 1.1756,
+      "parent_ablation_drop": 0.0312,
+      "child_ablation_drop": 0.0,
+      "merged_accuracy": 0.9375,
+      "merge_delta": 0.0,
+      "units": [
+        30,
+        31,
+        30
+      ],
+      "ids": [
+        "u0000",
+        "u0030",
+        "u0000"
+      ]
+    },
+    {
+      "seed": 2,
+      "base_accuracy": 1.0,
+      "split_accuracy": 0.9688,
+      "split_retention_drop": 0.03125,
+      "pair_correlation": 0.979,
+      "modulation_parent": 0.6063,
+      "modulation_child": 0.7138,
+      "parent_ablation_drop": 0.0312,
+      "child_ablation_drop": 0.0312,
+      "merged_accuracy": 1.0,
+      "merge_delta": -0.03125,
+      "units": [
+        30,
+        31,
+        30
+      ],
+      "ids": [
+        "u0000",
+        "u0030",
+        "u0000"
+      ]
+    }
+  ],
+  "gates": {
+    "old_task_retention": false,
+    "differentiation": false,
+    "irreplaceable": false,
+    "merge_lossless": true,
+    "unit_count": true
+  },
+  "verdict": "unit_split_merge_absent",
+  "discipline": {
+    "optimizer_steps": 4200,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 32.72
+  }
+}
