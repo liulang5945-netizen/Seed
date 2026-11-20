@@ -4396,3 +4396,8 @@ UnitScan 忠实重测：tick1 0.625/0.5417/0.625（中间信用门过）；tick2
 ## 2026-11-20 可学两步任务设计草案（D-20261119-111，零训练）
 
 同向/反向二分类：same=(direction1==direction2)，单 tick 只看 r2 不可判断、必须保留 tick1 信息；tick1 预测方向写回 one-hot（特征维 39–40），tick2 预测 same；数据合并多 build_partition seed 至 ≥800 训练对/64 fit 对；四臂自写回/零/shuffled/oracle。门：先决 oracle≥0.85；自写回≥0.65 且比零写回高≥0.15；清零必要降≥0.15；shuffled≤0.55。复用 UnitScan、1500 步、3 seed、零 check、价≤250 CPU、阈值不调；全过记 working_memory_writeback_ready 有界，门1不过记 task_not_learnable 再停。边界：只证二分类两步记忆任务显式写回，不等于一般顺序推理/递归。
+
+
+## 2026-11-20 工作记忆写回通过（D-20261119-112，`working_memory_writeback_ready`，48.94 CPU）
+
+同向/反向二分类：tick1 预测 direction1 并 one-hot 写回 tick2（特征维 39–40），tick2 预测 same。3 seed 全过：direction 1.0；oracle 1.0（任务可学）；自写回 1.0 vs 零写回 0.60/0.61/0.64（增益≈0.36–0.40）；shuffled 0.4914≤0.55；necessity 过 ⇒ working_memory_writeback_ready。判读：显式工作记忆写回成立——单 tick 不可能的任务上自写回恢复满分，零写回跌到 0.60–0.64、shuffled 跌到机会 ⇒ 收益来自写回通道本身；对比 D-108 隐状态不可组合，写成显式输入即可组合。披露：same 标签不平衡（0.2414、多数类 0.7586），零写回臂低于多数类（倾向 same=1），判据以自写回 vs 零写回与 oracle 为准；后续同类卡加平衡采样/多数类基线。边界：单主体/二分类两步/手工注入写回通道；不等于一般递归，不改任务轴与 check②。

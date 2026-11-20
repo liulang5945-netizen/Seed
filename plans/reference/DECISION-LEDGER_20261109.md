@@ -6235,3 +6235,16 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **2. 门**：①先决可学性 oracle ≥0.85；②自写回 ≥0.65 且比零写回高 ≥0.15；③清零必要降 ≥0.15；④shuffled ≤0.55。全过记 `working_memory_writeback_ready`（有界）；门 1 不过记 `task_not_learnable` 再停；其余 partial/negative。
 
 **3. 预算**：复用 UnitScan、1,500 步、3 seed、零 check、价 ≤250 CPU、阈值不调；数据对每臂 ≥300、标签平衡偏差 ≤0.10。判读边界：只证二分类两步记忆任务上的显式写回，不等于一般顺序推理/递归。
+
+
+### D-20261119-112 工作记忆写回通过：`working_memory_writeback_ready`（48.94 CPU，零 check）
+
+**1. 动作**：新增 [`probe_s2_learnable_two_step_20261120.py`](../../scripts/training/probe_s2_learnable_two_step_20261120.py)：同向/反向二分类（`same=(direction1==direction2)`）；tick1 预测 direction1（2 类）并 one-hot 写回 tick2 输入（特征维 39–40）；tick2 看 r2＋写回预测方向 → 预测 `same`；四臂自写回/零/shuffled/oracle；数据合并 6 个 `build_partition` seed（训练 1,020 对 / fit 180 对）。3 seed、零 check。
+
+**2. 读数**（3 seed 全过）：direction 准确率 `1.0/1.0/1.0`；**oracle `1.0`**（任务可学 ✓）；**自写回 `1.0`** vs **零写回 `0.6034/0.6121/0.6379`**（增益 ≈0.36–0.40 ≥0.15 ✓）；**shuffled `0.4914`**（≤0.55 ✓）；necessity ✓ ⇒ **`working_memory_writeback_ready`**。
+
+**3. 判读**：**显式工作记忆写回成立**——在「单 tick 不可能完成」的二分类两步任务上，模型自写回预测方向即可恢复满分；零写回跌到 0.60–0.64、shuffled 跌到机会水平，说明收益来自**写回通道本身**而非任务先验。与 D-108（隐状态携带但读出不可组合）对比：把中间结果写成下一步**显式输入**即可组合——这是「工作记忆」机制的因果证据。
+
+**4. 披露**：`same` 标签不平衡（`same_rate=0.2414`，多数类 0.7586）；零写回臂（0.60–0.64）**低于**多数类基线，说明该臂未利用多数先验而倾向输出 same=1；因此判据以「自写回 vs 零写回」与 oracle 为准，未用多数类作对照。后续同类卡应加平衡采样或报多数类基线。
+
+**5. 边界**：单主体、二分类两步任务、显式写回通道（手工注入 39–40 维）；不等于一般顺序推理/递归发展（D-102/D-108 仍 negative），不改变任务轴 `fit_face_only` 与 check②。

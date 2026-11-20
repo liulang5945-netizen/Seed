@@ -268,3 +268,7 @@ HEADS=9 跨会话：旧 A–H 全部 retention drop 0.0，新 I（颜色 parity�
 ## 56. 可学两步任务设计草案（D-20261119-111，零训练）
 
 先保证任务可学：同向/反向二分类 `same=(direction1==direction2)`，单 tick 只看 r2 不可判断、必须保留 tick1 信息；tick1 预测方向写回（one-hot 39–40），tick2 预测 same；数据合并多 seed 至 ≥800 对。门：先决 oracle ≥0.85；自写回 ≥0.65 且比零写回高 ≥0.15；清零必要降 ≥0.15；shuffled ≤0.55。价 ≤250 CPU、3 seed、零 check；全过记 `working_memory_writeback_ready`，门 1 不过再记 `task_not_learnable` 停止。
+
+## 57. 工作记忆写回通过（D-20261119-112，有界 verified）
+
+先构造可学二分类两步任务（同向/反向，`same=(dir1==dir2)`，单 tick 不可完成）：tick1 预测方向并 one-hot 写回 tick2 输入（39–40）。3 seed：oracle 1.0、自写回 1.0、零写回 0.603–0.638、shuffled 0.491 ⇒ 四门全过 ⇒ `working_memory_writeback_ready`（48.94 CPU）。**判读**：显式工作记忆写回成立，收益来自写回通道本身；对比 D-108「状态可携带但不可组合」——把中间结果写成显式输入即可组合。披露：标签不平衡（same 24.1%），零写回低于多数类基线；后续同类卡加平衡采样。边界：单主体、二分类两步、手工注入写回；不等于一般递归/顺序推理。
