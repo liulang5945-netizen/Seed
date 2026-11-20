@@ -1,0 +1,159 @@
+{
+  "schema": "taiji-u2-24-3-prefix-v1",
+  "card": "24.3 prefix maintenance vs full rebuild on out-of-store old events",
+  "created_utc": "2026-11-20T11:32:22.836359+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      20261120,
+      20261121,
+      20261122
+    ],
+    "sessions": 10,
+    "events_per_session": 20,
+    "prefixes": [
+      1,
+      2,
+      4,
+      8
+    ],
+    "steps": 300
+  },
+  "rows": [
+    {
+      "seed": 20261120,
+      "old_events": 40,
+      "consolidation_events": 160,
+      "fast_only": 0.3499999940395355,
+      "arms": {
+        "prefix_1": 0.22499999403953552,
+        "prefix_2": 0.15000000596046448,
+        "prefix_4": 0.20000000298023224,
+        "prefix_8": 0.2750000059604645,
+        "full_rebuild": 0.25
+      },
+      "costs": {
+        "prefix_1": 20,
+        "prefix_2": 40,
+        "prefix_4": 80,
+        "prefix_8": 160,
+        "full_rebuild": 160
+      },
+      "retention": {
+        "baseline": {
+          "s1": 0.984375,
+          "s2": 0.859375,
+          "s3": 1.0
+        },
+        "after": {
+          "s1": 0.984375,
+          "s2": 0.859375,
+          "s3": 1.0
+        },
+        "damage": {
+          "s1": 0.0,
+          "s2": 0.0,
+          "s3": 0.0
+        }
+      }
+    },
+    {
+      "seed": 20261121,
+      "old_events": 40,
+      "consolidation_events": 160,
+      "fast_only": 0.10000000149011612,
+      "arms": {
+        "prefix_1": 0.17499999701976776,
+        "prefix_2": 0.15000000596046448,
+        "prefix_4": 0.125,
+        "prefix_8": 0.25,
+        "full_rebuild": 0.2750000059604645
+      },
+      "costs": {
+        "prefix_1": 20,
+        "prefix_2": 40,
+        "prefix_4": 80,
+        "prefix_8": 160,
+        "full_rebuild": 160
+      },
+      "retention": {
+        "baseline": {
+          "s1": 0.9921875,
+          "s2": 0.859375,
+          "s3": 1.0
+        },
+        "after": {
+          "s1": 0.9921875,
+          "s2": 0.859375,
+          "s3": 1.0
+        },
+        "damage": {
+          "s1": 0.0,
+          "s2": 0.0,
+          "s3": 0.0
+        }
+      }
+    },
+    {
+      "seed": 20261122,
+      "old_events": 40,
+      "consolidation_events": 160,
+      "fast_only": 0.17499999701976776,
+      "arms": {
+        "prefix_1": 0.125,
+        "prefix_2": 0.20000000298023224,
+        "prefix_4": 0.15000000596046448,
+        "prefix_8": 0.17499999701976776,
+        "full_rebuild": 0.17499999701976776
+      },
+      "costs": {
+        "prefix_1": 20,
+        "prefix_2": 40,
+        "prefix_4": 80,
+        "prefix_8": 160,
+        "full_rebuild": 160
+      },
+      "retention": {
+        "baseline": {
+          "s1": 0.9921875,
+          "s2": 0.875,
+          "s3": 1.0
+        },
+        "after": {
+          "s1": 0.9921875,
+          "s2": 0.875,
+          "s3": 1.0
+        },
+        "damage": {
+          "s1": 0.0,
+          "s2": 0.0,
+          "s3": 0.0
+        }
+      }
+    }
+  ],
+  "best_prefix": 8,
+  "mean_gap_vs_full": 0.0,
+  "fast_only": [
+    0.3499999940395355,
+    0.10000000149011612,
+    0.17499999701976776
+  ],
+  "gates": {
+    "near_full_rebuild": true,
+    "cost_reduced": false,
+    "retention": true
+  },
+  "verdict": "prefix_maintenance_partial",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 207.88
+  }
+}

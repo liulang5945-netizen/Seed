@@ -4736,3 +4736,8 @@ J1：30 单位 RouteB 仅 appearance、48 步/轮×8×3＝1,152 步，3 seed fit
 ## 2026-11-20 24.2 巩固对照（D-20261119-180，`consolidation_partial`（净益未成立），218.73 CPU，0 check）
 
 冻结 23.0b 父；10 会话×20 事件；五臂 priority/random/recent/frozen-slow/fast-only；两延迟窗口；3 seed、只读 fit、零 check。读数：priority 两窗口 0.281/0.281、0.242/0.289、0.383/0.383；fast-only 0.297/0.273、0.320/0.320、0.281/0.305；priority−fast-only = −0.004/−0.055/+0.090（均值 +0.010 未达 0.05、非 3 seed 同向、两窗口非持续为正）；frozen-slow 最低 0.19–0.27；旧技能损伤 0.0✓ ⇒ consolidation_partial。判读：巩固净益未成立——priority 未超 fast-only、也未稳定超 random；但 frozen-slow 最差说明更新本身有贡献，只是何种策略无分辨；fast-only 偏强是设计事实（64 槽键值召回 fit 窗口 0.27–0.32 与训练头同级），压低净益空间；24.3 若继续须把评测窗口推到 F 容量之外。旧保持 0.0 仍来自父冻结。后继：24.3/24.4 可继续但需改长延迟窗口；若仍不成立则 24 按 experience_learning_partial/negative 收口；主窗 17,000 CPU 待授权；累计 24≈460 CPU；不签 24 通过/final/C/D/J/模型成型；零 check/final。
+
+
+## 2026-11-20 24.3 前缀维护（D-20261119-181，`prefix_maintenance_partial`（无成本收益），207.88 CPU，0 check）
+
+冻结 23.0b 父；10 会话×20 事件无重复抽样；会话 1–2 的 40 事件为长延迟测试（落在有界 64 槽外）；臂 prefix_1/2/4/8 vs full_rebuild vs fast-only；3 seed、只读 fit、零 check。读数：prefix_8 0.275/0.250/0.175；full 0.250/0.275/0.175；最佳前缀与 full 差均值 0.0（≤0.05✓）；但成本✗——prefix_8 重放 160 事件=full 160，无成本节省；更短前缀 1/2/4 成本低但与 full 差 −0.05～−0.12；旧事件整体 0.10–0.28、fast-only 0.10–0.35；retention 0.0✓ ⇒ prefix_maintenance_partial。判读：无成本收益——能匹配全重建的只有全量前缀、其成本等于全重建，『可支付维护』核心主张在本设计下未成立；旧事件学习整体弱（0.10–0.28）不是前缀策略单点问题，而是当前 4 维 direct_query 读出接口在旧事件上的容量上限；fast-only 偶高属键近邻偶然命中；旧保持 0.0 仍来自父冻结。后继：24.4（四类纠错）可做但受同一容量限制；建议 24.4 后即对 24 做范围限定收口（experience_learning_partial），把读取结构升级卡列为 24 之后第一优先；主窗 17,000 CPU 待授权；累计 24≈670 CPU；不签 24 通过/final/C/D/J/模型成型；零 check/final。
