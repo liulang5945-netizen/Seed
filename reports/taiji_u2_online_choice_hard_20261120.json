@@ -1,0 +1,66 @@
+{
+  "schema": "taiji-u2-online-choice-hard-v1",
+  "card": "cross-session trust dynamics with 10 actions and noisy feedback",
+  "created_utc": "2026-11-20T01:40:09.558362+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "sessions": 24,
+    "slots": 32,
+    "epochs": 8,
+    "actions": 10,
+    "gates": "online>=best_fixed-0.05; online>=wait+0.10; online>=random+0.10; actions>=3 & wait<=0.8"
+  },
+  "results": [
+    {
+      "seed": 0,
+      "online": 0.7082,
+      "best_fixed": 0.5639,
+      "wait": 0.4,
+      "random": 0.3167,
+      "actions_used": 8,
+      "wait_share": 0.2922
+    },
+    {
+      "seed": 1,
+      "online": 0.6899,
+      "best_fixed": 0.5694,
+      "wait": 0.3948,
+      "random": 0.3166,
+      "actions_used": 8,
+      "wait_share": 0.2865
+    },
+    {
+      "seed": 2,
+      "online": 0.6867,
+      "best_fixed": 0.5683,
+      "wait": 0.4078,
+      "random": 0.3157,
+      "actions_used": 8,
+      "wait_share": 0.2913
+    }
+  ],
+  "gates": {
+    "beats_best_fixed": true,
+    "beats_wait": true,
+    "beats_random": true,
+    "diversity": true
+  },
+  "verdict": "online_choice_hard_ready",
+  "discipline": {
+    "optimizer_steps": 0,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 0.16
+  }
+}
