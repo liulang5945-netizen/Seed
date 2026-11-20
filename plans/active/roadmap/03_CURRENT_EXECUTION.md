@@ -4641,3 +4641,8 @@ J1：30 单位 RouteB 仅 appearance、48 步/轮×8×3＝1,152 步，3 seed fit
 ## 2026-11-20 23 立项建议卡（D-20261119-161，提案，零训练零 check，待裁）
 
 照 MAINLINE §4.2 定义 23 契约（中文与多世界组合泛化；2,688 world；措辞/关系方向/2步组合交叉留出；Q≥0.80、增益≥0.05、保持≤0.02、≥3类旧技能；负出口 language_scope_insufficient；首窗帽 48,000；check ≤2/final ≤1）。前置审计关键发现：23 要求 ≥3 类旧技能 ≥0.80，但按 22.8 终值仅 J1 appearance fit 0.9063/0.8438/0.8125 达标；J2 dynamics 0.69–0.80（均值<0.80）未达、J3 partial-positive、J4 工程项、J5 negative、22.5.1 A/B/D 属原生核心线不可跨谱系拼装 ⇒ 现仅 1 类达标，23 直接开跑先天不足。建议先立 23.0 前置卡（≤1,500 CPU、零 check、新 pin）：在 22.8 RouteB 父上把 ≥3 类旧技能做到 fit ≥0.80（appearance、dynamics 加剂量、第三类 occlusion 非退化或 correction 加宽 direct/query），门 K1 三类 ≥0.80、K2 互不干扰 ≤0.02、K3 恢复/身份连续；出口 ready/partial/absent。主窗建议切片 1,500＋3,000＋8,000＋12,000＋10,000＝34,500（<48,000 帽）。待裁四项：23 准入；预算；check≤2/final≤1 授权；J3 加宽结构卡是否随 23 立项。提案不签 23 通过/final/C/D/J/模型成型；零训练零 check。
+
+
+## 2026-11-20 23.0 前置卡预注册（D-20261119-162，提案，零训练零 check）
+
+在 22.8 的 30 单位 RouteB 主体上补齐 ≥3 类旧技能 Q≥0.80：S1 appearance（1,152 步，22.8J1 已验）、S2 dynamics（2,000 步，J2 当前 0.69–0.80）、S3 occlusion 非退化（1,500 步；遮挡第一个物体颜色、标签=第二个可见物体位置桶，chance 1/3 非恒定，替换 22.8 全遮挡常量）。顺序学习 S1→S2→S3、每技能独立头、共享单位不重置、后训后测保持（刻意不用联合训练绕过）。门：K1 三类 fit ≥0.80（3 seed 逐 seed）、K2 后训 S2 后 S1 损伤 ≤0.02 且后训 S3 后 S1/S2 损伤 ≤0.02、K3 3/3 capsule 恢复 diff ≤1e-10/lineage 连续；总判 precondition_ready/partial/absent，兜底 budget_stop。3 seed×13,956 步、≤1,500 CPU、零 check/final；新 pin 拟 run_s2_23_0_precondition_20261120.py；依赖 23 准入（D-20261119-161 四项待裁），未准入不运行；不签 23 通过/final/C/D/J/模型成型。
