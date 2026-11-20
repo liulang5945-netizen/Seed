@@ -7199,3 +7199,14 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **4. 与 26/27**：A 成立则 26 的「信息缺口」压力有测试床；不成立则 26 继续暂停并记录「30 单位持续状态不承载跨步记忆」。不签 25/26 通过、结构收益、final/C/D/J/模型成型。
 
 **5. 待裁**：准入 A（或改 B/C）；2,000 CPU；是否把跨步记忆作为下一阶段主线；若 A 不成立是否按记忆轴范围限定收束既有判词。
+
+
+### D-20261119-194 跨步工作记忆探针：`memory_carry_verified`（有界；217.84 CPU，0 check）
+
+**1. 动作**：新增 [`run_s2_working_memory_20261120.py`](../../scripts/training/run_s2_working_memory_20261120.py) 与 [结果卡](../reference/RESULT-TAIJI_U2_WORKING_MEMORY_20261120.md)。5 tick（t0 目标/t1–t3 干扰/t4 查询），冻结 23.0b 父，单位状态跨 tick 携带，两步注意力读出逐 tick 30 维活动；三臂 no_state/replay/state_carry；3 seed、零 check。
+
+**2. 读数**：no_state **0.4479**、replay **0.9583**、state_carry **0.9583**；增益 **+0.5859/+0.4766/+0.4688**（3 seed 全部 ≥0.05）；G1 replay ≥0.80 ✓、G2 state_carry−no_state ≥0.05 且 ≥0.60 ✓、G3 旧三技能实测损伤 0.0 ✓ ⇒ **`memory_carry_verified`**；217.84 CPU。
+
+**3. 判读与披露**：单位持续状态**确实携带跨步信息**——state_carry 与 replay 上界完全同水平（0.9583），3 个干扰 tick 后无损恢复目标位置；但仅是 **5 tick/3 类/单目标**的短窗工作记忆，**不等于长时保持**；no_state 0.4479 高于 chance 0.33（残留/偏置偏差，已披露，不影响 G2）；state_carry 与 replay 数值相同说明读出主要依赖 t0 活动（保持而非更新）；不签 26 通过、不签长时记忆、不签 final/C/D/J/模型成型。
+
+**4. 后继**：①拉长干扰 tick 到 10/20/40 测保持衰减边界（「多久会忘」）；②加「目标需在干扰中更新」变体（测更新而非仅保持）；③26 信息缺口压力可在该测试床上重开（需 owner 准入）；累计本卡 ≈218 CPU；零 check/final。

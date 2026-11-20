@@ -1,7 +1,7 @@
 {
   "schema": "taiji-u2-working-memory-v1",
-  "card": "explicit working-memory write-back of tick1 prediction into tick2 input",
-  "created_utc": "2026-11-20T01:00:37.365821+00:00",
+  "card": "working-memory 5-tick recall with carried unit state",
+  "created_utc": "2026-11-20T12:38:06.027552+00:00",
   "run_conditions": {
     "threads": 1,
     "OMP_NUM_THREADS": null,
@@ -9,57 +9,83 @@
   },
   "protocol": {
     "seeds": [
-      0,
-      1,
-      2
+      20261120,
+      20261121,
+      20261122
     ],
+    "ticks": 5,
+    "train": 512,
+    "fit": 128,
     "steps": 1500,
-    "memory_dims": [
-      39,
-      40,
-      41
-    ],
-    "gates": "self>=0.55 & self-zero>=0.10; necessity drop>=0.10; oracle>=0.65; shuffled<=0.45"
+    "arms": [
+      "no_state",
+      "replay",
+      "state_carry"
+    ]
   },
-  "results": [
+  "rows": [
     {
-      "seed": 0,
-      "tick1": 0.5417,
-      "self": 0.4583,
-      "zero": 0.25,
-      "shuffled": 0.4167,
-      "oracle": 0.5
+      "seed": 20261120,
+      "arms": {
+        "no_state": 0.3984375,
+        "replay": 0.96875,
+        "state_carry": 0.984375
+      },
+      "retention_damage": {
+        "s1": 0.0,
+        "s2": 0.0,
+        "s3": 0.0
+      }
     },
     {
-      "seed": 1,
-      "tick1": 0.6667,
-      "self": 0.5833,
-      "zero": 0.4583,
-      "shuffled": 0.5,
-      "oracle": 0.625
+      "seed": 20261121,
+      "arms": {
+        "no_state": 0.46875,
+        "replay": 0.953125,
+        "state_carry": 0.9453125
+      },
+      "retention_damage": {
+        "s1": 0.0,
+        "s2": 0.0,
+        "s3": 0.0
+      }
     },
     {
-      "seed": 2,
-      "tick1": 0.5,
-      "self": 0.5417,
-      "zero": 0.4583,
-      "shuffled": 0.5,
-      "oracle": 0.5417
+      "seed": 20261122,
+      "arms": {
+        "no_state": 0.4765625,
+        "replay": 0.953125,
+        "state_carry": 0.9453125
+      },
+      "retention_damage": {
+        "s1": 0.0,
+        "s2": 0.0,
+        "s3": 0.0
+      }
     }
   ],
-  "gates": {
-    "self_over_zero": false,
-    "necessity": false,
-    "oracle_reference": false,
-    "shuffled_control": false
+  "means": {
+    "no_state": 0.4479166666666667,
+    "replay": 0.9583333333333334,
+    "state_carry": 0.9583333333333334
   },
-  "verdict": "task_not_learnable",
+  "gains": [
+    0.5859375,
+    0.4765625,
+    0.46875
+  ],
+  "gates": {
+    "g1_replay": true,
+    "g2_carry": true,
+    "g3_retention": true
+  },
+  "verdict": "memory_carry_verified",
+  "disclosure": "frozen 23.0b parent, two-step attention over per-tick unit activity; state carried through graph next_state",
   "discipline": {
-    "optimizer_steps": 4500,
     "check_reads": 0,
     "final_reads": 0
   },
   "cost": {
-    "cpu": 40.69
+    "cpu": 217.84
   }
 }
