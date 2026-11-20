@@ -6514,3 +6514,12 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 - 故显式循环轴按 **partial（组合通道）收口，不签有界 verified**，停止同范围。已证：**组合形态产生深度收益（0.91–0.98）且依赖顺序**；未证：单通道充分性。
 
 **4. 后继条件（新设计）**：若要让单通道充分，需要**专用记忆架构**（显式寄存器/工作记忆槽并按步写入）或**硬路由**（写回维只读、状态只用于当前步），属结构变更＋新 pin 新卡；在此之前 `recursive_development` 记「重复输入 negative、顺序两步 negative、显式循环 partial（组合通道）、工作记忆写回有界 verified（两步）」。
+
+
+### D-20261119-135 专用工作记忆槽设计草案（零训练；针对 D-134 单通道不足）
+
+**1. 动作**：写[设计草案](../reference/DESIGN-TAIJI_U2_MEMORY_SLOTS_20261120.md)：新模块 `taiji/u2_memory.py`（不改核心）——K=2 个 d 维寄存器，每步由单位活动经 write head 生成候选、sigmoid 门控软写入；读出时与 `direct` 拼接；**评估时把隐状态 `z/a` 每步清零**，只靠 memory 槽跨步传递。五门：self ≥0.85、状态消融后 ≥0.85（单通道充分性）、zero-memory 降 ≥0.15、shuffled 顺序降 ≥0.15、oracle ≥0.90。**零训练、零 check/final。**
+
+**2. 依据**：D-132/133/134——组合形态有深度收益（0.91–0.98）但单通道均不充分（状态消融 0.70–0.81、零写回降 0.046–0.083）⇒ 需要专用记忆架构让写回可独立承载。
+
+**3. 预算与出口**：新 pin `u2_memory.py`；训练 1,500 步、3 seed、零 check、价 ≤250 CPU、阈值不调；全过记 `memory_slot_ready`（有界），门 2 不过记 `memory_single_channel_insufficient`，其余 partial/negative。

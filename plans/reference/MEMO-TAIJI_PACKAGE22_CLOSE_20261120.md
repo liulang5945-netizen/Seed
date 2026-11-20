@@ -356,3 +356,7 @@ v7 增量：autonomous_choice 三次负（最强 online 0.742/0.835/0.738 vs 固
 ## 78. 联合门重跑与显式循环轴收口（D-20261119-134，partial）
 
 随机状态重置 p=0.5 训练、评估主路径与消融路径：self `0.907/0.963/0.926`✓、oracle `0.926–0.982`✓、顺序打乱降 `0.21–0.27`✓；但状态消融 self `0.704/0.815/0.778`（<0.85✗）、零写回降 `0.046–0.083`（<0.10✗）⇒ `sequential_loop_joint_partial`（3/5 门）。**判读**：组合形态成立（深度收益＋强顺序依赖），但**单通道均不充分**（写回单独 0.70–0.81、状态承担主记忆量），随机重置训练未能让写回独立达标。显式循环轴按 **partial（组合通道）收口，不签 verified，停止同范围**。后继：专用记忆架构（显式寄存器/工作记忆槽按步写入）或硬路由，结构变更＋新 pin 新卡。`recursive_development` 现记：重复输入 negative、顺序两步 negative、显式循环 partial、两步写回有界 verified。
+
+## 79. 专用工作记忆槽设计草案（D-20261119-135，零训练）
+
+针对 D-134「单通道均不充分」：新模块 `taiji/u2_memory.py`（K=2 个 d 维寄存器，write head 候选＋sigmoid 软门控写入，读出与 direct 拼接；评估时隐状态 z/a 每步清零、只靠 memory 槽跨步）。五门：self ≥0.85、状态消融后 ≥0.85（单通道充分性）、zero-memory 降 ≥0.15、shuffled 顺序降 ≥0.15、oracle ≥0.90。新 pin、训练 1,500 步、3 seed、零 check、价 ≤250 CPU。全过记 `memory_slot_ready`（有界）；门 2 不过记 `memory_single_channel_insufficient`。边界：只证 K=2 槽支撑三步 same13，不等于一般多步推理。
