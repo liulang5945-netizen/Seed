@@ -1,0 +1,85 @@
+{
+  "schema": "taiji-u2-cn-vocab2-v1",
+  "card": "A3 extension: 8 colours, 10 templates, 3 held-out wordings",
+  "created_utc": "2026-11-20T16:55:54.355543+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      20261120,
+      20261121,
+      20261122
+    ],
+    "colors": 8,
+    "templates_train": 7,
+    "templates_fit": 3,
+    "train": 768,
+    "fit": 192,
+    "fit_offset": 10000000,
+    "vocab": 24
+  },
+  "rows": [
+    {
+      "seed": 20261120,
+      "arms": {
+        "pos_attn": 0.359375,
+        "mean_pool": 0.2291666716337204,
+        "replay": 0.3802083432674408
+      },
+      "retention_damage": {
+        "s1": 0.0,
+        "s2": 0.0,
+        "s3": 0.0
+      }
+    },
+    {
+      "seed": 20261121,
+      "arms": {
+        "pos_attn": 0.28125,
+        "mean_pool": 0.21875,
+        "replay": 0.5677083134651184
+      },
+      "retention_damage": {
+        "s1": 0.0,
+        "s2": 0.0,
+        "s3": 0.0
+      }
+    },
+    {
+      "seed": 20261122,
+      "arms": {
+        "pos_attn": 0.4166666567325592,
+        "mean_pool": 0.203125,
+        "replay": 0.421875
+      },
+      "retention_damage": {
+        "s1": 0.0,
+        "s2": 0.0,
+        "s3": 0.0
+      }
+    }
+  ],
+  "means": {
+    "pos_attn": 0.3524305522441864,
+    "mean_pool": 0.21701389054457346,
+    "replay": 0.4565972189108531
+  },
+  "gates": {
+    "replay_learnable": false,
+    "pos_attn_level": false,
+    "pos_attn_gain": true,
+    "retention": true
+  },
+  "verdict": "cn_vocab2_partial",
+  "disclosure": "char ticks; positional attention vs mean pooling; replay on raw features; three held-out templates",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 231.28
+  }
+}
