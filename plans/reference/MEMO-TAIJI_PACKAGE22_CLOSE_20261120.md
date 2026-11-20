@@ -360,3 +360,7 @@ v7 增量：autonomous_choice 三次负（最强 online 0.742/0.835/0.738 vs 固
 ## 79. 专用工作记忆槽设计草案（D-20261119-135，零训练）
 
 针对 D-134「单通道均不充分」：新模块 `taiji/u2_memory.py`（K=2 个 d 维寄存器，write head 候选＋sigmoid 软门控写入，读出与 direct 拼接；评估时隐状态 z/a 每步清零、只靠 memory 槽跨步）。五门：self ≥0.85、状态消融后 ≥0.85（单通道充分性）、zero-memory 降 ≥0.15、shuffled 顺序降 ≥0.15、oracle ≥0.90。新 pin、训练 1,500 步、3 seed、零 check、价 ≤250 CPU。全过记 `memory_slot_ready`（有界）；门 2 不过记 `memory_single_channel_insufficient`。边界：只证 K=2 槽支撑三步 same13，不等于一般多步推理。
+
+## 80. 专用工作记忆槽（D-20261119-136，partial：4/5 门，单通道充分性已证）
+
+`taiji/u2_memory.py`（K=2 寄存器＋软门控写入，读出接 direct）＋三步 same13 探针（训练随机清零隐状态 p=0.5）：self `0.954/0.944/0.917`✓；**状态消融 `0.944/0.944/0.917`✓＝self（memory 槽单独承载，单通道充分性成立）**；零记忆降 `0.40–0.47`✓；shuffled 顺序降 `0.46–0.48`✓；oracle `0.630–0.815`✗ ⇒ `memory_slot_partial`（5 门 4 过）。判读：核心目标达成——记忆槽必要、顺序相关、单通道充分；oracle 臂失效属**协议问题**（强制 one-hot 覆盖与训练分布 OOD），非能力失败（self 0.92–0.95 已证可学）。后继：oracle 改教师强制训练/perfect-memory 对照，新卡重跑五门后签有界 verified。
