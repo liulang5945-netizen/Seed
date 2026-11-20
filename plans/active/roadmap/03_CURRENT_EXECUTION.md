@@ -4591,3 +4591,8 @@ joint24 三 tick 证据到达流（t0 查询/t1 颜色/t2 位置），U2-A/U2-B/
 ## 2026-11-20 22.7 S2 七臂等 FLOPs 行为窗（D-20261119-151，`growth_benefit_absent`，75.58 CPU，0 check）
 
 G0 信用出生 [0.4688,0.6875,0.6563,0.6875,0.6250]（0.6425）；控制均值 G1 0.5188/G2 0.5125/G3 0.5250/G4 0.5250/G5 0.6750（最强）/G6 0.6563；Δ=G0−G5=−0.0498、配对 95% 下界 −0.1625（上界<0）⇒ H1 未过、growth_benefit_absent（等 FLOPs）。H2 删除 4 个新生儿后 fit 降 0.406–0.688、占成长增益 0.87–1.29 ⇒ 过；H3 旧保持损伤 0.0 ⇒ 过；H4/H5 复用 S1；H7 5/5 休眠不变/唤醒逐值相等 ⇒ 过。判读：等 FLOPs 下生长仍不优于预分配强控制（与 D-49 一致，非口径伪影）；删除证明新生儿被真实使用（非装饰），但预分配同容量更划算。收口：机制/因果 verified＋净收益 absent（等 FLOPs）；禁同范围重跑；再试须 D-49 条件②③④＋新卡新 pin。不签 22.8+/C/D/J/final/模型成型。
+
+
+## 2026-11-20 22.8 S0 预注册（D-20261119-152，零训练、零 check）
+
+22.8 同主体联合生命片段：B 父谱系（child-20261112.pt）3 seed×3 session×32 轮，五类片段（appearance/dynamics/occlusion-conflict/correction/no-prompt）分账；门 J1 appearance≥0.60 且≥多数类+0.10、J2 dynamics≥0.45 且动作边际≥0.05、J3 纠错净益≥0.05/95%下界>0/旧保持≤0.02、J4 3/3 恢复逐位+lineage 连续、J5 no-prompt 净效用≥最强固定+0.05/空转≤0.30、J6 分账齐全；总判 verified/partial/negative；兜底 engineering_failure/budget_stop/final_not_authorized。切片 3,850 CPU（250/3,000/400/200），check 1 次、final 仅当次 R-SEAL-1。与 22.4.2b/22.6.0/22.5.1 为片段/父证据关系，不重复单卡；22.7 生长负结果不阻断。未清项：五类片段数据流冻结、新增头/通路迁移差集、3 session 恢复/lineage、曝光记录。不签 final/C/D/J/模型成型。
