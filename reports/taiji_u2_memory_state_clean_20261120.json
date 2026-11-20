@@ -1,0 +1,175 @@
+{
+  "schema": "taiji-u2-memory-state-clean-v1",
+  "card": "true state-only retention with collision-free features",
+  "created_utc": "2026-11-20T16:22:23.508381+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      20261120,
+      20261121,
+      20261122
+    ],
+    "gaps": [
+      5,
+      10,
+      20,
+      40
+    ],
+    "train": 384,
+    "fit": 128,
+    "fit_offset": 10000000,
+    "steps": 1500,
+    "arms": [
+      "stateless_reset",
+      "state_final",
+      "history",
+      "replay"
+    ]
+  },
+  "rows": [
+    {
+      "seed": 20261120,
+      "gaps": {
+        "5": {
+          "stateless_reset": 0.390625,
+          "state_final": 0.4140625,
+          "history": 0.8359375,
+          "replay": 0.7578125
+        },
+        "10": {
+          "stateless_reset": 0.3203125,
+          "state_final": 0.375,
+          "history": 0.8671875,
+          "replay": 0.78125
+        },
+        "20": {
+          "stateless_reset": 0.296875,
+          "state_final": 0.3046875,
+          "history": 0.59375,
+          "replay": 0.8203125
+        },
+        "40": {
+          "stateless_reset": 0.3671875,
+          "state_final": 0.34375,
+          "history": 0.6328125,
+          "replay": 0.84375
+        }
+      },
+      "retention_damage": {
+        "s1": 0.0,
+        "s2": 0.0,
+        "s3": 0.0
+      }
+    },
+    {
+      "seed": 20261121,
+      "gaps": {
+        "5": {
+          "stateless_reset": 0.3046875,
+          "state_final": 0.296875,
+          "history": 0.984375,
+          "replay": 0.9921875
+        },
+        "10": {
+          "stateless_reset": 0.390625,
+          "state_final": 0.3671875,
+          "history": 1.0,
+          "replay": 1.0
+        },
+        "20": {
+          "stateless_reset": 0.3203125,
+          "state_final": 0.359375,
+          "history": 0.984375,
+          "replay": 1.0
+        },
+        "40": {
+          "stateless_reset": 0.3671875,
+          "state_final": 0.3125,
+          "history": 0.9921875,
+          "replay": 1.0
+        }
+      },
+      "retention_damage": {
+        "s1": 0.0,
+        "s2": 0.0,
+        "s3": 0.0
+      }
+    },
+    {
+      "seed": 20261122,
+      "gaps": {
+        "5": {
+          "stateless_reset": 0.375,
+          "state_final": 0.3671875,
+          "history": 0.7109375,
+          "replay": 1.0
+        },
+        "10": {
+          "stateless_reset": 0.328125,
+          "state_final": 0.3125,
+          "history": 0.90625,
+          "replay": 0.984375
+        },
+        "20": {
+          "stateless_reset": 0.2890625,
+          "state_final": 0.296875,
+          "history": 0.6484375,
+          "replay": 0.984375
+        },
+        "40": {
+          "stateless_reset": 0.2890625,
+          "state_final": 0.296875,
+          "history": 0.9921875,
+          "replay": 0.953125
+        }
+      },
+      "retention_damage": {
+        "s1": 0.0,
+        "s2": 0.0,
+        "s3": 0.0
+      }
+    }
+  ],
+  "means": {
+    "5": {
+      "stateless_reset": 0.3567708333333333,
+      "state_final": 0.359375,
+      "history": 0.84375,
+      "replay": 0.9166666666666666
+    },
+    "10": {
+      "stateless_reset": 0.3463541666666667,
+      "state_final": 0.3515625,
+      "history": 0.9244791666666666,
+      "replay": 0.921875
+    },
+    "20": {
+      "stateless_reset": 0.3020833333333333,
+      "state_final": 0.3203125,
+      "history": 0.7421875,
+      "replay": 0.9348958333333334
+    },
+    "40": {
+      "stateless_reset": 0.3411458333333333,
+      "state_final": 0.3177083333333333,
+      "history": 0.8723958333333334,
+      "replay": 0.9322916666666666
+    }
+  },
+  "gates": {
+    "retention": true
+  },
+  "verdict": "memory_state_clean_diagnostic",
+  "disclosure": "state_final reads only the final tick activity; history is an external snapshot array for contrast (KV-cache analogue), not unit-state retention",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 282.16
+  }
+}

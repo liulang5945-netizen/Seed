@@ -1,5 +1,7 @@
 # 结果卡：中文连续任务（`chinese_continuous_verified`，有界；首条指令跨 5 tick 保持 0.995）
 
+> **机制更正（D-20261121-213）**：state_carry 臂为外置历史快照读取（位置嵌入可索引 t=0），**不证单位状态保持中文指令**；结论降级为「历史存续时指令可读」。
+
 > 文档状态：[结果卡] — 2026-11-20（D-20261119-208）。上游 [保持窗](RESULT-TAIJI_U2_WM_GAP3_20261120.md)、[读出升级](RESULT-TAIJI_U2_READOUT_SEQ_20261120.md)、[能力总表](MEMO-TAIJI_U2_CAPABILITY_LEDGER_20261120.md)。**零 check/final、只读 fit。**
 
 ## 1. 协议
