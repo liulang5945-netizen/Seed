@@ -1,0 +1,91 @@
+{
+  "schema": "taiji-u2-chinese-v1",
+  "card": "Chinese instruction grounding with held-out wording template",
+  "created_utc": "2026-11-20T13:58:16.640798+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      20261120,
+      20261121,
+      20261122
+    ],
+    "train_templates": [
+      0,
+      1,
+      2
+    ],
+    "fit_template": 3,
+    "train_variants": 12,
+    "fit_variants": 16,
+    "fit_offset": 10000000,
+    "classes": 16
+  },
+  "rows": [
+    {
+      "seed": 20261120,
+      "arms": {
+        "correct": 0.35546875,
+        "shuffled": 0.078125,
+        "null": 0.0625,
+        "replay": 1.0
+      },
+      "retention_damage": {
+        "s1": 0.0,
+        "s2": 0.0,
+        "s3": 0.0
+      }
+    },
+    {
+      "seed": 20261121,
+      "arms": {
+        "correct": 0.4375,
+        "shuffled": 0.0,
+        "null": 0.0625,
+        "replay": 1.0
+      },
+      "retention_damage": {
+        "s1": 0.0,
+        "s2": 0.0,
+        "s3": 0.0
+      }
+    },
+    {
+      "seed": 20261122,
+      "arms": {
+        "correct": 0.1875,
+        "shuffled": 0.0625,
+        "null": 0.0625,
+        "replay": 1.0
+      },
+      "retention_damage": {
+        "s1": 0.0,
+        "s2": 0.0,
+        "s3": 0.0
+      }
+    }
+  ],
+  "means": {
+    "correct": 0.3268229166666667,
+    "shuffled": 0.046875,
+    "null": 0.0625,
+    "replay": 1.0
+  },
+  "gates": {
+    "replay_learnable": true,
+    "correct_better_than_control": true,
+    "retention": true
+  },
+  "verdict": "chinese_grounding_verified",
+  "disclosure": "character one-hot projected to 48 dims; held-out wording template; replay arm reads the same projected features without the unit graph",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 203.73
+  }
+}
