@@ -1,0 +1,90 @@
+{
+  "schema": "taiji-u2-cn-vocab-order-v1",
+  "card": "A3 medium-vocabulary Chinese word-order extension with held-out wording",
+  "created_utc": "2026-11-20T16:33:17.817309+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      20261120,
+      20261121,
+      20261122
+    ],
+    "colours": 8,
+    "templates_train": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "template_fit": 4,
+    "max_len": 16,
+    "train": 512,
+    "fit": 128,
+    "fit_offset": 10000000
+  },
+  "rows": [
+    {
+      "seed": 20261120,
+      "arms": {
+        "pos_attn": 1.0,
+        "mean_pool": 0.40625,
+        "replay": 1.0
+      },
+      "retention_damage": {
+        "s1": 0.0,
+        "s2": 0.0,
+        "s3": 0.0
+      }
+    },
+    {
+      "seed": 20261121,
+      "arms": {
+        "pos_attn": 1.0,
+        "mean_pool": 0.4375,
+        "replay": 1.0
+      },
+      "retention_damage": {
+        "s1": 0.0,
+        "s2": 0.0,
+        "s3": 0.0
+      }
+    },
+    {
+      "seed": 20261122,
+      "arms": {
+        "pos_attn": 1.0,
+        "mean_pool": 0.3046875,
+        "replay": 1.0
+      },
+      "retention_damage": {
+        "s1": 0.0,
+        "s2": 0.0,
+        "s3": 0.0
+      }
+    }
+  ],
+  "means": {
+    "pos_attn": 1.0,
+    "mean_pool": 0.3828125,
+    "replay": 1.0
+  },
+  "gates": {
+    "replay_learnable": true,
+    "pos_attn_level": true,
+    "pos_attn_gain": true,
+    "retention": true
+  },
+  "verdict": "cn_vocab_order_verified",
+  "disclosure": "character ticks; positional attention vs mean pooling; replay on raw character features",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 223.56
+  }
+}

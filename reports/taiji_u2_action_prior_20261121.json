@@ -1,0 +1,55 @@
+{
+  "schema": "taiji-u2-action-prior-v1",
+  "card": "A2 action-grounding learnability prior with collision-free slots",
+  "created_utc": "2026-11-20T16:28:40.552033+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      20261120,
+      20261121,
+      20261122
+    ],
+    "train": 512,
+    "fit": 128,
+    "fit_offset": 10000000,
+    "steps": 2500,
+    "body_slots": 10,
+    "classes": 12,
+    "replay_min": 0.8
+  },
+  "rows": [
+    {
+      "seed": 20261120,
+      "replay": 0.8671875,
+      "train_fit": 1.0
+    },
+    {
+      "seed": 20261121,
+      "replay": 0.703125,
+      "train_fit": 1.0
+    },
+    {
+      "seed": 20261122,
+      "replay": 0.78125,
+      "train_fit": 1.0
+    }
+  ],
+  "mean_replay": 0.7838541666666666,
+  "gates": {
+    "replay_learnable": false,
+    "slot_check": true
+  },
+  "verdict": "action_prior_not_learnable",
+  "disclosure": "collision-free slots (colour 0-5, position 6-9 per object); held-out wording template; no unit graph in this prior",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 8.31
+  }
+}

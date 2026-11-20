@@ -4901,3 +4901,13 @@ S1 中性检查：新增逐令牌活动读出（30 维单位活动、hidden 64�
 ## 2026-11-21 代码核查更正：记忆/中文探针 state_carry 实为外置历史读取（D-20261121-213，零训练零 check）
 
 逐行复核确认：collect_activity（gap2/gap3/working_memory/cn_continuous/cn_continuous2）把每个 tick 的活动快照收进外部 [B,T,30] 数组，目标恒在 t=0、读出位置嵌入可直接索引 t=0——机制等价外置 KV-cache/replay，不是单位状态 z/a/H 保持；另 gap2 L63-64 特征下标碰撞（colour 2–7 与 position 6–8 重叠）。干净重测（无碰撞特征、fit 分区、4 臂、3 seed、282.16 CPU）：state_final 0.359/0.352/0.320/0.318（≈chance），history 0.844/0.924/0.742/0.872，replay 0.917–0.935 ⇒ 单位末态不保留目标信息、旧 carry 高读数来自外置历史。撤回 D-194/195/196/198/206/208/209 的「单位状态保持/中文指令保持」机制表述与结论；D-205 读出工程保留；D-199 种子泄漏更正仍有效。新增规则：state 臂须声明末态/历史并设 history 对照；fixture 做下标重叠检查；目标不得恒为 t0；保持结论必须由 state_final 支撑。能力总表 §6 的「≥40 tick」撤回。零 check/final；不签能力通过/模型成型/final/C/D/J。
+
+
+## 2026-11-21 阶段裁定落账（D-20261121-214，owner 2026-11-21）
+
+A1 读出默认（区分口径）：批准单步/单句令牌序列的位置注意力读出为默认（D-205 词序 0.967）；禁止把外置全历史张量的位置注意力当成单位状态保持；真正 state_carry 只读末步状态（或经 F/W），外置全序列仅 external_history_select 对照。A2 动作接地可学性先验：批准（第一优先，≤1,000 CPU、零 check，先修 colour/position 下标重叠，replay ≥0.80 前不开闭环/多步）。A3 中等词表＋留出语序扩展：批准（≤1,500 CPU、零 check，排 A2 之后，不开自由生成）。A4 >40 tick：延后。B1 结构线 25/26/27 维持暂停。B2 25 主窗释放、每卡单列报价。B3 check≤2/final≤1 继续冻结。B4 23/24 收束（composition_partial / experience_learning_partial）。B5 写入 D-205（词序 0.967）与 D-201（词汇接地 0.327）；D-206/208/209 写入须注明「基于外置全 tick 序列＋位置注意力选择，不证末步单一状态独立保留」。B6 包 22 超支永久记预算事故、不追溯改帽。C1 22.5.1 已由 D-20261119-144 结案（b_parent_earned，used=1/remaining=0）。C2 按现状。C3 暂不投真机，只投 A2/A3。执行顺序 A2→A3；零 check/final。
+
+
+## 2026-11-21 A2/A3 执行（D-20261121-215/216，零 check）
+
+A2 动作接地可学性先验：修正 colour/position 下标重叠、flat 46 维＋强 MLP，fit 留出措辞 replay 0.867/0.703/0.781（均值 0.784<0.80 门）、train_fit 1.0 ⇒ action_prior_not_learnable——按裁定闭环/多步动作保持关闭；判读为留出措辞泛化不足而非不可学（3 模板/1 留出/单模板 128 样本方差大）；重试须新预注册（≥5 模板、≥2 留出、更大 train，同门 0.80）。A3 中等词表语序扩展：8 颜色＋5 模板（训练 4、留出「同」），逐字符 tick 经冻结父，位置注意力 1.0000 vs 平均池化 0.3828、replay 1.0000、retention 0.0 ⇒ cn_vocab_order_verified（有界）——读出升级为主因，范围封闭词表/8 类/单任务，非结构收益、未涉 state_carry。零 check/final；不签动作接地/闭环/自然中文/26-27/final/C/D/J。
