@@ -80,3 +80,7 @@ B 父（原生核心，229 张量）与 22.x 任务面（RouteB，19 张量）**
 ## 23.1 数据合同冻结（D-20261119-167）
 
 23.1 数据合同 `data_contract_frozen`：2,688 条（train 1,536/fit 384/check 384/final 384）、三轴无泄漏、oracle 1.0、digest 冻结；244.3 CPU、零训练零 check。23.2 可进入实现；主窗 34,500 CPU、check≤2/final≤1 仍待您明示授权。
+
+## 23.2c 结果（D-20261119-170）
+
+23.2c 令牌＋注意力两跳读取 `relation_read_verified`（有界）：跨单位 Q3 0.406–0.422、增益 +0.047–+0.133（均值 +0.091、3 seed 同向）、旧技能 0.0；223.73 CPU、零 check。23.2 由 partial 升级为有界 verified；23.3 待设计（先修 Q2 偏置）。主窗 34,500 CPU、check≤2/final≤1 仍待您明示授权。
