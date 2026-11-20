@@ -240,3 +240,7 @@ HEADS=9 跨会话：旧 A–H 全部 retention drop 0.0，新 I（颜色 parity�
 ## 49. 顺序计算式递归设计草案（D-20261119-104，零训练）
 
 任务改为**两步动作序列最终位置预测**（bin1=r1.final_bin；bin2=bin1+(r2.final_bin−r2.current_bin)）：tick1 看 r1 预测中间桶、tick2 看 r2 预测最终桶、状态跨 tick 保留；单 tick 基线只看 r2 且位置代理清零。四门：序列 acc(bin2)≥0.55 且比单 tick 高≥0.10、shuffled 顺序低≥0.10、tick1 acc(bin1)≥0.50、tick2 换无关样本≤0.45。价 ≤200 CPU、3 seed、零 check。与 D-102（重复输入无深度收益）、D-50（结构细化负）明确区分：每 tick 新信息且必须携带中间状态。
+
+## 50. 顺序计算式递归卡（D-20261119-105，工程限制披露）
+
+动作对顺序任务：tick1/tick2 ≈ 机会（0.29–0.375），shuffled 反而更高（0.46–0.5），单 tick 基线 0.42–0.54 ⇒ 四门全败。判读：**工程限制而非能力结论**——`inputs [T,G,D]` 把 batch 当 time、状态跨批内样本连续携带，无法表达同一对样本的 tick1→tick2 状态；本卡不计入 `recursive_development` 判词（该轴仍 D-102 重复输入 negative＋顺序计算 uncovered）。后继：batch×time 分离扫描接口（新 pin 新卡）或手写 unrolled recurrence，实现前不得签递归判词。

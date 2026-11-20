@@ -4361,3 +4361,8 @@ HEADS=9：…→s9 颜色 parity（2 类派生）；3 seed 全过：inheritance 
 ## 2026-11-20 顺序计算式递归设计草案（D-20261119-104，零训练）
 
 两步动作序列最终位置预测：bin1=r1.final_bin、bin2=bin1+(r2.final_bin−r2.current_bin)；tick1 看 r1 预测 bin1、tick2 看 r2 预测 bin2，状态跨 tick 保留；单 tick 基线只看 r2 且位置代理清零。四门：序列 acc(bin2)≥0.55 且比单 tick 高≥0.10；shuffled 顺序低≥0.10；tick1 acc(bin1)≥0.50；tick2 换无关样本≤0.45。3 seed、零 check、价≤200 CPU；全过记 sequential_recursion_ready 有界、部分 partial、全负停止。与 D-102 重复输入、D-50 结构细化明确区分：每 tick 新信息且必须携带中间状态。
+
+
+## 2026-11-20 顺序计算式递归卡（D-20261119-105，`sequential_recursion_engineering_limitation`，59.16 CPU）
+
+动作对：bin1=r1.final_bin、bin2=bin1+(r2.final_bin−r2.current_bin)；tick1 看 r1、tick2 看 r2。读数：tick1 0.375/0.375/0.292、tick2 0.333/0.375/0.292（≈机会），shuffled 更高 0.458–0.5，单 tick 基线 0.417/0.542/0.5 ⇒ 四门全败且序列不如单 tick。判读：**工程限制非能力结论**——inputs [T,G,D] 把 batch 当 time、状态在批内样本间连续携带，无法表达同一对样本 tick1→tick2 状态；不计入 recursive_development 判词（该轴仍重复输入 negative＋顺序计算 uncovered）。后继：单位层 batch×time 分离扫描接口（新 pin 新卡）或手写 unrolled recurrence，零 check 价≤200 CPU；实现前不得以本卡读数签递归判词。

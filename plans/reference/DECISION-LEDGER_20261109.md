@@ -6161,3 +6161,14 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **2. 区别**：D-102 重复同一输入（tick1 已够，无深度收益）、D-50 结构细化（无增益）；本设计**每 tick 新信息、必须携带中间状态**，单 tick 原则上不可完成，属新问题形态、非同范围重试。
 
 **3. 预算与出口**：3 seed、零 check、价 ≤200 CPU；全过记 `sequential_recursion_ready`（有界）、部分记 partial、全负记 negative 并停止该形态。
+
+
+### D-20261119-105 顺序计算式递归卡：`sequential_recursion_engineering_limitation`（59.16 CPU；实现限制，非能力负结果）
+
+**1. 动作**：新增 [`probe_s2_sequential_recursion_20261120.py`](../../scripts/training/probe_s2_sequential_recursion_20261120.py)：由动作对构造 `bin1=r1.final_bin`、`bin2=bin1+(r2.final_bin−r2.current_bin)`；tick1 看 r1 预测 bin1、tick2 看 r2 预测 bin2（按 D-104 四门）。3 seed、零 check。
+
+**2. 读数**：tick1 `0.375/0.375/0.2917`、tick2 `0.3333/0.375/0.2917`（≈机会 1/3），shuffled tick2 `0.5/0.4583/0.4583`、unrelated tick2 `0.5`，单 tick 基线 `0.4167/0.5417/0.5`；**四门全败**且序列模型不如单 tick、shuffled 反而更高。
+
+**3. 判读（工程限制，非能力结论）**：失败模式显示**序列前向语义与「每样本 T 步递归」不匹配**——`RouteBGraph/NeuralUnits` 的 `inputs [T,G,D]` 把 **batch 当 time**，状态在批内样本间连续携带，无法表达「同一对样本的 tick1→tick2 状态」；因此本卡没有真正测到「顺序计算式递归」，其读数不能当作能力 negative。按纪律记 **`sequential_recursion_engineering_limitation`**，不计入 `recursive_development` 的能力判词（该轴仍为 D-102 的「重复输入」negative＋顺序计算形态 **uncovered**）。
+
+**4. 后继条件（新设计/可能需核心 API 变更）**：① 在单位层增加 **batch×time 分离**的扫描接口（新 pin、新卡）；② 或用手写 unrolled recurrence（同一模块逐 tick 调用、显式重置/携带状态 dict）验证，零 check、价 ≤200 CPU。在实现前不得以本卡读数签任何递归判词。

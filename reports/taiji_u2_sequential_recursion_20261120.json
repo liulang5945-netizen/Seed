@@ -1,0 +1,68 @@
+{
+  "schema": "taiji-u2-sequential-recursion-v1",
+  "card": "two-step action pairs: final-bin prediction with carried state",
+  "created_utc": "2026-11-20T00:47:00.059020+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "steps": 1500,
+    "pairs": 128,
+    "fit_pairs": 24,
+    "gates": "seq acc>=0.55 & >=single+0.10; shuffled drop>=0.10; tick1>=0.50; unrelated tick2<=0.45"
+  },
+  "results": [
+    {
+      "seed": 0,
+      "tick1": 0.375,
+      "tick2": 0.3333,
+      "shuffled_tick2": 0.5,
+      "unrelated_tick2": 0.5,
+      "single_tick": 0.4167,
+      "sequence_gain": -0.0833,
+      "shuffled_drop": -0.1667
+    },
+    {
+      "seed": 1,
+      "tick1": 0.375,
+      "tick2": 0.375,
+      "shuffled_tick2": 0.4583,
+      "unrelated_tick2": 0.5,
+      "single_tick": 0.5417,
+      "sequence_gain": -0.1667,
+      "shuffled_drop": -0.0833
+    },
+    {
+      "seed": 2,
+      "tick1": 0.2917,
+      "tick2": 0.2917,
+      "shuffled_tick2": 0.4583,
+      "unrelated_tick2": 0.5,
+      "single_tick": 0.5,
+      "sequence_gain": -0.2083,
+      "shuffled_drop": -0.1667
+    }
+  ],
+  "gates": {
+    "sequential_over_single": false,
+    "order_dependence": false,
+    "intermediate_credit": false,
+    "tick2_information": false
+  },
+  "verdict": "sequential_recursion_absent",
+  "discipline": {
+    "optimizer_steps": 9000,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 59.16
+  }
+}
