@@ -1,0 +1,68 @@
+{
+  "schema": "taiji-u2-memory-slots-joint-v1",
+  "card": "joint-gate K=2 memory slots: combined accuracy, single-channel sufficiency, teacher-forced oracle",
+  "created_utc": "2026-11-20T02:22:35.119183+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "steps": 1500,
+    "reset_prob": 0.5,
+    "gates": "self>=0.90; ablated>=0.85; zero drop>=0.15; order drop>=0.15; teacher-forced oracle(2500 steps)>=0.90"
+  },
+  "results": [
+    {
+      "seed": 0,
+      "self": 0.9537,
+      "state_ablated": 0.9444,
+      "zero_memory": 0.5556,
+      "swapped_order": 0.4907,
+      "oracle": 0.8981,
+      "zero_drop": 0.3981,
+      "order_drop": 0.463
+    },
+    {
+      "seed": 1,
+      "self": 0.9444,
+      "state_ablated": 0.9444,
+      "zero_memory": 0.4722,
+      "swapped_order": 0.463,
+      "oracle": 0.8981,
+      "zero_drop": 0.4722,
+      "order_drop": 0.4815
+    },
+    {
+      "seed": 2,
+      "self": 0.9167,
+      "state_ablated": 0.9167,
+      "zero_memory": 0.4722,
+      "swapped_order": 0.4444,
+      "oracle": 0.9444,
+      "zero_drop": 0.4444,
+      "order_drop": 0.4722
+    }
+  ],
+  "gates": {
+    "self_high": true,
+    "single_channel": true,
+    "memory_necessity": true,
+    "order_dependence": true,
+    "oracle_reference": false
+  },
+  "verdict": "memory_slot_joint_partial",
+  "discipline": {
+    "optimizer_steps": 4500,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 53.02
+  }
+}
