@@ -1,5 +1,6 @@
 # MASTER-PLAN（唯一权威主线）
 
+> 文档状态：[主线] — 2026-11-20（**23 立项建议卡待裁**：前置审计发现仅 1 类旧技能 ≥0.80，建议先立 23.0 前置卡（≤1,500 CPU）再开主窗；零训练零 check；D-20261119-161，最新）。
 > 文档状态：[主线] — 2026-11-20（**包 22 全局收束 `package22_closed_partial`**：22.5.1 正式 check②、22.5.2 arch_negative、22.6 negative、22.7 机制 verified＋收益 absent、22.8 partial；九轴表与 23 立项依据；final_not_authorized；不新增 22.9，D-20261119-160，最新）。
 > 文档状态：[主线] — 2026-11-20（**22.8J3c `old_head_not_learnable`**：MLP 头仍 0.208–0.250，4 维 direct 结构瓶颈；J3 停止该线、维持 partial-positive；下一步 22.8.4 全局收束；D-20261119-159，最新）。
 > 文档状态：[主线] — 2026-11-20（**22.8J1 `appearance_dose_verified`**：1,152 步 3 seed 0.81–0.91，S2 J1 失败确系剂量；J3b 旧头在 4 维 direct 上仍不可学，J3c 改 MLP 头待跑；D-20261119-158，最新）。
