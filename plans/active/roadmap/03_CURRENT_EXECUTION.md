@@ -4921,3 +4921,8 @@ A2 动作接地可学性先验：修正 colour/position 下标重叠、flat 46 �
 ## 2026-11-21 实验层可学习写入门（D-20261121-218，persistent_gate_partial，140.97 CPU，零 check）
 
 冻结单位核心；逐样本 10 tick 活动；实验层 gated buffer（s_t=(1-g)s_{t-1}+g·a_t，g=sigmoid(w·a_t+b)）解码 t0 目标；对照 running mean 与外部历史注意力；train 256/fit 96、3 seed、零 check。读数：gated 0.3333（≈机会）、mean 0.4618、history 0.9097；gated_level/gain ✗ ⇒ persistent_gate_partial——最小写入门未成立。判读：活动里有弱聚合信号但非可寻址保持；外部历史 0.91 再确认信息在序列、缺有界可寻址持久存储/写保护；门控形式失败不等于 F/W 不可行。后继：实现有界键值槽 F（固定容量、学习写/读地址）挂单位活动，测固定容量 t0 可寻址保持；若 F 也失败则记忆轴收束。不签记忆保持/持久状态/26-27/final/C/D/J；零 check。
+
+
+## 2026-11-21 有界键值槽 F 与记忆机制线收束（D-20261121-219，零 check）
+
+冻结单位核心；逐样本 10 tick 活动；实验层 8 槽×16 维有界键值槽（学习键/写地址/值投影/读查询）；对照 running mean 与外部历史；train 256/fit 96、3 seed。读数：bounded_store 0.3715、mean 0.4688、history 0.8750；store_level/gain ✗ ⇒ bounded_store_partial。判读：两种实验层机制（写入门 0.333、有界键值槽 0.372）均未超过无存储 mean，外部历史仍 0.875 ⇒ 信息在序列、学习写/读地址最小形式学不会；按预注册收束记忆机制线——外置无界历史可读、无有界可寻址保持；不否认 D-115 手写 F/W（人工固定接口）。后继：不再投入记忆机制探针；只剩 A3 中文扩展（获批）；动作线按 A2 关闭。零 check/final。

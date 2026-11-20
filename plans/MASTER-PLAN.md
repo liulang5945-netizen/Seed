@@ -1,3 +1,4 @@
+> 文档状态：[主线] — 2026-11-21（**有界键值槽 `bounded_store_partial`**：0.372<mean 0.469、history 0.875；记忆机制线按预注册收束；147 CPU、0 check；D-20261121-219，最新）。
 > 文档状态：[主线] — 2026-11-21（**实验层写入门 `persistent_gate_partial`**：gated 0.333=机会、mean 0.462、history 0.910；最小写入门未成立、缺有界可寻址持久存储；141 CPU、0 check；D-20261121-218，最新）。
 # MASTER-PLAN（唯一权威主线）
 

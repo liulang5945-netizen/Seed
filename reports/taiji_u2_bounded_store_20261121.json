@@ -1,0 +1,68 @@
+{
+  "schema": "taiji-u2-bounded-store-v1",
+  "card": "experiment-level bounded key-value store over per-tick unit activities",
+  "created_utc": "2026-11-20T16:49:09.699876+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      20261120,
+      20261121,
+      20261122
+    ],
+    "ticks": 10,
+    "slots": 8,
+    "slot_dim": 16,
+    "train": 256,
+    "fit": 96,
+    "fit_offset": 10000000,
+    "steps": 1200
+  },
+  "rows": [
+    {
+      "seed": 20261120,
+      "arms": {
+        "bounded_store": 0.3333333432674408,
+        "mean": 0.4375,
+        "history": 0.6458333134651184
+      }
+    },
+    {
+      "seed": 20261121,
+      "arms": {
+        "bounded_store": 0.3333333432674408,
+        "mean": 0.53125,
+        "history": 1.0
+      }
+    },
+    {
+      "seed": 20261122,
+      "arms": {
+        "bounded_store": 0.4479166567325592,
+        "mean": 0.4375,
+        "history": 0.9791666865348816
+      }
+    }
+  ],
+  "means": {
+    "bounded_store": 0.3715277810891469,
+    "mean": 0.46875,
+    "history": 0.875
+  },
+  "gates": {
+    "store_level": false,
+    "store_gain": false
+  },
+  "verdict": "bounded_store_partial",
+  "disclosure": "unit core frozen; the store is an experiment-level bounded interface with learned addresses, not unit-state retention",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 147.17
+  }
+}
