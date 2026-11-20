@@ -1,0 +1,68 @@
+{
+  "schema": "taiji-u2-sequential-loop-joint-v1",
+  "card": "joint-gate 3-step loop: state+write-back training, write-back-only sufficiency",
+  "created_utc": "2026-11-20T02:01:14.371304+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "steps": 1500,
+    "reset_prob": 0.5,
+    "gates": "self>=0.85; state-ablated self>=0.85; zero drop>=0.10; order drop>=0.10; oracle>=0.90"
+  },
+  "results": [
+    {
+      "seed": 0,
+      "self": 0.9074,
+      "self_state_ablated": 0.7037,
+      "zero_writeback": 0.8611,
+      "swapped_order": 0.6481,
+      "oracle": 0.9259,
+      "zero_drop": 0.0463,
+      "order_drop": 0.2593
+    },
+    {
+      "seed": 1,
+      "self": 0.963,
+      "self_state_ablated": 0.8148,
+      "zero_writeback": 0.9167,
+      "swapped_order": 0.6944,
+      "oracle": 0.9815,
+      "zero_drop": 0.0463,
+      "order_drop": 0.2685
+    },
+    {
+      "seed": 2,
+      "self": 0.9259,
+      "self_state_ablated": 0.7778,
+      "zero_writeback": 0.8426,
+      "swapped_order": 0.713,
+      "oracle": 0.9537,
+      "zero_drop": 0.0833,
+      "order_drop": 0.213
+    }
+  ],
+  "gates": {
+    "self_high": true,
+    "writeback_sufficient": false,
+    "zero_necessity": false,
+    "order_dependence": true,
+    "oracle_reference": true
+  },
+  "verdict": "sequential_loop_joint_partial",
+  "discipline": {
+    "optimizer_steps": 4500,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 34.48
+  }
+}
