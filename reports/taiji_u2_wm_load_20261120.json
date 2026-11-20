@@ -1,0 +1,140 @@
+{
+  "schema": "taiji-u2-wm-load-v1",
+  "card": "working-memory load probe: 1 vs 3 vs 5 simultaneous targets",
+  "created_utc": "2026-11-20T12:57:45.741949+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      20261120,
+      20261121,
+      20261122
+    ],
+    "loads": [
+      1,
+      3,
+      5
+    ],
+    "ticks": 5,
+    "train": 512,
+    "fit": 128,
+    "steps": 1500,
+    "load_drop": 0.15
+  },
+  "rows": [
+    {
+      "seed": 20261120,
+      "loads": {
+        "1": {
+          "no_state": 0.671875,
+          "replay": 0.9765625,
+          "state_carry": 0.9609375
+        },
+        "3": {
+          "no_state": 0.6953125,
+          "replay": 0.8359375,
+          "state_carry": 0.8984375
+        },
+        "5": {
+          "no_state": 0.7265625,
+          "replay": 0.859375,
+          "state_carry": 0.875
+        }
+      },
+      "retention_damage": {
+        "s1": 0.0,
+        "s2": 0.0,
+        "s3": 0.0
+      }
+    },
+    {
+      "seed": 20261121,
+      "loads": {
+        "1": {
+          "no_state": 0.53125,
+          "replay": 0.953125,
+          "state_carry": 0.9765625
+        },
+        "3": {
+          "no_state": 0.625,
+          "replay": 0.8671875,
+          "state_carry": 0.890625
+        },
+        "5": {
+          "no_state": 0.703125,
+          "replay": 0.8671875,
+          "state_carry": 0.8515625
+        }
+      },
+      "retention_damage": {
+        "s1": 0.0,
+        "s2": 0.0,
+        "s3": 0.0
+      }
+    },
+    {
+      "seed": 20261122,
+      "loads": {
+        "1": {
+          "no_state": 0.640625,
+          "replay": 0.9765625,
+          "state_carry": 0.921875
+        },
+        "3": {
+          "no_state": 0.78125,
+          "replay": 0.9140625,
+          "state_carry": 0.890625
+        },
+        "5": {
+          "no_state": 0.765625,
+          "replay": 0.90625,
+          "state_carry": 0.9140625
+        }
+      },
+      "retention_damage": {
+        "s1": 0.0,
+        "s2": 0.0,
+        "s3": 0.0
+      }
+    }
+  ],
+  "means": {
+    "1": {
+      "no_state": 0.6145833333333334,
+      "replay": 0.96875,
+      "state_carry": 0.953125
+    },
+    "3": {
+      "no_state": 0.7005208333333334,
+      "replay": 0.8723958333333334,
+      "state_carry": 0.8932291666666666
+    },
+    "5": {
+      "no_state": 0.7317708333333334,
+      "replay": 0.8776041666666666,
+      "state_carry": 0.8802083333333334
+    }
+  },
+  "gaps": {
+    "1": 0.015625,
+    "3": -0.02083333333333326,
+    "5": -0.0026041666666667407
+  },
+  "gates": {
+    "load_pressure": false,
+    "load1_ok": true,
+    "retention": true
+  },
+  "verdict": "memory_load_comparable",
+  "disclosure": "same frozen parent and readout family; query identifies the target index",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 229.45
+  }
+}
