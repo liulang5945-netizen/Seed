@@ -340,3 +340,7 @@ v7 增量：autonomous_choice 三次负（最强 online 0.742/0.835/0.738 vs 固
 ## 74. 会话收口报告 v8：autonomous_choice 三段式（D-20261119-130，零训练）
 
 `autonomous_choice` 定稿为三段式：①C 池 negative（三次，D-60/123/124，最强 v2 0.742/0.835/0.738 vs 固定 0.84 门未过，停止同范围）；②平稳＋即时反馈合成环境有界 verified（D-126/127，online 超 fixed/wait/random）；③非平稳/延迟 negative（D-128 组合、D-129 隔离，漂移比延迟更致命）。适用范围写入九轴：有界 verified 仅限平稳＋即时反馈合成环境；不代签 C 池/真实自主性。
+
+## 75. 显式循环＋写回序列推理设计草案（D-20261119-131，零训练）
+
+三步动作序列 `same13=(d1==d3)`（必须记住第 1 步方向）；新模块 `taiji/u2_loop.py`（UnitScan 逐步运行、每步把预测方向写回下一步输入 39–40＋invalid 41，首步 invalid=1）；对照 k=1/零写回/shuffled 顺序/oracle。四门：深度收益 `acc(k=3)≥acc(k=1)+0.10`；零写回低 ≥0.10；shuffled 顺序低 ≥0.10；oracle ≥0.85。价 ≤300 CPU、3 seed、零 check。全过记 `sequential_loop_ready`（有界），部分 partial，全负停止。
