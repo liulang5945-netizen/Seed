@@ -160,3 +160,7 @@ P3 预注册：同一计数任务、同读出，30 vs 48 单位两臂；门 D1 �
 ## 中文字序结果（D-20261119-202）
 
 `chinese_word_order_partial`：seq_raw 1.0 vs bag_raw 0.5（编码层可恢复）、seq_units 0.472 vs bag_units 0.394（+0.078 未达 0.10 门）⇒ 语序理解未证；204.33 CPU、零 check。中文轴暂定：封闭词表词汇接地成立、语序理解未证。不签自然中文、语序理解、26/27 通过、final/C/D/J/模型成型。
+
+## 多模态融合结果（D-20261119-203）
+
+`multimodal_action_partial`：joint 0.310 vs instruction_only 0.211 / scene_only 0.102（+0.099、差 0.001 未达门；<0.60）⇒ 融合有信号但不可用；201.02 CPU、零 check。多模态轴暂定「有可测融合信号、绝对水平未达可用；语序/开放词表未涉及」。
