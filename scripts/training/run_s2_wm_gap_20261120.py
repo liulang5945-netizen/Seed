@@ -42,6 +42,7 @@ BATCH = 32
 STEPS = 1500
 LR = 3e-3
 KEEP_MIN = 0.60
+FIT_OFFSET = 10_000_000
 TOL = 0.05
 RETENTION_MAX = 0.02
 
@@ -146,7 +147,7 @@ def run_seed(seed: int) -> dict:
     gaps = {}
     for gap in GAPS:
         train = build(TRAIN, seed, gap)
-        fit = build(FIT, seed + 1, gap)
+        fit = build(FIT, seed + FIT_OFFSET, gap)
         last = gap - 1
         arms = {}
         for arm, use in (

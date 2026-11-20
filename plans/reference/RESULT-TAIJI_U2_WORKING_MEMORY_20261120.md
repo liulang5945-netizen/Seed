@@ -1,5 +1,7 @@
 # 结果卡：跨步工作记忆探针（`memory_carry_verified`，有界）
 
+
+> **更正（D-20261119-199）**：fit 曾与 train 种子重叠（泄漏）；修复后重跑：no_state 0.318、replay=state_carry 0.9375、增益 +0.609/+0.664/+0.586。**判词仍成立（有界）**，以更正后数值为准。
 > 文档状态：[结果卡] — 2026-11-20（D-20261119-194）。上游 [表示/任务方向提案](PROPOSAL-TAIJI_U2_REPRESENTATION_20261120.md)。**零 check/final、只读 fit。**
 >
 > **授权记录**：按常设授权（recommendation-default）把该探针视为「诊断级」执行；不构成 26 通过，owner 可回溯修订。

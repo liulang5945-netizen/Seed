@@ -1,7 +1,7 @@
 {
   "schema": "taiji-u2-wm-update-v1",
   "card": "working-memory update probe: mid-sequence target replacement",
-  "created_utc": "2026-11-20T12:51:14.249473+00:00",
+  "created_utc": "2026-11-20T13:22:51.058404+00:00",
   "run_conditions": {
     "threads": 1,
     "OMP_NUM_THREADS": null,
@@ -23,9 +23,9 @@
     {
       "seed": 20261120,
       "arms": {
-        "no_state": 0.46875,
-        "replay": 0.9140625,
-        "state_carry": 0.921875
+        "no_state": 0.3828125,
+        "replay": 0.921875,
+        "state_carry": 0.8984375
       },
       "retention_damage": {
         "s1": 0.0,
@@ -36,9 +36,9 @@
     {
       "seed": 20261121,
       "arms": {
-        "no_state": 0.515625,
-        "replay": 0.9296875,
-        "state_carry": 0.9375
+        "no_state": 0.3515625,
+        "replay": 0.9609375,
+        "state_carry": 0.8203125
       },
       "retention_damage": {
         "s1": 0.0,
@@ -49,9 +49,9 @@
     {
       "seed": 20261122,
       "arms": {
-        "no_state": 0.5625,
-        "replay": 0.984375,
-        "state_carry": 0.953125
+        "no_state": 0.28125,
+        "replay": 0.890625,
+        "state_carry": 0.921875
       },
       "retention_damage": {
         "s1": 0.0,
@@ -61,14 +61,14 @@
     }
   ],
   "means": {
-    "no_state": 0.515625,
-    "replay": 0.9427083333333334,
-    "state_carry": 0.9375
+    "no_state": 0.3385416666666667,
+    "replay": 0.9244791666666666,
+    "state_carry": 0.8802083333333334
   },
   "gains": [
-    0.453125,
-    0.421875,
-    0.390625
+    0.515625,
+    0.46875,
+    0.640625
   ],
   "gates": {
     "carry_learns": true,
@@ -83,6 +83,6 @@
     "final_reads": 0
   },
   "cost": {
-    "cpu": 211.08
+    "cpu": 211.39
   }
 }

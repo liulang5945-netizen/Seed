@@ -1,0 +1,121 @@
+{
+  "schema": "taiji-u2-wm-heavy-v1",
+  "card": "heavy working-memory load: 10 targets/20 ticks and serial-order recall",
+  "created_utc": "2026-11-20T13:30:37.859249+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      20261120,
+      20261121,
+      20261122
+    ],
+    "load_bodies": 10,
+    "load_ticks": 20,
+    "order_targets": 5,
+    "order_ticks": 20,
+    "pressure": 0.15
+  },
+  "rows": [
+    {
+      "seed": 20261120,
+      "tasks": {
+        "load": {
+          "stateless_reset": 0.421875,
+          "carry_last": 0.3828125,
+          "replay": 0.3125,
+          "state_carry": 0.359375
+        },
+        "order": {
+          "stateless_reset": 0.328125,
+          "carry_last": 0.3359375,
+          "replay": 0.3359375,
+          "state_carry": 0.2265625
+        }
+      },
+      "retention_damage": {
+        "s1": 0.0,
+        "s2": 0.0,
+        "s3": 0.0
+      }
+    },
+    {
+      "seed": 20261121,
+      "tasks": {
+        "load": {
+          "stateless_reset": 0.421875,
+          "carry_last": 0.375,
+          "replay": 0.3828125,
+          "state_carry": 0.328125
+        },
+        "order": {
+          "stateless_reset": 0.3671875,
+          "carry_last": 0.3828125,
+          "replay": 0.421875,
+          "state_carry": 0.359375
+        }
+      },
+      "retention_damage": {
+        "s1": 0.0,
+        "s2": 0.0,
+        "s3": 0.0
+      }
+    },
+    {
+      "seed": 20261122,
+      "tasks": {
+        "load": {
+          "stateless_reset": 0.3828125,
+          "carry_last": 0.40625,
+          "replay": 0.359375,
+          "state_carry": 0.3125
+        },
+        "order": {
+          "stateless_reset": 0.4140625,
+          "carry_last": 0.390625,
+          "replay": 0.40625,
+          "state_carry": 0.3203125
+        }
+      },
+      "retention_damage": {
+        "s1": 0.0,
+        "s2": 0.0,
+        "s3": 0.0
+      }
+    }
+  ],
+  "means": {
+    "load": {
+      "stateless_reset": 0.4088541666666667,
+      "carry_last": 0.3880208333333333,
+      "replay": 0.3515625,
+      "state_carry": 0.3333333333333333
+    },
+    "order": {
+      "stateless_reset": 0.3697916666666667,
+      "carry_last": 0.3697916666666667,
+      "replay": 0.3880208333333333,
+      "state_carry": 0.3020833333333333
+    }
+  },
+  "gaps": {
+    "load": 0.018229166666666685,
+    "order": 0.0859375
+  },
+  "gates": {
+    "pressure": false,
+    "retention": true
+  },
+  "verdict": "memory_load_comparable",
+  "disclosure": "synthetic 10-body scenes; replay arm gets the target ticks and the final tick",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 232.59
+  }
+}

@@ -1,5 +1,7 @@
 # 结果卡：干扰中更新探针（`memory_update_verified`，有界）
 
+
+> **更正（D-20261119-199）**：fit 曾与 train 种子重叠（泄漏）；修复后重跑：no_state 0.339、replay 0.924、state_carry 0.880（差 0.044 ≤0.10）、增益 +0.516/+0.469/+0.641。**判词仍成立（有界）**，以更正后数值为准。
 > 文档状态：[结果卡] — 2026-11-20（D-20261119-196）。上游 [记忆衰减](RESULT-TAIJI_U2_WM_GAP_20261120.md)、[跨步工作记忆](RESULT-TAIJI_U2_WORKING_MEMORY_20261120.md)。**零 check/final、只读 fit。**
 
 ## 1. 协议

@@ -42,6 +42,7 @@ BATCH = 32
 STEPS = 1500
 LR = 3e-3
 LOAD_DROP = 0.15
+FIT_OFFSET = 10_000_000
 RETENTION_MAX = 0.02
 
 
@@ -145,7 +146,7 @@ def run_seed(seed: int) -> dict:
     last = TICKS - 1
     for load in LOADS:
         train = build(TRAIN, seed, load)
-        fit = build(FIT, seed + 1, load)
+        fit = build(FIT, seed + FIT_OFFSET, load)
         arms = {}
         for arm, use in (
             ("no_state", [last]),

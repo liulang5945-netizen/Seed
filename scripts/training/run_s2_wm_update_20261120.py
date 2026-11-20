@@ -43,6 +43,7 @@ BATCH = 32
 STEPS = 1500
 LR = 3e-3
 CARRY_MIN = 0.60
+FIT_OFFSET = 10_000_000
 GAIN_MIN = 0.05
 REPLAY_TOL = 0.10
 RETENTION_MAX = 0.02
@@ -150,7 +151,7 @@ def run_seed(seed: int) -> dict:
         parameter.requires_grad_(False)
         parameter.grad = None
     train = build(TRAIN, seed)
-    fit = build(FIT, seed + 1)
+    fit = build(FIT, seed + FIT_OFFSET)
     last = TICKS - 1
     arms = {}
     for arm, use in (

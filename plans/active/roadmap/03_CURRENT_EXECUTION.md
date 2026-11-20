@@ -4826,3 +4826,8 @@ S1 中性检查：新增逐令牌活动读出（30 维单位活动、hidden 64�
 ## 2026-11-20 工作记忆负载探针（D-20261119-198，`memory_load_comparable`，229.45 CPU，0 check）
 
 5 tick、t0 显示 N 个目标体（颜色各异）、t1–t3 干扰、t4 查询第 k 个目标位置（3 类）；N ∈ {1,3,5}；三臂 no_state/replay/state_carry；冻结 23.0b 父、两步注意力读出；3 seed、只读 fit、零 check。读数：N=1 carry 0.953 vs replay 0.96875（差 0.016✓）；N=3 0.893 vs 0.872（差 −0.021）；N=5 0.880 vs 0.878（差 −0.003）；retention 0.0✓ ⇒ memory_load_comparable（无容量压力）。判读：同时保持 5 个目标仍无衰减（carry 与 replay 同水平甚至略高）——当前 30 单位状态对至多 5 个并行目标没有信息缺口压力；no_state 随负载上升（0.615→0.732）系 t4 弱相关/测偏，已披露；26 的信息缺口压力仍不可测（至少到 5 目标）；不签 26 通过、不签容量上限结论（只到 5 目标）；旧保持 0.0 来自父冻结。后继：26 前置仍不满足——需更重负载（8–10 目标跨 20 tick 或需精确顺序记忆）才可能产生信息缺口；若 owner 不再投入负载设计，26/27 维持暂停，主线按『有界工作记忆＋单步任务有界 verified』收束；累计本卡≈229 CPU；零 check/final。
+
+
+## 2026-11-20 更正：记忆探针种子泄漏（D-20261119-199，零训练零 check）
+
+发现 `run_s2_working_memory/wm_gap/wm_update/wm_load/wm_heavy` 的 fit 用 `build(FIT, seed+1)`、train 用 `build(TRAIN, seed)`，fit 种子区间与 train 完全重叠（fit 第 j 条 = train 第 j+1 条）⇒ fit 读数被泄漏抬高。修复：fit 改用 `seed+FIT_OFFSET`（10,000,000）后全部重跑。更正后：①工作记忆（5 tick）no_state 0.318、replay=carry 0.9375、增益 +0.609/+0.664/+0.586 ⇒ memory_carry_verified 仍成立（有界）；②记忆衰减（5/10/20/40）carry 0.458/0.490/0.497/0.430 vs replay 0.945/0.945/0.865/0.859、no_state 0.286–0.352 ⇒ 撤回『≥40 tick 可读、无急剧衰减』，长时保持未建立；③更新（20 tick）carry 0.880 vs replay 0.924（差 0.044）、no_state 0.339 ⇒ memory_update_verified 仍成立（有界）；④负载（1/3/5）load1 carry 0.680 vs replay 0.844（差 0.164）、load3/5 近机会 ⇒ 撤回『无容量压力』、比较无效；⑤重负载/顺序：所有臂 0.30–0.41（含重放上界）⇒ 任务无效（memory_load_invalid）。规则：合成探针必须显式分区种子并在卡内记录；fit 读数不得高于 replay 上界，出现即查泄漏。194/195/196/198 已加更正横幅，195/198 原判读作废；更正后可签仅 5-tick 保持与 20-tick 最新信号裁决；不签长时记忆/容量压力/26-27 通过/final/C/D/J/模型成型；零 check/final。
