@@ -4366,3 +4366,8 @@ HEADS=9：…→s9 颜色 parity（2 类派生）；3 seed 全过：inheritance 
 ## 2026-11-20 顺序计算式递归卡（D-20261119-105，`sequential_recursion_engineering_limitation`，59.16 CPU）
 
 动作对：bin1=r1.final_bin、bin2=bin1+(r2.final_bin−r2.current_bin)；tick1 看 r1、tick2 看 r2。读数：tick1 0.375/0.375/0.292、tick2 0.333/0.375/0.292（≈机会），shuffled 更高 0.458–0.5，单 tick 基线 0.417/0.542/0.5 ⇒ 四门全败且序列不如单 tick。判读：**工程限制非能力结论**——inputs [T,G,D] 把 batch 当 time、状态在批内样本间连续携带，无法表达同一对样本 tick1→tick2 状态；不计入 recursive_development 判词（该轴仍重复输入 negative＋顺序计算 uncovered）。后继：单位层 batch×time 分离扫描接口（新 pin 新卡）或手写 unrolled recurrence，零 check 价≤200 CPU；实现前不得以本卡读数签递归判词。
+
+
+## 2026-11-20 batch×time 分离扫描接口设计（D-20261119-106，零训练）
+
+新增 taiji/u2_scan.py（UnitScan.run）逐 tick 用核心同公式更新 z/a、输出 activity[B,T,N]/readout[B,T,out]，样本间零交互、不改核心。实现前四条验证：T=1 与 graph.forward 差≤1e-6；批次独立≤1e-9；batch 置换不变；状态携带（tick1 不同→tick2 活动不同）。全过才重跑 D-104 四门；实现+验证≤60 CPU、顺序递归≤200 CPU、四门不调阈值；仍负则 negative 收口。回归现有 T=1 路径与门禁。

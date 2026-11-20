@@ -244,3 +244,7 @@ HEADS=9 跨会话：旧 A–H 全部 retention drop 0.0，新 I（颜色 parity�
 ## 50. 顺序计算式递归卡（D-20261119-105，工程限制披露）
 
 动作对顺序任务：tick1/tick2 ≈ 机会（0.29–0.375），shuffled 反而更高（0.46–0.5），单 tick 基线 0.42–0.54 ⇒ 四门全败。判读：**工程限制而非能力结论**——`inputs [T,G,D]` 把 batch 当 time、状态跨批内样本连续携带，无法表达同一对样本的 tick1→tick2 状态；本卡不计入 `recursive_development` 判词（该轴仍 D-102 重复输入 negative＋顺序计算 uncovered）。后继：batch×time 分离扫描接口（新 pin 新卡）或手写 unrolled recurrence，实现前不得签递归判词。
+
+## 51. batch×time 分离扫描接口设计（D-20261119-106，零训练）
+
+解决 D-105 工程限制：新增 `UnitScan.run(channels[B,T,8], gates[B,T,N], state)`（新模块，不改核心），逐 tick 同公式更新、样本间零交互。实现前四验证：T=1 与 graph.forward 差≤1e-6；批次独立≤1e-9；batch 置换不变；状态携带。全过才重跑顺序递归四门（同 D-104、不调阈值）；实现+验证 ≤60 CPU、顺序递归 ≤200 CPU；仍负则 negative 收口。

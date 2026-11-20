@@ -6172,3 +6172,12 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **3. 判读（工程限制，非能力结论）**：失败模式显示**序列前向语义与「每样本 T 步递归」不匹配**——`RouteBGraph/NeuralUnits` 的 `inputs [T,G,D]` 把 **batch 当 time**，状态在批内样本间连续携带，无法表达「同一对样本的 tick1→tick2 状态」；因此本卡没有真正测到「顺序计算式递归」，其读数不能当作能力 negative。按纪律记 **`sequential_recursion_engineering_limitation`**，不计入 `recursive_development` 的能力判词（该轴仍为 D-102 的「重复输入」negative＋顺序计算形态 **uncovered**）。
 
 **4. 后继条件（新设计/可能需核心 API 变更）**：① 在单位层增加 **batch×time 分离**的扫描接口（新 pin、新卡）；② 或用手写 unrolled recurrence（同一模块逐 tick 调用、显式重置/携带状态 dict）验证，零 check、价 ≤200 CPU。在实现前不得以本卡读数签任何递归判词。
+
+
+### D-20261119-106 batch×time 分离扫描接口设计草案（零训练；解决 D-105 工程限制）
+
+**1. 动作**：写[设计草案](../reference/DESIGN-TAIJI_U2_SCAN_INTERFACE_20261120.md)：新增 `taiji/u2_scan.py`（`UnitScan.run(channels[B,T,8], gates[B,T,N], state)`），逐 tick 用与核心 forward 相同公式更新 `z/a`、输出 `activity [B,T,N]` 与 `readout [B,T,out]`，**样本之间零交互**；不改核心 `u2_neural_units.py`。**零训练、零 check/final。**
+
+**2. 实现前验证点（4 条）**：T=1 与 `graph.forward` 差 ≤1e-6；批次独立（拼接 vs 分别 run 差 ≤1e-9）；batch 置换结果不变；同一样本 tick1 输入不同则 tick2 活动不同。全过才允许重跑 D-104 顺序递归四门。
+
+**3. 预算/出口**：实现＋验证 ≤60 CPU；随后顺序递归 ≤200 CPU（四门同 D-104，不调阈值）；回归现有 T=1 路径与门禁；顺序递归仍负则如实记 negative 收口该形态。
