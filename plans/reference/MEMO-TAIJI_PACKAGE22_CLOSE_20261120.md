@@ -368,3 +368,7 @@ v7 增量：autonomous_choice 三次负（最强 online 0.742/0.835/0.738 vs 固
 ## 81. 教师强制 oracle 修复（D-20261119-137，维持 partial）
 
 oracle 改教师强制（真实 d1 one-hot×2 写槽、单独训练 1,500 步含 step1 方向 CE）：oracle `0.889/0.898/0.944`（seed0/1 差 0.001–0.011 未过 0.90）；self/消融/零记忆/顺序四门保持 ✓ ⇒ 维持 `memory_slot_partial`（4/5）。判读：协议修复有效（oracle 由 0.630–0.815 升至 0.889–0.944，证明原失败是协议而非能力，任务在完美记忆下可学）；按不调阈值纪律不凑线。实质结论：单通道充分性已证、必要性/顺序依赖成立；未达门者为 oracle 参考上限（协议/容量）。收口：记忆槽 partial 不签 verified；`recursive_development`＝两形态负＋两步写回有界＋记忆槽 partial（单通道充分）。后继：更强 oracle 或组合通道联合门，新卡预注册。
+
+## 82. 会话收口报告 v9（D-20261119-138，零训练）
+
+递归/记忆槽定稿：重复输入 negative、顺序两步 negative、两步写回有界 verified、显式循环 partial（组合通道）、专用记忆槽 partial（单通道充分性成立、oracle 0.889–0.944 差门）。九轴终值：工程/任务 verified（check② 未读）；学习 routing＋通路新增有界/内容积累 uncovered；保持 fit-face＋通路按位一致；自动选择三段式；成熟生长结构＋通路级有界、单元级分化 range-limited negative；递归两形态负＋写回有界＋循环/记忆槽 partial；物理有界/碰撞 uncovered；寿命有界；不确定性有界。剩余推进只依赖 owner 裁定项；已负轴停止同范围。

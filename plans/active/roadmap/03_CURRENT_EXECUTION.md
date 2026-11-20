@@ -4521,3 +4521,8 @@ autonomous_choice 三段式：①C 池 negative（D-60/D-123/D-124 三次；最�
 ## 2026-11-20 教师强制 oracle 修复（D-20261119-137，维持 `memory_slot_partial`，46.14 CPU）
 
 oracle 臂改为教师强制（真实 d1 one-hot×2 写入槽、单独训练 1,500 步含 step1 方向 CE）：oracle 0.8889/0.8981/0.9444（seed0/1 差 0.001–0.011 未过 0.90）；self 0.9537/0.9444/0.9167✓；消融 0.9444/0.9444/0.9167✓；零记忆降 0.398–0.472✓；顺序降 0.463–0.482✓ ⇒ 维持 memory_slot_partial（4/5 门）。判读：协议修复有效（oracle 从 0.630–0.815 提升到 0.889–0.944，证明原 oracle 失败是协议问题、任务在完美记忆下可学）；仍差门一点，按不调阈值纪律不凑线。实质结论不变：单通道充分性已证、必要性与顺序依赖成立；未达门的是 oracle 参考上限（协议/容量）。收口：记忆槽 partial 记录、不签 verified；recursive_development 更新为「两形态负＋两步写回有界＋记忆槽 partial（单通道充分）」。后继：更强 oracle 或组合通道联合门重跑，新卡预注册。
+
+
+## 2026-11-20 会话收口报告 v9（D-20261119-138，零训练）
+
+递归/记忆槽两轴定稿：递归发展＝重复输入 negative（D-102）＋顺序两步 negative（D-108）＋两步写回有界 verified（D-115）＋显式循环组合通道 partial（D-132/133/134）＋专用记忆槽 partial（D-136/137：单通道充分性成立、oracle 0.889–0.944 差 0.90 门）。九轴终值更新：工程/任务 verified（fit_face_only 未读 check②）；学习 routing＋通路新增有界；保持 fit-face＋通路按位一致；自动选择三段式（C 池 negative/平稳合成有界/非平稳延迟 negative）；成熟生长结构＋通路级有界、单元级分化 range-limited negative；递归两形态负＋两步写回有界＋显式循环 partial＋记忆槽 partial；物理有界/碰撞 uncovered；寿命有界；不确定性有界。剩余推进只依赖 owner 裁定项（check② A/B、22.8/23–30、真机、阶段账）；已负轴停止同范围，新设计需新 pin。

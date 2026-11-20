@@ -6551,3 +6551,16 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 - **实质结论不变**：memory 槽单通道充分性已证（消融=self）、必要性与顺序依赖成立；未达门的是「完美记忆 head 的参考上限」，属 oracle 协议/容量限制，不是记忆槽机制失败。
 
 **4. 收口**：记忆槽形态按 **partial（4/5 门，单通道充分性已证）** 记录；不签有界 verified；`recursive_development` 记为「重复输入 negative、顺序两步 negative、显式循环 partial（组合）、两步写回有界 verified、专用记忆槽 partial（单通道充分）」。后继若继续：换更强 oracle（更多参数/更长训练/另一种完美记忆写入），或直接以「组合通道」重跑联合门；新卡、新 pin、预注册。
+
+
+### D-20261119-138 会话收口报告 v9：递归/记忆槽两轴定稿与九轴终值（零训练）
+
+**1. 动作**：在[会话收口报告](../reference/MEMO-TAIJI_SESSION_CLOSE_20261120.md)新增 §19：定稿递归/记忆槽两轴状态与九轴终值；更新「剩余推进只依赖 owner 裁定项」的表述。**零训练、零 check/final。**
+
+**2. 递归/记忆槽两轴定稿**：
+- **递归发展**：重复输入 negative（D-102）、顺序两步 negative（D-108）；**工作记忆写回两步有界 verified（D-115）**；显式循环**组合通道 partial**（self 0.91–0.96、深度收益 +0.43–0.48、顺序依赖 0.21–0.27，单通道不足；D-132/133/134）；**专用记忆槽 partial**（self 0.92–0.95、状态消融=self 单通道充分、零记忆降 0.40–0.47、顺序降 0.46–0.48；oracle 参考 0.89–0.94 差 0.90 门；D-136/137）。
+- **结论**：**组合形态有深度收益且顺序相关**；单通道充分性已在专用记忆槽中成立；**或 oracle 参考上限**（协议/容量）未达门，故记忆槽不签 verified、显式循环轴停止同范围。
+
+**3. 九轴终值（截至本轮）**：工程 verified；任务 verified（`fit_face_only`、check② 未读）；学习＝routing＋通路级新增有界 verified（3→9）/内容积累 uncovered；保持＝fit-face＋通路隔离按位一致；自动选择＝C 池 negative（三次）＋平稳合成有界 verified＋非平稳/延迟 negative；成熟生长＝结构 verified＋通路级加/回收/无干扰/可逆停用有界 verified、单元级生长收益未建立、单元级分化 range-limited negative；递归发展＝两形态负＋两步写回有界＋显式循环 partial＋记忆槽 partial（单通道充分）；物理迁移有界 verified（push/位置 bin）、碰撞/真机 uncovered；寿命有界 verified（≥3 跨进程会话等）；不确定性有界 verified（ECE 0.028→0.021）。
+
+**4. 剩余推进**：只依赖 owner 裁定项——check② A/B、22.8 与 23–30 准入、真机/多动力学、阶段账处置；已负轴按预注册出口停止，不再同范围重试；任何「更强 oracle/组合通道联合门」属新设计新 pin。
