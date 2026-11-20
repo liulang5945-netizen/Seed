@@ -1,0 +1,188 @@
+{
+  "schema": "taiji-u2-24-4-correction-v1",
+  "card": "24.4 four-type correction probe with indirect feedback",
+  "created_utc": "2026-11-20T11:37:19.548295+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      20261120,
+      20261121,
+      20261122
+    ],
+    "sessions": 10,
+    "events_per_session": 20,
+    "base_steps": 300,
+    "correct_steps": 64
+  },
+  "rows": [
+    {
+      "seed": 20261120,
+      "results": {
+        "stale": {
+          "before_original": 0.30000001192092896,
+          "after_target": 0.699999988079071,
+          "after_original": 0.10000000149011612
+        },
+        "misleading": {
+          "before_original": 0.20000000298023224,
+          "after_target": 0.6000000238418579,
+          "after_original": 0.6000000238418579
+        },
+        "contradiction": {
+          "before_original": 0.10000000149011612,
+          "after_target": 0.30000001192092896,
+          "after_original": 0.30000001192092896
+        },
+        "revocation": {
+          "before_original": 0.20000000298023224,
+          "after_target": 0.6000000238418579,
+          "after_original": 0.10000000149011612
+        }
+      },
+      "recovery": {
+        "stale": 0.699999988079071,
+        "revocation": 0.6000000238418579
+      },
+      "stability": {
+        "misleading_damage": 0.0,
+        "contradiction_damage": 0.0
+      },
+      "retention": {
+        "baseline": {
+          "s1": 0.984375,
+          "s2": 0.859375,
+          "s3": 1.0
+        },
+        "after": {
+          "s1": 0.984375,
+          "s2": 0.859375,
+          "s3": 1.0
+        },
+        "damage": {
+          "s1": 0.0,
+          "s2": 0.0,
+          "s3": 0.0
+        }
+      }
+    },
+    {
+      "seed": 20261121,
+      "results": {
+        "stale": {
+          "before_original": 0.30000001192092896,
+          "after_target": 0.4000000059604645,
+          "after_original": 0.10000000149011612
+        },
+        "misleading": {
+          "before_original": 0.30000001192092896,
+          "after_target": 0.5,
+          "after_original": 0.5
+        },
+        "contradiction": {
+          "before_original": 0.30000001192092896,
+          "after_target": 0.6000000238418579,
+          "after_original": 0.6000000238418579
+        },
+        "revocation": {
+          "before_original": 0.10000000149011612,
+          "after_target": 0.6000000238418579,
+          "after_original": 0.30000001192092896
+        }
+      },
+      "recovery": {
+        "stale": 0.4000000059604645,
+        "revocation": 0.6000000238418579
+      },
+      "stability": {
+        "misleading_damage": 0.0,
+        "contradiction_damage": 0.0
+      },
+      "retention": {
+        "baseline": {
+          "s1": 0.9921875,
+          "s2": 0.859375,
+          "s3": 1.0
+        },
+        "after": {
+          "s1": 0.9921875,
+          "s2": 0.859375,
+          "s3": 1.0
+        },
+        "damage": {
+          "s1": 0.0,
+          "s2": 0.0,
+          "s3": 0.0
+        }
+      }
+    },
+    {
+      "seed": 20261122,
+      "results": {
+        "stale": {
+          "before_original": 0.30000001192092896,
+          "after_target": 0.6000000238418579,
+          "after_original": 0.20000000298023224
+        },
+        "misleading": {
+          "before_original": 0.30000001192092896,
+          "after_target": 0.6000000238418579,
+          "after_original": 0.6000000238418579
+        },
+        "contradiction": {
+          "before_original": 0.10000000149011612,
+          "after_target": 0.4000000059604645,
+          "after_original": 0.4000000059604645
+        },
+        "revocation": {
+          "before_original": 0.10000000149011612,
+          "after_target": 0.800000011920929,
+          "after_original": 0.0
+        }
+      },
+      "recovery": {
+        "stale": 0.6000000238418579,
+        "revocation": 0.800000011920929
+      },
+      "stability": {
+        "misleading_damage": 0.0,
+        "contradiction_damage": 0.0
+      },
+      "retention": {
+        "baseline": {
+          "s1": 0.9921875,
+          "s2": 0.875,
+          "s3": 1.0
+        },
+        "after": {
+          "s1": 0.9921875,
+          "s2": 0.875,
+          "s3": 1.0
+        },
+        "damage": {
+          "s1": 0.0,
+          "s2": 0.0,
+          "s3": 0.0
+        }
+      }
+    }
+  ],
+  "gates": {
+    "stale_recovery": false,
+    "revocation_recovery": true,
+    "stability": true,
+    "retention": true
+  },
+  "verdict": "correction_partial",
+  "disclosure": "correction feedback is implemented as label targets with noisy/one-shot semantics; contradiction and misleading subsets test stability, not a reliability-aware source model",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 200.08
+  }
+}

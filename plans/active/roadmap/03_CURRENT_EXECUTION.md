@@ -4741,3 +4741,8 @@ J1：30 单位 RouteB 仅 appearance、48 步/轮×8×3＝1,152 步，3 seed fit
 ## 2026-11-20 24.3 前缀维护（D-20261119-181，`prefix_maintenance_partial`（无成本收益），207.88 CPU，0 check）
 
 冻结 23.0b 父；10 会话×20 事件无重复抽样；会话 1–2 的 40 事件为长延迟测试（落在有界 64 槽外）；臂 prefix_1/2/4/8 vs full_rebuild vs fast-only；3 seed、只读 fit、零 check。读数：prefix_8 0.275/0.250/0.175；full 0.250/0.275/0.175；最佳前缀与 full 差均值 0.0（≤0.05✓）；但成本✗——prefix_8 重放 160 事件=full 160，无成本节省；更短前缀 1/2/4 成本低但与 full 差 −0.05～−0.12；旧事件整体 0.10–0.28、fast-only 0.10–0.35；retention 0.0✓ ⇒ prefix_maintenance_partial。判读：无成本收益——能匹配全重建的只有全量前缀、其成本等于全重建，『可支付维护』核心主张在本设计下未成立；旧事件学习整体弱（0.10–0.28）不是前缀策略单点问题，而是当前 4 维 direct_query 读出接口在旧事件上的容量上限；fast-only 偶高属键近邻偶然命中；旧保持 0.0 仍来自父冻结。后继：24.4（四类纠错）可做但受同一容量限制；建议 24.4 后即对 24 做范围限定收口（experience_learning_partial），把读取结构升级卡列为 24 之后第一优先；主窗 17,000 CPU 待授权；累计 24≈670 CPU；不签 24 通过/final/C/D/J/模型成型；零 check/final。
+
+
+## 2026-11-20 24.4 四类纠错（D-20261119-182，`correction_partial`（回退类可恢复；稳定性子项设计缺陷已披露），200.08 CPU，0 check）
+
+冻结 23.0b 父；10 会话×20 事件无重复；会话 1–8 训练读取头，会话 9–10 四子集各 10 条（stale/revocation/misleading/contradiction）；每类 2 次有效交互；3 seed、只读 fit、零 check。读数：stale 恢复 0.70/0.40/0.60（seed1 未达 0.50✗）；revocation 0.60/0.60/0.80（✓）；misleading/contradiction 的『原标签』在 2 次交互后反而上升（misleading 0.2→0.6 等）；旧技能损伤 0.0✓ ⇒ correction_partial。判读与披露：回退类纠错在 2 次交互内可恢复（revocation 3/3、stale 2/3）；稳定性子项设计失败——misleading/contradiction 臂实际是训练回原标签、未构造真正冲突/误导反馈，stability=✓ 属无效读数，不得据此签抗误导/抗矛盾；旧保持 0.0 仍来自父冻结。后继：24.5 只剩总账；建议直接对 24 做范围限定收口（experience_learning_partial：24.1 接口有界、24.2/24.3 无净益/无成本收益、24.4 仅回退类可恢复、稳定性未测）；读取结构升级卡列为 24 后第一优先；主窗 17,000 CPU 待授权；累计 24≈870 CPU；不签 24 通过/final/C/D/J/模型成型；零 check/final。

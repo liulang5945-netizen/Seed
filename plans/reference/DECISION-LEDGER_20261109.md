@@ -7059,3 +7059,14 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **3. 判读**：**无成本收益**——能匹配全重建的只有全量前缀，其成本等于全重建，「可支付维护」核心主张在本设计下未成立；旧事件学习整体弱（0.10–0.28），不是前缀策略单点问题，而是**当前 4 维 direct_query 读出接口在旧事件上的容量上限**；fast-only 偶高属键近邻偶然命中；旧保持 0.0 仍来自父冻结。
 
 **4. 后继**：24.4（四类纠错）可做但会受同一容量限制；建议 24.4 后即对 24 做范围限定收口（`experience_learning_partial`），把「读取结构升级卡」列为 24 之后第一优先；主窗 17,000 CPU 仍待 owner 授权；累计 24 实际 ≈670 CPU；不签 24 通过/final/C/D/J/模型成型；零 check/final。
+
+
+### D-20261119-182 24.4 四类纠错：`correction_partial`（回退类可恢复；稳定性子项设计缺陷披露；200.08 CPU，0 check）
+
+**1. 动作**：新增 [`run_s2_24_4_correction_20261120.py`](../../scripts/training/run_s2_24_4_correction_20261120.py) 与 [结果卡](../reference/RESULT-TAIJI_U2_24_4_CORRECTION_20261120.md)。冻结 23.0b 父；10 会话×20 事件（无重复）；会话 1–8 训练读取头，会话 9–10 四子集各 10 条（stale/revocation/misleading/contradiction）；每类 2 次有效交互；3 seed、零 check。
+
+**2. 读数**：stale 恢复 **0.70/0.40/0.60**（seed1 未达 0.50 ✗）；revocation **0.60/0.60/0.80**（✓）；misleading/contradiction 的「原标签」在 2 次交互后反而上升（misleading 0.2→0.6 等）；旧技能损伤 0.0 ✓ ⇒ **`correction_partial`**；200.08 CPU。
+
+**3. 判读与披露**：**回退类纠错在 2 次交互内可恢复**（revocation 3/3、stale 2/3）；**稳定性子项设计失败**——misleading/contradiction 臂实际是「训练回原标签」，未构造真正的冲突/误导反馈，stability=✓ 属**无效读数**，本卡不得据此签「抗误导/抗矛盾」；旧保持 0.0 仍来自父冻结。
+
+**4. 后继**：24.5 只剩总账；建议直接对 24 做范围限定收口（`experience_learning_partial`：24.1 接口有界、24.2/24.3 无净益/无成本收益、24.4 仅回退类可恢复、稳定性未测）；「读取结构升级卡」列为 24 后第一优先；主窗 17,000 CPU 仍待 owner 授权；累计 24 实际 ≈870 CPU；不签 24 通过/final/C/D/J/模型成型；零 check/final。
