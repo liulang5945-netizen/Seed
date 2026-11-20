@@ -6262,3 +6262,14 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 - **结论**：D-112（不平衡分布）的 `working_memory_writeback_ready` 维持原判（已披露标签不平衡）；平衡分布复测记 **partial**，需改进 shuffled 控制设计后再签。
 
 **4. 后继条件**：① shuffled 控制改用「方向标签随机置换但 one-hot 形式与频次匹配」的严格对照；② 或在写回维增加「无效」标记（无写回时显式置 invalid），消除「非零即信息」捷径；③ 新卡、新 pin、预注册，零 check、价 ≤150 CPU；通过后把平衡版本升级。
+
+
+### D-20261119-114 严格写回控制（invalid 标记＋滚动置换）：`partial`；披露对照污染（48.33 CPU）
+
+**1. 动作**：新增 [`probe_s2_writeback_strict_20261120.py`](../../scripts/training/probe_s2_writeback_strict_20261120.py)：在平衡数据上，写回维改为「2 位桶 one-hot（39–40）＋**invalid 标记（41）**」（无写回时 invalid=1、桶全 0；自写回/shuffled 均 invalid=0），shuffled 改为**滚动置换的真实方向**（匹配频次、独立配对）。3 seed、零 check。
+
+**2. 读数**：oracle `1.0`、自写回 `1.0`、零写回 `0.6016/0.5625/0.6641`、necessity ✓；**shuffled `0.6641/0.5391/0.6797`——seed0/2 仍超 0.55** ⇒ 仍 `partial`。
+
+**3. 判据失败归因（披露）**：滚动置换后 shuffled 仍高于 0.5，说明**对照本身被数据构造污染**——`build_partition` 的 `direction = +1 if seed % 2 == 0 else −1`，配对取相邻行，方向在相邻对间有确定性交替；滚动/随机化写回仍与 `r2` 的方向存在系统相关，因此 shuffled 臂系统性高于机会。**这不是写回机制的证据，也不是反证**，而是**对照设计缺陷**。
+
+**4. 后继条件**：① 配对前**打乱行序**（消除相邻方向交替相关性），再做频次匹配的 shuffled 对照；② 或把方向标签做**全局随机置换**并在置换后重新构造 `same`；③ 重新预注册控制门（shuffled 必须落在 0.5±0.05）、新 pin、零 check、价 ≤150 CPU。通过后把平衡＋严格控制版本签为有界 verified；在此之前 D-112 的不平衡版原判维持。

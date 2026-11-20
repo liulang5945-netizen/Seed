@@ -276,3 +276,7 @@ HEADS=9 跨会话：旧 A–H 全部 retention drop 0.0，新 I（颜色 parity�
 ## 58. 工作记忆写回平衡复测（D-20261119-113，partial）
 
 1:1 平衡（same_rate=0.5）：oracle 1.0、自写回 1.0、零写回 0.609/0.563/0.641、necessity✓；但 shuffled 0.641/0.523/0.648（2/3 seed >0.55）⇒ `working_memory_writeback_partial`。平衡下正向更强（收益不靠标签不平衡），但**控制门被「写回维非零＝信息存在」捷径破坏**，严格判据不签平衡版 verified；D-112 不平衡版原判维持（已披露）。后继：shuffled 改匹配频次标签置换或加 invalid 标记消除捷径，新卡零 check ≤150 CPU。
+
+## 59. 严格写回控制（D-20261119-114，partial；对照污染披露）
+
+平衡数据＋invalid 标记＋滚动置换 shuffled：oracle/自写回 1.0、零写回 0.56–0.66、necessity✓，但 shuffled 0.54–0.68 仍有 2/3 seed>0.55 ⇒ partial。**归因**：`build_partition` 方向由 seed 奇偶决定、配对取相邻行 → 相邻方向确定性交替，滚动/随机写回仍与 r2 方向系统相关，对照被污染（非机制证据亦非反证）。后继：配对前打乱行序或方向全局随机置换后重建 same、控制门 0.5±0.05、新 pin 零 check ≤150 CPU；通过前 D-112 原判维持。

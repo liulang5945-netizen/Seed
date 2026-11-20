@@ -1,0 +1,77 @@
+{
+  "schema": "taiji-u2-learnable-two-step-v1",
+  "card": "working-memory write-back with invalid marker (balanced 1:1)",
+  "created_utc": "2026-11-20T01:12:22.141871+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "pair_seeds": [
+      20261120,
+      20261121,
+      20261122,
+      20261123,
+      20261124,
+      20261125
+    ],
+    "train_pairs": 194,
+    "fit_pairs": 128,
+    "memory_dims": [
+      39,
+      40
+    ],
+    "invalid_dim": 41,
+    "gates": "oracle>=0.85; self>=0.65 & self-zero>=0.15; necessity drop>=0.15; shuffled<=0.55"
+  },
+  "results": [
+    {
+      "seed": 0,
+      "direction_accuracy": 1.0,
+      "self": 1.0,
+      "zero": 0.6016,
+      "shuffled": 0.6641,
+      "oracle": 1.0,
+      "same_rate": 0.5
+    },
+    {
+      "seed": 1,
+      "direction_accuracy": 1.0,
+      "self": 1.0,
+      "zero": 0.5625,
+      "shuffled": 0.5391,
+      "oracle": 1.0,
+      "same_rate": 0.5
+    },
+    {
+      "seed": 2,
+      "direction_accuracy": 1.0,
+      "self": 1.0,
+      "zero": 0.6641,
+      "shuffled": 0.6797,
+      "oracle": 1.0,
+      "same_rate": 0.5
+    }
+  ],
+  "gates": {
+    "task_learnable": true,
+    "self_over_zero": true,
+    "necessity": true,
+    "shuffled_control": false
+  },
+  "verdict": "working_memory_writeback_partial",
+  "discipline": {
+    "optimizer_steps": 4500,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 48.33
+  }
+}
