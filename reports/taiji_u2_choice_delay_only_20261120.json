@@ -1,0 +1,68 @@
+{
+  "schema": "taiji-u2-online-choice-drift-v1",
+  "card": "delayed feedback K=3 only (stationary utility mapping)",
+  "created_utc": "2026-11-20T01:45:21.468530+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "sessions": 32,
+    "slots": 32,
+    "epochs": 8,
+    "delay": 3,
+    "drift_every": 1000000000,
+    "actions": 10,
+    "gates": "online>=best_fixed-0.05; online>=wait+0.10; online>=random+0.10; actions>=3 & wait<=0.8"
+  },
+  "results": [
+    {
+      "seed": 0,
+      "online": 0.4355,
+      "best_fixed": 0.4907,
+      "wait": 0.2672,
+      "random": 0.3167,
+      "actions_used": 8,
+      "wait_share": 0.3157
+    },
+    {
+      "seed": 1,
+      "online": 0.4226,
+      "best_fixed": 0.466,
+      "wait": 0.275,
+      "random": 0.3169,
+      "actions_used": 8,
+      "wait_share": 0.3116
+    },
+    {
+      "seed": 2,
+      "online": 0.4111,
+      "best_fixed": 0.5004,
+      "wait": 0.288,
+      "random": 0.3139,
+      "actions_used": 8,
+      "wait_share": 0.3104
+    }
+  ],
+  "gates": {
+    "beats_best_fixed": false,
+    "beats_wait": true,
+    "beats_random": false,
+    "diversity": true
+  },
+  "verdict": "online_choice_drift_absent",
+  "discipline": {
+    "optimizer_steps": 0,
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 0.28
+  }
+}
