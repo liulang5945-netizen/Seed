@@ -1,0 +1,87 @@
+{
+  "schema": "taiji-u2-readout-seq-v1",
+  "card": "readout upgrade on Chinese word-order task: mean pool vs positional attention",
+  "created_utc": "2026-11-20T14:25:04.095988+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      20261120,
+      20261121,
+      20261122
+    ],
+    "train_templates": [
+      0,
+      1,
+      2
+    ],
+    "fit_template": 3,
+    "fit_offset": 10000000,
+    "steps": 1500,
+    "margin": 0.1
+  },
+  "rows": [
+    {
+      "seed": 20261120,
+      "arms": {
+        "baseline_mean": 0.5,
+        "upgrade_posattn": 1.0,
+        "replay": 0.9166666865348816
+      },
+      "retention_damage": {
+        "s1": 0.0,
+        "s2": 0.0,
+        "s3": 0.0
+      }
+    },
+    {
+      "seed": 20261121,
+      "arms": {
+        "baseline_mean": 0.4166666567325592,
+        "upgrade_posattn": 1.0,
+        "replay": 0.8333333134651184
+      },
+      "retention_damage": {
+        "s1": 0.0,
+        "s2": 0.0,
+        "s3": 0.0
+      }
+    },
+    {
+      "seed": 20261122,
+      "arms": {
+        "baseline_mean": 0.5,
+        "upgrade_posattn": 0.9010416865348816,
+        "replay": 1.0
+      },
+      "retention_damage": {
+        "s1": 0.0,
+        "s2": 0.0,
+        "s3": 0.0
+      }
+    }
+  ],
+  "means": {
+    "baseline_mean": 0.4722222189108531,
+    "upgrade_posattn": 0.9670138955116272,
+    "replay": 0.9166666666666666
+  },
+  "gates": {
+    "replay_learnable": true,
+    "upgrade_gain": true,
+    "upgrade_level": true,
+    "retention": true
+  },
+  "verdict": "readout_seq_verified",
+  "disclosure": "frozen parent per-tick activities; replay = same positional-attention readout on raw character features",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 206.98
+  }
+}
