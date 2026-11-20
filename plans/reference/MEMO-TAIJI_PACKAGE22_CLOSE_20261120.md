@@ -284,3 +284,7 @@ HEADS=9 跨会话：旧 A–H 全部 retention drop 0.0，新 I（颜色 parity�
 ## 60. 去污染严格写回控制通过（D-20261119-115，有界 verified）
 
 平衡 1:1＋invalid 标记＋配对前打乱行序＋独立置换 shuffled：oracle/自写回 1.0、零写回 0.492–0.523、shuffled 0.500–0.516（≤0.55）、necessity ✓ ⇒ `working_memory_writeback_ready`（49.14 CPU）。**只有正确写回带来满分**，零写回/shuffled 均≈0.5 ⇒ D-114 对照污染归因获证；「显式工作记忆写回」升级为平衡＋严格控制下有界 verified。边界：单主体、二分类两步、手工注入写回（39–40＋invalid 41）；不等于一般递归/顺序推理。
+
+## 61. 会话收口报告 v5（D-20261119-116，零训练）
+
+v5 增量：通路级 9 条全部保持＋9×9 干扰矩阵（D-99/100）；递归两形态 negative（D-102/108）＋工作记忆写回平衡严格版有界 verified（D-115）；check② A 案维持、B 案零成本前置冻结（D-98）。九轴增量：learning/retention/lifetime 通路级有界；recursive_development negative（两形态）＋写回有界；mature_growth 单元级收益未建立、分化 partial。仍 uncovered：check②/B 执行、autonomous_choice、共享单元分裂整合、真机/多动力学、100 会话/24h、22.8/23–30。

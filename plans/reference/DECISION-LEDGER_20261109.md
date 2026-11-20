@@ -6284,3 +6284,17 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **3. 判读**：**去污染后对照干净**——在平衡分布、invalid 标记与独立置换控制下，**只有正确写回带来满分**（self/oracle 1.0），零写回与 shuffled 均≈0.5。这补上了 D-113/114 的控制缺陷，把「**显式工作记忆写回**」从「不平衡披露下的有界 verified」升级为**平衡＋严格控制下的有界 verified**；D-114 的对照污染归因得到证实（打乱配对后 shuffled 即回落到 0.5）。
 
 **4. 边界**：单主体、二分类两步任务、显式写回通道（手工注入特征维 39–40＋invalid 41）；不等于一般顺序推理/递归发展（D-102/D-108 仍 negative），不改变任务轴 `fit_face_only` 与 check②。
+
+
+### D-20261119-116 会话收口报告 v5：九轴终值增量（零训练）
+
+**1. 动作**：在[会话收口报告](../reference/MEMO-TAIJI_SESSION_CLOSE_20261120.md)新增 §13「v5 增量：通路 9 条、递归两形态、工作记忆写回、check② 前置」，更新九轴终值与剩余方向。**零训练、零 check/final。**
+
+**2. v5 增量**：
+- **通路级结构**：9 条任务通路全部保持（旧 A–H drop 0.0、新 I 1.0/1.0/1.0，D-99）；9×9 干扰矩阵 `others_max_delta=0.0`、重新载入逐位恢复（D-100）；扩展曲线 3→9 一致、未触上限。
+- **递归发展**：重复输入（D-102）与顺序计算（D-108）两形态均 negative；**工作记忆写回**在平衡＋invalid＋去污染置换控制下 `oracle/自写回 1.0、零写回 0.492–0.523、shuffled 0.500–0.516 ⇒ `working_memory_writeback_ready`（D-115，有界）**。
+- **check② 决策**：A 案维持（`fit_face_only`）；B 案零成本前置冻结（D-98 manifest digest `050d524e…`）；B 剩余四项待 owner 裁定。
+
+**3. 九轴终值（本轮增量）**：`learning`＋＝通路级 9 任务新能力有界；`retention`＋＝通路隔离逐位保持（9 任务）；`lifetime`＋＝通路跨会话新增/回收/停用/重新载入；`recursive_development`＝negative（两形态）＋工作记忆写回有界 verified（单主体/二分类两步）；`mature_growth` 单元级收益仍未建立、单元级分化 `partial`。
+
+**4. 仍 uncovered**：正式 check②/B 案执行；`autonomous_choice`（两法负）；共享单元分裂/整合；真机/多动力学；100 会话/24h；22.8 与 23–30 准入。

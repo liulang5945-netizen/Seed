@@ -4416,3 +4416,8 @@ UnitScan 忠实重测：tick1 0.625/0.5417/0.625（中间信用门过）；tick2
 ## 2026-11-20 去污染严格控制通过（D-20261119-115，`working_memory_writeback_ready`，49.14 CPU）
 
 平衡 1:1＋invalid 标记＋配对前打乱行序＋独立随机置换 shuffled：same_rate 0.5；direction 1.0；oracle 1.0；自写回 1.0 vs 零写回 0.4922/0.5234/0.4922（增益≈0.48–0.51）；shuffled 0.5156/0.5/0.5≤0.55（回机会）；necessity✓ ⇒ working_memory_writeback_ready。判读：去污染后对照干净——只有正确写回带来满分，零写回/shuffled 均≈0.5；D-114 对照污染归因获证（打乱配对后 shuffled 回落）。升级为平衡＋严格控制下有界 verified；边界：单主体/二分类两步/手工注入写回，不等于一般递归，不改任务轴与 check②。
+
+
+## 2026-11-20 会话收口报告 v5（D-20261119-116，零训练）
+
+v5 增量：①通路级 9 条全部保持＋9×9 干扰矩阵（D-99/100，未触上限）；②递归两形态 negative（D-102/108）＋工作记忆写回平衡严格版有界 verified（D-115）；③check② A 案维持、B 案零成本前置冻结（D-98），剩余四项待裁。九轴增量：learning/retention/lifetime 通路级有界；recursive_development negative（两形态）＋写回有界；mature_growth 单元级收益未建立、分化 partial。仍 uncovered：check②/B 执行、autonomous_choice、共享单元分裂整合、真机/多动力学、100会话/24h、22.8/23–30。零 check/final。

@@ -127,3 +127,18 @@ A 正式资格 A/B；B 22.8 与 23–30 准入；C 真机/多动力学族；D �
 ## 12. 去污染严格写回控制（D-20261119-115，有界 verified 升级）
 
 平衡 1:1＋invalid 标记＋配对前打乱行序＋独立置换 shuffled：oracle/自写回 1.0、零写回 0.492–0.523、shuffled 0.500–0.516、necessity ✓ ⇒ `working_memory_writeback_ready`（49.14 CPU）。只有正确写回带来满分；D-114 对照污染归因获证。**显式工作记忆写回**从「不平衡披露下有界」升级为「平衡＋严格控制下有界」；不含一般递归（D-102/D-108 negative）与任务轴变化。
+
+## 13. v5 增量（第 98 轮）：通路 9 条、递归两形态、工作记忆写回、check② 前置
+
+| 证据 | 结果 | 判词 |
+|---|---|---|
+| 九条任务通路 | 旧 A–H drop 0.0；新 I 1.0/1.0/1.0；继承 exact | `multihead8_ready`（D-99，397.05 ≤ 价 450） |
+| 九通路干扰矩阵 | 其余八条 `others_max_delta=0.0`；重新载入逐位恢复 | `pathway_interference_ready`（D-100，10.23 CPU） |
+| 重复输入递归 | tick 增益 0/−0.06/0；T=1 等算力基线更高 | negative（D-102） |
+| 顺序计算递归 | tick1 0.54–0.63 学会中间预测、tick2≈机会且不优于控制 | negative（D-108，忠实测量） |
+| 工作记忆写回（平衡＋严格） | oracle/自写回 1.0；零写回 0.492–0.523；shuffled 0.500–0.516 | **`working_memory_writeback_ready`（D-115，有界）** |
+| check② 前置 | A 案维持；B 案零成本前置冻结（digest `050d524e…`） | 待 owner 裁定 |
+
+**九轴增量**：`learning`＋＝通路级 9 任务新能力有界；`retention`＋＝通路隔离逐位保持；`lifetime`＋＝通路跨会话新增/回收/停用/重新载入；`recursive_development`＝negative（两形态）＋工作记忆写回有界 verified（单主体/二分类两步）；`mature_growth` 单元级收益仍未建立、单元级分化 `partial`。
+
+**仍未闭合**：正式 check②（A/B）；`autonomous_choice`（两法负）；共享单元分裂/整合；真机/多动力学族；100 会话/24h；22.8 与 23–30 准入。
