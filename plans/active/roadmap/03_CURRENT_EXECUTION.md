@@ -4331,3 +4331,8 @@ A 案（维持 fit_face_only、0 暴露）vs B 案（1 次 check、≤540 CPU、
 ## 2026-11-20 B 案零成本前置冻结（D-20261119-98，零训练 0 check）
 
 新增 freeze_b_parent_reference_20261120.py 生成 taiji_u2_b_parent_reference_20261120.json：冻结 D-53/54/55 参考规则；sha256 钉住 10 代码文件、6 回执、6 capsule；记录 B 父（22.5.1、seed 20261112、fit_face_only）与子（8 通路、parents 20261120+seed）谱系、三失败出口、预算（check②≤540、前置≈40 CPU）；自 digest 复核一致（050d524e…）、missing=[]、重跑可复现。判读：B 案六项前置中零成本两项完成；其余四项（候选/评估脚本冻结与预注册、预算定价、失败出口执行卡）需 owner 裁定 B 后一次性执行卡完成。A 案不变：任务轴 fit_face_only、未见任务 uncovered、不消耗 check 暴露。边界：只冻结「将用什么」、不评估不产能力证据；改口径须重生成并记 amendment。
+
+
+## 2026-11-20 九条任务通路（D-20261119-99，`multihead8_ready`，子进程 397.05≤价450）
+
+HEADS=9：…→s9 颜色 parity（2 类派生）；3 seed 全过：inheritance exact（8 边界）；旧 A–H 全部 retention drop 0.0（all_retentions_exact 覆盖八条旧任务）；新 I 1.0/1.0/1.0≥0.60 ⇒ multihead8_ready；成本 397.05≤450 未超价。判读：通路可扩至 9 任务、旧八任务逐位保持、新任务独立可学，仍未触容量/干扰上限。边界：单主体/9任务/9头；F–I 派生标签不替代未见任务验收；10+任务、9×9干扰矩阵、共享单元分裂整合、真机、22.8 未测。
