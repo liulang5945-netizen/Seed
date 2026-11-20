@@ -6298,3 +6298,12 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **3. 九轴终值（本轮增量）**：`learning`＋＝通路级 9 任务新能力有界；`retention`＋＝通路隔离逐位保持（9 任务）；`lifetime`＋＝通路跨会话新增/回收/停用/重新载入；`recursive_development`＝negative（两形态）＋工作记忆写回有界 verified（单主体/二分类两步）；`mature_growth` 单元级收益仍未建立、单元级分化 `partial`。
 
 **4. 仍 uncovered**：正式 check②/B 案执行；`autonomous_choice`（两法负）；共享单元分裂/整合；真机/多动力学；100 会话/24h；22.8 与 23–30 准入。
+
+
+### D-20261119-117 共享单元分裂/整合设计草案（零训练；结构目标最后机制项）
+
+**1. 动作**：写[设计草案](../reference/DESIGN-TAIJI_U2_SPLIT_MERGE_20261120.md)：**分裂**＝把共享单元 `u` 拆为 `u1`（原）＋`u2`（出生继承 r/c/eta/b、p 列对半分），解冻该对私有参数训练 200 步；**整合**＝按平均活动加权合并回一个（不重训）。新模块 `taiji/u2_split_merge.py`，不改核心。**零训练、零 check/final。**
+
+**2. 五门**：①旧任务 drop ≤0.02；②分裂后两子单元调制比 ≥1.5 或活动相关 ≤0.5（分工）；③分别消融两子单元各降 ≥0.10（不可互替）；④合并后与分裂前差 ≤0.02（不重训）；⑤单元数 30→31→30 与 capsule 继承一致。全过记 `unit_split_merge_ready`（有界）；否则 partial/negative。
+
+**3. 预算**：3 seed、零 check、价 ≤250 CPU、阈值不调；先做 capsule 保存/载入 smoke test。判读边界：单主体、30 单元、joint24；不代签「整合出更强的多任务能力」。

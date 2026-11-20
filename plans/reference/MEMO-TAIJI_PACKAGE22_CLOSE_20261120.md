@@ -288,3 +288,7 @@ HEADS=9 跨会话：旧 A–H 全部 retention drop 0.0，新 I（颜色 parity�
 ## 61. 会话收口报告 v5（D-20261119-116，零训练）
 
 v5 增量：通路级 9 条全部保持＋9×9 干扰矩阵（D-99/100）；递归两形态 negative（D-102/108）＋工作记忆写回平衡严格版有界 verified（D-115）；check② A 案维持、B 案零成本前置冻结（D-98）。九轴增量：learning/retention/lifetime 通路级有界；recursive_development negative（两形态）＋写回有界；mature_growth 单元级收益未建立、分化 partial。仍 uncovered：check②/B 执行、autonomous_choice、共享单元分裂整合、真机/多动力学、100 会话/24h、22.8/23–30。
+
+## 62. 共享单元分裂/整合设计草案（D-20261119-117，零训练）
+
+结构目标最后机制项：**分裂**＝共享单元拆为原单元＋出生继承单元（r/c/eta/b 继承、p 列对半分），解冻该对训练 200 步；**整合**＝按平均活动加权合并、不重训。五门：旧任务 drop ≤0.02；两子单元调制比 ≥1.5 或活动相关 ≤0.5；分别消融各降 ≥0.10（不可互替）；合并后与分裂前差 ≤0.02；30→31→30 与 capsule 一致。价 ≤250 CPU、3 seed、零 check。通过记 `unit_split_merge_ready`（有界），否则 partial/negative；不代签「整合出更强多任务能力」。

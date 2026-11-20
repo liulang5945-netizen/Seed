@@ -4421,3 +4421,8 @@ UnitScan 忠实重测：tick1 0.625/0.5417/0.625（中间信用门过）；tick2
 ## 2026-11-20 会话收口报告 v5（D-20261119-116，零训练）
 
 v5 增量：①通路级 9 条全部保持＋9×9 干扰矩阵（D-99/100，未触上限）；②递归两形态 negative（D-102/108）＋工作记忆写回平衡严格版有界 verified（D-115）；③check② A 案维持、B 案零成本前置冻结（D-98），剩余四项待裁。九轴增量：learning/retention/lifetime 通路级有界；recursive_development negative（两形态）＋写回有界；mature_growth 单元级收益未建立、分化 partial。仍 uncovered：check②/B 执行、autonomous_choice、共享单元分裂整合、真机/多动力学、100会话/24h、22.8/23–30。零 check/final。
+
+
+## 2026-11-20 共享单元分裂/整合设计草案（D-20261119-117，零训练）
+
+分裂：u→u1（原）+u2（继承 r/c/eta/b、p 列对半分），解冻该对训练 200 步；整合：按平均活动加权合并、不重训；新模块 u2_split_merge.py 不改核心。五门：①旧任务 drop≤0.02；②两子单元调制比≥1.5 或活动相关≤0.5；③分别消融各降≥0.10（不可互替）；④合并后与分裂前差≤0.02；⑤30→31→30 与 capsule 一致。3 seed、零 check、价≤250 CPU、阈值不调；全过记 unit_split_merge_ready 有界，否则 partial/negative。边界：单主体/30单元/joint24，不代签更强多任务能力。
