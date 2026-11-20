@@ -4326,3 +4326,8 @@ HEADS=8：…→s8 颜色 mod 3（3 类派生）；3 seed 全过：inheritance e
 ## 2026-11-20 正式 check② 决策准备（D-20261119-97，零训练）
 
 A 案（维持 fit_face_only、0 暴露）vs B 案（1 次 check、≤540 CPU、先冻 D 参考/B父资格/候选/评估脚本/预算/失败出口）对照；推荐 A 案维持（常设授权不含自行消耗检查暴露；8 通路新证据只覆盖结构/学习/保持）。task 轴继续 fit_face_only、未见任务 uncovered；9+ 任务边界探测列低优先（≤450 CPU）。owner 可裁定 B（先六项前置）或明示接受 A 案范围。
+
+
+## 2026-11-20 B 案零成本前置冻结（D-20261119-98，零训练 0 check）
+
+新增 freeze_b_parent_reference_20261120.py 生成 taiji_u2_b_parent_reference_20261120.json：冻结 D-53/54/55 参考规则；sha256 钉住 10 代码文件、6 回执、6 capsule；记录 B 父（22.5.1、seed 20261112、fit_face_only）与子（8 通路、parents 20261120+seed）谱系、三失败出口、预算（check②≤540、前置≈40 CPU）；自 digest 复核一致（050d524e…）、missing=[]、重跑可复现。判读：B 案六项前置中零成本两项完成；其余四项（候选/评估脚本冻结与预注册、预算定价、失败出口执行卡）需 owner 裁定 B 后一次性执行卡完成。A 案不变：任务轴 fit_face_only、未见任务 uncovered、不消耗 check 暴露。边界：只冻结「将用什么」、不评估不产能力证据；改口径须重生成并记 amendment。

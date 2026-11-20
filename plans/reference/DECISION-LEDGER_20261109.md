@@ -6074,3 +6074,14 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **2. 判读**：`task` 轴继续 `fit_face_only`、未见任务 `uncovered`；最终关闭任务轴仍需 check② 或 owner 明示接受 A 案范围。9+ 任务边界探测列为低优先备选（≤450 CPU）。
 
 **3. 授权记录**：按常设授权推荐 A 案先推进；owner 可回溯裁定 B（须先完成六项前置）或明示接受 A 案范围。
+
+
+### D-20261119-98 B 案零成本前置完成：D 参考冻结＋B 父资格谱系落盘（零训练，0 check）
+
+**1. 动作**：新增 [`freeze_b_parent_reference_20261120.py`](../../scripts/training/freeze_b_parent_reference_20261120.py)，生成 [`taiji_u2_b_parent_reference_20261120.json`](../manifests/taiji_u2_b_parent_reference_20261120.json)：冻结 D-53/54/55 参考规则；钉住 10 个代码文件、6 个回执、6 个 capsule 的 sha256；记录 B 父（22.5.1 候选，seed 20261112，`fit_face_only`）与子（8 通路主体，parents `20261120+seed`）谱系、三条失败出口、预算（check② ≤540、前置 ≈40 CPU）。**零训练、零 check/final。**
+
+**2. 校验**：清单自 digest 复核一致（`050d524e…`），`missing=[]`；重跑可复现同一 digest（内容不变）。capsule 覆盖 `seed{0,1,2}_session{1,8}`，父报告与子报告均在册。
+
+**3. 判读**：B 案六项前置中的**零成本两项**（D 参考冻结、B 父资格谱系）已完成；剩余四项（候选与评估脚本冻结、预注册评估脚本、预算定价、失败出口抄入执行卡）需在 owner 裁定 B 后的一次性执行卡中完成。A 案维持不变：任务轴仍 `fit_face_only`、未见任务 `uncovered`，本卡不消耗任何 check 暴露。
+
+**4. 边界**：清单只冻结「检查将用什么」，不评估任务、不产生新能力证据；若 owner 后续修改 D 口径或候选，须重新生成清单并记录 amendment。

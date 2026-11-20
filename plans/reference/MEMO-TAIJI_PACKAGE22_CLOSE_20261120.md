@@ -212,3 +212,7 @@ HEADS=8 跨会话：旧 A–G 全部 retention drop 0.0（门修正为 `all_rete
 ## 42. 正式 check② 决策准备（D-20261119-97，零训练）
 
 A 案（维持 `fit_face_only`、0 暴露）vs B 案（1 次 check 暴露、≤540 CPU）对照已成文，推荐 A 案维持；B 案前置六项（D 参考冻结、B 父资格、候选/评估脚本冻结与预注册、预算、失败出口）。8 通路证据不改变任务轴；`task` 轴继续 `fit_face_only`，未见任务 `uncovered`。
+
+## 43. B 案零成本前置冻结（D-20261119-98，零训练）
+
+B 案前置中「D 参考冻结＋B 父资格谱系」已完成：`taiji_u2_b_parent_reference_20261120.json`（digest 050d524e…）钉住 D-53/54/55 规则、10 代码文件、6 回执、6 capsule，记录父（22.5.1、seed 20261112）与子（8 通路）谱系及三失败出口。剩余四项待 owner 裁定 B 后的一次性执行卡完成；A 案维持、零 check 暴露。

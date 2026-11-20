@@ -1,0 +1,87 @@
+{
+  "b_parent_lineage": {
+    "child": {
+      "candidate": "8-pathway subject (joint24 + 7 per-task pathways)",
+      "capsules": [
+        "output/s2_multihead7/seed0_session1.pt",
+        "output/s2_multihead7/seed0_session8.pt",
+        "output/s2_multihead7/seed1_session1.pt",
+        "output/s2_multihead7/seed1_session8.pt",
+        "output/s2_multihead7/seed2_session1.pt",
+        "output/s2_multihead7/seed2_session8.pt"
+      ],
+      "evidence": "8 pathways retained drop 0.0; 8x8 interference others_max_delta=0.0",
+      "parents_per_seed": [
+        20261120,
+        20261121,
+        20261122
+      ],
+      "reports": [
+        "reports/taiji_u2_multihead7_20261120.json",
+        "reports/taiji_u2_multihead8_interference_20261120.json"
+      ]
+    },
+    "parent": {
+      "candidate": "22.5.1 joint-gate candidate",
+      "reports": [
+        "reports/taiji_u2_22_5_1_joint_gate_price_20261120.json",
+        "reports/taiji_u2_22_5_1_identity_evidence_20261120.json"
+      ],
+      "seed": 20261112,
+      "task_reading": "fit_face_only (A case, working path)"
+    }
+  },
+  "budget": {
+    "check2_cpu_cap": 540.0,
+    "prerequisite_cpu": 40.0
+  },
+  "check_reads": 0,
+  "created_utc": "2026-11-20T00:21:15.453422+00:00",
+  "d_reference": {
+    "d53": "action card engineering_failure: fit rows mixed into train (fit leak)",
+    "d54": "groups=4 routes only 0-31 dims; goal/feedback dead; use groups=6",
+    "d55": "action_consequence_pass (bounded): N=3 push, position bins, four-arm counterfactual",
+    "frozen_rule": "check② evaluation must reuse the pinned code and pre-registered arms; no post-hoc retuning"
+  },
+  "failure_exits": [
+    "unseen_task_failed",
+    "unseen_task_inconclusive",
+    "engineering_failure"
+  ],
+  "manifest_digest": "050d524e54e7227b28b3c28f1eb26f31d8d4504d6ef8615ed4acc27b8c37ecd8",
+  "missing": [],
+  "pins": {
+    "capsules": {
+      "output/s2_multihead7/seed0_session1.pt": "d930d39e16e110da04a0a905e9831c3ac96aa86ce8037a9b9d7cda61b46de290",
+      "output/s2_multihead7/seed0_session8.pt": "10b2e47e97c3f4ad6c3bbf01e12998a3439605921a08825c1aea1c313e96ac22",
+      "output/s2_multihead7/seed1_session1.pt": "d3e40d3a18411dedad918cd57048822060d754bbfe962d18c650b0d14e8cea80",
+      "output/s2_multihead7/seed1_session8.pt": "12f333b3cddd17f5660e5fd60face8bb830ada0b502c5b69211488cb65a6a468",
+      "output/s2_multihead7/seed2_session1.pt": "91470349608b05e9fb7d396cb97cf9bd42e37235dba651b6dd4fd1f0b0f03dce",
+      "output/s2_multihead7/seed2_session8.pt": "d23cfe3d572e617e5a72fe6ac3181ada91d0975d20c85769eeff8f1b08d9d59b"
+    },
+    "code": {
+      "scripts/training/first_a_support_22_5_v2.py": "a8af1b7c947b203f091993a5141d4aa1e8f0084780e0d34c5e1de5bdabc9fd2b",
+      "scripts/training/probe_s2_22_7_0_alpha_adapter_v3_20261120.py": "40fea6e7745d8eced5ef4fd780964702e248cfd63c52d8d051a1ca52260bf723",
+      "scripts/training/probe_s2_22_7_joint24_20261120.py": "4c6695e59ca7c4de2d62c6a17e4da08149b285632736cd43f1b770505587245f",
+      "scripts/training/probe_s2_action_consequence_20261120.py": "9ff85c21d25f0575ef4ea094b031072e720a24474f5c805222262e99fb0ba7b3",
+      "scripts/training/probe_s2_multihead2_20261120.py": "e5a4fbffa636dbb7ae2c50be806f063a082ff448409aee8cd4244e0fea11170f",
+      "scripts/training/probe_s2_multihead5_20261120.py": "a984e35044928574d37743c5389acf284d5bff553a9a1c22697b311434525a8b",
+      "scripts/training/probe_s2_multihead7_20261120.py": "4dc9c7d5663457db9b6de2dd3200b6bbd4e0f3cfe34c24f1d2e1c29685828a26",
+      "taiji/u2_multihead.py": "5b7131d84b79d94cd1ba024c49dba468994ce36b0dadd9c4766b0c8be36d0e80",
+      "taiji/u2_multihead2.py": "db9c9a0c02e9388b29c27518b6a01ccc586599ad80a987244e71aefeebe574ea",
+      "taiji/u2_neural_units.py": "6a8bfc15f44b39cc22cd1570bf43cedaf44e018628572efb528f2a829a5deca9"
+    },
+    "reports": {
+      "reports/taiji_u2_22_4_2b_action_run_20261120.json": "8f343f8b54ef74fa0c89de47151a1e4220bf34397f7f060892d33d25f7b0a62d",
+      "reports/taiji_u2_22_5_1_identity_evidence_20261120.json": "84a3e0c890c58a52976817420a1c81412ab0445e1c71da6f9cc0f48eeeb17ca7",
+      "reports/taiji_u2_22_5_1_joint_gate_price_20261120.json": "ed8c12a41abcd6e70efb7dc1944dc9217c9f0c909f101f132d373d2d21c8f2ac",
+      "reports/taiji_u2_22_7_0_alpha_adapter_v3_20261120.json": "9d6db2e1f3bf11e17a8c61fd3f75cbbc75ddb663a54b2d4360494406f537544a",
+      "reports/taiji_u2_multihead7_20261120.json": "b21c4f9c8536f7bcb77df8e58ee2bc93be2afd5ae91d26e759060d3951b30dc4",
+      "reports/taiji_u2_multihead8_interference_20261120.json": "43ed7c92cbcc2d0ddeae410159a491db91f41c7b1a68c392a99f6d8eea3ca458"
+    }
+  },
+  "purpose": "formal check② case-B prerequisite: D-reference freeze + B-parent lineage",
+  "schema": "taiji-u2-b-parent-reference-v1",
+  "status": "frozen_reference",
+  "training_steps": 0
+}
