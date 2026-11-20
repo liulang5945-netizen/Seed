@@ -1,5 +1,6 @@
 # MASTER-PLAN（唯一权威主线）
 
+> 文档状态：[主线] — 2026-11-20（**中文连续延伸 `cn_continuous_ext_verified`（有界）**：10/20 tick＋中途更新 carry 0.995–1.0 ≈ replay 1.0；机制为读出选择、不证状态单独保留；239.19 CPU、0 check；D-20261119-209，最新）。
 > 文档状态：[主线] — 2026-11-20（**中文连续 `chinese_continuous_verified`（有界）**：首条中文指令跨 3 干扰 tick 保持 0.995 vs 上界 0.997、无状态 0.081；封闭词表/5 tick；208.14 CPU、0 check；D-20261119-208，最新）。
 > 文档状态：[主线] — 2026-11-20（**重测 `upgrade_retest_invalid`**：逐字符 tick 表述失败（replay 0.357）、fusion 两 tick 不可学；不作中文/多模态结论；222 CPU、0 check；D-20261119-207，最新）。
 > 文档状态：[主线] — 2026-11-20（**保持窗重测 `memory_gap3_verified`**：换读出后保持窗 5→≥40 tick（carry 0.906 vs replay 0.919）；短窗系读出假边界；256.31 CPU、0 check；D-20261119-206，最新）。

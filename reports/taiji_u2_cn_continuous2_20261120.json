@@ -1,0 +1,138 @@
+{
+  "schema": "taiji-u2-cn-continuous2-v1",
+  "card": "Chinese continuous task at 10/20 ticks and with a mid-sequence update",
+  "created_utc": "2026-11-20T14:53:33.664726+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      20261120,
+      20261121,
+      20261122
+    ],
+    "conditions": [
+      "t10",
+      "t20",
+      "t20_update"
+    ],
+    "train": 384,
+    "fit": 128,
+    "fit_offset": 10000000,
+    "steps": 1500
+  },
+  "rows": [
+    {
+      "seed": 20261120,
+      "results": {
+        "t10": {
+          "stateless_reset": 0.03125,
+          "replay": 1.0,
+          "state_carry": 1.0
+        },
+        "t20": {
+          "stateless_reset": 0.0625,
+          "replay": 1.0,
+          "state_carry": 0.9921875
+        },
+        "t20_update": {
+          "stateless_reset": 0.0859375,
+          "replay": 1.0,
+          "state_carry": 0.984375
+        }
+      },
+      "retention_damage": {
+        "s1": 0.0,
+        "s2": 0.0,
+        "s3": 0.0
+      }
+    },
+    {
+      "seed": 20261121,
+      "results": {
+        "t10": {
+          "stateless_reset": 0.09375,
+          "replay": 1.0,
+          "state_carry": 1.0
+        },
+        "t20": {
+          "stateless_reset": 0.046875,
+          "replay": 1.0,
+          "state_carry": 1.0
+        },
+        "t20_update": {
+          "stateless_reset": 0.078125,
+          "replay": 1.0,
+          "state_carry": 1.0
+        }
+      },
+      "retention_damage": {
+        "s1": 0.0,
+        "s2": 0.0,
+        "s3": 0.0
+      }
+    },
+    {
+      "seed": 20261122,
+      "results": {
+        "t10": {
+          "stateless_reset": 0.0546875,
+          "replay": 1.0,
+          "state_carry": 1.0
+        },
+        "t20": {
+          "stateless_reset": 0.0546875,
+          "replay": 1.0,
+          "state_carry": 1.0
+        },
+        "t20_update": {
+          "stateless_reset": 0.0859375,
+          "replay": 1.0,
+          "state_carry": 1.0
+        }
+      },
+      "retention_damage": {
+        "s1": 0.0,
+        "s2": 0.0,
+        "s3": 0.0
+      }
+    }
+  ],
+  "means": {
+    "t10": {
+      "stateless_reset": 0.059895833333333336,
+      "replay": 1.0,
+      "state_carry": 1.0
+    },
+    "t20": {
+      "stateless_reset": 0.0546875,
+      "replay": 1.0,
+      "state_carry": 0.9973958333333334
+    },
+    "t20_update": {
+      "stateless_reset": 0.08333333333333333,
+      "replay": 1.0,
+      "state_carry": 0.9947916666666666
+    }
+  },
+  "gates": {
+    "t10_learnable": true,
+    "t10_carry": true,
+    "t20_learnable": true,
+    "t20_carry": true,
+    "t20_update_learnable": true,
+    "t20_update_carry": true,
+    "retention": true
+  },
+  "verdict": "cn_continuous_ext_verified",
+  "disclosure": "one high-density Chinese instruction per tick; both non-update and update variants share the positional-attention readout",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 239.19
+  }
+}
