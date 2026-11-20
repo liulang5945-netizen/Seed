@@ -216,3 +216,7 @@ A2：`action_prior_not_learnable`——留出措辞 replay 0.784<0.80（train_fi
 ## 逐样本状态解码（D-20261121-217）
 
 `state_decode_diagnostic`：逐样本（batch=1）序列下，z 在 t1 即回落机会（0.382/0.306/…）、a 仅 t1–t3 弱残留、H 恒 0.410 不演化 ⇒ 单位状态 z/a/H 不承载跨步记忆；外置历史可读 0.74–0.92（external_history_select）。149 CPU、零 check。记忆轴最终表述按此改写。
+
+## 实验层写入门结果（D-20261121-218）
+
+`persistent_gate_partial`：gated 0.333（机会）、mean 0.462、history 0.910 ⇒ 最小写入门未成立；缺有界可寻址持久存储。141 CPU、零 check。建议下一步做有界键值槽 F 探针；若 F 也失败则记忆轴收束。

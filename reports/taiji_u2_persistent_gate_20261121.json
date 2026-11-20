@@ -1,0 +1,67 @@
+{
+  "schema": "taiji-u2-persistent-gate-v1",
+  "card": "experiment-level gated persistent buffer over per-tick unit activities",
+  "created_utc": "2026-11-20T16:44:53.206503+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      20261120,
+      20261121,
+      20261122
+    ],
+    "ticks": 10,
+    "train": 256,
+    "fit": 96,
+    "fit_offset": 10000000,
+    "steps": 800,
+    "gate_min": 0.6
+  },
+  "rows": [
+    {
+      "seed": 20261120,
+      "arms": {
+        "gated": 0.3333333432674408,
+        "mean": 0.4583333432674408,
+        "history": 0.78125
+      }
+    },
+    {
+      "seed": 20261121,
+      "arms": {
+        "gated": 0.3125,
+        "mean": 0.5,
+        "history": 1.0
+      }
+    },
+    {
+      "seed": 20261122,
+      "arms": {
+        "gated": 0.3541666567325592,
+        "mean": 0.4270833432674408,
+        "history": 0.9479166865348816
+      }
+    }
+  ],
+  "means": {
+    "gated": 0.3333333333333333,
+    "mean": 0.4618055621782939,
+    "history": 0.9097222288449606
+  },
+  "gates": {
+    "gated_level": false,
+    "gated_gain": false
+  },
+  "verdict": "persistent_gate_partial",
+  "disclosure": "unit core unchanged; gated buffer is an experiment-level interface (F/W direction), not proof of unit-state retention",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 140.97
+  }
+}

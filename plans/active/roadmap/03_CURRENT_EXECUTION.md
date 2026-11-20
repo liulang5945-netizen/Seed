@@ -4916,3 +4916,8 @@ A2 动作接地可学性先验：修正 colour/position 下标重叠、flat 46 �
 ## 2026-11-21 逐样本状态解码（D-20261121-217，state_decode_diagnostic，148.73 CPU，零 check）
 
 干净 fixture、逐样本单步序列（batch=1）跑 10 tick、逐 tick 解码 t0 目标位置、train 96/fit 48、3 seed。读数：z 0.903/0.382/0.306/0.410/0.299/0.396/0.285/0.403/0.382/0.403；a 0.833/0.542/0.493/0.535/0.410/0.417/0.340/0.340/0.319/0.444；H 恒 0.410；activity 0.889 后回落。⇒ 单位状态 z/a 不承载跨步记忆（t1 起回落机会、a 仅 t1–t3 弱残留）、H 不演化。记忆轴最终表述：外置历史可读（external_history_select 0.74–0.92）；单位状态 z/a/H 不承载跨步记忆。真正持久状态需按样本持久状态（架构改动）或有界 F/W 存储。不签长时记忆/工作记忆/26-27/final/C/D/J；零 check。
+
+
+## 2026-11-21 实验层可学习写入门（D-20261121-218，persistent_gate_partial，140.97 CPU，零 check）
+
+冻结单位核心；逐样本 10 tick 活动；实验层 gated buffer（s_t=(1-g)s_{t-1}+g·a_t，g=sigmoid(w·a_t+b)）解码 t0 目标；对照 running mean 与外部历史注意力；train 256/fit 96、3 seed、零 check。读数：gated 0.3333（≈机会）、mean 0.4618、history 0.9097；gated_level/gain ✗ ⇒ persistent_gate_partial——最小写入门未成立。判读：活动里有弱聚合信号但非可寻址保持；外部历史 0.91 再确认信息在序列、缺有界可寻址持久存储/写保护；门控形式失败不等于 F/W 不可行。后继：实现有界键值槽 F（固定容量、学习写/读地址）挂单位活动，测固定容量 t0 可寻址保持；若 F 也失败则记忆轴收束。不签记忆保持/持久状态/26-27/final/C/D/J；零 check。

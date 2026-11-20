@@ -7492,3 +7492,14 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **3. 判读**：第二次独立确认「单位状态保持」不成立；此前所有保持读数确认为外置历史（D-213）或批/时间混用；架构上 z/a 为**共享状态向量**（非按样本），batch=1 逐样本测试仍不支持保持；H 未写入 next_state、不能称承载记忆。
 
 **4. 记忆轴最终表述**：**外置历史可读（external_history_select，0.74–0.92）；单位状态 z/a/H 不承载跨步记忆（t≥1≈机会）**；真正持久状态需按样本持久状态（架构改动）或有界 F/W 存储（D-115/24.1 方向）。不签长时记忆/工作记忆/26-27/final/C/D/J；累计 ≈149 CPU；零 check/final。
+
+
+### D-20261121-218 实验层可学习写入门：`persistent_gate_partial`（门控缓冲未学会；140.97 CPU，0 check）
+
+**1. 动作**：新增 [`run_s2_persistent_gate_20261121.py`](../../scripts/training/run_s2_persistent_gate_20261121.py) 与 [结果卡](../reference/RESULT-TAIJI_U2_PERSISTENT_GATE_20261121.md)。冻结单位核心；逐样本 10 tick 活动；实验层 gated buffer（s_t=(1-g)s_{t-1}+g·a_t）解码 t0 目标；对照 running mean 与外部历史注意力；3 seed、零 check。
+
+**2. 读数**：gated **0.3333**（≈机会）、mean **0.4618**、history **0.9097**；gated_level/gain ✗ ⇒ **`persistent_gate_partial`**；140.97 CPU。
+
+**3. 判读**：实验层最小写入门**未能保留 t0 信息**；running mean 说明活动有弱聚合信号但非可寻址保持；外部历史 0.91 再次确认信息在活动序列、缺的是**有界可寻址持久存储/写保护**；门控缓冲只是实验层接口的最小尝试，**失败不等于 F/W 不可行**，只说明该形式无效；不签记忆保持/持久状态/26-27/final/C/D/J。
+
+**4. 后继**：实现**有界键值槽 F（固定容量、学习写/读地址）**挂在单位活动上，测固定容量下 t0 可寻址保持；若 F 也失败则记忆轴收束为「外置无界历史可读、无有界可寻址保持」；累计 ≈141 CPU；零 check/final。
