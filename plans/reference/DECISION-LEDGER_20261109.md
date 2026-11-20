@@ -6788,3 +6788,14 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **3. 后继 J3c（预注册要点）**：同 J3b 协议，旧头/纠正头改**小型 MLP 4→16→24**（容量足以在 4 维 direct 上表达 24 类），门不变（旧头 ≥0.40、纠正增益 ≥0.05、旧保持 ≤0.02、冻结单位梯度 0、恢复 exact），≤300 CPU、零 check；仍不可学则记录「4 维 direct 是纠正/保持结构瓶颈」，J3 维持 partial-positive 并停止该线。
 
 **4. 22.8 分账**：J1 改为 `appearance_dose_verified`（有界）；J2/J4/J6 有界；J3 维持 partial-positive；J5 range-limited negative；22.8 整体仍 partial；check 1/final 未动；不签 final/C/D/J/模型成型。
+
+
+### D-20261119-159 22.8J3c MLP 头有意义保持：仍 `old_head_not_learnable`，4 维 direct 是结构瓶颈（14.23 CPU，0 check）
+
+**1. 动作**：新增 [`run_s2_22_8j3c_mlp_retention_20261120.py`](../../scripts/training/run_s2_22_8j3c_mlp_retention_20261120.py) 与 [结果卡](../reference/RESULT-TAIJI_U2_22_8J3C_MLP_20261120.md)。同 J3b 协议（基座 J1 剂量训练后冻结），旧头/纠正头由线性改为小型 MLP 4→16→24；3 seed、零 check/final。
+
+**2. 读数**：旧头 1,200 步后 **0.2500/0.2083/0.2083**（判据 0.40），仍 `old_head_not_learnable`；MLP 比线性（0.042–0.167）明显提升但未达判据；纠正头未训练（不构成纠失败）；K3 冻结单位梯度 0、恢复 diff 0.0 成立；14.23 CPU。
+
+**3. 判读**：冻结基座 `direct_query` 仅 **4 维**（`query_slots=4`）；线性/MLP 独立头均无法在旧子集达到判据 ⇒ **信息在 4 维表示内不可分**——基座 0.9 是单位与读出联合适配的结果，冻结后新头无法复用。这是**读出维度/接口的结构限制**，不是纠错机制失败；突破须加宽 direct/query（结构变更、新 pin、新设计），不能在本架构内继续加训练步数。按 J3b 预注册，J3 有意义保持**停止该线**，维持 partial-positive，不升级为「纠错与保持同时成立」。
+
+**4. 22.8 分账终值（本阶段）**：J1 `appearance_dose_verified`（有界，1,152 步 0.81–0.91）；J2 动作有界（0.69–0.80、边际 0.36–0.44）；J3 partial-positive；J4 恢复有界（3/3 diff 0.0）；J5 range-limited negative（恰等最强固定，三次同型负）；J6 分账齐全；J7 occlusion 退化仅记录。**22.8 整体仍 partial**；check 1/final 未动。后继：不再在本架构内重试 J3/J5，进入 **22.8.4 无条件全局收束**（零训练），输出九轴资格表与 23 立项依据，并明确 `final_not_authorized`；不签 final/C/D/J/模型成型。
