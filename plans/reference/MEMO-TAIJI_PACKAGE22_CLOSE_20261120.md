@@ -264,3 +264,7 @@ HEADS=9 跨会话：旧 A–H 全部 retention drop 0.0，新 I（颜色 parity�
 ## 55. 工作记忆写回卡（D-20261119-110，`task_not_learnable`）
 
 自写回 tick2 `0.458/0.583/0.542` vs 零写回 `0.25/0.458/0.458`、shuffled `0.417/0.5/0.5`、oracle `0.5/0.625/0.542`（<0.65 门）⇒ 四门全败、oracle 参考失败 ⇒ `task_not_learnable`。**弱正向**：自写回 3/3 seed 优于零写回（+0.21/+0.125/+0.083）且优于 shuffled，写回通道被使用；但 oracle 亦低，任务本身在当前容量/数据下不可学，故**不签**工作记忆 verified。后继：先构造可学两步任务（数据对 ≥1,000、二分类同向/反向、oracle 教师课程），新卡新 pin 预注册。
+
+## 56. 可学两步任务设计草案（D-20261119-111，零训练）
+
+先保证任务可学：同向/反向二分类 `same=(direction1==direction2)`，单 tick 只看 r2 不可判断、必须保留 tick1 信息；tick1 预测方向写回（one-hot 39–40），tick2 预测 same；数据合并多 seed 至 ≥800 对。门：先决 oracle ≥0.85；自写回 ≥0.65 且比零写回高 ≥0.15；清零必要降 ≥0.15；shuffled ≤0.55。价 ≤250 CPU、3 seed、零 check；全过记 `working_memory_writeback_ready`，门 1 不过再记 `task_not_learnable` 停止。

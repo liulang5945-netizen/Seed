@@ -4391,3 +4391,8 @@ UnitScan 忠实重测：tick1 0.625/0.5417/0.625（中间信用门过）；tick2
 ## 2026-11-20 工作记忆写回卡（D-20261119-110，`task_not_learnable`，40.69 CPU）
 
 两步动作对＋tick1 预测桶 one-hot 写回（39–41）：自写回 tick2 0.4583/0.5833/0.5417；零写回 0.25/0.4583/0.4583；shuffled 0.4167/0.5/0.5；oracle 0.5/0.625/0.5417（<0.65 门）⇒ 四门全败、oracle 参考失败 ⇒ task_not_learnable。判读：弱正向——自写回 3/3 seed 优于零写回（+0.21/+0.125/+0.083）且优于 shuffled，说明写回通道被使用；但 oracle 也只有 0.5–0.625，任务本身在当前容量/数据下不可学，故不签工作记忆 verified、不改递归判词。后继：先构造可学两步任务（数据对≥1,000、二分类同向/反向、oracle 教师课程），新卡新 pin 预注册；不得以弱正向代签。
+
+
+## 2026-11-20 可学两步任务设计草案（D-20261119-111，零训练）
+
+同向/反向二分类：same=(direction1==direction2)，单 tick 只看 r2 不可判断、必须保留 tick1 信息；tick1 预测方向写回 one-hot（特征维 39–40），tick2 预测 same；数据合并多 build_partition seed 至 ≥800 训练对/64 fit 对；四臂自写回/零/shuffled/oracle。门：先决 oracle≥0.85；自写回≥0.65 且比零写回高≥0.15；清零必要降≥0.15；shuffled≤0.55。复用 UnitScan、1500 步、3 seed、零 check、价≤250 CPU、阈值不调；全过记 working_memory_writeback_ready 有界，门1不过记 task_not_learnable 再停。边界：只证二分类两步记忆任务显式写回，不等于一般顺序推理/递归。

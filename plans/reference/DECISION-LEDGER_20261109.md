@@ -6226,3 +6226,12 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 - 因此按出口记 `task_not_learnable`、停止该任务形态，**不签**工作记忆 verified，也不改 `recursive_development` 判词。
 
 **4. 后继条件**：要验证工作记忆写回，须先构造**可学的两步任务**（如：加大数据对≥1,000、把 bin2 定义为「同向/反向」二分类而非绝对桶、或提供 oracle 教师课程）；新卡、新 pin、预注册；不得以本卡弱正向代签。
+
+
+### D-20261119-111 可学两步任务设计草案：同向/反向判断（零训练；先保证任务可学）
+
+**1. 动作**：写[设计草案](../reference/DESIGN-TAIJI_U2_LEARNABLE_TWO_STEP_20261120.md)：动作对 `same = (direction1 == direction2)`（二分类）；**单 tick 只看 r2 不可能判断**，必须保留 tick1 信息；tick1 预测方向并写回（one-hot 特征维 39–40），tick2 预测 same；数据合并多 `build_partition` seed 至 ≥800 训练对／64 fit 对；四臂自写回/零/shuffled/oracle。**零训练、零 check/final。**
+
+**2. 门**：①先决可学性 oracle ≥0.85；②自写回 ≥0.65 且比零写回高 ≥0.15；③清零必要降 ≥0.15；④shuffled ≤0.55。全过记 `working_memory_writeback_ready`（有界）；门 1 不过记 `task_not_learnable` 再停；其余 partial/negative。
+
+**3. 预算**：复用 UnitScan、1,500 步、3 seed、零 check、价 ≤250 CPU、阈值不调；数据对每臂 ≥300、标签平衡偏差 ≤0.10。判读边界：只证二分类两步记忆任务上的显式写回，不等于一般顺序推理/递归。
