@@ -1,0 +1,24 @@
+{
+  "schema": "taiji-u2-growth-joint-smoke-v1",
+  "created_utc": "2026-11-21T16:31:45.764599+00:00",
+  "seed": 20261120,
+  "baseline_p27": 0.8359375,
+  "combined": 0.8828125,
+  "old_only": 0.8828125,
+  "new_only": 0.359375,
+  "lesion_new": 0.0,
+  "old_skill_damage": 0.34375,
+  "verdict": "growth_joint_partial",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 133.77
+  }
+}

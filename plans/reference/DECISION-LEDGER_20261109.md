@@ -7953,3 +7953,10 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **2. 读数**：new-only **0.8906**、old-only 0.7031、combined 0.7344、lesion(new)=0.0312 ⇒ `growth_binding_partial`。
 
 **3. 判读**：新 12 单位**可独立承载 P-D（0.89）**——生长单位可被强制绑定并学习功能；但组合增益未成立（combined < new-only，lesion 0.031），新头/新路由与旧单位不兼容；需联合生长协议（旧+新共同优化/蒸馏）才能验证总能力提升。不签生长收益结论。
+
+
+### D-20261121-260 联合生长烟测：`growth_joint_partial`（133.77 CPU，0 check）
+
+**1. 读数**：P-D baseline 0.8359；combined 0.8828=old_only 0.8828；new_only 0.3594；lesion_new 0.0；old_skill_damage 0.3438。
+**2. 判读**：P-D 提升全来自旧单位；新单位仍被忽略；旧技能 0.344 异常，疑为 `grow_units_neutral_` 后 read_gate 布局重映射不完整（同类 a-offset 问题），视为实现缺陷、不作生长代价证据。
+**3. 后继**：修 read_gate 旧行迁移（生长前后旧任务差 ≤1e-6 单测）后重跑联合生长。
