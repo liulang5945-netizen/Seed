@@ -4988,3 +4988,8 @@ A3 首版 `cn_vocab2_partial` 作废：留出模板含训练中未出现的字�
 ## 2026-11-21 S1b 返工与 S1 线结案（D-20261121-232，s1_partial，13/16，318.77 CPU，0 check）
 
 新增 verify_taiji_s1b_rework_20261121.py 与结果卡；按 S1b 预注册仅改训练预算/回放/生长整合，门不变。读数：P-A 1.0/0.991✓；P-B overall 0.502✗、unprotected 0.281✓、gain +0.221✓；P-C +0.433✓、WAIT 1.000✓（修好）、brier 0.145✓；P-D 0.860/0.273✓；P-E 0.927✓、birth 0.0✓、lesion 0.0✗；P-F 0.0/1.0✓；旧技能损伤 0.094✗ ⇒ 13/16 s1_partial。判读：S1b 修好 WAIT/P-D/P-E；P-B 加倍步数仍 0.502 指向容量/表示干扰；生长 lesion 0.0 未整合；旧技能损伤恶化。按合同 S1 以 s1_partial 收束、23-S 不解锁、不调阈、不开 S1c。后继待裁：S1 重构 / 收到有界窄合同 / 暂停新核主线。零 check/final。
+
+
+## 2026-11-21 S1 缺口诊断（D-20261121-233，s1_gap_diagnostic，303.8 CPU，0 check）
+
+新增 diag_s1_gaps_20261121.py 与诊断卡；2 seed、零 check。读数：D1 同一统一主体只训 P24——train 1.0 / fit 0.513、0.575；D2 S0 专用 48 单元图 fit 0.906/1.0；D3 生长后只训读出 fit 0.444/0.531、lesion 0.006/0.000；303.8 CPU（帽 300，超 1.3% 记录）。判读：P-B 非优化问题而是容量/泛化瓶颈（30 单元共享 13 维读出 vs 48 单元专用图）；生长 lesion≈0 非读出未学——新单元出生零输入路径，需 S0 Bridge2 cohort 发育训练而非裸 grow_units_neutral_。不改变 S1 判词。后继待裁：S1-R 重构预注册（每阶段专用读出/48 单元主体＋cohort 生长；≤1,500 CPU、零 check）或 23-S 窄合同。

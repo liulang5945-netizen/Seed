@@ -1,0 +1,111 @@
+{
+  "schema": "taiji-u2-s1-gap-diag-v1",
+  "created_utc": "2026-11-21T07:33:17.958187+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      20261120,
+      20261121
+    ],
+    "steps": 900,
+    "readout_steps": 300
+  },
+  "rows": [
+    {
+      "seed": 20261120,
+      "unified_subject_p24": {
+        "train_acc": 1.0,
+        "fit_acc": 0.512499988079071,
+        "conflict_fit": 0.96875
+      },
+      "s0_p24_graph": {
+        "fit_acc": 0.90625
+      },
+      "readout_after_growth": {
+        "fit_acc": 0.4437499940395355,
+        "lesion_drop": 0.0062499940395355225,
+        "readout_mass": {
+          "selective_readout.0.weight": {
+            "shape": [
+              64,
+              108
+            ]
+          },
+          "selective_readout.0.bias": {
+            "shape": [
+              64
+            ]
+          },
+          "selective_readout.2.weight": {
+            "shape": [
+              13,
+              64
+            ]
+          },
+          "selective_readout.2.bias": {
+            "shape": [
+              13
+            ]
+          }
+        }
+      }
+    },
+    {
+      "seed": 20261121,
+      "unified_subject_p24": {
+        "train_acc": 1.0,
+        "fit_acc": 0.574999988079071,
+        "conflict_fit": 0.981249988079071
+      },
+      "s0_p24_graph": {
+        "fit_acc": 1.0
+      },
+      "readout_after_growth": {
+        "fit_acc": 0.53125,
+        "lesion_drop": 0.0,
+        "readout_mass": {
+          "selective_readout.0.weight": {
+            "shape": [
+              64,
+              108
+            ]
+          },
+          "selective_readout.0.bias": {
+            "shape": [
+              64
+            ]
+          },
+          "selective_readout.2.weight": {
+            "shape": [
+              13,
+              64
+            ]
+          },
+          "selective_readout.2.bias": {
+            "shape": [
+              13
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "means": {
+    "unified_subject_p24": 1.0,
+    "s0_p24_graph": 0.953125,
+    "readout_after_growth": 0.0031249970197677612
+  },
+  "verdict": "s1_gap_diagnostic",
+  "disclosure": "zero check/final; only fit; diagnosis only, not a capability card",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 303.8
+  }
+}
