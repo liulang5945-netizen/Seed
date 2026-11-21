@@ -1,0 +1,224 @@
+{
+  "schema": "taiji-u2-s1r-restructure-v1",
+  "created_utc": "2026-11-21T07:45:55.896213+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      20261120,
+      20261121,
+      20261122
+    ],
+    "subject_units": 48,
+    "heads": [
+      "cn",
+      "p24",
+      "p26",
+      "p27"
+    ],
+    "growth": "48 -> 56 -> 64 (+1/group twice)",
+    "budget_cpu": 1500.0
+  },
+  "rows": [
+    {
+      "seed": 20261120,
+      "phase_a": {
+        "masked_bi_acc": 0.9921875,
+        "masked_adv_acc": 0.5625
+      },
+      "phase_b": {
+        "overall_acc": 0.59375,
+        "unprotected_acc": 0.25,
+        "gain": 0.34375
+      },
+      "phase_c": {
+        "net_utility": 0.5859375596046448,
+        "always_act_utility": 0.08749999850988388,
+        "known_act_rate": 1.0,
+        "ambiguous_query_rate": 1.0,
+        "unresolvable_wait_rate": 1.0,
+        "brier_score": 0.1334206908941269
+      },
+      "phase_d": {
+        "accuracy": 0.8125,
+        "ablation_drop": 0.33125001192092896
+      },
+      "phase_e": {
+        "final_accuracy": 0.856249988079071,
+        "birth_consistency": 0.8125,
+        "lesion_drop": -0.00625002384185791,
+        "units": 64.0
+      },
+      "phase_f": {
+        "capsule_forward_diff": 0.0,
+        "reconnect_acc": 1.0
+      },
+      "old_skill_damage": 0.0,
+      "skill_trace": {
+        "after_a": {
+          "cn_masked_bi": 0.9921875,
+          "p24_overall": 0.21250000596046448
+        },
+        "after_b": {
+          "cn_masked_bi": 0.98828125,
+          "p24_overall": 0.5687500238418579
+        },
+        "after_e": {
+          "cn_masked_bi": 1.0,
+          "p24_overall": 0.6499999761581421
+        }
+      }
+    },
+    {
+      "seed": 20261121,
+      "phase_a": {
+        "masked_bi_acc": 0.99609375,
+        "masked_adv_acc": 0.44921875
+      },
+      "phase_b": {
+        "overall_acc": 0.612500011920929,
+        "unprotected_acc": 0.2562499940395355,
+        "gain": 0.35625001788139343
+      },
+      "phase_c": {
+        "net_utility": 0.5846875905990601,
+        "always_act_utility": 0.10000000149011612,
+        "known_act_rate": 0.9814814925193787,
+        "ambiguous_query_rate": 1.0,
+        "unresolvable_wait_rate": 1.0,
+        "brier_score": 0.14275503158569336
+      },
+      "phase_d": {
+        "accuracy": 0.856249988079071,
+        "ablation_drop": 0.25624996423721313
+      },
+      "phase_e": {
+        "final_accuracy": 0.9375,
+        "birth_consistency": 0.8187500238418579,
+        "lesion_drop": 0.00625002384185791,
+        "units": 64.0
+      },
+      "phase_f": {
+        "capsule_forward_diff": 0.0,
+        "reconnect_acc": 1.0
+      },
+      "old_skill_damage": 0.015625,
+      "skill_trace": {
+        "after_a": {
+          "cn_masked_bi": 0.99609375,
+          "p24_overall": 0.22499999403953552
+        },
+        "after_b": {
+          "cn_masked_bi": 0.9921875,
+          "p24_overall": 0.6000000238418579
+        },
+        "after_e": {
+          "cn_masked_bi": 0.98046875,
+          "p24_overall": 0.637499988079071
+        }
+      }
+    },
+    {
+      "seed": 20261122,
+      "phase_a": {
+        "masked_bi_acc": 0.99609375,
+        "masked_adv_acc": 0.4921875
+      },
+      "phase_b": {
+        "overall_acc": 0.6499999761581421,
+        "unprotected_acc": 0.29374998807907104,
+        "gain": 0.35624998807907104
+      },
+      "phase_c": {
+        "net_utility": 0.5859375,
+        "always_act_utility": 0.10000000149011612,
+        "known_act_rate": 1.0,
+        "ambiguous_query_rate": 1.0,
+        "unresolvable_wait_rate": 1.0,
+        "brier_score": 0.14055924117565155
+      },
+      "phase_d": {
+        "accuracy": 0.862500011920929,
+        "ablation_drop": 0.27500003576278687
+      },
+      "phase_e": {
+        "final_accuracy": 0.918749988079071,
+        "birth_consistency": 0.78125,
+        "lesion_drop": 0.0,
+        "units": 64.0
+      },
+      "phase_f": {
+        "capsule_forward_diff": 0.0,
+        "reconnect_acc": 1.0
+      },
+      "old_skill_damage": 0.0,
+      "skill_trace": {
+        "after_a": {
+          "cn_masked_bi": 0.99609375,
+          "p24_overall": 0.29374998807907104
+        },
+        "after_b": {
+          "cn_masked_bi": 1.0,
+          "p24_overall": 0.668749988079071
+        },
+        "after_e": {
+          "cn_masked_bi": 0.99609375,
+          "p24_overall": 0.699999988079071
+        }
+      }
+    }
+  ],
+  "means": {
+    "a_bi": 0.9947916666666666,
+    "a_adv": 0.5013020833333334,
+    "b_overall": 0.618749996026357,
+    "b_unprotected": 0.2666666607062022,
+    "b_gain": 0.35208333532015484,
+    "c_utility": 0.585520883401235,
+    "c_always_act": 0.09583333383003871,
+    "c_known_act": 0.9938271641731262,
+    "c_amb_query": 1.0,
+    "c_unres_wait": 1.0,
+    "c_brier": 0.13891165455182394,
+    "d_acc": 0.84375,
+    "d_ablation": 0.287500003973643,
+    "e_final": 0.9041666587193807,
+    "e_birth": 0.8041666746139526,
+    "e_lesion": 0.0,
+    "f_capsule": 0.0,
+    "f_reconnect": 1.0,
+    "damage": 0.015625
+  },
+  "gates": {
+    "a_bi": true,
+    "a_adv": false,
+    "b_overall": false,
+    "b_unprotected": true,
+    "b_gain": true,
+    "c_utility_gain": true,
+    "c_routes": true,
+    "c_brier": true,
+    "d_acc": true,
+    "d_ablation": true,
+    "e_final": true,
+    "e_birth": false,
+    "e_lesion": false,
+    "f_capsule": true,
+    "f_reconnect": true,
+    "old_skill_damage": true
+  },
+  "passed": 12,
+  "total_gates": 16,
+  "verdict": "s1r_partial",
+  "disclosure": "one shared 48-unit subject with per-phase readout heads; growth trains newborn units via the p27 head; external heads serialized separately from capsule_v2",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 257.23
+  }
+}
