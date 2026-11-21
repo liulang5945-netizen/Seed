@@ -1,0 +1,114 @@
+{
+  "schema": "taiji-u2-23s0-narrow-v1",
+  "created_utc": "2026-11-21T08:59:44.898136+00:00",
+  "status": "run_under_standing_authorization_pending_owner_ratification",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      20261120,
+      20261121,
+      20261122
+    ],
+    "subject_units": 48,
+    "phases": [
+      "P-A Chinese",
+      "P-B online correction",
+      "P-D physics"
+    ],
+    "budget_cpu": 1500.0
+  },
+  "rows": [
+    {
+      "seed": 20261120,
+      "a_bi": 1.0,
+      "a_adv": 0.859375,
+      "b_overall": 0.831250011920929,
+      "b_conflict": 1.0,
+      "b_unprotected": 0.8687499761581421,
+      "b_gain": -0.037499964237213135,
+      "d_acc": 0.8687499761581421,
+      "d_ablation": 0.23749995231628418,
+      "old_skill_damage": 0.87890625,
+      "capsule_diff": 0.0,
+      "reconnect_acc": 1.0,
+      "a_bi_after": 0.12109375,
+      "b_after": 0.856249988079071
+    },
+    {
+      "seed": 20261121,
+      "a_bi": 0.99609375,
+      "a_adv": 0.8046875,
+      "b_overall": 1.0,
+      "b_conflict": 1.0,
+      "b_unprotected": 1.0,
+      "b_gain": 0.0,
+      "d_acc": 0.8687499761581421,
+      "d_ablation": 0.2749999761581421,
+      "old_skill_damage": 0.8203125,
+      "capsule_diff": 0.0,
+      "reconnect_acc": 1.0,
+      "a_bi_after": 0.17578125,
+      "b_after": 0.9937499761581421
+    },
+    {
+      "seed": 20261122,
+      "a_bi": 1.0,
+      "a_adv": 0.796875,
+      "b_overall": 1.0,
+      "b_conflict": 1.0,
+      "b_unprotected": 1.0,
+      "b_gain": 0.0,
+      "d_acc": 0.918749988079071,
+      "d_ablation": 0.35624998807907104,
+      "old_skill_damage": 0.87109375,
+      "capsule_diff": 0.0,
+      "reconnect_acc": 1.0,
+      "a_bi_after": 0.12890625,
+      "b_after": 0.9937499761581421
+    }
+  ],
+  "means": {
+    "a_bi": 0.9986979166666666,
+    "a_adv": 0.8203125,
+    "b_overall_mean": 0.943750003973643,
+    "b_overall_median": 1.0,
+    "b_overall_min": 0.831250011920929,
+    "b_conflict": 1.0,
+    "b_unprotected": 0.956249992052714,
+    "d_acc": 0.8854166467984518,
+    "d_ablation": 0.28958330551783246,
+    "old_skill_damage": 0.87890625,
+    "capsule_diff": 0.0,
+    "reconnect_acc": 1.0
+  },
+  "gates": {
+    "a_bi": true,
+    "a_adv": false,
+    "b_median": true,
+    "b_mean": true,
+    "b_min": true,
+    "b_conflict": true,
+    "b_unprotected": false,
+    "b_gain": false,
+    "d_acc": true,
+    "d_ablation": true,
+    "old_skill_damage": false,
+    "capsule_diff": true,
+    "reconnect": true
+  },
+  "passed": 9,
+  "total_gates": 13,
+  "verdict": "23s0_partial",
+  "disclosure": "run under standing owner authorization; heads serialized separately from subject capsule; synthetic controlled surface",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 296.58
+  }
+}

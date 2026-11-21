@@ -7748,3 +7748,14 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **3. 23-S.0 窄合同预注册（待 owner `training_authority`，未冻结未运行）**：范围＝中文＋四类纠错＋遮挡物理；单一 48 单元主体＋阶段专用头；门：P-A ≥0.95/≥0.90；P-B 中位/均值 ≥0.85、min ≥0.80、conflict ≥0.95、unprotected ≤0.40、gain ≥0.20（有界，非 0.95，披露专用可达）；P-D ≥0.80/≥0.20；旧技能 ≤0.02；capsule ≤1e-6/重连 ≥0.90；≤1,500 CPU、3 seed、零 check；出口 `23s0_verified`/`partial`/`presentation_failure`/`budget_stop`/`engineering_failure`；通过解锁 24-S.0。
 
 **4. 纪律**：S1 已结案 `s1_partial`，本窄合同是范围缩小非复活；不含生长/自主联合；不签 check/final/C/D/J。**待裁**：是否批准 23-S.0 运行。
+
+
+### D-20261121-239 23-S.0 窄合同首轮：`23s0_partial`（9/13、7/13；两跑 606 CPU；0 check；常设授权）
+
+**1. 动作**：按 [窄合同预注册](../reference/DESIGN-TAIJI_U2_23S0_NARROW_20261121.md) 实现并运行 [`verify_taiji_23s0_narrow_20261121.py`](../../scripts/training/verify_taiji_23s0_narrow_20261121.py) 与修正版 [`verify_taiji_23s0b_narrow_20261121.py`](../../scripts/training/verify_taiji_23s0b_narrow_20261121.py)；[结果卡](../reference/RESULT-TAIJI_U2_23S0_NARROW_RUN_20261121.md)；在常设授权下执行，待 owner 回溯。
+
+**2. 读数**：首跑 9/13——P-A 0.999/**0.820✗**、P-B mean/median/min **0.944/1.000/0.831✓**、unprotected **0.956✗**/gain −0.012✗、P-D 0.885/0.290✓、旧技能损伤 **0.879✗**、capsule/reconnect ✓。修正版 7/13——P-A 1.0/0.870✗、P-B **1.0/1.0/1.0✓**、unprotected **1.0✗**、**P-D 0.623✗/0.119✗**、旧技能损伤 **0.484✗**。
+
+**3. 判读**：P-B 本身可学（1.0），但共享单位顺序学习下 P-B 大量训练＋稳定回放破坏 P-D 表示（0b），首跑则损伤 CN；**unprotected 对照失效**（pre-P-B 快照可 trusted-only 达 1.0，S0 为 0.0）——fixture/对照在新核上不等价；按预注册门两跑均 **`23s0_partial`**、不签 `23s0_verified`、**24-S 不解锁**、不调阈。
+
+**4. 后继（待裁）**：① 窄合同协议再设计（冻结已学共享单元或每阶段独立主体、重设对照）；② 接受有界包（P-B 1.0/P-D 0.885/P-A 0.999 各自有界，单主体联合未成立）；③ 暂停新核主线。累计 606 CPU；零 check/final。

@@ -1,0 +1,114 @@
+{
+  "schema": "taiji-u2-23s0b-narrow-v1",
+  "created_utc": "2026-11-21T09:05:37.534422+00:00",
+  "status": "run_under_standing_authorization_pending_owner_ratification",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      20261120,
+      20261121,
+      20261122
+    ],
+    "subject_units": 48,
+    "phases": [
+      "P-A Chinese",
+      "P-B online correction",
+      "P-D physics"
+    ],
+    "budget_cpu": 1500.0
+  },
+  "rows": [
+    {
+      "seed": 20261120,
+      "a_bi": 1.0,
+      "a_adv": 0.82421875,
+      "b_overall": 1.0,
+      "b_conflict": 1.0,
+      "b_unprotected": 1.0,
+      "b_gain": 0.0,
+      "d_acc": 0.6812499761581421,
+      "d_ablation": 0.17499995231628418,
+      "old_skill_damage": 0.296875,
+      "capsule_diff": 0.0,
+      "reconnect_acc": 1.0,
+      "a_bi_after": 0.703125,
+      "b_after": 0.987500011920929
+    },
+    {
+      "seed": 20261121,
+      "a_bi": 1.0,
+      "a_adv": 0.78515625,
+      "b_overall": 1.0,
+      "b_conflict": 1.0,
+      "b_unprotected": 1.0,
+      "b_gain": 0.0,
+      "d_acc": 0.71875,
+      "d_ablation": 0.23124998807907104,
+      "old_skill_damage": 0.19921875,
+      "capsule_diff": 0.0,
+      "reconnect_acc": 1.0,
+      "a_bi_after": 0.80078125,
+      "b_after": 0.96875
+    },
+    {
+      "seed": 20261122,
+      "a_bi": 1.0,
+      "a_adv": 1.0,
+      "b_overall": 1.0,
+      "b_conflict": 1.0,
+      "b_unprotected": 1.0,
+      "b_gain": 0.0,
+      "d_acc": 0.46875,
+      "d_ablation": -0.050000011920928955,
+      "old_skill_damage": 0.484375,
+      "capsule_diff": 0.0,
+      "reconnect_acc": 1.0,
+      "a_bi_after": 0.515625,
+      "b_after": 0.981249988079071
+    }
+  ],
+  "means": {
+    "a_bi": 1.0,
+    "a_adv": 0.8697916666666666,
+    "b_overall_mean": 1.0,
+    "b_overall_median": 1.0,
+    "b_overall_min": 1.0,
+    "b_conflict": 1.0,
+    "b_unprotected": 1.0,
+    "d_acc": 0.6229166587193807,
+    "d_ablation": 0.11874997615814209,
+    "old_skill_damage": 0.484375,
+    "capsule_diff": 0.0,
+    "reconnect_acc": 1.0
+  },
+  "gates": {
+    "a_bi": true,
+    "a_adv": false,
+    "b_median": true,
+    "b_mean": true,
+    "b_min": true,
+    "b_conflict": true,
+    "b_unprotected": false,
+    "b_gain": false,
+    "d_acc": false,
+    "d_ablation": false,
+    "old_skill_damage": false,
+    "capsule_diff": true,
+    "reconnect": true
+  },
+  "passed": 7,
+  "total_gates": 13,
+  "verdict": "23s0_partial",
+  "disclosure": "run under standing owner authorization; heads serialized separately from subject capsule; synthetic controlled surface",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 309.73
+  }
+}
