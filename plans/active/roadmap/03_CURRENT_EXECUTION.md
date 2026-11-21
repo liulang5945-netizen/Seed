@@ -4983,3 +4983,8 @@ A3 首版 `cn_vocab2_partial` 作废：留出模板含训练中未出现的字�
 ## 2026-11-21 S1 联合生命流首跑（D-20261121-231，s1_partial，11/16，255.34 CPU，0 check）
 
 新增 verify_taiji_s1_lifeline_20261121.py 与结果卡：单一 SelectivePersistentGraph（30 单元、13 维统一读出、per_sample_state）顺序走 P-A 中文→P-B 四类纠错→P-C 自主选择→P-D 遮挡物理→P-E 两代中性生长→P-F 冷载恢复；阶段间不换体、25% 回放；3 seed、255.34 CPU（帽 2,000）、零 check/final。读数：中文 1.000/0.991；P-B overall 0.504✗、unprotected 0.281、gain +0.223；P-C 效用 0.509（+0.376）、路由 1.0/1.0/0.667✗、brier 0.136；P-D 0.827/0.273；P-E 0.881✗、birth 0.0、lesion −0.004✗；P-F 前向差 0.0、重连 1.0；旧技能损伤 0.051✗ ⇒ 11/16，s1_partial。判读：多数轴可同一主体并存；失败为 P-B 混训不足、P-C WAIT 未校准、P-E 新单元未被使用、旧技能损伤超门；按合同不签 s1_verified、不解锁 23-S、不调阈。后继：S1b 返工预注册（同门；P-B 1,000 步/回放 50%、P-C 700 步+WAIT 校准、P-E 600 步整合+新单元使用损失；≤1,200 CPU、零 check）。零 check/final。
+
+
+## 2026-11-21 S1b 返工与 S1 线结案（D-20261121-232，s1_partial，13/16，318.77 CPU，0 check）
+
+新增 verify_taiji_s1b_rework_20261121.py 与结果卡；按 S1b 预注册仅改训练预算/回放/生长整合，门不变。读数：P-A 1.0/0.991✓；P-B overall 0.502✗、unprotected 0.281✓、gain +0.221✓；P-C +0.433✓、WAIT 1.000✓（修好）、brier 0.145✓；P-D 0.860/0.273✓；P-E 0.927✓、birth 0.0✓、lesion 0.0✗；P-F 0.0/1.0✓；旧技能损伤 0.094✗ ⇒ 13/16 s1_partial。判读：S1b 修好 WAIT/P-D/P-E；P-B 加倍步数仍 0.502 指向容量/表示干扰；生长 lesion 0.0 未整合；旧技能损伤恶化。按合同 S1 以 s1_partial 收束、23-S 不解锁、不调阈、不开 S1c。后继待裁：S1 重构 / 收到有界窄合同 / 暂停新核主线。零 check/final。
