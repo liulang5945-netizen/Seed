@@ -108,9 +108,7 @@ def run(seed: int) -> dict:
                 .mean()
             )
 
-    # freeze shared input mixing and unused internal readout
-    for parameter in subject.graph.cross_channel_mix.parameters():
-        parameter.requires_grad_(False)
+    # unused internal readout stays frozen
     for parameter in subject.graph.selective_readout.parameters():
         parameter.requires_grad_(False)
     for name, head in subject.phase_heads.items():
@@ -118,7 +116,7 @@ def run(seed: int) -> dict:
             parameter.requires_grad_(name == "cn")
     subject.train_mode()
     opt = torch.optim.Adam(subject.params(), lr=6e-3, weight_decay=0.0)
-    for step in range(600):
+    for step in range(1000):
         batch = _build_bidirectional_cn_32dim(
             BATCH, seed * 6000 + step, BI_CN_TRAIN_FIRST, BI_CN_TRAIN_SECOND
         )
@@ -126,6 +124,9 @@ def run(seed: int) -> dict:
         loss = F.cross_entropy(subject.logits("cn", batch["ticks"], sm), batch["labels"])
         step_protected(subject, opt, loss, "cn")
     trace["cn_after_cn"] = eval_cn()
+    # freeze shared input mixing after the first task
+    for parameter in subject.graph.cross_channel_mix.parameters():
+        parameter.requires_grad_(False)
 
     for name in ("p24", "p27"):
         for parameter in subject.phase_heads[name].parameters():
@@ -144,7 +145,7 @@ def run(seed: int) -> dict:
 
     subject.train_mode()
     opt = torch.optim.Adam(subject.params(), lr=7e-3, weight_decay=0.0)
-    for step in range(500):
+    for step in range(800):
         batch = _make_p27_physics_batch(BATCH, seed * 41000 + step)
         loss = F.cross_entropy(subject.logits("p27", batch["ticks"]), batch["labels"])
         step_protected(subject, opt, loss, "p27")

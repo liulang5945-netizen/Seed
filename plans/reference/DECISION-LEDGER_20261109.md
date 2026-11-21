@@ -7880,3 +7880,14 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **2. 判读**：D-249 的固定分区参数保护机制现可随 capsule_v2 继承（任务→子群映射可恢复）；仍不构成协同/生长收益；零 check/final。详见 [工程卡](../reference/ENG-TAIJI_U2_CAPSULE_TASK_ROUTES_20261121.md)。
 
 **3. 后继**：阶段 2 学习式路由；或把「任务路由＋保护」用于重开 S1/23-S 的联合卡。
+
+
+### D-20261121-251 路由＋保护的 capsule 继承：`capsule_route_inheritance_verified`（204.08 CPU，0 check）
+
+**1. 动作**：[`diag_capsule_route_inherit_20261121.py`](../../scripts/training/diag_capsule_route_inherit_20261121.py)＋[结果卡](../reference/RESULT-TAIJI_U2_CAPSULE_ROUTE_INHERIT_20261121.md)；1 seed，训练→capsule_v2（含 task_routes）→新图恢复→三任务复评。
+
+**2. 读数**：CN 1.0000→1.0000、P-B 1.0000→1.0000、P-D 0.8516→0.8516，`max_abs_diff=0.0`；routes 完整恢复；204.08 CPU、零 check。
+
+**3. 判读**：任务路由＋参数保护可随 capsule_v2 继承并精确恢复；限制：固定分区实验层机制、1 seed、heads 单独序列化、不构成协同/生长收益；不签 check/final/C/D/J。
+
+**4. 后继**：阶段 2 学习式路由；或以本机制重开 S1/23-S 联合卡（3 seed、≤800 CPU）。
