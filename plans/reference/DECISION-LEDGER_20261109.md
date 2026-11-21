@@ -7960,3 +7960,10 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **1. 读数**：P-D baseline 0.8359；combined 0.8828=old_only 0.8828；new_only 0.3594；lesion_new 0.0；old_skill_damage 0.3438。
 **2. 判读**：P-D 提升全来自旧单位；新单位仍被忽略；旧技能 0.344 异常，疑为 `grow_units_neutral_` 后 read_gate 布局重映射不完整（同类 a-offset 问题），视为实现缺陷、不作生长代价证据。
 **3. 后继**：修 read_gate 旧行迁移（生长前后旧任务差 ≤1e-6 单测）后重跑联合生长。
+
+
+### D-20261121-261 联合生长更正：旧损伤 0.0156（D-260 的 0.3438 为评估布局 bug）
+
+**1. 更正**：D-260 的 old_skill_damage 0.3438 是评估 bug——生长后旧头输入应取 `z[:old_n]+a[:old_n]`，此前错用偏移切片。修正后重跑：old_skill_damage **0.0156**（≤0.02）。
+
+**2. 不变结论**：combined 0.8828 = old_only 0.8828、new_only 0.3594、lesion_new **0.0**——联合生长仍无新单位功能贡献（生长收益未成立），但旧技能保持成立。134.31 CPU、零 check。

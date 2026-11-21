@@ -12,3 +12,7 @@ baseline P-D 0.8359；combined 0.8828；old_only 0.8828；new_only 0.3594；lesi
 
 ## 3. 后继
 先修 `grow_units_neutral_` 后 read_gate 的旧行迁移（单测：生长前后旧任务读数差 ≤1e-6），再重跑联合生长。
+
+
+## 5. 更正（D-20261121-261，零训练）
+旧「损伤 0.3438」是**评估布局 bug**：生长后 `a` 与旧头输入拼接错位（旧头应取 `z[:old_n]`+`a[:old_n]`）。修正后重跑：**old_skill_damage = 0.0156**（≤0.02），其余不变：combined 0.8828 = old_only 0.8828、new_only 0.3594、lesion_new 0.0。结论不变：联合生长仍**没有**让新单位产生功能贡献（lesion 0），但旧技能保持成立。
