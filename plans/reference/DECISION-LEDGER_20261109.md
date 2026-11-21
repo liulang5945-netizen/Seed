@@ -7860,3 +7860,14 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **2. 关键修正**：首跑失败因为 Adam 的 `weight_decay` 对**零梯度参数**仍衰减（冻结参数被持续拉向 0）；去掉 wd 后：CN after CN 0.566 → after P24 0.504 → final 0.504（保护生效，未崩塌）；P24 0.984；P27 0.773；damage 0.062。对照旧结果（同协议无保护）：CN/P24 终值 0.17/0.26 ⇒ **保护把 P24 从 0.26 拉到 0.98、CN 从 0.17 拉到 0.50**。
 
 **3. 判读**：方向成立但门未达（CN 需 ≥0.95、P27 ≥0.80、damage ≤0.02）：CN 仅 600 步/24 单元且 cross_channel_mix 冻结，欠拟合；P27 500 步略短。下一步调训练预算（CN 1,000 步、P27 800 步、CN 阶段允许 cross_channel_mix 训练），1 seed 复测后再 3 seed。零 check/final。
+
+
+### D-20261121-249 S1-RT 参数级保护 3 seed：`s1rt_protection_verified`（360.03 CPU，0 check）
+
+**1. 动作**：在 [`diag_protect_smoke_20261121.py`](../../scripts/training/diag_protect_smoke_20261121.py) 基础上跑 3 seed（回执 `reports/taiji_u2_s1rt_protection_20261121.json`、[结果卡](../reference/RESULT-TAIJI_U2_S1RT_PROTECTION_20261121.md)）。
+
+**2. 读数**：CN 终值 **1.0000**、P-B **0.9974**、P-D **0.8646**、旧损伤 **0.0078**；全部门过 ⇒ **`s1rt_protection_verified`**；360.03 CPU、零 check。
+
+**3. 判读**：首次在同一主体顺序三任务共存；对照无保护（阶段 1b）CN/P-B 终值 0.17/0.26 ⇒ **参数级保护是必要机制**（门控不够）。关键实现修正：保护阶段 `weight_decay=0`（否则冻结参数被衰减）。限制：固定分区为实验层机制、容量隔离非协同；未测联合增益/生长/开放中文/真机；不签 check/final/C/D/J。
+
+**4. 后继**：阶段 2 学习式 top-k 路由；或将参数级任务保护写入架构候选（新 pin/capsule 字段）。累计 S1-RT 线 ≈2,474 CPU、零 check。

@@ -1,0 +1,24 @@
+{
+  "schema": "taiji-u2-protect-smoke-v1",
+  "created_utc": "2026-11-21T12:14:26.500115+00:00",
+  "status": "run_under_standing_authorization_pending_owner_ratification",
+  "seed": 20261120,
+  "trace": {
+    "cn_after_cn": 1.0,
+    "cn_after_p24": 1.0,
+    "p24_after_p24": 1.0,
+    "cn_final": 1.0,
+    "p24_final": 1.0,
+    "p27_final": 0.8515625
+  },
+  "damage": 0.0,
+  "verdict": "parameter_protection_smoke_passed",
+  "disclosure": "one seed; parameter-row gradient masking + read_gate row masking; zero check/final",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 120.5
+  }
+}
