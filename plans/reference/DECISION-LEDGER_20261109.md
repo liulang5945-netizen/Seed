@@ -7759,3 +7759,14 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **3. 判读**：P-B 本身可学（1.0），但共享单位顺序学习下 P-B 大量训练＋稳定回放破坏 P-D 表示（0b），首跑则损伤 CN；**unprotected 对照失效**（pre-P-B 快照可 trusted-only 达 1.0，S0 为 0.0）——fixture/对照在新核上不等价；按预注册门两跑均 **`23s0_partial`**、不签 `23s0_verified`、**24-S 不解锁**、不调阈。
 
 **4. 后继（待裁）**：① 窄合同协议再设计（冻结已学共享单元或每阶段独立主体、重设对照）；② 接受有界包（P-B 1.0/P-D 0.885/P-A 0.999 各自有界，单主体联合未成立）；③ 暂停新核主线。累计 606 CPU；零 check/final。
+
+
+### D-20261121-240 23-S.0c 协议再设计：`23s0c_partial` 与窄合同线收束（276.2 CPU，0 check）
+
+**1. 动作**：新增 [`verify_taiji_23s0c_narrow_20261121.py`](../../scripts/training/verify_taiji_23s0c_narrow_20261121.py) 与 [结果卡](../reference/RESULT-TAIJI_U2_23S0C_20261121.md)：P-A 训练共享 48 单元后**冻结全部单位**，P-B/P-D 只训适配头；unprotected 改为未训练头；3 seed、零 check、276.2 CPU。
+
+**2. 读数**：P-A bi 1.000✓/adv 0.801–1.000✗；P-B overall **0.294/0.363/0.425（均值 0.360）✗**；conflict 0.938–0.975✗；unprotected 0.219–0.250✓；gain 0.056–0.206✗；P-D **0.425–0.494✗**/消融 0.175–0.219✗；旧技能 0.0✓；capsule 0.0/reconnect 1.0✓ ⇒ **5/13，`23s0c_partial`**。
+
+**3. 判读**：冻结单位后 P-B/P-D 崩到 0.29–0.49——P-A 中文表征不含实体/物理信息，适配头无法恢复；与 23-S.0/0b 合并：共享单位**可训练**（per-axis 可学）但顺序联合互相破坏，**冻结**则表征不足 ⇒ **单主体顺序协议无可行点，窄合同 joint 不成立**；per-axis 有界读数（P-A 1.0、P-B 专用 1.0、P-D 0.885、capsule/reconnect、中性生长）仍成立。
+
+**4. 收束**：23-S.0 窄合同线总判 `23s0_partial`（joint 未成立）；不签 verified、24-S 不解锁、不调阈；成本 606+276=882 CPU、零 check/final。待裁：① 接受有界包（per-axis 列示、joint 标注未成立）写交付；② 换范式（每阶段独立主体＋capsule 继承的单一谱系，新预注册）；③ 暂停新核主线。

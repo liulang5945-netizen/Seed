@@ -1,0 +1,89 @@
+{
+  "schema": "taiji-u2-23s0c-narrow-v1",
+  "created_utc": "2026-11-21T09:13:04.702841+00:00",
+  "status": "run_under_standing_authorization_pending_owner_ratification",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      20261120,
+      20261121,
+      20261122
+    ],
+    "design": "freeze units after P-A; P-B/P-D adapter heads only; untrained head as unprotected control",
+    "budget_cpu": 1200.0
+  },
+  "rows": [
+    {
+      "seed": 20261120,
+      "a_bi": 1.0,
+      "a_adv": 0.84765625,
+      "b_overall": 0.29374998807907104,
+      "b_conflict": 0.9375,
+      "b_unprotected": 0.23749999701976776,
+      "b_gain": 0.056249991059303284,
+      "d_acc": 0.42500001192092896,
+      "d_ablation": 0.17500001192092896,
+      "old_skill_damage": 0.0,
+      "capsule_diff": 0.0,
+      "reconnect_acc": 1.0
+    },
+    {
+      "seed": 20261121,
+      "a_bi": 1.0,
+      "a_adv": 0.80078125,
+      "b_overall": 0.36250001192092896,
+      "b_conflict": 0.9750000238418579,
+      "b_unprotected": 0.25,
+      "b_gain": 0.11250001192092896,
+      "d_acc": 0.4375,
+      "d_ablation": 0.1875,
+      "old_skill_damage": 0.0,
+      "capsule_diff": 0.0,
+      "reconnect_acc": 1.0
+    },
+    {
+      "seed": 20261122,
+      "a_bi": 1.0,
+      "a_adv": 1.0,
+      "b_overall": 0.42500001192092896,
+      "b_conflict": 0.96875,
+      "b_unprotected": 0.21875,
+      "b_gain": 0.20625001192092896,
+      "d_acc": 0.4937500059604645,
+      "d_ablation": 0.21875,
+      "old_skill_damage": 0.0,
+      "capsule_diff": 0.0,
+      "reconnect_acc": 1.0
+    }
+  ],
+  "gates": {
+    "a_bi": true,
+    "a_adv": false,
+    "b_median": false,
+    "b_mean": false,
+    "b_min": false,
+    "b_conflict": false,
+    "b_unprotected": true,
+    "b_gain": false,
+    "d_acc": false,
+    "d_ablation": false,
+    "old_skill_damage": true,
+    "capsule_diff": true,
+    "reconnect": true
+  },
+  "passed": 5,
+  "total_gates": 13,
+  "verdict": "23s0c_partial",
+  "disclosure": "protocol redesign after 23-S.0 partial; unprotected control redefined as untrained head; zero check/final",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 276.2
+  }
+}
