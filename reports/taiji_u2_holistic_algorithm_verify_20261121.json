@@ -1,0 +1,253 @@
+{
+  "schema": "taiji-u2-holistic-algorithm-verify-v1",
+  "card": "Holistic 5-suite verification of Taiji selective persistent state & compositional binding",
+  "created_utc": "2026-11-20T18:53:33.241510+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      20261120,
+      20261121,
+      20261122
+    ],
+    "cap_cpu": 1200.0,
+    "train": 512,
+    "fit": 256,
+    "fit_offset": 10000000,
+    "m3_training": "online_disjoint_batches_1000_steps_wd_1e-4",
+    "state_readout": "state_final_and_read_gate_at_t_minus_1_only_no_external_kv_history"
+  },
+  "rows": [
+    {
+      "seed": 20261120,
+      "arch_bug_audit": {
+        "fresh_old_batch_as_time_bleed": 0.03002309799194336,
+        "trained_parent_batch_bleed": 1.523769736289978,
+        "trained_parent_mean_c": 0.03129373490810394,
+        "trained_parent_max_c": 0.2768716514110565,
+        "old_cross_group_edges": 0,
+        "default_mode_max_diff": 0.0,
+        "new_per_sample_bleed": 0.0,
+        "new_cross_group_edges": 750,
+        "b1_unseen_fit_chars": []
+      },
+      "M1_selective_state_hold": {
+        "horizons": {
+          "5": {
+            "static_c_state_final": 0.984375,
+            "selective_state_final": 1.0
+          },
+          "10": {
+            "static_c_state_final": 0.8984375,
+            "selective_state_final": 1.0
+          },
+          "20": {
+            "static_c_state_final": 0.3671875,
+            "selective_state_final": 1.0
+          }
+        },
+        "old_skill_damage": 0.0,
+        "capsule_v2_max_abs_diff": 0.0
+      },
+      "M2_midstream_overwrite": {
+        "static_c_state_final": {
+          "acc": 0.890625,
+          "old_error_rate": 0.0078125
+        },
+        "selective_state_final": {
+          "acc": 1.0,
+          "old_error_rate": 0.0
+        }
+      },
+      "M3_multi_item_capacity_scaling": {
+        "2": 0.4375,
+        "8": 0.734375,
+        "32": 1.0
+      },
+      "B1_compositional_action_binding": {
+        "flat_mlp": 0.98046875,
+        "compositional_slot_binding": 0.94921875,
+        "selective_unit_binding": 0.8671875
+      }
+    },
+    {
+      "seed": 20261121,
+      "arch_bug_audit": {
+        "fresh_old_batch_as_time_bleed": 0.023806866258382797,
+        "trained_parent_batch_bleed": 4.285442352294922,
+        "trained_parent_mean_c": 0.04052937775850296,
+        "trained_parent_max_c": 0.24402488768100739,
+        "old_cross_group_edges": 0,
+        "default_mode_max_diff": 0.0,
+        "new_per_sample_bleed": 0.0,
+        "new_cross_group_edges": 750,
+        "b1_unseen_fit_chars": []
+      },
+      "M1_selective_state_hold": {
+        "horizons": {
+          "5": {
+            "static_c_state_final": 0.98828125,
+            "selective_state_final": 1.0
+          },
+          "10": {
+            "static_c_state_final": 0.78515625,
+            "selective_state_final": 1.0
+          },
+          "20": {
+            "static_c_state_final": 0.41796875,
+            "selective_state_final": 1.0
+          }
+        },
+        "old_skill_damage": 0.0,
+        "capsule_v2_max_abs_diff": 0.0
+      },
+      "M2_midstream_overwrite": {
+        "static_c_state_final": {
+          "acc": 0.95703125,
+          "old_error_rate": 0.0078125
+        },
+        "selective_state_final": {
+          "acc": 1.0,
+          "old_error_rate": 0.0
+        }
+      },
+      "M3_multi_item_capacity_scaling": {
+        "2": 0.5078125,
+        "8": 0.7421875,
+        "32": 1.0
+      },
+      "B1_compositional_action_binding": {
+        "flat_mlp": 0.96484375,
+        "compositional_slot_binding": 0.9453125,
+        "selective_unit_binding": 0.8984375
+      }
+    },
+    {
+      "seed": 20261122,
+      "arch_bug_audit": {
+        "fresh_old_batch_as_time_bleed": 0.013819241896271706,
+        "trained_parent_batch_bleed": 3.163020133972168,
+        "trained_parent_mean_c": 0.02382209338247776,
+        "trained_parent_max_c": 0.15846805274486542,
+        "old_cross_group_edges": 0,
+        "default_mode_max_diff": 0.0,
+        "new_per_sample_bleed": 0.0,
+        "new_cross_group_edges": 750,
+        "b1_unseen_fit_chars": []
+      },
+      "M1_selective_state_hold": {
+        "horizons": {
+          "5": {
+            "static_c_state_final": 0.9765625,
+            "selective_state_final": 1.0
+          },
+          "10": {
+            "static_c_state_final": 0.8125,
+            "selective_state_final": 1.0
+          },
+          "20": {
+            "static_c_state_final": 0.48046875,
+            "selective_state_final": 1.0
+          }
+        },
+        "old_skill_damage": 0.0,
+        "capsule_v2_max_abs_diff": 0.0
+      },
+      "M2_midstream_overwrite": {
+        "static_c_state_final": {
+          "acc": 0.82421875,
+          "old_error_rate": 0.04296875
+        },
+        "selective_state_final": {
+          "acc": 1.0,
+          "old_error_rate": 0.0
+        }
+      },
+      "M3_multi_item_capacity_scaling": {
+        "2": 0.421875,
+        "8": 0.640625,
+        "32": 1.0
+      },
+      "B1_compositional_action_binding": {
+        "flat_mlp": 0.859375,
+        "compositional_slot_binding": 0.90234375,
+        "selective_unit_binding": 0.97265625
+      }
+    }
+  ],
+  "summary": {
+    "arch_bug_audit": {
+      "fresh_old_batch_as_time_bleed_max": 0.03002309799194336,
+      "trained_parent_batch_bleed_max": 4.285442352294922,
+      "trained_parent_mean_c": 0.031881735349694885,
+      "trained_parent_max_c": 0.2768716514110565,
+      "old_cross_group_edges": 0,
+      "default_mode_max_diff": 0.0,
+      "new_per_sample_bleed_max": 0.0,
+      "new_cross_group_edges": 750,
+      "b1_unseen_fit_chars": []
+    },
+    "M1_selective_state_hold": {
+      "5": {
+        "static_c_state_final": 0.9830729166666666,
+        "selective_state_final": 1.0
+      },
+      "10": {
+        "static_c_state_final": 0.83203125,
+        "selective_state_final": 1.0
+      },
+      "20": {
+        "static_c_state_final": 0.421875,
+        "selective_state_final": 1.0
+      },
+      "old_skill_damage_max": 0.0,
+      "capsule_v2_max_abs_diff": 0.0
+    },
+    "M2_midstream_overwrite": {
+      "static_c_state_final": {
+        "acc": 0.890625,
+        "old_error_rate": 0.01953125
+      },
+      "selective_state_final": {
+        "acc": 1.0,
+        "old_error_rate": 0.0
+      }
+    },
+    "M3_multi_item_capacity_scaling": {
+      "2": 0.4557291666666667,
+      "8": 0.7057291666666666,
+      "32": 1.0
+    },
+    "B1_compositional_action_binding": {
+      "flat_mlp": 0.9348958333333334,
+      "compositional_slot_binding": 0.9322916666666666,
+      "selective_unit_binding": 0.9127604166666666
+    }
+  },
+  "gates": {
+    "arch_default_bit_identical": true,
+    "arch_batch_isolation_fixed": true,
+    "arch_cross_group_restored": true,
+    "m1_hold_t5": true,
+    "m1_hold_t10": true,
+    "m1_hold_t20": true,
+    "m1_beats_static_c": true,
+    "old_skill_damage_zero": true,
+    "capsule_v2_roundtrip_exact": true,
+    "m2_overwrite_pass": true,
+    "m3_capacity_scales": true,
+    "b1_compositional_ge_080": true,
+    "b1_unit_binding_ge_080": true
+  },
+  "verdict": "holistic_algorithm_verified",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 279.55
+  }
+}

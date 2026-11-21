@@ -1,0 +1,86 @@
+{
+  "schema": "taiji-u2-cn-vocab3-v1",
+  "card": "A3c natural-wording Chinese word-order (5 train / 5 held-out, seen chars)",
+  "created_utc": "2026-11-20T18:58:01.716534+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      20261120,
+      20261121,
+      20261122
+    ],
+    "colors": 8,
+    "train_templates": 5,
+    "fit_templates": 5,
+    "train": 1280,
+    "fit": 320,
+    "fit_offset": 10000000,
+    "max_len": 24,
+    "vocab": 32
+  },
+  "rows": [
+    {
+      "seed": 20261120,
+      "arms": {
+        "pos_attn": 0.453125,
+        "mean_pool": 0.19374999403953552,
+        "replay": 0.534375011920929
+      },
+      "retention_damage": {
+        "s1": 0.0,
+        "s2": 0.0,
+        "s3": 0.0
+      }
+    },
+    {
+      "seed": 20261121,
+      "arms": {
+        "pos_attn": 0.3499999940395355,
+        "mean_pool": 0.22812500596046448,
+        "replay": 0.550000011920929
+      },
+      "retention_damage": {
+        "s1": 0.0,
+        "s2": 0.0,
+        "s3": 0.0
+      }
+    },
+    {
+      "seed": 20261122,
+      "arms": {
+        "pos_attn": 0.543749988079071,
+        "mean_pool": 0.22812500596046448,
+        "replay": 0.6312500238418579
+      },
+      "retention_damage": {
+        "s1": 0.0,
+        "s2": 0.0,
+        "s3": 0.0
+      }
+    }
+  ],
+  "means": {
+    "pos_attn": 0.44895832737286884,
+    "mean_pool": 0.21666666865348816,
+    "replay": 0.5718750158945719
+  },
+  "gates": {
+    "replay_learnable": false,
+    "pos_attn_level": false,
+    "pos_attn_gain": true,
+    "retention": true
+  },
+  "verdict": "presentation_failure",
+  "disclosure": "all held-out characters are covered by the training templates; positional attention vs mean pooling; replay on raw features",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 239.27
+  }
+}

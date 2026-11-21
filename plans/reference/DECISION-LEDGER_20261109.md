@@ -7581,3 +7581,34 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **5. 未立项占位**：A3c（≤1,500 CPU、零 check，预注册已冻结）、架构级持久状态 A/B（≤1,500 CPU/方案，预注册已冻结）——均待 owner 裁定；若均不批则本交付为最终状态，记忆轴按「外置历史可读、单位状态不承载」收束。
 
 **6. 明确非声明**：不声称模型成型/自主选择/长时记忆/动作闭环/结构收益/开放中文/真机迁移/final/C/D/J 通过/独立接管；零 check、零 final。
+
+---
+
+### D-20261121-225
+- **时间与范围**：2026-11-21；先做算法与架构根因审计并实现加法选择性持久状态模块 `taiji/u2_selective_units.py` 后完成 5 套件整体验证（0 check / 0 final）。
+- **背景与 owner 指令**：owner 在对齐 `A1–F2` 阶段裁决（按推荐确认 `B1–B3/C2/D1–D3/E1–E2/F1–F2`）后要求：「你直接改，……你需要先整体验证一下算法，再接着推进，因为推进过程中一直让我对算法和架构有怀疑」。
+- **审计根因（保持 `taiji/u2_neural_units.py` 零字节改动）**：
+  1. 原 `NeuralUnits.forward` 将 dim-0 批轴当作时间轴迭代共享一维 `z/a:[N]`（初图批串扰 `0.0300`、训练后三技能父串扰达 `4.2854` 且 `mean(c)=0.0319` 坍缩）；
+  2. `make_identities` 跨群复现边恒为 `0`；
+  3. 正偏置写入门梯度在 `T=20` 衰减至极小；
+  4. 单纯 `[N]→[B,N]` 扩维无多键读出筛选（无 `read_gate` 首轮 `M3 = 0.490/0.573/0.551`，在线无过拟合亦停 `0.594/0.582/0.582`）。
+- **加法设计**：新建 `taiji/u2_selective_units.py`（`SelectiveUnitSpec` / `SelectiveNeuralUnits` / `SelectivePersistentGraph` / `capsule v2`），包含四维 `[B,T,G,D]` + 每样本 `[B,N]` 隔离、750 条跨群边＋跨通道混叠、保留优先负偏置（`write_bias=-2.0`）、仅依赖 `t=T-1` 全通道输入的通用乘性选读门（`read_gate`, `bias=+1.0`），且默认 `per_sample_state=False` 逐位委派旧图。
+- **整体验证读数（`reports/taiji_u2_holistic_algorithm_verify_20261121.json`，3 种子，`279.55 CPU`，13/13 门全过 → `holistic_algorithm_verified`）**：
+  - `arch_bug_audit`：默认关闭模式 `diff = 0.0`；开启隔离 `per_sample_bleed = 0.0`；跨群边 `0 → 750`；
+  - `M1_selective_state_hold`（随机写入刻、零历史缓存只看末步）：`T=5/10/20` 为 `1.0000 / 1.0000 / 1.0000`（对照静态 `c` 为 `0.9831 / 0.8320 / 0.4219`）；旧三技能损伤 `0.0`、`capsule_v2` 往返差 `0.0`；
+  - `M2_midstream_overwrite`（`T=12` 覆盖）：`1.0000`（旧错率 `0.0` 对静态 `0.8906 / 0.0195`）；
+  - `M3_multi_item_capacity_scaling`（`T=12` 三键延迟查询、在线 1000 步）：`N=2/8/32 = 0.4557 / 0.7057 / 1.0000`；
+  - `B1_compositional_action_binding`（5 训 / 2 留出已见字）：`flat_mlp = 0.9349`、`compositional_slot_binding = 0.9323`、`selective_unit_binding = 0.9128`。
+- **裁决与边界**：受控合成基准上架构与算法可信度已核验通过；记 `RESULT-TAIJI_U2_HOLISTIC_ALGORITHM_VERIFY_20261121.md`；不改 `taiji/u2_neural_units.py`、不解锁 check/final/25-27/C/D/J。
+
+---
+
+### D-20261121-226
+- **时间与范围**：2026-11-21；对齐设计卡与脚本后执行 `A3c` 自然措辞中文语序（0 check / 0 final）。
+- **前置修正**：将 `DESIGN-TAIJI_U2_A3C_20261121.md` 第 20–25 行留出模板逐字对齐到 `scripts/training/run_s2_cn_vocab3_20261121.py`（未见字 `[]`），并在 `M3` 之前未放宽任何门禁。
+- **实测读数（`reports/taiji_u2_cn_vocab3_20261121.json`，3 种子，`239.27 CPU`）**：
+  - `pos_attn = 0.4490`（`0.4531 / 0.3500 / 0.5437`）、`mean_pool = 0.2167`、`replay = 0.5719`（`0.5344 / 0.5500 / 0.6313`）、`retention_damage = 0.0`。
+  - 门禁：`replay_learnable = false`（`< 0.80`）、`pos_attn_level = false`（`< 0.60`）、`pos_attn_gain = true`、`retention = true`。
+  - 判词：**`presentation_failure`**。
+- **裁决**：命中预注册 `presentation_failure`（单字虽全已见但自然句式位置分布与新搭配超出字符级绝对位置注意力表征能力）；依 D-222 预承诺不调参重试，中文轴正式收束于有界 **`A3b = 0.7014`**（`cn_vocab2_verified`），记 `RESULT-TAIJI_U2_A3C_20261121.md`。
+

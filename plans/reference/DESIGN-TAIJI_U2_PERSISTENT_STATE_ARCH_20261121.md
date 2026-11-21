@@ -43,3 +43,10 @@
 ## 5. 不签
 
 不签记忆保持/长时记忆/结构收益/25-26/final/C/D/J/模型成型；零训练、零 check。
+
+## 8. 算法审计修正与整体验证回执（2026-11-21，D-20261121-225）
+
+1. **原方案 A 单纯改形为何不足**：对 [u2_neural_units.py](../../taiji/u2_neural_units.py) 审计证实，冻结三技能父的 `mean(c)=0.0319`（`max=0.2769`），且存在批-当-时串扰（初图 `0.0300` / 训后 `4.2854`）、零跨群边（`0`）及无乘性选读。因此仅做 `[N]→[B,N]` 扩维而不引入选择门，在 `M1(T=20)` 仅 `0.4219`、在 `M3` 多项延迟查询即使不发生过拟合也停在 `0.5820`。
+2. **已验证加法实现**：保持 `taiji/u2_neural_units.py` 字节不变，新建 [u2_selective_units.py](../../taiji/u2_selective_units.py)（`SelectiveUnitSpec` / `SelectiveNeuralUnits` / `SelectivePersistentGraph` / `capsule v2`），组合**样本隔离 `[B, N]` + 跨群边 (`750`) 与跨通道混合 + 保留优先负写入偏置 (`-2.0`) + 末步全通道乘性选读门 (`read_gate`, bias `+1.0`, 仅用 `t=T-1`)**；默认 `per_sample_state=False` 逐位委派旧图（`diff = 0.0`）。
+3. **5 套件整体验证（3 种子，0 check / 0 final）**：见 [RESULT-TAIJI_U2_HOLISTIC_ALGORITHM_VERIFY_20261121.md](RESULT-TAIJI_U2_HOLISTIC_ALGORITHM_VERIFY_20261121.md)——`M1(T=5/10/20) = 1.000/1.000/1.000`、`M2 = 1.000`（旧误报 `0.0`）、`M3(N=2/8/32) = 0.4557/0.7057/1.0000`、`B1 = 0.9323/0.9128`、旧三技能损伤 `0.0`、`capsule_v2` 往返差 `0.0`、`verdict = holistic_algorithm_verified`（`279.55 CPU`）。
+4. **遗留定位**：原方案 A/B 的有界结论修正为「非架构级持久存储+写入/读出双选择门不可行」；本交付仍为受控基准机械验证，**不签结构生长、开放中文、check/final/C/D/J**。

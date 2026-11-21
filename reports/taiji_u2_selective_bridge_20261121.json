@@ -1,0 +1,271 @@
+{
+  "schema": "taiji-u2-selective-bridge-v1",
+  "card": "D-20261121-227 Four-axis capability bridge on SelectivePersistentGraph",
+  "created_utc": "2026-11-21T04:25:46.437743+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      20261120,
+      20261121,
+      20261122
+    ],
+    "cap_cpu": 1200.0,
+    "fit_offset": 10000000,
+    "m3_steps": 1000,
+    "growth_steps": "400+600+900=1900"
+  },
+  "rows": [
+    {
+      "seed": 20261120,
+      "bridge1_equal_flops": {
+        "selective": {
+          "acc": 1.0,
+          "flops": 216832,
+          "cpu": 9.453
+        },
+        "gru": {
+          "acc": 0.53125,
+          "hidden": 35,
+          "flops": 218352,
+          "ratio": 1.0070100354191263,
+          "cpu": 6.359
+        },
+        "transformer": {
+          "acc": 1.0,
+          "d_model": 24,
+          "nhead": 4,
+          "dim_ff": 100,
+          "flops": 215552,
+          "ratio": 0.9940968122786304,
+          "cpu": 7.406
+        }
+      },
+      "bridge2_growth_lesion": {
+        "g0_acc": 0.53515625,
+        "g1_acc": 0.66015625,
+        "gen2_acc": 0.69140625,
+        "g5_fixed_n4_acc": 0.54296875,
+        "g6_prealloc_n32_acc": 1.0,
+        "total_selective_units": 52,
+        "birth_diff_max": 0.0,
+        "newborn_step1_grad_min": 0.0012346438597887754,
+        "lesioned_acc": 0.53515625,
+        "lesion_drop": 0.15625,
+        "restored_diff": 0.0,
+        "old_skill_damage": 0.0,
+        "capsule_v2_max_abs_diff": 0.0
+      },
+      "bridge3_a3c_chinese": {
+        "a3c_exact": {
+          "pos_attn_raw": 0.653124988079071,
+          "selective_causal": 0.8812500238418579
+        },
+        "a3c_bidirectional": {
+          "pos_attn_raw": 0.46875,
+          "selective_causal": 0.6656249761581421,
+          "adversarial_scope_acc": 0.628125011920929,
+          "unseen_fit_chars": []
+        }
+      },
+      "bridge4_action_feedback": {
+        "turn0_acc": 0.484375,
+        "turn1_with_feedback": 0.9296875,
+        "error_correction_rate": 0.8636363744735718,
+        "turn1_no_feedback": 0.45703125,
+        "turn1_permuted_feedback": 0.4453125
+      }
+    },
+    {
+      "seed": 20261121,
+      "bridge1_equal_flops": {
+        "selective": {
+          "acc": 1.0,
+          "flops": 216832,
+          "cpu": 11.0
+        },
+        "gru": {
+          "acc": 0.53515625,
+          "hidden": 35,
+          "flops": 218352,
+          "ratio": 1.0070100354191263,
+          "cpu": 6.875
+        },
+        "transformer": {
+          "acc": 1.0,
+          "d_model": 24,
+          "nhead": 4,
+          "dim_ff": 100,
+          "flops": 215552,
+          "ratio": 0.9940968122786304,
+          "cpu": 8.016
+        }
+      },
+      "bridge2_growth_lesion": {
+        "g0_acc": 0.5859375,
+        "g1_acc": 0.59765625,
+        "gen2_acc": 0.5859375,
+        "g5_fixed_n4_acc": 0.54296875,
+        "g6_prealloc_n32_acc": 1.0,
+        "total_selective_units": 52,
+        "birth_diff_max": 0.0,
+        "newborn_step1_grad_min": 0.0012913852697238326,
+        "lesioned_acc": 0.5859375,
+        "lesion_drop": 0.0,
+        "restored_diff": 0.0,
+        "old_skill_damage": 0.0,
+        "capsule_v2_max_abs_diff": 0.0
+      },
+      "bridge3_a3c_chinese": {
+        "a3c_exact": {
+          "pos_attn_raw": 0.515625,
+          "selective_causal": 0.824999988079071
+        },
+        "a3c_bidirectional": {
+          "pos_attn_raw": 0.35624998807907104,
+          "selective_causal": 0.7124999761581421,
+          "adversarial_scope_acc": 0.596875011920929,
+          "unseen_fit_chars": []
+        }
+      },
+      "bridge4_action_feedback": {
+        "turn0_acc": 0.4609375,
+        "turn1_with_feedback": 0.90234375,
+        "error_correction_rate": 0.8188405632972717,
+        "turn1_no_feedback": 0.4609375,
+        "turn1_permuted_feedback": 0.48828125
+      }
+    },
+    {
+      "seed": 20261122,
+      "bridge1_equal_flops": {
+        "selective": {
+          "acc": 1.0,
+          "flops": 216832,
+          "cpu": 9.969
+        },
+        "gru": {
+          "acc": 0.5234375,
+          "hidden": 35,
+          "flops": 218352,
+          "ratio": 1.0070100354191263,
+          "cpu": 6.578
+        },
+        "transformer": {
+          "acc": 1.0,
+          "d_model": 24,
+          "nhead": 4,
+          "dim_ff": 100,
+          "flops": 215552,
+          "ratio": 0.9940968122786304,
+          "cpu": 7.703
+        }
+      },
+      "bridge2_growth_lesion": {
+        "g0_acc": 0.53125,
+        "g1_acc": 0.52734375,
+        "gen2_acc": 0.515625,
+        "g5_fixed_n4_acc": 0.50390625,
+        "g6_prealloc_n32_acc": 1.0,
+        "total_selective_units": 52,
+        "birth_diff_max": 0.0,
+        "newborn_step1_grad_min": 0.0006527598015964031,
+        "lesioned_acc": 0.53125,
+        "lesion_drop": -0.015625,
+        "restored_diff": 0.0,
+        "old_skill_damage": 0.0,
+        "capsule_v2_max_abs_diff": 0.0
+      },
+      "bridge3_a3c_chinese": {
+        "a3c_exact": {
+          "pos_attn_raw": 0.49687498807907104,
+          "selective_causal": 0.703125
+        },
+        "a3c_bidirectional": {
+          "pos_attn_raw": 0.4312500059604645,
+          "selective_causal": 0.75,
+          "adversarial_scope_acc": 0.609375,
+          "unseen_fit_chars": []
+        }
+      },
+      "bridge4_action_feedback": {
+        "turn0_acc": 0.44921875,
+        "turn1_with_feedback": 0.86328125,
+        "error_correction_rate": 0.758865237236023,
+        "turn1_no_feedback": 0.4140625,
+        "turn1_permuted_feedback": 0.4453125
+      }
+    }
+  ],
+  "summary": {
+    "bridge1_equal_flops": {
+      "selective_acc": 1.0,
+      "gru_acc": 0.5299479166666666,
+      "transformer_acc": 1.0,
+      "selective_flops": 216832,
+      "gru_flops": 218352,
+      "gru_flops_ratio": 1.0070100354191263,
+      "transformer_flops": 215552,
+      "transformer_flops_ratio": 0.9940968122786304
+    },
+    "bridge2_growth_lesion": {
+      "g0_acc": 0.55078125,
+      "g1_acc": 0.5950520833333334,
+      "gen2_acc": 0.59765625,
+      "g5_fixed_n4_acc": 0.5299479166666666,
+      "g6_prealloc_n32_acc": 1.0,
+      "birth_diff_max": 0.0,
+      "newborn_step1_grad_min": 0.0006527598015964031,
+      "lesioned_acc": 0.55078125,
+      "lesion_drop": 0.046875,
+      "restored_diff_max": 0.0,
+      "old_skill_damage_max": 0.0,
+      "capsule_v2_max_abs_diff": 0.0
+    },
+    "bridge3_a3c_chinese": {
+      "a3c_exact_pos_attn_raw": 0.5552083253860474,
+      "a3c_exact_selective_causal": 0.803125003973643,
+      "a3c_bi_pos_attn_raw": 0.4187499980131785,
+      "a3c_bi_selective_causal": 0.7093749841054281,
+      "a3c_bi_adversarial_scope": 0.6114583412806193,
+      "a3c_bi_unseen_chars": []
+    },
+    "bridge4_action_feedback": {
+      "turn0_acc": 0.46484375,
+      "turn1_with_feedback": 0.8984375,
+      "turn1_no_feedback": 0.4440104166666667,
+      "turn1_permuted_feedback": 0.4596354166666667,
+      "error_correction_rate": 0.8137807250022888
+    }
+  },
+  "gates": {
+    "b1_flops_parity": true,
+    "b1_selective_ge_090": true,
+    "b1_non_inferior_to_gru": true,
+    "b2_birth_neutral": true,
+    "b2_newborn_alive": true,
+    "b2_growth_beats_fixed_n4": false,
+    "b2_gen2_ge_090": false,
+    "b2_lesion_causal": false,
+    "b2_old_skill_damage_zero": true,
+    "b2_capsule_v2_exact": true,
+    "b3_a3c_exact_ge_080": true,
+    "b3_beats_pos_attn": true,
+    "b3_bidirectional_ge_080": false,
+    "b4_turn1_ge_085": true,
+    "b4_gain_over_no_fb": true,
+    "b4_gain_over_permuted_fb": true,
+    "b4_correction_rate_ge_080": true
+  },
+  "verdict": "selective_bridge_partial",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 483.22
+  }
+}

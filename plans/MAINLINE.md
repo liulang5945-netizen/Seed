@@ -221,11 +221,15 @@
 承接 [N 长期实施方案](reference/PLAN-TAIJI-N_LONG_HORIZON_20261111.md)，包 23–30 按先决条件严格推进。**23–27** 首窗规划帽均为 **`<= 48,000 CPU / 96,000 wall`**（建议配比 准备 10% / 学习发展 60% / 评价 15% / 恢复故障 5% / 定位收束 10%）；每包 `.0` 按实价与样本分辨率（10,000 次固定种子 bootstrap + 3 seed 同向）冻结合同，check 最多 2 次、final 最多 1 次、全包最多 2 个具名候选与每卡 1 个定位包。
 
 ### 4.1 包 23–30 阶段总图与关键规划裁决
+- **A3c 自然措辞中文测试收束（2026-11-21，D-20261121-226）**：[A3c 结果卡](reference/RESULT-TAIJI_U2_A3C_20261121.md)（对齐 [A3c 设计卡](reference/DESIGN-TAIJI_U2_A3C_20261121.md) 第 20–25 行后执行）——5 训练/5 留出已见字实测 `replay 0.5719 < 0.80`、`pos_attn 0.4490`、`mean_pool 0.2167`、`retention_damage 0.0` ⇒ 命中预注册出口 **`presentation_failure`**（`239.27 CPU`，0 check）；依预承诺不调参重试，中文轴收束于有界 `A3b=0.7014`。
+
+- **算法整体验证与选择性持久状态实现（2026-11-21，D-20261121-225）**：[整体验证结果卡](reference/RESULT-TAIJI_U2_HOLISTIC_ALGORITHM_VERIFY_20261121.md)——保持 `taiji/u2_neural_units.py` 零字节改动，新建加法模块 `taiji/u2_selective_units.py`（每样本 `[B,N]` 隔离、750 条跨群边＋跨通道混叠、负写入偏置 `-2.0`、`t=T-1` 全通道通用 `read_gate`，默认 `per_sample_state=False` 逐位委派旧图 `diff=0.0`）。3 种子 5 套件 13/13 门全过 → **`holistic_algorithm_verified`**（`279.55 CPU`，0 check）：`M1(T=5/10/20)=1.0/1.0/1.0`（静态 `c` 0.983/0.832/0.422）、`M2=1.0`（旧错 `0.0`）、`M3(N=2/8/32)=0.456/0.706/1.0`、`B1=0.932/0.913`、旧三技能损伤 `0.0`、`capsule_v2` 往返差 `0.0`。不签结构生长（25/26/27 暂停）/开放中文/check/final/C/D/J。
+
 - **交付说明（2026-11-21，D-20261121-224）**：[有界能力包交付](reference/DELIVERY-TAIJI_U2_BOUNDED_PACKAGE_20261121.md)——成立项/不成立项/复现命令/成本；A3c 与架构持久状态预注册待批；非声明清单；零 check。
 
-- **架构级持久状态预注册（2026-11-21，D-20261121-223）**：[预注册](reference/DESIGN-TAIJI_U2_PERSISTENT_STATE_ARCH_20261121.md)——A 按样本状态（加法式、默认关闭旧行为不变）vs B 改进有界存储；门 state_final ≥0.60、history 对照 ≥0.80、旧技能 ≤0.02；≤1,500 CPU/方案、零 check；**待批未跑**。
+- **架构级持久状态预注册（2026-11-21，D-20261121-223；已由 D-20261121-225 加法实现并验证）**：[预注册](reference/DESIGN-TAIJI_U2_PERSISTENT_STATE_ARCH_20261121.md)——A 按样本状态（加法式、默认关闭旧行为不变）vs B 改进有界存储；门 state_final ≥0.60、history 对照 ≥0.80、旧技能 ≤0.02；≤1,500 CPU/方案、零 check；见上行 D-225 修正与实测结案。
 
-- **A3c 预注册（2026-11-21，D-20261121-222）**：[预注册](reference/DESIGN-TAIJI_U2_A3C_20261121.md)——自然措辞 5 训练/5 留出（用字已见）、门 replay ≥0.80/pos_attn ≥0.60/≥池化+0.10；≤1,500 CPU、零 check；**待批未跑**。
+- **A3c 预注册（2026-11-21，D-20261121-222；已由 D-20261121-226 执行并收束）**：[预注册](reference/DESIGN-TAIJI_U2_A3C_20261121.md)——自然措辞 5 训练/5 留出（用字已见）、门 replay ≥0.80/pos_attn ≥0.60/≥池化+0.10；≤1,500 CPU、零 check；已执行并判 **`presentation_failure`**（D-226）。
 
 - **阶段收束小结（2026-11-21，D-20261121-221）**：[小结](reference/MEMO-TAIJI_U2_PHASE_CLOSEOUT_20261121.md)——有界能力包（单位机制/读出工程/词汇接地/外部历史）；记忆机制/动作闭环/结构生长/经验巩固/自主选择均不成立；约 7,000–8,000 CPU、零 check；剩余选项三项待裁。
 

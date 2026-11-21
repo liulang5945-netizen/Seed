@@ -4951,3 +4951,13 @@ A3 首版 `cn_vocab2_partial` 作废：留出模板含训练中未出现的字�
 ## 2026-11-21 交付说明：有界能力包版（D-20261121-224，零训练零 check）
 
 写 DELIVERY-TAIJI_U2_BOUNDED_PACKAGE_20261121.md：成立（有界）——单位机制/因果/生命周期、身份胶囊恢复 ≤1e-10、三技能保留、词汇接地 0.327、中文语序（1.0/0.701）、外部历史 0.74–0.92、读出工程归因 0.472→0.967。不成立（预注册结案）——状态记忆、可学习持久存储、动作闭环、结构收益、经验巩固、自主选择/递归、开放中文（未测）。成本约 7,000–8,000 CPU、零 check/final、包 22 超支记事故、25 主窗释放。未立项占位：A3c 与架构持久状态 A/B 预注册已冻结待批；均不批则本交付为最终状态。明确非声明：模型成型/自主选择/长时记忆/动作闭环/结构收益/开放中文/真机/final/C/D/J/独立接管。
+
+
+## 2026-11-21 算法审计修正与 5 套件整体验证（D-20261121-225，`holistic_algorithm_verified`，279.55 CPU，0 check）
+
+按 owner 指示「先整体验证算法再推进」执行根因审计并完成加法修复：[taiji/u2_neural_units.py](../../../taiji/u2_neural_units.py) 保持 0 字节改动；新建 [u2_selective_units.py](../../../taiji/u2_selective_units.py)（[契约测试](../../../tests/taiji_native/test_u2_selective_units.py) 5/5+base 14/14 过，现合 `18 passed`），修复四项机制漏洞——① 四维 `[B,T,G,D]`＋每样本 `[B,N]` 状态隔离（默认 `per_sample_state=False` 严格逐位委派旧图 `diff=0.0`，旧图初值串扰 `0.0300` / 训后父串扰 `4.2854` 且 `mean_c=0.0319`）；② 跨群边 `0→750` ＋跨通道混合；③ 保留优先负写偏置（`-2.0`，20 tick 梯度比 `0.0` 放大 `>20×`）；④ 仅见末步 `t=T-1` 全通道输入的通用乘性读出门 `read_gate`（首轮无 `read_gate` 时 `M3` 卡在 `0.490/0.573/0.551`、在线流 `0.594/0.582/0.582`；合入 `read_gate` 后单调扩展）。正式 3 种子整体验证（[结果卡](../../reference/RESULT-TAIJI_U2_HOLISTIC_ALGORITHM_VERIFY_20261121.md)、[报告](../../../reports/taiji_u2_holistic_algorithm_verify_20261121.json)，`279.55 CPU`）：`M1(T=5/10/20)=1.0/1.0/1.0`（Static `0.983/0.832/0.422`）、`M2=1.0`（旧错率 `0.0`）、`M3(N=2/8/32)=0.456/0.706/1.0`、`B1=0.932/0.913`、旧技能损伤 `0.0`、`capsule_v2` 往返差 `0.0` ⇒ 13/13 门全过（`holistic_algorithm_verified`）。不签结构生长/开放中文/check/final/C/D/J。
+
+
+## 2026-11-21 A3c 自然措辞中文语序扩展（D-20261121-226，`presentation_failure`，239.27 CPU，0 check）
+
+已对齐 [A3c 设计卡](../../reference/DESIGN-TAIJI_U2_A3C_20261121.md) 第 20–25 行留出模板与 [run_s2_cn_vocab3_20261121.py](../../../scripts/training/run_s2_cn_vocab3_20261121.py)（未见字 `[]`），3 种子实测 [报告](../../../reports/taiji_u2_cn_vocab3_20261121.json)：`pos_attn 0.4490`、`mean_pool 0.2167`、`replay 0.5719`（`<0.80`）、旧技能损伤 `0.0` ⇒ 命中预注册出口 **`presentation_failure`**（位置偏移与新搭配超出单步位置注意力字符读出表征，记[结果卡](../../reference/RESULT-TAIJI_U2_A3C_20261121.md)）。依预承诺不调参重试，中文轴收束于有界 **`A3b = 0.7014`**。零 check / 零 final。
