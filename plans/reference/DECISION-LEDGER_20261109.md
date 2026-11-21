@@ -7871,3 +7871,12 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **3. 判读**：首次在同一主体顺序三任务共存；对照无保护（阶段 1b）CN/P-B 终值 0.17/0.26 ⇒ **参数级保护是必要机制**（门控不够）。关键实现修正：保护阶段 `weight_decay=0`（否则冻结参数被衰减）。限制：固定分区为实验层机制、容量隔离非协同；未测联合增益/生长/开放中文/真机；不签 check/final/C/D/J。
 
 **4. 后继**：阶段 2 学习式 top-k 路由；或将参数级任务保护写入架构候选（新 pin/capsule 字段）。累计 S1-RT 线 ≈2,474 CPU、零 check。
+
+
+### D-20261121-250 capsule_v2 加法式 task_routes：参数保护可继承（零训练、零 check）
+
+**1. 动作**：`taiji/u2_selective_units.py` 新增 `task_routes` 存储/`set_task_route`/`task_route_mask`/`export_task_routes`；`build/validate/apply_capsule_v2` 支持该字段；旧胶囊缺字段按空路由兼容。测试新增 3 项，**14 passed**。
+
+**2. 判读**：D-249 的固定分区参数保护机制现可随 capsule_v2 继承（任务→子群映射可恢复）；仍不构成协同/生长收益；零 check/final。详见 [工程卡](../reference/ENG-TAIJI_U2_CAPSULE_TASK_ROUTES_20261121.md)。
+
+**3. 后继**：阶段 2 学习式路由；或把「任务路由＋保护」用于重开 S1/23-S 的联合卡。

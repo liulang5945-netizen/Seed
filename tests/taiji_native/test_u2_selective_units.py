@@ -525,3 +525,62 @@ def test_step_mask_freezes_state_on_padding_ticks() -> None:
         assert "selective_step_mask_shape_mismatch" in str(exc)
     else:
         raise AssertionError("expected ValueError for invalid step_mask shape")
+
+
+def _v2_graph(seed: int = 7) -> SelectivePersistentGraph:
+    base = RouteBGraph(
+        UnitGraphSpec(
+            groups=6, units_per_group=5, input_dim=8, hidden_dim=8, output_dim=4, seed=seed
+        )
+    )
+    spec = SelectiveUnitSpec(
+        groups=6,
+        units_per_group=5,
+        output_dim=4,
+        readout_hidden=16,
+        per_sample_state=True,
+        selective_gate=True,
+        init_write_bias=-2.0,
+        seed=seed,
+    )
+    graph = SelectivePersistentGraph(base, spec)
+    graph.freeze_base_()
+    return graph
+
+
+def test_task_routes_roundtrip_and_mask() -> None:
+    graph = _v2_graph()
+    graph.set_task_route("cn", [0, 1, 2, 3])
+    graph.set_task_route("p24", [4, 5, 6, 7])
+    mask = graph.task_route_mask("cn")
+    assert float(mask.sum()) == 4.0
+    assert mask[0] == 1.0 and mask[4] == 0.0
+    capsule = build_capsule_v2(graph)
+    fresh = _v2_graph()
+    apply_capsule_v2(fresh, capsule)
+    assert fresh.task_routes == {"cn": [0, 1, 2, 3], "p24": [4, 5, 6, 7]}
+    assert torch.equal(fresh.task_route_mask("p24"), graph.task_route_mask("p24"))
+
+
+def test_legacy_capsule_without_task_routes_loads() -> None:
+    graph = _v2_graph()
+    graph.set_task_route("cn", [0, 1])
+    capsule = build_capsule_v2(graph)
+    legacy = {k: v for k, v in capsule.items() if k != "task_routes"}
+    from taiji.u2_selective_units import value_digest
+
+    legacy_body = {k: v for k, v in legacy.items() if k != "capsule_digest"}
+    legacy["capsule_digest"] = value_digest(legacy_body)
+    fresh = _v2_graph()
+    apply_capsule_v2(fresh, legacy)
+    assert fresh.task_routes == {}
+
+
+def test_task_route_rejects_invalid_indices() -> None:
+    graph = _v2_graph()
+    for bad in ([], [99], [1, 1]):
+        try:
+            graph.set_task_route("bad", bad)
+        except ValueError:
+            continue
+        raise AssertionError(f"expected ValueError for {bad}")

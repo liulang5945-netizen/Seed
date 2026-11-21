@@ -475,6 +475,7 @@ class SelectivePersistentGraph(nn.Module):
         self.selective_spec = selective_spec
         self.growth_generation = 0
         self.growth_cohorts: nn.ModuleList = nn.ModuleList()
+        self.task_routes: dict[str, list[int]] = {}
         self._build_selective_branch(selective_spec)
 
     def _build_selective_branch(self, spec: SelectiveUnitSpec) -> None:
@@ -637,6 +638,28 @@ class SelectivePersistentGraph(nn.Module):
         self.selective_spec = new_spec
         self.growth_generation += 1
         return list(range(old_n, new_n))
+
+    def set_task_route(self, name: str, unit_indices: list[int] | tuple[int, ...]) -> list[int]:
+        n_units = self.selective_units.n_units
+        indices = [int(i) for i in unit_indices]
+        if not indices:
+            raise ValueError("task_route_empty")
+        if any(i < 0 or i >= n_units for i in indices):
+            raise ValueError("task_route_index_out_of_range")
+        if len(set(indices)) != len(indices):
+            raise ValueError("task_route_duplicate_index")
+        self.task_routes[name] = indices
+        return list(indices)
+
+    def task_route_mask(self, name: str) -> torch.Tensor:
+        if name not in self.task_routes:
+            raise KeyError(name)
+        mask = torch.zeros(self.selective_units.n_units)
+        mask[self.task_routes[name]] = 1.0
+        return mask
+
+    def export_task_routes(self) -> dict[str, list[int]]:
+        return {name: list(indices) for name, indices in self.task_routes.items()}
 
     @property
     def total_selective_units(self) -> int:
@@ -937,6 +960,7 @@ def build_capsule_v2(
             "proposal_clock": clocks[0],
             "parameter_version": clocks[1],
         },
+        "task_routes": graph.export_task_routes(),
     }
     payload["capsule_digest"] = value_digest(payload)
     return payload
@@ -953,6 +977,17 @@ def validate_capsule_v2(capsule: dict[str, Any]) -> dict[str, Any]:
     if clocks["proposal_clock"] < clocks["parameter_version"]:
         raise ValueError("capsule_v2_clock_inversion")
     SelectiveUnitSpec(**capsule["selective_spec"])
+    routes = capsule.get("task_routes", {})
+    if not isinstance(routes, dict):
+        raise ValueError("capsule_v2_task_routes_type")
+    n_units = SelectiveUnitSpec(**capsule["selective_spec"]).n_units
+    for route_name, indices in routes.items():
+        if not isinstance(route_name, str) or not isinstance(indices, (list, tuple)):
+            raise ValueError("capsule_v2_task_route_shape")
+        if len(set(int(i) for i in indices)) != len(indices):
+            raise ValueError("capsule_v2_task_route_duplicate")
+        if any(int(i) < 0 or int(i) >= n_units for i in indices):
+            raise ValueError("capsule_v2_task_route_range")
     for item in capsule.get("growth_cohorts", []):
         SelectiveUnitSpec(**item["spec"])
         if item["lifecycle"] not in _LIFECYCLE_TO_ID:
@@ -1003,6 +1038,10 @@ def apply_capsule_v2(graph: SelectivePersistentGraph, capsule: dict[str, Any]) -
         graph.selective_spec = spec
     graph.load_selective_state_dict(capsule["selective_state_dict"])
     device = graph.selective_units.r.device
+    graph.task_routes = {
+        str(name): [int(i) for i in indices]
+        for name, indices in capsule.get("task_routes", {}).items()
+    }
     graph.growth_cohorts = nn.ModuleList()
     for item in capsule.get("growth_cohorts", []):
         c_spec = SelectiveUnitSpec(**item["spec"])
