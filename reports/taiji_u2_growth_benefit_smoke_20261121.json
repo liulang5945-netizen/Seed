@@ -1,0 +1,24 @@
+{
+  "schema": "taiji-u2-growth-benefit-smoke-v1",
+  "created_utc": "2026-11-21T15:29:17.115283+00:00",
+  "seed": 20261120,
+  "old_n": 72,
+  "new_n": 84,
+  "baseline_p27": 0.8359375,
+  "after_p27": 0.8984375,
+  "lesion_drop": 0.0,
+  "birth_neutral_readout_max": 0.329792857170105,
+  "verdict": "growth_benefit_smoke_negative",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 127.61
+  }
+}
