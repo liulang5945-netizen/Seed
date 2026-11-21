@@ -1,0 +1,23 @@
+{
+  "schema": "taiji-u2-growth-binding-smoke-v1",
+  "created_utc": "2026-11-21T15:32:54.552146+00:00",
+  "seed": 20261120,
+  "baseline_p27": 0.8359375,
+  "new_only_p27": 0.890625,
+  "old_only_p27": 0.703125,
+  "combined_p27": 0.734375,
+  "lesion_new": 0.03125,
+  "verdict": "growth_binding_partial",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 128.5
+  }
+}
