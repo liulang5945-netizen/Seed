@@ -1,0 +1,224 @@
+{
+  "schema": "taiji-u2-cognitive-loop-v1",
+  "card": "D-20261121-228 Stage-2 cognitive loop closure on SelectivePersistentGraph",
+  "created_utc": "2026-11-21T05:43:30.181703+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      20261120,
+      20261121,
+      20261122
+    ],
+    "cap_cpu": 1200.0,
+    "fit_offset": 10000000
+  },
+  "rows": [
+    {
+      "seed": 20261120,
+      "loop1_step_mask_cn": {
+        "unmasked_bi_acc": 1.0,
+        "masked_bi_acc": 1.0,
+        "unmasked_adv_acc": 0.9312499761581421,
+        "masked_adv_acc": 0.981249988079071,
+        "unseen_chars": []
+      },
+      "loop2_p24_consolidation": {
+        "overall_acc": 1.0,
+        "stale_acc": 1.0,
+        "revocation_acc": 1.0,
+        "misleading_acc": 1.0,
+        "unprotected_misleading_acc": 0.0,
+        "contradiction_val_acc": 1.0,
+        "contradiction_detect_acc": 1.0,
+        "contradiction_pos_recall": 1.0,
+        "no_consolidation_acc": 0.25,
+        "consolidation_gain": 0.75,
+        "old_skill_damage": 0.0,
+        "capsule_v2_max_abs_diff": 0.0
+      },
+      "loop3_p26_epistemic": {
+        "net_utility": 0.5833333134651184,
+        "always_act_utility": 0.15625,
+        "always_query_utility": 0.31562501192092896,
+        "always_wait_utility": -0.05000000819563866,
+        "known_act_rate": 1.0,
+        "ambiguous_query_rate": 1.0,
+        "unresolvable_wait_rate": 1.0,
+        "ambiguous_turn1_acc": 1.0,
+        "ambiguous_turn1_permuted_acc": 0.359375,
+        "brier_score": 0.15268374979496002
+      },
+      "loop4_p27_p28": {
+        "physics_acc": 0.9375,
+        "physics_no_probe_acc": 0.3828125,
+        "physics_probe_drop": 0.5546875,
+        "selective_t40_acc": 1.0,
+        "static_c_t40_acc": 0.96484375,
+        "crash_recovery_max_abs_diff": 0.0
+      }
+    },
+    {
+      "seed": 20261121,
+      "loop1_step_mask_cn": {
+        "unmasked_bi_acc": 1.0,
+        "masked_bi_acc": 0.996874988079071,
+        "unmasked_adv_acc": 0.9906250238418579,
+        "masked_adv_acc": 0.9906250238418579,
+        "unseen_chars": []
+      },
+      "loop2_p24_consolidation": {
+        "overall_acc": 1.0,
+        "stale_acc": 1.0,
+        "revocation_acc": 1.0,
+        "misleading_acc": 1.0,
+        "unprotected_misleading_acc": 0.0,
+        "contradiction_val_acc": 1.0,
+        "contradiction_detect_acc": 1.0,
+        "contradiction_pos_recall": 1.0,
+        "no_consolidation_acc": 0.2421875,
+        "consolidation_gain": 0.7578125,
+        "old_skill_damage": 0.0,
+        "capsule_v2_max_abs_diff": 0.0
+      },
+      "loop3_p26_epistemic": {
+        "net_utility": 0.5614583492279053,
+        "always_act_utility": 0.1822916716337204,
+        "always_query_utility": 0.27395835518836975,
+        "always_wait_utility": -0.05000000819563866,
+        "known_act_rate": 0.671875,
+        "ambiguous_query_rate": 1.0,
+        "unresolvable_wait_rate": 1.0,
+        "ambiguous_turn1_acc": 1.0,
+        "ambiguous_turn1_permuted_acc": 0.5234375,
+        "brier_score": 0.1540328860282898
+      },
+      "loop4_p27_p28": {
+        "physics_acc": 0.91015625,
+        "physics_no_probe_acc": 0.3359375,
+        "physics_probe_drop": 0.57421875,
+        "selective_t40_acc": 1.0,
+        "static_c_t40_acc": 0.73828125,
+        "crash_recovery_max_abs_diff": 0.0
+      }
+    },
+    {
+      "seed": 20261122,
+      "loop1_step_mask_cn": {
+        "unmasked_bi_acc": 1.0,
+        "masked_bi_acc": 0.996874988079071,
+        "unmasked_adv_acc": 0.9375,
+        "masked_adv_acc": 0.9750000238418579,
+        "unseen_chars": []
+      },
+      "loop2_p24_consolidation": {
+        "overall_acc": 1.0,
+        "stale_acc": 1.0,
+        "revocation_acc": 1.0,
+        "misleading_acc": 1.0,
+        "unprotected_misleading_acc": 0.0,
+        "contradiction_val_acc": 1.0,
+        "contradiction_detect_acc": 1.0,
+        "contradiction_pos_recall": 1.0,
+        "no_consolidation_acc": 0.23828125,
+        "consolidation_gain": 0.76171875,
+        "old_skill_damage": 0.0,
+        "capsule_v2_max_abs_diff": 0.0
+      },
+      "loop3_p26_epistemic": {
+        "net_utility": 0.5833333134651184,
+        "always_act_utility": 0.15625,
+        "always_query_utility": 0.28437504172325134,
+        "always_wait_utility": -0.05000000819563866,
+        "known_act_rate": 1.0,
+        "ambiguous_query_rate": 1.0,
+        "unresolvable_wait_rate": 1.0,
+        "ambiguous_turn1_acc": 1.0,
+        "ambiguous_turn1_permuted_acc": 0.4921875,
+        "brier_score": 0.14613255858421326
+      },
+      "loop4_p27_p28": {
+        "physics_acc": 0.921875,
+        "physics_no_probe_acc": 0.3515625,
+        "physics_probe_drop": 0.5703125,
+        "selective_t40_acc": 1.0,
+        "static_c_t40_acc": 0.7890625,
+        "crash_recovery_max_abs_diff": 0.0
+      }
+    }
+  ],
+  "summary": {
+    "loop1_step_mask_cn": {
+      "unmasked_bi_acc": 1.0,
+      "masked_bi_acc": 0.9979166587193807,
+      "unmasked_adv_acc": 0.953125,
+      "masked_adv_acc": 0.9822916785875956,
+      "unseen_chars": []
+    },
+    "loop2_p24_consolidation": {
+      "overall_acc": 1.0,
+      "stale_acc": 1.0,
+      "revocation_acc": 1.0,
+      "misleading_acc": 1.0,
+      "unprotected_misleading_acc": 0.0,
+      "contradiction_val_acc": 1.0,
+      "contradiction_detect_acc": 1.0,
+      "contradiction_pos_recall": 1.0,
+      "no_consolidation_acc": 0.24348958333333334,
+      "consolidation_gain": 0.7565104166666666,
+      "old_skill_damage_max": 0.0,
+      "capsule_v2_max_abs_diff": 0.0
+    },
+    "loop3_p26_epistemic": {
+      "net_utility": 0.5760416587193807,
+      "always_act_utility": 0.16493055721124014,
+      "always_query_utility": 0.29131946961085003,
+      "always_wait_utility": -0.05000000819563866,
+      "known_act_rate": 0.890625,
+      "ambiguous_query_rate": 1.0,
+      "unresolvable_wait_rate": 1.0,
+      "ambiguous_turn1_acc": 1.0,
+      "ambiguous_turn1_permuted_acc": 0.4583333333333333,
+      "brier_score": 0.15094973146915436
+    },
+    "loop4_p27_p28": {
+      "physics_acc": 0.9231770833333334,
+      "physics_no_probe_acc": 0.3567708333333333,
+      "physics_probe_drop": 0.56640625,
+      "selective_t40_acc": 1.0,
+      "static_c_t40_acc": 0.8307291666666666,
+      "crash_recovery_max_abs_diff": 0.0
+    }
+  },
+  "gates": {
+    "l1_bi_ge_085": true,
+    "l1_adv_beats_no_mask": false,
+    "l1_adv_scope_ge_075": true,
+    "l1_unseen_chars_zero": true,
+    "l2_stale_and_revocation_ge_085": true,
+    "l2_misleading_resistance_ge_085": true,
+    "l2_unprotected_control_fails": true,
+    "l2_contradiction_detected_ge_085": true,
+    "l2_consolidation_gain_and_retention": true,
+    "l3_beats_all_fixed_policies": true,
+    "l3_regime_routing_accurate": true,
+    "l3_turn1_after_query_ge_085": true,
+    "l3_permuted_reveal_drop_ge_035": true,
+    "l3_calibration_brier_le_015": false,
+    "l4_physics_acc_ge_085": true,
+    "l4_physics_no_probe_drop_ge_030": true,
+    "l4_long_horizon_t40_ge_090": false,
+    "l4_mid_episode_crash_recovery_exact": true
+  },
+  "verdict": "cognitive_loop_partial",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 497.31
+  }
+}

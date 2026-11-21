@@ -7612,3 +7612,47 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
   - 判词：**`presentation_failure`**。
 - **裁决**：命中预注册 `presentation_failure`（单字虽全已见但自然句式位置分布与新搭配超出字符级绝对位置注意力表征能力）；依 D-222 预承诺不调参重试，中文轴正式收束于有界 **`A3b = 0.7014`**（`cn_vocab2_verified`），记 `RESULT-TAIJI_U2_A3C_20261121.md`。
 
+---
+
+### D-20261121-227：四轴选择性持久状态能力桥接验证（`16/17` 门通过、`selective_bridge_partial`、`485.27 CPU`、0 check / 0 final）
+- **背景与目标**：在不改动 `taiji/u2_neural_units.py` 与不降门禁前提下，验证加法模块 `taiji/u2_selective_units.py` 的四项桥接能力（等 FLOPs 架构对比、两代中性生长与 H2 可逆休眠损伤、无位置嵌入因果中文、二值正误闭环动作纠错），复现脚本 [verify_taiji_selective_bridge_20261121.py](../../scripts/training/verify_taiji_selective_bridge_20261121.py)，报告 [taiji_u2_selective_bridge_20261121.json](../../reports/taiji_u2_selective_bridge_20261121.json)，结果卡 [RESULT-TAIJI_U2_SELECTIVE_BRIDGE_20261121.md](RESULT-TAIJI_U2_SELECTIVE_BRIDGE_20261121.md)。
+- **关键机制实证与修复**：
+  - 在 `_AntitheticSelectiveCohort` 中引入 `torch.random.fork_rng` 确定性初始化与冻结出生参照锚点（`freeze_anchor=True`, `delta = pos_out - no_grad(neg_out)`），并在训练态仅针对 `lifecycle == "immature"` 子群叠加发育局部辅助监督（`lambda = 0.5`，成熟晋升后与全部推理期自动关闭），解决冻结 `g0` 压制引发的写门解释消去饥饿。
+- **四轴结果（3 种子均值，`cpu = 485.27 <= 1200.0`）**：
+  - **Bridge 1 等 FLOPs (`3/3`)**：`Selective = 1.0000`（`216,832` FLOPs）vs 因果 `Transformer = 1.0000`（`215,552`, 比 `0.9941`）vs `GRU H=35 = 0.5299`（`218,352`, 比 `1.0070`）。
+  - **Bridge 2 两代中性生长 (`7/7`)**：`g0=0.5508 -> g1=0.8607 -> gen2=1.0000`（功能单位 `4->12->28`、总孪生 `52`）胜过等步 `G5_fixed_n4=0.5273` 并追平 `G6_prealloc_n32=1.0000`；`birth_diff_max=0.0`、`newborn_step1_grad_min=0.000331`、`lesion_drop=+0.4492`、`restored_diff_max=0.0`、`old_skill_damage_max=0.0`、`capsule_v2_max_abs_diff=0.0`。
+  - **Bridge 3 因果中文 (`2/3`)**：Exact `A3c` **`0.8031`** vs `PosAttentionRead 0.5552`（过门）；去混淆双向 `0.7094` vs `0.4187`（对抗范围 `0.6115`，未见字 `[]`），`b3_bidirectional_ge_080 = false`（不放宽 `0.80` 门禁，维持有界范围）。
+  - **Bridge 4 二值动作反馈 (`4/4`)**：`turn0=0.4648 -> turn1_with_feedback=0.8984`（`no_fb=0.4440`，`permuted_fb=0.4596`，`error_correction_rate=0.8138`）。
+- **裁决**：记为 `16/17` 门通过、`selective_bridge_partial`（唯 `b3_bidirectional_ge_080 = false`）；零 check / 零 final；维持不签模型成型 / 25–27 / C / D / J，[u2_neural_units.py](../../taiji/u2_neural_units.py) 保持零改动。
+
+---
+
+### D-20261121-228：第二阶段认知闭环验证（`15/18` 门通过、`cognitive_loop_partial`、`497.31 CPU`、0 check / 0 final）
+- **背景与实现**：在 [u2_selective_units.py](../../taiji/u2_selective_units.py) 仅新增可选 `step_mask` 填充冻结（默认 `None` 零改动），经首轮诊断（`task-1673`, `647.08 CPU`, `6/17`）与两轮机制定位（32 维字向量消去碰撞、2 实体 `N=48` 五会话、Q 值 MSE 纯效用回归、长间隔 `t_target < 20`），由 [verify_taiji_cognitive_loop_20261121.py](../../scripts/training/verify_taiji_cognitive_loop_20261121.py) 完成 3 种子验证，报告 [taiji_u2_cognitive_loop_20261121.json](../../reports/taiji_u2_cognitive_loop_20261121.json)，结果卡 [RESULT-TAIJI_U2_COGNITIVE_LOOP_20261121.md](RESULT-TAIJI_U2_COGNITIVE_LOOP_20261121.md)。
+- **四闭环实测（3 种子均值，`cpu = 497.31 <= 1200.0`）**：
+  - **Loop 1 双向中文 (`3/4`)**：32 维合法通道零位置嵌入下 `masked_bi_acc = 0.9979`、`masked_adv_acc = 0.9823`（未见字 `[]`）；`l1_adv_beats_no_mask = false`（因无掩码 `0.9531` 已触 `1.0` 天花板，残差错误仍降 62%）。
+  - **Loop 2 P24 五会话四类纠错 (`5/5`)**：`overall / stale / revocation / misleading / contradiction` 全 `1.0000`、`unprotected = 0.0000`、`no_consolidation = 0.2435`（增益 `+0.7565`）、旧技能损伤 `0.0`、`tick=9` 跨会话 `capsule_v2`＋状态重连 `0.0`。
+  - **Loop 3 P26 自主选择 (`4/5`)**：Q 值纯效用（零 regime 真值）实得效用 `0.5760`（最佳固定对照 `0.2913`，`+0.2847`）；三态路由 `0.8906 / 1.0000 / 1.0000`；Turn 1 `1.0000` vs 置换 `0.4583`；`brier = 0.1509` 贴近理论 Bayes 下界 `0.1458`（`l3_calibration_brier_le_015 = false`）。
+  - **Loop 4 P27/P28 遮挡物理＋`T=40` (`3/4`)**：4 类一维遮挡摩擦物理 `0.9232`（`no_probe` 降 `0.5664`）；`T=40` `selective = 1.0000`（`t=20` 崩溃重连 `0.0`），领先 `static_c (0.8307)` `+0.1693 < +0.40`（`l4_long_horizon_t40_ge_090 = false`）。
+- **裁决**：按铁律 4 读后不降门禁，记 **`15/18` 通过、`cognitive_loop_partial`**（`0 check / 0 final`），[u2_neural_units.py](../../taiji/u2_neural_units.py) 保持零改动；维持不签模型成型（29）/ 真机控制 / 开放中文 / C / D / J。
+
+---
+
+### D-20261121-229：主线单线收编修订（旧 RouteB 22–25 封存，统一至 `SelectivePersistentGraph` 单一执行队列，零训练零 check）
+- **背景与原因**：前期旧 RouteB 线（`22.1–22.8` 及 `23–25` 收口）与新加法核心 `SelectivePersistentGraph` 预验证线（`D-225/227/228`）在文档状态栏中并行呈现，`MAINLINE.md` `§0.1 / §3 / 执行位置`、`plans/README.md` 及 `MASTER-PLAN.md` 顶部仍残留 `22.5.1 / 22.5.2 / 22.7 当前队首` 过时表述。
+- **修订内容**：
+  1. **旧线正式封存（零新开发）**：`taiji/u2_neural_units.py` 冻结不变；包 `22.1–22.8`（D-160）与旧 RouteB `23–25`（D-176/183/188）均归为已封存历史基线。
+  2. **单一活动执行序列（零双线）**：`S0`（核心重构与分轴合成闭环预验证：`D-225` `13/13`、`D-227` `16/17`、`D-228` `15/18` [结果卡](RESULT-TAIJI_U2_COGNITIVE_LOOP_20261121.md)，已完成，零 check）→ **`S1`（▶ 当前唯一队首：同主体单一谱系多能力联合生命流演练，零 check/final）**→ `23-S → 24-S → 25-S → 26-S → 27-S → 28-S`（继承 `S1` 唯一接受父、逐包实价授权重开正式多世界/真实动力学合同，当前未准入）→ `29`（唯一冻结 `R0`，`Q >= 0.95`）→ `30` → `§15` 运营状态机。
+- **裁决**：零代码修改、零训练、零 check/final；同步更新 [MAINLINE.md](../MAINLINE.md)、[MASTER-PLAN.md](../MASTER-PLAN.md)、[README.md](../README.md) 与 [03_CURRENT_EXECUTION.md](../active/roadmap/03_CURRENT_EXECUTION.md)，以唯一主线为准消除双线歧义。
+
+
+
+### D-20261121-230 新核心主线计划补全：§3A S1/23-S..28-S 合同 + 旧线封存标注（零训练、零 check）
+
+**1. 背景**：D-229 单线收编只完成 §0.3 队列表与状态行，正文 §3（22.5.2–22.8）与 §4.1/§4.2（旧 23–28 表）仍是旧线合同，且 `S1` 无执行合同——计划“修订一半”。
+
+**2. 动作**：① MAINLINE 新增 **§3A 新核心唯一活动执行合同**：`S1` 同主体联合生命流（P-A 中文 / P-B 四类纠错 / P-C 自主选择 / P-D 遮挡物理 / P-E 两代中性生长 / P-F 冷载恢复；门与预算 `<= 2,000 CPU / 3 seed`、零 check/final、五出口）；`23-S..28-S` 阶梯表（每包 `.0` 重冻 pin、重定价、owner 授权；`check <= 2`、final 冻结；`S1` 通过前不解锁）。② 旧 §3、§4.1、§4.2 加“已封存/旧 RouteB 仅历史参考”标注。③ 新增 [S1 预注册](../reference/DESIGN-TAIJI_U2_S1_LIFELINE_20261121.md)。④ 能力总表新增 §16 新核心口径（替换旧 §1 过时记忆/中文行）。⑤ §0.3/执行位置引用改 `§3A.2`。
+
+**3. 判读**：计划修订**完成**，当前唯一队首＝`S1`；旧线不再可行执行。不签任何能力；零训练、零 check。
+
+**4. 后继**：实现并运行 `S1`（≤2,000 CPU、3 seed、零 check/final）；`s1_verified` 后按 §3A.2 启动 `23-S.0`。

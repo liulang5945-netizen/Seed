@@ -472,3 +472,56 @@ def test_capsule_v2_roundtrip_preserves_multi_gen_antithetic_cohorts(tmp_path: P
         out_a = graph(seq, gates, graph.initial_state(batch_size=4))["readout"]
         out_b = fresh(seq, gates, fresh.initial_state(batch_size=4))["readout"]
     assert float((out_a - out_b).abs().max()) <= 1e-10
+
+
+def test_step_mask_freezes_state_on_padding_ticks() -> None:
+    base_graph = RouteBGraph(
+        UnitGraphSpec(groups=1, units_per_group=4, output_dim=4, seed=951, dtype="float64")
+    )
+    sel_spec = SelectiveUnitSpec(
+        groups=1,
+        units_per_group=4,
+        output_dim=4,
+        readout_hidden=16,
+        per_sample_state=True,
+        selective_gate=True,
+        seed=951,
+        dtype="float64",
+    )
+    graph = SelectivePersistentGraph(base_graph, sel_spec)
+    graph.grow_antithetic_cohort_(groups=2, units_per_group=2, readout_hidden=16, seed=952)
+    with torch.no_grad():
+        c0 = cast(_AntitheticSelectiveCohort, graph.growth_cohorts[0])
+        cast(nn.Linear, c0.pos_readout[2]).weight.add_(0.25)
+
+    seq5 = {k: v.to(torch.float64) for k, v in _sample_channels(4, steps=5, seed=953).items()}
+    gates5 = torch.ones(4, 5, 4, dtype=torch.float64)
+    ones5 = torch.ones(4, 5, dtype=torch.float64)
+
+    noise3 = {k: v.to(torch.float64) for k, v in _sample_channels(4, steps=3, seed=954).items()}
+    seq8 = {k: torch.cat([seq5[k], noise3[k]], dim=1) for k in LEGAL_INPUT_CHANNELS}
+    for k in LEGAL_INPUT_CHANNELS:
+        seq8[k][:, -1, :] = seq5[k][:, -1, :]
+    gates8 = torch.ones(4, 8, 4, dtype=torch.float64)
+    mask8 = torch.tensor([[1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0]], dtype=torch.float64).expand(
+        4, 8
+    )
+
+    with torch.no_grad():
+        out_none = graph(seq5, gates5, graph.initial_state(batch_size=4))
+        out_ones = graph(seq5, gates5, graph.initial_state(batch_size=4), step_mask=ones5)
+        out_pad = graph(seq8, gates8, graph.initial_state(batch_size=4), step_mask=mask8)
+
+    assert float((out_none["readout"] - out_ones["readout"]).abs().max()) <= 1e-12
+    assert float((out_none["unit_result"]["z"] - out_ones["unit_result"]["z"]).abs().max()) <= 1e-12
+    assert float((out_none["unit_result"]["z"] - out_pad["unit_result"]["z"]).abs().max()) <= 1e-12
+    assert float((out_none["unit_result"]["a"] - out_pad["unit_result"]["a"]).abs().max()) <= 1e-12
+    assert float((out_pad["unit_result"]["write_trace"][:, 5:, :]).abs().max()) <= 1e-12
+
+    bad_mask = torch.ones(4, 3, dtype=torch.float64)
+    try:
+        graph(seq5, gates5, graph.initial_state(batch_size=4), step_mask=bad_mask)
+    except ValueError as exc:
+        assert "selective_step_mask_shape_mismatch" in str(exc)
+    else:
+        raise AssertionError("expected ValueError for invalid step_mask shape")

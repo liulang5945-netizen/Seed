@@ -4961,3 +4961,20 @@ A3 首版 `cn_vocab2_partial` 作废：留出模板含训练中未出现的字�
 ## 2026-11-21 A3c 自然措辞中文语序扩展（D-20261121-226，`presentation_failure`，239.27 CPU，0 check）
 
 已对齐 [A3c 设计卡](../../reference/DESIGN-TAIJI_U2_A3C_20261121.md) 第 20–25 行留出模板与 [run_s2_cn_vocab3_20261121.py](../../../scripts/training/run_s2_cn_vocab3_20261121.py)（未见字 `[]`），3 种子实测 [报告](../../../reports/taiji_u2_cn_vocab3_20261121.json)：`pos_attn 0.4490`、`mean_pool 0.2167`、`replay 0.5719`（`<0.80`）、旧技能损伤 `0.0` ⇒ 命中预注册出口 **`presentation_failure`**（位置偏移与新搭配超出单步位置注意力字符读出表征，记[结果卡](../../reference/RESULT-TAIJI_U2_A3C_20261121.md)）。依预承诺不调参重试，中文轴收束于有界 **`A3b = 0.7014`**。零 check / 零 final。
+
+## 2026-11-21 四轴能力桥接验证（D-20261121-227，`16/17` 门通过，`485.27 CPU`，0 check）
+
+基于零改动 `u2_neural_units.py` 的加法模块 [u2_selective_units.py](../../../taiji/u2_selective_units.py) 完成四轴桥接脚本 [verify_taiji_selective_bridge_20261121.py](../../../scripts/training/verify_taiji_selective_bridge_20261121.py)（报告 [taiji_u2_selective_bridge_20261121.json](../../../reports/taiji_u2_selective_bridge_20261121.json)，结果卡 [RESULT-TAIJI_U2_SELECTIVE_BRIDGE_20261121.md](../../reference/RESULT-TAIJI_U2_SELECTIVE_BRIDGE_20261121.md)）：`16/17` 门通过（Strict `selective_bridge_partial`，`485.27 CPU <= 1200.0`，`0 check / 0 final`）。Bridge 1 等 FLOPs（`3/3`：`Selective 1.0000` vs `Transformer 1.0000` vs `GRU H=35 0.5299`）；Bridge 2 经确定性冻结出生锚点与仅限 `immature` 期发育辅助监督消除写门饥饿后两代生长与 H2 损伤全过（`7/7`：`0.5508 -> 0.8607 -> 1.0000`、`G5=0.5273`、`G6=1.0000`、`birth_diff=0.0`、`lesion_drop=+0.4492`、`old_skill_damage=0.0`、`capsule_v2=0.0`）；Bridge 3 Exact `A3c` 过门（`0.8031` vs `0.5552`）而双向规则 `0.7094 < 0.80` 诚实不放宽；Bridge 4 二值正误反馈闭环纠错全过（`4/4`：`turn0=0.4648 -> turn1=0.8984`、`no_fb=0.4440`、`perm_fb=0.4596`、`corr=0.8138`）。
+
+## 2026-11-21 第二阶段认知闭环验证（D-20261121-228，`15/18` 门通过，`497.31 CPU`，0 check）
+
+在 [u2_selective_units.py](../../../taiji/u2_selective_units.py) 加法新增可选 `step_mask`（单测 [test_u2_selective_units.py](../../../tests/taiji_native/test_u2_selective_units.py) 24 passed），完成四闭环脚本 [verify_taiji_cognitive_loop_20261121.py](../../../scripts/training/verify_taiji_cognitive_loop_20261121.py)（报告 [taiji_u2_cognitive_loop_20261121.json](../../../reports/taiji_u2_cognitive_loop_20261121.json)，结果卡 [RESULT-TAIJI_U2_COGNITIVE_LOOP_20261121.md](../../reference/RESULT-TAIJI_U2_COGNITIVE_LOOP_20261121.md)）：`15/18` 门通过（不松弛门禁，`verdict = cognitive_loop_partial`，`497.31 CPU <= 1200.0`，`0 check / 0 final`）。Loop 1 双向中文 `masked_bi 0.9979`、`masked_adv 0.9823`（`unmasked_adv 0.9531` 触天花板致 `+0.05` 差未过）；Loop 2 P24 2 实体 5 会话四类纠错全种子 `1.0000`、`unprotected 0.0`、`gain +0.7565`、`old_skill_damage 0.0`、`capsule_v2 0.0`；Loop 3 P26 纯效用 Q 值回归实得效用 `0.5760`（胜固定 `+0.2847`）、路由 `0.8906/1.0/1.0`、Turn 1 `1.0000`（置换 `0.4583`）、`brier 0.1509` 贴近理论 Bayes 下界 `0.1458`；Loop 4 遮挡摩擦物理 `0.9232`（拔除探测 `-0.5664`）、`T=40 selective 1.0000`（`static_c 0.8307`）与 `t=20` 崩溃恢复 `0.0`。
+
+## 2026-11-21 主线单线收编修订（D-20261121-229，零训练零 check）
+
+依用户指令「先把计划修订一下，当前双线是混乱的」，在零代码训练、零 `check/final` 读取下完成计划树单线收编（详见 [总计划 MAINLINE.md](../../MAINLINE.md#执行位置)）：将历史包 `22.1–22.8`（`package22_closed_partial`）与旧 RouteB `23–25`（`23 composition_partial` / `24 experience_learning_partial` / `25 structural_pressure_absent`，对应零改动冻结的 [u2_neural_units.py](../../../taiji/u2_neural_units.py)）正式归入**已封存旧基线**；统一建立基于 [u2_selective_units.py](../../../taiji/u2_selective_units.py) 的唯一后续执行序列 **`S0(已完成：D-225/227/228，零 check) → S1(▶ 当前唯一队首：同主体单一谱系联合生命流演练，零 check/final) → 23-S..28-S(新核心正式合同重入，未准入) → 29 → 30 → §15`**，消除原“旧 22.7/22.5.2 队列描述与新核心 D-225–228 并行”的文档冲突。
+
+
+## 2026-11-21 新核心主线计划补全（D-20261121-230，零训练零 check）
+
+补完 D-229 未完成的计划修订（此前只完成 §0.3 单线收编表与状态行）：① MAINLINE 新增 **§3A 新核心唯一活动执行合同**——`S1` 同主体联合生命流演练（P-A 中文 / P-B 四类纠错 / P-C 自主选择 / P-D 遮挡物理 / P-E 两代中性生长 / P-F 冷载恢复；全部门与预算 `<= 2,000 CPU / 3 seed`、零 check/final）＋ `23-S..28-S` 新核心重入阶梯表（每包 `.0` 重冻 pin/重定价/owner 授权，`check <= 2`、`final` 冻结，`S1` 通过前不解锁）；② 旧 **§3（22.5.2–22.8）** 与 **§4.1/§4.2（旧 23–28 表）** 加封存标注，只作回归基线；③ 新增 [S1 预注册](../../reference/DESIGN-TAIJI_U2_S1_LIFELINE_20261121.md)；④ 能力总表新增 §16 新核心口径（替换旧 §1 的过时记忆/中文行）；⑤ §0.3 与执行位置引用改为 §3A.2。下一步＝实现并运行 `S1`（唯一队首）。

@@ -199,6 +199,8 @@ class SelectiveNeuralUnits(nn.Module):
         inputs: torch.Tensor,
         gates: torch.Tensor,
         state: dict[str, torch.Tensor],
+        *,
+        step_mask: torch.Tensor | None = None,
     ) -> dict[str, Any]:
         """Step selective units over explicit ``inputs [B, T, G, D]`` and ``state [B, N]``."""
         if inputs.ndim != 4:
@@ -215,6 +217,12 @@ class SelectiveNeuralUnits(nn.Module):
             or a_prev.shape != (batch_size, self.n_units)
         ):
             raise ValueError("selective_state_must_be_BN_per_sample")
+
+        mask_bt: torch.Tensor | None = None
+        if step_mask is not None:
+            if step_mask.ndim != 2 or step_mask.shape != (batch_size, steps):
+                raise ValueError("selective_step_mask_shape_mismatch")
+            mask_bt = step_mask.to(dtype=inputs.dtype, device=inputs.device)
 
         gates_bt = self._normalize_gates(gates, batch_size, steps)
         active_mask = (
@@ -246,18 +254,27 @@ class SelectiveNeuralUnits(nn.Module):
                     + self.write_bias.unsqueeze(0)
                 )
                 write_g = torch.sigmoid(write_logits)
-                z = ((1.0 - write_g) * z + write_g * candidate) * active_mask
+                z_cand = ((1.0 - write_g) * z + write_g * candidate) * active_mask
             else:
                 c = self.c.unsqueeze(0)
                 write_g = 1.0 - c.expand(batch_size, self.n_units)
-                z = (c * z + write_g * candidate) * active_mask
+                z_cand = (c * z + write_g * candidate) * active_mask
             eta = self.eta.unsqueeze(0)
-            a = ((1.0 - eta) * a + eta * z) * active_mask
+            a_cand = ((1.0 - eta) * a + eta * z_cand) * active_mask
+            if mask_bt is not None:
+                m = mask_bt[:, tick : tick + 1]
+                z = (m * z_cand + (1.0 - m) * z) * active_mask
+                a = (m * a_cand + (1.0 - m) * a) * active_mask
+                write_recorded = write_g * active_mask * m
+            else:
+                z = z_cand
+                a = a_cand
+                write_recorded = write_g * active_mask
             unit_activity = gate * z
             activity.append(unit_activity)
             z_trace.append(z)
             a_trace.append(a)
-            write_trace.append(write_g * active_mask)
+            write_trace.append(write_recorded)
 
         stacked_activity = torch.stack(activity, dim=1)
         return {
@@ -347,6 +364,8 @@ class _AntitheticSelectiveCohort(nn.Module):
         mix: nn.Linear,
         read_gate: nn.Linear,
         readout: nn.Sequential,
+        *,
+        step_mask: torch.Tensor | None = None,
     ) -> torch.Tensor:
         batch_size, steps = raw_seq.shape[0], raw_seq.shape[1]
         enc = mix(raw_seq).reshape(
@@ -355,13 +374,22 @@ class _AntitheticSelectiveCohort(nn.Module):
         gates = torch.ones(
             batch_size, steps, self.cohort_spec.n_units, dtype=raw_seq.dtype, device=raw_seq.device
         )
-        res = units(enc, gates, units.initial_state(batch_size, device=raw_seq.device))
+        res = units(
+            enc,
+            gates,
+            units.initial_state(batch_size, device=raw_seq.device),
+            step_mask=step_mask,
+        )
         state_final = torch.cat([res["z"], res["a"]], dim=-1)
         read_g = torch.sigmoid(read_gate(raw_final))
         return cast(torch.Tensor, readout(state_final * read_g))
 
     def forward_parts(
-        self, raw_seq: torch.Tensor, raw_final: torch.Tensor
+        self,
+        raw_seq: torch.Tensor,
+        raw_final: torch.Tensor,
+        *,
+        step_mask: torch.Tensor | None = None,
     ) -> tuple[torch.Tensor, torch.Tensor]:
         if self.lifecycle not in {"immature", "mature"}:
             zeros = torch.zeros(
@@ -372,7 +400,13 @@ class _AntitheticSelectiveCohort(nn.Module):
             )
             return zeros, zeros
         pos_out = self._run_twin(
-            raw_seq, raw_final, self.pos_units, self.pos_mix, self.pos_read_gate, self.pos_readout
+            raw_seq,
+            raw_final,
+            self.pos_units,
+            self.pos_mix,
+            self.pos_read_gate,
+            self.pos_readout,
+            step_mask=step_mask,
         )
         if self.freeze_anchor:
             with torch.no_grad():
@@ -383,6 +417,7 @@ class _AntitheticSelectiveCohort(nn.Module):
                     self.neg_mix,
                     self.neg_read_gate,
                     self.neg_readout,
+                    step_mask=step_mask,
                 )
         else:
             neg_out = self._run_twin(
@@ -392,11 +427,18 @@ class _AntitheticSelectiveCohort(nn.Module):
                 self.neg_mix,
                 self.neg_read_gate,
                 self.neg_readout,
+                step_mask=step_mask,
             )
         return pos_out - neg_out, pos_out
 
-    def forward(self, raw_seq: torch.Tensor, raw_final: torch.Tensor) -> torch.Tensor:
-        return self.forward_parts(raw_seq, raw_final)[0]
+    def forward(
+        self,
+        raw_seq: torch.Tensor,
+        raw_final: torch.Tensor,
+        *,
+        step_mask: torch.Tensor | None = None,
+    ) -> torch.Tensor:
+        return self.forward_parts(raw_seq, raw_final, step_mask=step_mask)[0]
 
     def export_state(self) -> dict[str, Any]:
         return {
@@ -822,6 +864,7 @@ class SelectivePersistentGraph(nn.Module):
         state: dict[str, torch.Tensor] | None = None,
         *,
         head: int = 0,
+        step_mask: torch.Tensor | None = None,
     ) -> dict[str, Any]:
         if not self.per_sample_state:
             if state is None:
@@ -834,7 +877,7 @@ class SelectivePersistentGraph(nn.Module):
         batch_size, steps = encoded.shape[0], encoded.shape[1]
         if state is None:
             state = self.initial_state(batch_size=batch_size)
-        unit_result = self.selective_units(encoded, gates, state)
+        unit_result = self.selective_units(encoded, gates, state, step_mask=step_mask)
         # Strictly final tick state + final tick raw channels only: zero KV history.
         state_final = torch.cat([unit_result["z"], unit_result["a"]], dim=-1)
         read_g = torch.sigmoid(self.read_gate(self._final_raw_channels(channels)))
@@ -845,7 +888,7 @@ class SelectivePersistentGraph(nn.Module):
             raw_seq, raw_final = self._raw_sequence_and_final(channels)
             for cohort in self.growth_cohorts:
                 typed_cohort = cast(_AntitheticSelectiveCohort, cohort)
-                delta, pos_out = typed_cohort.forward_parts(raw_seq, raw_final)
+                delta, pos_out = typed_cohort.forward_parts(raw_seq, raw_final, step_mask=step_mask)
                 readout = readout + delta
                 if typed_cohort.lifecycle == "immature":
                     immature_cohort_logits.append(pos_out)

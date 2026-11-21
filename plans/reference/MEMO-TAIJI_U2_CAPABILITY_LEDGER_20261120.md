@@ -130,3 +130,47 @@
 2. **动作接地重评（修正 D-215 A2 暂闭口径）**：无槽位碰撞的 5 训 / 2 留出（已见字）基准 `B1` 上，`compositional_slot_binding = 0.9323`、`selective_unit_binding = 0.9128`（`flat_mlp = 0.9349`），证实此前 `0.784` 源自少模板加权拼接而非结构不可学；真机与闭环多步控制仍未测、继续关闭。
 3. **中文轴最终收束（`D-20261121-226` `A3c`）**：见 [RESULT-TAIJI_U2_A3C_20261121.md](RESULT-TAIJI_U2_A3C_20261121.md)。5 训练 / 5 自然留出模板（全已见字）实测 `replay = 0.5719 < 0.80`、`pos_attn = 0.4490`、`mean_pool = 0.2167`、`retention_damage = 0.0`，命中预注册出口 **`presentation_failure`**（`239.27 CPU`）。按 D-222 承诺收束中文轴于有界 **`A3b = 0.7014`**（封闭 8 色 / 3 固定槽位留出模板）；开放中文/生成继续关闭。
 4. **不签清单不变**：仍不签 check / final / C / D / J / 结构生长（25/26/27 暂停）/ 自主选择 / 模型整体成型。
+
+---
+
+## 14. 2026-11-21 四轴能力桥接验证（D-20261121-227，零 check / 零 final）
+
+依据 [verify_taiji_selective_bridge_20261121.py](../../scripts/training/verify_taiji_selective_bridge_20261121.py) 与 [taiji_u2_selective_bridge_20261121.json](../../reports/taiji_u2_selective_bridge_20261121.json)（详细机制与逐种子记录见 [RESULT-TAIJI_U2_SELECTIVE_BRIDGE_20261121.md](RESULT-TAIJI_U2_SELECTIVE_BRIDGE_20261121.md)，`cpu = 485.27 <= 1200.0`，`0 check / 0 final`），`17` 项预注册门禁 **`16/17` 通过**（不松弛门禁，严格判词 `selective_bridge_partial`）：
+
+1. **Bridge 1 等 FLOPs 对比（3/3 通过）**：`M3` (`T=12`, 在线 `1,000` 步) 上 `SelectivePersistentGraph`（`216,832` FLOPs）达到 **`1.0000`**，匹配等 FLOPs 因果 Transformer（`215,552`, 比 `0.9941`, **`1.0000`**），显著优于等 FLOPs `GRU H=35`（`218,352`, 比 `1.0070`, `0.5299`）。
+2. **Bridge 2 两代中性生长与 H2 可逆损伤（7/7 通过）**：经确定性冻结出生锚点（`pos - no_grad(neg_anchor)`）与仅限 `immature` 期的发育局部辅助信号（`lambda=0.5`，`promote_cohorts_to_mature_()` 后与推理期自动归零）消除双线性鞍点与冻结 `g0` 下的写门梯度饥饿，3 种子生长曲线 **`0.5508 -> 0.8607 -> 1.0000`**（功能单位 `4 -> 12 -> 28`，总孪生 `52`），击败等步 `G5_fixed_n4 = 0.5273`（`+0.4727`）并追平 `G6_prealloc_n32 = 1.0000`；`birth_diff_max = 0.0`、`newborn_step1_grad_min = 0.000331`、`lesion_drop = +0.4492`、`restored_diff_max = 0.0`、`old_skill_damage_max = 0.0`、`capsule_v2_max_abs_diff = 0.0`。
+3. **Bridge 3 移位不变因果中文（2/3 通过）**：零位置嵌入的因果 `SelectivePersistentGraph` 在严格 Exact `A3c`（5 训 / 5 留出）上达到 **`0.8031`**（对比原始 `PosAttentionRead 0.5552`，`+0.2479`，2/2 通过）；去混淆双向规则（12 训 / 8 留出，未见字 `[]`）达到 `0.7094` vs `0.4187`（`adversarial_scope = 0.6115`），未达 `0.80` 门禁（`b3_bidirectional_ge_080 = false`，诚实保留为有界范围，不降阈）。
+4. **Bridge 4 二值正误动作闭环（4/4 通过）**：仅凭二值 `[right/wrong]` 反馈（零答案泄漏），`turn0 = 0.4648 -> turn1_with_feedback = 0.8984`（`no_fb = 0.4440`，`permuted_fb = 0.4596`，错后纠错率 **`0.8138`**）。
+5. **契约与非声明**：[u2_neural_units.py](../../taiji/u2_neural_units.py) 仍为零改动；不签模型成型 / check / final / C / D / J / 结构线 25–27 重开 / 开放中文双向。
+
+---
+
+## 15. 2026-11-21 第二阶段认知闭环验证（D-20261121-228，零 check / 零 final）
+
+在 `taiji/u2_selective_units.py` 中加法新增可选 `step_mask` 填充冻结机制（[test_u2_selective_units.py](../../tests/taiji_native/test_u2_selective_units.py) 24 项单测通过），运行 [verify_taiji_cognitive_loop_20261121.py](../../scripts/training/verify_taiji_cognitive_loop_20261121.py)（报告 [taiji_u2_cognitive_loop_20261121.json](../../reports/taiji_u2_cognitive_loop_20261121.json)，详情见 [RESULT-TAIJI_U2_COGNITIVE_LOOP_20261121.md](RESULT-TAIJI_U2_COGNITIVE_LOOP_20261121.md)，`cpu = 497.31 <= 1200.0`，`0 check / 0 final`），18 项预注册门禁 **`15/18` 通过**（不松弛门禁，严格判词 `cognitive_loop_partial`）：
+
+1. **Loop 1 双向中文＋`step_mask`（3/4 通过）**：32 维合法通道字投影（零位置嵌入）下 `masked_bi_acc = 0.9979`（3/3 种子 `>= 0.996`）、最小对立冲突 `masked_adv_acc = 0.9823`（未见字 `[]`）；因无掩码基线已达 `0.9531`，`+0.05` 门超出 `1.0` 天花板致 `l1_adv_beats_no_mask = false`（剩余误差减半 62%）。
+2. **Loop 2 P24 跨会话巩固与四类纠错（5/5 全满分通过）**：2 实体 5 会话流（`T=14, N=48`）下 `overall / stale / revocation / misleading / contradiction_val / contradiction_detect / contradiction_pos_recall` 全种子 **`1.0000`**；受信任训练＋盲信对照 **`0.0000`**（`<= 0.40`）；`tick=9` 重置控制 `0.2435`（增益 **`+0.7565`**）；旧三技能损伤 `0.0`、跨会话 `capsule_v2`＋状态重连 `0.0`。
+3. **Loop 3 P26 自主认识论选择（4/5 通过）**：纯效用 Q 值 MSE 回归（零 regime 真值）实得效用 **`0.5760`** 超最强固定策略（`0.2913`）**`+0.2847`**；三态路由 `known→ACT 0.8906 / amb→QUERY 1.0000 / unres→WAIT 1.0000`；`QUERY` 后 Turn 1 精度 `1.0000`（置换 `0.4583`）；Turn 0 `brier_score = 0.1509` 贴近理论 Bayes 最优下界 `0.1458`（`l3_calibration_brier_le_015 = false`，差 `0.0009`）。
+4. **Loop 4 P27 遮挡物理与 P28 T=40 恢复（3/4 通过）**：4 类一维遮挡摩擦物理 **`0.9232`**（拔除探测消融降 **`-0.5664`**）；`M1 (T=40, t_target<20)` `selective_t40 = 1.0000`（3/3 种子）且 `t=20` 崩溃重连 `0.0`，领先 `static_c_t40 (0.8307)` `+0.1693`（未达 `+0.40` 门，`l4_long_horizon_t40_ge_090 = false`）。
+5. **非声明不变**：[u2_neural_units.py](../../taiji/u2_neural_units.py) 保持零改动；不签模型成型（29）/ 真机控制 / 开放中文 / check / final / C / D / J。
+
+
+## 16. 新核心口径（D-20261121-230，修订 §1 旧表）
+
+§1 表基于旧 `u2_neural_units.py`（已封存），以下为新加法核心 `u2_selective_units.py` 的**有界实证**（零 check/final；详细卡见 §7/§14/§15）：
+
+| 目标要求 | 新核心证据 | 状态 |
+|---|---|---|
+| 持续状态记忆 | M1 末步状态（无外部历史）T=5/10/20 = **1.0000**；M2 覆盖 = 1.0000；M3 容量 N=2/8/32 = 0.456/0.706/1.000 | **有界 verified（合成）** |
+| 中文语义 | Bridge3 Exact A3c **0.8031**（双向受控 0.7094 <0.80 有界）；Loop1 masked_bi **0.9979** | **有界 verified（封闭词表/受控）** |
+| 跨会话四类纠错 | P24 全类 **1.0000**、unprotected 0.0、gain +0.7565、旧技能损伤 0.0 | **有界 verified（2 实体 5 会话）** |
+| 自主选择/不确定性 | P26 效用 0.5760（+0.2847）、路由 0.89/1.0/1.0、brier 0.1509 | **有界 verified（合成三态）** |
+| 遮挡物理 | P27 0.9232、消融 −0.5664 | **有界 verified（一维）** |
+| 两代中性生长 | 0.5508→0.8607→1.0000、birth diff 0、lesion +0.4492、旧技能 0.0 | **有界 verified（合成）** |
+| 动作接地 | B1 flat 0.9349 / compositional 0.9323 / selective 0.9128；二值反馈闭环 0.4648→0.8984 | **有界（合成二值反馈）** |
+| 旧核记忆 | 旧 core `z/a/H` 不承载跨步（D-213/217）、写入门/键值槽失败（D-218/219） | **旧核不成立（已封存）** |
+| 结构生长收益 | 旧线三次负；新核两代中性生长成立但**净收益未测** | **未成立/未测** |
+| 联合主体 | **S1 未跑**（唯一队首） | **待验证** |
+
+**口径要点**：新核证据全部为**合成受控面、零 check/final**，不得据此签 23-S 正式资格；`S1` 联合生命流通过后才解锁 `23-S`。
