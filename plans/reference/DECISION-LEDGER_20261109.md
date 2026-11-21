@@ -7891,3 +7891,14 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **3. 判读**：任务路由＋参数保护可随 capsule_v2 继承并精确恢复；限制：固定分区实验层机制、1 seed、heads 单独序列化、不构成协同/生长收益；不签 check/final/C/D/J。
 
 **4. 后继**：阶段 2 学习式路由；或以本机制重开 S1/23-S 联合卡（3 seed、≤800 CPU）。
+
+
+### D-20261121-253 J-RT 3 seed：`j_rt_verified`（611.45 CPU，0 check）
+
+**1. 动作**：预注册 [J-RT](../reference/DESIGN-TAIJI_U2_J_RT_20261121.md)、回执 `reports/taiji_u2_jrt_20261121.json`、[结果卡](../reference/RESULT-TAIJI_U2_JRT_20261121.md)。
+
+**2. 读数**：3 seed 均为 CN 1.0000、P-B 0.9922–1.0000、P-D 0.8438–0.8984；胶囊恢复差 **0.0**；全门过 ⇒ **`j_rt_verified`**；611.45 CPU、零 check。
+
+**3. 判读**：路由＋参数保护＋capsule 继承使同一主体三任务共存并精确恢复；此前 S1/23-S 的共享覆盖/冻结不足问题在该机制下解除。限制：固定分区实验层机制、容量隔离非协同、heads 单独序列化、本卡未重测旧损伤（smoke2 为 0.0）、不签联合增益/生长收益/check/final/C/D/J。
+
+**4. 后继**：阶段 2 学习式 top-k 路由并用同一门重跑。
