@@ -5053,3 +5053,8 @@ A3 首版 `cn_vocab2_partial` 作废：留出模板含训练中未出现的字�
 ## 2026-11-21 S1-RT 阶段 1（D-20261121-245，s1rt_stage1_partial，2/5，446.22 CPU，0 check，常设授权）
 
 新增 verify_taiji_s1rt_stage1_20261121.py 与结果卡：单一 48 单元＋S1-R2 阶段函数；shared vs partitioned（16/16/16）；3 seed。读数：shared a_bi/a_adv 0.984/0.465、b 0.808、d 0.712；partitioned 0.978/0.717、b 0.600、d 0.862；capsule 0.0；门 G0✓/G1✗/G2✗/G3✗/G4✓ ⇒ 2/5。披露：门实现有误（cn_fit 用 ADV 集与 a_bi 普通集比较、G3 未记录全任务 lesion 矩阵、G0 混集），本卡不作机制证据；初步信号 16 单元对 P-B 容量不足、P-D 分区升。后继：阶段 1b（修正门实现、每任务 ≥24 单元或 2,000 步；新预注册）或 owner 裁定接受有界包/暂停。
+
+
+## 2026-11-21 S1-RT 阶段 1b 实现失败（D-20261121-246，s1rt_stage1b_invalid，664 CPU，0 check）
+
+新增 verify_taiji_s1rt_stage1b_20261121.py 与结果卡；两跑各 ~332 CPU。读数：CN 0.134–0.168、P-B 0.276–0.286（两臂≈机会）、P-D 0.854–0.883、损伤 0.71–0.87、capsule 0.0；门判 2/5 为实现缺陷产物。判读：CN/P-B 在自定义循环不学习，而 S1-R2 阶段函数可达 0.93/0.875，差异在循环/头部重建而非分区；判 s1rt_stage1b_invalid，不开阶段 2、不作分区证据。S1-RT 线累计 1,110 CPU、零 check；归因 D-243 仍为唯一可靠依据；后续须先最小单测→1 seed 烟测→3 seed 卡。不签 check/final/C/D/J。
