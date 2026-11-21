@@ -1,0 +1,56 @@
+{
+  "schema": "taiji-u2-pb-specialized-v1",
+  "created_utc": "2026-11-21T08:37:14.548921+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      20261120,
+      20261121,
+      20261122
+    ],
+    "units": 48,
+    "head": "p24-only 128",
+    "steps": 2000
+  },
+  "rows": [
+    {
+      "seed": 20261120,
+      "train_acc": 0.856249988079071,
+      "fit_overall": 0.8500000238418579,
+      "conflict_acc": 1.0,
+      "units": 48
+    },
+    {
+      "seed": 20261121,
+      "train_acc": 1.0,
+      "fit_overall": 1.0,
+      "conflict_acc": 1.0,
+      "units": 48
+    },
+    {
+      "seed": 20261122,
+      "train_acc": 1.0,
+      "fit_overall": 1.0,
+      "conflict_acc": 1.0,
+      "units": 48
+    }
+  ],
+  "means": {
+    "train_acc": 0.9520833293596903,
+    "fit_overall": 0.950000007947286,
+    "conflict_acc": 1.0
+  },
+  "verdict": "pb_specialized_partial",
+  "disclosure": "diagnostic for the 23-S narrow contract; not a capability card",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 201.3
+  }
+}
