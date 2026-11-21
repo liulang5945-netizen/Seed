@@ -5048,3 +5048,8 @@ A3 首版 `cn_vocab2_partial` 作废：留出模板含训练中未出现的字�
 ## 2026-11-21 任务条件化子群路由预注册（D-20261121-244，待授权，零训练零 check）
 
 写 DESIGN-TAIJI_U2_TASK_ROUTING_20261121.md：阶段 1（≤600 CPU）固定分区 16/16/16＋任务 gate mask，对照共享全单位；门 G0 控制（P-D<0.65 或损伤>0.05）、G1 共存（P-A ≥0.95/P-B ≥0.85/P-D ≥0.80）、G2 旧损伤 ≤0.02、G3 功能绑定特异性、G4 capsule/重连、G5 预算；阶段 2（≤900 CPU，G1 通过后）学习式 top-k 路由并加法式写入 capsule_v2。限制：阶段 1 实验层机制；只验共存＋特异性，不签协同/生长收益/check/final。待 owner 批准阶段 1。
+
+
+## 2026-11-21 S1-RT 阶段 1（D-20261121-245，s1rt_stage1_partial，2/5，446.22 CPU，0 check，常设授权）
+
+新增 verify_taiji_s1rt_stage1_20261121.py 与结果卡：单一 48 单元＋S1-R2 阶段函数；shared vs partitioned（16/16/16）；3 seed。读数：shared a_bi/a_adv 0.984/0.465、b 0.808、d 0.712；partitioned 0.978/0.717、b 0.600、d 0.862；capsule 0.0；门 G0✓/G1✗/G2✗/G3✗/G4✓ ⇒ 2/5。披露：门实现有误（cn_fit 用 ADV 集与 a_bi 普通集比较、G3 未记录全任务 lesion 矩阵、G0 混集），本卡不作机制证据；初步信号 16 单元对 P-B 容量不足、P-D 分区升。后继：阶段 1b（修正门实现、每任务 ≥24 单元或 2,000 步；新预注册）或 owner 裁定接受有界包/暂停。

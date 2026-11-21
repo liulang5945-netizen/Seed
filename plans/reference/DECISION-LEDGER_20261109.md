@@ -7818,3 +7818,14 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **3. 限制**：阶段 1 为实验层机制（不改内核）；只验「共存＋功能特异性」，不签协同/联合增益/生长收益/check/final/C/D/J。
 
 **4. 待裁**：是否批准阶段 1（≤600 CPU、零 check）；阶段 2 视结果另行确认。
+
+
+### D-20261121-245 S1-RT 阶段 1：`s1rt_stage1_partial`（2/5；446.22 CPU；门实现有误披露）
+
+**1. 动作**：新增 [`verify_taiji_s1rt_stage1_20261121.py`](../../scripts/training/verify_taiji_s1rt_stage1_20261121.py) 与 [结果卡](../reference/RESULT-TAIJI_U2_S1RT_STAGE1_20261121.md)：单一 48 单元＋S1-R2 阶段函数；shared vs partitioned（16/16/16）；3 seed、446.22 CPU、零 check。
+
+**2. 读数**：shared a_bi/a_adv 0.984/0.465、b 0.808、d 0.712；partitioned 0.978/0.717、**b 0.600**、**d 0.862**；capsule 0.0。门 G0✓/G1✗/G2✗/G3✗/G4✓ ⇒ 2/5。
+
+**3. 披露**：门实现有误——`cn_fit` 用 ADV 集却与 `a_bi` 普通集比较（G1/G2 阈值对象错）、G3 未记录全任务 lesion 矩阵、G0 控制混集；**本卡不能支持/否定分区假设**，不作机制证据。可读初步信号：16 单元对 P-B 容量不足（0.600 vs 0.808），P-D 分区升（0.862 vs 0.712）。
+
+**4. 后继**：S1-RT 阶段 1b（修正门实现：统一评估集、G3 全任务 lesion 矩阵、每任务 ≥24 单元或 2,000 步；≤600 CPU、3 seed、零 check，新预注册）；或按 owner 裁定接受有界包/暂停。不签 check/final/C/D/J。

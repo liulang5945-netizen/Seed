@@ -1,0 +1,156 @@
+{
+  "schema": "taiji-u2-s1rt-stage1-v1",
+  "created_utc": "2026-11-21T11:09:10.760516+00:00",
+  "status": "run_under_standing_authorization_pending_owner_ratification",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      20261120,
+      20261121,
+      20261122
+    ],
+    "blocks": [
+      16,
+      16,
+      16
+    ],
+    "arms": [
+      "shared",
+      "partitioned"
+    ]
+  },
+  "rows": [
+    {
+      "seed": 20261120,
+      "partitioned": false,
+      "a_bi": 0.984375,
+      "a_adv": 0.48828125,
+      "b_overall": 0.7437499761581421,
+      "d_acc": 0.5562499761581421,
+      "cn_fit": 0.62890625,
+      "p24_fit": 0.75,
+      "p27_fit": 0.6171875,
+      "lesion_cn": 0.34375,
+      "lesion_p24": 0.296875,
+      "lesion_p27": 0.3671875,
+      "capsule_diff": 0.0
+    },
+    {
+      "seed": 20261121,
+      "partitioned": false,
+      "a_bi": 0.99609375,
+      "a_adv": 0.47265625,
+      "b_overall": 0.8187500238418579,
+      "d_acc": 0.8374999761581421,
+      "cn_fit": 0.6171875,
+      "p24_fit": 0.6796875,
+      "p27_fit": 0.828125,
+      "lesion_cn": 0.43359375,
+      "lesion_p24": 0.359375,
+      "lesion_p27": 0.5390625,
+      "capsule_diff": 0.0
+    },
+    {
+      "seed": 20261122,
+      "partitioned": false,
+      "a_bi": 0.97265625,
+      "a_adv": 0.43359375,
+      "b_overall": 0.862500011920929,
+      "d_acc": 0.7437499761581421,
+      "cn_fit": 0.22265625,
+      "p24_fit": 0.8515625,
+      "p27_fit": 0.7734375,
+      "lesion_cn": 0.1015625,
+      "lesion_p24": 0.578125,
+      "lesion_p27": 0.0625,
+      "capsule_diff": 0.0
+    },
+    {
+      "seed": 20261120,
+      "partitioned": true,
+      "a_bi": 0.95703125,
+      "a_adv": 0.86328125,
+      "b_overall": 0.543749988079071,
+      "d_acc": 0.8374999761581421,
+      "cn_fit": 0.6484375,
+      "p24_fit": 0.7265625,
+      "p27_fit": 0.859375,
+      "lesion_cn": 0.12109375,
+      "lesion_p24": 0.3359375,
+      "lesion_p27": 0.4296875,
+      "capsule_diff": 0.0
+    },
+    {
+      "seed": 20261121,
+      "partitioned": true,
+      "a_bi": 1.0,
+      "a_adv": 0.6875,
+      "b_overall": 0.59375,
+      "d_acc": 0.9125000238418579,
+      "cn_fit": 0.5859375,
+      "p24_fit": 0.7578125,
+      "p27_fit": 0.921875,
+      "lesion_cn": 0.0859375,
+      "lesion_p24": 0.2578125,
+      "lesion_p27": 0.28125,
+      "capsule_diff": 0.0
+    },
+    {
+      "seed": 20261122,
+      "partitioned": true,
+      "a_bi": 0.9765625,
+      "a_adv": 0.6015625,
+      "b_overall": 0.6625000238418579,
+      "d_acc": 0.8374999761581421,
+      "cn_fit": 0.53515625,
+      "p24_fit": 0.765625,
+      "p27_fit": 0.8515625,
+      "lesion_cn": 0.09375,
+      "lesion_p24": 0.359375,
+      "lesion_p27": 0.171875,
+      "capsule_diff": 0.0
+    }
+  ],
+  "means": {
+    "shared": {
+      "a_bi": 0.984375,
+      "a_adv": 0.46484375,
+      "b_overall": 0.8083333373069763,
+      "d_acc": 0.7124999761581421,
+      "cn_fit": 0.4895833333333333,
+      "p24_fit": 0.7604166666666666,
+      "p27_fit": 0.7395833333333334
+    },
+    "routed": {
+      "a_bi": 0.9778645833333334,
+      "a_adv": 0.7174479166666666,
+      "b_overall": 0.600000003973643,
+      "d_acc": 0.862499992052714,
+      "cn_fit": 0.58984375,
+      "p24_fit": 0.75,
+      "p27_fit": 0.8776041666666666
+    }
+  },
+  "gates": {
+    "g0_control": true,
+    "g1_coexist": false,
+    "g2_old_skill": false,
+    "g3_specificity": false,
+    "g4_capsule": true
+  },
+  "passed": 2,
+  "total_gates": 5,
+  "verdict": "s1rt_stage1_partial",
+  "disclosure": "stage-1 fixed partition is an experiment-level mechanism; zero check/final",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 446.22
+  }
+}
