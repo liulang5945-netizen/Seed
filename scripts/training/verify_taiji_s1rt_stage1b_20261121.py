@@ -63,8 +63,17 @@ BLOCK = 24
 N_UNITS = 72
 
 
-def _step(opt: torch.optim.Optimizer, loss: torch.Tensor, graph) -> None:
-    _clip_and_step(opt, graph, loss)
+def _step(
+    opt: torch.optim.Optimizer, loss: torch.Tensor, graph, subject=None, keep: str | None = None
+) -> None:
+    if subject is None or keep is None:
+        _clip_and_step(opt, graph, loss)
+        return
+    opt.zero_grad(set_to_none=True)
+    loss.backward()
+    subject.protect_grads(keep)
+    torch.nn.utils.clip_grad_norm_([p for group in opt.param_groups for p in group["params"]], 1.0)
+    opt.step()
 
 
 class Subject72(SubjectR):
@@ -149,7 +158,7 @@ def _eval_p24(subject: Subject72, ticks: torch.Tensor, batch: dict[str, torch.Te
     return float((logits[:, :4].argmax(-1) == batch["val_labels"]).float().mean())
 
 
-def run_arm(seed: int, partitioned: bool) -> dict[str, Any]:
+def run_arm(seed: int, partitioned: bool, protect: bool = False) -> dict[str, Any]:
     torch.set_num_threads(1)
     subject = Subject72(seed)
     subject.set_masks(partitioned)
@@ -174,7 +183,7 @@ def run_arm(seed: int, partitioned: bool) -> dict[str, Any]:
             subject.logits("cn", batch["ticks"], (batch["ticks"].abs().sum(-1) > 0).float()),
             batch["labels"],
         )
-        _step(opt, loss, subject.graph)
+        _step(opt, loss, subject.graph, subject, "cn" if protect else None)
     trace["after_cn"] = _eval(subject, "cn", fit_cn["ticks"], fit_cn["labels"])
     cn_peak = trace["after_cn"]
 
@@ -261,6 +270,7 @@ def run_arm(seed: int, partitioned: bool) -> dict[str, Any]:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines(0)[0])
     parser.add_argument("--out", default=str(OUT))
+    parser.add_argument("--protect", action="store_true")
     args = parser.parse_args()
     started = time.process_time()
     rows = [run_arm(seed, partitioned) for partitioned in (False, True) for seed in SEEDS]
