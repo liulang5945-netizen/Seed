@@ -7913,3 +7913,14 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **3. 判读**：无排他约束的学习式路由会选重叠单位，共享单位被多任务更新 → 干扰复现；**必须加「已分配单位排他/可用性约束」**；不签机制结论。
 
 **4. 后继**：阶段 2b 顺序排他分配（后任务从未占用单位中 top-k），用 J-RT 同门复测。
+
+
+### D-20261121-255 顺序排他 top-k 路由 3 seed：`exclusive_router_partial`（372.66 CPU，0 check）
+
+**1. 动作**：[`diag_router_exclusive_20261121.py`](../../scripts/training/diag_router_exclusive_20261121.py)＋[结果卡](../reference/RESULT-TAIJI_U2_ROUTER_EXCLUSIVE_20261121.md)；顺序排他分配（24/24/24），直通 hard top-k，保护被选单位。
+
+**2. 读数**：seed1 CN 0.734/P-B 0.953/P-D 0.914；seed2 0.480/0.797/0.922；seed3 0.773/0.906/0.953；重叠均为 0 ⇒ disjoint✓、coexist✗。
+
+**3. 判读**：排他解决重叠，但 CN 明显低于固定分区（1.0）——路由随 logits 移动、未按任务收益分配；**无监督的路由选择不如固定分区**。不签机制结论。
+
+**4. 后继**：A 按单位贡献/显著度先选后冻结（saliency allocation）；B 接受固定分区 J-RT 为机制并回灌 S1/23-S 正式判据。
