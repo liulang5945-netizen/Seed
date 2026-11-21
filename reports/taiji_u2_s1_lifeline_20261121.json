@@ -1,0 +1,253 @@
+{
+  "schema": "taiji-u2-s1-lifeline-v1",
+  "created_utc": "2026-11-21T07:16:51.949973+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      20261120,
+      20261121,
+      20261122
+    ],
+    "single_subject": true,
+    "phases": [
+      "P-A",
+      "P-B",
+      "P-C",
+      "P-D",
+      "P-E",
+      "P-F"
+    ],
+    "steps": {
+      "a": 600,
+      "b": 500,
+      "c": 450,
+      "d": 450,
+      "grow": 180
+    },
+    "budget_cpu": 2000.0
+  },
+  "rows": [
+    {
+      "seed": 20261120,
+      "phase_a": {
+        "masked_bi_acc": 1.0,
+        "masked_adv_acc": 1.0
+      },
+      "phase_b": {
+        "overall_acc": 0.3375000059604645,
+        "conflict_acc": 0.925000011920929,
+        "unprotected_acc": 0.25,
+        "gain": 0.08750000596046448
+      },
+      "phase_c": {
+        "net_utility": 0.35624998807907104,
+        "always_act_utility": 0.07500000298023224,
+        "known_act_rate": 1.0,
+        "ambiguous_query_rate": 1.0,
+        "unresolvable_wait_rate": 0.0,
+        "brier_score": 0.14017130434513092
+      },
+      "phase_d": {
+        "accuracy": 0.768750011920929,
+        "ablation_drop": 0.20625001192092896
+      },
+      "phase_e": {
+        "final_accuracy": 0.893750011920929,
+        "birth_diff": 0.0,
+        "lesion_drop": -0.006249964237213135,
+        "units": 54.0
+      },
+      "phase_f": {
+        "capsule_forward_diff": 0.0,
+        "reconnect_diff": 0.0,
+        "reconnect_acc": 1.0,
+        "continuity_ok": 1.0
+      },
+      "old_skill_damage": 0.02734375,
+      "skill_trace": {
+        "after_a": {
+          "cn_masked_bi": 1.0,
+          "p24_overall": 0.25
+        },
+        "after_b": {
+          "cn_masked_bi": 1.0,
+          "p24_overall": 0.3375000059604645
+        },
+        "after_d": {
+          "cn_masked_bi": 0.98046875,
+          "p24_overall": 0.3125
+        },
+        "after_e": {
+          "cn_masked_bi": 0.97265625,
+          "p24_overall": 0.4000000059604645
+        }
+      }
+    },
+    {
+      "seed": 20261121,
+      "phase_a": {
+        "masked_bi_acc": 1.0,
+        "masked_adv_acc": 0.9921875
+      },
+      "phase_b": {
+        "overall_acc": 0.5562499761581421,
+        "conflict_acc": 0.9375,
+        "unprotected_acc": 0.2562499940395355,
+        "gain": 0.29999998211860657
+      },
+      "phase_c": {
+        "net_utility": 0.5859375596046448,
+        "always_act_utility": 0.15000000596046448,
+        "known_act_rate": 1.0,
+        "ambiguous_query_rate": 1.0,
+        "unresolvable_wait_rate": 1.0,
+        "brier_score": 0.11933432519435883
+      },
+      "phase_d": {
+        "accuracy": 0.8062499761581421,
+        "ablation_drop": 0.38124996423721313
+      },
+      "phase_e": {
+        "final_accuracy": 0.9375,
+        "birth_diff": 0.0,
+        "lesion_drop": 0.0,
+        "units": 54.0
+      },
+      "phase_f": {
+        "capsule_forward_diff": 0.0,
+        "reconnect_diff": 0.0,
+        "reconnect_acc": 1.0,
+        "continuity_ok": 1.0
+      },
+      "old_skill_damage": 0.02734375,
+      "skill_trace": {
+        "after_a": {
+          "cn_masked_bi": 1.0,
+          "p24_overall": 0.2562499940395355
+        },
+        "after_b": {
+          "cn_masked_bi": 0.96875,
+          "p24_overall": 0.5562499761581421
+        },
+        "after_d": {
+          "cn_masked_bi": 0.9375,
+          "p24_overall": 0.612500011920929
+        },
+        "after_e": {
+          "cn_masked_bi": 0.97265625,
+          "p24_overall": 0.5874999761581421
+        }
+      }
+    },
+    {
+      "seed": 20261122,
+      "phase_a": {
+        "masked_bi_acc": 1.0,
+        "masked_adv_acc": 0.98046875
+      },
+      "phase_b": {
+        "overall_acc": 0.6187499761581421,
+        "conflict_acc": 1.0,
+        "unprotected_acc": 0.3375000059604645,
+        "gain": 0.2812499701976776
+      },
+      "phase_c": {
+        "net_utility": 0.5859375,
+        "always_act_utility": 0.17499999701976776,
+        "known_act_rate": 1.0,
+        "ambiguous_query_rate": 1.0,
+        "unresolvable_wait_rate": 1.0,
+        "brier_score": 0.14975878596305847
+      },
+      "phase_d": {
+        "accuracy": 0.90625,
+        "ablation_drop": 0.23124998807907104
+      },
+      "phase_e": {
+        "final_accuracy": 0.8125,
+        "birth_diff": 0.0,
+        "lesion_drop": -0.00625002384185791,
+        "units": 54.0
+      },
+      "phase_f": {
+        "capsule_forward_diff": 0.0,
+        "reconnect_diff": 0.0,
+        "reconnect_acc": 1.0,
+        "continuity_ok": 1.0
+      },
+      "old_skill_damage": 0.05078125,
+      "skill_trace": {
+        "after_a": {
+          "cn_masked_bi": 1.0,
+          "p24_overall": 0.3375000059604645
+        },
+        "after_b": {
+          "cn_masked_bi": 0.96875,
+          "p24_overall": 0.6187499761581421
+        },
+        "after_d": {
+          "cn_masked_bi": 0.95703125,
+          "p24_overall": 0.699999988079071
+        },
+        "after_e": {
+          "cn_masked_bi": 0.94921875,
+          "p24_overall": 0.6937500238418579
+        }
+      }
+    }
+  ],
+  "means": {
+    "a_bi": 1.0,
+    "a_adv": 0.9908854166666666,
+    "b_overall": 0.5041666527589163,
+    "b_unprotected": 0.28125,
+    "b_gain": 0.22291665275891623,
+    "c_utility": 0.5093750158945719,
+    "c_always_act": 0.13333333532015482,
+    "c_known_act": 1.0,
+    "c_amb_query": 1.0,
+    "c_unres_wait": 0.6666666666666666,
+    "c_brier": 0.13642147183418274,
+    "d_acc": 0.8270833293596903,
+    "d_ablation": 0.27291665474573773,
+    "e_final": 0.881250003973643,
+    "e_birth": 0.0,
+    "e_lesion": -0.004166662693023682,
+    "f_capsule": 0.0,
+    "f_reconnect_acc": 1.0,
+    "damage": 0.05078125
+  },
+  "gates": {
+    "a_bi": true,
+    "a_adv": true,
+    "b_overall": false,
+    "b_unprotected": true,
+    "b_gain": true,
+    "c_utility_gain": true,
+    "c_routes": false,
+    "c_brier": true,
+    "d_acc": true,
+    "d_ablation": true,
+    "e_final": false,
+    "e_birth": true,
+    "e_lesion": false,
+    "f_capsule": true,
+    "f_reconnect": true,
+    "old_skill_damage": false
+  },
+  "passed": 11,
+  "total_gates": 16,
+  "verdict": "s1_partial",
+  "disclosure": "same subject instance across phases; replay buffer mixes previous phases; growth 30->42->54 (+2/group twice); synthetic controlled surface",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 255.34
+  }
+}

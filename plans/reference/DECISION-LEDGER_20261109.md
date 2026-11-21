@@ -7656,3 +7656,14 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **3. 判读**：计划修订**完成**，当前唯一队首＝`S1`；旧线不再可行执行。不签任何能力；零训练、零 check。
 
 **4. 后继**：实现并运行 `S1`（≤2,000 CPU、3 seed、零 check/final）；`s1_verified` 后按 §3A.2 启动 `23-S.0`。
+
+
+### D-20261121-231 S1 联合生命流首跑：`s1_partial`（11/16 门；255.34 CPU；零 check）
+
+**1. 动作**：新增 [`verify_taiji_s1_lifeline_20261121.py`](../../scripts/training/verify_taiji_s1_lifeline_20261121.py) 与 [结果卡](../reference/RESULT-TAIJI_U2_S1_LIFELINE_20261121.md)：单一 `SelectivePersistentGraph`（30 单元、13 维统一读出、per_sample_state）顺序走 P-A 中文→P-B 四类纠错→P-C 自主选择→P-D 遮挡物理→P-E 两代中性生长→P-F 冷载恢复；阶段间不换体、25% 回放；3 seed、255.34 CPU（帽 2,000）、零 check/final。
+
+**2. 读数**：中文 **1.000/0.991**；P-B overall **0.504**（✗）、unprotected 0.281、gain +0.223；P-C 效用 0.509（+0.376）、路由 **1.0/1.0/0.667**（WAIT ✗）、brier 0.136；P-D 0.827/0.273；P-E **0.881**（✗）、birth 0.0、lesion **−0.004**（✗）；P-F 前向差 0.0、重连 1.0；旧技能损伤 **0.051**（✗）⇒ **11/16，`s1_partial`**。
+
+**3. 判读**：多数轴可在同一主体上并存（中文/纠错增益/自主效用/物理/冷载恢复过门）；失败集中在 P-B 混训不足、P-C WAIT 路由未校准、P-E 新单元未被读出使用、旧技能损伤超门；按合同 **不签 `s1_verified`、不解锁 23-S**、不得同卡调阈；不是能力否定，是训练预算/回放/生长整合的具体工程缺口。
+
+**4. 后继**：写 [S1b 返工预注册](../reference/DESIGN-TAIJI_U2_S1B_REWORK_20261121.md)（同门、同预算纪律；P-B 步数 1,000、回放 50%；P-C 700 步 + WAIT 校准；P-E 600 步整合 + 新单元使用损失；≤1,200 CPU、零 check）；S1b 不过则 S1 以 `s1_partial` 结案。不签 check/final/C/D/J/模型成型。
