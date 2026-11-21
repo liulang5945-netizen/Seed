@@ -1,0 +1,57 @@
+{
+  "schema": "taiji-u2-s1g3-cohort-v1",
+  "created_utc": "2026-11-21T08:24:49.719474+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      20261120,
+      20261121
+    ],
+    "cohort": "antithetic twin, frozen anchor, immature aux",
+    "steps": [
+      350,
+      500
+    ]
+  },
+  "rows": [
+    {
+      "seed": 20261120,
+      "base_acc": 0.890625,
+      "final_acc": 0.921875,
+      "lesion_drop": 0.03125,
+      "birth_diff": 0.0,
+      "old_skill_damage": 0.0,
+      "capsule_diff": 0.0,
+      "cohort_index": 0
+    },
+    {
+      "seed": 20261121,
+      "base_acc": 0.8671875,
+      "final_acc": 0.859375,
+      "lesion_drop": -0.0078125,
+      "birth_diff": 0.0,
+      "old_skill_damage": 0.0,
+      "capsule_diff": 0.0,
+      "cohort_index": 0
+    }
+  ],
+  "gates": {
+    "birth_neutral": true,
+    "integration": false,
+    "old_skill_damage": true,
+    "capsule_exact": true
+  },
+  "verdict": "s1g3_partial",
+  "disclosure": "unit core untouched; cohort is the additive growth interface already exercised in S0 Bridge2",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 196.59
+  }
+}

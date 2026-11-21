@@ -7726,3 +7726,14 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **4. 判读**：模块级生长正确性成立；功能整合未成立；S1-R 仍 `s1r_partial`、不重开 S1-R3、**23-S 不解锁**；不签结构收益/check/final/C/D/J。
 
 **5. 后继**：S1-G3 预注册（cohort 发育式整合：`grow_antithetic_cohort_` 两代、冻结出生锚点、immature 辅助信号、promote 后 lesion ≥0.20、旧技能 ≤0.02；≤800 CPU、零 check）；不过则结构线按「中性可生长、功能整合未成立」收束待裁。
+
+
+### D-20261121-237 cohort 发育式整合：`s1g3_partial` 与结构整合线收束（196.59 CPU，0 check）
+
+**1. 动作**：新增 [`verify_taiji_s1g3_cohort_20261121.py`](../../scripts/training/verify_taiji_s1g3_cohort_20261121.py) 与 [结果卡](../reference/RESULT-TAIJI_U2_S1G3_COHORT_20261121.md)：48 单元主体先训 P-D 350 步；`grow_antithetic_cohort_`（冻结成熟、冻结出生锚点、exact zero birth）；immature 期正 twins 辅助 CE 500 步（λ=0.5）；promote 后 dormant lesion；2 seed、零 check。
+
+**2. 读数**：birth diff **0.0**✓、旧技能损伤 **0.0**✓、capsule diff **0.0**✓；base 0.891/0.867→final 0.922/0.859；**lesion 0.031 / −0.008（<0.20 门）✗** ⇒ **`s1g3_partial`**；196.59 CPU。
+
+**3. 判读**：结构正确性保持（出生中性/旧技能/胶囊），但 cohort delta 在读出中权重太小，500 步发育训练未让其承担功能；与旧线 22.7 `growth_benefit_absent` 一致。**结构线结论（有界）**：「可中性生长、可精确恢复、旧技能保持」成立；「新单元/群体承担可测功能贡献」**未成立**（三种路径均 <0.20）。
+
+**4. 收束**：结构整合线（S1-G/G2/G3）按单范围 ≤2 次修订铁律**以负结果收束**，不再开同范围生长卡；S1 线总成本 ≈2,223 CPU、零 check/final；23-S 仍不解锁。**待 owner 裁定**：① 23-S 窄合同（中文+四类纠错+遮挡物理）；② 暂停新核主线按有界能力收束；③ 另行立项生长机制（新架构/新证据，不在本次范围）。

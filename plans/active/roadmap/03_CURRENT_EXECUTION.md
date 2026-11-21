@@ -5008,3 +5008,8 @@ A3 首版 `cn_vocab2_partial` 作废：留出模板含训练中未出现的字�
 ## 2026-11-21 生长语义与新生儿整合（D-20261121-236，s1g_verified + s1g2_partial，≈298 CPU，0 check）
 
 更正：S1-R2 出生 diff 5.27/胶囊 3.35 系头部布局测量 bug（[z(N),a(N)] 增长后 a 偏移变化，按旧偏移复制/置零头权重）——S1-R2 生长/胶囊门作废，其余门有效。S1-G（94.62 CPU，s1g_verified）：48→56→64，先生长后重映射；birth diff 0.0、旧技能损伤 0.0、capsule_v2 diff 0.0 ⇒ grow_units_neutral_ 出生中性/旧技能保持/胶囊兼容成立（仅中性语义）。S1-G2（108.34 CPU，s1g2_partial）：零初始化新列出生 0.0✓，两阶段新生儿训练后 base 0.883/0.859→final 0.914/0.922、lesion 0.031/0.055<0.20 ⇒ 结构可生长但功能整合不足，需 cohort 发育式训练。S1-R 仍 s1r_partial、不重开、23-S 不解锁。后继：S1-G3 预注册（cohort 两代、冻结出生锚点、immature 辅助、lesion≥0.20、旧技能≤0.02；≤800 CPU、零 check）。
+
+
+## 2026-11-21 cohort 发育式整合与结构线收束（D-20261121-237，s1g3_partial，196.59 CPU，0 check）
+
+新增 verify_taiji_s1g3_cohort_20261121.py 与结果卡：48 单元主体先训 P-D 350 步；grow_antithetic_cohort_（冻结成熟、冻结出生锚点、exact zero birth）；immature 期正 twins 辅助 CE 500 步（λ=0.5）；promote 后 dormant lesion；2 seed、零 check。读数：birth diff 0.0✓、旧技能损伤 0.0✓、capsule diff 0.0✓；base 0.891/0.867→final 0.922/0.859；lesion 0.031/−0.008<0.20✗ ⇒ s1g3_partial；196.59 CPU。判读：结构正确性保持但 cohort 功能贡献不足；与旧线 22.7 growth_benefit_absent 一致。结构线结论（有界）：可中性生长/可精确恢复/旧技能保持成立；新单元/群体承担可测功能贡献未成立（三种路径 <0.20）。结构整合线以负结果收束（≤2 次修订用满），不再开同范围生长卡；S1 线总成本 ≈2,223 CPU、零 check；23-S 不解锁。待裁：窄合同/暂停/另行立项生长机制。
