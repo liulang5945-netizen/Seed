@@ -1,0 +1,74 @@
+{
+  "schema": "taiji-u2-s1g-growth-fix-v1",
+  "created_utc": "2026-11-21T08:19:14.003839+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      20261120,
+      20261121
+    ],
+    "growth": "48 -> 56 -> 64",
+    "head_remap": true,
+    "steps": 200
+  },
+  "rows": [
+    {
+      "seed": 20261120,
+      "before": {
+        "cn": 1.0,
+        "p24": 0.3229166567325592,
+        "p27": 0.34375
+      },
+      "after": {
+        "cn": 1.0,
+        "p24": 0.3229166567325592,
+        "p27": 0.34375
+      },
+      "birth_diff": 0.0,
+      "old_skill_damage": 0.0,
+      "capsule_diff": 0.0,
+      "units": [
+        48,
+        64
+      ]
+    },
+    {
+      "seed": 20261121,
+      "before": {
+        "cn": 1.0,
+        "p24": 0.2916666567325592,
+        "p27": 0.3958333432674408
+      },
+      "after": {
+        "cn": 1.0,
+        "p24": 0.2916666567325592,
+        "p27": 0.3958333432674408
+      },
+      "birth_diff": 0.0,
+      "old_skill_damage": 0.0,
+      "capsule_diff": 0.0,
+      "units": [
+        48,
+        64
+      ]
+    }
+  ],
+  "gates": {
+    "birth_neutral": true,
+    "old_skill_damage": true,
+    "capsule_exact": true
+  },
+  "verdict": "s1g_verified",
+  "disclosure": "S1-R2 growth/capsule gates were measured with a wrong [z,a] head layout after growth; this card corrects the layout",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 94.62
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "schema": "taiji-u2-s1g2-newborn-v1",
+  "created_utc": "2026-11-21T08:17:17.752260+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "seeds": [
+      20261120,
+      20261121
+    ],
+    "growth": "48 -> 64",
+    "stages": [
+      250,
+      250,
+      250
+    ]
+  },
+  "rows": [
+    {
+      "seed": 20261120,
+      "base_acc": 0.8828125,
+      "final_acc": 0.9140625,
+      "birth_diff": 0.0,
+      "lesion_drop": 0.03125,
+      "units": [
+        48,
+        64
+      ]
+    },
+    {
+      "seed": 20261121,
+      "base_acc": 0.859375,
+      "final_acc": 0.921875,
+      "birth_diff": 0.0,
+      "lesion_drop": 0.0546875,
+      "units": [
+        48,
+        64
+      ]
+    }
+  ],
+  "gates": {
+    "birth_neutral": true,
+    "integration": false
+  },
+  "verdict": "s1g2_partial",
+  "disclosure": "unit core untouched; this is an experiment-level integration test after correct head remap",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 108.34
+  }
+}
