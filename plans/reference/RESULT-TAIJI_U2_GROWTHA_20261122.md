@@ -40,3 +40,9 @@
 - 逐 seed 严格门：a_weak65 false（0.633/0.625）、gain false（0.031/0.023）、lesion ✓、old_damage ✓ ⇒ **`growthA_3seed_partial`**；
 - 判读：单 seed verified 是**种子相关**的；均值口径下（增益 ≥0.05、lesion ≥0.10、旧损伤 ≤0.05）三 seed 全过，但预登记门是逐 seed，故不自动改判；
 - 待 owner：接受均值口径 ⇒ 可判 verified（3 seed）；或要求逐 seed 稳定 ⇒ 需再校准（更大容量/更长训练/多次生长）。成本 3×≈147 CPU。
+
+
+## 7. Owner 回溯裁定（D-20261122-296）
+
+- 接受**均值口径**：3 seed 均值增益 **0.0651**、均值 lesion **0.2708**、旧损伤 **0.0**，且绝对弱项门 0.65 ⇒ **`growthA_3seed_verified`（已回溯确认）**；
+- 披露保留：逐 seed 严格门仅 1/3（seed1/2 弱项 0.625–0.633）；标准后续可能调整。
