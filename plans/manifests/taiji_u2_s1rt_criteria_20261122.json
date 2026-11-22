@@ -1,0 +1,53 @@
+{
+  "budget_cpu": 800.0,
+  "check_reads": 0,
+  "created": "2026-11-22",
+  "criteria_sha256": "ffe584fe3c3bcce0dcbc35954fd23902c3ac208f14b9ac9150ae9ae3689052ba",
+  "decision": "D-20261122-270 approved by owner (S1-RT contract revision)",
+  "exits": [
+    "s1_rt_verified",
+    "s1_rt_partial",
+    "budget_stop",
+    "engineering_failure"
+  ],
+  "final_reads": 0,
+  "gates": {
+    "ablation": {
+      "min": 0.2
+    },
+    "capsule": {
+      "readout_diff_max": 1e-06,
+      "restore_diff_max": 1e-06
+    },
+    "coexist": {
+      "cn_min": 0.95,
+      "p24_min": 0.85,
+      "p27_min": 0.8
+    },
+    "conflict": {
+      "min": 0.95
+    },
+    "old_skill_damage": {
+      "max": 0.02
+    }
+  },
+  "schema": "taiji-u2-s1rt-criteria-v1",
+  "scope": {
+    "distillation": "not used",
+    "groups": 12,
+    "inherit": "capsule_v2 task_routes + head state dict restore",
+    "routing": "fixed 24-unit subpopulation per task; parameter-level protection; wd=0 in protected phases",
+    "tasks": [
+      "cn",
+      "p24",
+      "p27"
+    ],
+    "units": 72,
+    "units_per_group": 6
+  },
+  "seeds": [
+    20261120,
+    20261121,
+    20261122
+  ]
+}

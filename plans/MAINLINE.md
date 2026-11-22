@@ -179,7 +179,11 @@
 > 本节为 [u2_selective_units.py](../taiji/u2_selective_units.py) 新加法核心的**唯一活动执行合同**；旧线 §3/§4 已封存，只作回归基线。
 > 所有卡沿用 §1 铁律：判据读前冻结、单卡独立定价、`check <= 2 / final <= 1` 冻结、零 `check/final` 直至逐包授权；S0 已完成（D-225/227/228，零 check）。
 
-### 3A.0 状态快照（2026-11-22，D-20261122-269）
+### 3A.0 状态快照（2026-11-22，D-20261122-271 更新）
+
+> **[S1 已通过]** 按冻结合同 `criteria_sha256 = ffe584fe3c3bcce0dcbc35954fd23902c3ac208f14b9ac9150ae9ae3689052ba`、3 seed、670.66 CPU、零 check/final，S1 判 **`s1_rt_verified`**（[结果卡](reference/RESULT-TAIJI_U2_S1RT_FORMAL_20261122.md)）。原「未回灌/未授权」状态解除；**23-S 解锁，但需 owner 逐卡 `training_authority` 与重新定价**。生长（D-265 负结论）与协同（D-268）仍未解；B 路线非蒸馏参考见 [S1-RT 修订](reference/DESIGN-TAIJI_U2_S1RT_CONTRACT_20261122.md) 附录 B。
+
+#### 历史快照（D-20261122-269）
 
 > **实证已换代、合同未回灌**：RT 机制线（固定任务子群＋参数梯度掩码＋wd=0＋`capsule_v2` routes）已产出 `s1rtf_verified`（3 seed：CN 1.0 / P-B 0.984–1.0 / P-D 0.852–0.914 / 旧损伤 ≤0.008 / 胶囊与恢复差 0.0），但**尚未取得 owner 单卡 `training_authority`、未按 §3A.2 重立 S1 判据**；生长（D-265 负结论）与协同（D-268 `shared_coexist_no_synergy`）未解。盘点与研究对照见 [CONSOLIDATION-RESEARCH-20261122.md](reference/CONSOLIDATION-RESEARCH-20261122.md)。**后续训练卡一律等待 owner 裁定。**
 

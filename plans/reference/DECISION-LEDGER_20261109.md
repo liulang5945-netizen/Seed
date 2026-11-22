@@ -8028,3 +8028,10 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **1. 动作**：写 [S1-RT 合同修订草案](../reference/DESIGN-TAIJI_U2_S1RT_CONTRACT_20261122.md)：范围（72 单元/三任务/24 路由/参数保护/capsule 继承）、G1–G8 门、出口、证据映射（D-257/D-260/D-240）、冻结与授权流程、附录 B 非蒸馏参考。
 **2. 关键决定**：旧 S1 四轮注意保留为历史；新合同冻结后需按合同重跑 3 seed（≈630 CPU、零 check）作为正式 S1 证据，D-257 仅预验证；**不含蒸馏**；生长/协同不属本卡。
 **3. 状态**：草案待 owner 审阅；未运行、未签 S1、23-S 仍锁。
+
+### D-20261122-271 S1-RT 正式判据：`s1_rt_verified`（冻结哈希；670.66 CPU；3 seed；0 check）
+
+**1. 动作**：冻结 [criteria manifest](../manifests/taiji_u2_s1rt_criteria_20261122.json)（sha256 `ffe584fe…`），新增 `verify_taiji_s1rt_formal_20261122.py`，按冻结合同跑 3 seed；回执 `reports/taiji_u2_s1rt_formal_20261122.json`、[结果卡](../reference/RESULT-TAIJI_U2_S1RT_FORMAL_20261122.md)。
+**2. 读数**：CN 1.0；P-B 0.9844–1.0；P-D 0.8516–0.9141；conflict 0.9922–1.0；消融 0.3672–0.5078；旧损伤 0–0.0078；胶囊/恢复差 0.0 ⇒ 合同出口 **`s1_rt_verified`**（回执内部字符串 `s1rtf_verified`，已披露映射）；670.66 CPU ≤800、零 check/final。
+**3. 意义**：S1 首次按「读前冻结」判据通过；23-S 解锁（仍需新卡授权）；固定分区为实验层机制、heads 单独序列化、合成面、未用蒸馏。
+**4. 纪律**：criteria_sha256 校验一致；run conditions 记录；未调阈。
