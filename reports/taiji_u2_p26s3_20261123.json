@@ -1,0 +1,172 @@
+{
+  "schema": "taiji-u2-p26s-v1",
+  "created_utc": "2026-11-22T17:11:56.477247+00:00",
+  "criteria_sha256": "4c8e70dd2281c236fc64894b1a855c2f20a843d195b214587a1586ea01215d5d",
+  "authority": "owner:standing-authorization:2026-11-20#recommendation-default",
+  "seed": 20261120,
+  "dp": {
+    "value_at_initial": 3.1113545097656248,
+    "value_at_low_conf": 3.01364416015625
+  },
+  "learned": {
+    "mean_utility": 3.0381666666666662,
+    "mean_solved": 2.8866666666666667,
+    "action_counts": {
+      "CONTINUE": 1590,
+      "VERIFY": 244,
+      "HELP": 256,
+      "REST": 1266,
+      "WAIT": 244
+    },
+    "wait_given_pending": 0.40197693574958815,
+    "rest_given_zero_energy": 0.966832504145937,
+    "pending_seen": 607,
+    "zero_seen": 603
+  },
+  "baselines": {
+    "always_continue": {
+      "mean_utility": 1.14,
+      "mean_solved": 1.14,
+      "action_counts": {
+        "CONTINUE": 3600,
+        "VERIFY": 0,
+        "HELP": 0,
+        "REST": 0,
+        "WAIT": 0
+      },
+      "wait_given_pending": NaN,
+      "rest_given_zero_energy": 0.0,
+      "pending_seen": 0,
+      "zero_seen": 3000
+    },
+    "always_help": {
+      "mean_utility": 0.79,
+      "mean_solved": 0.79,
+      "action_counts": {
+        "CONTINUE": 0,
+        "VERIFY": 0,
+        "HELP": 3600,
+        "REST": 0,
+        "WAIT": 0
+      },
+      "wait_given_pending": NaN,
+      "rest_given_zero_energy": 0.0,
+      "pending_seen": 0,
+      "zero_seen": 3300
+    },
+    "random": {
+      "mean_utility": 1.3751666666666666,
+      "mean_solved": 1.2966666666666666,
+      "action_counts": {
+        "CONTINUE": 714,
+        "VERIFY": 733,
+        "HELP": 741,
+        "REST": 698,
+        "WAIT": 714
+      },
+      "wait_given_pending": 0.2028397565922921,
+      "rest_given_zero_energy": 0.1888412017167382,
+      "pending_seen": 493,
+      "zero_seen": 1631
+    },
+    "heuristic": {
+      "mean_utility": 2.8355,
+      "mean_solved": 2.82,
+      "action_counts": {
+        "CONTINUE": 1007,
+        "VERIFY": 450,
+        "HELP": 0,
+        "REST": 1704,
+        "WAIT": 439
+      },
+      "wait_given_pending": 1.0,
+      "rest_given_zero_energy": 0.8601716304896517,
+      "pending_seen": 439,
+      "zero_seen": 1981
+    },
+    "dp_optimal": {
+      "mean_utility": 3.0721666666666665,
+      "mean_solved": 2.9366666666666665,
+      "action_counts": {
+        "CONTINUE": 1615,
+        "VERIFY": 176,
+        "HELP": 342,
+        "REST": 1291,
+        "WAIT": 176
+      },
+      "wait_given_pending": 0.3333333333333333,
+      "rest_given_zero_energy": 1.0,
+      "pending_seen": 528,
+      "zero_seen": 711
+    }
+  },
+  "ablations": {
+    "zero_energy": {
+      "mean_utility": 1.0933333333333333,
+      "mean_solved": 0.8233333333333334,
+      "action_counts": {
+        "CONTINUE": 528,
+        "VERIFY": 255,
+        "HELP": 0,
+        "REST": 2758,
+        "WAIT": 59
+      },
+      "wait_given_pending": 0.14285714285714285,
+      "rest_given_zero_energy": 0.22661870503597123,
+      "pending_seen": 413,
+      "zero_seen": 556
+    },
+    "zero_conf": {
+      "mean_utility": 2.696833333333333,
+      "mean_solved": 2.6233333333333335,
+      "action_counts": {
+        "CONTINUE": 1025,
+        "VERIFY": 509,
+        "HELP": 568,
+        "REST": 1443,
+        "WAIT": 55
+      },
+      "wait_given_pending": 0.15759312320916904,
+      "rest_given_zero_energy": 0.5785876993166287,
+      "pending_seen": 349,
+      "zero_seen": 878
+    },
+    "zero_solved": {
+      "mean_utility": 2.888333333333333,
+      "mean_solved": 2.8633333333333333,
+      "action_counts": {
+        "CONTINUE": 935,
+        "VERIFY": 200,
+        "HELP": 264,
+        "REST": 2001,
+        "WAIT": 200
+      },
+      "wait_given_pending": 0.3333333333333333,
+      "rest_given_zero_energy": 1.0,
+      "pending_seen": 600,
+      "zero_seen": 1699
+    }
+  },
+  "best_fixed": 2.8355,
+  "dp_utility": 3.0721666666666665,
+  "action_agreement": 0.9565,
+  "capsule_state_diff": 0.0,
+  "gates": {
+    "G0": true,
+    "G1": true,
+    "G2": true,
+    "G3": true,
+    "G4": true
+  },
+  "verdict": "p26s3_verified",
+  "run_conditions": {
+    "threads": 1
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 93.02
+  }
+}

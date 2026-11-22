@@ -1,0 +1,81 @@
+{
+  "schema": "taiji-u2-p26s2-criteria-v1",
+  "card": "P26-S2",
+  "created": "2026-11-23",
+  "decision": "D-20261123-315",
+  "authority": "owner:standing-authorization:2026-11-20#recommendation-default",
+  "subject": "Subject72 seed 20261120; cn block 0:24 with a 5-action head; 12-step session manager (3 items, energy, pending verification, no new prompt); P26-S2 world parameters; behaviour cloning from finite-horizon DP",
+  "protocol": {
+    "seed": 20261120,
+    "horizon": 12,
+    "items": 3,
+    "energy_max": 2,
+    "p_continue_low": 0.35,
+    "p_continue_high": 0.85,
+    "p_help": 0.75,
+    "help_cost": 2,
+    "verify_cost": 1,
+    "energy_bonus": 0.15,
+    "bc_samples": 5000,
+    "bc_steps": 300,
+    "bc_batch": 64,
+    "lr": 0.007,
+    "wd": 0.0,
+    "eval_episodes": 300,
+    "eval_seed_offset": 99000,
+    "actions": [
+      "CONTINUE",
+      "VERIFY",
+      "HELP",
+      "REST",
+      "WAIT"
+    ],
+    "channels": {
+      "solved": [
+        0,
+        4
+      ],
+      "conf": [
+        4,
+        6
+      ],
+      "energy": [
+        6,
+        9
+      ],
+      "pending": [
+        9,
+        11
+      ],
+      "t_bucket": [
+        11,
+        14
+      ],
+      "query": 15
+    }
+  },
+  "gates": {
+    "G0_gain_over_fixed_min": 0.1,
+    "G1_dp_gap_max": 0.08,
+    "G2_energy_drop_min": 0.05,
+    "G2_conf_drop_min": 0.05,
+    "G2_solved_drop_min": 0.05,
+    "G3_wait_given_pending_min": 0.6,
+    "G3_rest_given_zero_energy_min": 0.6,
+    "G4_capsule_diff_max": 1e-06
+  },
+  "budget_cpu": 400.0,
+  "check_reads": 0,
+  "final_reads": 0,
+  "exits": [
+    "p26s2_verified",
+    "p26s2_no_gain",
+    "p26s2_suboptimal",
+    "p26s2_state_blind",
+    "p26s2_context_weak",
+    "p26s2_baseline_insufficient",
+    "budget_stop",
+    "engineering_failure"
+  ],
+  "criteria_sha256": "0392fd260ea7aa66385e066f80c892d51c1a671bb2a07573461a29adc40a34ac"
+}

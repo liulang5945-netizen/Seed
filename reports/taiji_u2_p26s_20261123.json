@@ -1,0 +1,171 @@
+{
+  "schema": "taiji-u2-p26s-v1",
+  "created_utc": "2026-11-22T17:06:20.033606+00:00",
+  "criteria_sha256": "de833966104d5998725517cd3725451bdcf52684a7086157c47bae0911ab9472",
+  "authority": "owner:standing-authorization:2026-11-20#recommendation-default",
+  "seed": 20261120,
+  "dp": {
+    "value_at_initial": 3.1499809062499997,
+    "value_at_low_conf": 3.1499809062499997
+  },
+  "learned": {
+    "mean_utility": 3.15,
+    "mean_solved": 3.0,
+    "action_counts": {
+      "CONTINUE": 2004,
+      "VERIFY": 0,
+      "HELP": 948,
+      "REST": 648,
+      "WAIT": 0
+    },
+    "wait_given_pending": NaN,
+    "rest_given_zero_energy": 1.0,
+    "pending_seen": 0,
+    "zero_seen": 327
+  },
+  "baselines": {
+    "always_continue": {
+      "mean_utility": 1.3866666666666667,
+      "mean_solved": 1.3866666666666667,
+      "action_counts": {
+        "CONTINUE": 3600,
+        "VERIFY": 0,
+        "HELP": 0,
+        "REST": 0,
+        "WAIT": 0
+      },
+      "wait_given_pending": NaN,
+      "rest_given_zero_energy": 0.0,
+      "pending_seen": 0,
+      "zero_seen": 3000
+    },
+    "always_help": {
+      "mean_utility": 1.9166666666666667,
+      "mean_solved": 1.9166666666666667,
+      "action_counts": {
+        "CONTINUE": 0,
+        "VERIFY": 0,
+        "HELP": 3600,
+        "REST": 0,
+        "WAIT": 0
+      },
+      "wait_given_pending": NaN,
+      "rest_given_zero_energy": 0.0,
+      "pending_seen": 0,
+      "zero_seen": 3000
+    },
+    "random": {
+      "mean_utility": 2.2198333333333333,
+      "mean_solved": 2.1633333333333336,
+      "action_counts": {
+        "CONTINUE": 714,
+        "VERIFY": 733,
+        "HELP": 741,
+        "REST": 698,
+        "WAIT": 714
+      },
+      "wait_given_pending": 0.21502590673575128,
+      "rest_given_zero_energy": 0.19574468085106383,
+      "pending_seen": 386,
+      "zero_seen": 1645
+    },
+    "heuristic": {
+      "mean_utility": 2.8840000000000003,
+      "mean_solved": 2.87,
+      "action_counts": {
+        "CONTINUE": 958,
+        "VERIFY": 450,
+        "HELP": 0,
+        "REST": 1748,
+        "WAIT": 444
+      },
+      "wait_given_pending": 1.0,
+      "rest_given_zero_energy": 0.8610837438423645,
+      "pending_seen": 444,
+      "zero_seen": 2030
+    },
+    "dp_optimal": {
+      "mean_utility": 3.15,
+      "mean_solved": 3.0,
+      "action_counts": {
+        "CONTINUE": 2004,
+        "VERIFY": 0,
+        "HELP": 948,
+        "REST": 648,
+        "WAIT": 0
+      },
+      "wait_given_pending": NaN,
+      "rest_given_zero_energy": 1.0,
+      "pending_seen": 0,
+      "zero_seen": 327
+    }
+  },
+  "ablations": {
+    "zero_energy": {
+      "mean_utility": 2.191666666666667,
+      "mean_solved": 1.9166666666666667,
+      "action_counts": {
+        "CONTINUE": 0,
+        "VERIFY": 0,
+        "HELP": 850,
+        "REST": 2750,
+        "WAIT": 0
+      },
+      "wait_given_pending": NaN,
+      "rest_given_zero_energy": 0.5238095238095238,
+      "pending_seen": 0,
+      "zero_seen": 525
+    },
+    "zero_conf": {
+      "mean_utility": 3.15,
+      "mean_solved": 3.0,
+      "action_counts": {
+        "CONTINUE": 2004,
+        "VERIFY": 0,
+        "HELP": 948,
+        "REST": 648,
+        "WAIT": 0
+      },
+      "wait_given_pending": NaN,
+      "rest_given_zero_energy": 1.0,
+      "pending_seen": 0,
+      "zero_seen": 327
+    },
+    "zero_solved": {
+      "mean_utility": 2.9766666666666666,
+      "mean_solved": 2.9766666666666666,
+      "action_counts": {
+        "CONTINUE": 1203,
+        "VERIFY": 0,
+        "HELP": 80,
+        "REST": 2317,
+        "WAIT": 0
+      },
+      "wait_given_pending": NaN,
+      "rest_given_zero_energy": 1.0,
+      "pending_seen": 0,
+      "zero_seen": 2317
+    }
+  },
+  "best_fixed": 2.8840000000000003,
+  "dp_utility": 3.15,
+  "capsule_state_diff": 0.0,
+  "gates": {
+    "G0": true,
+    "G1": true,
+    "G2": false,
+    "G3": false,
+    "G4": true
+  },
+  "verdict": "p26s_state_blind",
+  "run_conditions": {
+    "threads": 1
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 92.34
+  }
+}
