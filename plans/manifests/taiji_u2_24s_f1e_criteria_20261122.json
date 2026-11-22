@@ -1,0 +1,57 @@
+{
+  "schema": "taiji-u2-24s-f1e-criteria-v1",
+  "card": "24-S.F1e",
+  "created": "2026-11-22",
+  "decision": "D-20261122-304",
+  "authority": "owner:standing-authorization:2026-11-20#recommendation-default",
+  "subject": "Subject72 seed 20261120 + 24 newborn units budded from the p24 block (parameter and group inheritance); newborn-only readout; old p24 block frozen",
+  "upstream": "24-S.F1d (D-302): random-birth newborn-only readout fails at 8 interactions (P@8=0.2227); 24-S.F1c (D-301): dedicated head works but newborn params not causally used",
+  "protocol": {
+    "base_steps": 1200,
+    "base_batch": 48,
+    "base_lr": 0.007,
+    "base_wd": 0.0001,
+    "event_batches": 10,
+    "event_batch": 48,
+    "event_updates": 0,
+    "grow_additional_per_group": 2,
+    "newborn_units": 24,
+    "budding_source": "p24 units 24:48 -> newborn units 72:96, 1:1 by group and within-group position",
+    "correction_interactions_primary": 8,
+    "correction_interactions_extended": 24,
+    "revision_batch": 96,
+    "head_lr": 0.02,
+    "graph_lr": 0.01,
+    "arms": [
+      "P_inherited_joint",
+      "H_inherited_head_only",
+      "C2_inherited_permuted",
+      "C1_inherited_none"
+    ]
+  },
+  "gates": {
+    "G0_base_overall_min": 0.75,
+    "G0_base_outdated_min": 0.9,
+    "G1_acc8_min": 0.75,
+    "G2_vs_no_correction_min": 0.3,
+    "G2_vs_permuted_min": 0.3,
+    "G3_retention_drop_max": 0.001,
+    "G4_vs_random_birth_min": 0.3,
+    "G4_random_birth_ref": 0.22265625,
+    "G5_capsule_diff_max": 1e-06
+  },
+  "budget_cpu": 600.0,
+  "check_reads": 0,
+  "final_reads": 0,
+  "exits": [
+    "24s_f1e_verified",
+    "24s_f1e_partial_slow",
+    "24s_f1e_partial",
+    "24s_f1e_not_inheritance",
+    "24s_f1e_interference",
+    "24s_f1e_baseline_insufficient",
+    "budget_stop",
+    "engineering_failure"
+  ],
+  "criteria_sha256": "0566b20d3f185c4e69fa49c79840873706405389d5baff2d140ae45fb0362d5c"
+}

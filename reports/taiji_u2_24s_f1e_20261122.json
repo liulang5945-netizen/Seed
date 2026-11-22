@@ -1,0 +1,448 @@
+{
+  "schema": "taiji-u2-24s-f1e-v1",
+  "created_utc": "2026-11-22T15:27:41.362687+00:00",
+  "criteria_sha256": "0566b20d3f185c4e69fa49c79840873706405389d5baff2d140ae45fb0362d5c",
+  "authority": "owner:standing-authorization:2026-11-20#recommendation-default",
+  "seed": 20261120,
+  "base": {
+    "overall": 0.9921875,
+    "per_regime": {
+      "0": 1.0,
+      "1": 0.984375,
+      "2": 1.0,
+      "3": 0.984375
+    },
+    "conflict_accuracy": 1.0
+  },
+  "growth": {
+    "added_units": 24,
+    "n_units": 96,
+    "inheritance_max_diff_at_growth": 0.0,
+    "inheritance_max_diff_after_training": 0.0,
+    "budding_state_equality_diff": 0.0,
+    "post_growth_base": {
+      "overall": 0.9921875,
+      "per_regime": {
+        "0": 1.0,
+        "1": 0.984375,
+        "2": 1.0,
+        "3": 0.984375
+      },
+      "conflict_accuracy": 1.0
+    },
+    "post_growth_revision": {
+      "acc_new": 0.359375,
+      "acc_stale": 0.24609375
+    },
+    "event_acc_new": [
+      0.5,
+      0.4166666567325592,
+      0.5,
+      0.3541666567325592,
+      0.3541666567325592,
+      0.5416666865348816,
+      0.3125,
+      0.3541666567325592,
+      0.2916666567325592,
+      0.3541666567325592
+    ],
+    "readout_input_dim": 48
+  },
+  "arms": {
+    "P_inherited_joint": {
+      "mode": "P_inherited_joint",
+      "base_anchor": {
+        "overall": 0.9921875,
+        "per_regime": {
+          "0": 1.0,
+          "1": 0.984375,
+          "2": 1.0,
+          "3": 0.984375
+        },
+        "conflict_accuracy": 1.0
+      },
+      "curve": [
+        {
+          "interaction": 1,
+          "acc_new": 0.8125,
+          "acc_stale": 0.015625
+        },
+        {
+          "interaction": 2,
+          "acc_new": 0.8984375,
+          "acc_stale": 0.0
+        },
+        {
+          "interaction": 3,
+          "acc_new": 0.9765625,
+          "acc_stale": 0.0
+        },
+        {
+          "interaction": 4,
+          "acc_new": 0.9609375,
+          "acc_stale": 0.0
+        },
+        {
+          "interaction": 5,
+          "acc_new": 0.9921875,
+          "acc_stale": 0.0
+        },
+        {
+          "interaction": 6,
+          "acc_new": 0.9921875,
+          "acc_stale": 0.0
+        },
+        {
+          "interaction": 7,
+          "acc_new": 1.0,
+          "acc_stale": 0.0
+        },
+        {
+          "interaction": 8,
+          "acc_new": 1.0,
+          "acc_stale": 0.0,
+          "base_overall": 0.9921875,
+          "base_per_regime": {
+            "0": 1.0,
+            "1": 0.984375,
+            "2": 1.0,
+            "3": 0.984375
+          }
+        },
+        {
+          "interaction": 9,
+          "acc_new": 1.0,
+          "acc_stale": 0.0
+        },
+        {
+          "interaction": 10,
+          "acc_new": 1.0,
+          "acc_stale": 0.0
+        },
+        {
+          "interaction": 11,
+          "acc_new": 1.0,
+          "acc_stale": 0.0
+        },
+        {
+          "interaction": 12,
+          "acc_new": 1.0,
+          "acc_stale": 0.0
+        },
+        {
+          "interaction": 13,
+          "acc_new": 1.0,
+          "acc_stale": 0.0
+        },
+        {
+          "interaction": 14,
+          "acc_new": 1.0,
+          "acc_stale": 0.0
+        },
+        {
+          "interaction": 15,
+          "acc_new": 1.0,
+          "acc_stale": 0.0
+        },
+        {
+          "interaction": 16,
+          "acc_new": 1.0,
+          "acc_stale": 0.0
+        },
+        {
+          "interaction": 17,
+          "acc_new": 1.0,
+          "acc_stale": 0.0
+        },
+        {
+          "interaction": 18,
+          "acc_new": 1.0,
+          "acc_stale": 0.0
+        },
+        {
+          "interaction": 19,
+          "acc_new": 1.0,
+          "acc_stale": 0.0
+        },
+        {
+          "interaction": 20,
+          "acc_new": 1.0,
+          "acc_stale": 0.0
+        },
+        {
+          "interaction": 21,
+          "acc_new": 1.0,
+          "acc_stale": 0.0
+        },
+        {
+          "interaction": 22,
+          "acc_new": 1.0,
+          "acc_stale": 0.0
+        },
+        {
+          "interaction": 23,
+          "acc_new": 1.0,
+          "acc_stale": 0.0
+        },
+        {
+          "interaction": 24,
+          "acc_new": 1.0,
+          "acc_stale": 0.0,
+          "base_overall": 0.9921875,
+          "base_per_regime": {
+            "0": 1.0,
+            "1": 0.984375,
+            "2": 1.0,
+            "3": 0.984375
+          }
+        }
+      ],
+      "acc_at_8": 1.0,
+      "acc_at_24": 1.0,
+      "retention_drop": 0.0
+    },
+    "H_inherited_head_only": {
+      "mode": "H_inherited_head_only",
+      "base_anchor": {
+        "overall": 0.9921875,
+        "per_regime": {
+          "0": 1.0,
+          "1": 0.984375,
+          "2": 1.0,
+          "3": 0.984375
+        },
+        "conflict_accuracy": 1.0
+      },
+      "curve": [
+        {
+          "interaction": 1,
+          "acc_new": 0.78125,
+          "acc_stale": 0.0234375
+        },
+        {
+          "interaction": 2,
+          "acc_new": 0.90625,
+          "acc_stale": 0.0
+        },
+        {
+          "interaction": 3,
+          "acc_new": 0.9609375,
+          "acc_stale": 0.0
+        },
+        {
+          "interaction": 4,
+          "acc_new": 0.953125,
+          "acc_stale": 0.0
+        },
+        {
+          "interaction": 5,
+          "acc_new": 0.96875,
+          "acc_stale": 0.0
+        },
+        {
+          "interaction": 6,
+          "acc_new": 0.984375,
+          "acc_stale": 0.0
+        },
+        {
+          "interaction": 7,
+          "acc_new": 0.9921875,
+          "acc_stale": 0.0
+        },
+        {
+          "interaction": 8,
+          "acc_new": 0.9921875,
+          "acc_stale": 0.0,
+          "base_overall": 0.9921875,
+          "base_per_regime": {
+            "0": 1.0,
+            "1": 0.984375,
+            "2": 1.0,
+            "3": 0.984375
+          }
+        }
+      ],
+      "acc_at_8": 0.9921875,
+      "acc_at_24": 0.9921875,
+      "retention_drop": 0.0
+    },
+    "C2_inherited_permuted": {
+      "mode": "C2_inherited_permuted",
+      "base_anchor": {
+        "overall": 0.9921875,
+        "per_regime": {
+          "0": 1.0,
+          "1": 0.984375,
+          "2": 1.0,
+          "3": 0.984375
+        },
+        "conflict_accuracy": 1.0
+      },
+      "curve": [
+        {
+          "interaction": 1,
+          "acc_new": 0.0703125,
+          "acc_stale": 0.359375
+        },
+        {
+          "interaction": 2,
+          "acc_new": 0.03125,
+          "acc_stale": 0.4140625
+        },
+        {
+          "interaction": 3,
+          "acc_new": 0.015625,
+          "acc_stale": 0.3984375
+        },
+        {
+          "interaction": 4,
+          "acc_new": 0.0,
+          "acc_stale": 0.3984375
+        },
+        {
+          "interaction": 5,
+          "acc_new": 0.0,
+          "acc_stale": 0.3828125
+        },
+        {
+          "interaction": 6,
+          "acc_new": 0.0,
+          "acc_stale": 0.3828125
+        },
+        {
+          "interaction": 7,
+          "acc_new": 0.0,
+          "acc_stale": 0.3828125
+        },
+        {
+          "interaction": 8,
+          "acc_new": 0.0,
+          "acc_stale": 0.3359375,
+          "base_overall": 0.9921875,
+          "base_per_regime": {
+            "0": 1.0,
+            "1": 0.984375,
+            "2": 1.0,
+            "3": 0.984375
+          }
+        }
+      ],
+      "acc_at_8": 0.0,
+      "acc_at_24": 0.0,
+      "retention_drop": 0.0
+    },
+    "C1_inherited_none": {
+      "mode": "C1_inherited_none",
+      "base_anchor": {
+        "overall": 0.9921875,
+        "per_regime": {
+          "0": 1.0,
+          "1": 0.984375,
+          "2": 1.0,
+          "3": 0.984375
+        },
+        "conflict_accuracy": 1.0
+      },
+      "curve": [
+        {
+          "interaction": 1,
+          "acc_new": 0.390625,
+          "acc_stale": 0.25
+        },
+        {
+          "interaction": 2,
+          "acc_new": 0.390625,
+          "acc_stale": 0.25
+        },
+        {
+          "interaction": 3,
+          "acc_new": 0.390625,
+          "acc_stale": 0.25
+        },
+        {
+          "interaction": 4,
+          "acc_new": 0.390625,
+          "acc_stale": 0.25
+        },
+        {
+          "interaction": 5,
+          "acc_new": 0.390625,
+          "acc_stale": 0.25
+        },
+        {
+          "interaction": 6,
+          "acc_new": 0.390625,
+          "acc_stale": 0.25
+        },
+        {
+          "interaction": 7,
+          "acc_new": 0.390625,
+          "acc_stale": 0.25
+        },
+        {
+          "interaction": 8,
+          "acc_new": 0.359375,
+          "acc_stale": 0.24609375,
+          "base_overall": 0.9921875,
+          "base_per_regime": {
+            "0": 1.0,
+            "1": 0.984375,
+            "2": 1.0,
+            "3": 0.984375
+          }
+        }
+      ],
+      "acc_at_8": 0.359375,
+      "acc_at_24": 0.359375,
+      "retention_drop": 0.0
+    }
+  },
+  "newborn_contribution": {
+    "trained_acc": 1.0,
+    "reset_to_inherited": 0.97265625,
+    "reset_to_random_birth": 0.21875,
+    "drop_reset_inherited": 0.02734375,
+    "drop_reset_random": 0.78125
+  },
+  "head_only_arm": {
+    "acc_at_8": 0.9921875
+  },
+  "lifecycle": {
+    "promotion_forward_diff": 0.0,
+    "mature_units_after_promotion": 96,
+    "immature_units_after_promotion": 0,
+    "total_units": 96
+  },
+  "capsule_state_diff": 0.0,
+  "gates": {
+    "G0": true,
+    "G1": true,
+    "G2_vs_no_correction": true,
+    "G2_vs_permuted": true,
+    "G3": true,
+    "G3_inheritance": true,
+    "G4": true,
+    "G5": true,
+    "G6_promotion": true
+  },
+  "verdict": "24s_f1e_verified",
+  "verdict_inputs": {
+    "acc_at_8_P": 1.0,
+    "acc_at_24_P": 1.0,
+    "acc_at_8_H": 0.9921875,
+    "acc_at_8_C1": 0.359375,
+    "acc_at_8_C2": 0.0,
+    "retention_drop_P": 0.0,
+    "random_birth_ref": 0.22265625
+  },
+  "run_conditions": {
+    "threads": 1
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 101.2
+  }
+}
