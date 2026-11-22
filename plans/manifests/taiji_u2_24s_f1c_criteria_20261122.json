@@ -1,0 +1,53 @@
+{
+  "schema": "taiji-u2-24s-f1c-criteria-v1",
+  "card": "24-S.F1c",
+  "created": "2026-11-22",
+  "decision": "D-20261122-301",
+  "authority": "owner:standing-authorization:2026-11-20#recommendation-default",
+  "subject": "Subject72 seed 20261120 + neutral growth 24 newborn units (72->96); p24 base block frozen",
+  "upstream": "24-S.F1/F1b (D-297/298): correction learnable at 8 interactions but retention fails; replay 0.375, anchor blocks learning",
+  "protocol": {
+    "base_steps": 1200,
+    "base_batch": 48,
+    "base_lr": 0.007,
+    "base_wd": 0.0001,
+    "event_batches": 10,
+    "event_batch": 48,
+    "event_updates": 0,
+    "grow_additional_per_group": 2,
+    "newborn_units": 24,
+    "correction_interactions": 8,
+    "interaction_eval_4": 4,
+    "revision_batch": 96,
+    "head_lr": 0.02,
+    "graph_lr": 0.01,
+    "arms": [
+      "P_proper_feedback",
+      "C1_no_correction",
+      "C2_permuted_labels"
+    ]
+  },
+  "gates": {
+    "G0_base_overall_min": 0.75,
+    "G0_base_outdated_min": 0.9,
+    "G1_acc4_min": 0.75,
+    "G2_vs_no_correction_min": 0.3,
+    "G2_vs_permuted_min": 0.3,
+    "G3_retention_drop_max": 0.001,
+    "G4_lesion_drop_min": 0.15,
+    "G5_capsule_diff_max": 1e-06
+  },
+  "budget_cpu": 500.0,
+  "check_reads": 0,
+  "final_reads": 0,
+  "exits": [
+    "24s_f1c_verified",
+    "24s_f1c_partial_slow",
+    "24s_f1c_partial",
+    "24s_f1c_interference",
+    "24s_f1c_baseline_insufficient",
+    "budget_stop",
+    "engineering_failure"
+  ],
+  "criteria_sha256": "c281c23735554cf65f435530477233069254576e40b502736f898e336d028153"
+}

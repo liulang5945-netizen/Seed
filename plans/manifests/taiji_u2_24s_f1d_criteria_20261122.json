@@ -1,0 +1,53 @@
+{
+  "schema": "taiji-u2-24s-f1d-criteria-v1",
+  "card": "24-S.F1d",
+  "created": "2026-11-22",
+  "decision": "D-20261122-302",
+  "authority": "owner:standing-authorization:2026-11-20#recommendation-default",
+  "subject": "Subject72 seed 20261120 + 24 newborn units (72->96); newborn-only readout path; old p24 block frozen",
+  "upstream": "24-S.F1c (D-301): growth+dedicated head reaches 0.855@4 with zero retention loss but newborn parameters are not causally required (birth-reset drop 0.0)",
+  "protocol": {
+    "base_steps": 1200,
+    "base_batch": 48,
+    "base_lr": 0.007,
+    "base_wd": 0.0001,
+    "event_batches": 10,
+    "event_batch": 48,
+    "event_updates": 0,
+    "grow_additional_per_group": 2,
+    "newborn_units": 24,
+    "correction_interactions": 8,
+    "interaction_eval_4": 4,
+    "revision_batch": 96,
+    "head_lr": 0.02,
+    "graph_lr": 0.01,
+    "arms": [
+      "P_proper_feedback",
+      "C1_no_correction",
+      "C2_permuted_labels"
+    ]
+  },
+  "gates": {
+    "G0_base_overall_min": 0.75,
+    "G0_base_outdated_min": 0.9,
+    "G1_acc4_min": 0.75,
+    "G2_vs_no_correction_min": 0.3,
+    "G2_vs_permuted_min": 0.3,
+    "G3_retention_drop_max": 0.001,
+    "G4_lesion_drop_min": 0.15,
+    "G5_capsule_diff_max": 1e-06
+  },
+  "budget_cpu": 500.0,
+  "check_reads": 0,
+  "final_reads": 0,
+  "exits": [
+    "24s_f1d_verified",
+    "24s_f1d_partial_slow",
+    "24s_f1d_partial",
+    "24s_f1d_interference",
+    "24s_f1d_baseline_insufficient",
+    "budget_stop",
+    "engineering_failure"
+  ],
+  "criteria_sha256": "a8975a2419f31abc85497bee3f16eb475e237ab6400bfd7ab01e51ea2d440b9c"
+}
