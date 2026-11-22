@@ -1,0 +1,44 @@
+{
+  "schema": "taiji-u2-joint-bounded-v1",
+  "created_utc": "2026-11-22T12:25:37.196801+00:00",
+  "cn_ref": {
+    "cn": 1.0,
+    "p24": 0.2265625,
+    "conflict": 0.3046875
+  },
+  "p24_ref": {
+    "cn": 0.16015625,
+    "p24": 0.5546875,
+    "conflict": 0.7890625
+  },
+  "joint": {
+    "cn": 0.98828125,
+    "p24": 0.796875,
+    "conflict": 0.890625
+  },
+  "degradation": {
+    "cn": 0.01171875,
+    "p24": -0.2421875,
+    "conflict": -0.1015625
+  },
+  "floors": {
+    "cn": true,
+    "p24": true,
+    "conflict": true
+  },
+  "no_collapse": true,
+  "bounded": true,
+  "verdict": "joint_bounded_verified",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 308.28
+  }
+}
