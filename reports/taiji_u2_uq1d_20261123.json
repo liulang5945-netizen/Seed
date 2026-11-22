@@ -1,0 +1,102 @@
+{
+  "schema": "taiji-u2-uq1d-v1",
+  "created_utc": "2026-11-22T16:58:49.748319+00:00",
+  "criteria_sha256": "244b695f4984d3f99fb9e083a6da27a67d1c699ffe8dc1f96e9bbb0f56cade79",
+  "authority": "owner:standing-authorization:2026-11-20#recommendation-default",
+  "seed": 20261120,
+  "training": {
+    "p24_acc_after_p24": 0.8125,
+    "p24_acc_after_p27": 0.8125
+  },
+  "tasks": {
+    "p24": {
+      "alpha": 0.1,
+      "n_calib": 1024,
+      "n_test": 1024,
+      "test_acc": 0.8125,
+      "calib_acc": 0.83984375,
+      "conformal": {
+        "tau": 0.6460390686988831,
+        "calib_coverage": 0.7890625,
+        "calib_ucb": 0.09931312214957297,
+        "coverage": 0.828125,
+        "risk": 0.12971697747707367,
+        "selective_acc": 0.8702830225229263,
+        "abstain_rate": 0.171875,
+        "n_answered": 848
+      },
+      "permuted": {
+        "tau": Infinity,
+        "calib_coverage": 0.0,
+        "coverage": 0.0,
+        "risk": 1.0,
+        "selective_acc": 0.0,
+        "abstain_rate": 1.0,
+        "n_answered": 0,
+        "satisfies": false
+      },
+      "always_answer": {
+        "risk": 0.1875,
+        "coverage": 1.0,
+        "selective_acc": 0.8125,
+        "abstain_rate": 0.0,
+        "n_answered": 1024
+      }
+    },
+    "p27": {
+      "alpha": 0.04,
+      "n_calib": 1024,
+      "n_test": 1024,
+      "test_acc": 0.921875,
+      "calib_acc": 0.9111328125,
+      "conformal": {
+        "tau": 0.8113687038421631,
+        "calib_coverage": 0.8134765625,
+        "calib_ucb": 0.0388924470730046,
+        "coverage": 0.80859375,
+        "risk": 0.02415458858013153,
+        "selective_acc": 0.9758454114198685,
+        "abstain_rate": 0.19140625,
+        "n_answered": 828
+      },
+      "permuted": {
+        "tau": Infinity,
+        "calib_coverage": 0.0,
+        "coverage": 0.0,
+        "risk": 1.0,
+        "selective_acc": 0.0,
+        "abstain_rate": 1.0,
+        "n_answered": 0,
+        "satisfies": false
+      },
+      "always_answer": {
+        "risk": 0.078125,
+        "coverage": 1.0,
+        "selective_acc": 0.921875,
+        "abstain_rate": 0.0,
+        "n_answered": 1024
+      }
+    }
+  },
+  "capsule_state_diff": 0.0,
+  "retention_drop": 0.0,
+  "gates": {
+    "G0": true,
+    "G1": true,
+    "G2": true,
+    "G3": true,
+    "G4": true,
+    "G5": true
+  },
+  "verdict": "uq1d_verified",
+  "run_conditions": {
+    "threads": 1
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 105.89
+  }
+}

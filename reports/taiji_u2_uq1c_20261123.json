@@ -1,0 +1,116 @@
+{
+  "schema": "taiji-u2-uq1c-v1",
+  "created_utc": "2026-11-22T16:54:30.061378+00:00",
+  "criteria_sha256": "8ff1666321fce40bf0d1b2568d42b31189cf899fda83d0a11535301cf13aff95",
+  "authority": "owner:standing-authorization:2026-11-20#recommendation-default",
+  "seed": 20261120,
+  "training": {
+    "p24_acc_after_p24": 0.79296875,
+    "p24_acc_after_p27": 0.79296875
+  },
+  "tasks": {
+    "p24": {
+      "alpha": 0.1,
+      "test_acc": 0.79296875,
+      "calib_acc": 0.8515625,
+      "conformal": {
+        "tau": 0.646479070186615,
+        "calib_coverage": 0.8125,
+        "calib_ucb": 0.09611988812685013,
+        "coverage": 0.7890625,
+        "risk": 0.13861386477947235,
+        "selective_acc": 0.8613861352205276,
+        "abstain_rate": 0.2109375,
+        "n_answered": 202
+      },
+      "permuted": {
+        "tau": 0.646479070186615,
+        "calib_coverage": 0.8125,
+        "coverage": 0.7890625,
+        "risk": 0.13861386477947235,
+        "selective_acc": 0.8613861352205276,
+        "abstain_rate": 0.2109375,
+        "n_answered": 202,
+        "satisfies": false
+      },
+      "empirical_uncorrected": {
+        "tau": 0.6161081194877625,
+        "calib_coverage": 0.87109375,
+        "coverage": 0.8515625,
+        "risk": 0.16972477734088898,
+        "selective_acc": 0.830275222659111,
+        "abstain_rate": 0.1484375,
+        "n_answered": 218
+      },
+      "always_answer": {
+        "risk": 0.20703125,
+        "coverage": 1.0,
+        "selective_acc": 0.79296875,
+        "abstain_rate": 0.0,
+        "n_answered": 256
+      }
+    },
+    "p27": {
+      "alpha": 0.04,
+      "test_acc": 0.9375,
+      "calib_acc": 0.90234375,
+      "conformal": {
+        "tau": 0.937679648399353,
+        "calib_coverage": 0.6015625,
+        "calib_ucb": 0.038487017154693604,
+        "coverage": 0.625,
+        "risk": 0.0062500000931322575,
+        "selective_acc": 0.9937499999068677,
+        "abstain_rate": 0.375,
+        "n_answered": 160
+      },
+      "permuted": {
+        "tau": 0.937679648399353,
+        "calib_coverage": 0.6015625,
+        "coverage": 0.625,
+        "risk": 0.0062500000931322575,
+        "selective_acc": 0.9937499999068677,
+        "abstain_rate": 0.375,
+        "n_answered": 160,
+        "satisfies": true
+      },
+      "empirical_uncorrected": {
+        "tau": 0.8151913285255432,
+        "calib_coverage": 0.80078125,
+        "coverage": 0.79296875,
+        "risk": 0.02463054098188877,
+        "selective_acc": 0.9753694590181112,
+        "abstain_rate": 0.20703125,
+        "n_answered": 203
+      },
+      "always_answer": {
+        "risk": 0.0625,
+        "coverage": 1.0,
+        "selective_acc": 0.9375,
+        "abstain_rate": 0.0,
+        "n_answered": 256
+      }
+    }
+  },
+  "capsule_state_diff": 0.0,
+  "retention_drop": 0.0,
+  "gates": {
+    "G0": true,
+    "G1": false,
+    "G2": true,
+    "G3": false,
+    "G4": true,
+    "G5": true
+  },
+  "verdict": "uq1c_risk_unmet",
+  "run_conditions": {
+    "threads": 1
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 105.08
+  }
+}

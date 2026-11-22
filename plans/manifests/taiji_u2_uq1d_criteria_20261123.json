@@ -1,0 +1,69 @@
+{
+  "schema": "taiji-u2-uq1d-criteria-v1",
+  "card": "UQ-1d",
+  "created": "2026-11-23",
+  "decision": "D-20261123-313",
+  "authority": "owner:standing-authorization:2026-11-20#recommendation-default",
+  "subject": "Subject72 seed 20261120; p24 500 steps + p27 600 steps with per-block 48-dim heads and block isolation; multi-seed 1024 calibration/test; Clopper-Pearson upper bound selective risk control with task-conditioned alpha",
+  "protocol": {
+    "seed": 20261120,
+    "p24_steps": 500,
+    "p27_steps": 600,
+    "batch": 48,
+    "lr": 0.007,
+    "wd": 0.0,
+    "p24_calib_offsets": [
+      212,
+      213,
+      214,
+      215
+    ],
+    "p24_test_offsets": [
+      712,
+      713,
+      714,
+      715
+    ],
+    "p27_calib_offsets": [
+      81,
+      82,
+      83,
+      84
+    ],
+    "p27_test_offsets": [
+      981,
+      982,
+      983,
+      984
+    ],
+    "per_seed_count": 256,
+    "fit_offset": 10000000,
+    "alpha": {
+      "p24": 0.1,
+      "p27": 0.04
+    },
+    "risk_tolerance": 0.03,
+    "coverage_min": 0.4,
+    "min_calib_coverage": 0.3,
+    "cp_level": 0.95
+  },
+  "gates": {
+    "G0_p24_acc_min": 0.7,
+    "G0_p27_acc_min": 0.7,
+    "G5_capsule_diff_max": 1e-06,
+    "G5_retention_drop_max": 0.001
+  },
+  "budget_cpu": 300.0,
+  "check_reads": 0,
+  "final_reads": 0,
+  "exits": [
+    "uq1d_verified",
+    "uq1d_risk_unmet",
+    "uq1d_feedback_weak",
+    "uq1d_calibration_optional",
+    "uq1d_baseline_insufficient",
+    "budget_stop",
+    "engineering_failure"
+  ],
+  "criteria_sha256": "244b695f4984d3f99fb9e083a6da27a67d1c699ffe8dc1f96e9bbb0f56cade79"
+}
