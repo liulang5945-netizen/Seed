@@ -25,7 +25,7 @@ from scripts.training.verify_taiji_s1r2_rework_20261121 import PhaseHead
 from scripts.training.verify_taiji_s1rt_stage1b_20261121 import Subject72
 
 BLOCKS = {"cn": (0, 24), "p24": (24, 48), "p27": (48, 72)}
-SEED = 20261120
+SEED = int(sys.argv[1]) if len(sys.argv) > 1 else 20261120
 B = 48
 
 
@@ -232,7 +232,7 @@ def main():
         "discipline": {"check_reads": 0, "final_reads": 0},
         "cost": {"cpu": round(time.process_time() - started, 2)},
     }
-    Path(r"E:\Seed\reports\taiji_u2_growthA_20261122.json").write_text(
+    Path(rf"E:\Seed\reports\taiji_u2_growthA_{SEED}.json").write_text(
         json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"
     )
     print(

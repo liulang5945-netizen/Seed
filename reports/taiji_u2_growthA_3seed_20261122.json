@@ -1,0 +1,94 @@
+{
+  "schema": "taiji-u2-growthA-3seed-v1",
+  "seeds": [
+    20261120,
+    20261121,
+    20261122
+  ],
+  "rows": [
+    {
+      "schema": "taiji-u2-growthA-v1",
+      "created_utc": "2026-11-22T12:39:46.298611+00:00",
+      "base_weak": 0.6015625,
+      "weak_after": 0.6328125,
+      "gain": 0.03125,
+      "lesion": 0.1640625,
+      "old_damage": 0.0,
+      "old_p27": 0.8984375,
+      "old_cn": 1.0,
+      "old_p24": 0.9765625,
+      "verdict": "growthA_partial",
+      "run_conditions": {
+        "threads": 1,
+        "OMP_NUM_THREADS": null,
+        "MKL_NUM_THREADS": null
+      },
+      "discipline": {
+        "check_reads": 0,
+        "final_reads": 0
+      },
+      "cost": {
+        "cpu": 146.78
+      }
+    },
+    {
+      "schema": "taiji-u2-growthA-v1",
+      "created_utc": "2026-11-22T12:42:15.839849+00:00",
+      "base_weak": 0.6015625,
+      "weak_after": 0.625,
+      "gain": 0.0234375,
+      "lesion": 0.2265625,
+      "old_damage": 0.0,
+      "old_p27": 0.890625,
+      "old_cn": 1.0,
+      "old_p24": 0.984375,
+      "verdict": "growthA_partial",
+      "run_conditions": {
+        "threads": 1,
+        "OMP_NUM_THREADS": null,
+        "MKL_NUM_THREADS": null
+      },
+      "discipline": {
+        "check_reads": 0,
+        "final_reads": 0
+      },
+      "cost": {
+        "cpu": 146.69
+      }
+    },
+    {
+      "schema": "taiji-u2-growthA-v1",
+      "created_utc": "2026-11-22T12:44:45.880926+00:00",
+      "base_weak": 0.5703125,
+      "weak_after": 0.7109375,
+      "gain": 0.140625,
+      "lesion": 0.421875,
+      "old_damage": 0.0,
+      "old_p27": 0.921875,
+      "old_cn": 1.0,
+      "old_p24": 0.9609375,
+      "verdict": "growthA_verified",
+      "run_conditions": {
+        "threads": 1,
+        "OMP_NUM_THREADS": null,
+        "MKL_NUM_THREADS": null
+      },
+      "discipline": {
+        "check_reads": 0,
+        "final_reads": 0
+      },
+      "cost": {
+        "cpu": 147.2
+      }
+    }
+  ],
+  "gates": {
+    "a_weak65": false,
+    "gain": false,
+    "lesion": true,
+    "old_damage": true
+  },
+  "mean_gain": 0.06510416666666667,
+  "mean_lesion": 0.2708333333333333,
+  "verdict": "growthA_3seed_partial"
+}

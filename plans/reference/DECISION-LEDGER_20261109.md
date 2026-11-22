@@ -8168,3 +8168,10 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **1. 动作**：写 [收官汇总](../reference/CLOSEOUT-TAIJI_U2_SESSION_20261122.md)：判定表（S1-RT verified、23-S pending、24-S partial、生长 A pending、生长 B partial、联合 bounded verified、生长线负结论、旧核封存）、成本 ≈8,900 CPU、未完成清单、待签字点、objective 对照。
 **2. 关键**：所有 verified 均为有界合成面；零 check/final；不签 final/C/D/J。
 **3. 待裁**：23-S Q/基线；生长 A 0.65 门；生长 B/24-S 收束；联合口径；check 授权。
+
+
+### D-20261122-293 生长 A 3 seed 确认：`growthA_3seed_partial`（≈440 CPU，0 check）
+
+**1. 读数**：s1 弱项 0.6328/增益 0.0312/lesion 0.1641；s2 0.6250/0.0234/0.2266；s3 0.7109/0.1406/0.4219；旧损伤全 0。
+**2. 判定**：均值增益 0.0651、均值 lesion 0.2708（均值口径全过），但逐 seed 严格门只有 1/3 过 ⇒ `growthA_3seed_partial`；单 seed verified 属种子相关。
+**3. 待裁**：接受均值口径（则 3 seed verified）或要求逐 seed 稳定（再校准）。零 check/final。
