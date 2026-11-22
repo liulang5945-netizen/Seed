@@ -1,0 +1,268 @@
+{
+  "schema": "taiji-u2-24s0b-v1",
+  "created_utc": "2026-11-22T11:27:14.129863+00:00",
+  "seeds": [
+    20261120,
+    20261121,
+    20261122
+  ],
+  "rows": [
+    {
+      "seed": 20261120,
+      "trace": {
+        "sess1": {
+          "cn_seen": 0.2421875,
+          "cn_unseen": 0.2578125,
+          "p24": 0.2265625,
+          "p27": 0.3828125,
+          "composite": 0.27734375,
+          "capsule_diff": 0.0
+        },
+        "sess2": {
+          "cn_seen": 0.453125,
+          "cn_unseen": 0.30859375,
+          "p24": 0.34375,
+          "p27": 0.359375,
+          "composite": 0.3662109375,
+          "capsule_diff": 0.0
+        },
+        "sess3": {
+          "cn_seen": 0.38671875,
+          "cn_unseen": 0.31640625,
+          "p24": 0.3359375,
+          "p27": 0.515625,
+          "composite": 0.388671875,
+          "capsule_diff": 0.0
+        },
+        "sess4": {
+          "cn_seen": 0.4921875,
+          "cn_unseen": 0.33984375,
+          "p24": 0.28125,
+          "p27": 0.625,
+          "composite": 0.4345703125,
+          "capsule_diff": 0.0
+        },
+        "sess5": {
+          "cn_seen": 0.53125,
+          "cn_unseen": 0.30078125,
+          "p24": 0.4140625,
+          "p27": 0.5546875,
+          "composite": 0.4501953125,
+          "capsule_diff": 0.0
+        },
+        "sess6": {
+          "cn_seen": 0.77734375,
+          "cn_unseen": 0.6640625,
+          "p24": 0.3359375,
+          "p27": 0.734375,
+          "composite": 0.6279296875,
+          "capsule_diff": 0.0
+        },
+        "sess7": {
+          "cn_seen": 0.91796875,
+          "cn_unseen": 0.91796875,
+          "p24": 0.3203125,
+          "p27": 0.734375,
+          "composite": 0.72265625,
+          "capsule_diff": 0.0
+        },
+        "sess8": {
+          "cn_seen": 0.91796875,
+          "cn_unseen": 0.91796875,
+          "p24": 0.3203125,
+          "p27": 0.734375,
+          "composite": 0.72265625
+        }
+      },
+      "recovery": {
+        "outdated": 0.375,
+        "misleading": 0.328125,
+        "outdated2": 0.3125,
+        "withdrawn": 0.75
+      }
+    },
+    {
+      "seed": 20261121,
+      "trace": {
+        "sess1": {
+          "cn_seen": 0.359375,
+          "cn_unseen": 0.23046875,
+          "p24": 0.421875,
+          "p27": 0.3828125,
+          "composite": 0.3486328125,
+          "capsule_diff": 0.0
+        },
+        "sess2": {
+          "cn_seen": 0.46875,
+          "cn_unseen": 0.28515625,
+          "p24": 0.40625,
+          "p27": 0.4140625,
+          "composite": 0.3935546875,
+          "capsule_diff": 0.0
+        },
+        "sess3": {
+          "cn_seen": 0.44140625,
+          "cn_unseen": 0.4375,
+          "p24": 0.25,
+          "p27": 0.609375,
+          "composite": 0.4345703125,
+          "capsule_diff": 0.0
+        },
+        "sess4": {
+          "cn_seen": 0.3671875,
+          "cn_unseen": 0.3046875,
+          "p24": 0.2734375,
+          "p27": 0.3515625,
+          "composite": 0.32421875,
+          "capsule_diff": 0.0
+        },
+        "sess5": {
+          "cn_seen": 0.5859375,
+          "cn_unseen": 0.44140625,
+          "p24": 0.3359375,
+          "p27": 0.3984375,
+          "composite": 0.4404296875,
+          "capsule_diff": 0.0
+        },
+        "sess6": {
+          "cn_seen": 0.87890625,
+          "cn_unseen": 0.78515625,
+          "p24": 0.25,
+          "p27": 0.5703125,
+          "composite": 0.62109375,
+          "capsule_diff": 0.0
+        },
+        "sess7": {
+          "cn_seen": 0.94921875,
+          "cn_unseen": 0.93359375,
+          "p24": 0.3359375,
+          "p27": 0.6953125,
+          "composite": 0.728515625,
+          "capsule_diff": 0.0
+        },
+        "sess8": {
+          "cn_seen": 0.94921875,
+          "cn_unseen": 0.93359375,
+          "p24": 0.3359375,
+          "p27": 0.6953125,
+          "composite": 0.728515625
+        }
+      },
+      "recovery": {
+        "outdated": 0.3671875,
+        "misleading": 0.515625,
+        "outdated2": 0.2578125,
+        "withdrawn": 0.75
+      }
+    },
+    {
+      "seed": 20261122,
+      "trace": {
+        "sess1": {
+          "cn_seen": 0.375,
+          "cn_unseen": 0.23046875,
+          "p24": 0.46875,
+          "p27": 0.4296875,
+          "composite": 0.3759765625,
+          "capsule_diff": 0.0
+        },
+        "sess2": {
+          "cn_seen": 0.4140625,
+          "cn_unseen": 0.27734375,
+          "p24": 0.359375,
+          "p27": 0.4140625,
+          "composite": 0.3662109375,
+          "capsule_diff": 0.0
+        },
+        "sess3": {
+          "cn_seen": 0.4609375,
+          "cn_unseen": 0.3671875,
+          "p24": 0.390625,
+          "p27": 0.4765625,
+          "composite": 0.423828125,
+          "capsule_diff": 0.0
+        },
+        "sess4": {
+          "cn_seen": 0.5234375,
+          "cn_unseen": 0.375,
+          "p24": 0.25,
+          "p27": 0.6171875,
+          "composite": 0.44140625,
+          "capsule_diff": 0.0
+        },
+        "sess5": {
+          "cn_seen": 0.6484375,
+          "cn_unseen": 0.47265625,
+          "p24": 0.2734375,
+          "p27": 0.6484375,
+          "composite": 0.5107421875,
+          "capsule_diff": 0.0
+        },
+        "sess6": {
+          "cn_seen": 0.73046875,
+          "cn_unseen": 0.48046875,
+          "p24": 0.2265625,
+          "p27": 0.65625,
+          "composite": 0.5234375,
+          "capsule_diff": 0.0
+        },
+        "sess7": {
+          "cn_seen": 0.87109375,
+          "cn_unseen": 0.47265625,
+          "p24": 0.3828125,
+          "p27": 0.765625,
+          "composite": 0.623046875,
+          "capsule_diff": 0.0
+        },
+        "sess8": {
+          "cn_seen": 0.87109375,
+          "cn_unseen": 0.47265625,
+          "p24": 0.3828125,
+          "p27": 0.765625,
+          "composite": 0.623046875
+        }
+      },
+      "recovery": {
+        "outdated": 0.375,
+        "misleading": 0.25,
+        "outdated2": 0.234375,
+        "withdrawn": 0.75
+      }
+    }
+  ],
+  "slopes": [
+    0.06895228794642858,
+    0.06748744419642858,
+    0.044677734375
+  ],
+  "tail_gain": [
+    0.41373697916666663,
+    0.34407552083333337,
+    0.2138671875
+  ],
+  "drawdowns": [
+    0.0,
+    0.1103515625,
+    0.009765625
+  ],
+  "gates": {
+    "retention": true,
+    "recovery": false,
+    "trend": true,
+    "drawdown": false,
+    "capsule": true
+  },
+  "verdict": "24s0b_partial",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 315.08
+  }
+}
