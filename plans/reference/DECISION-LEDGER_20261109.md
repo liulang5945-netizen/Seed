@@ -8016,3 +8016,9 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **2. 读数**：I CN 1.0/P-B 0.883；S CN 0.961/P-B 0.906；Δ CN −0.039、P-B +0.023；coexist✓ transfer✗ ⇒ `shared_coexist_no_synergy`。
 **3. 判读**：共享主干可共存且有局部正迁移（P-B +0.023），但 CN 掉 0.039，净协同未成立（共享容量/任务冲突）。1 seed、不签协同结论。
 **4. 后继**：共享容量 24→48、任务损失加权、或共享中间层；否则按「共存不协同」收束。
+
+### D-20261122-269 主线盘点与公开研究对照（零训练、0 check）
+
+**1. 动作**：写 [盘点/研究文档](../reference/CONSOLIDATION-RESEARCH-20261122.md)：主线位置、问题清单 P1–P6、公开研究地图、可落地改造建议；MAINLINE §3A.0 状态快照。
+**2. 关键结论**：P1 已解（固定分区+grad mask+wd=0+capsule routes，S1-RTF 3 seed）；P2 生长未解（负结论收束）；P3 协同未解；P5 评测需标准化。研究对照：HAT 对应 grad-mask；DeepSeekMoE shared+routed 对应共享折中；Net2Net/PNN 对应生长失败；CL survey 给评测框架。
+**3. 状态**：主线处于「S1 合同内、协议已换代」过渡点，需 owner 裁定是否以 RT 重立 S1 判据；本轮零训练、零 check。
