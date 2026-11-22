@@ -1,0 +1,25 @@
+{
+  "schema": "taiji-u2-growthA-v1",
+  "created_utc": "2026-11-22T12:09:16.086544+00:00",
+  "base_weak": 0.6015625,
+  "weak_after": 0.6328125,
+  "gain": 0.03125,
+  "lesion": 0.1640625,
+  "old_damage": 0.0,
+  "old_p27": 0.8984375,
+  "old_cn": 1.0,
+  "old_p24": 0.9765625,
+  "verdict": "growthA_partial",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 147.33
+  }
+}
