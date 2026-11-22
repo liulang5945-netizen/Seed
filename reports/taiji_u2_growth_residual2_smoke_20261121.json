@@ -1,0 +1,23 @@
+{
+  "schema": "taiji-u2-growth-residual2-smoke-v1",
+  "created_utc": "2026-11-21T16:53:13.691293+00:00",
+  "seed": 20261120,
+  "grew": 24,
+  "baseline": 0.8125,
+  "old_only": 0.8125,
+  "combined": 0.875,
+  "lesion_new": 0.0625,
+  "verdict": "growth_residual2_partial",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 144.78
+  }
+}
