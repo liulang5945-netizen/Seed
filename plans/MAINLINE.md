@@ -181,6 +181,8 @@
 
 ### 3A.0 状态快照（2026-11-22，D-20261122-271 更新）
 
+> **[23-S.2a 增益试点：`23s2a_gain_positive`]** 同 seed：R Q=0.836 vs 共享 0.25 / 冻结 0.438，增益 0.398（262.8 CPU、零 check）。**但基线非合同要求的等算力 GRU/TF**，故 23-S 增益门仍未闭合；23-S.2b 补强基线（≤1,500 CPU）。误触发 23-S.1 重跑 649.86 CPU 已披露作废。见 [结果卡](reference/RESULT-TAIJI_U2_23S2A_GAIN_20261122.md)。
+
 > **[23-S 全门映射草案]** 4 门中保持/旧技能满足，Q 在 `min(CN unseen,P-B,P-D)` 定义下 0.836–0.883（待 owner 认可）；**增益门缺同协议基线 ⇒ 23-S 不判 verified、24-S 保持锁定**。补门方案 23-S.2（S/F 对照臂，≤500 CPU）。见 [映射草案](reference/MAPPING-TAIJI_U2_23S_GATES_20261122.md)。
 
 > **[23-S.1b：`23s1b_rt_verified`]** 仅把 P-D 步数 800→1,300（冻结哈希 `c95dfaeb…`），3 seed 全门通过：CN unseen 0.8594–1.0、P-D 0.8359–0.8984、旧损伤 ≤0.0078、胶囊/恢复 0.0（669.23 CPU、零 check）。**注意：子卡通过 ≠ 23-S 整包 verified；24-S 仍锁，待 owner 映射 §3A.2 全门。** 结果卡 [RESULT-TAIJI_U2_23S1B_RT_20261122.md](reference/RESULT-TAIJI_U2_23S1B_RT_20261122.md)。

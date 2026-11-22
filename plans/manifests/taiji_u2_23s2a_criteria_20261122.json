@@ -1,0 +1,27 @@
+{
+  "arms": [
+    "shared",
+    "frozen"
+  ],
+  "budget_cpu": 600.0,
+  "check_reads": 0,
+  "created": "2026-11-22",
+  "criteria_sha256": "e9cf3236c22b5684e3ca792f84b1a582fa4e4ed907041fa01888443b74c15fa3",
+  "decision": "D-20261122-277 pilot for 23-S gain gate",
+  "exits": [
+    "23s2a_gain_positive",
+    "23s2a_gain_absent",
+    "budget_stop",
+    "engineering_failure"
+  ],
+  "final_reads": 0,
+  "gain_threshold": 0.05,
+  "q_definition": "min(cn_unseen, p24, p27)",
+  "schema": "taiji-u2-23s2a-gain-criteria-v1",
+  "seed": 20261120,
+  "steps": {
+    "cn": 1000,
+    "p24": 900,
+    "p27": 1300
+  }
+}

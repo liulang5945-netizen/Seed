@@ -1,0 +1,38 @@
+{
+  "schema": "taiji-u2-23s2a-gain-v1",
+  "criteria_sha256": "e9cf3236c22b5684e3ca792f84b1a582fa4e4ed907041fa01888443b74c15fa3",
+  "created_utc": "2026-11-22T10:09:16.608730+00:00",
+  "seed": 20261120,
+  "q_routed": 0.835938,
+  "rows": [
+    {
+      "arm": "shared",
+      "cn_unseen": 0.25,
+      "p24": 0.2734375,
+      "p27": 0.8671875,
+      "q": 0.25
+    },
+    {
+      "arm": "frozen",
+      "cn_unseen": 1.0,
+      "p24": 0.4765625,
+      "p27": 0.4375,
+      "q": 0.4375
+    }
+  ],
+  "gain": 0.39843799999999996,
+  "threshold": 0.05,
+  "verdict": "23s2a_gain_positive",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 262.8
+  }
+}
