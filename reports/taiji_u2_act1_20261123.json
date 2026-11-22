@@ -1,0 +1,91 @@
+{
+  "schema": "taiji-u2-act1-v1",
+  "created_utc": "2026-11-22T16:37:47.891709+00:00",
+  "criteria_sha256": "c908f99750c328525482611e9ada936317744114fa9ad3bb92d00ee5f91a366e",
+  "authority": "owner:standing-authorization:2026-11-20#recommendation-default",
+  "seed": 20261120,
+  "base": {
+    "acc": 1.0,
+    "per_outcome": {
+      "0": 1.0,
+      "1": 1.0,
+      "2": 1.0,
+      "3": 1.0,
+      "4": 1.0
+    },
+    "block_acc": 1.0,
+    "n": 256
+  },
+  "text_zero": {
+    "acc": 0.90625,
+    "per_outcome": {
+      "0": 0.7894737124443054,
+      "1": 1.0,
+      "2": 0.7647058963775635,
+      "3": 1.0,
+      "4": 1.0
+    },
+    "block_acc": 0.7647058963775635,
+    "n": 256
+  },
+  "visual_zero": {
+    "acc": 0.49609375,
+    "per_outcome": {
+      "0": 1.0,
+      "1": 0.0,
+      "2": 0.0,
+      "3": 0.0,
+      "4": 1.0
+    },
+    "block_acc": 0.0,
+    "n": 256
+  },
+  "counterfactual": {
+    "acc": 1.0,
+    "correct": 192,
+    "total": 192
+  },
+  "revision": {
+    "no_feedback_locked_acc": 0.83203125,
+    "revised_locked_acc": 1.0,
+    "revised_base_acc": 0.859375,
+    "curve": [
+      0.8671875,
+      0.8671875,
+      0.8828125,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "permuted_locked_acc": 0.1015625,
+    "permuted_curve": [
+      0.70703125,
+      0.70703125,
+      0.70703125,
+      0.5,
+      0.40625,
+      0.23046875,
+      0.13671875,
+      0.1015625
+    ]
+  },
+  "gates": {
+    "G0": true,
+    "G1": true,
+    "G2": true,
+    "G3": false
+  },
+  "verdict": "act1_no_revision",
+  "run_conditions": {
+    "threads": 1
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 96.77
+  }
+}

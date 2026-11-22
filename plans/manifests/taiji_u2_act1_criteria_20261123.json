@@ -1,0 +1,84 @@
+{
+  "schema": "taiji-u2-act1-criteria-v1",
+  "card": "ACT-1",
+  "created": "2026-11-23",
+  "decision": "D-20261123-309",
+  "authority": "owner:standing-authorization:2026-11-20#recommendation-default",
+  "subject": "Subject72 seed 20261120; cn block 0:24 with a 48-dim action-outcome head; deterministic corridor world with visual position/goal and language door-state modalities",
+  "protocol": {
+    "seed": 20261120,
+    "base_steps": 800,
+    "batch": 48,
+    "lr": 0.007,
+    "wd": 0.0,
+    "test_count": 256,
+    "counterfactual_states": 64,
+    "revision_interactions": 8,
+    "revision_batch": 96,
+    "revision_lr": 0.006,
+    "test_seed_offset_base": 1200,
+    "test_seed_offset_locked": 1300,
+    "train_seed_offset": 5000,
+    "font_projection_seed": 2026112301,
+    "outcomes": [
+      "MOVE",
+      "REACH",
+      "BLOCK",
+      "STAY",
+      "TOGGLE"
+    ],
+    "actions": [
+      "L",
+      "R",
+      "PUSH"
+    ],
+    "door_states": [
+      "open",
+      "closed",
+      "locked"
+    ],
+    "channels": {
+      "pos": [
+        0,
+        5
+      ],
+      "goal": [
+        5,
+        10
+      ],
+      "action": [
+        12,
+        15
+      ],
+      "query": 15,
+      "text": [
+        16,
+        24
+      ]
+    }
+  },
+  "gates": {
+    "G0_base_acc_min": 0.85,
+    "G0_block_acc_min": 0.8,
+    "G1_counterfactual_acc_min": 0.85,
+    "G2_text_zero_block_drop_min": 0.15,
+    "G2_visual_zero_acc_drop_min": 0.15,
+    "G3_revision_acc_min": 0.75,
+    "G3_retention_min": 0.8,
+    "G3_no_feedback_max": 0.4,
+    "G3_permuted_max": 0.4
+  },
+  "budget_cpu": 700.0,
+  "check_reads": 0,
+  "final_reads": 0,
+  "exits": [
+    "act1_verified",
+    "act1_no_revision",
+    "act1_unimodal",
+    "act1_action_insensitive",
+    "act1_baseline_insufficient",
+    "budget_stop",
+    "engineering_failure"
+  ],
+  "criteria_sha256": "c908f99750c328525482611e9ada936317744114fa9ad3bb92d00ee5f91a366e"
+}

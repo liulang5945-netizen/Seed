@@ -1,0 +1,94 @@
+{
+  "schema": "taiji-u2-act1-v1",
+  "created_utc": "2026-11-22T16:40:47.241455+00:00",
+  "criteria_sha256": "25a927dc42869099033c525f8d79e5ea38f0f970ed22c2fffb28798ba1c31369",
+  "authority": "owner:standing-authorization:2026-11-20#recommendation-default",
+  "seed": 20261120,
+  "base": {
+    "acc": 1.0,
+    "per_outcome": {
+      "0": 1.0,
+      "1": 1.0,
+      "2": 1.0,
+      "3": 1.0,
+      "4": 1.0
+    },
+    "block_acc": 1.0,
+    "n": 256
+  },
+  "text_zero": {
+    "acc": 0.90625,
+    "per_outcome": {
+      "0": 0.7894737124443054,
+      "1": 1.0,
+      "2": 0.7647058963775635,
+      "3": 1.0,
+      "4": 1.0
+    },
+    "block_acc": 0.7647058963775635,
+    "n": 256
+  },
+  "visual_zero": {
+    "acc": 0.49609375,
+    "per_outcome": {
+      "0": 1.0,
+      "1": 0.0,
+      "2": 0.0,
+      "3": 0.0,
+      "4": 1.0
+    },
+    "block_acc": 0.0,
+    "n": 256
+  },
+  "counterfactual": {
+    "acc": 1.0,
+    "correct": 192,
+    "total": 192
+  },
+  "revision": {
+    "no_feedback_locked_acc": 0.83203125,
+    "no_feedback_dependent_acc": 0.359375,
+    "revised_dependent_acc": 1.0,
+    "permuted_dependent_acc": 0.0,
+    "revised_locked_acc": 1.0,
+    "revised_base_acc": 0.859375,
+    "curve": [
+      0.8671875,
+      0.8671875,
+      0.8828125,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "permuted_locked_acc": 0.1015625,
+    "permuted_curve": [
+      0.70703125,
+      0.70703125,
+      0.70703125,
+      0.5,
+      0.40625,
+      0.23046875,
+      0.13671875,
+      0.1015625
+    ]
+  },
+  "gates": {
+    "G0": true,
+    "G1": true,
+    "G2": true,
+    "G3": true
+  },
+  "verdict": "act1b_verified",
+  "run_conditions": {
+    "threads": 1
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 96.52
+  }
+}

@@ -1,0 +1,103 @@
+{
+  "schema": "taiji-u2-act1b-criteria-v1",
+  "card": "ACT-1b",
+  "created": "2026-11-23",
+  "decision": "D-20261123-310",
+  "authority": "owner:standing-authorization:2026-11-20#recommendation-default",
+  "subject": "Subject72 seed 20261120; cn block 0:24 with a 48-dim action-outcome head; same corridor world as ACT-1; locked-regime revision measured on the door-dependent state subset",
+  "protocol": {
+    "seed": 20261120,
+    "base_steps": 800,
+    "batch": 48,
+    "lr": 0.007,
+    "wd": 0.0,
+    "test_count": 256,
+    "counterfactual_states": 64,
+    "revision_interactions": 8,
+    "revision_batch": 96,
+    "revision_lr": 0.006,
+    "test_seed_offset_base": 1200,
+    "test_seed_offset_locked": 1300,
+    "test_seed_offset_locked_dependent": 1400,
+    "train_seed_offset": 5000,
+    "font_projection_seed": 2026112301,
+    "outcomes": [
+      "MOVE",
+      "REACH",
+      "BLOCK",
+      "STAY",
+      "TOGGLE"
+    ],
+    "actions": [
+      "L",
+      "R",
+      "PUSH"
+    ],
+    "door_states": [
+      "open",
+      "closed",
+      "locked"
+    ],
+    "door_dependent_states": [
+      [
+        1,
+        1
+      ],
+      [
+        2,
+        0
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        2
+      ]
+    ],
+    "channels": {
+      "pos": [
+        0,
+        5
+      ],
+      "goal": [
+        5,
+        10
+      ],
+      "action": [
+        12,
+        15
+      ],
+      "query": 15,
+      "text": [
+        16,
+        24
+      ]
+    }
+  },
+  "gates": {
+    "G0_base_acc_min": 0.85,
+    "G0_block_acc_min": 0.8,
+    "G1_counterfactual_acc_min": 0.85,
+    "G2_text_zero_block_drop_min": 0.15,
+    "G2_visual_zero_acc_drop_min": 0.15,
+    "G3_dependent_revision_acc_min": 0.75,
+    "G3_retention_min": 0.8,
+    "G3_no_feedback_max": 0.4,
+    "G3_permuted_max": 0.4
+  },
+  "budget_cpu": 700.0,
+  "check_reads": 0,
+  "final_reads": 0,
+  "exits": [
+    "act1b_verified",
+    "act1b_no_revision",
+    "act1b_unimodal",
+    "act1b_action_insensitive",
+    "act1b_baseline_insufficient",
+    "budget_stop",
+    "engineering_failure"
+  ],
+  "criteria_sha256": "25a927dc42869099033c525f8d79e5ea38f0f970ed22c2fffb28798ba1c31369"
+}
