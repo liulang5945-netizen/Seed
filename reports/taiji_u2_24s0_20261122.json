@@ -1,0 +1,195 @@
+{
+  "schema": "taiji-u2-24s0-v1",
+  "created_utc": "2026-11-22T10:39:26.589777+00:00",
+  "seeds": [
+    20261120,
+    20261121,
+    20261122
+  ],
+  "rows": [
+    {
+      "seed": 20261120,
+      "trace": {
+        "sess1": {
+          "q": 0.234375,
+          "cn_seen": 0.46484375,
+          "cn_unseen": 0.234375,
+          "p24": 0.234375,
+          "p27": 0.3828125,
+          "capsule_diff": 0.0
+        },
+        "sess2": {
+          "q": 0.26953125,
+          "cn_seen": 0.359375,
+          "cn_unseen": 0.26953125,
+          "p24": 0.421875,
+          "p27": 0.40625,
+          "capsule_diff": 0.0
+        },
+        "sess3": {
+          "q": 0.3125,
+          "cn_seen": 0.58984375,
+          "cn_unseen": 0.33203125,
+          "p24": 0.3125,
+          "p27": 0.4375,
+          "capsule_diff": 0.0
+        },
+        "sess4": {
+          "q": 0.37109375,
+          "cn_seen": 0.5,
+          "cn_unseen": 0.37109375,
+          "p24": 0.46875,
+          "p27": 0.390625,
+          "capsule_diff": 0.0
+        },
+        "sess5": {
+          "q": 0.37109375,
+          "cn_seen": 0.5,
+          "cn_unseen": 0.37109375,
+          "p24": 0.46875,
+          "p27": 0.390625,
+          "capsule_diff": 0.0
+        }
+      },
+      "gains": {
+        "sess2": 0.03515625,
+        "sess3": 0.078125,
+        "sess4": 0.13671875
+      },
+      "retention": 0.13671875,
+      "recovery": {
+        "outdated": 0.15625,
+        "misleading": 0.609375
+      }
+    },
+    {
+      "seed": 20261121,
+      "trace": {
+        "sess1": {
+          "q": 0.29296875,
+          "cn_seen": 0.51953125,
+          "cn_unseen": 0.29296875,
+          "p24": 0.3828125,
+          "p27": 0.359375,
+          "capsule_diff": 0.0
+        },
+        "sess2": {
+          "q": 0.3984375,
+          "cn_seen": 0.515625,
+          "cn_unseen": 0.42578125,
+          "p24": 0.484375,
+          "p27": 0.3984375,
+          "capsule_diff": 0.0
+        },
+        "sess3": {
+          "q": 0.265625,
+          "cn_seen": 0.5078125,
+          "cn_unseen": 0.390625,
+          "p24": 0.265625,
+          "p27": 0.421875,
+          "capsule_diff": 0.0
+        },
+        "sess4": {
+          "q": 0.2734375,
+          "cn_seen": 0.77734375,
+          "cn_unseen": 0.87109375,
+          "p24": 0.2734375,
+          "p27": 0.53125,
+          "capsule_diff": 0.0
+        },
+        "sess5": {
+          "q": 0.2734375,
+          "cn_seen": 0.77734375,
+          "cn_unseen": 0.87109375,
+          "p24": 0.2734375,
+          "p27": 0.53125,
+          "capsule_diff": 0.0
+        }
+      },
+      "gains": {
+        "sess2": 0.10546875,
+        "sess3": -0.02734375,
+        "sess4": -0.01953125
+      },
+      "retention": -0.01953125,
+      "recovery": {
+        "outdated": 0.2421875,
+        "misleading": 0.3359375
+      }
+    },
+    {
+      "seed": 20261122,
+      "trace": {
+        "sess1": {
+          "q": 0.23046875,
+          "cn_seen": 0.30078125,
+          "cn_unseen": 0.23046875,
+          "p24": 0.4375,
+          "p27": 0.4375,
+          "capsule_diff": 0.0
+        },
+        "sess2": {
+          "q": 0.19921875,
+          "cn_seen": 0.3125,
+          "cn_unseen": 0.19921875,
+          "p24": 0.28125,
+          "p27": 0.4453125,
+          "capsule_diff": 0.0
+        },
+        "sess3": {
+          "q": 0.296875,
+          "cn_seen": 0.5234375,
+          "cn_unseen": 0.4921875,
+          "p24": 0.296875,
+          "p27": 0.4609375,
+          "capsule_diff": 0.0
+        },
+        "sess4": {
+          "q": 0.2890625,
+          "cn_seen": 0.734375,
+          "cn_unseen": 0.359375,
+          "p24": 0.2890625,
+          "p27": 0.453125,
+          "capsule_diff": 0.0
+        },
+        "sess5": {
+          "q": 0.2890625,
+          "cn_seen": 0.734375,
+          "cn_unseen": 0.359375,
+          "p24": 0.2890625,
+          "p27": 0.453125,
+          "capsule_diff": 0.0
+        }
+      },
+      "gains": {
+        "sess2": -0.03125,
+        "sess3": 0.06640625,
+        "sess4": 0.05859375
+      },
+      "retention": 0.05859375,
+      "recovery": {
+        "outdated": 0.3359375,
+        "misleading": 0.25
+      }
+    }
+  ],
+  "gates": {
+    "retention": true,
+    "recovery": false,
+    "gain_sustained": false,
+    "capsule": true
+  },
+  "verdict": "24s0_partial",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 305.84
+  }
+}

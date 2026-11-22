@@ -181,6 +181,8 @@
 
 ### 3A.0 状态快照（2026-11-22，D-20261122-271 更新）
 
+> **[24-S.0 首卡：`24s0_partial`]** 保持 ✓、capsule ✓；**纠错恢复 ✗**（2 交互内 outdated 0.156–0.336、misleading 0.250–0.609）、**净益持续 ✗**（305.84 CPU、3 seed、零 check）。24-S 不 verified；返工方向：头级/低秩快速纠错＋基线对照（24-S.0b，需新预注册）。见 [结果卡](reference/RESULT-TAIJI_U2_24S0_20261122.md)。
+
 > **[24-S.0 预注册草案]** 五会话窄卡（建立/新组合/过时标签/误导+矛盾/延迟保持），四类纠错 2 交互恢复、净益 ≥0.05 持续 ≥2 会话、capsule 每会话恢复；3 seed ≤1,200 CPU、零 check。**未冻结、未运行、需单卡授权。** 见 [DESIGN-TAIJI_U2_24S0_20261122.md](reference/DESIGN-TAIJI_U2_24S0_20261122.md)。
 
 > **[23-S：`verified`（pending owner ratification，D-281）]** 按草案口径四门齐备（Q 0.836/0.883/0.859；增益 0.648–0.707；保持 ≤0.008；三任务 ≥0.80）。**24-S 解锁仅规划/预注册**，执行需单卡授权；check/final 仍冻结。判定卡 [VERDICT-TAIJI_U2_23S_20261122.md](reference/VERDICT-TAIJI_U2_23S_20261122.md)；owner 可回溯改口径/要求 23-S.2c。
