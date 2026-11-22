@@ -8022,3 +8022,9 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **1. 动作**：写 [盘点/研究文档](../reference/CONSOLIDATION-RESEARCH-20261122.md)：主线位置、问题清单 P1–P6、公开研究地图、可落地改造建议；MAINLINE §3A.0 状态快照。
 **2. 关键结论**：P1 已解（固定分区+grad mask+wd=0+capsule routes，S1-RTF 3 seed）；P2 生长未解（负结论收束）；P3 协同未解；P5 评测需标准化。研究对照：HAT 对应 grad-mask；DeepSeekMoE shared+routed 对应共享折中；Net2Net/PNN 对应生长失败；CL survey 给评测框架。
 **3. 状态**：主线处于「S1 合同内、协议已换代」过渡点，需 owner 裁定是否以 RT 重立 S1 判据；本轮零训练、零 check。
+
+### D-20261122-270 S1-RT 合同修订草案（owner 裁定 A；零训练、0 check）
+
+**1. 动作**：写 [S1-RT 合同修订草案](../reference/DESIGN-TAIJI_U2_S1RT_CONTRACT_20261122.md)：范围（72 单元/三任务/24 路由/参数保护/capsule 继承）、G1–G8 门、出口、证据映射（D-257/D-260/D-240）、冻结与授权流程、附录 B 非蒸馏参考。
+**2. 关键决定**：旧 S1 四轮注意保留为历史；新合同冻结后需按合同重跑 3 seed（≈630 CPU、零 check）作为正式 S1 证据，D-257 仅预验证；**不含蒸馏**；生长/协同不属本卡。
+**3. 状态**：草案待 owner 审阅；未运行、未签 S1、23-S 仍锁。
