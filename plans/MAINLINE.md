@@ -181,6 +181,8 @@
 
 ### 3A.0 状态快照（2026-11-22，D-20261122-271 更新）
 
+> **[收官证据补全（D-294）]** 既有有界证据（P26 自主选择 +0.28～+0.49、CN Exact A3c 0.8031、M1–M3、P24、capsule 继承）补入收官对照；开放中文/动作/真机/不确定性/跨会话迁移仍未成立。见 [CLOSEOUT](reference/CLOSEOUT-TAIJI_U2_SESSION_20261122.md)。
+
 > **[生长 A 3 seed：`growthA_3seed_partial`（D-293）]** 均值增益 0.0651、均值 lesion 0.2708、旧损伤 0；但逐 seed 严格门仅 1/3 过（s1/s2 弱项 0.625–0.633、增益 0.023–0.031）。单 seed verified 属种子相关；待 owner 裁定均值口径或再校准。见 [A 卡](reference/RESULT-TAIJI_U2_GROWTHA_20261122.md)。
 
 > **[本会话收官汇总（D-292）]** 判定：S1-RT verified、23-S pending、24-S partial、生长 A pending、生长 B partial、联合 bounded verified；≈8,900 CPU、零 check/final。未完成：开放中文/真机/多模态、24-S 正式包、生长 B、联合正增益、不确定性。见 [CLOSEOUT-TAIJI_U2_SESSION_20261122.md](reference/CLOSEOUT-TAIJI_U2_SESSION_20261122.md)。
