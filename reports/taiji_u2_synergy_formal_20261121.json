@@ -1,0 +1,35 @@
+{
+  "schema": "taiji-u2-synergy-formal-v1",
+  "created_utc": "2026-11-22T03:21:20.022840+00:00",
+  "seed": 20261120,
+  "isolated": {
+    "cn": 1.0,
+    "p24": 0.8828125
+  },
+  "shared": {
+    "cn": 0.9609375,
+    "p24": 0.90625
+  },
+  "delta": {
+    "cn": -0.0390625,
+    "p24": 0.0234375
+  },
+  "gates": {
+    "ref": true,
+    "coexist": true,
+    "transfer": false
+  },
+  "verdict": "shared_coexist_no_synergy",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 182.5
+  }
+}
