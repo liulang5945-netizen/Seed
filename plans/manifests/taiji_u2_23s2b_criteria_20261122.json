@@ -1,0 +1,33 @@
+{
+  "arms": [
+    "gru",
+    "tf"
+  ],
+  "batch": 48,
+  "budget_cpu": 1500.0,
+  "check_reads": 0,
+  "created": "2026-11-22",
+  "criteria_sha256": "f4915b7d65e97365f1bb92a4be124dc6fdb5309e0261145a0f5b8b425d2d0139",
+  "decision": "D-20261122-278 equal-compute GRU/TF baselines",
+  "exits": [
+    "23s2b_gain_verified",
+    "23s2b_gain_absent",
+    "budget_stop",
+    "engineering_failure"
+  ],
+  "final_reads": 0,
+  "gain_mean_min": 0.05,
+  "gain_min": 0.0,
+  "q_definition": "min(cn_unseen, p24, p27)",
+  "schema": "taiji-u2-23s2b-gain-criteria-v1",
+  "seeds": [
+    20261120,
+    20261121,
+    20261122
+  ],
+  "steps": {
+    "cn": 1000,
+    "p24": 900,
+    "p27": 1300
+  }
+}
