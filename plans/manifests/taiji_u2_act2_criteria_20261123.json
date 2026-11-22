@@ -1,0 +1,69 @@
+{
+  "schema": "taiji-u2-act2-criteria-v1",
+  "card": "ACT-2",
+  "created": "2026-11-23",
+  "decision": "D-20261123-317",
+  "authority": "owner:standing-authorization:2026-11-20#recommendation-default",
+  "subject": "Subject72 seed 20261120; cn block 0:24 with a 3-action head; 12-step corridor navigation (visual position/goal + language door state); behaviour cloning from value iteration planner",
+  "protocol": {
+    "seed": 20261120,
+    "horizon": 12,
+    "step_cost": 0.02,
+    "p_door_closed": 0.5,
+    "bc_samples": 5000,
+    "bc_steps": 300,
+    "bc_batch": 64,
+    "lr": 0.007,
+    "wd": 0.0,
+    "eval_episodes": 300,
+    "eval_seed_offset": 77000,
+    "actions": [
+      "L",
+      "R",
+      "PUSH"
+    ],
+    "channels": {
+      "pos": [
+        0,
+        5
+      ],
+      "goal": [
+        5,
+        10
+      ],
+      "action": [
+        12,
+        15
+      ],
+      "query": 15,
+      "text": [
+        16,
+        24
+      ]
+    },
+    "tie_epsilon": 0.1
+  },
+  "gates": {
+    "G0_success_min": 0.9,
+    "G1_gain_over_fixed_min": 0.15,
+    "G2_dp_success_gap_max": 0.05,
+    "G2_dp_steps_gap_max": 2.0,
+    "G3_text_drop_min": 0.15,
+    "G3_visual_drop_min": 0.2,
+    "G4_capsule_diff_max": 1e-06
+  },
+  "budget_cpu": 400.0,
+  "check_reads": 0,
+  "final_reads": 0,
+  "exits": [
+    "act2_verified",
+    "act2_low_success",
+    "act2_no_gain",
+    "act2_suboptimal",
+    "act2_modality_blind",
+    "act2_baseline_insufficient",
+    "budget_stop",
+    "engineering_failure"
+  ],
+  "criteria_sha256": "55eaf14df46516963e4b3e8b40b201251ad57c9986540a05118f9b952bcd08f3"
+}

@@ -1,0 +1,68 @@
+{
+  "schema": "taiji-u2-act2b-criteria-v1",
+  "card": "ACT-2b",
+  "created": "2026-11-23",
+  "decision": "D-20261123-318",
+  "authority": "owner:standing-authorization:2026-11-20#recommendation-default",
+  "subject": "Subject72 seed 20261120; 12-step corridor navigation with start position != goal (removes trivial initial-success episodes); behaviour cloning from value iteration planner",
+  "protocol": {
+    "seed": 20261120,
+    "horizon": 12,
+    "step_cost": 0.02,
+    "p_door_closed": 0.5,
+    "bc_samples": 5000,
+    "bc_steps": 300,
+    "bc_batch": 64,
+    "lr": 0.007,
+    "wd": 0.0,
+    "eval_episodes": 300,
+    "eval_seed_offset": 77100,
+    "actions": [
+      "L",
+      "R",
+      "PUSH"
+    ],
+    "channels": {
+      "pos": [
+        0,
+        5
+      ],
+      "goal": [
+        5,
+        10
+      ],
+      "action": [
+        12,
+        15
+      ],
+      "query": 15,
+      "text": [
+        16,
+        24
+      ]
+    }
+  },
+  "gates": {
+    "G0_success_min": 0.85,
+    "G1_utility_gain_over_fixed_min": 0.15,
+    "G2_dp_success_gap_max": 0.1,
+    "G2_dp_steps_gap_max": 2.0,
+    "G3_text_drop_min": 0.15,
+    "G3_visual_drop_min": 0.2,
+    "G4_capsule_diff_max": 1e-06
+  },
+  "budget_cpu": 400.0,
+  "check_reads": 0,
+  "final_reads": 0,
+  "exits": [
+    "act2b_verified",
+    "act2b_low_success",
+    "act2b_no_gain",
+    "act2b_suboptimal",
+    "act2b_modality_blind",
+    "act2b_baseline_insufficient",
+    "budget_stop",
+    "engineering_failure"
+  ],
+  "criteria_sha256": "7dc623ad86e1b9d5a7a3f7b6b8aec3e0172c5d3d5f253bee3746c0b2654fa81e"
+}

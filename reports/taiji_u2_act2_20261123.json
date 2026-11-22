@@ -1,0 +1,80 @@
+{
+  "schema": "taiji-u2-act2-v1",
+  "created_utc": "2026-11-22T17:17:47.781215+00:00",
+  "criteria_sha256": "55eaf14df46516963e4b3e8b40b201251ad57c9986540a05118f9b952bcd08f3",
+  "authority": "owner:standing-authorization:2026-11-20#recommendation-default",
+  "seed": 20261120,
+  "planner": {
+    "v_initial_high": 3.0,
+    "v_initial_low": 2.0
+  },
+  "learned": {
+    "success": 0.8766666666666667,
+    "mean_steps": 3.8866666666666667,
+    "utility": 0.7989333333333334
+  },
+  "baselines": {
+    "random": {
+      "success": 0.49666666666666665,
+      "mean_steps": 8.456666666666667,
+      "utility": 0.32753333333333334
+    },
+    "always_R": {
+      "success": 0.2866666666666667,
+      "mean_steps": 9.18,
+      "utility": 0.10306666666666667
+    },
+    "always_PUSH": {
+      "success": 0.0,
+      "mean_steps": 12.0,
+      "utility": -0.24
+    },
+    "greedy": {
+      "success": 0.8766666666666667,
+      "mean_steps": 3.8866666666666667,
+      "utility": 0.7989333333333334
+    },
+    "dp_optimal": {
+      "success": 0.8766666666666667,
+      "mean_steps": 3.8866666666666667,
+      "utility": 0.7989333333333334
+    }
+  },
+  "ablations": {
+    "zero_text": {
+      "success": 0.5,
+      "mean_steps": 6.93,
+      "utility": 0.3614
+    },
+    "zero_visual": {
+      "success": 0.2833333333333333,
+      "mean_steps": 9.31,
+      "utility": 0.09713333333333334
+    },
+    "zero_goal": {
+      "success": 0.3233333333333333,
+      "mean_steps": 8.596666666666666,
+      "utility": 0.1514
+    }
+  },
+  "best_fixed": 0.8766666666666667,
+  "capsule_state_diff": 0.0,
+  "gates": {
+    "G0": false,
+    "G1": false,
+    "G2": true,
+    "G3": true,
+    "G4": true
+  },
+  "verdict": "act2_low_success",
+  "run_conditions": {
+    "threads": 1
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 91.36
+  }
+}
