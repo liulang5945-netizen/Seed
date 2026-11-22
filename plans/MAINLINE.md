@@ -181,6 +181,8 @@
 
 ### 3A.0 状态快照（2026-11-22，D-20261122-271 更新）
 
+> **[下一阶段交接单（D-295）]** P0 24-S 表示级纠正、P1 生长 A 稳定化、P2 开放中文、P3 动作/多模态、P4 不确定性、P5 跨会话迁移；每卡预注册＋授权。见 [NEXT-ACTIONS-20261122.md](reference/NEXT-ACTIONS-20261122.md)。
+
 > **[收官证据补全（D-294）]** 既有有界证据（P26 自主选择 +0.28～+0.49、CN Exact A3c 0.8031、M1–M3、P24、capsule 继承）补入收官对照；开放中文/动作/真机/不确定性/跨会话迁移仍未成立。见 [CLOSEOUT](reference/CLOSEOUT-TAIJI_U2_SESSION_20261122.md)。
 
 > **[生长 A 3 seed：`growthA_3seed_partial`（D-293）]** 均值增益 0.0651、均值 lesion 0.2708、旧损伤 0；但逐 seed 严格门仅 1/3 过（s1/s2 弱项 0.625–0.633、增益 0.023–0.031）。单 seed verified 属种子相关；待 owner 裁定均值口径或再校准。见 [A 卡](reference/RESULT-TAIJI_U2_GROWTHA_20261122.md)。
