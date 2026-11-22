@@ -181,6 +181,8 @@
 
 ### 3A.0 状态快照（2026-11-22，D-20261122-271 更新）
 
+> **[生长 A 需求性生长：`partial`（近 verified）]** +24 单元：弱项 0.6016→**0.6875**（增益 +0.086）、新单元 lesion **0.180**、旧损伤 **0.0**；仅绝对门 0.70 差 0.0125；非单调（+36 回退）。见 [结果卡](reference/RESULT-TAIJI_U2_GROWTHA_20261122.md)。
+
 > **[24-S 窄卡收束：`partial`]** 0e/0f 后：misleading/withdrawn 4 交互可恢复（最高 0.94/1.0），**outdated 仍 0.22–0.47**；按预定出口收束为 24-S partial，不再调协议；成本 0b–0f ≈1,597 CPU、零 check。转生长 A/B 与联合修订卡。见 [合并结论](reference/RESULT-TAIJI_U2_24S_CORRECTION_SUMMARY_20261122.md)。
 
 > **[24-S 纠错线合并：0b/0c/0d 全 partial]** 趋势/保持/回撤/胶囊均过；**纠正恢复未能过**（outdated 0.29–0.41 三协议无效；misleading 头级 0.75×2/3 seed）；诊断为「全局标签反转≠来源级纠错」，拟 24-S.0e 改用 25% 子集来源级事件。见 [合并结论](reference/RESULT-TAIJI_U2_24S_CORRECTION_SUMMARY_20261122.md)。
