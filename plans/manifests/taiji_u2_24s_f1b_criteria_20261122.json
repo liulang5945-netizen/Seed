@@ -1,0 +1,51 @@
+{
+  "schema": "taiji-u2-24s-f1b-criteria-v1",
+  "card": "24-S.F1b",
+  "created": "2026-11-22",
+  "decision": "D-20261122-298",
+  "authority": "owner:standing-authorization:2026-11-20#recommendation-default",
+  "subject": "Subject72 seed 20261120; p24 route units 24:48; same candidate as 24-S.F1",
+  "upstream": "24-S.F1 (D-20261122-297): correction learnable 0.590@4 / 0.969@8 but retention drop 0.766",
+  "protocol": {
+    "base_steps": 1200,
+    "base_batch": 48,
+    "base_lr": 0.007,
+    "base_wd": 0.0001,
+    "event_batches": 10,
+    "event_batch": 48,
+    "event_updates": 0,
+    "correction_interactions": 8,
+    "interaction_eval_4": 4,
+    "revision_batch": 96,
+    "replay_old_batch": 96,
+    "head_lr": 0.02,
+    "graph_lr": 0.01,
+    "anchor_lambda": 1.0,
+    "arms": [
+      "P_protected_replay",
+      "N_no_protection",
+      "L_anchor_only",
+      "C_frozen"
+    ]
+  },
+  "gates": {
+    "G0_base_overall_min": 0.75,
+    "G0_base_outdated_min": 0.9,
+    "G1_acc8_min": 0.75,
+    "G2_vs_frozen_min": 0.3,
+    "G3_retention_drop_max": 0.05,
+    "G4_capsule_diff_max": 1e-06
+  },
+  "budget_cpu": 300.0,
+  "check_reads": 0,
+  "final_reads": 0,
+  "exits": [
+    "24s_f1b_verified",
+    "24s_f1b_partial",
+    "24s_f1b_interference",
+    "24s_f1b_baseline_insufficient",
+    "budget_stop",
+    "engineering_failure"
+  ],
+  "criteria_sha256": "6ede30f0129dfd60780dcf2e00d7e993e804163860eb9c6563a720c2a950d6b6"
+}

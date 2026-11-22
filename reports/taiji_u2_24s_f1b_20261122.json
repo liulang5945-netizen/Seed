@@ -1,0 +1,401 @@
+{
+  "schema": "taiji-u2-24s-f1b-v1",
+  "created_utc": "2026-11-22T14:28:17.184493+00:00",
+  "criteria_sha256": "6ede30f0129dfd60780dcf2e00d7e993e804163860eb9c6563a720c2a950d6b6",
+  "authority": "owner:standing-authorization:2026-11-20#recommendation-default",
+  "seed": 20261120,
+  "base": {
+    "overall": 0.9921875,
+    "per_regime": {
+      "0": 1.0,
+      "1": 0.984375,
+      "2": 1.0,
+      "3": 0.984375
+    },
+    "conflict_accuracy": 1.0,
+    "conflict_recall_regime3": 1.0
+  },
+  "base_revision": {
+    "acc_new": 0.02734375,
+    "acc_stale": 0.8515625
+  },
+  "capsule_diff_after_base": 0.0,
+  "event": {
+    "updates": 0
+  },
+  "arms": {
+    "P_protected_replay": {
+      "mode": "P_protected_replay",
+      "event_acc_new": [
+        0.02083333395421505,
+        0.0625,
+        0.0416666679084301,
+        0.0,
+        0.0,
+        0.0,
+        0.125,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "base_anchor": {
+        "overall": 0.9921875,
+        "per_regime": {
+          "0": 1.0,
+          "1": 0.984375,
+          "2": 1.0,
+          "3": 0.984375
+        },
+        "conflict_accuracy": 1.0,
+        "conflict_recall_regime3": 1.0
+      },
+      "curve": [
+        {
+          "interaction": 1,
+          "acc_new": 0.0703125,
+          "acc_stale": 0.6875
+        },
+        {
+          "interaction": 2,
+          "acc_new": 0.15625,
+          "acc_stale": 0.5234375
+        },
+        {
+          "interaction": 3,
+          "acc_new": 0.3671875,
+          "acc_stale": 0.296875
+        },
+        {
+          "interaction": 4,
+          "acc_new": 0.5625,
+          "acc_stale": 0.1484375,
+          "base_overall": 0.90234375,
+          "base_per_regime": {
+            "0": 0.9375,
+            "1": 0.84375,
+            "2": 0.953125,
+            "3": 0.875
+          }
+        },
+        {
+          "interaction": 5,
+          "acc_new": 0.75,
+          "acc_stale": 0.0390625
+        },
+        {
+          "interaction": 6,
+          "acc_new": 0.8515625,
+          "acc_stale": 0.015625
+        },
+        {
+          "interaction": 7,
+          "acc_new": 0.9375,
+          "acc_stale": 0.0078125
+        },
+        {
+          "interaction": 8,
+          "acc_new": 0.97265625,
+          "acc_stale": 0.0078125,
+          "base_overall": 0.8046875,
+          "base_per_regime": {
+            "0": 0.953125,
+            "1": 0.765625,
+            "2": 0.890625,
+            "3": 0.609375
+          }
+        }
+      ],
+      "acc_at_4": 0.5625,
+      "acc_at_8": 0.97265625,
+      "retention_drop": 0.375,
+      "capsule_diff": 0.0
+    },
+    "N_no_protection": {
+      "mode": "N_no_protection",
+      "event_acc_new": [
+        0.02083333395421505,
+        0.0625,
+        0.0416666679084301,
+        0.0,
+        0.0,
+        0.0,
+        0.125,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "base_anchor": {
+        "overall": 0.9921875,
+        "per_regime": {
+          "0": 1.0,
+          "1": 0.984375,
+          "2": 1.0,
+          "3": 0.984375
+        },
+        "conflict_accuracy": 1.0,
+        "conflict_recall_regime3": 1.0
+      },
+      "curve": [
+        {
+          "interaction": 1,
+          "acc_new": 0.078125,
+          "acc_stale": 0.6953125
+        },
+        {
+          "interaction": 2,
+          "acc_new": 0.1640625,
+          "acc_stale": 0.5234375
+        },
+        {
+          "interaction": 3,
+          "acc_new": 0.3828125,
+          "acc_stale": 0.28125
+        },
+        {
+          "interaction": 4,
+          "acc_new": 0.57421875,
+          "acc_stale": 0.140625,
+          "base_overall": 0.86328125,
+          "base_per_regime": {
+            "0": 0.9375,
+            "1": 0.84375,
+            "2": 0.90625,
+            "3": 0.765625
+          }
+        },
+        {
+          "interaction": 5,
+          "acc_new": 0.7421875,
+          "acc_stale": 0.046875
+        },
+        {
+          "interaction": 6,
+          "acc_new": 0.8203125,
+          "acc_stale": 0.03125
+        },
+        {
+          "interaction": 7,
+          "acc_new": 0.90625,
+          "acc_stale": 0.0078125
+        },
+        {
+          "interaction": 8,
+          "acc_new": 0.96875,
+          "acc_stale": 0.01171875,
+          "base_overall": 0.55859375,
+          "base_per_regime": {
+            "0": 0.875,
+            "1": 0.5,
+            "2": 0.640625,
+            "3": 0.21875
+          }
+        }
+      ],
+      "acc_at_4": 0.57421875,
+      "acc_at_8": 0.96875,
+      "retention_drop": 0.765625,
+      "capsule_diff": 0.0
+    },
+    "L_anchor_only": {
+      "mode": "L_anchor_only",
+      "event_acc_new": [
+        0.02083333395421505,
+        0.0625,
+        0.0416666679084301,
+        0.0,
+        0.0,
+        0.0,
+        0.125,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "base_anchor": {
+        "overall": 0.9921875,
+        "per_regime": {
+          "0": 1.0,
+          "1": 0.984375,
+          "2": 1.0,
+          "3": 0.984375
+        },
+        "conflict_accuracy": 1.0,
+        "conflict_recall_regime3": 1.0
+      },
+      "curve": [
+        {
+          "interaction": 1,
+          "acc_new": 0.0703125,
+          "acc_stale": 0.7109375
+        },
+        {
+          "interaction": 2,
+          "acc_new": 0.1171875,
+          "acc_stale": 0.609375
+        },
+        {
+          "interaction": 3,
+          "acc_new": 0.28125,
+          "acc_stale": 0.4609375
+        },
+        {
+          "interaction": 4,
+          "acc_new": 0.375,
+          "acc_stale": 0.3671875,
+          "base_overall": 0.984375,
+          "base_per_regime": {
+            "0": 0.96875,
+            "1": 0.96875,
+            "2": 1.0,
+            "3": 1.0
+          }
+        },
+        {
+          "interaction": 5,
+          "acc_new": 0.4140625,
+          "acc_stale": 0.3359375
+        },
+        {
+          "interaction": 6,
+          "acc_new": 0.4453125,
+          "acc_stale": 0.3046875
+        },
+        {
+          "interaction": 7,
+          "acc_new": 0.4296875,
+          "acc_stale": 0.3046875
+        },
+        {
+          "interaction": 8,
+          "acc_new": 0.45703125,
+          "acc_stale": 0.31640625,
+          "base_overall": 0.97265625,
+          "base_per_regime": {
+            "0": 0.984375,
+            "1": 0.984375,
+            "2": 0.96875,
+            "3": 0.953125
+          }
+        }
+      ],
+      "acc_at_4": 0.375,
+      "acc_at_8": 0.45703125,
+      "retention_drop": 0.03125,
+      "capsule_diff": 0.0
+    },
+    "C_frozen": {
+      "mode": "C_frozen",
+      "event_acc_new": [
+        0.02083333395421505,
+        0.0625,
+        0.0416666679084301,
+        0.0,
+        0.0,
+        0.0,
+        0.125,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "base_anchor": {
+        "overall": 0.9921875,
+        "per_regime": {
+          "0": 1.0,
+          "1": 0.984375,
+          "2": 1.0,
+          "3": 0.984375
+        },
+        "conflict_accuracy": 1.0,
+        "conflict_recall_regime3": 1.0
+      },
+      "curve": [
+        {
+          "interaction": 1,
+          "acc_new": 0.015625,
+          "acc_stale": 0.875
+        },
+        {
+          "interaction": 2,
+          "acc_new": 0.015625,
+          "acc_stale": 0.875
+        },
+        {
+          "interaction": 3,
+          "acc_new": 0.015625,
+          "acc_stale": 0.875
+        },
+        {
+          "interaction": 4,
+          "acc_new": 0.02734375,
+          "acc_stale": 0.8515625,
+          "base_overall": 0.9921875,
+          "base_per_regime": {
+            "0": 1.0,
+            "1": 0.984375,
+            "2": 1.0,
+            "3": 0.984375
+          }
+        },
+        {
+          "interaction": 5,
+          "acc_new": 0.015625,
+          "acc_stale": 0.875
+        },
+        {
+          "interaction": 6,
+          "acc_new": 0.015625,
+          "acc_stale": 0.875
+        },
+        {
+          "interaction": 7,
+          "acc_new": 0.015625,
+          "acc_stale": 0.875
+        },
+        {
+          "interaction": 8,
+          "acc_new": 0.02734375,
+          "acc_stale": 0.8515625,
+          "base_overall": 0.9921875,
+          "base_per_regime": {
+            "0": 1.0,
+            "1": 0.984375,
+            "2": 1.0,
+            "3": 0.984375
+          }
+        }
+      ],
+      "acc_at_4": 0.02734375,
+      "acc_at_8": 0.02734375,
+      "retention_drop": 0.0,
+      "capsule_diff": 0.0
+    }
+  },
+  "gates": {
+    "G0": true,
+    "G1": true,
+    "G2": true,
+    "G3": false,
+    "G4": true
+  },
+  "verdict": "24s_f1b_interference",
+  "verdict_inputs": {
+    "acc_at_8_P": 0.97265625,
+    "acc_at_8_N": 0.96875,
+    "acc_at_8_L": 0.45703125,
+    "acc_at_8_C": 0.02734375,
+    "acc_at_4_P": 0.5625,
+    "retention_drop_P": 0.375,
+    "retention_drop_N": 0.765625,
+    "retention_drop_L": 0.03125,
+    "capsule_diff_P": 0.0
+  },
+  "run_conditions": {
+    "threads": 1
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 115.19
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "schema": "taiji-u2-24s-f1-criteria-v1",
+  "card": "24-S.F1",
+  "created": "2026-11-22",
+  "decision": "D-20261122-297",
+  "authority": "owner:standing-authorization:2026-11-20#recommendation-default",
+  "subject": "Subject72 seed 20261120; p24 route units 24:48; single candidate",
+  "protocol": {
+    "base_steps": 1200,
+    "base_batch": 48,
+    "base_lr": 0.007,
+    "base_wd": 0.0001,
+    "event_batches": 10,
+    "event_batch": 48,
+    "event_updates": 0,
+    "correction_interactions": 4,
+    "correction_interactions_extended": 8,
+    "correction_batch": 96,
+    "head_lr": 0.02,
+    "graph_lr": 0.01,
+    "arms": [
+      "A_representation",
+      "B_head_only",
+      "C_frozen",
+      "D_permuted_labels"
+    ]
+  },
+  "gates": {
+    "G0_base_overall_min": 0.75,
+    "G0_base_outdated_min": 0.9,
+    "G1_acc4_min": 0.75,
+    "G2_vs_frozen_min": 0.3,
+    "G2_vs_permuted_min": 0.3,
+    "G3_lesion_drop_min": 0.15,
+    "G4_retention_drop_max": 0.05,
+    "G4_capsule_diff_max": 1e-06
+  },
+  "budget_cpu": 400.0,
+  "check_reads": 0,
+  "final_reads": 0,
+  "exits": [
+    "24s_f1_verified",
+    "24s_f1_partial_slow",
+    "24s_f1_partial",
+    "24s_f1_baseline_insufficient",
+    "budget_stop",
+    "engineering_failure"
+  ],
+  "criteria_sha256": "549bd902a93dbae60a166c1635e45a7a9c1403b00fe8b60bd0299301d7ee34fb"
+}

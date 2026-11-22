@@ -1,0 +1,602 @@
+{
+  "schema": "taiji-u2-24s-f1-v1",
+  "created_utc": "2026-11-22T14:20:14.236092+00:00",
+  "criteria_sha256": "549bd902a93dbae60a166c1635e45a7a9c1403b00fe8b60bd0299301d7ee34fb",
+  "authority": "owner:standing-authorization:2026-11-20#recommendation-default",
+  "seed": 20261120,
+  "base": {
+    "overall": 0.9921875,
+    "per_regime": {
+      "0": 1.0,
+      "1": 0.984375,
+      "2": 1.0,
+      "3": 0.984375
+    },
+    "conflict_accuracy": 1.0,
+    "conflict_recall_regime3": 1.0
+  },
+  "base_revision": {
+    "acc_new": 0.02734375,
+    "acc_stale": 0.8515625
+  },
+  "capsule_diff_after_base": 0.0,
+  "event": {
+    "updates": 0
+  },
+  "arms": {
+    "A_representation": {
+      "mode": "A_representation",
+      "event_acc_new": [
+        0.02083333395421505,
+        0.0625,
+        0.0416666679084301,
+        0.0,
+        0.0,
+        0.0,
+        0.125,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "base_anchor": {
+        "overall": 0.9921875,
+        "per_regime": {
+          "0": 1.0,
+          "1": 0.984375,
+          "2": 1.0,
+          "3": 0.984375
+        },
+        "conflict_accuracy": 1.0,
+        "conflict_recall_regime3": 1.0
+      },
+      "curve": [
+        {
+          "interaction": 1,
+          "acc_new": 0.078125,
+          "acc_stale": 0.6875,
+          "probe_size": 128,
+          "base_per_regime": {
+            "0": 0.890625,
+            "1": 0.53125,
+            "2": 0.65625,
+            "3": 0.21875
+          }
+        },
+        {
+          "interaction": 2,
+          "acc_new": 0.1484375,
+          "acc_stale": 0.5234375,
+          "probe_size": 128,
+          "base_per_regime": {
+            "0": 0.890625,
+            "1": 0.53125,
+            "2": 0.65625,
+            "3": 0.21875
+          }
+        },
+        {
+          "interaction": 3,
+          "acc_new": 0.375,
+          "acc_stale": 0.296875,
+          "probe_size": 128,
+          "base_per_regime": {
+            "0": 0.890625,
+            "1": 0.53125,
+            "2": 0.65625,
+            "3": 0.21875
+          }
+        },
+        {
+          "interaction": 4,
+          "acc_new": 0.58984375,
+          "acc_stale": 0.140625,
+          "probe_size": 256,
+          "base_overall": 0.85546875,
+          "base_per_regime": {
+            "0": 0.9375,
+            "1": 0.84375,
+            "2": 0.90625,
+            "3": 0.734375
+          }
+        },
+        {
+          "interaction": 5,
+          "acc_new": 0.7578125,
+          "acc_stale": 0.0390625,
+          "probe_size": 128,
+          "base_per_regime": {
+            "0": 0.890625,
+            "1": 0.53125,
+            "2": 0.65625,
+            "3": 0.21875
+          }
+        },
+        {
+          "interaction": 6,
+          "acc_new": 0.828125,
+          "acc_stale": 0.03125,
+          "probe_size": 128,
+          "base_per_regime": {
+            "0": 0.890625,
+            "1": 0.53125,
+            "2": 0.65625,
+            "3": 0.21875
+          }
+        },
+        {
+          "interaction": 7,
+          "acc_new": 0.8984375,
+          "acc_stale": 0.0078125,
+          "probe_size": 128,
+          "base_per_regime": {
+            "0": 0.890625,
+            "1": 0.53125,
+            "2": 0.65625,
+            "3": 0.21875
+          }
+        },
+        {
+          "interaction": 8,
+          "acc_new": 0.96875,
+          "acc_stale": 0.015625,
+          "probe_size": 256,
+          "base_overall": 0.57421875,
+          "base_per_regime": {
+            "0": 0.890625,
+            "1": 0.53125,
+            "2": 0.65625,
+            "3": 0.21875
+          }
+        }
+      ],
+      "acc_at_4": 0.58984375,
+      "acc_at_8": 0.96875,
+      "lesion": {
+        "acc_new_after": 0.95703125,
+        "acc_new_before": 0.96875,
+        "drop": 0.01171875
+      },
+      "capsule_diff": 0.0,
+      "retention_drop": 0.765625,
+      "parameter_updates": 8
+    },
+    "B_head_only": {
+      "mode": "B_head_only",
+      "event_acc_new": [
+        0.02083333395421505,
+        0.0625,
+        0.0416666679084301,
+        0.0,
+        0.0,
+        0.0,
+        0.125,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "base_anchor": {
+        "overall": 0.9921875,
+        "per_regime": {
+          "0": 1.0,
+          "1": 0.984375,
+          "2": 1.0,
+          "3": 0.984375
+        },
+        "conflict_accuracy": 1.0,
+        "conflict_recall_regime3": 1.0
+      },
+      "curve": [
+        {
+          "interaction": 1,
+          "acc_new": 0.015625,
+          "acc_stale": 0.8125,
+          "probe_size": 128,
+          "base_per_regime": {
+            "0": 0.484375,
+            "1": 0.3125,
+            "2": 0.296875,
+            "3": 0.21875
+          }
+        },
+        {
+          "interaction": 2,
+          "acc_new": 0.0234375,
+          "acc_stale": 0.78125,
+          "probe_size": 128,
+          "base_per_regime": {
+            "0": 0.484375,
+            "1": 0.3125,
+            "2": 0.296875,
+            "3": 0.21875
+          }
+        },
+        {
+          "interaction": 3,
+          "acc_new": 0.0625,
+          "acc_stale": 0.671875,
+          "probe_size": 128,
+          "base_per_regime": {
+            "0": 0.484375,
+            "1": 0.3125,
+            "2": 0.296875,
+            "3": 0.21875
+          }
+        },
+        {
+          "interaction": 4,
+          "acc_new": 0.13671875,
+          "acc_stale": 0.54296875,
+          "probe_size": 256,
+          "base_overall": 0.96484375,
+          "base_per_regime": {
+            "0": 1.0,
+            "1": 0.90625,
+            "2": 0.984375,
+            "3": 0.96875
+          }
+        },
+        {
+          "interaction": 5,
+          "acc_new": 0.2421875,
+          "acc_stale": 0.421875,
+          "probe_size": 128,
+          "base_per_regime": {
+            "0": 0.484375,
+            "1": 0.3125,
+            "2": 0.296875,
+            "3": 0.21875
+          }
+        },
+        {
+          "interaction": 6,
+          "acc_new": 0.390625,
+          "acc_stale": 0.1953125,
+          "probe_size": 128,
+          "base_per_regime": {
+            "0": 0.484375,
+            "1": 0.3125,
+            "2": 0.296875,
+            "3": 0.21875
+          }
+        },
+        {
+          "interaction": 7,
+          "acc_new": 0.5859375,
+          "acc_stale": 0.0390625,
+          "probe_size": 128,
+          "base_per_regime": {
+            "0": 0.484375,
+            "1": 0.3125,
+            "2": 0.296875,
+            "3": 0.21875
+          }
+        },
+        {
+          "interaction": 8,
+          "acc_new": 0.80859375,
+          "acc_stale": 0.00390625,
+          "probe_size": 256,
+          "base_overall": 0.328125,
+          "base_per_regime": {
+            "0": 0.484375,
+            "1": 0.3125,
+            "2": 0.296875,
+            "3": 0.21875
+          }
+        }
+      ],
+      "acc_at_4": 0.13671875,
+      "acc_at_8": 0.80859375,
+      "lesion": {
+        "acc_new_after": 0.64453125,
+        "acc_new_before": 0.80859375,
+        "drop": 0.1640625
+      },
+      "capsule_diff": 0.0,
+      "retention_drop": 0.765625,
+      "parameter_updates": 8
+    },
+    "C_frozen": {
+      "mode": "C_frozen",
+      "event_acc_new": [
+        0.02083333395421505,
+        0.0625,
+        0.0416666679084301,
+        0.0,
+        0.0,
+        0.0,
+        0.125,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "base_anchor": {
+        "overall": 0.9921875,
+        "per_regime": {
+          "0": 1.0,
+          "1": 0.984375,
+          "2": 1.0,
+          "3": 0.984375
+        },
+        "conflict_accuracy": 1.0,
+        "conflict_recall_regime3": 1.0
+      },
+      "curve": [
+        {
+          "interaction": 1,
+          "acc_new": 0.015625,
+          "acc_stale": 0.875,
+          "probe_size": 128,
+          "base_per_regime": {
+            "0": 1.0,
+            "1": 0.984375,
+            "2": 1.0,
+            "3": 0.984375
+          }
+        },
+        {
+          "interaction": 2,
+          "acc_new": 0.015625,
+          "acc_stale": 0.875,
+          "probe_size": 128,
+          "base_per_regime": {
+            "0": 1.0,
+            "1": 0.984375,
+            "2": 1.0,
+            "3": 0.984375
+          }
+        },
+        {
+          "interaction": 3,
+          "acc_new": 0.015625,
+          "acc_stale": 0.875,
+          "probe_size": 128,
+          "base_per_regime": {
+            "0": 1.0,
+            "1": 0.984375,
+            "2": 1.0,
+            "3": 0.984375
+          }
+        },
+        {
+          "interaction": 4,
+          "acc_new": 0.02734375,
+          "acc_stale": 0.8515625,
+          "probe_size": 256,
+          "base_overall": 0.9921875,
+          "base_per_regime": {
+            "0": 1.0,
+            "1": 0.984375,
+            "2": 1.0,
+            "3": 0.984375
+          }
+        },
+        {
+          "interaction": 5,
+          "acc_new": 0.015625,
+          "acc_stale": 0.875,
+          "probe_size": 128,
+          "base_per_regime": {
+            "0": 1.0,
+            "1": 0.984375,
+            "2": 1.0,
+            "3": 0.984375
+          }
+        },
+        {
+          "interaction": 6,
+          "acc_new": 0.015625,
+          "acc_stale": 0.875,
+          "probe_size": 128,
+          "base_per_regime": {
+            "0": 1.0,
+            "1": 0.984375,
+            "2": 1.0,
+            "3": 0.984375
+          }
+        },
+        {
+          "interaction": 7,
+          "acc_new": 0.015625,
+          "acc_stale": 0.875,
+          "probe_size": 128,
+          "base_per_regime": {
+            "0": 1.0,
+            "1": 0.984375,
+            "2": 1.0,
+            "3": 0.984375
+          }
+        },
+        {
+          "interaction": 8,
+          "acc_new": 0.02734375,
+          "acc_stale": 0.8515625,
+          "probe_size": 256,
+          "base_overall": 0.9921875,
+          "base_per_regime": {
+            "0": 1.0,
+            "1": 0.984375,
+            "2": 1.0,
+            "3": 0.984375
+          }
+        }
+      ],
+      "acc_at_4": 0.02734375,
+      "acc_at_8": 0.02734375,
+      "lesion": {
+        "acc_new_after": 0.375,
+        "acc_new_before": 0.02734375,
+        "drop": -0.34765625
+      },
+      "capsule_diff": 0.0,
+      "retention_drop": 0.0,
+      "parameter_updates": 0
+    },
+    "D_permuted_labels": {
+      "mode": "D_permuted_labels",
+      "event_acc_new": [
+        0.02083333395421505,
+        0.0625,
+        0.0416666679084301,
+        0.0,
+        0.0,
+        0.0,
+        0.125,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "base_anchor": {
+        "overall": 0.9921875,
+        "per_regime": {
+          "0": 1.0,
+          "1": 0.984375,
+          "2": 1.0,
+          "3": 0.984375
+        },
+        "conflict_accuracy": 1.0,
+        "conflict_recall_regime3": 1.0
+      },
+      "curve": [
+        {
+          "interaction": 1,
+          "acc_new": 0.0234375,
+          "acc_stale": 0.7265625,
+          "probe_size": 128,
+          "base_per_regime": {
+            "0": 0.546875,
+            "1": 0.5,
+            "2": 0.515625,
+            "3": 0.546875
+          }
+        },
+        {
+          "interaction": 2,
+          "acc_new": 0.0234375,
+          "acc_stale": 0.5390625,
+          "probe_size": 128,
+          "base_per_regime": {
+            "0": 0.546875,
+            "1": 0.5,
+            "2": 0.515625,
+            "3": 0.546875
+          }
+        },
+        {
+          "interaction": 3,
+          "acc_new": 0.0078125,
+          "acc_stale": 0.4375,
+          "probe_size": 128,
+          "base_per_regime": {
+            "0": 0.546875,
+            "1": 0.5,
+            "2": 0.515625,
+            "3": 0.546875
+          }
+        },
+        {
+          "interaction": 4,
+          "acc_new": 0.0078125,
+          "acc_stale": 0.32421875,
+          "probe_size": 256,
+          "base_overall": 0.890625,
+          "base_per_regime": {
+            "0": 0.90625,
+            "1": 0.921875,
+            "2": 0.953125,
+            "3": 0.78125
+          }
+        },
+        {
+          "interaction": 5,
+          "acc_new": 0.0,
+          "acc_stale": 0.375,
+          "probe_size": 128,
+          "base_per_regime": {
+            "0": 0.546875,
+            "1": 0.5,
+            "2": 0.515625,
+            "3": 0.546875
+          }
+        },
+        {
+          "interaction": 6,
+          "acc_new": 0.0,
+          "acc_stale": 0.375,
+          "probe_size": 128,
+          "base_per_regime": {
+            "0": 0.546875,
+            "1": 0.5,
+            "2": 0.515625,
+            "3": 0.546875
+          }
+        },
+        {
+          "interaction": 7,
+          "acc_new": 0.0,
+          "acc_stale": 0.3515625,
+          "probe_size": 128,
+          "base_per_regime": {
+            "0": 0.546875,
+            "1": 0.5,
+            "2": 0.515625,
+            "3": 0.546875
+          }
+        },
+        {
+          "interaction": 8,
+          "acc_new": 0.0,
+          "acc_stale": 0.30859375,
+          "probe_size": 256,
+          "base_overall": 0.52734375,
+          "base_per_regime": {
+            "0": 0.546875,
+            "1": 0.5,
+            "2": 0.515625,
+            "3": 0.546875
+          }
+        }
+      ],
+      "acc_at_4": 0.0078125,
+      "acc_at_8": 0.0,
+      "lesion": {
+        "acc_new_after": 0.21484375,
+        "acc_new_before": 0.0,
+        "drop": -0.21484375
+      },
+      "capsule_diff": 0.0,
+      "retention_drop": 0.484375,
+      "parameter_updates": 8
+    }
+  },
+  "gates": {
+    "G0": true,
+    "G1": false,
+    "G2_vs_frozen": true,
+    "G2_vs_permuted": true,
+    "G3": false,
+    "G4_retention": false,
+    "G4_capsule": true
+  },
+  "verdict": "24s_f1_partial_slow",
+  "verdict_inputs": {
+    "acc_at_4_A": 0.58984375,
+    "acc_at_4_C": 0.02734375,
+    "acc_at_4_D": 0.0078125,
+    "acc_at_8_A": 0.96875,
+    "acc_at_8_B": 0.80859375,
+    "lesion_drop_A": 0.01171875,
+    "retention_drop_A": 0.765625,
+    "capsule_diff_A": 0.0
+  },
+  "run_conditions": {
+    "threads": 1
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 113.81
+  }
+}

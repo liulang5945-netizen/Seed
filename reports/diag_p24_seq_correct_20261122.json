@@ -1,0 +1,39 @@
+{
+  "schema": "taiji-u2-diag-p24-seq-correct-v1",
+  "created_utc": "2026-11-22T14:02:28.246746+00:00",
+  "seed": 20261120,
+  "marks": {
+    "600": {
+      "acc_new": 0.09375,
+      "pct_new": 0.09375,
+      "pct_stale": 0.02734375,
+      "pct_base": 0.6796875,
+      "n": 256
+    },
+    "900": {
+      "acc_new": 0.09375,
+      "pct_new": 0.09375,
+      "pct_stale": 0.0234375,
+      "pct_base": 0.7421875,
+      "n": 256
+    },
+    "1200": {
+      "acc_new": 0.1484375,
+      "pct_new": 0.1484375,
+      "pct_stale": 0.078125,
+      "pct_base": 0.8046875,
+      "n": 256
+    }
+  },
+  "run_conditions": {
+    "threads": 1
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "authority": "owner:standing-authorization:2026-11-20#recommendation-default",
+  "cost": {
+    "cpu": 100.95
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "schema": "taiji-u2-diag-24s-f1-ablation-v1",
+  "created_utc": "2026-11-22T14:30:29.995825+00:00",
+  "seed": 20261120,
+  "base": {
+    "overall": 0.9921875,
+    "per_regime": {
+      "0": 1.0,
+      "1": 0.984375,
+      "2": 1.0,
+      "3": 0.984375
+    },
+    "conflict_accuracy": 1.0,
+    "conflict_recall_regime3": 1.0
+  },
+  "base_revision": {
+    "acc_new": 0.02734375,
+    "acc_stale": 0.8515625
+  },
+  "arm_normal_acc_new": 0.96484375,
+  "ablation": {
+    "mask_zero_lesion": 0.95703125,
+    "restore_base_units_keep_head": 0.47265625,
+    "restore_base_head_keep_units": 0.6640625,
+    "zero_p24_readout_state": 0.22265625,
+    "full_revert_units_and_head": 0.02734375
+  },
+  "interpretation_boundary": "post-hoc diagnostic; F1 G3 gate unchanged; no verdict change",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "authority": "owner:standing-authorization:2026-11-20#recommendation-default",
+  "cost": {
+    "cpu": 113.45
+  }
+}

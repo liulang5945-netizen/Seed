@@ -1,0 +1,133 @@
+{
+  "schema": "taiji-u2-diag-p24-regime-v1",
+  "created_utc": "2026-11-22T13:58:50.295267+00:00",
+  "seed": 20261120,
+  "units": 72,
+  "blocks": {
+    "cn": [
+      0,
+      24
+    ],
+    "p24": [
+      24,
+      48
+    ],
+    "p27": [
+      48,
+      72
+    ]
+  },
+  "marks": {
+    "300": {
+      "overall": 0.75,
+      "by_regime": {
+        "0": 0.984375,
+        "1": 0.640625,
+        "2": 0.59375,
+        "3": 0.78125
+      },
+      "conflict_accuracy": 1.0,
+      "conflict_fp": 0.0,
+      "conflict_recall": 1.0,
+      "regime0_noupdate": 0.140625,
+      "regime1_noupdate": 0.53125,
+      "regime2_noupdate": 0.5625,
+      "regime3_noupdate": 0.65625,
+      "regime0_nobase": 1.0,
+      "regime1_nobase": 0.140625,
+      "regime2_nobase": 0.28125,
+      "regime3_nobase": 0.0625
+    },
+    "600": {
+      "overall": 0.828125,
+      "by_regime": {
+        "0": 1.0,
+        "1": 0.796875,
+        "2": 0.65625,
+        "3": 0.859375
+      },
+      "conflict_accuracy": 1.0,
+      "conflict_fp": 0.0,
+      "conflict_recall": 1.0,
+      "regime0_noupdate": 0.125,
+      "regime1_noupdate": 0.59375,
+      "regime2_noupdate": 0.625,
+      "regime3_noupdate": 0.5625,
+      "regime0_nobase": 1.0,
+      "regime1_nobase": 0.3125,
+      "regime2_nobase": 0.265625,
+      "regime3_nobase": 0.3125
+    },
+    "900": {
+      "overall": 0.86328125,
+      "by_regime": {
+        "0": 1.0,
+        "1": 0.75,
+        "2": 0.796875,
+        "3": 0.90625
+      },
+      "conflict_accuracy": 1.0,
+      "conflict_fp": 0.0,
+      "conflict_recall": 1.0,
+      "regime0_noupdate": 0.140625,
+      "regime1_noupdate": 0.546875,
+      "regime2_noupdate": 0.765625,
+      "regime3_noupdate": 0.734375,
+      "regime0_nobase": 1.0,
+      "regime1_nobase": 0.296875,
+      "regime2_nobase": 0.328125,
+      "regime3_nobase": 0.421875
+    },
+    "1200": {
+      "overall": 0.83203125,
+      "by_regime": {
+        "0": 1.0,
+        "1": 0.6875,
+        "2": 0.75,
+        "3": 0.890625
+      },
+      "conflict_accuracy": 1.0,
+      "conflict_fp": 0.0,
+      "conflict_recall": 1.0,
+      "regime0_noupdate": 0.125,
+      "regime1_noupdate": 0.578125,
+      "regime2_noupdate": 0.6875,
+      "regime3_noupdate": 0.703125,
+      "regime0_nobase": 1.0,
+      "regime1_nobase": 0.25,
+      "regime2_nobase": 0.328125,
+      "regime3_nobase": 0.390625
+    },
+    "1400": {
+      "overall": 1.0,
+      "by_regime": {
+        "0": 1.0,
+        "1": 1.0,
+        "2": 1.0,
+        "3": 1.0
+      },
+      "conflict_accuracy": 1.0,
+      "conflict_fp": 0.0,
+      "conflict_recall": 1.0,
+      "regime0_noupdate": 0.0625,
+      "regime1_noupdate": 0.796875,
+      "regime2_noupdate": 0.765625,
+      "regime3_noupdate": 0.8125,
+      "regime0_nobase": 1.0,
+      "regime1_nobase": 0.28125,
+      "regime2_nobase": 0.3125,
+      "regime3_nobase": 0.5
+    }
+  },
+  "run_conditions": {
+    "threads": 1
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "authority": "owner:standing-authorization:2026-11-20#recommendation-default",
+  "cost": {
+    "cpu": 103.84
+  }
+}
