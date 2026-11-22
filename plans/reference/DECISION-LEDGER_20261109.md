@@ -8043,3 +8043,11 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **2. 读数**：CN seen 1.0；**CN unseen 1.0000/0.9727/0.8594**；P-B 0.9922–1.0；conflict 0.9922–1.0；P-D 0.8516/0.7969/0.8438（seed2 未达 0.80）；旧损伤/胶囊/恢复 0.0；666.59 CPU ≤800。
 **3. 判读**：组合泛化有界成立（未见颜色对 0.86–1.0），但 P-D 一 seed 差 0.0031 未过门 ⇒ `23s1_rt_partial`；按预注册不调阈，23-S 不 verified、24-S 不解锁。
 **4. 纪律**：criteria_sha256 读前冻结并校验；未调阈；零 check/final；合成面、固定分区实验层机制，不签 final/C/D/J。
+
+
+### D-20261122-275 23-S.1b 组合泛化复跑：`23s1b_rt_verified`（669.23 CPU，3 seed，0 check）
+
+**1. 动作**：冻结 [23-S.1b 判据](../manifests/taiji_u2_23s1b_rt_criteria_20261122.json)（sha256 `c95dfaeb…`，仅 P-D 步数 800→1,300），新增 `verify_taiji_23s1b_rt_20261122.py`，按合同跑 3 seed；回执 `reports/taiji_u2_23s1b_rt_20261122.json`、[结果卡](../reference/RESULT-TAIJI_U2_23S1B_RT_20261122.md)。
+**2. 读数**：CN seen 1.0；CN unseen 0.8594–1.0；P-B 0.9922–1.0；conflict 0.9922–1.0；P-D 0.8359/0.8828/0.8984；旧损伤 0–0.0078；胶囊/恢复 0.0 ⇒ 全门过 `23s1b_rt_verified`；669.23 CPU ≤900。
+**3. 判读**：仅增加 P-D 训练步数即解除 23-S.1 唯一缺口；但 **23-S.1b verified ≠ 23-S 整包 verified**（§3A.2 的 Q/增益/保持/≥3 旧技能类未逐项映射），24-S 不自动解锁；需 owner 裁定。
+**4. 纪律**：哈希读前冻结、未调阈、零 check/final；合成面、固定分区实验层机制，不签 final/C/D/J。

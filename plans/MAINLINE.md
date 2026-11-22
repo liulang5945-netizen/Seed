@@ -181,6 +181,8 @@
 
 ### 3A.0 状态快照（2026-11-22，D-20261122-271 更新）
 
+> **[23-S.1b：`23s1b_rt_verified`]** 仅把 P-D 步数 800→1,300（冻结哈希 `c95dfaeb…`），3 seed 全门通过：CN unseen 0.8594–1.0、P-D 0.8359–0.8984、旧损伤 ≤0.0078、胶囊/恢复 0.0（669.23 CPU、零 check）。**注意：子卡通过 ≠ 23-S 整包 verified；24-S 仍锁，待 owner 映射 §3A.2 全门。** 结果卡 [RESULT-TAIJI_U2_23S1B_RT_20261122.md](reference/RESULT-TAIJI_U2_23S1B_RT_20261122.md)。
+
 > **[23-S.1 首卡：`23s1_rt_partial`]** 中文组合泛化（留出颜色对）seen 1.0、unseen 0.86–1.0 全过，但 P-D seed2 0.7969<0.80 未达门（666.59 CPU、3 seed、零 check）。**23-S 未 verified、24-S 不解锁**；结果卡 [RESULT-TAIJI_U2_23S1_RT_20261122.md](reference/RESULT-TAIJI_U2_23S1_RT_20261122.md)。
 
 > **[S1 已通过]** 按冻结合同 `criteria_sha256 = ffe584fe3c3bcce0dcbc35954fd23902c3ac208f14b9ac9150ae9ae3689052ba`、3 seed、670.66 CPU、零 check/final，S1 判 **`s1_rt_verified`**（[结果卡](reference/RESULT-TAIJI_U2_S1RT_FORMAL_20261122.md)）。原「未回灌/未授权」状态解除；**23-S 解锁，但需 owner 逐卡 `training_authority` 与重新定价**。生长（D-265 负结论）与协同（D-268）仍未解；B 路线非蒸馏参考见 [S1-RT 修订](reference/DESIGN-TAIJI_U2_S1RT_CONTRACT_20261122.md) 附录 B。
