@@ -1,0 +1,115 @@
+{
+  "schema": "taiji-u2-lc1-v1",
+  "created_utc": "2026-11-22T16:16:27.273804+00:00",
+  "criteria_sha256": "223d704d960e417930c9a3071ce4a02888fab2b174ac8d245096f2db01f5096f",
+  "authority": "owner:standing-authorization:2026-11-20#recommendation-default",
+  "seed": 20261120,
+  "base": {
+    "p24_acc": 0.79296875,
+    "p27_acc": 0.8984375,
+    "capsule_diff": 0.0
+  },
+  "stages": {
+    "base": {
+      "a0": 0.79296875,
+      "b0": 0.8984375,
+      "capsule": 0.0,
+      "lifecycle": {
+        "proposed": 0,
+        "immature": 0,
+        "mature": 72,
+        "dormant": 0,
+        "retired": 0
+      }
+    },
+    "dormancy": {
+      "p27_dormant_acc": 0.25,
+      "p24_after_p27_dormant": 0.79296875,
+      "p27_after_wake": 0.8984375,
+      "p24_after_wake": 0.79296875,
+      "p24_half_dormant_acc": 0.53125,
+      "p27_during_p24_half_dormant": 0.8984375,
+      "p24_after_second_wake": 0.79296875,
+      "capsule_after_wake": 0.0,
+      "lifecycle_dormant": {
+        "proposed": 0,
+        "immature": 0,
+        "mature": 48,
+        "dormant": 24,
+        "retired": 0
+      }
+    },
+    "retirement": {
+      "p24_acc": 0.79296875,
+      "p27_acc": 0.25,
+      "capsule_diff": 0.0,
+      "lifecycle": {
+        "proposed": 0,
+        "immature": 0,
+        "mature": 48,
+        "dormant": 0,
+        "retired": 24
+      }
+    },
+    "recycle": {
+      "curve": [
+        0.51953125,
+        0.8046875,
+        0.9140625,
+        0.921875,
+        0.9609375,
+        0.9921875,
+        1.0,
+        1.0
+      ],
+      "revision_acc": 1.0,
+      "revision_acc_dormant": 0.22265625,
+      "revision_acc_after_wake": 1.0,
+      "parent_state_equality": 0.0,
+      "p24_retention_acc": 0.79296875,
+      "generation_increment": 1,
+      "lifecycle": {
+        "proposed": 0,
+        "immature": 0,
+        "mature": 72,
+        "dormant": 0,
+        "retired": 0
+      },
+      "promotion_forward_diff": 0.0,
+      "capsule_diff": 0.0
+    }
+  },
+  "gates": {
+    "G0": true,
+    "G1": true,
+    "G2": true,
+    "G3": true,
+    "G4": true
+  },
+  "verdict": "lc1_verified",
+  "verdict_inputs": {
+    "a0": 0.79296875,
+    "b0": 0.8984375,
+    "b_dorm": 0.25,
+    "a_keep": 0.79296875,
+    "a_part": 0.53125,
+    "b_wake": 0.8984375,
+    "a_wake": 0.79296875,
+    "a_ret": 0.79296875,
+    "b_ret": 0.25,
+    "rev_acc": 1.0,
+    "rev_dorm": 0.22265625,
+    "p24_drop": 0.0,
+    "gen_increment": 1
+  },
+  "run_conditions": {
+    "threads": 1
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 104.12
+  }
+}

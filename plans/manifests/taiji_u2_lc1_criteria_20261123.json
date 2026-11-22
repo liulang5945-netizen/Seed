@@ -1,0 +1,58 @@
+{
+  "schema": "taiji-u2-lc1-criteria-v1",
+  "card": "LC-1",
+  "created": "2026-11-23",
+  "decision": "D-20261123-306",
+  "authority": "owner:standing-authorization:2026-11-20#recommendation-default",
+  "subject": "Subject72 seed 20261120; p24 500 steps + p27 600 steps with per-block 48-dim heads and block isolation; lifecycle dormancy/wake/retirement/recycling",
+  "protocol": {
+    "seed": 20261120,
+    "p24_steps": 500,
+    "p27_steps": 600,
+    "batch": 48,
+    "lr": 0.007,
+    "wd": 0.0,
+    "p24_test_seed_offset": 712,
+    "p27_test_seed_offset": 981,
+    "fit_offset": 10000000,
+    "p24_dormant_units": [
+      36,
+      48
+    ],
+    "recycle_revision_interactions": 8,
+    "recycle_revision_batch": 96,
+    "recycle_head_lr": 0.02,
+    "recycle_graph_lr": 0.01,
+    "recycle_generation_increment": 1
+  },
+  "gates": {
+    "G0_p24_acc_min": 0.7,
+    "G0_p27_acc_min": 0.7,
+    "G1_dormant_p27_acc_max": 0.3,
+    "G1_p24_drop_max": 0.01,
+    "G1_partial_p24_drop_min": 0.05,
+    "G2_equality_tol": 1e-06,
+    "G3_p24_drop_max": 0.001,
+    "G3_dormant_p27_acc_max": 0.3,
+    "G4_revision_acc_min": 0.75,
+    "G4_p24_drop_max": 0.001,
+    "G4_generation_increment": 1,
+    "G4_recycled_dormant_acc_max": 0.3,
+    "G5_capsule_diff_max": 1e-06,
+    "G5_promotion_diff_max": 1e-09
+  },
+  "budget_cpu": 400.0,
+  "check_reads": 0,
+  "final_reads": 0,
+  "exits": [
+    "lc1_verified",
+    "lc1_dormancy_irreversible",
+    "lc1_retirement_breach",
+    "lc1_recycle_partial",
+    "lc1_dormancy_weak",
+    "lc1_baseline_insufficient",
+    "budget_stop",
+    "engineering_failure"
+  ],
+  "criteria_sha256": "223d704d960e417930c9a3071ce4a02888fab2b174ac8d245096f2db01f5096f"
+}
