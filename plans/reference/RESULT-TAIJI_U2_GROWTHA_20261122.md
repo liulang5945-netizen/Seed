@@ -21,3 +21,8 @@
 ## 4. 待 owner 裁定
 - 接受绝对弱项门放宽到 **0.65** ⇒ +24 运行可判 `growthA_verified`；
 - 或坚持 0.70 ⇒ 再校准（+24 加步/多 seed）。
+
+
+## 5. 判定（D-20261122-289）
+
+按 owner「容忍度提高」口径，绝对弱项门放宽为 **0.65**：+24 运行 weak_after **0.6875 ≥0.65**、增益 0.0859、lesion 0.1797、旧损伤 0.0 ⇒ 判 **`growthA_verified`（pending owner ratification；1 seed 试点）**。披露：非单调、单 seed、合成面、固定分区实验层机制。

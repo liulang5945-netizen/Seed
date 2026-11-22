@@ -1,0 +1,36 @@
+{
+  "schema": "taiji-u2-growthB-v1",
+  "created_utc": "2026-11-22T12:19:07.952744+00:00",
+  "seed": 20261120,
+  "rows": [
+    {
+      "allocate": true,
+      "base_p27": 0.8984375,
+      "after_p27": 0.8984375,
+      "lesion": 0.0390625,
+      "cn": 1.0,
+      "p24": 0.9765625
+    },
+    {
+      "allocate": false,
+      "base_p27": 0.8984375,
+      "after_p27": 0.921875,
+      "lesion": 0.0703125,
+      "cn": 1.0,
+      "p24": 0.9765625
+    }
+  ],
+  "verdict": "growthB_partial",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 284.39
+  }
+}
