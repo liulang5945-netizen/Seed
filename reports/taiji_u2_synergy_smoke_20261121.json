@@ -1,0 +1,30 @@
+{
+  "schema": "taiji-u2-synergy-smoke-v1",
+  "created_utc": "2026-11-22T03:17:16.729594+00:00",
+  "seed": 20261120,
+  "separate": {
+    "cn": 1.0,
+    "p24": 0.8515625
+  },
+  "joint": {
+    "cn": 1.0,
+    "p24": 0.7890625
+  },
+  "delta": {
+    "cn": 0.0,
+    "p24": -0.0625
+  },
+  "verdict": "interference_or_neutral",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 298.92
+  }
+}
