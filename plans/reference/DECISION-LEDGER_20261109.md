@@ -8161,3 +8161,10 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **1. 协议**：同一 72 单元主体同时训练 CN+P-B（交替 1,200 步、各 600），路由+保护；对照为单独训练 600 步同架构。
 **2. 读数**：联合 CN 0.9883（退化 0.0117）、P-B 0.7969（提升 0.2422）、conflict 0.8906（提升 0.1016）；绝对下限、无崩塌、退化 ≤0.10 全过。
 **3. 判读**：按 owner 口径「可联合＋有界损失」**verified**；不证明联合正增益，不夸大为协同；1 seed、合成面、不签 25-S/final。
+
+
+### D-20261122-292 本会话收官汇总（零训练、0 check）
+
+**1. 动作**：写 [收官汇总](../reference/CLOSEOUT-TAIJI_U2_SESSION_20261122.md)：判定表（S1-RT verified、23-S pending、24-S partial、生长 A pending、生长 B partial、联合 bounded verified、生长线负结论、旧核封存）、成本 ≈8,900 CPU、未完成清单、待签字点、objective 对照。
+**2. 关键**：所有 verified 均为有界合成面；零 check/final；不签 final/C/D/J。
+**3. 待裁**：23-S Q/基线；生长 A 0.65 门；生长 B/24-S 收束；联合口径；check 授权。

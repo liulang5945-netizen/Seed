@@ -181,6 +181,8 @@
 
 ### 3A.0 状态快照（2026-11-22，D-20261122-271 更新）
 
+> **[本会话收官汇总（D-292）]** 判定：S1-RT verified、23-S pending、24-S partial、生长 A pending、生长 B partial、联合 bounded verified；≈8,900 CPU、零 check/final。未完成：开放中文/真机/多模态、24-S 正式包、生长 B、联合正增益、不确定性。见 [CLOSEOUT-TAIJI_U2_SESSION_20261122.md](reference/CLOSEOUT-TAIJI_U2_SESSION_20261122.md)。
+
 > **[联合修订：`joint_bounded_verified`（D-291）]** 同一主体同时训练 CN+P-B：CN 0.988（退化 0.012）、P-B 0.797（+0.242）、conflict 0.891（+0.102）；按 owner「可联合＋有界损失」口径通过（308.28 CPU、1 seed、零 check）。不证明联合正增益。见 [结果卡](reference/RESULT-TAIJI_U2_JOINT_BOUNDED_20261122.md)。
 
 > **[生长 A：`growthA_verified`（pending ratification，D-289）]** 按 owner 容忍口径（绝对门 0.65）：+24 弱项 0.6875、增益 0.0859、lesion 0.1797、旧损伤 0.0；1 seed 试点。**[生长 B：`growthB_partial`（D-290）]** 权重再平均 lesion 0.039 低于对照 0.070，未提升贡献。见 [A 卡](reference/RESULT-TAIJI_U2_GROWTHA_20261122.md) / [B 卡](reference/RESULT-TAIJI_U2_GROWTHB_20261122.md)。
