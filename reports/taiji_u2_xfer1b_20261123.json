@@ -1,0 +1,94 @@
+{
+  "schema": "taiji-u2-xfer1-v1",
+  "created_utc": "2026-11-22T16:29:23.617733+00:00",
+  "criteria_sha256": "0d507e102672a02f947b217b95d7361d03e9177ab28b47f829e5b13c82ac2376",
+  "authority": "owner:standing-authorization:2026-11-20#recommendation-default",
+  "seed": 20261120,
+  "session_a": {
+    "steps": 600,
+    "seen_acc_end": 1.0
+  },
+  "cross_session": {
+    "capsule_diff": 0.0
+  },
+  "session_b": {
+    "steps": 150,
+    "warm_unseen_acc": 1.0,
+    "fresh_unseen_acc": 0.578125,
+    "gain": 0.421875,
+    "level_gap": 0.0,
+    "warm_curve": [
+      {
+        "step": 25,
+        "acc": 1.0
+      },
+      {
+        "step": 50,
+        "acc": 1.0
+      },
+      {
+        "step": 75,
+        "acc": 1.0
+      },
+      {
+        "step": 100,
+        "acc": 1.0
+      },
+      {
+        "step": 125,
+        "acc": 1.0
+      },
+      {
+        "step": 150,
+        "acc": 1.0
+      }
+    ],
+    "fresh_curve": [
+      {
+        "step": 25,
+        "acc": 0.5234375
+      },
+      {
+        "step": 50,
+        "acc": 0.5625
+      },
+      {
+        "step": 75,
+        "acc": 0.484375
+      },
+      {
+        "step": 100,
+        "acc": 0.51171875
+      },
+      {
+        "step": 125,
+        "acc": 0.4921875
+      },
+      {
+        "step": 150,
+        "acc": 0.578125
+      }
+    ]
+  },
+  "retention": {
+    "seen_acc_after_b": 0.96875,
+    "drop": 0.03125
+  },
+  "gates": {
+    "G0": true,
+    "G1": true,
+    "G2": true,
+    "G3": true
+  },
+  "verdict": "xfer1b_verified",
+  "run_conditions": {
+    "threads": 1
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 188.39
+  }
+}

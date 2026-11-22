@@ -1,0 +1,41 @@
+{
+  "schema": "taiji-u2-xfer1-criteria-v1",
+  "card": "XFER-1",
+  "created": "2026-11-23",
+  "decision": "D-20261123-307",
+  "authority": "owner:standing-authorization:2026-11-20#recommendation-default",
+  "subject": "Subject72 seed 20261120; CN seen pairs session A 600 steps; capsule cross-session; unseen pairs session B 250 steps; fresh control",
+  "protocol": {
+    "seed": 20261120,
+    "session_a_steps": 600,
+    "session_b_steps": 250,
+    "curve_every": 25,
+    "batch": 48,
+    "lr": 0.006,
+    "wd": 0.0,
+    "test_count": 256,
+    "test_seed_offset_seen": 700,
+    "test_seed_offset_unseen": 900,
+    "fit_offset": 10000000
+  },
+  "gates": {
+    "G0_a_end_min": 0.8,
+    "G1_level_gap_max": 0.05,
+    "G2_gain_min": 0.05,
+    "G3_retention_drop_max": 0.05,
+    "G3_capsule_diff_max": 1e-06
+  },
+  "budget_cpu": 400.0,
+  "check_reads": 0,
+  "final_reads": 0,
+  "exits": [
+    "xfer1_verified",
+    "xfer1_no_transfer",
+    "xfer1_level_low",
+    "xfer1_retention_breach",
+    "xfer1_baseline_insufficient",
+    "budget_stop",
+    "engineering_failure"
+  ],
+  "criteria_sha256": "0133df9342c9535e5fc90f33964f27bf2a7f90943143c0d507817cee05f1684e"
+}

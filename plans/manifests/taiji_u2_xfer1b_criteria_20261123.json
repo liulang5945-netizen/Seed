@@ -1,0 +1,41 @@
+{
+  "schema": "taiji-u2-xfer1b-criteria-v1",
+  "card": "XFER-1b",
+  "created": "2026-11-23",
+  "decision": "D-20261123-308",
+  "authority": "owner:standing-authorization:2026-11-20#recommendation-default",
+  "subject": "Subject72 seed 20261120; CN seen pairs session A 600 steps; capsule cross-session; unseen pairs session B measured at 150 steps (XFER-1 showed 250-step saturation at 1.0 for both arms)",
+  "protocol": {
+    "seed": 20261120,
+    "session_a_steps": 600,
+    "session_b_steps": 150,
+    "curve_every": 25,
+    "batch": 48,
+    "lr": 0.006,
+    "wd": 0.0,
+    "test_count": 256,
+    "test_seed_offset_seen": 700,
+    "test_seed_offset_unseen": 900,
+    "fit_offset": 10000000
+  },
+  "gates": {
+    "G0_a_end_min": 0.8,
+    "G1_level_gap_max": 0.05,
+    "G2_gain_min": 0.05,
+    "G3_retention_drop_max": 0.05,
+    "G3_capsule_diff_max": 1e-06
+  },
+  "budget_cpu": 400.0,
+  "check_reads": 0,
+  "final_reads": 0,
+  "exits": [
+    "xfer1b_verified",
+    "xfer1b_no_transfer",
+    "xfer1b_level_low",
+    "xfer1b_retention_breach",
+    "xfer1b_baseline_insufficient",
+    "budget_stop",
+    "engineering_failure"
+  ],
+  "criteria_sha256": "0d507e102672a02f947b217b95d7361d03e9177ab28b47f829e5b13c82ac2376"
+}
