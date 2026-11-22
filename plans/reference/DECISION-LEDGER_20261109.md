@@ -8035,3 +8035,11 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **2. 读数**：CN 1.0；P-B 0.9844–1.0；P-D 0.8516–0.9141；conflict 0.9922–1.0；消融 0.3672–0.5078；旧损伤 0–0.0078；胶囊/恢复差 0.0 ⇒ 合同出口 **`s1_rt_verified`**（回执内部字符串 `s1rtf_verified`，已披露映射）；670.66 CPU ≤800、零 check/final。
 **3. 意义**：S1 首次按「读前冻结」判据通过；23-S 解锁（仍需新卡授权）；固定分区为实验层机制、heads 单独序列化、合成面、未用蒸馏。
 **4. 纪律**：criteria_sha256 校验一致；run conditions 记录；未调阈。
+
+
+### D-20261122-273 23-S.1 中文组合泛化首卡：`23s1_rt_partial`（666.59 CPU，3 seed，0 check）
+
+**1. 动作**：冻结 [23-S.1 判据](manifests 见 criteria_sha256 `9625421b…`)，新增 `verify_taiji_23s1_rt_20261122.py`，按合同跑 3 seed；回执 `reports/taiji_u2_23s1_rt_20261122.json`、[结果卡](../reference/RESULT-TAIJI_U2_23S1_RT_20261122.md)。
+**2. 读数**：CN seen 1.0；**CN unseen 1.0000/0.9727/0.8594**；P-B 0.9922–1.0；conflict 0.9922–1.0；P-D 0.8516/0.7969/0.8438（seed2 未达 0.80）；旧损伤/胶囊/恢复 0.0；666.59 CPU ≤800。
+**3. 判读**：组合泛化有界成立（未见颜色对 0.86–1.0），但 P-D 一 seed 差 0.0031 未过门 ⇒ `23s1_rt_partial`；按预注册不调阈，23-S 不 verified、24-S 不解锁。
+**4. 纪律**：criteria_sha256 读前冻结并校验；未调阈；零 check/final；合成面、固定分区实验层机制，不签 final/C/D/J。

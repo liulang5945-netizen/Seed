@@ -1,0 +1,71 @@
+{
+  "budget_cpu": 800.0,
+  "check_reads": 0,
+  "created": "2026-11-22",
+  "criteria_sha256": "9625421b0a9206c96d296a58e7681ad01a38da3b30bb5c078333487217b40e03",
+  "decision": "D-20261122-272 owner authorized 23-S.1",
+  "exits": [
+    "23s1_rt_verified",
+    "23s1_rt_partial",
+    "budget_stop",
+    "engineering_failure"
+  ],
+  "final_reads": 0,
+  "gates": {
+    "capsule_readout_diff_max": 1e-06,
+    "cn_seen_min": 0.95,
+    "cn_unseen_min": 0.85,
+    "conflict_min": 0.95,
+    "old_damage_max": 0.02,
+    "p24_min": 0.85,
+    "p27_min": 0.8,
+    "restore_diff_max": 1e-06
+  },
+  "schema": "taiji-u2-23s1-rt-criteria-v1",
+  "scope": {
+    "cn_holdout_ordered_pairs": [
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        0
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        3,
+        2
+      ],
+      [
+        4,
+        5
+      ],
+      [
+        5,
+        4
+      ],
+      [
+        6,
+        7
+      ],
+      [
+        7,
+        6
+      ]
+    ],
+    "cn_seen_pairs": "remaining 48 ordered pairs",
+    "inherit": "capsule_v2 task_routes + head state dict",
+    "routing": "fixed 24/24/24 + parameter-level protection + wd=0",
+    "templates": "train templates for training; FIT templates for seen/unseen evaluation",
+    "units": 72
+  },
+  "seeds": [
+    20261120,
+    20261121,
+    20261122
+  ]
+}
