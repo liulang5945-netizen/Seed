@@ -1,0 +1,59 @@
+{
+  "schema": "taiji-u2-uq1-criteria-v1",
+  "card": "UQ-1",
+  "created": "2026-11-22",
+  "decision": "D-20261122-305",
+  "authority": "owner:standing-authorization:2026-11-20#recommendation-default",
+  "subject": "Subject72 seed 20261120; P24 300 steps + P27 500 steps; per-task temperature calibration on a separate calibration split",
+  "protocol": {
+    "seed": 20261120,
+    "p24_steps": 500,
+    "p27_steps": 500,
+    "batch": 48,
+    "lr": 0.007,
+    "wd": 0.0,
+    "p24_calib_seed_offset": 212,
+    "p24_test_seed_offset": 712,
+    "p27_calib_seed_offset": 81,
+    "p27_test_seed_offset": 981,
+    "fit_offset": 10000000,
+    "temperature_grid": [
+      0.5,
+      5.0,
+      0.1
+    ],
+    "coverage_target": 0.7,
+    "ece_bins": 15,
+    "utility": {
+      "correct": 1.0,
+      "wrong": -3.0,
+      "help": -0.1
+    }
+  },
+  "gates": {
+    "G0_p24_acc_min": 0.65,
+    "G0_p27_acc_min": 0.5,
+    "G1_ece_max": 0.1,
+    "G1_brier_gain_min": 0.01,
+    "G2_auroc_min": 0.7,
+    "G3_coverage_min": 0.65,
+    "G3_selective_gain_min": 0.05,
+    "G4_utility_gain_vs_always_min": 0.05,
+    "G4_utility_gain_vs_random_min": 0.05,
+    "G5_ece_drop_vs_permuted_min": 0.05,
+    "G6_capsule_diff_max": 1e-06,
+    "G6_p24_retention_drop_max": 0.01
+  },
+  "budget_cpu": 300.0,
+  "check_reads": 0,
+  "final_reads": 0,
+  "exits": [
+    "uq1_verified",
+    "uq1_calibrated_only",
+    "uq1_partial",
+    "uq1_baseline_insufficient",
+    "budget_stop",
+    "engineering_failure"
+  ],
+  "criteria_sha256": "86ca737bce47b714562bcc505c42090f1c7ccdbe5546a447e076fb51e88f4aa4"
+}
