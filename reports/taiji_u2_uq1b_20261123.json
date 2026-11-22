@@ -1,0 +1,103 @@
+{
+  "schema": "taiji-u2-uq1b-v1",
+  "created_utc": "2026-11-22T16:46:27.278263+00:00",
+  "criteria_sha256": "cd4b58d56d8dbf242249bcfbaf2ab78f492fe0b9963c9fad9dd7460e2187e6bb",
+  "authority": "owner:standing-authorization:2026-11-20#recommendation-default",
+  "seed": 20261120,
+  "alpha": 0.1,
+  "training": {
+    "p24_acc_after_p24": 0.79296875,
+    "p24_acc_after_p27": 0.79296875
+  },
+  "tasks": {
+    "p24": {
+      "test_acc": 0.79296875,
+      "calib_acc": 0.8515625,
+      "risk_target": {
+        "tau": 0.6161081194877625,
+        "calib_coverage": 0.87109375,
+        "calib_risk": 0.09865470975637436,
+        "coverage": 0.8515625,
+        "risk": 0.16972477734088898,
+        "selective_acc": 0.830275222659111,
+        "abstain_rate": 0.1484375,
+        "n_answered": 218
+      },
+      "fixed_70": {
+        "tau": 0.7393261194229126,
+        "coverage": 0.671875,
+        "risk": 0.05232558026909828,
+        "selective_acc": 0.9476744197309017,
+        "abstain_rate": 0.328125,
+        "n_answered": 172
+      },
+      "permuted_calib": {
+        "tau": 0.6161081194877625,
+        "calib_coverage": 0.87109375,
+        "coverage": 0.8515625,
+        "risk": 0.16972477734088898,
+        "selective_acc": 0.830275222659111,
+        "abstain_rate": 0.1484375,
+        "n_answered": 218,
+        "satisfies_risk_control": false
+      }
+    },
+    "p27": {
+      "test_acc": 0.9375,
+      "calib_acc": 0.90234375,
+      "risk_target": {
+        "tau": 0.5040447115898132,
+        "calib_coverage": 1.0,
+        "calib_risk": 0.09765625,
+        "coverage": 1.0,
+        "risk": 0.0625,
+        "selective_acc": 0.9375,
+        "abstain_rate": 0.0,
+        "n_answered": 256
+      },
+      "fixed_70": {
+        "tau": 0.8970552682876587,
+        "coverage": 0.70703125,
+        "risk": 0.01104972418397665,
+        "selective_acc": 0.9889502758160233,
+        "abstain_rate": 0.29296875,
+        "n_answered": 181
+      },
+      "permuted_calib": {
+        "tau": 0.5040447115898132,
+        "calib_coverage": 1.0,
+        "coverage": 1.0,
+        "risk": 0.0625,
+        "selective_acc": 0.9375,
+        "abstain_rate": 0.0,
+        "n_answered": 256,
+        "satisfies_risk_control": true
+      }
+    }
+  },
+  "capsule_state_diff": 0.0,
+  "retention_drop": 0.0,
+  "abstain": {
+    "p24": 0.1484375,
+    "p27": 0.0
+  },
+  "gates": {
+    "G0": true,
+    "G1": false,
+    "G2": true,
+    "G3": true,
+    "G4": false,
+    "G5": true
+  },
+  "verdict": "uq1b_risk_unmet",
+  "run_conditions": {
+    "threads": 1
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 105.27
+  }
+}
