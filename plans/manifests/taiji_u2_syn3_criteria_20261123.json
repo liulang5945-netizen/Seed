@@ -1,0 +1,66 @@
+{
+  "schema": "taiji-u2-syn3-criteria-v1",
+  "card": "SYN-3",
+  "created": "2026-11-23",
+  "decision": "D-20261123-331",
+  "authority": "owner:standing-authorization:2026-11-20#recommendation-default",
+  "subject": "Subject72 seed 20261120; cn/p24/p27 blocks trained with UQ-1 recipe; standardised per-block joint readout; 8192 joint samples; joint label = 2*(cn_label % 2) + (p27_label % 2) (each block contributes one bit)",
+  "protocol": {
+    "seed": 20261120,
+    "cn_steps": 600,
+    "p24_steps": 500,
+    "p27_steps": 600,
+    "batch": 48,
+    "lr": 0.007,
+    "wd": 0.0,
+    "joint_train_count": 8192,
+    "joint_steps": 1600,
+    "joint_batch": 128,
+    "joint_lr": 0.005,
+    "arm_steps": 400,
+    "train_seed_offset": 50000,
+    "test_seed_offset": 60000,
+    "fit_offset": 10000000,
+    "unit_lesion_count": 12,
+    "label_rule": "2 * (cn_label % 2) + (p27_label % 2)",
+    "blocks": {
+      "cn": [
+        0,
+        24
+      ],
+      "p24": [
+        24,
+        48
+      ],
+      "p27": [
+        48,
+        72
+      ]
+    },
+    "cn_seed_offset": 212,
+    "p27_seed_offset": 81,
+    "state_standardisation": "per-block train-batch mean/std applied to readout inputs"
+  },
+  "gates": {
+    "G0_joint_acc_min": 0.85,
+    "G1_cn_drop_min": 0.3,
+    "G2_p27_drop_min": 0.3,
+    "G3_single_block_acc_max": 0.6,
+    "G4_unit_drop_min": 0.1,
+    "G5_capsule_diff_max": 1e-06
+  },
+  "budget_cpu": 300.0,
+  "check_reads": 0,
+  "final_reads": 0,
+  "exits": [
+    "syn3_verified",
+    "syn3_low_joint",
+    "syn3_not_synergistic",
+    "syn3_single_block_sufficient",
+    "syn3_no_unit_causality",
+    "syn3_baseline_insufficient",
+    "budget_stop",
+    "engineering_failure"
+  ],
+  "criteria_sha256": "085e77d3eaa667bfa4c4888a431c484c410b38bf6397d073877a49d3d32ba78d"
+}
