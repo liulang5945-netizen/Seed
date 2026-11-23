@@ -1,0 +1,81 @@
+{
+  "schema": "taiji-p0ba-diag-v1",
+  "created_utc": "2026-11-23T14:29:47.470019+00:00",
+  "seed": 20261120,
+  "task": "flip_4colour_null_calibrated",
+  "normal_cn": 1.0,
+  "normal_cn_after": 1.0,
+  "cn_probe": {
+    "train": 0.6510416865348816,
+    "test": 0.3984375
+  },
+  "birth_probe": {
+    "train": 0.5729166865348816,
+    "test": 0.4375
+  },
+  "null_cn_mean": 0.4953125,
+  "null_cn_max": 0.578125,
+  "null_birth_mean": 0.4953125,
+  "null_birth_max": 0.5390625,
+  "detect_acc": 1.0,
+  "pre": {
+    "flip": 1.0,
+    "linear": 0.990234375,
+    "prototype": 0.4423828125,
+    "logreg": 0.861328125,
+    "mlp8": 0.794921875,
+    "mlp16": 0.9169921875,
+    "linear_unseen": 0.984375,
+    "logreg_unseen": 0.83984375
+  },
+  "post": {
+    "flip": 1.0,
+    "linear": 0.9921875,
+    "prototype": 0.4853515625,
+    "logreg": 0.96484375,
+    "mlp8": 0.794921875,
+    "mlp16": 0.9169921875,
+    "linear_unseen": 0.990234375,
+    "logreg_unseen": 0.96875
+  },
+  "consolidation_delta": {
+    "flip": 0.0,
+    "linear": 0.001953125,
+    "prototype": 0.04296875,
+    "logreg": 0.103515625,
+    "mlp8": 0.0,
+    "mlp16": 0.0,
+    "linear_unseen": 0.005859375,
+    "logreg_unseen": 0.12890625
+  },
+  "ceiling": {
+    "mlp16": 1.0,
+    "linear": 1.0
+  },
+  "dormant": 0.3427734375,
+  "wake": 1.0,
+  "ref_flip": 1.0,
+  "adapter_reset": 0.501953125,
+  "gates": {
+    "G0_old_cn": true,
+    "G1_pressure": true,
+    "G2_detect": true,
+    "G3_flip": true,
+    "G4_linear": true,
+    "G5_prototype": false,
+    "G6_mlp16": true,
+    "G7_dormant": true,
+    "G8_wake": true,
+    "G9_adapter_drop": true,
+    "G10_retention": true
+  },
+  "verdict": "p0ba_not_consolidated",
+  "cost": {
+    "cpu": 193.89
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  }
+}
