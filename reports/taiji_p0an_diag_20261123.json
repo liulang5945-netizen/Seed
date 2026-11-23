@@ -1,0 +1,47 @@
+{
+  "schema": "taiji-p0an-diag-v1",
+  "created_utc": "2026-11-23T12:16:26.687945+00:00",
+  "seed": 20261120,
+  "task": "revision_flip_consolidation",
+  "normal_cn": 1.0,
+  "normal_cn_after": 1.0,
+  "cn_probe": {
+    "train": 0.8385416865348816,
+    "test": 0.5078125
+  },
+  "birth_probe": {
+    "train": 0.5494791865348816,
+    "test": 0.484375
+  },
+  "detect_acc": 0.986328125,
+  "detect_acc_stale": 0.541015625,
+  "flip_acc": 0.998046875,
+  "flip_transfer": 0.58984375,
+  "linear_probe": 0.89453125,
+  "flip_transfer16": 0.6875,
+  "flip_reset": 0.451171875,
+  "dormant": 0.11328125,
+  "flip_ref_big": 0.99609375,
+  "wake": 0.998046875,
+  "gates": {
+    "G0_old_cn": true,
+    "G1_pressure": true,
+    "G2_detect": true,
+    "G3_flip": true,
+    "G4_linear_probe": false,
+    "G4b_flip_transfer16": false,
+    "G5_adapter_drop": true,
+    "G6_dormant": true,
+    "G7_wake": false,
+    "G6_retention": true
+  },
+  "verdict": "p0an_not_consolidated",
+  "cost": {
+    "cpu": 179.36
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  }
+}
