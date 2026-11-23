@@ -8980,3 +8980,10 @@ eset drop 0.223 来自快读出未收敛，**「功能迁移到单元」解释�
 **2. 读数**：两 seed 唤醒序列 [False,True,False]；动作 grow_learn_familyB；**family B 1.000/1.000**、family A 4 色 1.000/0.991、8 色 1.000/1.000、family B 新单元 lesion 0.749/0.743（drop 0.251/0.257 ✅）、旧中文 1.000、终态 waiting。24 门全过。
 **3. 判定**：**2/2 p0bq_verified**。**判读**：**完整自主循环成立**（等待→需求唤醒→生长→学新能力→保旧能力→回等待），新能力由新增单元承担（lesion 掉 0.25），成本可核（+65 CPU/次）。[结果卡](RESULT-TAIJI_P0BQ_DIAG_20261124.md)。
 **4. 后继**：「求助/求证」等动作接入；跨会话经验积累（capsule 跨会话恢复后再学）。零 check/final。
+
+### D-20261124-405 P0-BR 跨会话经验积累（capsule 链）：1/2 verified，seed21 失败系比较基准过期（约 557 CPU，0 check，探索诊断）
+
+**1. 卡**：脚本 diag_p0br_20261123.py；会话1 保存 capsule A → 会话2（新图恢复）核验 A 并在其上学习 family B → 保存 capsule AB → 会话3（新图恢复）核验 A+B。
+**2. 读数**：**capA_diff=0.0、capAB_diff=0.0（两 seed）**；seed20 verified（恢复 4c/8c 1.000/1.000、B 1.000）；seed21 p0br_session_restore_failed——capAB_diff 0.0 但 G31 把会话3 的 8 色（1.000）与会话1 阶段 B 的旧读数（0.994）比较；会话2 的回放训练已把旧 8 色提升到 **1.000**（acc8_after_B=1.000），正确基准应为保存时刻读数。
+**3. 判定**：1/2 verified。**判读**：恢复本身逐位（两 seed diff 0.0）；失败是**我方判据基准过期**（用保存前旧读数当基准），不改旧卡；跨会话「保存→恢复→继续学习→再保存→再恢复」核心链路已成立。[结果卡](RESULT-TAIJI_P0BR_DIAG_20261124.md)。
+**4. 后继**：P0-BS 预注册「基准＝保存时刻读数」重跑；会话3 恢复后继续学第三能力。零 check/final。
