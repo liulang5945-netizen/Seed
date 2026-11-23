@@ -1,0 +1,40 @@
+{
+  "schema": "taiji-p0ah-diag-v1",
+  "created_utc": "2026-11-23T11:46:50.868219+00:00",
+  "seed": 20261120,
+  "task": "revision_flip_consolidation",
+  "normal_cn": 1.0,
+  "normal_cn_after": 1.0,
+  "cn_probe": {
+    "train": 0.8255208134651184,
+    "test": 0.5078125
+  },
+  "birth_probe": {
+    "train": 0.5572916865348816,
+    "test": 0.6015625
+  },
+  "detect_acc": 1.0,
+  "detect_acc_stale": 0.517578125,
+  "flip_acc": 0.12109375,
+  "linear_probe": 0.12890625,
+  "flip_transfer": 0.142578125,
+  "flip_reset": 0.111328125,
+  "gates": {
+    "G0_old_cn": true,
+    "G1_pressure": false,
+    "G2_detect": true,
+    "G3_flip": false,
+    "G4_flip_transfer": false,
+    "G5_adapter_drop": false,
+    "G6_retention": true
+  },
+  "verdict": "p0ah_not_pressured",
+  "cost": {
+    "cpu": 194.56
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  }
+}
