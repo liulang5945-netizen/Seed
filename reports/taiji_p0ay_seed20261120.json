@@ -1,0 +1,77 @@
+{
+  "schema": "taiji-p0ay-diag-v1",
+  "created_utc": "2026-11-23T14:06:09.900820+00:00",
+  "seed": 20261120,
+  "task": "flip_4colour_small",
+  "normal_cn": 1.0,
+  "normal_cn_after": 1.0,
+  "cn_probe": {
+    "train": 0.640625,
+    "test": 0.5390625
+  },
+  "birth_probe": {
+    "train": 0.5963541865348816,
+    "test": 0.6015625
+  },
+  "detect_acc": 1.0,
+  "pre": {
+    "flip": 0.95703125,
+    "linear": 0.8974609375,
+    "prototype": 0.349609375,
+    "logreg": 0.9443359375,
+    "mlp8": 0.64453125,
+    "mlp16": 0.9169921875,
+    "linear_unseen": 0.97265625,
+    "logreg_unseen": 0.955078125
+  },
+  "post": {
+    "flip": 0.95703125,
+    "linear": 0.9619140625,
+    "prototype": 0.3310546875,
+    "logreg": 0.986328125,
+    "mlp8": 0.841796875,
+    "mlp16": 0.8017578125,
+    "linear_unseen": 0.96875,
+    "logreg_unseen": 0.986328125
+  },
+  "consolidation_delta": {
+    "flip": 0.0,
+    "linear": 0.064453125,
+    "prototype": -0.0185546875,
+    "logreg": 0.0419921875,
+    "mlp8": 0.197265625,
+    "mlp16": -0.115234375,
+    "linear_unseen": -0.00390625,
+    "logreg_unseen": 0.03125
+  },
+  "ceiling": {
+    "mlp16": 1.0,
+    "linear": 1.0
+  },
+  "dormant": 0.3330078125,
+  "wake": 0.95703125,
+  "ref_flip": 0.95703125,
+  "adapter_reset": 0.5263671875,
+  "gates": {
+    "G0_old_cn": true,
+    "G1_pressure": false,
+    "G2_detect": true,
+    "G3_flip": true,
+    "G4_linear": true,
+    "G5_prototype": false,
+    "G6_mlp16": true,
+    "G7_dormant": false,
+    "G8_wake": true,
+    "G9_adapter_drop": true,
+    "G10_retention": true
+  },
+  "verdict": "p0ay_not_pressured",
+  "cost": {
+    "cpu": 185.44
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  }
+}
