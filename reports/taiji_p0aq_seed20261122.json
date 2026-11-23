@@ -1,0 +1,71 @@
+{
+  "schema": "taiji-p0aq-diag-v1",
+  "created_utc": "2026-11-23T12:48:54.257099+00:00",
+  "seed": 20261122,
+  "task": "revision_flip_consolidation_framework",
+  "normal_cn": 1.0,
+  "normal_cn_after": 1.0,
+  "cn_probe": {
+    "train": 0.8411458134651184,
+    "test": 0.4921875
+  },
+  "birth_probe": {
+    "train": 0.5729166865348816,
+    "test": 0.5078125
+  },
+  "detect_acc": 1.0,
+  "pre": {
+    "flip": 1.0,
+    "linear": 0.9599609375,
+    "prototype": 0.921875,
+    "logreg": 1.0,
+    "mlp8": 0.9150390625,
+    "mlp16": 0.9716796875
+  },
+  "post": {
+    "flip": 0.9921875,
+    "linear": 0.9599609375,
+    "prototype": 0.916015625,
+    "logreg": 0.99609375,
+    "mlp8": 0.87109375,
+    "mlp16": 0.95703125
+  },
+  "consolidation_delta": {
+    "flip": -0.0078125,
+    "linear": 0.0,
+    "prototype": -0.005859375,
+    "logreg": -0.00390625,
+    "mlp8": -0.0439453125,
+    "mlp16": -0.0146484375
+  },
+  "ceiling": {
+    "mlp16": 1.0,
+    "linear": 1.0
+  },
+  "dormant": 0.1318359375,
+  "wake": 0.9921875,
+  "ref_flip": 0.9921875,
+  "adapter_reset": 0.470703125,
+  "gates": {
+    "G0_old_cn": true,
+    "G1_pressure": true,
+    "G2_detect": true,
+    "G3_flip": true,
+    "G4_linear": true,
+    "G5_prototype": true,
+    "G6_mlp16": true,
+    "G7_dormant": true,
+    "G8_wake": true,
+    "G9_adapter_drop": true,
+    "G10_retention": true
+  },
+  "verdict": "p0aq_verified",
+  "cost": {
+    "cpu": 181.03
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  }
+}

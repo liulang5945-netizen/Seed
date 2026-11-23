@@ -1,0 +1,47 @@
+{
+  "schema": "taiji-p0ap-diag-v1",
+  "created_utc": "2026-11-23T12:33:18.840953+00:00",
+  "seed": 20261122,
+  "task": "revision_flip_consolidation",
+  "normal_cn": 1.0,
+  "normal_cn_after": 1.0,
+  "cn_probe": {
+    "train": 0.8411458134651184,
+    "test": 0.4921875
+  },
+  "birth_probe": {
+    "train": 0.5729166865348816,
+    "test": 0.5078125
+  },
+  "detect_acc": 1.0,
+  "detect_acc_stale": 0.501953125,
+  "flip_acc": 0.994140625,
+  "flip_transfer": 0.876953125,
+  "linear_probe": 0.98046875,
+  "flip_transfer16": 0.9375,
+  "flip_reset": 0.4453125,
+  "dormant": 0.126953125,
+  "flip_ref_big": 0.98828125,
+  "wake": 0.994140625,
+  "gates": {
+    "G0_old_cn": true,
+    "G1_pressure": true,
+    "G2_detect": true,
+    "G3_flip": true,
+    "G4_linear_probe": true,
+    "G4b_flip_transfer16": true,
+    "G5_adapter_drop": true,
+    "G6_dormant": true,
+    "G7_wake": false,
+    "G6_retention": true
+  },
+  "verdict": "p0ap_wake_not_restored",
+  "cost": {
+    "cpu": 189.64
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  }
+}
