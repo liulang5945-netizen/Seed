@@ -8428,3 +8428,34 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **2. 读数**：联合 train 0.822 / test **0.766**；CN 块休眠 drop **0.508**、P27 块休眠 drop **0.504**；单块头 0.270/0.234；单位 12 休眠 drop **0.527/0.465**；双块休眠 0.293；capsule 0.0。
 **3. 判定**：syn1e_low_joint（G0 0.766<0.80；G1–G5 全过）。**结论**：协同的**块级与单位级因果贡献成立**（单块≈机会、双块休眠≈机会），但联合任务精度门未过 ⇒ 不签「协同成立」，如实记负结果。[系列结果卡](RESULT-TAIJI_U2_SYN1_SERIES_20261123.md)。
 **4. 零 check/final；常设授权待回溯。**
+
+
+### D-20261123-327 S1-RT 修订 r2：RT 范围标签回填＋25-S 前置 S1-R2（owner 裁定，零训练，0 check）
+
+**1. 卡**：[S1-RT 修订 r2](REVISION-TAIJI_U2_S1RT_R2_20261123.md)（修订对象 D-270/271）；编号避让 D-326（SYN-2 判据清单已占用）。
+**2. 依据**：代码审查确认 RT 机制前向按任务名选单元段、每任务读出头、分区梯度清零、认知状态逐调用重置；G6 对照引用历史读数；CR-3/CR-4 要求外控路由显式标注、不计自主。
+**3. 裁定**：①接受范围标签并回填 MAINLINE §0.2/§3A.0 与 [能力总账 §27](MEMO-TAIJI_U2_CAPABILITY_LEDGER_20261120.md)，**不撤销、不重判任何已签出口**；②25-S（含 25-S.0）准入追加 `s1_r2_verified`；24-S 继续在 RT 机制下推进并带标签；RT 下生长试点不作 25-S 准入证据。
+**4. 待定**：G3′ 保持阈值（−0.05 / −0.02）、R2-X 候选（R2-A / R2-B / 两者）。零训练、零 check/final。
+
+
+### D-20261123-328 S1-RT 修订 r2 余项裁定：G3′ 取 −0.05、R2-X 两候选都试（owner 裁定，零训练，0 check）
+
+**1. 卡**：[S1-RT 修订 r2](REVISION-TAIJI_U2_S1RT_R2_20261123.md) §9 第 2、3 项（承接 D-20261123-327）。
+**2. 裁定**：①G3′ 非平凡保持阈值 **BWT ≥ −0.05**（沿用 D-284 口径；共享块多阶段梯度、遗忘 ≤ C1 一半两项附加条件不变）；②R2-X 探索段 **R2-A（共享＋学习路由）与 R2-B（学习掩码）都试**，合计 ≤300 CPU、1 seed、可丢弃；主臂按 r2 §5 读前写定规则选择。
+**3. 状态**：r2 四项全部裁定，S1-R2 判据**未冻结**；R2-X 脚本待编写。零训练、零 check/final。
+
+
+### D-20261123-329 D-227 Bridge 1 公平基线诊断：`read_gate_confound_confirmed`（149.52 CPU，3 seed，0 check）
+
+**1. 卡**：[结果卡](RESULT-TAIJI_U2_FAIR_BASELINE_M3_20261123.md)；脚本 `diag_fair_baseline_m3_20261123.py`；判读规则读前写于 [r2 §7](REVISION-TAIJI_U2_S1RT_R2_20261123.md)。探索诊断，非能力声明。
+**2. 读数**：复现 exact；selective 1.000 / selective_no_gate 0.516 / gru 0.530 / **gru_gate 1.000** / lstm 0.566 / lstm_gate 0.557；selective − gru_gate = 0.000（3/3 seed）。
+**3. 判定**：命中规则 1（差 ≤0.02）⇒ Bridge 1 优势归因 `read_gate`；「单元动力学优于 GRU」降为未证实（能力总账 §28）；S1-R2 C5 必选。
+**4. 线索**：500 步收敛 selective 0.97 vs gru_gate 0.66（非预注册、参数多 21%、单 lr）；后续可选 lr 扫描或更难 M3 变体（需授权）。零 check/final。
+
+
+### D-20261123-330 更难 M3 诊断预注册：判读规则读前冻结（零训练，0 check）
+
+**1. 卡**：脚本 `scripts/training/diag_m3_hard_20261123.py`（承接 D-329 `read_gate_confound_confirmed`）；探索诊断，非能力声明。
+**2. 设计**：三档难度 H1（T=24/3 槽/4 值）、H2（T=24/6 槽/4 值）、H3（T=40/6 槽/8 值/2 次覆盖写）；臂 `selective` / `gru_gate` / `gru`，按各档解析 FLOPs 配平（比 0.990–1.004）；1,500 步、fit 512、3 seed、配对同批次。
+**3. 读前冻结**：判读规则即模块 docstring，`decision_rules_sha256 = 7037d0305647c7ed78a6781311c0d029fc9281408a7b231c00df4c050d5ed907`（运行时写入报告，读后核对）；逐档 ceiling/floor/selective_better/gru_gate_better/no_difference/inconclusive，总判 presentation_failure / unit_dynamics_contribution_bounded / gru_gate_better_somewhere / no_independent_contribution / mixed。
+**4. 状态**：待 owner 本地运行；预算帽 1,800 CPU。零 check/final。

@@ -232,3 +232,35 @@
 - 冻结单位＋适配头：P-B 0.294/0.363/0.425、P-D 0.425–0.494（崩）；旧技能 0、capsule/reconnect 0/1.0。
 - 合并结论：共享单位可训练则顺序联合破坏（0b P-D 0.62、首跑损伤 0.88），冻结则表征不足（0c）⇒ 单主体顺序协议无可行点，窄合同 joint 不成立；per-axis 有界（P-A 1.0/P-B 专用 1.0/P-D 0.885/中性生长）仍成立。
 - 24-S 不解锁；882 CPU、零 check；待裁：有界包/换范式/暂停。
+
+## 27. RT 机制范围标签回填（D-20261123-327）
+
+依 [S1-RT 修订 r2](REVISION-TAIJI_U2_S1RT_R2_20261123.md) §3，owner 裁定回填。**各卡出口、读数与判词不变**，只追加生效范围：
+
+```text
+scope: routing=external_task_id; protection=fixed_partition_grad_mask; heads=per_task; state=episode_reset; scenario=task_incremental
+```
+
+| 卡（D 号） | 机制（脚本静态检查：R=任务路由/分块，H=每任务头，G=梯度掩码） | 适用标签 |
+|---|---|---|
+| S1-RT 正式（D-271） | R H G | 全部 |
+| 23-S.1 / 23-S.1b / 23-S.2a（D-277；23-S 判定 D-281 / D-296 追认） | R H G | 全部 |
+| 24-S.0–0f、24-S.F1–F1b | R H G | 全部 |
+| 24-S.F1c–F1e | R H（无 G，生长＋专用头） | routing / heads / state |
+| 生长 A / 生长 B（D-289/290/293） | R H G | 全部 |
+| 联合 bounded（D-291） | R H G | 全部 |
+| LC-1（D-306）、XFER-1/1b（D-307/308）、ACT-1/1b/2/2b（D-309/310/317/318） | R H G | 全部 |
+| UQ-1/1b（D-305/311）、P26-S/S2/S3（D-314–316） | R H G | 全部 |
+| UQ-1c/1d（D-312/313）、P26-R/R2（D-319/320）、SYN-1–1e（D-321–325） | H G（复用 Subject72 分块，脚本内未显式设路由） | heads / protection / state；routing 逐卡复核后补记 |
+
+**可声明**：外控路由下的多任务共存、参数隔离保持、胶囊继承与跨进程恢复、P-D 探针因果消融。
+**不可声明**（S1-R2 未过前）：自主/学习路由、共享表征上的保持、任务无关推断、认知状态跨情节连续、CR-2 协同。
+- 23-S.2b（D-279，纯 GRU/TF 朴素顺序基线）与 D-225/227/228（S0 分轴，无任务路由）不适用本标签；其中 D-227 Bridge 1 已由 D-20261123-329 补注（见 §28）。
+- 25-S 准入另需 `s1_r2_verified`；零训练、零 check/final。
+
+## 28. D-227 Bridge 1 归因补注（D-20261123-329，`read_gate_confound_confirmed`）
+
+- [公平基线诊断](../../scripts/training/diag_fair_baseline_m3_20261123.py)（[结果卡](RESULT-TAIJI_U2_FAIR_BASELINE_M3_20261123.md)）：复现 exact；`gru_gate` 3/3 seed `1.000` = `selective`；`selective_no_gate` 0.516 ≈ `gru` 0.530；`lstm_gate` 0.557（门对 LSTM 无效）。
+- **口径变更**：§14 第 1 条「显著优于等 FLOPs GRU」与 §16「持续状态记忆」行中隐含的「单元动力学优于常规 RNN」→ **未证实**；成立的表述为「末步乘性 `read_gate` 是 M3 多键查询的必要组件，对 GRU 与 Selective 同样有效」。
+- M3（T=12）对两者处于天花板，不能区分单元动力学；500 步收敛速度差（0.97 vs 0.66）为非预注册线索，参数量差 21%、单 lr，不计入能力。
+- S1-R2 对照臂 C5 改为必选。零 check/final。

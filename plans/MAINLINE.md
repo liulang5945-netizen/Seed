@@ -17,7 +17,7 @@
 | **`22.5.1` 联合门整体（纠正＋保持）** | **已正式结案 `joint_gate_check2_pass / b_parent_earned`（D-20261119-144）；正式 B 学习父资格已挣得（主交接 `child-20261112.pt`）** | fit 面 3 种子 pass＋增补帽完成全 3 种子 `192` check（`899.42 CPU`、`formal_2251: used=1/remaining=0`）：**A 3/3 `174/192`（drop `0.0`）**、**B / multi / supersede 3/3 `144/144`（`gain=0.9653`）**、**D(`parent_a_truth`) `125/126/126` 对 `126`**、**恢复 `3/3 exact`**；经零训练零 check `--verify`（`17.52 CPU`）修 `overwrite_probe` 行微扰（`drop=0.875`）、因果超出冻结父 `5-5=0` 与 3 种子 D 中位判据乙（`median ub=0.0`，保留 `20261110` `ub=0.0208` 与 S1 豁免 D-12 披露），`--closeout` 闭合 | [B 父挣得清单](manifests/taiji_u2_22_5_1_b_parent_earned_20261120.json) / [正式 check② 结果卡](reference/RESULT-TAIJI_U2_22_5_1_FORMAL_CHECK2_20261120.md) / [联合门结果卡](reference/RESULT-TAIJI_U2_22_5_1_JOINT_GATE_20261120.md) / [阶段收口账](reference/MEMO-TAIJI_PACKAGE22_CLOSE_20261120.md) |
 | `22.5.2–22.8`（包 22 收官，已封存） | **已结案收束 `package22_closed_partial`（D-160）** | `22.5.2` `arch_negative`（D-147）；`22.6` 范围限定负（D-148）；`22.7` 等 FLOPs `growth_benefit_absent`（D-151）；`22.8` 部分收束（D-160）；`final_not_authorized`、不新增 `22.9` | [包 22 全局收束](reference/CLOSEOUT-TAIJI_U2_22_GLOBAL_20261120.md) / [阶段收口账](reference/MEMO-TAIJI_PACKAGE22_CLOSE_20261120.md) |
 | 旧 RouteB `23–25`（已封存基线） | **已有界/负面收口并封存** | `23` `composition_partial`（D-176）；`24` `experience_learning_partial`（D-183）；`25` `structural_pressure_absent`（D-188）；旧核 [u2_neural_units.py](../taiji/u2_neural_units.py) 冻结零改动、不再投入 | [23 收口](reference/CLOSEOUT-TAIJI_U2_23_20261120.md) / [24 收口](reference/CLOSEOUT-TAIJI_U2_24_20261120.md) / [决策台账](reference/DECISION-LEDGER_20261109.md) |
-| **`S0` 新核心分轴闭环预验证**（[u2_selective_units.py](../taiji/u2_selective_units.py)） | **已完成（D-225 / D-227 / D-228，零 `check / final`，受控合成面）** | **D-225** 整体验证 `13/13`（`279.55 CPU`）；**D-227** 四轴桥接 `16/17`（等 FLOPs `1.000` 胜 GRU、两代中性生长 `1.000`、`H2` 损伤 `0.449`、Exact `A3c 0.803`、动作反馈 `0.898`；`485.27 CPU`）；**D-228** 二阶闭环 `15/18`（32 维无位置嵌入中文 `0.998`、P24 四类纠错全 `1.000`、P26 自主选择 `+0.285`、P27 遮挡物理 `0.923`、P28 `T=40` 与 `t=20` 崩溃恢复 `0.0`；`497.31 CPU`） | [D-225 卡](reference/RESULT-TAIJI_U2_HOLISTIC_ALGORITHM_VERIFY_20261121.md) / [D-227 卡](reference/RESULT-TAIJI_U2_SELECTIVE_BRIDGE_20261121.md) / [D-228 卡](reference/RESULT-TAIJI_U2_COGNITIVE_LOOP_20261121.md) |
+| **`S0` 新核心分轴闭环预验证**（[u2_selective_units.py](../taiji/u2_selective_units.py)） | **已完成（D-225 / D-227 / D-228，零 `check / final`，受控合成面）** | **D-225** 整体验证 `13/13`（`279.55 CPU`）；**D-227** 四轴桥接 `16/17`（等 FLOPs `1.000` 胜 GRU〔D-20261123-329 补注：优势来自 `read_gate`，加门 GRU 同为 `1.000`〕、两代中性生长 `1.000`、`H2` 损伤 `0.449`、Exact `A3c 0.803`、动作反馈 `0.898`；`485.27 CPU`）；**D-228** 二阶闭环 `15/18`（32 维无位置嵌入中文 `0.998`、P24 四类纠错全 `1.000`、P26 自主选择 `+0.285`、P27 遮挡物理 `0.923`、P28 `T=40` 与 `t=20` 崩溃恢复 `0.0`；`497.31 CPU`） | [D-225 卡](reference/RESULT-TAIJI_U2_HOLISTIC_ALGORITHM_VERIFY_20261121.md) / [D-227 卡](reference/RESULT-TAIJI_U2_SELECTIVE_BRIDGE_20261121.md) / [D-228 卡](reference/RESULT-TAIJI_U2_COGNITIVE_LOOP_20261121.md) |
 | **`S1` 同主体单一谱系联合演练** | **▶ 当前唯一队首（未启动，零 `check / final`）** | 将中文＋跨会话纠错＋自主求证/等待＋遮挡物理＋多代中性生长＋断点恢复合入**同一可继承 `SelectivePersistentGraph` 主体连续生命流**，验证多任务共存、旧技能损伤 `<= 0.02` 与跨进程恢复；通过后才重入正式合同 | 本文 `§0.3` / `§3` / `执行位置` |
 | `23-S..28-S → 29 → 30 → §15` | **新核心正式重入路线（未准入）** | 按 `§4` 阶梯以新核心逐包重立 `23-S..28-S`（真实多世界/生成/巩固/压力/物理/长运行）；`29` 冻结唯一 `R0`（`Q>=0.95`）→ `30` 接管包 → `§15` 运营状态机；各包开窗前均需实测报价＋owner 授权 | 本文 `§0.3` / `§4` / [N 长期路线](reference/PLAN-TAIJI-N_LONG_HORIZON_20261111.md) |
 | 历史阶段财务账（`22.5` 旧线） | **超支永久记事故（D-20261119-04/06/15/142/143/144）** | 诚实位置 `≈32,040 + E5.10 三卡 189.3 + S0–S4 实测 ≈3,209 + check② 首轮 621.60 + 增补轮 914.59 + verify 结案 17.52 = ≈36,804`，对重冻阶段帽 `24,000` 超 `≈12,804（53.4%）`，不追溯改帽；后续每卡单列报价＋硬帽 | [03 台账](active/roadmap/03_CURRENT_EXECUTION.md) / D-15 / [D-144](reference/RESULT-TAIJI_U2_22_5_1_FORMAL_CHECK2_20261120.md) |
@@ -43,6 +43,7 @@
 **2026-11-21 当前九轴与阶段收编状态**（见 [能力总账](reference/MEMO-TAIJI_U2_CAPABILITY_LEDGER_20261120.md) 与 [包 22 收口](reference/CLOSEOUT-TAIJI_U2_22_GLOBAL_20261120.md)）：
 - **已封存旧 RouteB 基线（`u2_neural_units.py`，同一 `20261112` 谱系）**：`engineering=verified`；`task=verified(22.5.0 first-A + 22.5.1 联合门 D-144)`；`learning=verified(路由与通路)/uncovered(长期内容积累)`；`retention=verified(check② D 中位 ub=0.0)`；`autonomous_choice=negative(22.6)`；`mature_growth=机制 verified / 22.7 收益 absent`；`recursive_development=uncovered`；`physical_transfer / lifetime=有界/uncovered`。
 - **新加法核心 `S0` 受控合成面预实证（`u2_selective_units.py`，D-225/227/228，零 check、不代签正式包）**：九轴分项机理均已获正信号——`engineering`（per-sample 隔离＋`capsule_v2` 跨会话/`t=20` 崩溃恢复 `0.0`）；`task`（Exact A3c `0.803`、双向 32 维无位置嵌入 `0.998`、`B1 0.913`）；`learning`（二值反馈纠错 `0.898`＋P24 四类纠错与 `tick=9` 巩固 `1.000`）；`retention`（全实验旧三技能损伤 `0.0`）；`autonomous_choice`（Q 值纯效用三态路由 `+0.285`，唯 Brier `0.1509` 微超 `0.15`）；`mature_growth`（两代冻结锚点生长 `1.000`＋`H2` 损伤 `0.449`）；`physical_transfer`（遮挡摩擦物理 `0.923`、去探测降 `0.566`）；`lifetime`（`T=40 selective 1.000`）；`recursive_development` 待 `S1 / 26-S` 接入相依干预闭环。
+- **RT 机制范围标签（D-20261123-327 回填）**：S1-RT 起各轴 `verified` 均在 `routing=external_task_id / fixed_partition_grad_mask / per_task heads / episode_reset` 下成立；`retention` 的「旧损伤 ≤0.008」为参数隔离所保证，非共享表征保持；任务无关、共享表征的同主体判据见 S1-R2（[r2 修订](reference/REVISION-TAIJI_U2_S1RT_R2_20261123.md)），未过前不升级上述各轴口径。
 
 ### 0.3 单一主线收编与唯一后续执行队列（D-20261121-229）
 
@@ -181,6 +182,10 @@
 
 ### 3A.0 状态快照（2026-11-22，D-20261122-271 更新）
 
+> **[公平基线诊断：`read_gate_confound_confirmed`（D-20261123-329）]** D-227 Bridge 1 复现逐位一致；GRU 加同一末步 `read_gate` 后 3/3 seed 达 `1.000`＝Selective，去门后 Selective `0.516` ≈ GRU `0.530` ⇒ 「等 FLOPs 胜 GRU」归因于读门，**单元动力学优于 GRU 降为未证实**；S1-R2 对照臂 C5（GRU＋read_gate）改**必选**。500 步收敛 Selective 更快（0.97 vs 0.66）为非预注册线索。149.52 CPU、零 check/final。见 [结果卡](reference/RESULT-TAIJI_U2_FAIR_BASELINE_M3_20261123.md)。
+
+> **[Owner 裁定（D-20261123-327）：RT 范围标签回填＋25-S 等 S1-R2]** 依 [S1-RT 修订 r2](reference/REVISION-TAIJI_U2_S1RT_R2_20261123.md)：①`s1_rt_verified` 及沿用 RT 机制（任务名路由＋固定分区梯度掩码＋每任务读出头）的 23-S / 24-S / 生长 A·B / 联合 bounded / LC / XFER / ACT / UQ / P26 / SYN 诸卡**结论与出口不变**，统一附范围标签 `scope: routing=external_task_id; protection=fixed_partition_grad_mask; heads=per_task; state=episode_reset; scenario=task_incremental`；该标签下可声明「外控路由下多任务共存、参数隔离保持、胶囊继承与恢复」，**不得**声明自主/学习路由、共享表征上的保持、任务无关推断、跨情节认知状态连续或 CR-2 协同（逐卡清单见 [能力总账 §27](reference/MEMO-TAIJI_U2_CAPABILITY_LEDGER_20261120.md)）。②新增 **S1-R2 级判据**（任务无关推断、学得路由、非平凡保持、同卡强 CL 基线）；**25-S（含 `25-S.0`）准入追加前置 `s1_r2_verified`**，24-S 照常在 RT 机制下推进（带标签）。③余项已裁（D-20261123-328）：G3′ 取 **BWT ≥ −0.05**；R2-X 探索段 **R2-A 与 R2-B 都试**（≤300 CPU、1 seed、可丢弃）；S1-R2 判据待探索段后冻结；零训练、零 check/final。
+
 > **[Owner 回溯裁定（D-296）]** 23-S 与生长 A（3 seed 均值口径）转 **verified（已回溯）**；24-S/生长 B 按 partial 收束；联合「可联合＋有界损失」标准确认；check/final 保持冻结、进入需单独授权。标准不固定，后续可调整，本阶段以此为准。
 
 > **[下一阶段交接单（D-295）]** P0 24-S 表示级纠正、P1 生长 A 稳定化、P2 开放中文、P3 动作/多模态、P4 不确定性、P5 跨会话迁移；每卡预注册＋授权。见 [NEXT-ACTIONS-20261122.md](reference/NEXT-ACTIONS-20261122.md)。
@@ -260,13 +265,13 @@
 |---|---|---|---|---|
 | `23-S` | 中文与多世界组合泛化 | 新核 `23-S.0` 合同冻结（重定 pin/世界/分区） | `S1` 唯一父 | 同 §4.2 包 23：`Q>=0.80`、增益 `>=0.05`、保持 `<=0.02`、`>=3` 类旧技能 |
 | `24-S` | 跨会话经验学习与可支付维护 | `24-S.0` 五会话流重定价 | `23-S.5` 父 | 同 §4.2 包 24：净益 `>=0.05` 且持续 `>=2` 会话；四类纠错 `2` 交互内恢复 |
-| `25-S` | 继承式结构生长、整合与回收 | `25-S.0` 压力证据与七臂合同 | `24-S.5` 父 | 同 §4.2 包 25：每代净益 `>=0.05`、删除 `>=50%` 增益且 `>=0.02`、旧技能 `<=0.02` |
+| `25-S` | 继承式结构生长、整合与回收 | `25-S.0` 压力证据与七臂合同 | `24-S.5` 父 **且 `s1_r2_verified`**（D-20261123-327） | 同 §4.2 包 25：每代净益 `>=0.05`、删除 `>=50%` 增益且 `>=0.02`、旧技能 `<=0.02` |
 | `26-S` | 可学习的递归发展 | `26-S.0` 三压力轨迹合同 | `25-S.6` 父 | 同 §4.2 包 26：净效用 `>=0.05`、MAE `<=0.05`、Brier `<=0.20`、排序 `>=0.70` |
 | `27-S` | 多环境物理因果与迁移 | `27-S.0` 三族动力学合同 | `26-S` 父 | 同 §4.2 包 27：每族 `Q>=0.80`、预测误差降 `>=10%`、因果解释 `>=0.80` |
 | `28-S` | 长跨度持续联合运行 | `28-S.0` 停止轴与十区段流合同 | `27-S` 唯一合格谱系 | 同 §4.2 包 28：初/中/末 `Q>=0.80`、边界 5 恢复 `0` 重复外执/事实倒退 |
 
 - **预算口径**：沿用 `23–27` 首窗 `<= 48,000 CPU / 96,000 wall`（每包实价在 `.0` 卡重报，含恢复/定位开销按 `>=1.25x` 余裕）；`28-S` 首窗另定；单包独立帽、不得跨包挪用。
-- **准入铁律**：`S1` 未 `s1_verified` 前，`23-S..28-S` 一律不得启动；旧线 `check/final` 不因新线重开而追加曝光。
+- **准入铁律**：`S1` 未 `s1_verified` 前，`23-S..28-S` 一律不得启动；**`25-S` 及其后包另需 `s1_r2_verified`（D-20261123-327）；RT 机制下的生长试点卡附范围标签，不得作为 25-S 准入证据**；旧线 `check/final` 不因新线重开而追加曝光。
 
 ## 3. 中期执行计划：收官执行包 22（`22.5.2 → 22.6 → 22.7 → 22.8`）
 

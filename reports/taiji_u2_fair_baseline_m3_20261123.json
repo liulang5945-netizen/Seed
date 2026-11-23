@@ -1,0 +1,559 @@
+{
+  "schema": "taiji-u2-fair-baseline-m3-v1",
+  "card": "Exploration diagnostic: read_gate-matched GRU/LSTM controls for D-20261121-227 Bridge 1",
+  "created_utc": "2026-11-23T05:15:16.982862+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "task": "M3 multi-item delayed query (T=12), _make_m3_data",
+    "seeds": [
+      20261120,
+      20261121,
+      20261122
+    ],
+    "steps": 1000,
+    "batch": 64,
+    "fit_size": 256,
+    "fit_seed": "seed + 9000 + 10000000",
+    "tune_seed": null,
+    "lrs": [
+      0.007
+    ],
+    "lr_selection": "fixed (Bridge-1 value)",
+    "optimizer": "Adam, weight_decay=1e-4, clip_grad_norm=1.0",
+    "trained_base": false,
+    "base_encoding_used_by_selective": false,
+    "checkpoints": [
+      250,
+      500,
+      1000
+    ],
+    "flops_target": 216832,
+    "accuracy_resolution": 0.00390625,
+    "binomial_se_at_p0.5": 0.03125
+  },
+  "rows": [
+    {
+      "seed": 20261120,
+      "arms": {
+        "selective": {
+          "chosen": {
+            "lr": 0.007,
+            "fit_acc": 1.0,
+            "tune_acc": null,
+            "fit_curve": {
+              "250": 0.56640625,
+              "500": 0.9375,
+              "1000": 1.0
+            },
+            "trainable_params": 15428,
+            "cpu": 12.625
+          },
+          "all_lrs": null
+        },
+        "selective_no_gate": {
+          "chosen": {
+            "lr": 0.007,
+            "fit_acc": 0.484375,
+            "tune_acc": null,
+            "fit_curve": {
+              "250": 0.55078125,
+              "500": 0.51171875,
+              "1000": 0.484375
+            },
+            "trainable_params": 12292,
+            "cpu": 11.656
+          },
+          "all_lrs": null
+        },
+        "gru": {
+          "chosen": {
+            "lr": 0.007,
+            "fit_acc": 0.53125,
+            "tune_acc": null,
+            "fit_curve": {
+              "250": 0.60546875,
+              "500": 0.56640625,
+              "1000": 0.53125
+            },
+            "trainable_params": 11489,
+            "cpu": 7.75
+          },
+          "all_lrs": null
+        },
+        "gru_gate": {
+          "chosen": {
+            "lr": 0.007,
+            "fit_acc": 1.0,
+            "tune_acc": null,
+            "fit_curve": {
+              "250": 0.58984375,
+              "500": 0.59375,
+              "1000": 1.0
+            },
+            "trainable_params": 12734,
+            "cpu": 7.672
+          },
+          "all_lrs": null
+        },
+        "lstm": {
+          "chosen": {
+            "lr": 0.007,
+            "fit_acc": 0.6171875,
+            "tune_acc": null,
+            "fit_curve": {
+              "250": 0.54296875,
+              "500": 0.54296875,
+              "1000": 0.6171875
+            },
+            "trainable_params": 12644,
+            "cpu": 6.719
+          },
+          "all_lrs": null
+        },
+        "lstm_gate": {
+          "chosen": {
+            "lr": 0.007,
+            "fit_acc": 0.5390625,
+            "tune_acc": null,
+            "fit_curve": {
+              "250": 0.5078125,
+              "500": 0.54296875,
+              "1000": 0.5390625
+            },
+            "trainable_params": 14742,
+            "cpu": 6.797
+          },
+          "all_lrs": null
+        }
+      }
+    },
+    {
+      "seed": 20261121,
+      "arms": {
+        "selective": {
+          "chosen": {
+            "lr": 0.007,
+            "fit_acc": 1.0,
+            "tune_acc": null,
+            "fit_curve": {
+              "250": 0.51953125,
+              "500": 0.984375,
+              "1000": 1.0
+            },
+            "trainable_params": 15428,
+            "cpu": 11.547
+          },
+          "all_lrs": null
+        },
+        "selective_no_gate": {
+          "chosen": {
+            "lr": 0.007,
+            "fit_acc": 0.53125,
+            "tune_acc": null,
+            "fit_curve": {
+              "250": 0.5078125,
+              "500": 0.53515625,
+              "1000": 0.53125
+            },
+            "trainable_params": 12292,
+            "cpu": 11.609
+          },
+          "all_lrs": null
+        },
+        "gru": {
+          "chosen": {
+            "lr": 0.007,
+            "fit_acc": 0.53515625,
+            "tune_acc": null,
+            "fit_curve": {
+              "250": 0.55078125,
+              "500": 0.53125,
+              "1000": 0.53515625
+            },
+            "trainable_params": 11489,
+            "cpu": 7.609
+          },
+          "all_lrs": null
+        },
+        "gru_gate": {
+          "chosen": {
+            "lr": 0.007,
+            "fit_acc": 1.0,
+            "tune_acc": null,
+            "fit_curve": {
+              "250": 0.53125,
+              "500": 0.68359375,
+              "1000": 1.0
+            },
+            "trainable_params": 12734,
+            "cpu": 7.672
+          },
+          "all_lrs": null
+        },
+        "lstm": {
+          "chosen": {
+            "lr": 0.007,
+            "fit_acc": 0.53515625,
+            "tune_acc": null,
+            "fit_curve": {
+              "250": 0.5078125,
+              "500": 0.55078125,
+              "1000": 0.53515625
+            },
+            "trainable_params": 12644,
+            "cpu": 6.25
+          },
+          "all_lrs": null
+        },
+        "lstm_gate": {
+          "chosen": {
+            "lr": 0.007,
+            "fit_acc": 0.5625,
+            "tune_acc": null,
+            "fit_curve": {
+              "250": 0.55859375,
+              "500": 0.53125,
+              "1000": 0.5625
+            },
+            "trainable_params": 14742,
+            "cpu": 6.062
+          },
+          "all_lrs": null
+        }
+      }
+    },
+    {
+      "seed": 20261122,
+      "arms": {
+        "selective": {
+          "chosen": {
+            "lr": 0.007,
+            "fit_acc": 1.0,
+            "tune_acc": null,
+            "fit_curve": {
+              "250": 0.60546875,
+              "500": 0.9921875,
+              "1000": 1.0
+            },
+            "trainable_params": 15428,
+            "cpu": 10.328
+          },
+          "all_lrs": null
+        },
+        "selective_no_gate": {
+          "chosen": {
+            "lr": 0.007,
+            "fit_acc": 0.53125,
+            "tune_acc": null,
+            "fit_curve": {
+              "250": 0.58203125,
+              "500": 0.53515625,
+              "1000": 0.53125
+            },
+            "trainable_params": 12292,
+            "cpu": 9.891
+          },
+          "all_lrs": null
+        },
+        "gru": {
+          "chosen": {
+            "lr": 0.007,
+            "fit_acc": 0.5234375,
+            "tune_acc": null,
+            "fit_curve": {
+              "250": 0.58203125,
+              "500": 0.54296875,
+              "1000": 0.5234375
+            },
+            "trainable_params": 11489,
+            "cpu": 6.641
+          },
+          "all_lrs": null
+        },
+        "gru_gate": {
+          "chosen": {
+            "lr": 0.007,
+            "fit_acc": 1.0,
+            "tune_acc": null,
+            "fit_curve": {
+              "250": 0.58984375,
+              "500": 0.69921875,
+              "1000": 1.0
+            },
+            "trainable_params": 12734,
+            "cpu": 6.688
+          },
+          "all_lrs": null
+        },
+        "lstm": {
+          "chosen": {
+            "lr": 0.007,
+            "fit_acc": 0.546875,
+            "tune_acc": null,
+            "fit_curve": {
+              "250": 0.53515625,
+              "500": 0.59765625,
+              "1000": 0.546875
+            },
+            "trainable_params": 12644,
+            "cpu": 5.938
+          },
+          "all_lrs": null
+        },
+        "lstm_gate": {
+          "chosen": {
+            "lr": 0.007,
+            "fit_acc": 0.5703125,
+            "tune_acc": null,
+            "fit_curve": {
+              "250": 0.546875,
+              "500": 0.5625,
+              "1000": 0.5703125
+            },
+            "trainable_params": 14742,
+            "cpu": 5.953
+          },
+          "all_lrs": null
+        }
+      }
+    }
+  ],
+  "summary": {
+    "selective": {
+      "fit_acc_mean": 1.0,
+      "fit_acc_min": 1.0,
+      "fit_acc_per_seed": {
+        "20261120": 1.0,
+        "20261121": 1.0,
+        "20261122": 1.0
+      },
+      "fit_curve_mean": {
+        "250": 0.5638020833333334,
+        "500": 0.9713541666666666,
+        "1000": 1.0
+      },
+      "chosen_lrs": [
+        0.007,
+        0.007,
+        0.007
+      ],
+      "hidden": null,
+      "flops": 216832,
+      "flops_ratio_to_selective": 1.0,
+      "trainable_params": 15428
+    },
+    "selective_no_gate": {
+      "fit_acc_mean": 0.515625,
+      "fit_acc_min": 0.484375,
+      "fit_acc_per_seed": {
+        "20261120": 0.484375,
+        "20261121": 0.53125,
+        "20261122": 0.53125
+      },
+      "fit_curve_mean": {
+        "250": 0.546875,
+        "500": 0.52734375,
+        "1000": 0.515625
+      },
+      "chosen_lrs": [
+        0.007,
+        0.007,
+        0.007
+      ],
+      "hidden": null,
+      "flops": 216832,
+      "flops_ratio_to_selective": 1.0,
+      "trainable_params": 12292
+    },
+    "gru": {
+      "fit_acc_mean": 0.5299479166666666,
+      "fit_acc_min": 0.5234375,
+      "fit_acc_per_seed": {
+        "20261120": 0.53125,
+        "20261121": 0.53515625,
+        "20261122": 0.5234375
+      },
+      "fit_curve_mean": {
+        "250": 0.5794270833333334,
+        "500": 0.546875,
+        "1000": 0.5299479166666666
+      },
+      "chosen_lrs": [
+        0.007,
+        0.007,
+        0.007
+      ],
+      "hidden": 35,
+      "flops": 218352,
+      "flops_ratio_to_selective": 1.0070100354191263,
+      "trainable_params": 11489
+    },
+    "gru_gate": {
+      "fit_acc_mean": 1.0,
+      "fit_acc_min": 1.0,
+      "fit_acc_per_seed": {
+        "20261120": 1.0,
+        "20261121": 1.0,
+        "20261122": 1.0
+      },
+      "fit_curve_mean": {
+        "250": 0.5703125,
+        "500": 0.6588541666666666,
+        "1000": 1.0
+      },
+      "chosen_lrs": [
+        0.007,
+        0.007,
+        0.007
+      ],
+      "hidden": 34,
+      "flops": 213114,
+      "flops_ratio_to_selective": 0.9828530844155844,
+      "trainable_params": 12734
+    },
+    "lstm": {
+      "fit_acc_mean": 0.56640625,
+      "fit_acc_min": 0.53515625,
+      "fit_acc_per_seed": {
+        "20261120": 0.6171875,
+        "20261121": 0.53515625,
+        "20261122": 0.546875
+      },
+      "fit_curve_mean": {
+        "250": 0.5286458333333334,
+        "500": 0.5638020833333334,
+        "1000": 0.56640625
+      },
+      "chosen_lrs": [
+        0.007,
+        0.007,
+        0.007
+      ],
+      "hidden": 28,
+      "flops": 217008,
+      "flops_ratio_to_selective": 1.0008116883116882,
+      "trainable_params": 12644
+    },
+    "lstm_gate": {
+      "fit_acc_mean": 0.5572916666666666,
+      "fit_acc_min": 0.5390625,
+      "fit_acc_per_seed": {
+        "20261120": 0.5390625,
+        "20261121": 0.5625,
+        "20261122": 0.5703125
+      },
+      "fit_curve_mean": {
+        "250": 0.5377604166666666,
+        "500": 0.5455729166666666,
+        "1000": 0.5572916666666666
+      },
+      "chosen_lrs": [
+        0.007,
+        0.007,
+        0.007
+      ],
+      "hidden": 27,
+      "flops": 212138,
+      "flops_ratio_to_selective": 0.9783519037780402,
+      "trainable_params": 14742
+    }
+  },
+  "contrasts": {
+    "read_gate_effect_selective": {
+      "mean_diff": 0.484375,
+      "min_diff": 0.46875,
+      "per_seed": [
+        0.515625,
+        0.46875,
+        0.46875
+      ]
+    },
+    "read_gate_effect_gru": {
+      "mean_diff": 0.4700520833333333,
+      "min_diff": 0.46484375,
+      "per_seed": [
+        0.46875,
+        0.46484375,
+        0.4765625
+      ]
+    },
+    "read_gate_effect_lstm": {
+      "mean_diff": -0.009114583333333334,
+      "min_diff": -0.078125,
+      "per_seed": [
+        -0.078125,
+        0.02734375,
+        0.0234375
+      ]
+    },
+    "selective_minus_best_gated_baseline": {
+      "baseline": "gru_gate",
+      "mean_diff": 0.0,
+      "min_diff": 0.0,
+      "per_seed": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "selective_no_gate_minus_gru": {
+      "mean_diff": -0.014322916666666666,
+      "min_diff": -0.046875,
+      "per_seed": [
+        -0.046875,
+        -0.00390625,
+        0.0078125
+      ]
+    }
+  },
+  "reproduction": {
+    "applicable": true,
+    "checks": {
+      "selective@20261120": {
+        "new": 1.0,
+        "bridge": 1.0,
+        "abs_diff": 0.0
+      },
+      "selective@20261121": {
+        "new": 1.0,
+        "bridge": 1.0,
+        "abs_diff": 0.0
+      },
+      "selective@20261122": {
+        "new": 1.0,
+        "bridge": 1.0,
+        "abs_diff": 0.0
+      },
+      "gru@20261120": {
+        "new": 0.53125,
+        "bridge": 0.53125,
+        "abs_diff": 0.0
+      },
+      "gru@20261121": {
+        "new": 0.53515625,
+        "bridge": 0.53515625,
+        "abs_diff": 0.0
+      },
+      "gru@20261122": {
+        "new": 0.5234375,
+        "bridge": 0.5234375,
+        "abs_diff": 0.0
+      }
+    },
+    "exact": true
+  },
+  "status": "complete",
+  "claim_boundary": "exploration diagnostic on a synthetic task; not a capability claim; fit split only",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 149.52,
+    "cap_cpu": 900.0
+  }
+}
