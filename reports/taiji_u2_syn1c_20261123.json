@@ -1,0 +1,39 @@
+{
+  "schema": "taiji-u2-syn1-v1",
+  "created_utc": "2026-11-23T03:15:00.328662+00:00",
+  "criteria_sha256": "d149f0f8c80a9fd9790cecd6ee0389a9b26886b8f9613d535709039b82a76bea",
+  "authority": "owner:standing-authorization:2026-11-20#recommendation-default",
+  "seed": 20261120,
+  "joint_acc": 0.71875,
+  "arms": {
+    "cn_only": 0.24609375,
+    "p27_only": 0.2734375
+  },
+  "lesions": {
+    "cn_block_dormant": 0.23046875,
+    "p27_block_dormant": 0.26953125,
+    "both_blocks_dormant": 0.2421875,
+    "cn_units_12_dormant": 0.25390625,
+    "p27_units_12_dormant": 0.34765625
+  },
+  "capsule_state_diff": 0.0,
+  "gates": {
+    "G0": false,
+    "G1": true,
+    "G2": true,
+    "G3": true,
+    "G4": true,
+    "G5": true
+  },
+  "verdict": "syn1c_low_joint",
+  "run_conditions": {
+    "threads": 1
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 142.64
+  }
+}

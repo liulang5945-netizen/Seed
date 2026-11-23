@@ -1,0 +1,63 @@
+{
+  "schema": "taiji-u2-syn1-criteria-v1",
+  "card": "SYN-1",
+  "created": "2026-11-23",
+  "decision": "D-20261123-321",
+  "authority": "owner:standing-authorization:2026-11-20#recommendation-default",
+  "subject": "Subject72 seed 20261120; cn/p24/p27 blocks trained with UQ-1 recipe; joint readout over cn and p27 states for a label requiring both blocks; block/unit dormancy ablations and single-block arms",
+  "protocol": {
+    "seed": 20261120,
+    "p24_steps": 500,
+    "p27_steps": 600,
+    "batch": 48,
+    "lr": 0.007,
+    "wd": 0.0,
+    "joint_steps": 300,
+    "joint_batch": 48,
+    "arm_steps": 300,
+    "train_seed_offset": 50000,
+    "test_seed_offset": 60000,
+    "fit_offset": 10000000,
+    "unit_lesion_count": 12,
+    "label_rule": "((cn_label // 2) + p27_label) % 4",
+    "blocks": {
+      "cn": [
+        0,
+        24
+      ],
+      "p24": [
+        24,
+        48
+      ],
+      "p27": [
+        48,
+        72
+      ]
+    },
+    "cn_seed_offset": 212,
+    "p27_seed_offset": 81,
+    "cn_steps": 600
+  },
+  "gates": {
+    "G0_joint_acc_min": 0.8,
+    "G1_cn_drop_min": 0.4,
+    "G2_p27_drop_min": 0.4,
+    "G3_single_block_acc_max": 0.35,
+    "G4_unit_drop_min": 0.1,
+    "G5_capsule_diff_max": 1e-06
+  },
+  "budget_cpu": 300.0,
+  "check_reads": 0,
+  "final_reads": 0,
+  "exits": [
+    "syn1_verified",
+    "syn1_low_joint",
+    "syn1_not_synergistic",
+    "syn1_single_block_sufficient",
+    "syn1_no_unit_causality",
+    "syn1_baseline_insufficient",
+    "budget_stop",
+    "engineering_failure"
+  ],
+  "criteria_sha256": "80180cec7594de8ae4281c1f99d36daef5d17f8d97832a05007f7e2a469d2193"
+}
