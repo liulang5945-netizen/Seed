@@ -1,0 +1,31 @@
+{
+  "schema": "taiji-p0ch-diag-v1",
+  "created_utc": "2026-11-23T22:12:02.392476+00:00",
+  "seed": 20261122,
+  "task": "multimodal_binding_hardened",
+  "normal_cn": 1.0,
+  "normal_cn_after": 1.0,
+  "acc_seen": 1.0,
+  "acc_unseen_pairs": 0.732421875,
+  "acc_no_visual": 0.7626953125,
+  "acc_no_flag": 0.767578125,
+  "acc_lesion_newborn": 0.26171875,
+  "gates": {
+    "G0_old_cn": true,
+    "G1_multimodal": true,
+    "G2_unseen_pairs": true,
+    "G3_visual_causal": true,
+    "G4_flag_causal": true,
+    "G5_growth_causal": true,
+    "G6_normal_retained": true
+  },
+  "verdict": "p0ch_verified",
+  "cost": {
+    "cpu": 208.73
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  }
+}
