@@ -1,0 +1,102 @@
+{
+  "schema": "taiji-u2-uq1d-v1",
+  "created_utc": "2026-11-23T05:52:14.292643+00:00",
+  "criteria_sha256": "933797a9b3218f5e7a03867fd0afc027ea09ea1b803aff0bd9a7d036e4cb8e5f",
+  "authority": "owner:standing-authorization:2026-11-20#recommendation-default",
+  "seed": 20261121,
+  "training": {
+    "p24_acc_after_p24": 0.818359375,
+    "p24_acc_after_p27": 0.818359375
+  },
+  "tasks": {
+    "p24": {
+      "alpha": 0.1,
+      "n_calib": 1024,
+      "n_test": 1024,
+      "test_acc": 0.818359375,
+      "calib_acc": 0.830078125,
+      "conformal": {
+        "tau": 0.6610166430473328,
+        "calib_coverage": 0.7578125,
+        "calib_ucb": 0.09917037466088523,
+        "coverage": 0.8046875,
+        "risk": 0.10194174945354462,
+        "selective_acc": 0.8980582505464554,
+        "abstain_rate": 0.1953125,
+        "n_answered": 824
+      },
+      "permuted": {
+        "tau": Infinity,
+        "calib_coverage": 0.0,
+        "coverage": 0.0,
+        "risk": 1.0,
+        "selective_acc": 0.0,
+        "abstain_rate": 1.0,
+        "n_answered": 0,
+        "satisfies": false
+      },
+      "always_answer": {
+        "risk": 0.181640625,
+        "coverage": 1.0,
+        "selective_acc": 0.818359375,
+        "abstain_rate": 0.0,
+        "n_answered": 1024
+      }
+    },
+    "p27": {
+      "alpha": 0.04,
+      "n_calib": 1024,
+      "n_test": 1024,
+      "test_acc": 0.9189453125,
+      "calib_acc": 0.9150390625,
+      "conformal": {
+        "tau": 0.7894062399864197,
+        "calib_coverage": 0.83984375,
+        "calib_ucb": 0.039023832605173205,
+        "coverage": 0.837890625,
+        "risk": 0.03030303120613098,
+        "selective_acc": 0.969696968793869,
+        "abstain_rate": 0.162109375,
+        "n_answered": 858
+      },
+      "permuted": {
+        "tau": Infinity,
+        "calib_coverage": 0.0,
+        "coverage": 0.0,
+        "risk": 1.0,
+        "selective_acc": 0.0,
+        "abstain_rate": 1.0,
+        "n_answered": 0,
+        "satisfies": false
+      },
+      "always_answer": {
+        "risk": 0.0810546875,
+        "coverage": 1.0,
+        "selective_acc": 0.9189453125,
+        "abstain_rate": 0.0,
+        "n_answered": 1024
+      }
+    }
+  },
+  "capsule_state_diff": 0.0,
+  "retention_drop": 0.0,
+  "gates": {
+    "G0": true,
+    "G1": true,
+    "G2": true,
+    "G3": true,
+    "G4": true,
+    "G5": true
+  },
+  "verdict": "uq1e_verified",
+  "run_conditions": {
+    "threads": 1
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 115.77
+  }
+}
