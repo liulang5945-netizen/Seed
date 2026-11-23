@@ -1,0 +1,764 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Seed 为态极原生认知模型提供运行时、实验工具与产品界面，探索持续性、记忆、推理、行动与长期发展。">
+  <meta name="theme-color" content="#173f32">
+  <title>Seed — 让智能继续生长</title>
+  <link rel="icon" href="seed-mark-color.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Serif+SC:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --paper: #f3f1e9;
+      --paper-deep: #e9e5da;
+      --ink: #173f32;
+      --ink-soft: #4e6259;
+      --forest: #173f32;
+      --forest-light: #245542;
+      --leaf: #b7d878;
+      --orange: #e97845;
+      --line: rgba(23, 63, 50, .17);
+      --white: #fffdf7;
+      --display: "Noto Serif SC", "Songti SC", serif;
+      --sans: "DM Sans", "PingFang SC", "Microsoft YaHei", sans-serif;
+      --max: 1240px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: var(--sans);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .22;
+      z-index: 20;
+      background-image: radial-gradient(rgba(23, 63, 50, .16) .45px, transparent .55px);
+      background-size: 5px 5px;
+      mix-blend-mode: multiply;
+    }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; }
+    img, svg { display: block; }
+    ::selection { color: var(--white); background: var(--orange); }
+    :focus-visible { outline: 2px solid var(--orange); outline-offset: 4px; }
+    .shell { width: min(calc(100% - 64px), var(--max)); margin-inline: auto; }
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 22px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+    .eyebrow::before { content: ""; width: 24px; height: 1px; background: currentColor; }
+    .button {
+      min-height: 50px;
+      padding: 0 24px;
+      border: 1px solid var(--ink);
+      border-radius: 100px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 28px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform .25s ease, background .25s ease, color .25s ease;
+    }
+    .button:hover { transform: translateY(-2px); }
+    .button-primary { color: var(--white); background: var(--ink); }
+    .button-primary:hover { background: var(--forest-light); }
+    .button-ghost { background: transparent; }
+    .button-ghost:hover { background: rgba(23, 63, 50, .06); }
+    .arrow { font-size: 18px; line-height: 1; }
+
+    .site-header {
+      position: fixed;
+      inset: 0 0 auto;
+      z-index: 15;
+      border-bottom: 1px solid transparent;
+      transition: background .3s ease, border-color .3s ease;
+    }
+    .site-header.scrolled {
+      background: rgba(243, 241, 233, .9);
+      border-color: var(--line);
+      backdrop-filter: blur(16px);
+    }
+    .nav { height: 84px; display: flex; align-items: center; justify-content: space-between; }
+    .brand { display: flex; align-items: center; gap: 11px; font-weight: 700; letter-spacing: .08em; }
+    .brand img { width: 35px; height: 35px; }
+    .brand small { margin-left: 4px; color: var(--ink-soft); font-size: 9px; letter-spacing: .15em; font-weight: 600; }
+    .nav-links { display: flex; align-items: center; gap: 34px; font-size: 13px; }
+    .nav-links > a:not(.nav-cta) { position: relative; color: var(--ink-soft); }
+    .nav-links > a:not(.nav-cta)::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 100%;
+      bottom: -7px;
+      height: 1px;
+      background: var(--orange);
+      transition: right .25s ease;
+    }
+    .nav-links > a:hover::after { right: 0; }
+    .nav-cta { padding: 11px 18px; border: 1px solid var(--line); border-radius: 100px; }
+    .menu-toggle { display: none; border: 0; background: transparent; color: var(--ink); padding: 8px; }
+    .menu-toggle span { display: block; width: 22px; height: 1px; background: currentColor; margin: 5px; }
+
+    .hero { min-height: 850px; padding: 164px 0 76px; position: relative; }
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 460px;
+      height: 460px;
+      top: 40px;
+      right: -200px;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .hero-grid { display: grid; grid-template-columns: 1.06fr .94fr; gap: 68px; align-items: center; }
+    .hero-copy { position: relative; z-index: 2; }
+    .hero h1 {
+      max-width: 720px;
+      margin: 0;
+      font-family: var(--display);
+      font-size: clamp(52px, 5.5vw, 80px);
+      font-weight: 600;
+      line-height: 1.22;
+      letter-spacing: -.055em;
+    }
+    .hero h1 em { color: var(--orange); font-style: normal; white-space: nowrap; }
+    .hero-intro { max-width: 535px; margin: 30px 0 0; color: var(--ink-soft); font-size: 17px; line-height: 1.95; }
+    .hero-intro strong { color: var(--ink); font-weight: 600; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 38px; }
+    .hero-note { display: flex; align-items: center; gap: 9px; margin-top: 28px; color: var(--ink-soft); font-size: 11px; }
+    .status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--orange); box-shadow: 0 0 0 5px rgba(233, 120, 69, .12); }
+
+    .living-system {
+      min-height: 570px;
+      position: relative;
+      overflow: hidden;
+      color: var(--white);
+      background: var(--forest);
+      border-radius: 2px 96px 2px 2px;
+      box-shadow: 0 30px 70px rgba(23, 63, 50, .16);
+      isolation: isolate;
+    }
+    .living-system::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background: radial-gradient(circle at 52% 45%, rgba(183, 216, 120, .13), transparent 37%), linear-gradient(145deg, transparent 55%, rgba(255, 255, 255, .035));
+    }
+    .system-top { padding: 27px 30px; display: flex; justify-content: space-between; font-size: 9px; letter-spacing: .18em; color: rgba(255, 253, 247, .62); }
+    .system-top span:last-child { color: var(--leaf); }
+    .orbit-stage { height: 350px; position: relative; }
+    .orbit {
+      position: absolute;
+      left: 50%;
+      top: 48%;
+      border: 1px solid rgba(255, 255, 255, .16);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .orbit-one { width: 285px; height: 285px; }
+    .orbit-two { width: 190px; height: 190px; border-style: dashed; opacity: .65; }
+    .orbit-three { width: 380px; height: 160px; transform: translate(-50%, -50%) rotate(-20deg); opacity: .45; }
+    .seed-core {
+      position: absolute;
+      left: 50%;
+      top: 48%;
+      width: 102px;
+      height: 102px;
+      transform: translate(-50%, -50%);
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--paper);
+      box-shadow: 0 0 0 12px rgba(183, 216, 120, .06), 0 0 70px rgba(183, 216, 120, .18);
+    }
+    .seed-core img { width: 64px; height: 64px; }
+    .node {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: rgba(255, 253, 247, .82);
+      font-size: 11px;
+      letter-spacing: .08em;
+    }
+    .node::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--leaf); box-shadow: 0 0 0 5px rgba(183, 216, 120, .1); }
+    .node-a { top: 28px; left: 48%; }
+    .node-b { top: 144px; right: 24px; }
+    .node-c { bottom: 30px; left: 47%; }
+    .node-d { top: 144px; left: 24px; }
+    .node-d::before { background: var(--orange); box-shadow: 0 0 0 5px rgba(233, 120, 69, .12); }
+    .pulse-line { position: absolute; left: 50%; top: 48%; width: 144px; height: 1px; transform-origin: left; background: linear-gradient(90deg, var(--leaf), transparent); animation: breathe 3.5s ease-in-out infinite; }
+    .pulse-one { transform: rotate(-90deg); }
+    .pulse-two { transform: rotate(0); animation-delay: -1.7s; }
+    .pulse-three { transform: rotate(90deg); animation-delay: -.8s; }
+    .pulse-four { transform: rotate(180deg); animation-delay: -2.5s; }
+    .system-feed { margin: 0 28px; border-top: 1px solid rgba(255, 255, 255, .13); }
+    .feed-row { display: grid; grid-template-columns: 34px 1fr auto; gap: 12px; align-items: center; padding: 14px 0; border-bottom: 1px solid rgba(255, 255, 255, .08); font-size: 10px; }
+    .feed-row:last-child { border-bottom: 0; }
+    .feed-index { color: var(--leaf); }
+    .feed-row span:nth-child(2) { color: rgba(255, 253, 247, .78); }
+    .feed-row time { color: rgba(255, 253, 247, .38); font-variant-numeric: tabular-nums; }
+    .hero-stats { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 60px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .stat { padding: 24px 0; display: flex; align-items: baseline; gap: 14px; }
+    .stat + .stat { padding-left: 34px; border-left: 1px solid var(--line); }
+    .stat strong { font-family: var(--display); font-size: 33px; font-weight: 600; }
+    .stat span { color: var(--ink-soft); font-size: 12px; }
+
+    .word-stream { overflow: hidden; color: var(--paper); background: var(--orange); transform: rotate(-1.2deg) scale(1.02); }
+    .stream-track { width: max-content; display: flex; gap: 30px; align-items: center; padding: 15px 0; animation: stream 28s linear infinite; font-size: 11px; font-weight: 700; letter-spacing: .18em; }
+    .stream-track i { width: 5px; height: 5px; background: currentColor; border-radius: 50%; opacity: .65; }
+
+    .manifesto { padding: 160px 0 145px; }
+    .manifesto-grid { display: grid; grid-template-columns: .65fr 1.35fr; gap: 80px; }
+    .section-marker { display: flex; gap: 15px; align-items: flex-start; font-size: 11px; letter-spacing: .12em; }
+    .section-marker span { color: var(--orange); }
+    .manifesto h2, .memory-heading h2, .runtime-heading h2 {
+      margin: 0;
+      font-family: var(--display);
+      font-weight: 600;
+      font-size: clamp(37px, 4.1vw, 59px);
+      line-height: 1.5;
+      letter-spacing: -.035em;
+    }
+    .manifesto h2 em { color: var(--orange); font-style: normal; }
+    .manifesto-copy { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; margin-top: 50px; padding-top: 28px; border-top: 1px solid var(--line); }
+    .manifesto-copy p { margin: 0; color: var(--ink-soft); font-size: 14px; line-height: 2; }
+
+    .architecture { padding: 130px 0; color: var(--white); background: var(--forest); position: relative; overflow: hidden; }
+    .architecture::after { content: "SEED"; position: absolute; right: -30px; bottom: -100px; color: rgba(255, 255, 255, .025); font-size: 330px; font-weight: 700; line-height: 1; pointer-events: none; }
+    .architecture .eyebrow { color: var(--leaf); }
+    .architecture-heading { display: grid; grid-template-columns: .8fr 1.2fr; gap: 70px; align-items: end; margin-bottom: 75px; }
+    .architecture h2 { margin: 0; font-family: var(--display); font-size: clamp(38px, 4.6vw, 64px); font-weight: 600; line-height: 1.35; letter-spacing: -.035em; }
+    .architecture-heading p { max-width: 460px; margin: 0 0 8px; color: rgba(255, 253, 247, .58); font-size: 14px; line-height: 1.9; }
+    .architecture-workbench { display: grid; grid-template-columns: .38fr 1fr; border-top: 1px solid rgba(255, 255, 255, .16); border-bottom: 1px solid rgba(255, 255, 255, .16); position: relative; z-index: 1; }
+    .architecture-tabs { border-right: 1px solid rgba(255, 255, 255, .16); }
+    .architecture-tab {
+      width: 100%;
+      min-height: 82px;
+      display: grid;
+      grid-template-columns: 38px 1fr auto;
+      gap: 10px;
+      align-items: center;
+      padding: 0 24px 0 0;
+      color: rgba(255, 253, 247, .42);
+      background: transparent;
+      border: 0;
+      border-bottom: 1px solid rgba(255, 255, 255, .1);
+      text-align: left;
+      cursor: pointer;
+      transition: color .25s ease, padding .25s ease;
+    }
+    .architecture-tab:last-child { border-bottom: 0; }
+    .architecture-tab:hover { color: var(--white); padding-left: 8px; }
+    .architecture-tab[aria-selected="true"] { color: var(--white); }
+    .architecture-tab[aria-selected="true"] .tab-name::before { content: ""; display: inline-block; width: 16px; height: 1px; margin: 0 10px 4px 0; background: var(--orange); }
+    .tab-index { color: var(--leaf); font-size: 10px; }
+    .tab-name { font-size: 14px; }
+    .tab-plus { font-size: 20px; font-weight: 400; }
+    .architecture-tab[aria-selected="true"] .tab-plus { color: var(--orange); transform: rotate(45deg); }
+    .architecture-panels { min-height: 460px; }
+    .architecture-panel { padding: 48px 0 44px 60px; animation: panel-in .4s ease both; }
+    .architecture-panel[hidden] { display: none; }
+    .panel-kicker { color: var(--leaf); font-size: 10px; letter-spacing: .16em; }
+    .architecture-panel h3 { max-width: 620px; margin: 22px 0 18px; font-family: var(--display); font-size: clamp(30px, 3.3vw, 45px); font-weight: 500; line-height: 1.45; }
+    .architecture-panel > p { max-width: 615px; color: rgba(255, 253, 247, .58); font-size: 14px; line-height: 1.95; }
+    .process { display: flex; align-items: center; gap: 10px; margin-top: 50px; }
+    .process-step { flex: 1; min-height: 88px; display: flex; flex-direction: column; justify-content: space-between; padding: 16px; border: 1px solid rgba(255, 255, 255, .15); }
+    .process-step small { color: rgba(255, 253, 247, .38); font-size: 9px; letter-spacing: .12em; }
+    .process-step strong { font-size: 13px; font-weight: 500; }
+    .process-arrow { color: var(--orange); }
+    .panel-caption { margin-top: 18px; color: rgba(255, 253, 247, .32); font-size: 10px; }
+
+    .memory { padding: 140px 0; }
+    .memory-heading { display: grid; grid-template-columns: 1.2fr .8fr; gap: 80px; align-items: end; }
+    .memory-heading p { margin: 0 0 10px; color: var(--ink-soft); font-size: 14px; line-height: 1.9; }
+    .memory-grid { display: grid; grid-template-columns: repeat(4, 1fr); margin-top: 70px; border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
+    .memory-card { min-height: 350px; padding: 28px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); position: relative; transition: background .3s ease, transform .3s ease; }
+    .memory-card:hover { background: var(--white); transform: translateY(-7px); }
+    .memory-card:nth-child(2):hover { background: #e7edda; }
+    .memory-card:nth-child(3):hover { background: #f1ded1; }
+    .memory-number { color: var(--orange); font-size: 10px; letter-spacing: .14em; }
+    .memory-glyph { height: 115px; display: flex; align-items: center; }
+    .memory-glyph svg { width: 74px; height: 74px; fill: none; stroke: var(--ink); stroke-width: 1; }
+    .memory-card h3 { margin: 0 0 12px; font-family: var(--display); font-size: 24px; font-weight: 600; }
+    .memory-card p { margin: 0; color: var(--ink-soft); font-size: 13px; line-height: 1.8; }
+    .memory-en { position: absolute; right: 24px; bottom: 22px; color: rgba(23, 63, 50, .28); font-size: 9px; letter-spacing: .14em; text-transform: uppercase; writing-mode: vertical-rl; }
+
+    .runtime { padding: 125px 0; background: var(--paper-deep); }
+    .runtime-heading { max-width: 780px; }
+    .runtime-heading h2 { font-size: clamp(36px, 4.2vw, 57px); }
+    .runtime-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-top: 65px; }
+    .runtime-card { min-height: 380px; padding: 30px; display: flex; flex-direction: column; background: var(--paper); border: 1px solid transparent; }
+    .runtime-card.featured { color: var(--white); background: var(--forest); }
+    .runtime-card-top { display: flex; justify-content: space-between; align-items: center; }
+    .runtime-card-top span:first-child { font-size: 11px; letter-spacing: .13em; }
+    .runtime-badge { padding: 6px 9px; color: var(--ink-soft); border: 1px solid var(--line); border-radius: 100px; font-size: 9px; }
+    .featured .runtime-badge { color: var(--leaf); border-color: rgba(255, 255, 255, .17); }
+    .runtime-card h3 { margin: auto 0 16px; font-family: var(--display); font-size: 42px; font-weight: 600; }
+    .runtime-card p { min-height: 76px; margin: 0; color: var(--ink-soft); font-size: 13px; line-height: 1.9; }
+    .featured p { color: rgba(255, 253, 247, .6); }
+    .runtime-card ul { list-style: none; padding: 22px 0 0; margin: 24px 0 0; border-top: 1px solid var(--line); font-size: 11px; line-height: 2.3; }
+    .featured ul { border-color: rgba(255, 255, 255, .14); color: rgba(255, 253, 247, .7); }
+    .runtime-card li::before { content: "·"; margin-right: 10px; color: var(--orange); }
+
+    .boundary { padding: 140px 0; }
+    .boundary-card { display: grid; grid-template-columns: 1fr 1fr; background: var(--white); border: 1px solid var(--line); }
+    .boundary-intro { padding: 55px; border-right: 1px solid var(--line); }
+    .boundary-intro h2 { margin: 0; font-family: var(--display); font-size: clamp(36px, 3.8vw, 51px); font-weight: 600; line-height: 1.45; }
+    .boundary-intro p { margin: 24px 0 0; color: var(--ink-soft); font-size: 13px; line-height: 1.9; }
+    .boundary-list { margin: 0; padding: 30px 50px; list-style: none; display: flex; flex-direction: column; justify-content: center; }
+    .boundary-list li { display: grid; grid-template-columns: 35px 1fr; gap: 15px; padding: 24px 0; border-bottom: 1px solid var(--line); }
+    .boundary-list li:last-child { border-bottom: 0; }
+    .boundary-list span { color: var(--orange); font-size: 10px; padding-top: 4px; }
+    .boundary-list strong { display: block; margin-bottom: 7px; font-size: 14px; }
+    .boundary-list p { margin: 0; color: var(--ink-soft); font-size: 12px; line-height: 1.8; }
+
+    .start { padding: 120px 0; color: var(--white); background: #102e25; }
+    .start-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 90px; align-items: center; }
+    .start .eyebrow { color: var(--leaf); }
+    .start h2 { margin: 0; font-family: var(--display); font-size: clamp(40px, 4.8vw, 64px); font-weight: 500; line-height: 1.45; letter-spacing: -.04em; }
+    .start h2 em { color: var(--leaf); font-style: normal; }
+    .start-copy > p { max-width: 480px; margin: 25px 0 0; color: rgba(255, 253, 247, .54); font-size: 14px; line-height: 1.9; }
+    .code-card { overflow: hidden; color: #dce9d8; background: #0b211b; border: 1px solid rgba(255, 255, 255, .12); border-radius: 3px; box-shadow: 18px 18px 0 rgba(183, 216, 120, .06); }
+    .code-top { height: 48px; padding: 0 17px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255, 255, 255, .09); color: rgba(255, 255, 255, .38); font-size: 10px; }
+    .copy-button { padding: 7px 10px; color: var(--leaf); background: transparent; border: 1px solid rgba(183, 216, 120, .25); border-radius: 3px; font-size: 10px; cursor: pointer; }
+    .copy-button:hover { background: rgba(183, 216, 120, .08); }
+    pre { margin: 0; padding: 28px; overflow-x: auto; font: 13px/1.9 "SFMono-Regular", Consolas, monospace; }
+    .code-muted { color: #6f8d80; }
+    .code-green { color: var(--leaf); }
+    .code-orange { color: #f0a17d; }
+    .code-note { margin: 0; padding: 0 28px 25px; color: rgba(255, 255, 255, .35); font-size: 10px; line-height: 1.7; }
+
+    .site-footer { padding: 34px 0; background: #102e25; color: rgba(255, 253, 247, .48); border-top: 1px solid rgba(255, 255, 255, .1); }
+    .footer-inner { display: flex; align-items: center; justify-content: space-between; gap: 25px; font-size: 10px; letter-spacing: .06em; }
+    .footer-brand { display: flex; align-items: center; gap: 9px; color: var(--white); font-size: 12px; font-weight: 600; }
+    .footer-brand img { width: 25px; height: 25px; }
+    .footer-links { display: flex; gap: 24px; }
+    .footer-links a:hover { color: var(--leaf); }
+
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity .75s ease, transform .75s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .hero-copy { animation: rise .8s .05s ease both; }
+    .living-system { animation: rise .9s .18s ease both; }
+
+    @keyframes rise { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes panel-in { from { opacity: 0; transform: translateX(12px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes breathe { 0%, 100% { opacity: .15; } 50% { opacity: .9; } }
+    @keyframes stream { to { transform: translateX(-50%); } }
+
+    @media (max-width: 1020px) {
+      .hero { padding-top: 140px; }
+      .hero-grid { grid-template-columns: 1fr; gap: 55px; }
+      .hero-copy { max-width: 760px; }
+      .living-system { width: min(100%, 620px); min-height: 550px; justify-self: end; }
+      .hero-stats { margin-top: 10px; }
+      .manifesto-grid, .architecture-heading { grid-template-columns: 1fr; gap: 35px; }
+      .memory-grid { grid-template-columns: repeat(2, 1fr); }
+      .memory-card { min-height: 320px; }
+      .runtime-grid { grid-template-columns: 1fr; }
+      .runtime-card { min-height: 300px; }
+      .runtime-card h3 { margin-top: 70px; }
+      .start-grid { gap: 45px; }
+    }
+
+    @media (max-width: 760px) {
+      .shell { width: min(calc(100% - 36px), var(--max)); }
+      .nav { height: 72px; }
+      .brand small { display: none; }
+      .menu-toggle { display: block; }
+      .nav-links { position: absolute; top: 72px; left: 0; right: 0; display: none; padding: 20px 18px 26px; background: var(--paper); border-bottom: 1px solid var(--line); }
+      .nav-links.open { display: grid; gap: 22px; }
+      .nav-cta { text-align: center; }
+      .hero { min-height: auto; padding: 126px 0 64px; }
+      .hero h1 { font-size: clamp(44px, 13.2vw, 62px); line-height: 1.28; }
+      .hero-intro { font-size: 15px; }
+      .hero-actions { align-items: stretch; }
+      .button { gap: 20px; }
+      .living-system { min-height: 500px; border-radius: 2px 65px 2px 2px; }
+      .system-top { padding: 23px 20px; }
+      .orbit-stage { height: 315px; transform: scale(.9); margin-inline: -15px; }
+      .system-feed { margin-inline: 20px; }
+      .hero-stats { grid-template-columns: 1fr; }
+      .stat + .stat { padding-left: 0; border-left: 0; border-top: 1px solid var(--line); }
+      .stat { padding: 17px 0; }
+      .stat strong { min-width: 48px; font-size: 28px; }
+      .manifesto, .memory, .boundary { padding: 95px 0; }
+      .manifesto-copy { grid-template-columns: 1fr; gap: 18px; margin-top: 35px; }
+      .architecture { padding: 90px 0; }
+      .architecture-heading { margin-bottom: 45px; }
+      .architecture-workbench { grid-template-columns: 1fr; }
+      .architecture-tabs { display: grid; grid-template-columns: 1fr 1fr; border-right: 0; border-bottom: 1px solid rgba(255, 255, 255, .16); }
+      .architecture-tab { min-height: 66px; padding: 0 10px; grid-template-columns: 25px 1fr; }
+      .architecture-tab:nth-child(odd) { border-right: 1px solid rgba(255, 255, 255, .1); }
+      .architecture-tab:nth-child(3) { border-bottom: 0; }
+      .tab-plus { display: none; }
+      .architecture-panel { padding: 35px 0; }
+      .process { flex-wrap: wrap; margin-top: 35px; }
+      .process-step { flex: 1 1 40%; min-height: 78px; }
+      .process-arrow { display: none; }
+      .memory-heading { grid-template-columns: 1fr; gap: 25px; }
+      .memory-grid { margin-top: 45px; }
+      .memory-card { min-height: 310px; padding: 22px; }
+      .memory-glyph { height: 100px; }
+      .runtime { padding: 90px 0; }
+      .runtime-grid { margin-top: 45px; }
+      .boundary-card { grid-template-columns: 1fr; }
+      .boundary-intro { padding: 35px 28px; border-right: 0; border-bottom: 1px solid var(--line); }
+      .boundary-list { padding: 15px 28px; }
+      .start { padding: 90px 0; }
+      .start-grid { grid-template-columns: 1fr; }
+      pre { padding: 22px 18px; font-size: 11px; }
+      .code-note { padding-inline: 18px; }
+      .footer-inner { align-items: flex-start; flex-wrap: wrap; }
+      .footer-links { width: 100%; justify-content: space-between; }
+    }
+
+    @media (max-width: 440px) {
+      .hero-actions .button { width: 100%; }
+      .memory-grid { grid-template-columns: 1fr; }
+      .memory-card { min-height: 285px; }
+      .memory-glyph { height: 85px; }
+      .orbit-stage { transform: scale(.78); margin: -25px -60px -15px; }
+      .living-system { min-height: 460px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+      .reveal { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header" id="site-header">
+    <nav class="nav shell" aria-label="主导航">
+      <a class="brand" href="#top" aria-label="Seed 首页">
+        <img src="seed-mark-color.svg" alt="" width="35" height="35">
+        <span>SEED</span>
+        <small>TAIJI RESEARCH</small>
+      </a>
+      <button class="menu-toggle" type="button" aria-label="打开导航" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span>
+      </button>
+      <div class="nav-links" id="nav-links">
+        <a href="#vision">研究愿景</a>
+        <a href="#architecture">认知架构</a>
+        <a href="#runtime">运行系统</a>
+        <a class="nav-cta" href="#start">开始探索 <span aria-hidden="true">↗</span></a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="hero-grid shell">
+        <div class="hero-copy">
+          <p class="eyebrow">SEED × TAIJI · 原生认知研究</p>
+          <h1>不只是回应。<br><em>让智能继续生长。</em></h1>
+          <p class="hero-intro">从一次对话到一段持续的经历。<strong>Seed</strong> 为态极原生认知模型提供运行时与实验工具，让感知、记忆、推理和行动在同一个生命循环中协同工作。</p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#architecture">探索认知架构 <span class="arrow" aria-hidden="true">→</span></a>
+            <a class="button button-ghost" href="#boundary">了解研究边界</a>
+          </div>
+          <div class="hero-note"><span class="status-dot"></span>开放研究项目 · Apache License 2.0</div>
+        </div>
+
+        <div class="living-system" aria-label="观察、记忆、推理和行动组成的认知循环示意图">
+          <div class="system-top"><span>LIVING SYSTEM / 01</span><span>RESEARCH PREVIEW</span></div>
+          <div class="orbit-stage">
+            <div class="orbit orbit-one"></div>
+            <div class="orbit orbit-two"></div>
+            <div class="orbit orbit-three"></div>
+            <span class="pulse-line pulse-one"></span>
+            <span class="pulse-line pulse-two"></span>
+            <span class="pulse-line pulse-three"></span>
+            <span class="pulse-line pulse-four"></span>
+            <div class="seed-core"><img src="seed-mark-color.svg" alt="Seed 种子树标识" width="64" height="64"></div>
+            <span class="node node-a">感知</span>
+            <span class="node node-b">记忆</span>
+            <span class="node node-c">推理</span>
+            <span class="node node-d">行动</span>
+          </div>
+          <div class="system-feed" aria-hidden="true">
+            <div class="feed-row"><span class="feed-index">01</span><span>接收观察 · 更新当前状态</span><time>00:01</time></div>
+            <div class="feed-row"><span class="feed-index">02</span><span>检索经历 · 形成行动选择</span><time>00:02</time></div>
+            <div class="feed-row"><span class="feed-index">03</span><span>环境反馈 · 开启下一轮学习</span><time>00:03</time></div>
+          </div>
+        </div>
+
+        <div class="hero-stats">
+          <div class="stat"><strong>04</strong><span>相互分工的记忆系统</span></div>
+          <div class="stat"><strong>05</strong><span>相互关联的研究方向</span></div>
+          <div class="stat"><strong>01</strong><span>持续运转的认知闭环</span></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="word-stream" aria-hidden="true">
+      <div class="stream-track">
+        <span>OBSERVE</span><i></i><span>REMEMBER</span><i></i><span>REASON</span><i></i><span>ACT</span><i></i><span>LEARN</span><i></i><span>DEVELOP</span><i></i>
+        <span>OBSERVE</span><i></i><span>REMEMBER</span><i></i><span>REASON</span><i></i><span>ACT</span><i></i><span>LEARN</span><i></i><span>DEVELOP</span><i></i>
+      </div>
+    </div>
+
+    <section class="manifesto shell reveal" id="vision">
+      <div class="manifesto-grid">
+        <div class="section-marker"><span>01</span>研究愿景 / VISION</div>
+        <div>
+          <h2>今天的智能，常常困在此刻。<br>我们想给它一条<em>连续的时间线。</em></h2>
+          <div class="manifesto-copy">
+            <p>真正的学习不只发生在训练结束之前。它也应该发生在每一次观察、每一个选择、每一个结果之后，让新的经验成为下一步决策的一部分。</p>
+            <p>态极探索如何让内部状态跨越交互延续，如何从行动后果中学习，并在保留已有能力的同时获得新技能。这不是一次无依据的能力承诺，而是一条正在被实现与验证的研究路线。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="architecture" id="architecture">
+      <div class="shell">
+        <div class="architecture-heading reveal">
+          <div>
+            <p class="eyebrow">02 · COGNITIVE ARCHITECTURE</p>
+            <h2>一个闭环，<br>而非一串孤立模块。</h2>
+          </div>
+          <p>认知不是单向流水线。观察改变状态，记忆提供上下文，推理形成选择，行动带来新反馈——循环由此继续。点击左侧，查看每个环节。</p>
+        </div>
+
+        <div class="architecture-workbench reveal">
+          <div class="architecture-tabs" role="tablist" aria-label="认知架构环节">
+            <button class="architecture-tab" id="tab-perception" type="button" role="tab" aria-selected="true" aria-controls="panel-perception" data-panel="perception"><span class="tab-index">01</span><span class="tab-name">感知与状态</span><span class="tab-plus">+</span></button>
+            <button class="architecture-tab" id="tab-memory" type="button" role="tab" aria-selected="false" aria-controls="panel-memory" data-panel="memory" tabindex="-1"><span class="tab-index">02</span><span class="tab-name">记忆体系</span><span class="tab-plus">+</span></button>
+            <button class="architecture-tab" id="tab-reasoning" type="button" role="tab" aria-selected="false" aria-controls="panel-reasoning" data-panel="reasoning" tabindex="-1"><span class="tab-index">03</span><span class="tab-name">推理与规划</span><span class="tab-plus">+</span></button>
+            <button class="architecture-tab" id="tab-action" type="button" role="tab" aria-selected="false" aria-controls="panel-action" data-panel="action" tabindex="-1"><span class="tab-index">04</span><span class="tab-name">行动与学习</span><span class="tab-plus">+</span></button>
+          </div>
+          <div class="architecture-panels">
+            <article class="architecture-panel" id="panel-perception" role="tabpanel" aria-labelledby="tab-perception">
+              <span class="panel-kicker">PERCEPTION & STATE</span>
+              <h3>把新的观察，放进正在延续的内部状态。</h3>
+              <p>感知并不只是提取一次性特征。新的输入会与已有状态相遇，修订对当前情境与世界的认识，让下一次理解拥有历史，而非从零开始。</p>
+              <div class="process"><div class="process-step"><small>INPUT</small><strong>环境观察</strong></div><span class="process-arrow">→</span><div class="process-step"><small>ENCODE</small><strong>感知表征</strong></div><span class="process-arrow">→</span><div class="process-step"><small>UPDATE</small><strong>内部状态</strong></div></div>
+              <div class="panel-caption">目标：在多次交互之间延续知识与内部状态。</div>
+            </article>
+            <article class="architecture-panel" id="panel-memory" role="tabpanel" aria-labelledby="tab-memory" hidden>
+              <span class="panel-kicker">MEMORY SYSTEM</span>
+              <h3>记住经历，也提取经历背后的知识。</h3>
+              <p>不同记忆承担不同职责：工作记忆维持当前任务，情景记忆保存经历，语义记忆提炼共同知识，程序记忆积累技能。它们协作，而非堆叠成同一个信息仓库。</p>
+              <div class="process"><div class="process-step"><small>STORE</small><strong>保存经历</strong></div><span class="process-arrow">→</span><div class="process-step"><small>RETRIEVE</small><strong>按线索取回</strong></div><span class="process-arrow">→</span><div class="process-step"><small>CONSOLIDATE</small><strong>巩固与提取</strong></div></div>
+              <div class="panel-caption">目标：让经验在需要时可用，而不只是被存储。</div>
+            </article>
+            <article class="architecture-panel" id="panel-reasoning" role="tabpanel" aria-labelledby="tab-reasoning" hidden>
+              <span class="panel-kicker">REASONING & PLANNING</span>
+              <h3>按任务、不确定性与资源，选择计算路径。</h3>
+              <p>具有不同表征和学习规则的组件共同处理问题。推理不止给出一个答案，还要结合目标、状态和可用资源形成行动路径，并在新信息出现时修订计划。</p>
+              <div class="process"><div class="process-step"><small>CONTEXT</small><strong>状态与记忆</strong></div><span class="process-arrow">→</span><div class="process-step"><small>PLAN</small><strong>候选路径</strong></div><span class="process-arrow">→</span><div class="process-step"><small>SELECT</small><strong>行动选择</strong></div></div>
+              <div class="panel-caption">目标：专门化协作，让计算投入与任务需要匹配。</div>
+            </article>
+            <article class="architecture-panel" id="panel-action" role="tabpanel" aria-labelledby="tab-action" hidden>
+              <span class="panel-kicker">ACTION & LEARNING</span>
+              <h3>让行动的后果，真正回到学习之中。</h3>
+              <p>语言、工具和环境交互连接到可观察的结果。反馈不止用于评价一次输出，也用于影响后续状态与决策，使系统在真实后果中积累能力。</p>
+              <div class="process"><div class="process-step"><small>ACT</small><strong>工具与环境</strong></div><span class="process-arrow">→</span><div class="process-step"><small>FEEDBACK</small><strong>观察结果</strong></div><span class="process-arrow">→</span><div class="process-step"><small>LEARN</small><strong>更新后续决策</strong></div></div>
+              <div class="panel-caption">目标：通过学习、重放、巩固与结构适应实现长期发展。</div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="memory shell" id="memory">
+      <div class="memory-heading reveal">
+        <div>
+          <p class="eyebrow">03 · MEMORY, IN FOUR VOICES</p>
+          <h2>记忆不是一种能力，<br>而是四种不同的分工。</h2>
+        </div>
+        <p>从眼前任务到长期技能，每种记忆都有自己的时间尺度与用途。它们共同支撑一个更连续、更能从经验中受益的系统。</p>
+      </div>
+      <div class="memory-grid reveal">
+        <article class="memory-card">
+          <span class="memory-number">01 / NOW</span>
+          <div class="memory-glyph"><svg viewBox="0 0 80 80" aria-hidden="true"><circle cx="40" cy="40" r="25"/><circle cx="40" cy="40" r="16"/><circle cx="40" cy="40" r="4" fill="#e97845" stroke="none"/><path d="M40 4v10M40 66v10M4 40h10M66 40h10"/></svg></div>
+          <h3>工作记忆</h3><p>维持当前任务与正在使用的信息，让思考拥有清晰的此刻。</p><span class="memory-en">Working memory</span>
+        </article>
+        <article class="memory-card">
+          <span class="memory-number">02 / EXPERIENCE</span>
+          <div class="memory-glyph"><svg viewBox="0 0 80 80" aria-hidden="true"><path d="M17 56V24l23-10 23 10v32L40 66z"/><path d="M17 24l23 11 23-11M40 35v31"/><circle cx="40" cy="24" r="4" fill="#b7d878" stroke="none"/></svg></div>
+          <h3>情景记忆</h3><p>保存经历过的事件与上下文，使过去可以被重新取回。</p><span class="memory-en">Episodic memory</span>
+        </article>
+        <article class="memory-card">
+          <span class="memory-number">03 / KNOWLEDGE</span>
+          <div class="memory-glyph"><svg viewBox="0 0 80 80" aria-hidden="true"><circle cx="24" cy="25" r="8"/><circle cx="56" cy="25" r="8"/><circle cx="40" cy="56" r="8"/><path d="M30 29l7 19M50 29l-7 19M32 25h16"/><circle cx="40" cy="25" r="3" fill="#e97845" stroke="none"/></svg></div>
+          <h3>语义记忆</h3><p>从多次经历中提取共同知识，形成可迁移的理解。</p><span class="memory-en">Semantic memory</span>
+        </article>
+        <article class="memory-card">
+          <span class="memory-number">04 / SKILL</span>
+          <div class="memory-glyph"><svg viewBox="0 0 80 80" aria-hidden="true"><path d="M18 56c10-1 9-21 20-22s9 18 23 13"/><path d="M18 45c10-1 9-21 20-22s9 18 23 13" opacity=".45"/><path d="M18 67h45"/><circle cx="58" cy="47" r="5" fill="#b7d878" stroke="none"/></svg></div>
+          <h3>程序记忆</h3><p>把反复实践沉淀为技能，让学会的行为能够持续保留。</p><span class="memory-en">Procedural memory</span>
+        </article>
+      </div>
+    </section>
+
+    <section class="runtime" id="runtime">
+      <div class="shell">
+        <div class="runtime-heading reveal">
+          <p class="eyebrow">04 · ONE ECOSYSTEM</p>
+          <h2>认知、承载与交互，<br>各自清晰，共同生长。</h2>
+        </div>
+        <div class="runtime-grid reveal">
+          <article class="runtime-card featured">
+            <div class="runtime-card-top"><span>01 / COGNITION</span><span class="runtime-badge">研究内核</span></div>
+            <h3>Taiji</h3><p>负责学习型表征、状态、记忆、目标、推理与行动选择。</p>
+            <ul><li>原生认知机制</li><li>学习与发展原型</li><li>持续状态与反馈闭环</li></ul>
+          </article>
+          <article class="runtime-card">
+            <div class="runtime-card-top"><span>02 / RUNTIME</span><span class="runtime-badge">工程底座</span></div>
+            <h3>Seed</h3><p>为认知机制提供可持续运行、可测量、可恢复的工程承载。</p>
+            <ul><li>进程、设备与数据集</li><li>实验与 checkpoint 管理</li><li>API 与环境适配</li></ul>
+          </article>
+          <article class="runtime-card">
+            <div class="runtime-card-top"><span>03 / INTERACTION</span><span class="runtime-badge">产品界面</span></div>
+            <h3>Harness</h3><p>把研究能力连接到真实使用场景，承载 Web 与桌面交互。</p>
+            <ul><li>Web 与桌面客户端</li><li>交互界面与工作区</li><li>产品打包与分发</li></ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="boundary shell" id="boundary">
+      <div class="boundary-card reveal">
+        <div class="boundary-intro">
+          <p class="eyebrow">05 · HONEST BY DESIGN</p>
+          <h2>研究原型，<br>而非完成时。</h2>
+          <p>清晰的边界不是退让，而是可靠研究的起点。Seed 将架构目标、当前实现与实验结论分开描述。</p>
+        </div>
+        <ol class="boundary-list">
+          <li><span>01</span><div><strong>当前是可运行的研究基础</strong><p>实现包含实验内核和限定范围的原型，不等同于完整通用认知系统。</p></div></li>
+          <li><span>02</span><div><strong>长期发展仍是研究目标</strong><p>保留旧能力并获得新技能的方向，需要持续的实验实现与验证。</p></div></li>
+          <li><span>03</span><div><strong>能力表述以证据为准</strong><p>小型学习示例展示具体接口，不能据此推断通用语言理解能力。</p></div></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="start" id="start">
+      <div class="start-grid shell">
+        <div class="start-copy reveal">
+          <p class="eyebrow">06 · BEGIN WITH SEED</p>
+          <h2>从一次学习开始，<br><em>观察智能如何延续。</em></h2>
+          <p>通过一个最小 Python 示例，体验字节学习与 checkpoint 恢复。每一个宏大的认知目标，都从可运行、可检查的一步开始。</p>
+        </div>
+        <div class="code-card reveal">
+          <div class="code-top"><span>quick_start.py</span><button class="copy-button" type="button" id="copy-code">复制代码</button></div>
+          <pre id="code-sample"><code><span class="code-green">from</span> seed <span class="code-green">import</span> Seed
+
+model = Seed()
+model.learn_bytes(<span class="code-orange">b"abcdabcdabcdabcd"</span>, epochs=<span class="code-orange">200</span>)
+checkpoint = model.checkpoint()
+restored = Seed.from_checkpoint(checkpoint)
+<span class="code-green">print</span>(restored.generate(<span class="code-orange">b"a"</span>, length=<span class="code-orange">8</span>))</code></pre>
+          <p class="code-note">需要 Python 3.12+。这是字节学习接口的研究示例，不代表通用语言理解能力。</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner shell">
+      <a class="footer-brand" href="#top"><img src="seed-mark-color.svg" alt="" width="25" height="25">SEED</a>
+      <span>态极原生认知模型的运行时 · © <span id="year">2026</span> Seed</span>
+      <div class="footer-links"><a href="#vision">研究愿景</a><a href="#boundary">能力边界</a><a href="#top">回到顶部 ↑</a></div>
+    </div>
+  </footer>
+
+  <script>
+    const header = document.getElementById('site-header');
+    const menuButton = document.querySelector('.menu-toggle');
+    const navLinks = document.getElementById('nav-links');
+    const tabs = Array.from(document.querySelectorAll('.architecture-tab'));
+    const panels = Array.from(document.querySelectorAll('.architecture-panel'));
+
+    const updateHeader = () => header.classList.toggle('scrolled', window.scrollY > 20);
+    updateHeader();
+    window.addEventListener('scroll', updateHeader, { passive: true });
+
+    menuButton.addEventListener('click', () => {
+      const isOpen = navLinks.classList.toggle('open');
+      menuButton.setAttribute('aria-expanded', String(isOpen));
+      menuButton.setAttribute('aria-label', isOpen ? '关闭导航' : '打开导航');
+    });
+    navLinks.addEventListener('click', (event) => {
+      if (event.target.closest('a')) {
+        navLinks.classList.remove('open');
+        menuButton.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    function activateTab(tab) {
+      tabs.forEach((item) => {
+        const active = item === tab;
+        item.setAttribute('aria-selected', String(active));
+        item.tabIndex = active ? 0 : -1;
+      });
+      panels.forEach((panel) => {
+        panel.hidden = panel.id !== `panel-${tab.dataset.panel}`;
+      });
+    }
+    tabs.forEach((tab, index) => {
+      tab.addEventListener('click', () => activateTab(tab));
+      tab.addEventListener('keydown', (event) => {
+        if (!['ArrowDown', 'ArrowUp', 'ArrowRight', 'ArrowLeft', 'Home', 'End'].includes(event.key)) return;
+        event.preventDefault();
+        let nextIndex = index;
+        if (event.key === 'Home') nextIndex = 0;
+        else if (event.key === 'End') nextIndex = tabs.length - 1;
+        else if (['ArrowDown', 'ArrowRight'].includes(event.key)) nextIndex = (index + 1) % tabs.length;
+        else nextIndex = (index - 1 + tabs.length) % tabs.length;
+        activateTab(tabs[nextIndex]);
+        tabs[nextIndex].focus();
+      });
+    });
+
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach((element) => revealObserver.observe(element));
+
+    const copyButton = document.getElementById('copy-code');
+    copyButton.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(document.getElementById('code-sample').innerText);
+        copyButton.textContent = '已复制';
+      } catch {
+        copyButton.textContent = '请选择代码复制';
+      }
+      window.setTimeout(() => { copyButton.textContent = '复制代码'; }, 2200);
+    });
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
