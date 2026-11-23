@@ -1,0 +1,24 @@
+{
+  "schema": "taiji-p0au-diag-v1",
+  "created_utc": "2026-11-23T13:27:37.851862+00:00",
+  "seed": 20261120,
+  "cn_steps": 1200,
+  "acc": {
+    "seen_train_templates": 1.0,
+    "unseen_pairs_train_templates": 1.0
+  },
+  "gates": {
+    "G0_seen": true,
+    "G1_unseen_high": true,
+    "G2_unseen_low": false
+  },
+  "verdict": "p0au_unseen_feasible",
+  "cost": {
+    "cpu": 108.2
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  }
+}
