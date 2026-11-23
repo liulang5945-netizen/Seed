@@ -1,0 +1,32 @@
+{
+  "schema": "taiji-p0bc-diag-v1",
+  "created_utc": "2026-11-23T15:10:13.615831+00:00",
+  "seed": 20261120,
+  "task": "progressive_4to8_expansion",
+  "normal_cn": 1.0,
+  "normal_cn_after": 1.0,
+  "acc4_before_phaseB": 0.818359375,
+  "acc4_after_phaseB": 0.595703125,
+  "acc8_seen": 1.0,
+  "acc8_unseen": 0.892578125,
+  "acc8_lesion_phaseB_cohort": 0.626953125,
+  "acc4_lesion_phaseB_cohort": 0.52734375,
+  "gates": {
+    "G0_old_cn": true,
+    "G1_4c_retained": false,
+    "G2_8c_learned": true,
+    "G3_8c_unseen": true,
+    "G4_lesion_drop": true,
+    "G5_4c_unaffected_by_lesion": false,
+    "G6_normal_retained": true
+  },
+  "verdict": "p0bc_old_ability_lost",
+  "cost": {
+    "cpu": 178.16
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  }
+}
