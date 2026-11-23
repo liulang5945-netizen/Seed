@@ -1,0 +1,31 @@
+{
+  "schema": "taiji-p0c-diag-v1",
+  "created_utc": "2026-11-23T06:57:27.191505+00:00",
+  "seed": 20261120,
+  "interactions": 200,
+  "base_p24": 0.9921875,
+  "p24_after": 0.98828125,
+  "retention_drop": 0.00390625,
+  "arms": {
+    "adapter": 1.0,
+    "no_adapter": 0.24609375,
+    "frozen_adapter": 1.0
+  },
+  "lesion_newborn_dormant": 0.296875,
+  "gates": {
+    "G0": true,
+    "G1": true,
+    "G2": false,
+    "G3": true,
+    "G4": true
+  },
+  "verdict": "p0c_adapter_not_learned",
+  "cost": {
+    "cpu": 117.48
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  }
+}
