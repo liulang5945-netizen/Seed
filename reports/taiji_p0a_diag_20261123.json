@@ -1,0 +1,35 @@
+{
+  "schema": "taiji-p0a-diag-v1",
+  "created_utc": "2026-11-23T06:26:16.463194+00:00",
+  "seed": 20261120,
+  "base_rev_acc_random_head": 0.03125,
+  "probe": {
+    "train_acc": 1.0,
+    "test_acc": 1.0,
+    "feature_dim": 48
+  },
+  "probe_interval": {
+    "target": 0.75,
+    "margin": 0.2
+  },
+  "budget_curve": {
+    "8": 0.29296875,
+    "50": 1.0,
+    "200": 1.0,
+    "800": 1.0
+  },
+  "lateral_curve": {
+    "200": 1.0,
+    "800": 1.0
+  },
+  "lateral_gain_at_200": 0.0,
+  "verdict": "p0a_pressure_absent",
+  "cost": {
+    "cpu": 196.59
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  }
+}
