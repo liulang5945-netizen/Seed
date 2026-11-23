@@ -1,0 +1,113 @@
+{
+  "schema": "taiji-actuq4-diag-v1",
+  "created_utc": "2026-11-23T08:53:59.874384+00:00",
+  "seeds": [
+    20261120,
+    20261121,
+    20261122
+  ],
+  "rows": {
+    "20261120": {
+      "tau": 0.91,
+      "low_before": 0.4571428596973419,
+      "base_utility": 0.958984375,
+      "base_commit_acc": 0.77734375,
+      "arms": {
+        "UNIT300": {
+          "low_after": 0.5809524059295654,
+          "gain": 0.12380954623222351,
+          "utility": 0.7218749523162842
+        },
+        "UNIT100": {
+          "low_after": 0.5714285969734192,
+          "gain": 0.11428573727607727,
+          "utility": 0.890625
+        },
+        "HEAD300": {
+          "low_after": 0.5333333611488342,
+          "gain": 0.07619050145149231,
+          "utility": 0.915234386920929
+        },
+        "NOFB": {
+          "low_after": 0.4571428596973419,
+          "gain": 0.0,
+          "utility": 0.958984375
+        }
+      }
+    },
+    "20261121": {
+      "tau": 0.88,
+      "low_before": 0.5104166865348816,
+      "base_utility": 0.9546875953674316,
+      "base_commit_acc": 0.8125,
+      "arms": {
+        "UNIT300": {
+          "low_after": 0.5625,
+          "gain": 0.05208331346511841,
+          "utility": 0.6820312738418579
+        },
+        "UNIT100": {
+          "low_after": 0.53125,
+          "gain": 0.020833313465118408,
+          "utility": 0.8656250238418579
+        },
+        "HEAD300": {
+          "low_after": 0.5104166865348816,
+          "gain": 0.0,
+          "utility": 0.8636718988418579
+        },
+        "NOFB": {
+          "low_after": 0.5104166865348816,
+          "gain": 0.0,
+          "utility": 0.9546875953674316
+        }
+      }
+    },
+    "20261122": {
+      "tau": 0.89,
+      "low_before": 0.47999998927116394,
+      "base_utility": 0.953125,
+      "base_commit_acc": 0.79296875,
+      "arms": {
+        "UNIT300": {
+          "low_after": 0.5899999737739563,
+          "gain": 0.10999998450279236,
+          "utility": 0.6683593988418579
+        },
+        "UNIT100": {
+          "low_after": 0.6100000143051147,
+          "gain": 0.1300000250339508,
+          "utility": 0.8769532442092896
+        },
+        "HEAD300": {
+          "low_after": 0.5299999713897705,
+          "gain": 0.04999998211860657,
+          "utility": 0.908984363079071
+        },
+        "NOFB": {
+          "low_after": 0.47999998927116394,
+          "gain": 0.0,
+          "utility": 0.953125
+        }
+      }
+    }
+  },
+  "mean_unit_gain": 0.0952976147333781,
+  "mean_head_gain": 0.042063494523366295,
+  "positive_seeds": 3,
+  "gates": {
+    "G0_base": true,
+    "G1_unit_gain": false,
+    "G2_unit_vs_head": true,
+    "G3_utility": false
+  },
+  "verdict": "actuq4_feedback_weak",
+  "cost": {
+    "cpu": 453.52
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  }
+}
