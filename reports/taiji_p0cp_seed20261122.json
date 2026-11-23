@@ -1,0 +1,102 @@
+{
+  "schema": "taiji-p0cp-diag-v1",
+  "created_utc": "2026-11-23T23:01:47.884274+00:00",
+  "seed": 20261122,
+  "task": "readout_only_rl_feedback_v2",
+  "normal_cn": 1.0,
+  "normal_cn_after": 1.0,
+  "acc_seen": 1.0,
+  "acc_unseen_pairs": 0.732421875,
+  "acc_no_visual": 0.7626953125,
+  "acc_no_flag": 0.767578125,
+  "acc_lesion_newborn": 0.26171875,
+  "lesion_drop": 0.73828125,
+  "cap_diff": 0.0,
+  "acc_restore": 1.0,
+  "wake_log": [
+    {
+      "tick": 0,
+      "budget": 0.05,
+      "demand": 0,
+      "wake": false,
+      "action": "wait"
+    },
+    {
+      "tick": 1,
+      "budget": 0.45,
+      "demand": 1,
+      "wake": true,
+      "action": "recall_cross_modal",
+      "full": 1.0,
+      "no_visual": 0.7626953125,
+      "no_flag": 0.767578125
+    },
+    {
+      "tick": 2,
+      "budget": 0.45,
+      "demand": 0,
+      "wake": false,
+      "action": "wait"
+    },
+    {
+      "tick": 3,
+      "budget": 0.45,
+      "demand": 0,
+      "wake": false,
+      "action": "wait"
+    }
+  ],
+  "rl_diag": {
+    "n_train_params": 4,
+    "grad_norms_first_step": [
+      1.0723182640504092e-05,
+      4.431117588410416e-07,
+      2.520617636037059e-05,
+      4.056912075611763e-06
+    ],
+    "param_deltas": [
+      18.685949325561523,
+      3.3689486980438232,
+      6.3986334800720215,
+      0.8205235004425049
+    ],
+    "max_delta": 18.685949325561523,
+    "frac_updated": 1.0,
+    "n_unmasked_units": 4
+  },
+  "reward_adapt": {
+    "acc_new_before": 0.5087890625,
+    "acc_new_after": 0.9951171875,
+    "gain": 0.486328125,
+    "acc_old_rule_after": 0.5146484375,
+    "lesion_drop_new": 0.751953125,
+    "acc_new_supervised": 0.9951171875
+  },
+  "gates": {
+    "G0_old_cn": true,
+    "G1_multimodal": true,
+    "G2_unseen_pairs": true,
+    "G3_visual_causal": true,
+    "G4_flag_causal": true,
+    "G5_growth_causal": true,
+    "G6_normal_retained": true,
+    "G7_lesion_drop": true,
+    "G8_capsule_restore": true,
+    "G9_wake_pattern": true,
+    "G10_wake_recall": true,
+    "G11_rule_change_pre": true,
+    "G12_feedback_adaptation": true,
+    "G13_adaptation_gain": true,
+    "G14_growth_still_causal": true,
+    "G15_supervised_upper": true
+  },
+  "verdict": "p0cp_verified",
+  "cost": {
+    "cpu": 239.67
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  }
+}
