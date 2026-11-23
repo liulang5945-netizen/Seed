@@ -1,6 +1,6 @@
 {
   "schema": "taiji-p0z-diag-v1",
-  "created_utc": "2026-11-23T10:59:09.952585+00:00",
+  "created_utc": "2026-11-23T11:05:54.738988+00:00",
   "seed": 20261120,
   "task": "revision_presence_binary",
   "normal_cn": 1.0,
@@ -15,11 +15,11 @@
   },
   "detect_acc": 1.0,
   "transfer": 1.0,
-  "reset": 0.515625,
+  "reset": 0.5234375,
   "dormant": 0.4765625,
-  "wake": 0.517578125,
+  "wake": 1.0,
   "capsule_diff": 0.0,
-  "capsule_acc": 0.51953125,
+  "capsule_acc": 1.0,
   "gates": {
     "G0_old_cn": true,
     "G1_pressure": true,
@@ -28,12 +28,12 @@
     "G4_adapter_drop": true,
     "G5_retention": true,
     "G6_dormant": true,
-    "G7_wake": false,
-    "G8_capsule": false
+    "G7_wake": true,
+    "G8_capsule": true
   },
-  "verdict": "p0z_wake_not_restored",
+  "verdict": "p0z_verified",
   "cost": {
-    "cpu": 112.62
+    "cpu": 120.11
   },
   "discipline": {
     "check_reads": 0,

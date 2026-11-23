@@ -240,25 +240,6 @@ def main() -> int:
             .mean()
         )
 
-    with torch.no_grad():
-        units.extra_proj.weight[OLD_N:] = 0.0
-    head3 = PhaseHead(2 * (96 - OLD_N), 2, 64)
-    opt4 = torch.optim.Adam(head3.parameters(), lr=6e-3)
-    for i in range(8):
-        batch = revision_split(BATCH, SEED * 7000 + 5100 + i)
-        b_extra = batch["ticks"][:, :, FLAG_CH[0] : FLAG_CH[1]].clone()
-        logits = head3(newborn_states(subj, batch["ticks"], b_extra))
-        loss = F.cross_entropy(logits, batch["labels"])
-        opt4.zero_grad(set_to_none=True)
-        loss.backward()
-        opt4.step()
-    subj.eval_mode()
-    with torch.no_grad():
-        reset_acc = float(
-            (head3(newborn_states(subj, test["ticks"], extra_test)).argmax(-1) == test["labels"])
-            .float()
-            .mean()
-        )
     # lifecycle: dormancy must disable the detection, wake must restore it exactly
     subj.graph.selective_units.set_unit_lifecycle_(range(OLD_N, subj.n_units), "dormant")
     subj.eval_mode()
@@ -296,6 +277,25 @@ def main() -> int:
                 head(newborn_states(_G(fresh, subj.n_units), test["ticks"], extra_test)).argmax(-1)
                 == test["labels"]
             )
+            .float()
+            .mean()
+        )
+    with torch.no_grad():
+        units.extra_proj.weight[OLD_N:] = 0.0
+    head3 = PhaseHead(2 * (96 - OLD_N), 2, 64)
+    opt4 = torch.optim.Adam(head3.parameters(), lr=6e-3)
+    for i in range(8):
+        batch = revision_split(BATCH, SEED * 7000 + 5100 + i)
+        b_extra = batch["ticks"][:, :, FLAG_CH[0] : FLAG_CH[1]].clone()
+        logits = head3(newborn_states(subj, batch["ticks"], b_extra))
+        loss = F.cross_entropy(logits, batch["labels"])
+        opt4.zero_grad(set_to_none=True)
+        loss.backward()
+        opt4.step()
+    subj.eval_mode()
+    with torch.no_grad():
+        reset_acc = float(
+            (head3(newborn_states(subj, test["ticks"], extra_test)).argmax(-1) == test["labels"])
             .float()
             .mean()
         )
