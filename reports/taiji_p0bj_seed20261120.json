@@ -1,0 +1,50 @@
+{
+  "schema": "taiji-p0bj-diag-v1",
+  "created_utc": "2026-11-23T16:35:01.677170+00:00",
+  "seed": 20261120,
+  "task": "s1_joint_family_b",
+  "normal_cn": 1.0,
+  "cn_probe": {
+    "train": 0.6067708134651184,
+    "test": 0.4609375
+  },
+  "birth_probe": {
+    "train": 0.5130208134651184,
+    "test": 0.5234375
+  },
+  "null_cn_mean": 0.513671875,
+  "null_birth_mean": 0.502734375,
+  "normal_cn_after": 1.0,
+  "acc4_before_phaseB": 1.0,
+  "acc4_after_phaseB": 1.0,
+  "acc8_seen": 1.0,
+  "acc8_unseen": 0.67578125,
+  "acc8_lesion_phaseB_cohort": 0.51953125,
+  "acc4_lesion_phaseB_cohort": 0.9970703125,
+  "acc8_wake": 1.0,
+  "acc4_wake": 1.0,
+  "capsule_diff": 0.0,
+  "acc8_capsule": 1.0,
+  "acc4_capsule": 1.0,
+  "gates": {
+    "G0_old_cn": true,
+    "G1_4c_retained": true,
+    "G2_8c_learned": true,
+    "G3_8c_unseen": true,
+    "G4_lesion_drop": true,
+    "G5_4c_integration_ok": true,
+    "G6_normal_retained": true,
+    "G7_wake_exact": true,
+    "G9_pressure": true,
+    "G8_capsule_exact": true
+  },
+  "verdict": "p0bj_verified",
+  "cost": {
+    "cpu": 210.84
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  }
+}
