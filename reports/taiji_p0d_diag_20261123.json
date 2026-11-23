@@ -1,0 +1,30 @@
+{
+  "schema": "taiji-p0d-diag-v1",
+  "created_utc": "2026-11-23T07:05:26.652596+00:00",
+  "seed": 20261120,
+  "phases": {
+    "fast_8": 0.77734375,
+    "sleep_200": 1.0,
+    "transfer_readout_reset": 1.0,
+    "reset_units": 0.77734375
+  },
+  "reset_drop": 0.22265625,
+  "p24_before": 0.9921875,
+  "p24_after": 0.98828125,
+  "gates": {
+    "G0": true,
+    "G1": true,
+    "G2": true,
+    "G3": true,
+    "G4": true
+  },
+  "verdict": "p0d_verified",
+  "cost": {
+    "cpu": 132.23
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  }
+}
