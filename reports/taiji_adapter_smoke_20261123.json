@@ -1,0 +1,22 @@
+{
+  "schema": "taiji-adapter-smoke-v1",
+  "created_utc": "2026-11-23T09:41:42.325966+00:00",
+  "seed": 20261120,
+  "zero_init_forward_diff": 0.0,
+  "train_40_acc": 1.0,
+  "adapter_zeroed_acc": 0.2578125,
+  "gates": {
+    "E0_equivalence": true,
+    "E1_learn": true,
+    "E2_adapter_carries": true
+  },
+  "verdict": "adapter_smoke_verified",
+  "cost": {
+    "cpu": 145.94
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  }
+}

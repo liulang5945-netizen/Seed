@@ -8626,3 +8626,17 @@ eset drop 0.223 来自快读出未收敛，**「功能迁移到单元」解释�
 **2. 读数**：旧 cn 头 0.340；出生探针 0.156；**CN 状态探针 0.844（⚠️ 表示层不压力）**；新生训练 0.523；迁移 0.387；清零 0.141；「正常中文 0.406」为 step_mask 口径假象。
 **3. 判定**：按出口 p0o_not_learnable（G3 不过）；**按加强压力判据实为 p0o_not_pressured**。**诊断**：flag 放入字符投影空间（0:32）被 CN 块直接读取 ⇒ 压力来源错误（P0-F 教训重演）；另发现 Subject72.protect_grads 不存在（stage1b protect 分支会崩）的工程缺陷。[结果卡](RESULT-TAIJI_P0O_DIAG_20261123.md)。
 **4. 下一轮**：flag 移到 CN 不处理的通道组（32:36）＋**单元级原始输入适配器**（机制 B 单元版，小改前向）；保持验证统一 step_mask 口径。零 check/final。
+
+### D-20261123-353 P0-Q CN 基座通道组传输探针：p0q_char_space_only（147.44 CPU，1 seed，0 check，探索诊断）
+
+**1. 卡**：脚本 diag_p0q_20261123.py；cn 块 800 步；向 0:4/32:36/40:44 注入 4 类 one-hot flag，CN 状态 MLP 探针 1500 步。
+**2. 读数**：0:4（字符空间）**1.000**；**32:36 = 0.371**；**40:44 = 0.363**（均 ≤0.55 ⇒ 被基座抑制）。
+**3. 判读**：CN 基座与 p24 基座一致，32:36 可作「新证据来源通道」（旧表示不可读 ⇒ 压力合格）；但基座不传输 ⇒ 需**单元级原始输入通路**。[结果卡](RESULT-TAIJI_P0Q_DIAG_20261123.md)。零 check/final。
+
+
+### D-20261123-354 单元级原始输入适配器：dapter_smoke_verified（145.94 CPU，1 seed，0 check）
+
+**1. 变更**：	aiji/u2_selective_units.py：SelectiveNeuralUnits.attach_extra_（零初始化 \in R^{N\times D_e}$）＋orward(..., extra=) 写门附加  e(t)$；SelectivePersistentGraph.forward(..., extra=) 透传；mask_newborn_grads 的 UNIT_ROW_PARAMS 纳入 extra_proj.weight（旧单元行保护）。
+**2. Smoke 读数**（P0-H 压力任务、write_in/r 置 0、仅经原始通道 32:36 输入）：零初始化前向差 **0.0**；40 次交互 **1.000**；清零适配器 **0.258（drop 0.742）**。
+**3. 判定**：dapter_smoke_verified（E0–E2 全过）。**意义**：为基座抑制的新通道提供**单元级可学习通路**，零初始化不扰动旧行为，功能可定位到新通路；为中文修订任务 P0-R 铺路。[设计](DESIGN-TAIJI_EXTRA_ADAPTER_20261123.md)／[结果卡](RESULT-TAIJI_ADAPTER_SMOKE_20261123.md)。
+**4. 后继**：P0-R 中文修订任务（flag 32:36＋单元级适配器＋压力/可学/迁移/保持）。零 check/final。

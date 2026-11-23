@@ -52,7 +52,7 @@ CRITERIA = ROOT / "plans/manifests/taiji_u2_24s_f1c_criteria_20261122.json"
 OUT = ROOT / "reports/taiji_u2_24s_f1c_20261122.json"
 OLD_N = 72
 P24_OLD = list(range(24, 48))
-UNIT_ROW_PARAMS = ("r", "c", "eta", "b", "write_bias")
+UNIT_ROW_PARAMS = ("r", "c", "eta", "b", "write_bias", "extra_proj.weight")
 
 
 def _forward_states(subj, ticks, mask):

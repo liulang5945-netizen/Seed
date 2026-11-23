@@ -136,6 +136,7 @@ class SelectiveNeuralUnits(nn.Module):
 
         ctx_dim = spec.groups * spec.hidden_dim
         self.write_in = nn.Linear(ctx_dim, n_units, bias=False, dtype=dtype)
+        self.extra_proj: nn.Linear | None = None
         self.write_state = nn.Linear(n_units, n_units, bias=False, dtype=dtype)
         self.write_bias = nn.Parameter(torch.full((n_units,), spec.init_write_bias, dtype=dtype))
         with torch.no_grad():
@@ -169,6 +170,15 @@ class SelectiveNeuralUnits(nn.Module):
             self.b.clamp_(0.0, B_MAX)
             self.w.mul_(self.edge_mask).clamp_(-W_MAX, W_MAX)
 
+    def attach_extra_(self, extra_dim: int, *, seed: int | None = None) -> None:
+        """Attach a learnable raw-input adapter feeding the write gate (zero-init no-op)."""
+        if extra_dim <= 0:
+            return
+        proj = nn.Linear(extra_dim, self.n_units, bias=False, dtype=self.write_in.weight.dtype)
+        with torch.no_grad():
+            proj.weight.zero_()
+        self.extra_proj = proj
+
     def set_unit_lifecycle_(self, indices: list[int] | tuple[int, ...] | range, state: str) -> None:
         """Assign named lifecycle phase to selected units (masks output & recurrence when inactive)."""
         if state not in _LIFECYCLE_TO_ID:
@@ -201,6 +211,7 @@ class SelectiveNeuralUnits(nn.Module):
         state: dict[str, torch.Tensor],
         *,
         step_mask: torch.Tensor | None = None,
+        extra: torch.Tensor | None = None,
     ) -> dict[str, Any]:
         """Step selective units over explicit ``inputs [B, T, G, D]`` and ``state [B, N]``."""
         if inputs.ndim != 4:
@@ -253,6 +264,8 @@ class SelectiveNeuralUnits(nn.Module):
                     + self.write_state(z)
                     + self.write_bias.unsqueeze(0)
                 )
+                if self.extra_proj is not None and extra is not None:
+                    write_logits = write_logits + self.extra_proj(extra[:, tick, :])
                 write_g = torch.sigmoid(write_logits)
                 z_cand = ((1.0 - write_g) * z + write_g * candidate) * active_mask
             else:
@@ -888,6 +901,7 @@ class SelectivePersistentGraph(nn.Module):
         *,
         head: int = 0,
         step_mask: torch.Tensor | None = None,
+        extra: torch.Tensor | None = None,
     ) -> dict[str, Any]:
         if not self.per_sample_state:
             if state is None:
@@ -900,7 +914,7 @@ class SelectivePersistentGraph(nn.Module):
         batch_size, steps = encoded.shape[0], encoded.shape[1]
         if state is None:
             state = self.initial_state(batch_size=batch_size)
-        unit_result = self.selective_units(encoded, gates, state, step_mask=step_mask)
+        unit_result = self.selective_units(encoded, gates, state, step_mask=step_mask, extra=extra)
         # Strictly final tick state + final tick raw channels only: zero KV history.
         state_final = torch.cat([unit_result["z"], unit_result["a"]], dim=-1)
         read_g = torch.sigmoid(self.read_gate(self._final_raw_channels(channels)))
