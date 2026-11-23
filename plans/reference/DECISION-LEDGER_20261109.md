@@ -8459,3 +8459,10 @@ world 配对 95% 下界 >0（**配对单位＝example**，每个 example 是独�
 **2. 设计**：三档难度 H1（T=24/3 槽/4 值）、H2（T=24/6 槽/4 值）、H3（T=40/6 槽/8 值/2 次覆盖写）；臂 `selective` / `gru_gate` / `gru`，按各档解析 FLOPs 配平（比 0.990–1.004）；1,500 步、fit 512、3 seed、配对同批次。
 **3. 读前冻结**：判读规则即模块 docstring，`decision_rules_sha256 = 7037d0305647c7ed78a6781311c0d029fc9281408a7b231c00df4c050d5ed907`（运行时写入报告，读后核对）；逐档 ceiling/floor/selective_better/gru_gate_better/no_difference/inconclusive，总判 presentation_failure / unit_dynamics_contribution_bounded / gru_gate_better_somewhere / no_independent_contribution / mixed。
 **4. 状态**：待 owner 本地运行；预算帽 1,800 CPU。零 check/final。
+
+### D-20261123-326 SYN-2 整合阶段塑性：syn2_low_joint（183.67 CPU，1 seed，0 check）
+
+**1. 卡**：判据清单 [manifest](../manifests/taiji_u2_syn2_criteria_20261123.json) 先行冻结（criteria_sha256=c1f16674…ad5f2）＋说明 [DESIGN](DESIGN-TAIJI_U2_SYN2_20261123.md)；CN/P24/P27 三块 UQ-1 配方训练后冻结；联合任务标签＝((CN 类//2)+P27 类) mod 4；联合读出 8192 样本 1600 步（读出口径）→ 解冻 CN/P27 单位参数微调 200 步（lr 3e-4）。
+**2. 读数**：联合 acc 读出口径 **0.7617** → 塑性后 **0.7773（+0.0156）**；单任务 CN 0.8203→0.8594、P27 0.8516→0.8906（上升，无保持损伤）；塑性后块休眠 drop **0.520/0.492**、单位休眠 drop **0.527/0.516**；单块头 0.277/0.246；capsule 0.0。
+**3. 判定**：syn2_low_joint（G0 0.777<0.85、G1 收益 0.016<0.08；G2–G6 全过）。**判读**：整合阶段块内塑性**未带来真实整合收益**；瓶颈在块状态→组合标签的信息/映射（与 SYN-1 系列一致）；协同因果贡献维持。边界：人工组合标签、单 seed、微调 200 步。[结果卡](RESULT-TAIJI_U2_SYN2_20261123.md)。
+**4. 零 check/final；常设授权待回溯。**
