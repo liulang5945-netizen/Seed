@@ -1,0 +1,36 @@
+{
+  "schema": "taiji-p0h-diag-v1",
+  "created_utc": "2026-11-23T07:28:53.390052+00:00",
+  "seed": 20261120,
+  "birth_probe": {
+    "train": 0.2509765625,
+    "test": 0.296875
+  },
+  "probe_rule": {
+    "target": 0.75,
+    "margin": 0.2
+  },
+  "learn": {
+    "200": 1.0,
+    "800": 1.0,
+    "reset_input": 0.24609375
+  },
+  "p24_before": 0.9921875,
+  "p24_after": 0.9921875,
+  "gates": {
+    "G0_birth_pressure": true,
+    "G1_learn_200": true,
+    "G2_learn_800": true,
+    "G3_reset_drop": true,
+    "G4_retention": true
+  },
+  "verdict": "p0h_verified",
+  "cost": {
+    "cpu": 151.14
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  }
+}
