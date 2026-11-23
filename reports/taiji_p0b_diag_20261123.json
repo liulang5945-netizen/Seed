@@ -1,0 +1,36 @@
+{
+  "schema": "taiji-p0b-diag-v1",
+  "created_utc": "2026-11-23T06:49:09.789158+00:00",
+  "seed": 20261120,
+  "p24_before_wiring": 0.9921875,
+  "p24_after_wiring_zero": 0.98828125,
+  "old_p24_retention_drop": 0.00390625,
+  "probe": {
+    "train_acc": 0.2490234375,
+    "test_acc": 0.25390625
+  },
+  "newborn_state_probe": {
+    "train_acc": 0.267578125,
+    "test_acc": 0.23828125
+  },
+  "probe_rule": {
+    "target": 0.75,
+    "margin": 0.2
+  },
+  "budget_curve": {
+    "8": 0.24609375,
+    "50": 0.2734375,
+    "200": 0.2734375
+  },
+  "pressure_present": true,
+  "learnable": false,
+  "verdict": "p0b_pressure_but_not_learnable",
+  "cost": {
+    "cpu": 112.19
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  }
+}
