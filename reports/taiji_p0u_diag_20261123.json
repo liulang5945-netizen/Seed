@@ -1,0 +1,35 @@
+{
+  "schema": "taiji-p0u-diag-v1",
+  "created_utc": "2026-11-23T10:21:01.423700+00:00",
+  "seed": 20261120,
+  "normal_cn": 1.0,
+  "normal_cn_after": 1.0,
+  "cn_probe": {
+    "train": 0.8229166865348816,
+    "test": 0.6171875
+  },
+  "birth_probe": {
+    "train": 0.5260416865348816,
+    "test": 0.4453125
+  },
+  "rev_acc": 0.48828125,
+  "transfer": 0.509765625,
+  "reset": 0.46875,
+  "gates": {
+    "G0_old_cn": true,
+    "G1_pressure": false,
+    "G2_rev": false,
+    "G3_transfer": false,
+    "G4_adapter_drop": false,
+    "G5_retention": true
+  },
+  "verdict": "p0u_not_pressured",
+  "cost": {
+    "cpu": 113.25
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  }
+}
