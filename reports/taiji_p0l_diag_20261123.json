@@ -1,0 +1,30 @@
+{
+  "schema": "taiji-p0l-diag-v1",
+  "created_utc": "2026-11-23T07:49:23.853233+00:00",
+  "seed": 20261120,
+  "trained": 1.0,
+  "dormant": 0.26171875,
+  "wake": 1.0,
+  "capsule_diff": 0.0,
+  "restored": 1.0,
+  "reset": 0.26171875,
+  "p24_before": 0.9921875,
+  "p24_after": 0.9921875,
+  "gates": {
+    "G0_trained": true,
+    "G1_dormant": true,
+    "G2_wake": true,
+    "G3_capsule": true,
+    "G4_reset_drop": true,
+    "G5_retention": true
+  },
+  "verdict": "p0l_verified",
+  "cost": {
+    "cpu": 185.48
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  }
+}
