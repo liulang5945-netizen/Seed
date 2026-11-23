@@ -55,7 +55,7 @@ from scripts.training.verify_taiji_s1rt_stage1b_20261121 import Subject72
 
 ROOT = Path(r"E:\Seed")
 SEED = int(sys.argv[1]) if len(sys.argv) > 1 else 20261120
-OUT = ROOT / "reports/taiji_p0be_seed{SEED}.json"
+OUT = ROOT / f"reports/taiji_p0be_seed{SEED}.json"
 PHASE_B_STEPS = 1600
 
 

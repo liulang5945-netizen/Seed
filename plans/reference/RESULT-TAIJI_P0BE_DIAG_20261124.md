@@ -36,3 +36,8 @@
 3. 或推进 S1 联合验收（多能力同主体）。
 
 零 check/final；不签 24-S/25-S/29/final/C/D/J。
+
+## 补注（回执修复，D-392）
+
+首跑时 OUT 路径未用 f-string，三 seed 覆盖同一文件名；已修复为 
+eports/taiji_p0be_seed{SEED}.json 并**重跑 seed 20261120/21**，读数与首跑**逐位一致**（seed20 verified：0.913/0.994/0.713/drop 0.434；seed21 unseen 0.549），同时验证了本管线的可复现性。seed22 的回执由首跑产物重命名保留（读数一致）。
