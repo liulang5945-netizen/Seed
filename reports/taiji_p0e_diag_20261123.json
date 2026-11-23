@@ -1,0 +1,38 @@
+{
+  "schema": "taiji-p0e-diag-v1",
+  "created_utc": "2026-11-23T07:10:06.861928+00:00",
+  "seed": 20261120,
+  "dev": {
+    "early_50": 1.0,
+    "final": 1.0,
+    "transfer": 1.0,
+    "reset": 1.0,
+    "reset_drop": 0.0
+  },
+  "ctrl": {
+    "early_50": 1.0,
+    "final": 1.0,
+    "transfer": 1.0,
+    "reset": 1.0,
+    "reset_drop": 0.0
+  },
+  "early_gain": 0.0,
+  "p24_before": 0.9921875,
+  "p24_after": 0.98828125,
+  "gates": {
+    "G0_early_gain": false,
+    "G1_final": true,
+    "G2_transfer": true,
+    "G3_reset_drop": false,
+    "G4_retention": true
+  },
+  "verdict": "p0e_units_not_needed",
+  "cost": {
+    "cpu": 139.91
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  }
+}

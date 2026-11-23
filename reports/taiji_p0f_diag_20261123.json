@@ -1,0 +1,20 @@
+{
+  "schema": "taiji-p0f-diag-v1",
+  "created_utc": "2026-11-23T07:14:05.525278+00:00",
+  "seed": 20261120,
+  "birth_units": {
+    "linear_8": 1.0,
+    "linear_50": 1.0,
+    "linear_200": 1.0,
+    "mlp_200": 1.0
+  },
+  "interpretation": "linear_200 >= 0.90 => the pressure task is linearly decodable from birth units once routed; unit plasticity is not required for it",
+  "cost": {
+    "cpu": 137.41
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  }
+}
