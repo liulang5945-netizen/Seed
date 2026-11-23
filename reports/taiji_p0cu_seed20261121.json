@@ -1,0 +1,48 @@
+{
+  "schema": "taiji-p0cu-diag-v1",
+  "created_utc": "2026-11-23T23:50:36.616845+00:00",
+  "seed": 20261121,
+  "task": "parallel_cohorts_capsule_reward",
+  "normal_cn": 1.0,
+  "normal_cn_after": 1.0,
+  "r0": 1.0,
+  "r1": 1.0,
+  "lesA": {
+    "r0": 0.2646484375,
+    "r1": 0.6376953125
+  },
+  "lesB": {
+    "r0": 0.7099609375,
+    "r1": 0.2529296875
+  },
+  "capsule": {
+    "r0_restore": 1.0,
+    "r1_restore": 1.0,
+    "cap_diff": 0.0
+  },
+  "reward_r2": {
+    "acc_r2": 0.548828125,
+    "r0_after": 1.0,
+    "r1_after": 1.0
+  },
+  "gates": {
+    "G0_old_cn": true,
+    "G1_r0": true,
+    "G2_r1": true,
+    "G3_lesA_r0": true,
+    "G4_lesB_r1": true,
+    "G5_normal_retained": true,
+    "G6_capsule": true,
+    "G7_reward_r2": false,
+    "G8_r0_r1_retained": true
+  },
+  "verdict": "p0cu_lifecycle_failed",
+  "cost": {
+    "cpu": 198.33
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  }
+}
