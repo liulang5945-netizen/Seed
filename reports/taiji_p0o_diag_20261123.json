@@ -1,0 +1,35 @@
+{
+  "schema": "taiji-p0o-diag-v1",
+  "created_utc": "2026-11-23T09:31:42.616980+00:00",
+  "seed": 20261120,
+  "normal_cn": 0.99609375,
+  "normal_cn_after": 0.40625,
+  "old_head_rev": 0.33984375,
+  "birth_probe": {
+    "train": 0.15625
+  },
+  "cn_probe": {
+    "train": 0.84375
+  },
+  "rev_acc": 0.5234375,
+  "transfer": 0.38671875,
+  "reset": 0.140625,
+  "gates": {
+    "G0_old_cn": true,
+    "G1_old_head_rev": true,
+    "G2_birth_probe": true,
+    "G3_rev_acc": false,
+    "G4_transfer": false,
+    "G5_reset_drop": true,
+    "G6_retention": false
+  },
+  "verdict": "p0o_not_learnable",
+  "cost": {
+    "cpu": 152.28
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  }
+}
