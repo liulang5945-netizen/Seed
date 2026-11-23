@@ -1,11 +1,11 @@
 {
   "schema": "taiji-p0r-diag-v1",
-  "created_utc": "2026-11-23T10:02:20.706450+00:00",
+  "created_utc": "2026-11-23T10:14:51.574251+00:00",
   "seed": 20261120,
-  "normal_cn": 0.37890625,
-  "normal_cn_after": 0.37890625,
+  "normal_cn": 1.0,
+  "normal_cn_after": 1.0,
   "cn_probe": {
-    "train": 0.84375
+    "train": 0.88671875
   },
   "birth_probe": {
     "train": 0.1328125
@@ -14,14 +14,14 @@
   "transfer": 0.37109375,
   "reset": 0.421875,
   "gates": {
-    "G0_old_cn": false,
+    "G0_old_cn": true,
     "G1_pressure": false,
     "G2_rev": false,
     "G3_transfer": false,
     "G4_adapter_drop": false,
     "G5_retention": true
   },
-  "verdict": "p0r_cn_base_failed",
+  "verdict": "p0r_not_pressured",
   "cost": {
     "cpu": 107.36
   },

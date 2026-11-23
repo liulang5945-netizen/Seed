@@ -113,15 +113,16 @@ def run_states(subj, ticks, mask, extra=None, step_mask=None):
 
 
 def cn_state_vec(subj, ticks, step_mask=None) -> torch.Tensor:
+    """States exactly as subj.logits sees them: cat(first OLD_N units of z and a).
+
+    Masked-out units still carry a nonzero drive term, so zeroing them (as an earlier
+    version did) shifts the head input distribution; slice instead.
+    """
     mask = pad_mask(subj.n_units, 0, 24)
     subj.eval_mode()
     with torch.no_grad():
         z, a = run_states(subj, ticks, mask, step_mask=step_mask)
-    zc = torch.zeros(ticks.shape[0], OLD_N)
-    ac = torch.zeros(ticks.shape[0], OLD_N)
-    zc[:, :24] = z[:, :24]
-    ac[:, :24] = a[:, :24]
-    return torch.cat([zc, ac], dim=-1)
+    return torch.cat([z[:, :OLD_N], a[:, :OLD_N]], dim=-1)
 
 
 def cn_eval(subj) -> float:
