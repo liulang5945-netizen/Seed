@@ -450,6 +450,7 @@
       .reveal { opacity: 1; transform: none; }
     }
   </style>
+  <link rel="stylesheet" href="technical.css">
 </head>
 <body>
   <header class="site-header" id="site-header">
@@ -463,10 +464,10 @@
         <span></span><span></span>
       </button>
       <div class="nav-links" id="nav-links">
-        <a href="#vision">研究愿景</a>
+        <a href="#how-it-works">运行原理</a>
         <a href="#architecture">认知架构</a>
-        <a href="#runtime">运行系统</a>
-        <a class="nav-cta" href="#start">开始探索 <span aria-hidden="true">↗</span></a>
+        <a href="#source-map">源码地图</a>
+        <a class="nav-cta" href="https://github.com/liulang5945-netizen/Seed" target="_blank" rel="noreferrer">GitHub 仓库 <span aria-hidden="true">↗</span></a>
       </div>
     </nav>
   </header>
@@ -479,8 +480,8 @@
           <h1>不只是回应。<br><em>让智能继续生长。</em></h1>
           <p class="hero-intro">从一次对话到一段持续的经历。<strong>Seed</strong> 为态极原生认知模型提供运行时与实验工具，让感知、记忆、推理和行动在同一个生命循环中协同工作。</p>
           <div class="hero-actions">
-            <a class="button button-primary" href="#architecture">探索认知架构 <span class="arrow" aria-hidden="true">→</span></a>
-            <a class="button button-ghost" href="#boundary">了解研究边界</a>
+            <a class="button button-primary" href="https://github.com/liulang5945-netizen/Seed" target="_blank" rel="noreferrer">查看 GitHub 仓库 <span class="arrow" aria-hidden="true">↗</span></a>
+            <a class="button button-ghost" href="#how-it-works">算法运行原理 <span aria-hidden="true">→</span></a>
           </div>
           <div class="hero-note"><span class="status-dot"></span>开放研究项目 · Apache License 2.0</div>
         </div>
@@ -523,9 +524,77 @@
       </div>
     </div>
 
+    <section class="kernel shell" id="how-it-works">
+      <div class="kernel-heading reveal">
+        <div>
+          <p class="eyebrow">01 · THE EXECUTABLE KERNEL</p>
+          <h2>一次 <code>observe()</code>，<br>实际发生什么？</h2>
+        </div>
+        <div class="kernel-intro">
+          <span class="implementation-badge">IMPLEMENTED · TSK-V8</span>
+          <p>下面不是愿景图，而是当前仓库里的真实执行路径。逐步查看输入、预测结算、稀疏状态更新、可选记忆、读出与状态保存。</p>
+          <a class="repo-inline" href="https://github.com/liulang5945-netizen/Seed/blob/main/TAIJI_CODE_WIKI.md#L5-L41" target="_blank" rel="noreferrer">阅读完整 Runtime path <span>↗</span></a>
+        </div>
+      </div>
+
+      <div class="kernel-workbench reveal">
+        <div class="kernel-steps" role="tablist" aria-label="Taiji 单步算法执行流程">
+          <button class="kernel-step" id="kernel-step-0" type="button" role="tab" aria-selected="true" aria-controls="kernel-detail"><span class="kernel-step-number">01</span><span><strong>字节输入编码</strong><small>ByteSensor.encode</small></span></button>
+          <button class="kernel-step" id="kernel-step-1" type="button" role="tab" aria-selected="false" aria-controls="kernel-detail" tabindex="-1"><span class="kernel-step-number">02</span><span><strong>结算上次预测</strong><small>prediction → surprise</small></span></button>
+          <button class="kernel-step" id="kernel-step-2" type="button" role="tab" aria-selected="false" aria-controls="kernel-detail" tabindex="-1"><span class="kernel-step-number">03</span><span><strong>稀疏状态更新</strong><small>TaijiFabric.step</small></span></button>
+          <button class="kernel-step" id="kernel-step-3" type="button" role="tab" aria-selected="false" aria-controls="kernel-detail" tabindex="-1"><span class="kernel-step-number">04</span><span><strong>可选记忆取回</strong><small>EpisodicField.recall</small></span></button>
+          <button class="kernel-step" id="kernel-step-4" type="button" role="tab" aria-selected="false" aria-controls="kernel-detail" tabindex="-1"><span class="kernel-step-number">05</span><span><strong>读出下一符号</strong><small>probabilities</small></span></button>
+          <button class="kernel-step" id="kernel-step-5" type="button" role="tab" aria-selected="false" aria-controls="kernel-detail" tabindex="-1"><span class="kernel-step-number">06</span><span><strong>原子写回状态</strong><small>TaijiState</small></span></button>
+        </div>
+        <article class="kernel-detail" id="kernel-detail" role="tabpanel" aria-labelledby="kernel-step-0" aria-live="polite">
+          <div class="kernel-detail-top"><code class="kernel-method" id="kernel-method">ByteSensor.encode(symbol)</code><a class="kernel-source" id="kernel-source" href="https://github.com/liulang5945-netizen/Seed/blob/main/taiji/organs.py#L17-L64" target="_blank" rel="noreferrer">在 GitHub 查看 ↗</a></div>
+          <span class="kernel-stage" id="kernel-stage">STEP 01 / INPUT ENCODING</span>
+          <h3 id="kernel-title">先把字节变成明确的输入符号</h3>
+          <p class="kernel-description" id="kernel-description">文本示例不经过 tokenizer。0–255 直接表示原始字节，256 表示数据流边界；编码器把当前符号写成 one-hot 感受器活动，起止边界可以分别控制。</p>
+          <pre class="kernel-code"><code id="kernel-code"># 0..255 = raw bytes; 256 = stream boundary
+value = torch.zeros(alphabet_size)
+value[int(symbol)] = 1.0</code></pre>
+          <ul class="kernel-facts" id="kernel-facts"><li>257 个输入符号</li><li>无 tokenizer</li><li>边界符可独立控制</li></ul>
+        </article>
+      </div>
+
+      <div class="equation-heading reveal"><h3>稀疏连接如何学习</h3><p>只更新已经存在的连接，不创建稠密外积。这里的“活动痕迹”表示最近哪些输入仍在发挥作用，它决定哪条连接应接收误差信号。</p></div>
+      <div class="equation-grid reveal">
+        <article class="equation-card"><span>01 / GATHER-SUM</span><code>y[j] = Σₖ w[j,k] · x[pre_index[j,k]]</code><h4>前向：只汇总存在的边</h4><p>每条后验单元只读取固定扇入的输入，计算量跟随真实边数，而不是稠密矩阵大小。</p></article>
+        <article class="equation-card"><span>02 / SCATTER-ADD</span><code>e_pre = scatter_add(pre_index, w ⊙ e_post)</code><h4>回投：沿同一组连接送回误差</h4><p>突触后误差乘上连接权重，再累加回对应的突触前坐标，形成下一步局部学习所需的信号。</p></article>
+        <article class="equation-card"><span>03 / LOCAL UPDATE</span><code>Δw[j,k] = η · e_post[j] · trace[i] / scale</code><h4>更新：误差 × 活动痕迹</h4><p>仅已有边执行原地更新，并按非零痕迹数量归一；权重张量不使用自动梯度，学习规则可以直接审查。</p></article>
+      </div>
+
+      <div class="call-chain reveal">
+        <div class="call-chain-intro"><h3>从示例到内核，<br>每一跳都有源码。</h3><p><code>Seed</code> 负责产品生命周期和序列化包装，<code>TSKV8Adapter</code> 暴露认知合同，<code>Taiji</code> 执行真实学习与生成。运行时没有另藏一个模型替它思考。</p><a class="repo-inline" href="https://github.com/liulang5945-netizen/Seed/blob/main/seed/model.py#L25-L58" target="_blank" rel="noreferrer">查看运行时所有权 <span>↗</span></a></div>
+        <div class="call-routes">
+          <div class="call-route"><span>学习</span><div><code>Seed.learn_bytes → sensor.symbols → observe(learn=True, readout="predictive")</code><p>逐符号在线更新，返回 online_accuracy 与 mean_surprise；默认不启用长期情景记忆。</p></div></div>
+          <div class="call-route"><span>生成</span><div><code>observe(prompt, learn=False) → argmax / multinomial → observe(next_symbol)</code><p>提示先改变状态，随后每个输出字节都会作为下一时步观察重新喂回模型。</p></div></div>
+          <div class="call-route"><span>恢复</span><div><code>Seed.checkpoint → {format, config, taiji, substrate} → restore_native</code><p>恢复前校验格式与配置；内核检查点覆盖拓扑、参数、快速状态、事务和随机数状态。</p></div></div>
+        </div>
+      </div>
+
+      <div class="source-map reveal" id="source-map">
+        <div class="source-map-head"><h3>GitHub 源码地图</h3><p>从真实实现继续往下读。以下链接全部指向当前仓库的对应文件与关键行，而不是另写一份脱离代码的说明。</p></div>
+        <div class="source-links">
+          <a class="source-link" href="https://github.com/liulang5945-netizen/Seed/blob/main/seed/model.py#L137-L260" target="_blank" rel="noreferrer"><div><code>seed/model.py</code><p>产品运行时入口：字节学习、生成、checkpoint 包装与配置校验。</p></div><span>↗</span></a>
+          <a class="source-link" href="https://github.com/liulang5945-netizen/Seed/blob/main/taiji/model.py#L2020-L2072" target="_blank" rel="noreferrer"><div><code>taiji/model.py</code><p>因果单步、在线字节学习、自由生成和行动事务的核心编排。</p></div><span>↗</span></a>
+          <a class="source-link" href="https://github.com/liulang5945-netizen/Seed/blob/main/taiji/sparse.py#L113-L184" target="_blank" rel="noreferrer"><div><code>taiji/sparse.py</code><p>固定扇入拓扑、gather-sum 前向、scatter-add 回投与局部更新。</p></div><span>↗</span></a>
+          <a class="source-link" href="https://github.com/liulang5945-netizen/Seed/blob/main/taiji/fabric.py" target="_blank" rel="noreferrer"><div><code>taiji/fabric.py</code><p>快速稀疏解码、慢速巩固、递归转移与因果时步更新。</p></div><span>↗</span></a>
+          <a class="source-link" href="https://github.com/liulang5945-netizen/Seed/blob/main/taiji/memory.py" target="_blank" rel="noreferrer"><div><code>taiji/memory.py</code><p>分布式经历写入、递归模式补全与多类记忆读出。</p></div><span>↗</span></a>
+          <a class="source-link" href="https://github.com/liulang5945-netizen/Seed/blob/main/TAIJI_CODE_WIKI.md" target="_blank" rel="noreferrer"><div><code>TAIJI_CODE_WIKI.md</code><p>当前可执行内核的模块地图、检查点内容与验证入口。</p></div><span>↗</span></a>
+        </div>
+      </div>
+
+      <div class="current-target reveal">
+        <div class="is-current"><span>当前实现 / IMPLEMENTED</span><h4>TSK-v8 可执行实验内核</h4><p>原始字节感受器、稀疏预测皮层、情景场原型、行动与预测读出、状态保存恢复均有真实代码和限定范围测试。</p></div>
+        <div><span>长期目标 / RESEARCH TARGET</span><h4>完整 Taiji 原生认知架构</h4><p>多模态抽象、完整世界模型、多系统记忆协作、规划与长期自主成长仍在研究和验证中，不能由上述内核直接推定。</p></div>
+      </div>
+    </section>
+
     <section class="manifesto shell reveal" id="vision">
       <div class="manifesto-grid">
-        <div class="section-marker"><span>01</span>研究愿景 / VISION</div>
+        <div class="section-marker"><span>02</span>研究愿景 / VISION</div>
         <div>
           <h2>今天的智能，常常困在此刻。<br>我们想给它一条<em>连续的时间线。</em></h2>
           <div class="manifesto-copy">
@@ -540,7 +609,7 @@
       <div class="shell">
         <div class="architecture-heading reveal">
           <div>
-            <p class="eyebrow">02 · COGNITIVE ARCHITECTURE</p>
+            <p class="eyebrow">03 · COGNITIVE ARCHITECTURE</p>
             <h2>一个闭环，<br>而非一串孤立模块。</h2>
           </div>
           <p>认知不是单向流水线。观察改变状态，记忆提供上下文，推理形成选择，行动带来新反馈——循环由此继续。点击左侧，查看每个环节。</p>
@@ -590,7 +659,7 @@
     <section class="memory shell" id="memory">
       <div class="memory-heading reveal">
         <div>
-          <p class="eyebrow">03 · MEMORY, IN FOUR VOICES</p>
+          <p class="eyebrow">04 · MEMORY, IN FOUR VOICES</p>
           <h2>记忆不是一种能力，<br>而是四种不同的分工。</h2>
         </div>
         <p>从眼前任务到长期技能，每种记忆都有自己的时间尺度与用途。它们共同支撑一个更连续、更能从经验中受益的系统。</p>
@@ -622,7 +691,7 @@
     <section class="runtime" id="runtime">
       <div class="shell">
         <div class="runtime-heading reveal">
-          <p class="eyebrow">04 · ONE ECOSYSTEM</p>
+          <p class="eyebrow">05 · ONE ECOSYSTEM</p>
           <h2>认知、承载与交互，<br>各自清晰，共同生长。</h2>
         </div>
         <div class="runtime-grid reveal">
@@ -648,7 +717,7 @@
     <section class="boundary shell" id="boundary">
       <div class="boundary-card reveal">
         <div class="boundary-intro">
-          <p class="eyebrow">05 · HONEST BY DESIGN</p>
+          <p class="eyebrow">06 · HONEST BY DESIGN</p>
           <h2>研究原型，<br>而非完成时。</h2>
           <p>清晰的边界不是退让，而是可靠研究的起点。Seed 将架构目标、当前实现与实验结论分开描述。</p>
         </div>
@@ -663,7 +732,7 @@
     <section class="start" id="start">
       <div class="start-grid shell">
         <div class="start-copy reveal">
-          <p class="eyebrow">06 · BEGIN WITH SEED</p>
+          <p class="eyebrow">07 · BEGIN WITH SEED</p>
           <h2>从一次学习开始，<br><em>观察智能如何延续。</em></h2>
           <p>通过一个最小 Python 示例，体验字节学习与 checkpoint 恢复。每一个宏大的认知目标，都从可运行、可检查的一步开始。</p>
         </div>
@@ -686,7 +755,7 @@ restored = Seed.from_checkpoint(checkpoint)
     <div class="footer-inner shell">
       <a class="footer-brand" href="#top"><img src="seed-mark-color.svg" alt="" width="25" height="25">SEED</a>
       <span>态极原生认知模型的运行时 · © <span id="year">2026</span> Seed</span>
-      <div class="footer-links"><a href="#vision">研究愿景</a><a href="#boundary">能力边界</a><a href="#top">回到顶部 ↑</a></div>
+      <div class="footer-links"><a href="#how-it-works">运行原理</a><a href="https://github.com/liulang5945-netizen/Seed" target="_blank" rel="noreferrer">GitHub ↗</a><a href="#top">回到顶部 ↑</a></div>
     </div>
   </footer>
 
@@ -760,5 +829,6 @@ restored = Seed.from_checkpoint(checkpoint)
     });
     document.getElementById('year').textContent = new Date().getFullYear();
   </script>
+  <script src="technical.js"></script>
 </body>
 </html>
