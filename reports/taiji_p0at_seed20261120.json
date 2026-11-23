@@ -1,0 +1,143 @@
+{
+  "schema": "taiji-p0at-diag-v1",
+  "created_utc": "2026-11-23T13:23:43.705604+00:00",
+  "seed": 20261120,
+  "task": "meta_consolidation_grid",
+  "normal_cn": 1.0,
+  "normal_cn_after": 1.0,
+  "cn_probe": {
+    "train": 0.8385416865348816,
+    "test": 0.5078125
+  },
+  "birth_probe": {
+    "train": 0.5494791865348816,
+    "test": 0.484375
+  },
+  "detect_acc": 0.986328125,
+  "arms": {
+    "lam0.001_steps800": {
+      "quality": {
+        "linear": 0.8486328125,
+        "logreg": 0.9228515625,
+        "prototype": 0.330078125,
+        "mlp16": 0.5322265625,
+        "linear_unseen": 0.537109375,
+        "logreg_unseen": 0.560546875
+      },
+      "causal": {
+        "ref": 0.9287109375,
+        "dormant": 0.1279296875,
+        "wake": 0.9287109375,
+        "adapter_reset": 0.52734375,
+        "adapter_drop": 0.4013671875
+      }
+    },
+    "lam0.01_steps800": {
+      "quality": {
+        "linear": 0.8662109375,
+        "logreg": 0.931640625,
+        "prototype": 0.3369140625,
+        "mlp16": 0.431640625,
+        "linear_unseen": 0.70703125,
+        "logreg_unseen": 0.552734375
+      },
+      "causal": {
+        "ref": 0.9365234375,
+        "dormant": 0.1064453125,
+        "wake": 0.9365234375,
+        "adapter_reset": 0.4658203125,
+        "adapter_drop": 0.470703125
+      }
+    },
+    "lam0.1_steps800": {
+      "quality": {
+        "linear": 0.9140625,
+        "logreg": 0.986328125,
+        "prototype": 0.521484375,
+        "mlp16": 0.693359375,
+        "linear_unseen": 0.4609375,
+        "logreg_unseen": 0.421875
+      },
+      "causal": {
+        "ref": 0.986328125,
+        "dormant": 0.1240234375,
+        "wake": 0.986328125,
+        "adapter_reset": 0.4697265625,
+        "adapter_drop": 0.5166015625
+      }
+    },
+    "lam0.001_steps2000": {
+      "quality": {
+        "linear": 0.9326171875,
+        "logreg": 0.982421875,
+        "prototype": 0.29296875,
+        "mlp16": 0.5654296875,
+        "linear_unseen": 0.681640625,
+        "logreg_unseen": 0.69140625
+      },
+      "causal": {
+        "ref": 0.978515625,
+        "dormant": 0.134765625,
+        "wake": 0.978515625,
+        "adapter_reset": 0.4931640625,
+        "adapter_drop": 0.4853515625
+      }
+    },
+    "lam0.01_steps2000": {
+      "quality": {
+        "linear": 0.8896484375,
+        "logreg": 0.9755859375,
+        "prototype": 0.1748046875,
+        "mlp16": 0.365234375,
+        "linear_unseen": 0.658203125,
+        "logreg_unseen": 0.712890625
+      },
+      "causal": {
+        "ref": 0.974609375,
+        "dormant": 0.1494140625,
+        "wake": 0.974609375,
+        "adapter_reset": 0.498046875,
+        "adapter_drop": 0.4765625
+      }
+    },
+    "lam0.1_steps2000": {
+      "quality": {
+        "linear": 0.9736328125,
+        "logreg": 0.99609375,
+        "prototype": 0.3525390625,
+        "mlp16": 0.5703125,
+        "linear_unseen": 0.49609375,
+        "logreg_unseen": 0.45703125
+      },
+      "causal": {
+        "ref": 0.99609375,
+        "dormant": 0.1279296875,
+        "wake": 0.99609375,
+        "adapter_reset": 0.486328125,
+        "adapter_drop": 0.509765625
+      }
+    }
+  },
+  "best_arm": "lam0.01_steps800",
+  "gates": {
+    "G0_old_cn": true,
+    "G1_pressure": true,
+    "G2_detect": true,
+    "G3_logreg": false,
+    "G4_unseen_linear": false,
+    "G5_unseen_logreg": false,
+    "G6_dormant": true,
+    "G7_wake": true,
+    "G8_adapter_drop": true,
+    "G9_retention": true
+  },
+  "verdict": "p0at_not_consolidated",
+  "cost": {
+    "cpu": 437.62
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  }
+}
