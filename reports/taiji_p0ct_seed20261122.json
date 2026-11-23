@@ -1,0 +1,35 @@
+{
+  "schema": "taiji-p0ct-diag-v1",
+  "created_utc": "2026-11-23T23:45:52.272551+00:00",
+  "seed": 20261122,
+  "task": "grow_first_parallel_cohorts",
+  "normal_cn": 1.0,
+  "normal_cn_after": 1.0,
+  "r0": 0.98046875,
+  "r1": 0.98828125,
+  "lesA": {
+    "r0": 0.2470703125,
+    "r1": 0.67578125
+  },
+  "lesB": {
+    "r0": 0.6865234375,
+    "r1": 0.248046875
+  },
+  "gates": {
+    "G0_old_cn": true,
+    "G1_r0": true,
+    "G2_r1": true,
+    "G3_lesA_r0": true,
+    "G4_lesB_r1": true,
+    "G5_normal_retained": true
+  },
+  "verdict": "p0ct_verified",
+  "cost": {
+    "cpu": 161.72
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  }
+}
