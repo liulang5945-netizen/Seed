@@ -1,0 +1,50 @@
+{
+  "schema": "taiji-actuq1-diag-v1",
+  "created_utc": "2026-11-23T08:21:49.221468+00:00",
+  "seed": 20261120,
+  "base": {
+    "utility": 1.0,
+    "verify_rate": 0.0,
+    "commit_acc": 1.0,
+    "coverage": 1.0
+  },
+  "always_verify": {
+    "utility": 0.9000000357627869,
+    "verify_rate": 1.0,
+    "commit_acc": 0.0,
+    "coverage": 0.0
+  },
+  "fixed_095": {
+    "utility": 1.0,
+    "verify_rate": 0.0,
+    "commit_acc": 1.0,
+    "coverage": 1.0
+  },
+  "adaptive": {
+    "utility": 1.0,
+    "verify_rate": 0.0,
+    "commit_acc": 1.0,
+    "coverage": 1.0
+  },
+  "best_tau": 0.0,
+  "feedback": {
+    "low_conf_before": 0.0,
+    "low_conf_after": 0.0
+  },
+  "gates": {
+    "G0_base": true,
+    "G1_vs_commit": false,
+    "G2_vs_verify": true,
+    "G3_efficient": true,
+    "G4_feedback": false
+  },
+  "verdict": "actuq1_no_utility_gain",
+  "cost": {
+    "cpu": 143.59
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  }
+}
