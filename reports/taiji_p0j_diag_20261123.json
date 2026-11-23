@@ -1,0 +1,50 @@
+{
+  "schema": "taiji-p0j-diag-v1",
+  "created_utc": "2026-11-23T07:40:58.094606+00:00",
+  "seed": 20261120,
+  "dev": {
+    "curve": {
+      "5": 0.55078125,
+      "10": 1.0,
+      "20": 1.0,
+      "50": 1.0,
+      "200": 1.0
+    },
+    "final": 1.0,
+    "transfer": 1.0,
+    "reset": 0.27734375,
+    "reset_drop": 0.72265625
+  },
+  "ctrl": {
+    "curve": {
+      "5": 0.5,
+      "10": 0.55078125,
+      "20": 0.77734375,
+      "50": 1.0,
+      "200": 1.0
+    },
+    "final": 1.0,
+    "transfer": 1.0,
+    "reset": 0.27734375,
+    "reset_drop": 0.72265625
+  },
+  "early_gain_at_20": 0.22265625,
+  "p24_before": 0.9921875,
+  "p24_after": 0.9921875,
+  "gates": {
+    "G0_early_gain": true,
+    "G1_final": true,
+    "G2_transfer": true,
+    "G3_reset_drop": true,
+    "G4_retention": true
+  },
+  "verdict": "p0j_verified",
+  "cost": {
+    "cpu": 150.06
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  }
+}
