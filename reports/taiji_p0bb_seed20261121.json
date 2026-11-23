@@ -1,0 +1,80 @@
+{
+  "schema": "taiji-p0bb-diag-v1",
+  "created_utc": "2026-11-23T14:45:16.218358+00:00",
+  "seed": 20261121,
+  "task": "flip_4colour_null_calibrated_v2",
+  "normal_cn": 1.0,
+  "normal_cn_after": 1.0,
+  "cn_probe": {
+    "train": 0.5598958134651184,
+    "test": 0.52734375
+  },
+  "birth_probe": {
+    "train": 0.4934895932674408,
+    "test": 0.46484375
+  },
+  "null_cn_mean": 0.5015625,
+  "null_cn_max": 0.53515625,
+  "null_birth_mean": 0.49921875,
+  "null_birth_max": 0.54296875,
+  "detect_acc": 1.0,
+  "pre": {
+    "flip": 0.990234375,
+    "linear": 0.607421875,
+    "prototype": 0.4228515625,
+    "logreg": 0.6484375,
+    "mlp8": 0.6767578125,
+    "mlp16": 0.8935546875,
+    "linear_unseen": 0.59765625,
+    "logreg_unseen": 0.66015625
+  },
+  "post": {
+    "flip": 0.990234375,
+    "linear": 0.7021484375,
+    "prototype": 0.46875,
+    "logreg": 0.73046875,
+    "mlp8": 0.8203125,
+    "mlp16": 0.9033203125,
+    "linear_unseen": 0.708984375,
+    "logreg_unseen": 0.734375
+  },
+  "consolidation_delta": {
+    "flip": 0.0,
+    "linear": 0.0947265625,
+    "prototype": 0.0458984375,
+    "logreg": 0.08203125,
+    "mlp8": 0.1435546875,
+    "mlp16": 0.009765625,
+    "linear_unseen": 0.111328125,
+    "logreg_unseen": 0.07421875
+  },
+  "ceiling": {
+    "mlp16": 1.0,
+    "linear": 1.0
+  },
+  "dormant": 0.2470703125,
+  "wake": 0.990234375,
+  "ref_flip": 0.990234375,
+  "adapter_reset": 0.443359375,
+  "gates": {
+    "G0_old_cn": true,
+    "G1_pressure": true,
+    "G2_detect": true,
+    "G3_flip": true,
+    "G4_linear": false,
+    "G6_mlp16": true,
+    "G7_dormant": true,
+    "G8_wake": true,
+    "G9_adapter_drop": true,
+    "G10_retention": true
+  },
+  "verdict": "p0bb_not_consolidated",
+  "cost": {
+    "cpu": 182.48
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  }
+}
