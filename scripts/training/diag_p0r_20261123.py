@@ -33,10 +33,10 @@ from scripts.training.verify_taiji_23s2a_gain_20261122 import (
     CN_COLOURS,
     CN_MAX_LEN,
     HOLDOUT,
-    cn_split,
 )
 from scripts.training.verify_taiji_24s_f1c_20261122 import mask_newborn_grads, newborn_params
 from scripts.training.verify_taiji_algorithm_holistic_20261121 import _channels_seq
+from scripts.training.verify_taiji_cognitive_loop_20261121 import _build_bidirectional_cn_32dim
 from scripts.training.verify_taiji_s1r2_rework_20261121 import PhaseHead
 from scripts.training.verify_taiji_s1rt_stage1b_20261121 import Subject72
 
@@ -44,7 +44,7 @@ ROOT = Path(r"E:\Seed")
 OUT = ROOT / "reports/taiji_p0r_diag_20261123.json"
 SEED = 20261120
 OLD_N = 72
-CN_STEPS = 800
+CN_STEPS = 1200
 REV_STEPS = 200
 BATCH = 48
 TARGET = 0.75
@@ -125,7 +125,9 @@ def cn_state_vec(subj, ticks, step_mask=None) -> torch.Tensor:
 
 
 def cn_eval(subj) -> float:
-    normal = cn_split(256, SEED + 900 + 10_000_000, "seen")
+    normal = _build_bidirectional_cn_32dim(
+        256, SEED + 900 + 10_000_000, BI_CN_TRAIN_FIRST, BI_CN_TRAIN_SECOND
+    )
     sm = (normal["ticks"].abs().sum(-1) > 0).float()
     subj.eval_mode()
     with torch.no_grad():
@@ -165,7 +167,9 @@ def main() -> int:
     opt = torch.optim.Adam(subj.params(), lr=6e-3, weight_decay=1e-4)
     subj.train_mode()
     for step in range(CN_STEPS):
-        batch = cn_split(BATCH, SEED * 6000 + step, "train")
+        batch = _build_bidirectional_cn_32dim(
+            BATCH, SEED * 6000 + step, BI_CN_TRAIN_FIRST, BI_CN_TRAIN_SECOND
+        )
         loss = F.cross_entropy(
             subj.logits("cn", batch["ticks"], (batch["ticks"].abs().sum(-1) > 0).float()),
             batch["labels"],

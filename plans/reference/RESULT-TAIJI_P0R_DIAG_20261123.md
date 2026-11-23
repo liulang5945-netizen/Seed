@@ -36,3 +36,8 @@ flag 放 **32:36**（P0-Q 称被抑制）；新生单元盲出生＋`attach_extr
 ## 6. 披露
 
 工程失败非机制结论；单 seed；零 check/final；不签 24-S/25-S/29/final/C/D/J。
+
+## 补注（2026-11-23，D-356，第二次尝试）
+
+改用 stage1b 配方（1200 步）后重跑：人工前向路径下 normal_cn 仍为 **0.379**，而同一训练在 P0-S 用 subj.logits(cn, ...) 评估为 **1.000** ⇒ **本卡的评估路径有 bug**（人工 
+un_states 与 subj.logits 不一致，疑似 mask/step_mask 或 head 输入拼接口径），不是训练问题。第二次尝试仍记 p0r_cn_base_failed（工程失败）。下一轮先修 eval 路径（加状态差校验）再跑修订任务；P0-S 已确认基座可收敛与 32:36 抑制。

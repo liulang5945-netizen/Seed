@@ -1,0 +1,33 @@
+{
+  "schema": "taiji-p0s-diag-v1",
+  "created_utc": "2026-11-23T09:57:50.114995+00:00",
+  "seed": 20261120,
+  "cn_steps": 1200,
+  "cn_acc": 1.0,
+  "probes": {
+    "char_0_4": {
+      "train": 1.0
+    },
+    "grp_32_36": {
+      "train": 0.46875
+    },
+    "grp_40_44": {
+      "train": 0.47265625
+    }
+  },
+  "gates": {
+    "G0_cn_converged": true,
+    "G1_suppressed_32_36": true,
+    "G2_suppressed_40_44": true,
+    "G3_control_transmits": true
+  },
+  "verdict": "p0s_verified",
+  "cost": {
+    "cpu": 103.72
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  }
+}
