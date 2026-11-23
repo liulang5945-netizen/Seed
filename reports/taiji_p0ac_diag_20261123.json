@@ -1,0 +1,37 @@
+{
+  "schema": "taiji-p0ac-diag-v1",
+  "created_utc": "2026-11-23T11:18:59.499248+00:00",
+  "seed": 20261120,
+  "task": "revision_inherit_detect_then_flip",
+  "normal_cn": 1.0,
+  "normal_cn_after": 1.0,
+  "cn_probe": {
+    "train": 0.8385416865348816,
+    "test": 0.5078125
+  },
+  "birth_probe": {
+    "train": 0.5989583134651184,
+    "test": 0.4921875
+  },
+  "detect_acc": 0.517578125,
+  "flip_acc": 0.63671875,
+  "flip_transfer": 0.455078125,
+  "flip_reset": 0.392578125,
+  "gates": {
+    "G0_old_cn": true,
+    "G1_pressure": true,
+    "G3_flip": false,
+    "G4_flip_transfer": false,
+    "G5_adapter_drop": true,
+    "G6_retention": true
+  },
+  "verdict": "p0ac_flip_not_learnable",
+  "cost": {
+    "cpu": 130.36
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  }
+}
