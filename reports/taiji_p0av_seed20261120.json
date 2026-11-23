@@ -1,6 +1,6 @@
 {
   "schema": "taiji-p0av-diag-v1",
-  "created_utc": "2026-11-23T13:33:26.808322+00:00",
+  "created_utc": "2026-11-23T13:39:00.385686+00:00",
   "seed": 20261120,
   "task": "flip_all_pairs_capacity",
   "normal_cn": 1.0,
@@ -16,7 +16,7 @@
   "detect_acc": 0.923828125,
   "pre": {
     "flip": 0.3564453125,
-    "linear": 0.4482421875,
+    "linear": 0.3974609375,
     "prototype": 0.318359375,
     "logreg": 0.265625,
     "mlp8": 0.2734375,
@@ -32,7 +32,7 @@
   },
   "consolidation_delta": {
     "flip": 0.06640625,
-    "linear": 0.060546875,
+    "linear": 0.111328125,
     "prototype": 0.0625,
     "logreg": 0.2578125,
     "mlp8": 0.14453125,
@@ -61,7 +61,7 @@
   },
   "verdict": "p0av_capacity_insufficient",
   "cost": {
-    "cpu": 182.33
+    "cpu": 184.27
   },
   "discipline": {
     "check_reads": 0,
