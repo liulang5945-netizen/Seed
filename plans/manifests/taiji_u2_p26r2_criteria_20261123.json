@@ -1,0 +1,86 @@
+{
+  "schema": "taiji-u2-p26r2-criteria-v1",
+  "card": "P26-R2",
+  "created": "2026-11-23",
+  "decision": "D-20261123-320",
+  "authority": "owner:standing-authorization:2026-11-20#recommendation-default",
+  "subject": "Subject72 seed 20261120; P26-S2 session world; 5-action head trained from scratch by advantage-weighted regression on episode returns (no planner labels); G2 requires energy/conf ablations only (solved descriptive)",
+  "protocol": {
+    "seed": 20261120,
+    "horizon": 12,
+    "items": 3,
+    "energy_max": 2,
+    "p_continue_low": 0.35,
+    "p_continue_high": 0.85,
+    "p_help": 0.75,
+    "help_cost": 2,
+    "verify_cost": 1,
+    "energy_bonus": 0.15,
+    "train_batches": 240,
+    "episodes_per_batch": 32,
+    "epochs_per_batch": 4,
+    "minibatch": 256,
+    "lr": 0.003,
+    "wd": 0.0,
+    "epsilon_start": 0.5,
+    "epsilon_end": 0.05,
+    "awr_clip": 10.0,
+    "eval_every": 20,
+    "valid_episodes": 128,
+    "eval_episodes": 300,
+    "eval_seed_offset": 99500,
+    "actions": [
+      "CONTINUE",
+      "VERIFY",
+      "HELP",
+      "REST",
+      "WAIT"
+    ],
+    "channels": {
+      "solved": [
+        0,
+        4
+      ],
+      "conf": [
+        4,
+        6
+      ],
+      "energy": [
+        6,
+        9
+      ],
+      "pending": [
+        9,
+        11
+      ],
+      "t_bucket": [
+        11,
+        14
+      ],
+      "query": 15
+    }
+  },
+  "gates": {
+    "G0_gain_over_fixed_min": 0.05,
+    "G1_dp_gap_max": 0.15,
+    "G2_energy_drop_min": 0.05,
+    "G2_conf_drop_min": 0.05,
+    "G3_min_action_share": 0.05,
+    "G3_rest_given_zero_min": 0.6,
+    "G4_capsule_diff_max": 1e-06
+  },
+  "budget_cpu": 500.0,
+  "check_reads": 0,
+  "final_reads": 0,
+  "exits": [
+    "p26r2_verified",
+    "p26r2_no_gain",
+    "p26r2_suboptimal",
+    "p26r2_state_blind",
+    "p26r2_behaviour_weak",
+    "p26r2_baseline_insufficient",
+    "budget_stop",
+    "engineering_failure"
+  ],
+  "criteria_sha256": "fc0927d121a499dd5941b15f422f7c195fbdf29a95d6b86635c75d44543f912a"
+}

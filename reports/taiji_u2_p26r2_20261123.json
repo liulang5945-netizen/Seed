@@ -1,0 +1,146 @@
+{
+  "schema": "taiji-u2-p26r-v1",
+  "created_utc": "2026-11-23T02:45:35.620366+00:00",
+  "criteria_sha256": "fc0927d121a499dd5941b15f422f7c195fbdf29a95d6b86635c75d44543f912a",
+  "authority": "owner:standing-authorization:2026-11-20#recommendation-default",
+  "seed": 20261120,
+  "curve": [
+    {
+      "batch": 20,
+      "utility": 2.05390625
+    },
+    {
+      "batch": 40,
+      "utility": 2.72421875
+    },
+    {
+      "batch": 60,
+      "utility": 2.7609375
+    },
+    {
+      "batch": 80,
+      "utility": 2.527734375
+    },
+    {
+      "batch": 100,
+      "utility": 2.664453125
+    },
+    {
+      "batch": 120,
+      "utility": 1.91171875
+    },
+    {
+      "batch": 140,
+      "utility": 2.755078125
+    },
+    {
+      "batch": 160,
+      "utility": 2.8210937499999997
+    },
+    {
+      "batch": 180,
+      "utility": 2.958984375
+    },
+    {
+      "batch": 200,
+      "utility": 2.9765625
+    },
+    {
+      "batch": 220,
+      "utility": 2.94140625
+    },
+    {
+      "batch": 240,
+      "utility": 2.92265625
+    }
+  ],
+  "learned": {
+    "mean_utility": 2.895,
+    "mean_solved": 2.88,
+    "action_counts": {
+      "CONTINUE": 507,
+      "VERIFY": 0,
+      "HELP": 593,
+      "REST": 2500,
+      "WAIT": 0
+    },
+    "rest_given_zero": 1.0,
+    "wait_given_pending": 0.0
+  },
+  "action_shares": {
+    "CONTINUE": 0.14083333333333334,
+    "VERIFY": 0.0,
+    "HELP": 0.16472222222222221,
+    "REST": 0.6944444444444444,
+    "WAIT": 0.0
+  },
+  "used_actions": 3,
+  "baselines": {
+    "always_continue": 1.07,
+    "always_help": 0.7333333333333333,
+    "random": 1.3546666666666667,
+    "heuristic": 2.819,
+    "dp_optimal": 2.964833333333333
+  },
+  "ablations": {
+    "zero_energy": {
+      "mean_utility": 0.8406666666666667,
+      "mean_solved": 0.5866666666666667,
+      "action_counts": {
+        "CONTINUE": 305,
+        "VERIFY": 0,
+        "HELP": 0,
+        "REST": 3295,
+        "WAIT": 0
+      },
+      "rest_given_zero": 0.2459016393442623,
+      "wait_given_pending": 0.0
+    },
+    "zero_conf": {
+      "mean_utility": 2.7455,
+      "mean_solved": 2.66,
+      "action_counts": {
+        "CONTINUE": 1110,
+        "VERIFY": 0,
+        "HELP": 311,
+        "REST": 2179,
+        "WAIT": 0
+      },
+      "rest_given_zero": 1.0,
+      "wait_given_pending": 0.0
+    },
+    "zero_solved": {
+      "mean_utility": 2.958833333333333,
+      "mean_solved": 2.8833333333333333,
+      "action_counts": {
+        "CONTINUE": 947,
+        "VERIFY": 0,
+        "HELP": 598,
+        "REST": 2055,
+        "WAIT": 0
+      },
+      "rest_given_zero": 1.0,
+      "wait_given_pending": 0.0
+    }
+  },
+  "best_fixed": 2.819,
+  "capsule_state_diff": 0.0,
+  "gates": {
+    "G0": true,
+    "G1": true,
+    "G2": true,
+    "G3": true,
+    "G4": true
+  },
+  "verdict": "p26r2_verified",
+  "run_conditions": {
+    "threads": 1
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 148.33
+  }
+}
