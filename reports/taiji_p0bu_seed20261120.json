@@ -1,0 +1,211 @@
+{
+  "schema": "taiji-p0bu-diag-v1",
+  "created_utc": "2026-11-23T18:56:11.353834+00:00",
+  "seed": 20261120,
+  "task": "continuous_loop_with_feedback",
+  "normal_cn": 1.0,
+  "cn_probe": {
+    "train": 0.5677083134651184,
+    "test": 0.48046875
+  },
+  "birth_probe": {
+    "train": 0.53125,
+    "test": 0.5
+  },
+  "null_cn_mean": 0.491796875,
+  "null_birth_mean": 0.4953125,
+  "normal_cn_after": 1.0,
+  "acc4_before_phaseB": 1.0,
+  "acc4_after_phaseB": 1.0,
+  "acc8_seen": 1.0,
+  "acc8_unseen": 0.7265625,
+  "acc8_lesion_phaseB_cohort": 0.408203125,
+  "acc4_lesion_phaseB_cohort": 1.0,
+  "acc8_wake": 1.0,
+  "acc4_wake": 1.0,
+  "capsule_diff": 0.0,
+  "utility": {
+    "grow_and_train_8c": 0.6,
+    "retire_phaseA": -0.77,
+    "wait": 0.0
+  },
+  "chosen_action": "grow_and_train_8c",
+  "actual_gain": 0.75,
+  "acc8_after_retire": 0.2763671875,
+  "actual_retire_damage": 0.6572265625,
+  "regret": 0.14277343750000004,
+  "EV_GROW_GAIN_updated": 0.725,
+  "EV_RETIRE_DAMAGE_updated": 0.70361328125,
+  "utility2": {
+    "grow_more": -0.1,
+    "retire_phaseA": -0.72361328125,
+    "recycle_phaseA": -0.39,
+    "wait": 0.0
+  },
+  "chosen_action2": "wait",
+  "wake_log": [
+    {
+      "tick": 0,
+      "budget": 0.05,
+      "demand": 0,
+      "drift": 0.0,
+      "wake": false
+    },
+    {
+      "tick": 1,
+      "budget": 0.45,
+      "demand": 1,
+      "drift": 0.0,
+      "wake": true,
+      "recalled_4c": 1.0,
+      "recalled_8c": 1.0,
+      "action": "grow_learn_familyB",
+      "accB": 1.0,
+      "acc4_after_B": 1.0,
+      "acc8_after_B": 1.0,
+      "accB_lesion": 0.7490234375
+    },
+    {
+      "tick": 2,
+      "budget": 0.45,
+      "demand": 0,
+      "drift": 0.0,
+      "wake": false
+    }
+  ],
+  "capA_diff": 0.0,
+  "capAB_diff": 0.0,
+  "acc4_sess2": 1.0,
+  "acc8_sess2": 1.0,
+  "acc4_sess3": 1.0,
+  "acc8_sess3": 1.0,
+  "accB_sess3": 1.0,
+  "acc4_at_capAB": 1.0,
+  "acc8_at_capAB": 1.0,
+  "accB_at_capAB": 1.0,
+  "loop": {
+    "steps": [
+      {
+        "step": 0,
+        "disagree_fraction": 0.125,
+        "acc": {
+          "answer": 1.0,
+          "verify": 1.0,
+          "ask_for_help": 1.0
+        },
+        "chosen": "answer",
+        "chosen_acc": 1.0
+      },
+      {
+        "step": 1,
+        "disagree_fraction": 0.140625,
+        "acc": {
+          "answer": 1.0,
+          "verify": 1.0,
+          "ask_for_help": 1.0
+        },
+        "chosen": "answer",
+        "chosen_acc": 1.0
+      },
+      {
+        "step": 2,
+        "disagree_fraction": 0.125,
+        "acc": {
+          "answer": 1.0,
+          "verify": 1.0,
+          "ask_for_help": 1.0
+        },
+        "chosen": "answer",
+        "chosen_acc": 1.0
+      },
+      {
+        "step": 3,
+        "disagree_fraction": 0.1875,
+        "acc": {
+          "answer": 1.0,
+          "verify": 1.0,
+          "ask_for_help": 1.0
+        },
+        "chosen": "answer",
+        "chosen_acc": 1.0
+      }
+    ],
+    "answer_acc": 1.0,
+    "chosen_acc": 1.0,
+    "est": {
+      "answer": 0.975,
+      "verify": 0.984375,
+      "ask_for_help": 0.9824999999999999
+    },
+    "evidence_err": 0.025000000000000022
+  },
+  "unc": {
+    "n": 256,
+    "disagree_fraction": 0.37890625,
+    "mlp_acc": 0.61328125,
+    "disagree_subset_acc": 0.5463917255401611,
+    "policy_acc": 0.78515625,
+    "policy_cost": 0.37890625,
+    "advisor_expected_acc": 0.7472656352445484,
+    "ask_cost": 0.189453125,
+    "utilities": {
+      "answer": 0.61328125,
+      "verify": 0.595703125,
+      "ask_for_help": 0.6525390727445484
+    },
+    "chosen_action": "ask_for_help"
+  },
+  "accB": 1.0,
+  "acc4_after_B": 1.0,
+  "acc8_after_B": 1.0,
+  "woke_once": true,
+  "final_state": "waiting",
+  "acc8_capsule": 1.0,
+  "acc4_capsule": 1.0,
+  "gates": {
+    "G0_old_cn": true,
+    "G1_4c_retained": true,
+    "G2_8c_learned": true,
+    "G3_8c_unseen": true,
+    "G4_lesion_drop": true,
+    "G5_4c_integration_ok": true,
+    "G6_normal_retained": true,
+    "G7_wake_exact": true,
+    "G9_pressure": true,
+    "G15_choice": true,
+    "G16_gain": true,
+    "G17_retire_damage_consistent": true,
+    "G18_regret": true,
+    "G19_second_choice": true,
+    "G20_evidence_update": true,
+    "G21_wait_no_change": true,
+    "G22_wake_conditions": true,
+    "G23_wake_recall_ok": true,
+    "G24_final_wait": true,
+    "G25_wake_action": true,
+    "G26_familyB": true,
+    "G27_familyA_4c": true,
+    "G28_familyA_8c": true,
+    "G30_session1_restore": true,
+    "G31_session2_restore": true,
+    "G32_familyB_restored": true,
+    "G33_uncertainty": true,
+    "G34_verify_gain": true,
+    "G35_policy_choice": true,
+    "G36_ask_cost": true,
+    "G37_loop_actions": false,
+    "G38_loop_gain": false,
+    "G39_evidence_updated": true,
+    "G29_familyB_lesion": true,
+    "G8_capsule_exact": true
+  },
+  "verdict": "p0bu_loop_failed",
+  "cost": {
+    "cpu": 281.08
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  }
+}
