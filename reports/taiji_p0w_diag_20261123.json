@@ -1,0 +1,53 @@
+{
+  "schema": "taiji-p0w-diag-v1",
+  "created_utc": "2026-11-23T10:29:10.442424+00:00",
+  "seed": 20261120,
+  "cn_acc": 1.0,
+  "results": {
+    "char_0_4@all_ticks": {
+      "train": 1.0,
+      "test": 1.0
+    },
+    "char_0_4@tick0": {
+      "train": 0.7135416865348816,
+      "test": 0.4765625
+    },
+    "char_0_4@last_tick": {
+      "train": 0.9661458134651184,
+      "test": 0.828125
+    },
+    "grp_32_36@all_ticks": {
+      "train": 0.515625,
+      "test": 0.2421875
+    },
+    "grp_32_36@tick0": {
+      "train": 0.515625,
+      "test": 0.28125
+    },
+    "grp_32_36@last_tick": {
+      "train": 0.5286458134651184,
+      "test": 0.21875
+    },
+    "grp_40_44@all_ticks": {
+      "train": 0.5234375,
+      "test": 0.203125
+    },
+    "grp_40_44@tick0": {
+      "train": 0.5364583134651184,
+      "test": 0.203125
+    },
+    "grp_40_44@last_tick": {
+      "train": 0.546875,
+      "test": 0.2265625
+    }
+  },
+  "rule": "group test <= 0.55 => suppressed on held-out",
+  "cost": {
+    "cpu": 107.05
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  }
+}
