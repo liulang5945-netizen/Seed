@@ -1,0 +1,132 @@
+{
+  "schema": "taiji-p0cs-diag-v1",
+  "created_utc": "2026-11-23T23:38:41.495718+00:00",
+  "seed": 20261121,
+  "task": "unit_level_parallel_cohorts",
+  "normal_cn": 1.0,
+  "normal_cn_after": 1.0,
+  "acc_seen": 0.546875,
+  "acc_unseen_pairs": 0.208984375,
+  "acc_no_visual": 0.546875,
+  "acc_no_flag": 0.546875,
+  "acc_lesion_newborn": 0.2685546875,
+  "lesion_drop": 0.2783203125,
+  "cap_diff": 0.0,
+  "acc_restore": 0.546875,
+  "wake_log": [
+    {
+      "tick": 0,
+      "budget": 0.05,
+      "demand": 0,
+      "wake": false,
+      "action": "wait"
+    },
+    {
+      "tick": 1,
+      "budget": 0.45,
+      "demand": 1,
+      "wake": true,
+      "action": "recall_cross_modal",
+      "full": 0.546875,
+      "no_visual": 0.546875,
+      "no_flag": 0.546875
+    },
+    {
+      "tick": 2,
+      "budget": 0.45,
+      "demand": 0,
+      "wake": false,
+      "action": "wait"
+    },
+    {
+      "tick": 3,
+      "budget": 0.45,
+      "demand": 0,
+      "wake": false,
+      "action": "wait"
+    }
+  ],
+  "rl_diag": {
+    "n_train_params": 14,
+    "grad_norms_first_step": [
+      0.011204678565263748,
+      0.027199959382414818,
+      0.03341168165206909,
+      0.0348268486559391,
+      0.0029115243814885616,
+      -1.0,
+      -1.0,
+      0.0019944394007325172,
+      0.0008311130222864449,
+      0.00567292794585228,
+      9.045745537150651e-05,
+      0.00022857883595861495,
+      0.00024270180438179523,
+      1.8332766558160074e-05
+    ],
+    "param_deltas": [
+      4.258969783782959,
+      0.23685254156589508,
+      1.928285002708435,
+      0.13926197588443756,
+      0.5057268142700195,
+      0.0,
+      0.0,
+      0.2736344635486603,
+      0.4764721393585205,
+      1.7515805959701538,
+      0.3899174928665161,
+      2.9574689865112305,
+      1.3400059938430786,
+      0.4093779921531677
+    ],
+    "max_delta": 4.258969783782959,
+    "frac_updated": 0.8571428571428571,
+    "n_unmasked_units": 12
+  },
+  "reward_adapt": {
+    "acc_new_before": 0.521484375,
+    "acc_new_after": 0.5029296875,
+    "gain": -0.0185546875,
+    "acc_old_rule_after": 0.546875,
+    "lesion_drop_new": 0.236328125,
+    "acc_new_supervised": 0.515625,
+    "cohorts": {
+      "r0": 0.546875,
+      "r1": 0.515625,
+      "lesionB_on_r1": 0.2490234375,
+      "lesionB_on_r0": 0.0,
+      "lesionA_on_r0": 0.2783203125
+    }
+  },
+  "gates": {
+    "G0_old_cn": true,
+    "G1_multimodal": false,
+    "G2_unseen_pairs": false,
+    "G3_visual_causal": false,
+    "G4_flag_causal": false,
+    "G5_growth_causal": true,
+    "G6_normal_retained": true,
+    "G7_lesion_drop": true,
+    "G8_capsule_restore": true,
+    "G9_wake_pattern": true,
+    "G10_wake_recall": false,
+    "G11_rule_change_pre": true,
+    "G12_feedback_adaptation": false,
+    "G13_adaptation_gain": false,
+    "G14_growth_still_causal": true,
+    "G15_supervised_upper": false,
+    "G16_r0_unit_parallel": false,
+    "G17_r1_unit_parallel": false,
+    "G18_dissociation": true
+  },
+  "verdict": "p0cs_binding_failed",
+  "cost": {
+    "cpu": 251.47
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  }
+}
