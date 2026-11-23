@@ -1,0 +1,46 @@
+{
+  "schema": "taiji-actuq3-diag-v1",
+  "created_utc": "2026-11-23T08:42:21.287858+00:00",
+  "seed": 20261120,
+  "best_tau": 0.91,
+  "low_before": 0.4571428596973419,
+  "arms": {
+    "HEAD10": {
+      "low_before": 0.4571428596973419,
+      "low_after": 0.4476190507411957,
+      "gain": -0.00952380895614624,
+      "utility": 0.9582031965255737
+    },
+    "HEAD100": {
+      "low_before": 0.4571428596973419,
+      "low_after": 0.46666666865348816,
+      "gain": 0.00952380895614624,
+      "utility": 0.9476562738418579
+    },
+    "UNIT50": {
+      "low_before": 0.4571428596973419,
+      "low_after": 0.5142857432365417,
+      "gain": 0.05714288353919983,
+      "utility": 0.9558594226837158
+    },
+    "RECAL": {
+      "tau": 0.93,
+      "utility": 0.9554687738418579
+    }
+  },
+  "gates": {
+    "G0_base": true,
+    "G1_gain": false,
+    "G2_utility": true,
+    "G3_verify": false
+  },
+  "verdict": "actuq3_feedback_weak",
+  "cost": {
+    "cpu": 583.2
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  }
+}
