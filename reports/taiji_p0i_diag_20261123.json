@@ -1,0 +1,30 @@
+{
+  "schema": "taiji-p0i-diag-v1",
+  "created_utc": "2026-11-23T07:35:40.581175+00:00",
+  "seed": 20261120,
+  "phases": {
+    "fast_8": 1.0,
+    "slow_200": 1.0,
+    "transfer": 1.0,
+    "reset": 0.24609375
+  },
+  "reset_drop": 0.75390625,
+  "p24_before": 0.9921875,
+  "p24_after": 0.9921875,
+  "gates": {
+    "G0_fast": true,
+    "G1_slow": true,
+    "G2_transfer": true,
+    "G3_reset_drop": true,
+    "G4_retention": true
+  },
+  "verdict": "p0i_verified",
+  "cost": {
+    "cpu": 153.95
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  }
+}
