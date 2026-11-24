@@ -1,0 +1,146 @@
+{
+  "schema": "taiji-p0dh-diag-v1",
+  "created_utc": "2026-11-24T02:35:51.456810+00:00",
+  "seed": 20261121,
+  "task": "two_round_growth_recycle",
+  "normal_cn": 1.0,
+  "normal_cn_after": 1.0,
+  "s1": {
+    "r0": 1.0
+  },
+  "s2": {
+    "r1": 1.0,
+    "r0": 0.5185546875,
+    "r0_cal": 0.94921875
+  },
+  "s3": {
+    "r2": 1.0,
+    "r0": 0.94921875,
+    "r1": 1.0,
+    "r0_cal": 0.9775390625,
+    "r1_cal": 1.0
+  },
+  "capsule": {
+    "r2_restore": 1.0,
+    "cap_diff": 0.0
+  },
+  "calib_steps": 900,
+  "fourth": {
+    "utility": {
+      "grow_learn_R3": 0.56,
+      "wait": 0.0,
+      "retire_C_cohort": -0.72
+    },
+    "chosen": "grow_learn_R3",
+    "r3": 1.0,
+    "r0": 0.9873046875,
+    "r1": 1.0,
+    "r2": 1.0,
+    "cap4_diff": 0.0,
+    "r3_restore": 1.0
+  },
+  "fifth": {
+    "utility": {
+      "grow_learn_R4": 0.56,
+      "wait": 0.0
+    },
+    "chosen": "grow_learn_R4",
+    "r4": 1.0,
+    "r0": 0.994140625,
+    "r1": 1.0,
+    "r2": 1.0,
+    "r3": 1.0,
+    "cap5_diff": 0.0,
+    "r4_restore": 1.0
+  },
+  "recycle": {
+    "chosen": "recycle_D_learn_R5",
+    "r5": 1.0,
+    "r3_before": 1.0,
+    "r3_after": 0.4951171875,
+    "r0": 0.99609375,
+    "r1": 1.0,
+    "r2": 1.0,
+    "r4": 1.0,
+    "capR_diff": 0.0,
+    "r5_restore": 1.0,
+    "units": 192
+  },
+  "cycle": {
+    "r6": 1.0,
+    "r6_restore": 1.0,
+    "capG_diff": 0.0,
+    "r7": 1.0,
+    "r4_before": 1.0,
+    "r4_after": 0.3994140625,
+    "r7_restore": 1.0,
+    "capH_diff": 0.0,
+    "after": {
+      "r0": 0.9970703125,
+      "r1": 1.0,
+      "r2": 1.0,
+      "r5": 1.0,
+      "r6": 1.0
+    },
+    "calib_steps": 2100
+  },
+  "round2": {
+    "r8": 1.0,
+    "r9": 1.0,
+    "r6_before": 1.0,
+    "r6_after": 0.3720703125,
+    "r9_restore": 1.0,
+    "capJ_diff": 0.0,
+    "after": {
+      "r0": 1.0,
+      "r1": 1.0,
+      "r2": 1.0,
+      "r5": 1.0,
+      "r7": 1.0,
+      "r8": 1.0
+    },
+    "calib_steps": 2400
+  },
+  "gates": {
+    "G0_old_cn": true,
+    "G1_r0": true,
+    "G2_r1": true,
+    "G3_r2": true,
+    "G4_capsule": true,
+    "G5_normal_retained": true,
+    "G6_recalib_cost": true,
+    "G7_choice4": true,
+    "G8_r3": true,
+    "G9_all_retained": true,
+    "G10_cap4": true,
+    "G11_choice5": true,
+    "G12_r4": true,
+    "G13_all_five": true,
+    "G14_cap5": true,
+    "G15_recycle_choice": true,
+    "G16_r5": true,
+    "G17_others_retained": true,
+    "G18_r3_overwritten": true,
+    "G19_capR": true,
+    "G20_units_constant": true,
+    "G21_r6_growth": true,
+    "G22_growth_retained": true,
+    "G23_r7_recycle": true,
+    "G24_recycle_overwrite": true,
+    "G25_cycle_retained": true,
+    "G26_r8": true,
+    "G27_round2_growth_retained": true,
+    "G28_r9": true,
+    "G29_r6_overwritten": true,
+    "G30_round2_retained": true
+  },
+  "verdict": "p0dh_verified",
+  "cost": {
+    "cpu": 856.36
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  }
+}
