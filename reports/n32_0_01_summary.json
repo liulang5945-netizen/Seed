@@ -1,0 +1,29 @@
+{
+  "schema": "taiji-n32-0-rt-v1-summary",
+  "card": "N32.0.01",
+  "scope": "routing=external_task_id; protection=disjoint_columns(construction); heads=per_task; state=episode_reset; scenario=task_incremental",
+  "cpu_total": 378.79,
+  "configs": {
+    "u24_s1200": {
+      "weakest_margin": 0.015625,
+      "all_seeds_plus_0_02": false
+    },
+    "u24_s2400": {
+      "weakest_margin": 0.08359375000000002,
+      "all_seeds_plus_0_02": true
+    },
+    "u48_s1200": {
+      "weakest_margin": 0.11484375000000002,
+      "all_seeds_plus_0_02": true
+    },
+    "u48_s2400": {
+      "weakest_margin": 0.11484375000000002,
+      "all_seeds_plus_0_02": true
+    }
+  },
+  "chosen": {
+    "units": 24,
+    "steps": 2400
+  },
+  "exit": "signal_positive"
+}

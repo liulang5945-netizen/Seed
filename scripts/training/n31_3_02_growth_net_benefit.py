@@ -1,4 +1,4 @@
-"""N31.3.01: growth net benefit (cell08) — grow arm vs same-capacity prealloc control.
+"""N31.3.02: growth net benefit (cell08) — grow arm vs same-capacity prealloc control.
 
 Both arms use the leak-free base 8-colour pipeline (NO colour-relabel augmentation),
 identical data order, replay and step counts.  Only the timing of capacity allocation
@@ -10,7 +10,7 @@ differs:
 Cell08 gate: new-ability net gain >= +0.05 (grow - prealloc, 8-colour seen accuracy)
 and old-ability retention >= prealloc - 0.02 (4-colour after phase B).
 
-Usage: python scripts/training/n31_3_01_growth_net_benefit.py <seed> <grow|prealloc>
+Usage: python scripts/training/n31_3_02_growth_net_benefit.py <seed> <grow|prealloc>
 """
 
 from __future__ import annotations
@@ -45,7 +45,7 @@ from scripts.training.verify_taiji_23s2a_gain_20261122 import BI_CN_TRAIN_FIRST,
 ROOT = Path(r"E:\Seed")
 SEED = int(sys.argv[1]) if len(sys.argv) > 1 else 20261120
 ARM = sys.argv[2] if len(sys.argv) > 2 else "grow"
-OUT = ROOT / f"reports/n31_3_01_{ARM}_seed{SEED}.json"
+OUT = ROOT / f"reports/n31_3_02_{ARM}_seed{SEED}.json"
 WARMUP_STEPS = 2400
 OLD_N = 72
 
@@ -193,8 +193,8 @@ def main() -> int:
     normal_after = cn_eval(subj)
     capsule_diff = 0.0
     payload = {
-        "schema": "taiji-n31-3-01-v1",
-        "card": "N31.3.01",
+        "schema": "taiji-n31-3-02-v1",
+        "card": "N31.3.02",
         "created_utc": datetime.now(UTC).isoformat(),
         "seed": SEED,
         "arm": ARM,

@@ -1,0 +1,12 @@
+{
+  "schema": "taiji-n32-0-rt-v1-summary",
+  "card": "N32.0.90",
+  "scope": "routing=external_task_id; protection=disjoint_columns(construction); heads=per_task; state=episode_reset; scenario=task_incremental",
+  "cpu_total": 466.85,
+  "config": "u24_s2400",
+  "seeds_pass": 2,
+  "weakest_margin": -0.07656249999999998,
+  "rt_mean3": 0.9444444444444445,
+  "c2_mean3": 0.9071180555555555,
+  "exit": "n32_0_90_fail"
+}

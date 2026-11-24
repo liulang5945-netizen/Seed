@@ -1,0 +1,119 @@
+{
+  "schema": "taiji-n32-0-rt-v1",
+  "card": "N32.0.01",
+  "design": "DESIGN-N32-0-01_20261124.md",
+  "arch_version": "taiji-gru-rt-v1",
+  "scope": "routing=external_task_id; protection=disjoint_columns(construction); heads=per_task; state=episode_reset; scenario=task_incremental",
+  "created_utc": "2026-11-24T14:53:32.662629+00:00",
+  "seed": 20261122,
+  "smoke": false,
+  "gates": {
+    "cn": 0.85,
+    "p24": 0.75,
+    "conflict": 0.85,
+    "p27": 0.7
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  },
+  "rt": {
+    "configs": {
+      "u24_s1200": {
+        "final": {
+          "cn": 0.9609375,
+          "p24": 0.98828125,
+          "conflict": 1.0,
+          "p27": 0.91015625
+        },
+        "g01_margin": 0.11093750000000002,
+        "mean3": 0.953125,
+        "units": 24,
+        "steps": 1200,
+        "capsule_diff": 0.0,
+        "matches_immediate": true
+      },
+      "u24_s2400": {
+        "final": {
+          "cn": 0.96875,
+          "p24": 1.0,
+          "conflict": 1.0,
+          "p27": 0.953125
+        },
+        "g01_margin": 0.11875000000000002,
+        "mean3": 0.9739583333333334,
+        "units": 24,
+        "steps": 2400,
+        "capsule_diff": 0.0,
+        "matches_immediate": true
+      },
+      "u48_s1200": {
+        "final": {
+          "cn": 0.9921875,
+          "p24": 0.98046875,
+          "conflict": 1.0,
+          "p27": 0.9140625
+        },
+        "g01_margin": 0.14218750000000002,
+        "mean3": 0.9622395833333334,
+        "units": 48,
+        "steps": 1200,
+        "capsule_diff": 0.0,
+        "matches_immediate": true
+      },
+      "u48_s2400": {
+        "final": {
+          "cn": 0.97265625,
+          "p24": 1.0,
+          "conflict": 1.0,
+          "p27": 0.94921875
+        },
+        "g01_margin": 0.12265625000000002,
+        "mean3": 0.9739583333333334,
+        "units": 48,
+        "steps": 2400,
+        "capsule_diff": 0.0,
+        "matches_immediate": true
+      }
+    },
+    "live_bwt": {
+      "u24": {
+        "cn": 0.0,
+        "p24": 0.0,
+        "conflict": 0.0,
+        "p27": 0.0
+      },
+      "u48": {
+        "cn": 0.0,
+        "p24": 0.0,
+        "conflict": 0.0,
+        "p27": 0.0
+      }
+    },
+    "live_bwt_exact_zero": true,
+    "n_params": {
+      "u24": {
+        "cn": 8624,
+        "p24": 8429,
+        "p27": 8364,
+        "total": 25417
+      },
+      "u48": {
+        "cn": 20120,
+        "p24": 19925,
+        "p27": 19860,
+        "total": 59905
+      }
+    },
+    "cpu": {
+      "u24": 61.94,
+      "u48": 63.97
+    }
+  },
+  "status": "complete",
+  "cost": {
+    "cpu": 126.06,
+    "cap_cpu": 200.0
+  }
+}

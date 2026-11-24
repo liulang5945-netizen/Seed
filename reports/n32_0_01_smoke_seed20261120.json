@@ -1,0 +1,124 @@
+{
+  "schema": "taiji-n32-0-rt-v1",
+  "card": "N32.0.01",
+  "design": "DESIGN-N32-0-01_20261124.md",
+  "arch_version": "taiji-gru-rt-v1",
+  "scope": "routing=external_task_id; protection=disjoint_columns(construction); heads=per_task; state=episode_reset; scenario=task_incremental",
+  "created_utc": "2026-11-24T14:49:10.205808+00:00",
+  "seed": 20261120,
+  "smoke": true,
+  "gates": {
+    "cn": 0.85,
+    "p24": 0.75,
+    "conflict": 0.85,
+    "p27": 0.7
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  },
+  "rt": {
+    "configs": {
+      "u24_s20": {
+        "final": {
+          "cn": 0.12109375,
+          "p24": 0.2734375,
+          "conflict": 0.75,
+          "p27": 0.42578125
+        },
+        "g01_margin": -0.72890625,
+        "mean3": 0.2734375,
+        "units": 24,
+        "steps": 20,
+        "capsule_diff": 0.0,
+        "matches_immediate": true
+      },
+      "u24_s40": {
+        "final": {
+          "cn": 0.11328125,
+          "p24": 0.21484375,
+          "conflict": 1.0,
+          "p27": 0.46484375
+        },
+        "g01_margin": -0.73671875,
+        "mean3": 0.2643229166666667,
+        "units": 24,
+        "steps": 40,
+        "capsule_diff": 0.0,
+        "matches_immediate": true
+      },
+      "u48_s20": {
+        "final": {
+          "cn": 0.125,
+          "p24": 0.26171875,
+          "conflict": 0.8203125,
+          "p27": 0.33984375
+        },
+        "g01_margin": -0.725,
+        "mean3": 0.2421875,
+        "units": 48,
+        "steps": 20,
+        "capsule_diff": 0.0,
+        "matches_immediate": true
+      },
+      "u48_s40": {
+        "final": {
+          "cn": 0.1953125,
+          "p24": 0.27734375,
+          "conflict": 1.0,
+          "p27": 0.4609375
+        },
+        "g01_margin": -0.6546875,
+        "mean3": 0.3111979166666667,
+        "units": 48,
+        "steps": 40,
+        "capsule_diff": 0.0,
+        "matches_immediate": true
+      }
+    },
+    "live_bwt": {
+      "u24": {
+        "cn": 0.0,
+        "p24": 0.0,
+        "conflict": 0.0,
+        "p27": 0.0
+      },
+      "u48": {
+        "cn": 0.0,
+        "p24": 0.0,
+        "conflict": 0.0,
+        "p27": 0.0
+      }
+    },
+    "live_bwt_exact_zero": true,
+    "n_params": {
+      "u24": {
+        "cn": 8624,
+        "p24": 8429,
+        "p27": 8364,
+        "total": 25417
+      },
+      "u48": {
+        "cn": 20120,
+        "p24": 19925,
+        "p27": 19860,
+        "total": 59905
+      }
+    },
+    "cpu": {
+      "u24": 1.73,
+      "u48": 1.16
+    }
+  },
+  "status": "complete",
+  "cost": {
+    "cpu": 3.06,
+    "cap_cpu": 200.0
+  },
+  "projection": {
+    "card_cpu": 550.8,
+    "cap": 600.0
+  },
+  "projection_ok": true
+}
