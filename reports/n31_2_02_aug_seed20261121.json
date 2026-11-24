@@ -1,0 +1,89 @@
+{
+  "schema": "taiji-n31-2-02-v1",
+  "card": "N31.2.02",
+  "arm": "aug",
+  "holdout_seen_in_training": 0,
+  "created_utc": "2026-11-24T08:15:31.953454+00:00",
+  "seed": 20261121,
+  "task": "unseen_pairs_failure_breakdown",
+  "breakdown_unseen": {
+    "n": 512,
+    "acc": 0.607421875,
+    "acc_flag0": 0.5038759689922481,
+    "acc_flag_pos": 0.6422976501305483,
+    "acc_first": 0.4689922480620155,
+    "acc_second": 0.7480314960629921,
+    "pred_is_normal": 0.2890625,
+    "pred_is_other": 0.5390625,
+    "pred_is_c1": 0.587890625,
+    "pred_is_c2": 0.240234375,
+    "pred_is_neither": 0.171875,
+    "rule_always_normal": 0.251953125,
+    "rule_always_other": 0.748046875,
+    "rule_always_c1": 0.486328125,
+    "rule_always_c2": 0.513671875
+  },
+  "breakdown_seen": {
+    "n": 1024,
+    "acc": 1.0,
+    "acc_flag0": 1.0,
+    "acc_flag_pos": 1.0,
+    "acc_first": 1.0,
+    "acc_second": 1.0,
+    "pred_is_normal": 0.267578125,
+    "pred_is_other": 0.732421875,
+    "pred_is_c1": 0.4921875,
+    "pred_is_c2": 0.5078125,
+    "pred_is_neither": 0.0,
+    "rule_always_normal": 0.267578125,
+    "rule_always_other": 0.732421875,
+    "rule_always_c1": 0.4921875,
+    "rule_always_c2": 0.5078125
+  },
+  "normal_cn": 1.0,
+  "cn_probe": {
+    "train": 0.5169270634651184,
+    "test": 0.5068359375
+  },
+  "birth_probe": {
+    "train": 0.5009765625,
+    "test": 0.4638671875
+  },
+  "null_cn_mean": 0.5012044270833333,
+  "null_birth_mean": 0.5015299479166667,
+  "normal_cn_after": 1.0,
+  "acc4_before_phaseB": 0.990234375,
+  "acc4_after_phaseB": 1.0,
+  "acc8_seen": 1.0,
+  "acc8_unseen": 0.607421875,
+  "acc8_lesion_phaseB_cohort": 0.482421875,
+  "acc4_lesion_phaseB_cohort": 0.990234375,
+  "acc8_wake": 1.0,
+  "acc4_wake": 1.0,
+  "capsule_diff": 0.0,
+  "acc8_capsule": 1.0,
+  "acc4_capsule": 1.0,
+  "gates": {
+    "R_leak_free": true,
+    "S_old_cn_retained": true,
+    "R_wake_exact": true,
+    "R_capsule_exact": true,
+    "E_pressure": true,
+    "E_cell06_unseen": false,
+    "E_cell06_seen": true,
+    "E_cell06_old4": true,
+    "E_growth_lesion": true
+  },
+  "verdict": "n31_2_02_signal_negative",
+  "cost": {
+    "cpu": 351.02
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  },
+  "run_conditions": {
+    "threads": 1
+  }
+}

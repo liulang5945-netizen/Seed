@@ -403,6 +403,9 @@ def main() -> int:
     parser.add_argument("--seeds", default=",".join(str(s) for s in SEEDS))
     parser.add_argument("--levels", default=",".join(lv.name for lv in LEVELS))
     parser.add_argument("--lr-sweep", action="store_true")
+    parser.add_argument("--lrs", default="", help="comma-separated lr grid (overrides LR_GRID)")
+    parser.add_argument("--fit", type=int, default=FIT, help="fit split size")
+    parser.add_argument("--arms", default=",".join(ARM_NAMES))
     parser.add_argument("--cap-cpu", type=float, default=DEFAULT_CAP_CPU)
     parser.add_argument("--smoke", action="store_true", help="30 steps, first seed, no report")
     args = parser.parse_args()
@@ -420,7 +423,12 @@ def main() -> int:
     if args.smoke:
         steps, seeds = 30, seeds[:1]
     checkpoints = {max(1, steps // 4), max(1, steps // 2), steps}
-    lrs = LR_GRID if args.lr_sweep else (LR_DEFAULT,)
+    grid = tuple(float(x) for x in args.lrs.split(",") if x.strip()) if args.lrs else LR_GRID
+    lrs = grid if args.lr_sweep else (LR_DEFAULT,)
+    arm_names = [a.strip() for a in args.arms.split(",") if a.strip()]
+    if not set(arm_names) <= set(ARM_NAMES) or not {"selective", "gru_gate"} <= set(arm_names):
+        raise SystemExit(f"--arms must include selective and gru_gate, got {arm_names}")
+    fit_size = args.fit
     dims = {lv.name: level_dims(lv) for lv in LEVELS}
 
     status = "complete"
@@ -429,14 +437,14 @@ def main() -> int:
         row: dict[str, Any] = {"seed": seed, "levels": {}}
         for level in levels:
             idx = LEVELS.index(level)
-            fit = make_m3h(FIT, seed + 9000 + FIT_OFFSET + 100 * (idx + 1), level)
+            fit = make_m3h(fit_size, seed + 9000 + FIT_OFFSET + 100 * (idx + 1), level)
             tune = (
                 make_m3h(TUNE, seed + 9500 + FIT_OFFSET + 100 * (idx + 1), level)
                 if args.lr_sweep
                 else None
             )
             arms: dict[str, Any] = {}
-            for name in ARM_NAMES:
+            for name in arm_names:
                 runs = []
                 for lr in lrs:
                     if time.process_time() - started > args.cap_cpu:
@@ -477,7 +485,7 @@ def main() -> int:
     for level in levels:
         lv_sum: dict[str, Any] = {}
         per_seed: dict[str, dict[int, float]] = {}
-        for name in ARM_NAMES:
+        for name in arm_names:
             accs = {
                 r["seed"]: r["levels"][level.name][name]["chosen"]["fit_acc"]
                 for r in rows
@@ -519,14 +527,15 @@ def main() -> int:
             "seeds": seeds,
             "steps": steps,
             "batch": BATCH,
-            "fit_size": FIT,
+            "fit_size": fit_size,
+            "arms": arm_names,
             "lrs": list(lrs),
             "lr_selection": "max tune_acc" if args.lr_sweep else "fixed (Bridge-1 value)",
             "optimizer": "Adam, weight_decay=1e-4, clip_grad_norm=1.0",
             "checkpoints": sorted(checkpoints),
             "dims": {lv.name: dims[lv.name] for lv in levels},
-            "accuracy_resolution": 1.0 / FIT,
-            "binomial_se_at_p0.5": math.sqrt(0.25 / FIT),
+            "accuracy_resolution": 1.0 / fit_size,
+            "binomial_se_at_p0.5": math.sqrt(0.25 / fit_size),
             "decision_rules_sha256": rules_sha256,
         },
         "rows": rows,
