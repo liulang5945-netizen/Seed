@@ -1,0 +1,55 @@
+{
+  "schema": "taiji-p0cy-diag-v1",
+  "created_utc": "2026-11-24T00:24:03.443191+00:00",
+  "seed": 20261121,
+  "task": "staged_r2_strengthened",
+  "normal_cn": 1.0,
+  "normal_cn_after": 1.0,
+  "r0": 0.9921875,
+  "r1": 0.9931640625,
+  "r2": 1.0,
+  "r0_staged": 0.9921875,
+  "r1_staged": 0.9931640625,
+  "lesA": {
+    "r0": 0.255859375,
+    "r1": 0.72265625,
+    "r2": 0.591796875
+  },
+  "lesB": {
+    "r0": 0.7314453125,
+    "r1": 0.25390625,
+    "r2": 0.7353515625
+  },
+  "lesC": {
+    "r0": 0.8447265625,
+    "r1": 0.912109375,
+    "r2": 0.25
+  },
+  "capsule": {
+    "r0_restore": 0.9921875,
+    "r1_restore": 0.9931640625,
+    "r2_restore": 1.0,
+    "cap_diff": 0.0
+  },
+  "gates": {
+    "G0_old_cn": true,
+    "G1_r0": true,
+    "G2_r1": true,
+    "G2b_r2": true,
+    "G2c_staged_retention": true,
+    "G3_lesA_r0": true,
+    "G4_lesB_r1": true,
+    "G5_normal_retained": true,
+    "G6_capsule": true,
+    "G7_lesC_r2": true
+  },
+  "verdict": "p0cy_verified",
+  "cost": {
+    "cpu": 310.58
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  }
+}
