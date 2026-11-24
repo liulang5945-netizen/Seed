@@ -9413,3 +9413,11 @@ etired，退役单位 drive 被掩蔽 ⇒ 训练时特征全零、评估时恢�
 
 **1. 依据**：N31.3.01 单测 PASS（D-465），属工程正确门；格07 为单测固定测试，非确认运行类格。
 **2. 变更**：STAGE_GATES §5 格07 状态 open→pass，附证据（|dz|=|da|=0）。
+
+### D-20261124-469 N31.4.01 单元动力学对标（探索）：**signal_positive**
+
+**1. 卡**：RESULT-N31-4-01_20261124.md；diag_m3_hard_20261123.py（D-330 配置）；回执 
+eports/n31_4_01_m3_hard_20261124.json；探索 seed 20261120–22，约 797 CPU。
+**2. 读数**：H1 ceiling（1.000 vs 0.999，d≈0）；**H2 selective_better**（1.000 vs 0.896，逐 seed d=+0.123/+0.088/+0.102）；**H3 selective_better**（0.861 vs 0.613，d=+0.152/+0.273/+0.316）；等 FLOPs（差 ≤0.5%），参数量 selective +21%。
+**3. 判定**：探索卡出口 **signal_positive**（不升格、不用 verified）。启动 **N31.4.90**（确认 seed 20261201–03＋--lr-sweep，读前冻结、逐 seed 判定；确认运行不计线预算）。
+**4. 后继**：按 N31.4.90 结果定卷宗终态（selective_better→推进级2/级3；平→REPLACE-STANDARD 换 GRU＋read_gate）。

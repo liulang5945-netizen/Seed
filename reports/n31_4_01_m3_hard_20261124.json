@@ -1,0 +1,741 @@
+{
+  "schema": "taiji-u2-m3-hard-v1",
+  "card": "Exploration diagnostic: Selective vs read_gate-matched GRU on harder M3",
+  "created_utc": "2026-11-24T06:54:17.210841+00:00",
+  "run_conditions": {
+    "threads": 1,
+    "OMP_NUM_THREADS": null,
+    "MKL_NUM_THREADS": null
+  },
+  "protocol": {
+    "levels": [
+      {
+        "name": "H1",
+        "horizon": 24,
+        "slots": 3,
+        "values": 4,
+        "overwrites": 0
+      },
+      {
+        "name": "H2",
+        "horizon": 24,
+        "slots": 6,
+        "values": 4,
+        "overwrites": 0
+      },
+      {
+        "name": "H3",
+        "horizon": 40,
+        "slots": 6,
+        "values": 8,
+        "overwrites": 2
+      }
+    ],
+    "seeds": [
+      20261120,
+      20261121,
+      20261122
+    ],
+    "steps": 1500,
+    "batch": 64,
+    "fit_size": 512,
+    "lrs": [
+      0.007
+    ],
+    "lr_selection": "fixed (Bridge-1 value)",
+    "optimizer": "Adam, weight_decay=1e-4, clip_grad_norm=1.0",
+    "checkpoints": [
+      375,
+      750,
+      1500
+    ],
+    "dims": {
+      "H1": {
+        "target_flops": 418816,
+        "hidden": {
+          "gru": 34,
+          "gru_gate": 34
+        },
+        "flops": {
+          "selective": 418816,
+          "gru": 414496,
+          "gru_gate": 417930
+        }
+      },
+      "H2": {
+        "target_flops": 418816,
+        "hidden": {
+          "gru": 34,
+          "gru_gate": 34
+        },
+        "flops": {
+          "selective": 418816,
+          "gru": 414496,
+          "gru_gate": 417930
+        }
+      },
+      "H3": {
+        "target_flops": 688640,
+        "hidden": {
+          "gru": 34,
+          "gru_gate": 34
+        },
+        "flops": {
+          "selective": 688640,
+          "gru": 688096,
+          "gru_gate": 691530
+        }
+      }
+    },
+    "accuracy_resolution": 0.001953125,
+    "binomial_se_at_p0.5": 0.02209708691207961,
+    "decision_rules_sha256": "7037d0305647c7ed78a6781311c0d029fc9281408a7b231c00df4c050d5ed907"
+  },
+  "rows": [
+    {
+      "seed": 20261120,
+      "levels": {
+        "H1": {
+          "selective": {
+            "chosen": {
+              "lr": 0.007,
+              "fit_acc": 1.0,
+              "tune_acc": null,
+              "fit_curve": {
+                "375": 0.5390625,
+                "750": 0.861328125,
+                "1500": 1.0
+              },
+              "auc": 0.8001302083333334,
+              "trainable_params": 15428,
+              "cpu": 36.953
+            },
+            "all_lrs": null
+          },
+          "gru_gate": {
+            "chosen": {
+              "lr": 0.007,
+              "fit_acc": 1.0,
+              "tune_acc": null,
+              "fit_curve": {
+                "375": 0.564453125,
+                "750": 0.99609375,
+                "1500": 1.0
+              },
+              "auc": 0.853515625,
+              "trainable_params": 12734,
+              "cpu": 20.297
+            },
+            "all_lrs": null
+          },
+          "gru": {
+            "chosen": {
+              "lr": 0.007,
+              "fit_acc": 0.921875,
+              "tune_acc": null,
+              "fit_curve": {
+                "375": 0.5546875,
+                "750": 0.55859375,
+                "1500": 0.921875
+              },
+              "auc": 0.6783854166666666,
+              "trainable_params": 11068,
+              "cpu": 19.281
+            },
+            "all_lrs": null
+          }
+        },
+        "H2": {
+          "selective": {
+            "chosen": {
+              "lr": 0.007,
+              "fit_acc": 1.0,
+              "tune_acc": null,
+              "fit_curve": {
+                "375": 0.4453125,
+                "750": 0.509765625,
+                "1500": 1.0
+              },
+              "auc": 0.6516927083333334,
+              "trainable_params": 15428,
+              "cpu": 44.719
+            },
+            "all_lrs": null
+          },
+          "gru_gate": {
+            "chosen": {
+              "lr": 0.007,
+              "fit_acc": 0.876953125,
+              "tune_acc": null,
+              "fit_curve": {
+                "375": 0.4453125,
+                "750": 0.47265625,
+                "1500": 0.876953125
+              },
+              "auc": 0.5983072916666666,
+              "trainable_params": 12734,
+              "cpu": 27.797
+            },
+            "all_lrs": null
+          },
+          "gru": {
+            "chosen": {
+              "lr": 0.007,
+              "fit_acc": 0.455078125,
+              "tune_acc": null,
+              "fit_curve": {
+                "375": 0.44921875,
+                "750": 0.44921875,
+                "1500": 0.455078125
+              },
+              "auc": 0.451171875,
+              "trainable_params": 11068,
+              "cpu": 23.969
+            },
+            "all_lrs": null
+          }
+        },
+        "H3": {
+          "selective": {
+            "chosen": {
+              "lr": 0.007,
+              "fit_acc": 0.822265625,
+              "tune_acc": null,
+              "fit_curve": {
+                "375": 0.30078125,
+                "750": 0.310546875,
+                "1500": 0.822265625
+              },
+              "auc": 0.4778645833333333,
+              "trainable_params": 15688,
+              "cpu": 54.828
+            },
+            "all_lrs": null
+          },
+          "gru_gate": {
+            "chosen": {
+              "lr": 0.007,
+              "fit_acc": 0.669921875,
+              "tune_acc": null,
+              "fit_curve": {
+                "375": 0.29296875,
+                "750": 0.330078125,
+                "1500": 0.669921875
+              },
+              "auc": 0.4309895833333333,
+              "trainable_params": 12994,
+              "cpu": 32.625
+            },
+            "all_lrs": null
+          },
+          "gru": {
+            "chosen": {
+              "lr": 0.007,
+              "fit_acc": 0.29296875,
+              "tune_acc": null,
+              "fit_curve": {
+                "375": 0.279296875,
+                "750": 0.30078125,
+                "1500": 0.29296875
+              },
+              "auc": 0.291015625,
+              "trainable_params": 11328,
+              "cpu": 33.156
+            },
+            "all_lrs": null
+          }
+        }
+      }
+    },
+    {
+      "seed": 20261121,
+      "levels": {
+        "H1": {
+          "selective": {
+            "chosen": {
+              "lr": 0.007,
+              "fit_acc": 1.0,
+              "tune_acc": null,
+              "fit_curve": {
+                "375": 0.583984375,
+                "750": 1.0,
+                "1500": 1.0
+              },
+              "auc": 0.861328125,
+              "trainable_params": 15428,
+              "cpu": 27.031
+            },
+            "all_lrs": null
+          },
+          "gru_gate": {
+            "chosen": {
+              "lr": 0.007,
+              "fit_acc": 1.0,
+              "tune_acc": null,
+              "fit_curve": {
+                "375": 0.572265625,
+                "750": 1.0,
+                "1500": 1.0
+              },
+              "auc": 0.857421875,
+              "trainable_params": 12734,
+              "cpu": 15.703
+            },
+            "all_lrs": null
+          },
+          "gru": {
+            "chosen": {
+              "lr": 0.007,
+              "fit_acc": 0.515625,
+              "tune_acc": null,
+              "fit_curve": {
+                "375": 0.560546875,
+                "750": 0.564453125,
+                "1500": 0.515625
+              },
+              "auc": 0.546875,
+              "trainable_params": 11068,
+              "cpu": 14.891
+            },
+            "all_lrs": null
+          }
+        },
+        "H2": {
+          "selective": {
+            "chosen": {
+              "lr": 0.007,
+              "fit_acc": 1.0,
+              "tune_acc": null,
+              "fit_curve": {
+                "375": 0.46484375,
+                "750": 0.48828125,
+                "1500": 1.0
+              },
+              "auc": 0.6510416666666666,
+              "trainable_params": 15428,
+              "cpu": 32.25
+            },
+            "all_lrs": null
+          },
+          "gru_gate": {
+            "chosen": {
+              "lr": 0.007,
+              "fit_acc": 0.912109375,
+              "tune_acc": null,
+              "fit_curve": {
+                "375": 0.462890625,
+                "750": 0.462890625,
+                "1500": 0.912109375
+              },
+              "auc": 0.6126302083333334,
+              "trainable_params": 12734,
+              "cpu": 20.734
+            },
+            "all_lrs": null
+          },
+          "gru": {
+            "chosen": {
+              "lr": 0.007,
+              "fit_acc": 0.46875,
+              "tune_acc": null,
+              "fit_curve": {
+                "375": 0.46875,
+                "750": 0.470703125,
+                "1500": 0.46875
+              },
+              "auc": 0.4694010416666667,
+              "trainable_params": 11068,
+              "cpu": 20.688
+            },
+            "all_lrs": null
+          }
+        },
+        "H3": {
+          "selective": {
+            "chosen": {
+              "lr": 0.007,
+              "fit_acc": 0.884765625,
+              "tune_acc": null,
+              "fit_curve": {
+                "375": 0.353515625,
+                "750": 0.314453125,
+                "1500": 0.884765625
+              },
+              "auc": 0.517578125,
+              "trainable_params": 15688,
+              "cpu": 52.078
+            },
+            "all_lrs": null
+          },
+          "gru_gate": {
+            "chosen": {
+              "lr": 0.007,
+              "fit_acc": 0.611328125,
+              "tune_acc": null,
+              "fit_curve": {
+                "375": 0.283203125,
+                "750": 0.318359375,
+                "1500": 0.611328125
+              },
+              "auc": 0.404296875,
+              "trainable_params": 12994,
+              "cpu": 31.125
+            },
+            "all_lrs": null
+          },
+          "gru": {
+            "chosen": {
+              "lr": 0.007,
+              "fit_acc": 0.34765625,
+              "tune_acc": null,
+              "fit_curve": {
+                "375": 0.30859375,
+                "750": 0.3046875,
+                "1500": 0.34765625
+              },
+              "auc": 0.3203125,
+              "trainable_params": 11328,
+              "cpu": 30.516
+            },
+            "all_lrs": null
+          }
+        }
+      }
+    },
+    {
+      "seed": 20261122,
+      "levels": {
+        "H1": {
+          "selective": {
+            "chosen": {
+              "lr": 0.007,
+              "fit_acc": 1.0,
+              "tune_acc": null,
+              "fit_curve": {
+                "375": 0.533203125,
+                "750": 1.0,
+                "1500": 1.0
+              },
+              "auc": 0.8444010416666666,
+              "trainable_params": 15428,
+              "cpu": 26.797
+            },
+            "all_lrs": null
+          },
+          "gru_gate": {
+            "chosen": {
+              "lr": 0.007,
+              "fit_acc": 0.998046875,
+              "tune_acc": null,
+              "fit_curve": {
+                "375": 0.513671875,
+                "750": 0.986328125,
+                "1500": 0.998046875
+              },
+              "auc": 0.8326822916666666,
+              "trainable_params": 12734,
+              "cpu": 14.859
+            },
+            "all_lrs": null
+          },
+          "gru": {
+            "chosen": {
+              "lr": 0.007,
+              "fit_acc": 0.75390625,
+              "tune_acc": null,
+              "fit_curve": {
+                "375": 0.5234375,
+                "750": 0.537109375,
+                "1500": 0.75390625
+              },
+              "auc": 0.6048177083333334,
+              "trainable_params": 11068,
+              "cpu": 15.391
+            },
+            "all_lrs": null
+          }
+        },
+        "H2": {
+          "selective": {
+            "chosen": {
+              "lr": 0.007,
+              "fit_acc": 1.0,
+              "tune_acc": null,
+              "fit_curve": {
+                "375": 0.48828125,
+                "750": 0.490234375,
+                "1500": 1.0
+              },
+              "auc": 0.6595052083333334,
+              "trainable_params": 15428,
+              "cpu": 34.438
+            },
+            "all_lrs": null
+          },
+          "gru_gate": {
+            "chosen": {
+              "lr": 0.007,
+              "fit_acc": 0.8984375,
+              "tune_acc": null,
+              "fit_curve": {
+                "375": 0.474609375,
+                "750": 0.48046875,
+                "1500": 0.8984375
+              },
+              "auc": 0.6178385416666666,
+              "trainable_params": 12734,
+              "cpu": 21.641
+            },
+            "all_lrs": null
+          },
+          "gru": {
+            "chosen": {
+              "lr": 0.007,
+              "fit_acc": 0.490234375,
+              "tune_acc": null,
+              "fit_curve": {
+                "375": 0.474609375,
+                "750": 0.453125,
+                "1500": 0.490234375
+              },
+              "auc": 0.47265625,
+              "trainable_params": 11068,
+              "cpu": 21.531
+            },
+            "all_lrs": null
+          }
+        },
+        "H3": {
+          "selective": {
+            "chosen": {
+              "lr": 0.007,
+              "fit_acc": 0.875,
+              "tune_acc": null,
+              "fit_curve": {
+                "375": 0.2890625,
+                "750": 0.28125,
+                "1500": 0.875
+              },
+              "auc": 0.4817708333333333,
+              "trainable_params": 15688,
+              "cpu": 50.406
+            },
+            "all_lrs": null
+          },
+          "gru_gate": {
+            "chosen": {
+              "lr": 0.007,
+              "fit_acc": 0.55859375,
+              "tune_acc": null,
+              "fit_curve": {
+                "375": 0.267578125,
+                "750": 0.3125,
+                "1500": 0.55859375
+              },
+              "auc": 0.3795572916666667,
+              "trainable_params": 12994,
+              "cpu": 36.031
+            },
+            "all_lrs": null
+          },
+          "gru": {
+            "chosen": {
+              "lr": 0.007,
+              "fit_acc": 0.296875,
+              "tune_acc": null,
+              "fit_curve": {
+                "375": 0.3046875,
+                "750": 0.314453125,
+                "1500": 0.296875
+              },
+              "auc": 0.3053385416666667,
+              "trainable_params": 11328,
+              "cpu": 36.391
+            },
+            "all_lrs": null
+          }
+        }
+      }
+    }
+  ],
+  "summary": {
+    "H1": {
+      "selective": {
+        "fit_acc_mean": 1.0,
+        "fit_acc_min": 1.0,
+        "fit_acc_per_seed": {
+          "20261120": 1.0,
+          "20261121": 1.0,
+          "20261122": 1.0
+        },
+        "auc_mean": 0.8352864583333334,
+        "hidden": null,
+        "flops_ratio": 1.0
+      },
+      "gru_gate": {
+        "fit_acc_mean": 0.9993489583333334,
+        "fit_acc_min": 0.998046875,
+        "fit_acc_per_seed": {
+          "20261120": 1.0,
+          "20261121": 1.0,
+          "20261122": 0.998046875
+        },
+        "auc_mean": 0.8478732638888888,
+        "hidden": 34,
+        "flops_ratio": 0.9978845125305623
+      },
+      "gru": {
+        "fit_acc_mean": 0.73046875,
+        "fit_acc_min": 0.515625,
+        "fit_acc_per_seed": {
+          "20261120": 0.921875,
+          "20261121": 0.515625,
+          "20261122": 0.75390625
+        },
+        "auc_mean": 0.6100260416666666,
+        "hidden": 34,
+        "flops_ratio": 0.9896852078239609
+      }
+    },
+    "H2": {
+      "selective": {
+        "fit_acc_mean": 1.0,
+        "fit_acc_min": 1.0,
+        "fit_acc_per_seed": {
+          "20261120": 1.0,
+          "20261121": 1.0,
+          "20261122": 1.0
+        },
+        "auc_mean": 0.6540798611111112,
+        "hidden": null,
+        "flops_ratio": 1.0
+      },
+      "gru_gate": {
+        "fit_acc_mean": 0.8958333333333334,
+        "fit_acc_min": 0.876953125,
+        "fit_acc_per_seed": {
+          "20261120": 0.876953125,
+          "20261121": 0.912109375,
+          "20261122": 0.8984375
+        },
+        "auc_mean": 0.6095920138888888,
+        "hidden": 34,
+        "flops_ratio": 0.9978845125305623
+      },
+      "gru": {
+        "fit_acc_mean": 0.4713541666666667,
+        "fit_acc_min": 0.455078125,
+        "fit_acc_per_seed": {
+          "20261120": 0.455078125,
+          "20261121": 0.46875,
+          "20261122": 0.490234375
+        },
+        "auc_mean": 0.46440972222222227,
+        "hidden": 34,
+        "flops_ratio": 0.9896852078239609
+      }
+    },
+    "H3": {
+      "selective": {
+        "fit_acc_mean": 0.8606770833333334,
+        "fit_acc_min": 0.822265625,
+        "fit_acc_per_seed": {
+          "20261120": 0.822265625,
+          "20261121": 0.884765625,
+          "20261122": 0.875
+        },
+        "auc_mean": 0.49240451388888884,
+        "hidden": null,
+        "flops_ratio": 1.0
+      },
+      "gru_gate": {
+        "fit_acc_mean": 0.61328125,
+        "fit_acc_min": 0.55859375,
+        "fit_acc_per_seed": {
+          "20261120": 0.669921875,
+          "20261121": 0.611328125,
+          "20261122": 0.55859375
+        },
+        "auc_mean": 0.4049479166666667,
+        "hidden": 34,
+        "flops_ratio": 1.0041966775092936
+      },
+      "gru": {
+        "fit_acc_mean": 0.3125,
+        "fit_acc_min": 0.29296875,
+        "fit_acc_per_seed": {
+          "20261120": 0.29296875,
+          "20261121": 0.34765625,
+          "20261122": 0.296875
+        },
+        "auc_mean": 0.3055555555555556,
+        "hidden": 34,
+        "flops_ratio": 0.9992100371747212
+      }
+    }
+  },
+  "level_verdicts": {
+    "H1": {
+      "verdict": "ceiling",
+      "seeds": [
+        20261120,
+        20261121,
+        20261122
+      ],
+      "selective_mean": 1.0,
+      "gru_gate_mean": 0.9993489583333334,
+      "paired_diff_per_seed": [
+        0.0,
+        0.0,
+        0.001953125
+      ],
+      "paired_diff_mean": 0.0006510416666666666,
+      "chance": 0.25
+    },
+    "H2": {
+      "verdict": "selective_better",
+      "seeds": [
+        20261120,
+        20261121,
+        20261122
+      ],
+      "selective_mean": 1.0,
+      "gru_gate_mean": 0.8958333333333334,
+      "paired_diff_per_seed": [
+        0.123046875,
+        0.087890625,
+        0.1015625
+      ],
+      "paired_diff_mean": 0.10416666666666667,
+      "chance": 0.25
+    },
+    "H3": {
+      "verdict": "selective_better",
+      "seeds": [
+        20261120,
+        20261121,
+        20261122
+      ],
+      "selective_mean": 0.8606770833333334,
+      "gru_gate_mean": 0.61328125,
+      "paired_diff_per_seed": [
+        0.15234375,
+        0.2734375,
+        0.31640625
+      ],
+      "paired_diff_mean": 0.24739583333333334,
+      "chance": 0.125
+    }
+  },
+  "verdict": "unit_dynamics_contribution_bounded",
+  "status": "complete",
+  "claim_boundary": "exploration diagnostic on a synthetic task; not a capability claim; fit split only",
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0
+  },
+  "cost": {
+    "cpu": 796.78,
+    "cap_cpu": 1800.0
+  }
+}
