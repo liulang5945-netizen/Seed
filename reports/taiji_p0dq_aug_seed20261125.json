@@ -1,0 +1,28 @@
+{
+  "schema": "taiji-p0dq-diag-v1",
+  "created_utc": "2026-11-24T04:51:26.396736+00:00",
+  "seed": 20261125,
+  "arm": "aug",
+  "task": "8color_unseen_pairs",
+  "normal_cn": 1.0,
+  "normal_cn_after": 1.0,
+  "seen": 1.0,
+  "unseen": 1.0,
+  "lesion_seen": 0.1083984375,
+  "gates": {
+    "G0_old_cn": true,
+    "G1_seen": true,
+    "G2_unseen": true,
+    "G3_lesion": true,
+    "G4_normal_retained": true
+  },
+  "verdict": "p0dq_verified",
+  "cost": {
+    "cpu": 381.03
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  }
+}
