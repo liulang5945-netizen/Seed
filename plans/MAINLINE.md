@@ -199,6 +199,8 @@
 
 ### 3A.0 状态快照（2026-11-22，D-20261122-271 更新）
 
+> **[N31 进展（D-20261124-471 / D-20261124-472）]** 格07 出生中性 `pass`（N31.3.01）；N31.4.01 单元动力学对标 `signal_positive`（H2 / H3 上 selective 逐 seed 高于等 FLOPs GRU＋read_gate +0.09～+0.32），确认运行 N31.4.90 进行中。**审计：P0-DU / DV / DX / EB 的颜色重标号增广在 HOLDOUT 过滤之后才做置换，训练中每 seed 约 4,150 条留出对样本 → `data_invalid`**，「8 色未见对 6/6」撤回（[N31.0.06](reference/RESULT-N31-0-06_20261124.md)）。N31.2 开线（[N31.2.00](reference/DESIGN-N31-2-00_20261124.md)），首卡 N31.2.01 用无泄漏生成器。
+
 > **[N 编号体系生效、N31 开阶段（D-20261124-464）]** 统一目标（核心需求 §2.1）修订落盘：「自身机制」定义、自主选择须由学得策略产生、生长「能力必需／收益单签」、谱系自 N32 起算、仅 N35 签署、首个交付范围表。新增 [阶段验收与停止规则](active/STAGE_GATES_AND_STOPPING.md)（成绩单＋研究线熔断＋阶段时间盒）与 [机制通过标准与训练放行](active/MECHANISM_ACCEPTANCE.md)（级0–级4、终态、必需能力条款、放行01–07）；[ID_MAP_N](reference/ID_MAP_N.md) 映射旧编号。P0 线冻结；D-327「25-S 等 S1-R2」重解释为「生长收益签署以 N31 格01–05 为前置，生长能力在位不受限」。当前唯一阶段 N31（§0.3′）。零训练、零 check/final。
 
 > **[公平基线诊断：`read_gate_confound_confirmed`（D-20261123-329）]** D-227 Bridge 1 复现逐位一致；GRU 加同一末步 `read_gate` 后 3/3 seed 达 `1.000`＝Selective，去门后 Selective `0.516` ≈ GRU `0.530` ⇒ 「等 FLOPs 胜 GRU」归因于读门，**单元动力学优于 GRU 降为未证实**；S1-R2 对照臂 C5（GRU＋read_gate）改**必选**。500 步收敛 Selective 更快（0.97 vs 0.66）为非预注册线索。149.52 CPU、零 check/final。见 [结果卡](reference/RESULT-TAIJI_U2_FAIR_BASELINE_M3_20261123.md)。

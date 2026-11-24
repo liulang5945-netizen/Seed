@@ -9421,3 +9421,24 @@ eports/n31_4_01_m3_hard_20261124.json；探索 seed 20261120–22，约 797 CPU�
 **2. 读数**：H1 ceiling（1.000 vs 0.999，d≈0）；**H2 selective_better**（1.000 vs 0.896，逐 seed d=+0.123/+0.088/+0.102）；**H3 selective_better**（0.861 vs 0.613，d=+0.152/+0.273/+0.316）；等 FLOPs（差 ≤0.5%），参数量 selective +21%。
 **3. 判定**：探索卡出口 **signal_positive**（不升格、不用 verified）。启动 **N31.4.90**（确认 seed 20261201–03＋--lr-sweep，读前冻结、逐 seed 判定；确认运行不计线预算）。
 **4. 后继**：按 N31.4.90 结果定卷宗终态（selective_better→推进级2/级3；平→REPLACE-STANDARD 换 GRU＋read_gate）。
+
+
+### D-20261124-470 N31.4 单元动力学卷宗建立（补登记，零训练）
+
+**1. 卡**：[DOSSIER-N31-4-UNIT-DYNAMICS](DOSSIER-N31-4-UNIT-DYNAMICS.md)（卷宗文首已引用本号，此处补台账条目）。
+**2. 状态**：级0 完成；级1 部分（不变量06/07 待补）；级3 进行中（N31.4.01 `signal_positive`，N31.4.90 运行中）。零训练。
+
+
+### D-20261124-471 N31.0.06 颜色重标号增广泄漏审计：P0-DU / DV / DX / EB → `data_invalid`（零训练，0 check）
+
+**1. 卡**：[RESULT-N31-0-06](RESULT-N31-0-06_20261124.md)。
+**2. 发现**：`revision8` 先按 HOLDOUT 过滤、后施加颜色置换；置换后的对 14.4% 落在 HOLDOUT，每 seed 阶段 B 约 4,150 条带正确标签的留出对训练样本，8/8 留出对暴露。
+**3. 裁定**：P0-DU（D-459）、P0-DV（D-460）、P0-DX（D-461）的 aug 臂未见对读数与 P0-EB（D-463）未见对比较记 `data_invalid`；D-462「T8U 可签署 full 6/6」撤回；base 臂读数（约 0.73）有效；格06 维持 `open`；P0-DX 的压力门精度修复本身有效。
+**4. 方法学**：增广类变换后再做 HOLDOUT 过滤，报告训练中留出项计数。零训练、0 check/final。
+
+
+### D-20261124-472 N31.2 开线：8 色未见对泛化（格06），首卡 N31.2.01 无泄漏增广（零训练，0 check）
+
+**1. 卡**：[N31.2.00 开线卡](DESIGN-N31-2-00_20261124.md)；脚本 `scripts/training/n31_2_01_unseen_leakfree.py`、`run_n31_2_01.ps1`。
+**2. 预算**：≤6 卡 / ≤2,000 CPU；首卡只跑 aug 臂 × 探索 seed 20261120–22（约 1,100 CPU），base 臂沿用 P0-BH / BI / DQ 读数。
+**3. 并行**：活跃线 N31.4＋N31.2 共 2 条；N31.1 仍等 N31.4 结线。零训练、0 check/final。
