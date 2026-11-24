@@ -24,7 +24,7 @@
 | 巩固（冻结头、训练单元） | 标准（暂缓） | **DEFER** | P0-AQ 2/3（signal_positive） | 若 N32 课程需要快慢迁移则开 N31.5，否则不开线 |
 | 决策/唤醒/求助效用常数 | 外控原型 | **DEFER → N33** | P0-BM/BN/BZ/BO/BP/BQ/BT/BV | 只作对照/工程原型；N33 用学得策略重建卷宗 |
 | 结构生长（中性/继承出生＋适配器） | 必需能力 | **REQUIRED-INPLACE 待格08** | N31.3（P0-CS 已更正；出生中性 PASS） | 终态由格08 决定：ADOPT / REQUIRED-INPLACE / REQUIRED-REVISE |
-| 选择性单元动力学（写门＋慢变量 a） | 机制 | **待 N31.4** | D-329（加门 GRU 打平）、D-330 运行中 | 若「平」且参数更多 → REPLACE-STANDARD（GRU＋read_gate） |
+| 选择性单元动力学（写门＋慢变量 a） | 机制 | **待 N31.4.91** | N31.4.90 `mixed`（H3 不确定；探索信号主要来自固定 lr）；成本 参数 +21%、CPU 1.76 倍 | 「平」/「劣」/「仍不确定」→ REPLACE-STANDARD（GRU＋read_gate）；「优」→ 主臂保留、不声明优势（见 DESIGN-N31-4-91 §3） |
 
 ## 3. 与 N32 的关系
 
