@@ -1,0 +1,47 @@
+{
+  "schema": "taiji-p0di-calibration-v1",
+  "task": "recycle_damage_calibration",
+  "measurements": [
+    {
+      "event": "DF recycle D (R3)",
+      "before": 1.0,
+      "after": 0.4951171875,
+      "damage": 0.5048828125
+    },
+    {
+      "event": "DG recycle E (R4)",
+      "before": 1.0,
+      "after": 0.4423828125,
+      "damage": 0.5576171875
+    },
+    {
+      "event": "DH recycle E (R4, round2)",
+      "before": 1.0,
+      "after": 0.3994140625,
+      "damage": 0.6005859375
+    },
+    {
+      "event": "DH recycle F (R6, round2)",
+      "before": 1.0,
+      "after": 0.3720703125,
+      "damage": 0.6279296875
+    }
+  ],
+  "damage_mean": 0.5728,
+  "damage_std": 0.0465,
+  "damage_min": 0.5048828125,
+  "damage_max": 0.6279296875,
+  "prior_predicted_damage": 0.2,
+  "prediction_gap": 0.3728,
+  "utilities": {
+    "grow": 0.56,
+    "recycle_with_measured_damage": -0.0128,
+    "retire_only": -0.72
+  },
+  "decision_rule": {
+    "budget_not_full": "grow",
+    "budget_full": "wait"
+  },
+  "recommended_EV_RECYCLE_DAMAGE": 0.6,
+  "note": "post-hoc calibration from committed receipts; later recyclings show larger damage (0.505 -> 0.628), so 0.60 is a conservative prior"
+}
