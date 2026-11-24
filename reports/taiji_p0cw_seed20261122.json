@@ -1,0 +1,52 @@
+{
+  "schema": "taiji-p0cw-diag-v1",
+  "created_utc": "2026-11-24T00:08:53.998560+00:00",
+  "seed": 20261122,
+  "task": "three_cohort_three_rule",
+  "normal_cn": 1.0,
+  "normal_cn_after": 1.0,
+  "r0": 1.0,
+  "r1": 1.0,
+  "r2": 0.26171875,
+  "lesA": {
+    "r0": 0.232421875,
+    "r1": 0.8876953125,
+    "r2": 0.25390625
+  },
+  "lesB": {
+    "r0": 0.8330078125,
+    "r1": 0.2451171875,
+    "r2": 0.240234375
+  },
+  "lesC": {
+    "r0": 0.8876953125,
+    "r1": 0.8076171875,
+    "r2": 0.2529296875
+  },
+  "capsule": {
+    "r0_restore": 1.0,
+    "r1_restore": 1.0,
+    "r2_restore": 0.26171875,
+    "cap_diff": 0.0
+  },
+  "gates": {
+    "G0_old_cn": true,
+    "G1_r0": true,
+    "G2_r1": true,
+    "G2b_r2": false,
+    "G3_lesA_r0": true,
+    "G4_lesB_r1": true,
+    "G5_normal_retained": true,
+    "G6_capsule": true,
+    "G7_lesC_r2": false
+  },
+  "verdict": "p0cw_parallel_rules_failed",
+  "cost": {
+    "cpu": 169.95
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  }
+}
