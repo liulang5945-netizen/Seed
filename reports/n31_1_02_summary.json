@@ -1,0 +1,18 @@
+{
+  "schema": "taiji-n31-1-02-v1-summary",
+  "card": "N31.1.02",
+  "exit": "inconclusive",
+  "proxy_weakest_seed_min_task": 0.83203125,
+  "weakest_g01_margin": -0.017968749999999978,
+  "g01_seeds": 1,
+  "g02_seeds": 0,
+  "g03_seeds": 1,
+  "g05_seeds": 3,
+  "g04_on_mean": true,
+  "r2a_mean3": 0.9192708333333334,
+  "baseline_mean3": [
+    0.923611111111111,
+    0.6206597222222222
+  ],
+  "cpu_total": 689.92
+}
