@@ -1,0 +1,21 @@
+{
+  "schema": "taiji-p0eb-diag-v1",
+  "created_utc": "2026-11-24T06:01:40.462758+00:00",
+  "seed": 20261125,
+  "task": "prealloc_same_capacity",
+  "normal_cn": 1.0,
+  "normal_cn_after": 1.0,
+  "acc4_before_phaseB": 0.49609375,
+  "acc4_after_phaseB": 0.435546875,
+  "acc8_seen": 0.994140625,
+  "acc8_unseen": 0.966796875,
+  "verdict": "p0eb_ok",
+  "cost": {
+    "cpu": 288.83
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  }
+}
