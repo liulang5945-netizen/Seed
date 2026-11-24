@@ -1,0 +1,55 @@
+{
+  "schema": "taiji-p0cx-diag-v1",
+  "created_utc": "2026-11-24T00:17:33.635772+00:00",
+  "seed": 20261122,
+  "task": "staged_r2_after_old",
+  "normal_cn": 1.0,
+  "normal_cn_after": 1.0,
+  "r0": 0.80078125,
+  "r1": 0.87109375,
+  "r2": 0.7890625,
+  "r0_staged": 0.80078125,
+  "r1_staged": 0.87109375,
+  "lesA": {
+    "r0": 0.232421875,
+    "r1": 0.7265625,
+    "r2": 0.6552734375
+  },
+  "lesB": {
+    "r0": 0.697265625,
+    "r1": 0.2451171875,
+    "r2": 0.6123046875
+  },
+  "lesC": {
+    "r0": 0.8876953125,
+    "r1": 0.8076171875,
+    "r2": 0.2412109375
+  },
+  "capsule": {
+    "r0_restore": 0.80078125,
+    "r1_restore": 0.87109375,
+    "r2_restore": 0.7890625,
+    "cap_diff": 0.0
+  },
+  "gates": {
+    "G0_old_cn": true,
+    "G1_r0": false,
+    "G2_r1": false,
+    "G2b_r2": false,
+    "G2c_staged_retention": false,
+    "G3_lesA_r0": true,
+    "G4_lesB_r1": true,
+    "G5_normal_retained": true,
+    "G6_capsule": true,
+    "G7_lesC_r2": true
+  },
+  "verdict": "p0cx_parallel_rules_failed",
+  "cost": {
+    "cpu": 208.7
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  }
+}
