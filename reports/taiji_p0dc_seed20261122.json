@@ -1,0 +1,82 @@
+{
+  "schema": "taiji-p0dc-diag-v1",
+  "created_utc": "2026-11-24T01:39:09.199939+00:00",
+  "seed": 20261122,
+  "task": "fifth_growth_online_evidence",
+  "normal_cn": 1.0,
+  "normal_cn_after": 1.0,
+  "s1": {
+    "r0": 1.0
+  },
+  "s2": {
+    "r1": 1.0,
+    "r0": 0.66015625,
+    "r0_cal": 0.8603515625
+  },
+  "s3": {
+    "r2": 1.0,
+    "r0": 0.8603515625,
+    "r1": 1.0,
+    "r0_cal": 0.9453125,
+    "r1_cal": 1.0
+  },
+  "capsule": {
+    "r2_restore": 1.0,
+    "cap_diff": 0.0
+  },
+  "calib_steps": 900,
+  "fourth": {
+    "utility": {
+      "grow_learn_R3": 0.56,
+      "wait": 0.0,
+      "retire_C_cohort": -0.72
+    },
+    "chosen": "grow_learn_R3",
+    "r3": 1.0,
+    "r0": 0.9677734375,
+    "r1": 1.0,
+    "r2": 1.0,
+    "cap4_diff": 0.0,
+    "r3_restore": 1.0
+  },
+  "fifth": {
+    "utility": {
+      "grow_learn_R4": 0.56,
+      "wait": 0.0
+    },
+    "chosen": "grow_learn_R4",
+    "r4": 1.0,
+    "r0": 0.9775390625,
+    "r1": 1.0,
+    "r2": 1.0,
+    "r3": 1.0,
+    "cap5_diff": 0.0,
+    "r4_restore": 1.0
+  },
+  "gates": {
+    "G0_old_cn": true,
+    "G1_r0": true,
+    "G2_r1": true,
+    "G3_r2": true,
+    "G4_capsule": true,
+    "G5_normal_retained": true,
+    "G6_recalib_cost": true,
+    "G7_choice4": true,
+    "G8_r3": true,
+    "G9_all_retained": true,
+    "G10_cap4": true,
+    "G11_choice5": true,
+    "G12_r4": true,
+    "G13_all_five": true,
+    "G14_cap5": true
+  },
+  "verdict": "p0dc_verified",
+  "cost": {
+    "cpu": 359.7
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  }
+}
