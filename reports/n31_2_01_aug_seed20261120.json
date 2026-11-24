@@ -1,0 +1,55 @@
+{
+  "schema": "taiji-n31-2-01-v1",
+  "card": "N31.2.01",
+  "arm": "aug",
+  "holdout_seen_in_training": 0,
+  "created_utc": "2026-11-24T07:33:17.503887+00:00",
+  "seed": 20261120,
+  "task": "unseen_pairs_leak_free_relabel",
+  "normal_cn": 1.0,
+  "cn_probe": {
+    "train": 0.5286458134651184,
+    "test": 0.513671875
+  },
+  "birth_probe": {
+    "train": 0.4912109375,
+    "test": 0.4677734375
+  },
+  "null_cn_mean": 0.4998046875,
+  "null_birth_mean": 0.4951171875,
+  "normal_cn_after": 1.0,
+  "acc4_before_phaseB": 0.951171875,
+  "acc4_after_phaseB": 1.0,
+  "acc8_seen": 0.9990234375,
+  "acc8_unseen": 0.77734375,
+  "acc8_lesion_phaseB_cohort": 0.5087890625,
+  "acc4_lesion_phaseB_cohort": 0.9580078125,
+  "acc8_wake": 0.9990234375,
+  "acc4_wake": 1.0,
+  "capsule_diff": 0.0,
+  "acc8_capsule": 0.9990234375,
+  "acc4_capsule": 1.0,
+  "gates": {
+    "R_leak_free": true,
+    "S_old_cn_retained": true,
+    "R_wake_exact": true,
+    "R_capsule_exact": true,
+    "E_pressure": true,
+    "E_cell06_unseen": false,
+    "E_cell06_seen": true,
+    "E_cell06_old4": true,
+    "E_growth_lesion": true
+  },
+  "verdict": "n31_2_01_signal_negative",
+  "cost": {
+    "cpu": 456.83
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  },
+  "run_conditions": {
+    "threads": 1
+  }
+}
