@@ -1,0 +1,28 @@
+{
+  "schema": "taiji-p0dp-diag-v1",
+  "created_utc": "2026-11-24T04:37:39.361662+00:00",
+  "seed": 20261123,
+  "arm": "aug",
+  "task": "8color_unseen_pairs",
+  "normal_cn": 1.0,
+  "normal_cn_after": 1.0,
+  "seen": 0.9990234375,
+  "unseen": 1.0,
+  "lesion_seen": 0.107421875,
+  "gates": {
+    "G0_old_cn": true,
+    "G1_seen": true,
+    "G2_unseen": true,
+    "G3_lesion": true,
+    "G4_normal_retained": true
+  },
+  "verdict": "p0dp_verified",
+  "cost": {
+    "cpu": 230.23
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  }
+}
