@@ -1,0 +1,41 @@
+{
+  "schema": "taiji-p0cz-diag-v1",
+  "created_utc": "2026-11-24T00:34:48.861885+00:00",
+  "seed": 20261121,
+  "task": "three_session_growth_chain",
+  "normal_cn": 1.0,
+  "normal_cn_after": 1.0,
+  "s1": {
+    "r0": 1.0
+  },
+  "s2": {
+    "r1": 1.0,
+    "r0": 0.5185546875
+  },
+  "s3": {
+    "r2": 1.0,
+    "r0": 0.5185546875,
+    "r1": 1.0
+  },
+  "capsule": {
+    "r2_restore": 1.0,
+    "cap_diff": 0.0
+  },
+  "gates": {
+    "G0_old_cn": true,
+    "G1_r0": false,
+    "G2_r1": true,
+    "G3_r2": true,
+    "G4_capsule": true,
+    "G5_normal_retained": true
+  },
+  "verdict": "p0cz_chain_failed",
+  "cost": {
+    "cpu": 207.36
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  }
+}
