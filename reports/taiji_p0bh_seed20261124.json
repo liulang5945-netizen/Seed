@@ -1,0 +1,39 @@
+{
+  "schema": "taiji-p0bh-diag-v1",
+  "created_utc": "2026-11-24T04:31:04.392902+00:00",
+  "seed": 20261124,
+  "task": "longer_phaseB_stronger_replay",
+  "normal_cn": 1.0,
+  "normal_cn_after": 1.0,
+  "acc4_before_phaseB": 1.0,
+  "acc4_after_phaseB": 1.0,
+  "acc8_seen": 1.0,
+  "acc8_unseen": 0.837890625,
+  "acc8_lesion_phaseB_cohort": 0.4208984375,
+  "acc4_lesion_phaseB_cohort": 1.0,
+  "acc8_wake": 1.0,
+  "acc4_wake": 1.0,
+  "capsule_diff": 0.0,
+  "acc8_capsule": 1.0,
+  "acc4_capsule": 1.0,
+  "gates": {
+    "G0_old_cn": true,
+    "G1_4c_retained": true,
+    "G2_8c_learned": true,
+    "G3_8c_unseen": true,
+    "G4_lesion_drop": true,
+    "G5_4c_integration_ok": true,
+    "G6_normal_retained": true,
+    "G7_wake_exact": true,
+    "G8_capsule_exact": true
+  },
+  "verdict": "p0bh_verified",
+  "cost": {
+    "cpu": 340.56
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  }
+}
