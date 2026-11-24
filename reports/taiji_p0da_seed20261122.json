@@ -1,0 +1,46 @@
+{
+  "schema": "taiji-p0da-diag-v1",
+  "created_utc": "2026-11-24T00:47:54.176207+00:00",
+  "seed": 20261122,
+  "task": "session_growth_recalibration",
+  "normal_cn": 1.0,
+  "normal_cn_after": 1.0,
+  "s1": {
+    "r0": 1.0
+  },
+  "s2": {
+    "r1": 1.0,
+    "r0": 0.66015625,
+    "r0_cal": 0.8603515625
+  },
+  "s3": {
+    "r2": 1.0,
+    "r0": 0.8603515625,
+    "r1": 1.0,
+    "r0_cal": 0.9453125,
+    "r1_cal": 1.0
+  },
+  "capsule": {
+    "r2_restore": 1.0,
+    "cap_diff": 0.0
+  },
+  "calib_steps": 900,
+  "gates": {
+    "G0_old_cn": true,
+    "G1_r0": true,
+    "G2_r1": true,
+    "G3_r2": true,
+    "G4_capsule": true,
+    "G5_normal_retained": true,
+    "G6_recalib_cost": true
+  },
+  "verdict": "p0da_verified",
+  "cost": {
+    "cpu": 224.2
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  }
+}
