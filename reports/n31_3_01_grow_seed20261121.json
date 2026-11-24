@@ -1,0 +1,23 @@
+{
+  "schema": "taiji-n31-3-01-v1",
+  "card": "N31.3.01",
+  "created_utc": "2026-11-24T08:53:21.950562+00:00",
+  "seed": 20261121,
+  "arm": "grow",
+  "task": "growth_net_benefit",
+  "normal_cn": 1.0,
+  "normal_cn_after": 1.0,
+  "acc4_before_phaseB": 1.0,
+  "acc4_after_phaseB": 1.0,
+  "acc8_seen": 1.0,
+  "capsule_diff": 0.0,
+  "units": 120,
+  "cost": {
+    "cpu": 273.3
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  }
+}
