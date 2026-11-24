@@ -1,6 +1,6 @@
 # 结果卡：P0-DA 跨会话生长＋旧读出重校准（**2/2 verified**：生长后旧能力 0.52/0.66→0.95/0.98，代价 900 步）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-439）。脚本 [diag_p0da_20261123.py](../../scripts/training/diag_p0da_20261123.py)；回执 `reports/taiji_p0da_seed{20261121,20261122}.json`。**2 seed、约 447 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-439）。脚本 [diag_p0da_20261123.py](../../scripts/training/diag_p0da_20261123.py)；回执 `reports/taiji_p0da_seed{20261121,20261122}.json`。**2 seed、约 447 CPU、零 check；探索诊断。**
 
 ## 1. 设计（修复 P0-CZ 的「跨会话生长扰动」）
 

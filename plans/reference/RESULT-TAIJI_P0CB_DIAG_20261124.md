@@ -1,6 +1,6 @@
 # 结果卡：P0-CB 长程循环多种子（2/3 verified；seed21 仅「E 因果」门因新能力被回放分摊而未过）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-415）。脚本 [diag_p0ca_20261123.py](../../scripts/training/diag_p0ca_20261123.py)；回执 `reports/taiji_p0ca_seed{20261120,20261121,20261122}.json`。**3 seed（含 P0-CA）、约 2785 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-415）。脚本 [diag_p0ca_20261123.py](../../scripts/training/diag_p0ca_20261123.py)；回执 `reports/taiji_p0ca_seed{20261120,20261121,20261122}.json`。**3 seed（含 P0-CA）、约 2785 CPU、零 check；探索诊断。**
 
 ## 1. 设置
 

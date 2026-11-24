@@ -1,6 +1,6 @@
 # 结果卡：P0-AQ 冻结评估框架＋巩固前后对照（3 seed；`p0aq_verified` 2/3，均值为通过）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-378）。评估框架 [taiji_eval_framework_20261124.py](../../scripts/training/taiji_eval_framework_20261124.py)；脚本 [diag_p0aq_20261123.py](../../scripts/training/diag_p0aq_20261123.py)；回执 `reports/taiji_p0aq_seed{20261120,20261121,20261122}.json`。**3 seed、约 550 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-378）。评估框架 [taiji_eval_framework_20261124.py](../../scripts/training/taiji_eval_framework_20261124.py)；脚本 [diag_p0aq_20261123.py](../../scripts/training/diag_p0aq_20261123.py)；回执 `reports/taiji_p0aq_seed{20261120,20261121,20261122}.json`。**3 seed、约 550 CPU、零 check；探索诊断。**
 
 ## 1. 按 owner 评审落实的修正
 

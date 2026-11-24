@@ -1,6 +1,6 @@
 # 结果卡：P0-AZ 4 色解耦生成器＋按类别校准门（3 seed；`p0az_not_pressured`；出生探针仍超 chance 门、质量与未见对强）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-387）。脚本 [diag_p0az_20261123.py](../../scripts/training/diag_p0az_20261123.py)；回执 `reports/taiji_p0az_seed{20261120,20261121,20261122}.json`。**3 seed、约 557 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-387）。脚本 [diag_p0az_20261123.py](../../scripts/training/diag_p0az_20261123.py)；回执 `reports/taiji_p0az_seed{20261120,20261121,20261122}.json`。**3 seed、约 557 CPU、零 check；探索诊断。**
 
 ## 1. 修正（按 owner/自审意见）
 

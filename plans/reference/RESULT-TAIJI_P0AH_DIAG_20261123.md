@@ -1,6 +1,6 @@
 # 结果卡：P0-AH 48 单元容量＋线性探测（`p0ah_not_pressured`；容量加倍反而破坏压力与翻转）
 
-> [结果卡·探索诊断] — 2026-11-23（D-20261223-370）。脚本 [diag_p0ah_20261123.py](../../scripts/training/diag_p0ah_20261123.py)；回执 [report](../../reports/taiji_p0ah_diag_20261123.json)。**1 seed、194.56 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-23（D-20261124-370）。脚本 [diag_p0ah_20261123.py](../../scripts/training/diag_p0ah_20261123.py)；回执 [report](../../reports/taiji_p0ah_diag_20261123.json)。**1 seed、194.56 CPU、零 check；探索诊断。**
 
 ## 1. 设置
 

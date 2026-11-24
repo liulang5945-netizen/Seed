@@ -1,6 +1,6 @@
 # 结果卡：P0-CN/CO 反馈适应稳定化尝试（**各 1/2**：低 lr 稳但慢；只训读出最稳、无崩溃，但 seed22 差 0.04）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-426/427）。脚本 [diag_p0cn](../../scripts/training/diag_p0cn_20261123.py)（全参数、lr 1e-3）、[diag_p0co](../../scripts/training/diag_p0co_20261123.py)（**只训读出头**、lr 1e-2）；回执 `reports/taiji_p0c{n,o}_seed*.json`。**4 次运行、约 1158 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-426/427）。脚本 [diag_p0cn](../../scripts/training/diag_p0cn_20261123.py)（全参数、lr 1e-3）、[diag_p0co](../../scripts/training/diag_p0co_20261123.py)（**只训读出头**、lr 1e-2）；回执 `reports/taiji_p0c{n,o}_seed*.json`。**4 次运行、约 1158 CPU、零 check；探索诊断。**
 
 ## 1. 读数（规则变化后仅用二值奖励）
 

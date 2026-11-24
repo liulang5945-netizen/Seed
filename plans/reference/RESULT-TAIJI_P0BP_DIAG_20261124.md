@@ -1,6 +1,6 @@
 # 结果卡：P0-BP 带唤醒条件的等待 v2（修正规则，2 seed）（**2/2 verified**：tick1 自动唤醒→回忆核验→回等待）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-403）。脚本 [diag_p0bp_20261123.py](../../scripts/training/diag_p0bp_20261123.py)；回执 `reports/taiji_p0bp_seed{20261120,20261121}.json`。**2 seed、约 424 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-403）。脚本 [diag_p0bp_20261123.py](../../scripts/training/diag_p0bp_20261123.py)；回执 `reports/taiji_p0bp_seed{20261120,20261121}.json`。**2 seed、约 424 CPU、零 check；探索诊断。**
 
 ## 1. 设计（修正 P0-BO 的判据设计错误）
 

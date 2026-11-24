@@ -1,6 +1,6 @@
 # 结果卡：P0-BJ 第二任务族联合验收（4→8 色、不同颜色面与不同 HOLDOUT）（**2/2 verified**；跨任务族通用）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-397）。脚本 [diag_p0bj_20261123.py](../../scripts/training/diag_p0bj_20261123.py)；回执 `reports/taiji_p0bj_seed{20261120,20261121}.json`。**2 seed、约 425 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-397）。脚本 [diag_p0bj_20261123.py](../../scripts/training/diag_p0bj_20261123.py)；回执 `reports/taiji_p0bj_seed{20261120,20261121}.json`。**2 seed、约 425 CPU、零 check；探索诊断。**
 
 ## 1. 范围与预注册
 

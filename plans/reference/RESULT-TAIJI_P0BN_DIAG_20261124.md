@@ -1,6 +1,6 @@
 # 结果卡：P0-BN 两决策＋在线证据更新（2 seed）（**2/2 verified**；选生长→更新证据→选等待，能力不变）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-401）。脚本 [diag_p0bn_20261123.py](../../scripts/training/diag_p0bn_20261123.py)；回执 `reports/taiji_p0bn_seed{20261120,20261121}.json`。**2 seed、约 427 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-401）。脚本 [diag_p0bn_20261123.py](../../scripts/training/diag_p0bn_20261123.py)；回执 `reports/taiji_p0bn_seed{20261120,20261121}.json`。**2 seed、约 427 CPU、零 check；探索诊断。**
 
 ## 1. 设计（多轮决策＋在线更新）
 

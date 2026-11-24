@@ -1,6 +1,6 @@
 # 结果卡：P0-DB 第四能力＋成本决策（含重校准代价）（**2/2 verified**：四规则共存 R0–R3 ≥0.968，胶囊 ABCD 逐位）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-440）。脚本 [diag_p0db_20261123.py](../../scripts/training/diag_p0db_20261123.py)；回执 `reports/taiji_p0db_seed{20261121,20261122}.json`。**2 seed、约 566 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-440）。脚本 [diag_p0db_20261123.py](../../scripts/training/diag_p0db_20261123.py)；回执 `reports/taiji_p0db_seed{20261121,20261122}.json`。**2 seed、约 566 CPU、零 check；探索诊断。**
 
 ## 1. 设计
 

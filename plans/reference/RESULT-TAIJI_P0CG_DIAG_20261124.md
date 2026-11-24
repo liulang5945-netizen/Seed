@@ -1,6 +1,6 @@
 # 结果卡：P0-CG 多模态（中文文本＋视觉形状码）绑定（**1/2 verified**：好 seed 1.000、未见颜色对 0.928；坏 seed 0.795/无因果）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-420）。脚本 [diag_p0cg_20261123.py](../../scripts/training/diag_p0cg_20261123.py)；回执 `reports/taiji_p0cg_seed{20261120,20261121}.json`。**2 seed、约 259 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-420）。脚本 [diag_p0cg_20261123.py](../../scripts/training/diag_p0cg_20261123.py)；回执 `reports/taiji_p0cg_seed{20261120,20261121}.json`。**2 seed、约 259 CPU、零 check；探索诊断。**
 
 ## 1. 设计（首个多模态任务）
 

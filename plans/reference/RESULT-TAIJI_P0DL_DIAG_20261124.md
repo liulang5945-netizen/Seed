@@ -1,6 +1,6 @@
 # 结果卡：P0-DL 循环内「适应→回退→并行保留」（测量顺序修正，**2/2 verified**）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-451）。脚本 [diag_p0dl_20261123.py](../../scripts/training/diag_p0dl_20261123.py)；回执 `reports/taiji_p0dl_seed{20261121,20261122}.json`。**2 seed、约 620 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-451）。脚本 [diag_p0dl_20261123.py](../../scripts/training/diag_p0dl_20261123.py)；回执 `reports/taiji_p0dl_seed{20261121,20261122}.json`。**2 seed、约 620 CPU、零 check；探索诊断。**
 
 ## 1. 设计（清除 P0-DK 的测量顺序误判）
 

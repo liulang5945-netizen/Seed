@@ -1,6 +1,6 @@
 # 结果卡：P0-CH 加固多模态绑定（3000 步，3 seed）（**2/3 verified**：已见全 1.000、未见对 0.73–0.94、两模态与生长因果成立）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-421）。脚本 [diag_p0ch_20261123.py](../../scripts/training/diag_p0ch_20261123.py)；回执 `reports/taiji_p0ch_seed{20261120,20261121,20261122}.json`。**3 seed、约 630 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-421）。脚本 [diag_p0ch_20261123.py](../../scripts/training/diag_p0ch_20261123.py)；回执 `reports/taiji_p0ch_seed{20261120,20261121,20261122}.json`。**3 seed、约 630 CPU、零 check；探索诊断。**
 
 ## 1. 设计（P0-CG 加固）
 

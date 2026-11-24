@@ -1,6 +1,6 @@
 # 结果卡：P0-BU/BV 连续任务循环中的「不确定→求证/求助→反馈更新」（BV **2/2 verified**；BU 因批次饱和误作失败）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-408/409）。脚本 [diag_p0bu](../../scripts/training/diag_p0bu_20261123.py)（首批次错误）、[diag_p0bv](../../scripts/training/diag_p0bv_20261123.py)（修正）；回执 `reports/taiji_p0bu_seed*.json`、`reports/taiji_p0bv_seed*.json`。**各 2 seed、各约 560 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-408/409）。脚本 [diag_p0bu](../../scripts/training/diag_p0bu_20261123.py)（首批次错误）、[diag_p0bv](../../scripts/training/diag_p0bv_20261123.py)（修正）；回执 `reports/taiji_p0bu_seed*.json`、`reports/taiji_p0bv_seed*.json`。**各 2 seed、各约 560 CPU、零 check；探索诊断。**
 
 ## 1. 设计
 

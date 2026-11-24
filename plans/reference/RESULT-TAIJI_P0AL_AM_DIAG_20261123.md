@@ -1,6 +1,6 @@
 # 结果卡：P0-AL/AM 唤醒复核与评估模式修正（`p0al_wake_not_restored` / `p0am_not_consolidated`；重要测量缺陷）
 
-> [结果卡·探索诊断] — 2026-11-23（D-20261223-374/375）。脚本 [p0al](../../scripts/training/diag_p0al_20261123.py)／[p0am](../../scripts/training/diag_p0am_20261123.py)；回执 [p0al](../../reports/taiji_p0al_diag_20261123.json)／[p0am](../../reports/taiji_p0am_diag_20261123.json)。**1 seed、186.8/188.66 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-23（D-20261124-374/375）。脚本 [p0al](../../scripts/training/diag_p0al_20261123.py)／[p0am](../../scripts/training/diag_p0am_20261123.py)；回执 [p0al](../../reports/taiji_p0al_diag_20261123.json)／[p0am](../../reports/taiji_p0am_diag_20261123.json)。**1 seed、186.8/188.66 CPU、零 check；探索诊断。**
 
 ## 1. 动机
 

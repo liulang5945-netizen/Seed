@@ -1,6 +1,6 @@
 # 结果卡：P0-U 修订任务（字符＋flag 组合）两次尝试（`p0u_not_pressured`）
 
-> [结果卡·探索诊断] — 2026-11-23（D-20261223-358）。脚本 [diag_p0u_20261123.py](../../scripts/training/diag_p0u_20261123.py)；回执 [report](../../reports/taiji_p0u_diag_20261123.json)。**1 seed、106.95/113.25 CPU、零 check；探索诊断，不出能力结论。**
+> [结果卡·探索诊断] — 2026-11-23（D-20261124-358）。脚本 [diag_p0u_20261123.py](../../scripts/training/diag_p0u_20261123.py)；回执 [report](../../reports/taiji_p0u_diag_20261123.json)。**1 seed、106.95/113.25 CPU、零 check；探索诊断，不出能力结论。**
 
 ## 1. 设计（修正版：保留 `write_in`＋单元级适配器读 flag）
 

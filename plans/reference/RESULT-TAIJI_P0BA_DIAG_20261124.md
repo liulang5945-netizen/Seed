@@ -1,6 +1,6 @@
 # 结果卡：P0-BA 4 色任务 null 校准压力检验（3 seed；`p0ba_pressure_not_significant_delta` 2/3，压力基本成立）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-388）。脚本 [diag_p0ba_20261123.py](../../scripts/training/diag_p0ba_20261123.py)；回执 `reports/taiji_p0ba_seed{20261120,20261121,20261122}.json`。**3 seed、约 581 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-388）。脚本 [diag_p0ba_20261123.py](../../scripts/training/diag_p0ba_20261123.py)；回执 `reports/taiji_p0ba_seed{20261120,20261121,20261122}.json`。**3 seed、约 581 CPU、零 check；探索诊断。**
 
 ## 1. 方法（按 owner/自审：null 校准）
 

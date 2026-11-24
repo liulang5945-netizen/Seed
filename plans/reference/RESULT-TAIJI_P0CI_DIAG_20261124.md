@@ -1,6 +1,6 @@
 # 结果卡：P0-CI 多模态能力＋生命周期循环（**2/2 verified**：胶囊逐位、唤醒跨模态回忆、lesion 因果）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-422）。脚本 [diag_p0ci_20261123.py](../../scripts/training/diag_p0ci_20261123.py)；回执 `reports/taiji_p0ci_seed{20261121,20261122}.json`。**2 seed、约 306 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-422）。脚本 [diag_p0ci_20261123.py](../../scripts/training/diag_p0ci_20261123.py)；回执 `reports/taiji_p0ci_seed{20261121,20261122}.json`。**2 seed、约 306 CPU、零 check；探索诊断。**
 
 ## 1. 设计
 

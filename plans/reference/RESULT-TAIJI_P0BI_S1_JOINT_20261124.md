@@ -1,6 +1,6 @@
 # 结果卡：P0-BI S1 联合验收（多能力同主体，3 seed）（**3/3 verified**）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-396）。脚本 [diag_p0bi_20261123.py](../../scripts/training/diag_p0bi_20261123.py)；回执 `reports/taiji_p0bi_seed{20261120,20261121,20261122}.json`。**3 seed、约 651 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-396）。脚本 [diag_p0bi_20261123.py](../../scripts/training/diag_p0bi_20261123.py)；回执 `reports/taiji_p0bi_seed{20261120,20261121,20261122}.json`。**3 seed、约 651 CPU、零 check；探索诊断。**
 
 ## 1. 范围与预注册（读前冻结）
 

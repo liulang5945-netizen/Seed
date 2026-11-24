@@ -1,6 +1,6 @@
 # 结果卡：P0-CZ 三会话生长链（**负结果**：隔会话生长后旧规则 R0 掉到 0.52/0.66；R1/R2 全 1.000、胶囊逐位）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-438）。脚本 [diag_p0cz_20261123.py](../../scripts/training/diag_p0cz_20261123.py)；回执 `reports/taiji_p0cz_seed{20261121,20261122}.json`。**2 seed、约 417 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-438）。脚本 [diag_p0cz_20261123.py](../../scripts/training/diag_p0cz_20261123.py)；回执 `reports/taiji_p0cz_seed{20261121,20261122}.json`。**2 seed、约 417 CPU、零 check；探索诊断。**
 
 ## 1. 设计（三会话链）
 

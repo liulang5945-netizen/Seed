@@ -1,6 +1,6 @@
 # 结果卡：P0-BB 4 色任务 null 校准 v2（预注册 Δ≤0.10）（3 seed；**2/3 verified**，首次全门通过）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-389）。脚本 [diag_p0bb_20261123.py](../../scripts/training/diag_p0bb_20261123.py)；回执 `reports/taiji_p0bb_seed{20261120,20261121,20261122}.json`。**3 seed、约 542 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-389）。脚本 [diag_p0bb_20261123.py](../../scripts/training/diag_p0bb_20261123.py)；回执 `reports/taiji_p0bb_seed{20261120,20261121,20261122}.json`。**3 seed、约 542 CPU、零 check；探索诊断。**
 
 ## 1. 预注册（读前冻结）
 

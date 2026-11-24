@@ -1,6 +1,6 @@
 # 结果卡：P0-AK 翻转能力的生命周期检查（`p0ak_wake_not_restored`；休眠有效 0.121、唤醒 0.969 非逐值）
 
-> [结果卡·探索诊断] — 2026-11-23（D-20261223-373）。脚本 [diag_p0ak_20261123.py](../../scripts/training/diag_p0ak_20261123.py)；回执 [report](../../reports/taiji_p0ak_diag_20261123.json)。**1 seed、183.08 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-23（D-20261124-373）。脚本 [diag_p0ak_20261123.py](../../scripts/training/diag_p0ak_20261123.py)；回执 [report](../../reports/taiji_p0ak_diag_20261123.json)。**1 seed、183.08 CPU、零 check；探索诊断。**
 
 ## 1. 设置
 

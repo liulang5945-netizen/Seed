@@ -1,6 +1,6 @@
 # 结果卡：P0-CJ/CK 行动＋结果反馈（规则变化后从奖励适应）（**负结果**：适应前后停在 0.75＝旧规则与新规则的一致率，疑实现问题）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-423）。脚本 [diag_p0cj](../../scripts/training/diag_p0cj_20261123.py)（600 步）、[diag_p0ck](../../scripts/training/diag_p0ck_20261123.py)（1500 步、lr 1e-2）；回执 `reports/taiji_p0c{j,k}_seed*.json`。**3 次运行、约 510 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-423）。脚本 [diag_p0cj](../../scripts/training/diag_p0cj_20261123.py)（600 步）、[diag_p0ck](../../scripts/training/diag_p0ck_20261123.py)（1500 步、lr 1e-2）；回执 `reports/taiji_p0c{j,k}_seed*.json`。**3 次运行、约 510 CPU、零 check；探索诊断。**
 
 ## 1. 设计（行动＋真实奖励）
 

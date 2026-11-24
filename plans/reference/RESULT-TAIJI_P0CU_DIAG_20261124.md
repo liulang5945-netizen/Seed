@@ -1,6 +1,6 @@
 # 结果卡：P0-CU 双队列主体＋胶囊＋第三规则奖励适应（**胶囊/保持 2/2 通过；R2 奖励适应未过：0.55/0.65**）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-433）。脚本 [diag_p0cu_20261123.py](../../scripts/training/diag_p0cu_20261123.py)；回执 `reports/taiji_p0cu_seed{20261121,20261122}.json`。**2 seed、约 395 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-433）。脚本 [diag_p0cu_20261123.py](../../scripts/training/diag_p0cu_20261123.py)；回执 `reports/taiji_p0cu_seed{20261121,20261122}.json`。**2 seed、约 395 CPU、零 check；探索诊断。**
 
 ## 1. 设计
 

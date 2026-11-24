@@ -1,6 +1,6 @@
 # 结果卡：P0-BW 主动选样（负结果：不确定度能排序错误，但预算 100 时主动≈随机）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-410）。脚本 [diag_p0bw_20261123.py](../../scripts/training/diag_p0bw_20261123.py)；回执 `reports/taiji_p0bw_seed{20261120,20261121}.json`。**2 seed、约 562 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-410）。脚本 [diag_p0bw_20261123.py](../../scripts/training/diag_p0bw_20261123.py)；回执 `reports/taiji_p0bw_seed{20261120,20261121}.json`。**2 seed、约 562 CPU、零 check；探索诊断。**
 
 ## 1. 设计
 

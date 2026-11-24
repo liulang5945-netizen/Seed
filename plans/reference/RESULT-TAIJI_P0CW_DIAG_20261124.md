@@ -1,6 +1,6 @@
 # 结果卡：P0-CW 三队列三规则（**负结果**：R0/R1 全 1.000，R2 仅 0.31/0.26——即使专属队列仍失败）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-435）。脚本 [diag_p0cw_20261123.py](../../scripts/training/diag_p0cw_20261123.py)；回执 `reports/taiji_p0cw_seed{20261121,20261122}.json`。**2 seed、约 340 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-435）。脚本 [diag_p0cw_20261123.py](../../scripts/training/diag_p0cw_20261123.py)；回执 `reports/taiji_p0cw_seed{20261121,20261122}.json`。**2 seed、约 340 CPU、零 check；探索诊断。**
 
 ## 1. 设计
 

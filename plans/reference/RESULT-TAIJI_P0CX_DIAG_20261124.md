@@ -1,6 +1,6 @@
 # 结果卡：P0-CX 分阶段训练 R2（**1/2 verified**：staging 可让 R2 到 1.000 且不伤旧能力；弱 seed 整体偏弱）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-436）。脚本 [diag_p0cx_20261123.py](../../scripts/training/diag_p0cx_20261123.py)；回执 `reports/taiji_p0cx_seed{20261121,20261122}.json`。**2 seed、约 418 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-436）。脚本 [diag_p0cx_20261123.py](../../scripts/training/diag_p0cx_20261123.py)；回执 `reports/taiji_p0cx_seed{20261121,20261122}.json`。**2 seed、约 418 CPU、零 check；探索诊断。**
 
 ## 1. 设计（定位 P0-CW 的失败原因）
 

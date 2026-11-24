@@ -1,6 +1,6 @@
 # 结果卡：P0-AY 4 色小任务（`p0ay_not_pressured`；未见对泛化 0.97/0.99 成立，但压力门与休眠门按 4 类需重校）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-386）。脚本 [diag_p0ay_20261123.py](../../scripts/training/diag_p0ay_20261123.py)；回执 [report](../../reports/taiji_p0ay_seed20261120.json)。**1 seed、185.44 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-386）。脚本 [diag_p0ay_20261123.py](../../scripts/training/diag_p0ay_20261123.py)；回执 [report](../../reports/taiji_p0ay_seed20261120.json)。**1 seed、185.44 CPU、零 check；探索诊断。**
 
 ## 1. 设计
 

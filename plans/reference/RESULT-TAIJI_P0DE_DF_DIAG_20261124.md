@@ -1,6 +1,6 @@
 # 结果卡：P0-DE/DF 回收后重学——生命周期 bug 与修复（**DF verified**：R5 1.000，回收 R3 被覆写、四能力保持、容量不变）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-443/444）。脚本 [diag_p0df_20261123.py](../../scripts/training/diag_p0df_20261123.py)（P0-DE 脚本已并入其前身并重建为 DF，回执 `reports/taiji_p0de_seed20261121.json` 保留）；回执 `reports/taiji_p0df_seed20261121.json`。**1 seed（DE）/ 1 seed（DF）、约 919 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-443/444）。脚本 [diag_p0df_20261123.py](../../scripts/training/diag_p0df_20261123.py)（P0-DE 脚本已并入其前身并重建为 DF，回执 `reports/taiji_p0de_seed20261121.json` 保留）；回执 `reports/taiji_p0df_seed20261121.json`。**1 seed（DE）/ 1 seed（DF）、约 919 CPU、零 check；探索诊断。**
 
 ## 1. P0-DE：完整重置＋更长训练，R5 仍 0.227
 

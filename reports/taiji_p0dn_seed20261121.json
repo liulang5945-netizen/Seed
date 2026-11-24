@@ -1,0 +1,20 @@
+{
+  "schema": "taiji-p0dn-diag-v1",
+  "created_utc": "2026-11-24T04:14:58.350966+00:00",
+  "seed": 20261121,
+  "task": "birth_neutral_corrected_cs",
+  "normal_cn": 1.0,
+  "m_before_growth": 1.0,
+  "m_after_growth_correct_eval": 1.0,
+  "m_after_growth_delta": 0.0,
+  "units": 120,
+  "verdict": "p0dn_verified",
+  "cost": {
+    "cpu": 196.94
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  }
+}

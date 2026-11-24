@@ -1,6 +1,6 @@
 # 结果卡：P0-DH 两轮生长↔回收循环＋生命周期一致性回归测试（**`p0dh_verified` 30 门**；测试 PASS）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-446/447）。脚本 [diag_p0dh_20261123.py](../../scripts/training/diag_p0dh_20261123.py)；测试 [test_lifecycle_training_consistency_20261124.py](../../scripts/tests/test_lifecycle_training_consistency_20261124.py)；回执 [report](../../reports/taiji_p0dh_seed20261121.json)。**1 seed、856.36 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-446/447）。脚本 [diag_p0dh_20261123.py](../../scripts/training/diag_p0dh_20261123.py)；测试 [test_lifecycle_training_consistency_20261124.py](../../scripts/tests/test_lifecycle_training_consistency_20261124.py)；回执 [report](../../reports/taiji_p0dh_seed20261121.json)。**1 seed、856.36 CPU、零 check；探索诊断。**
 
 ## 1. 设计
 

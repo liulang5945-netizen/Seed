@@ -1,6 +1,6 @@
 # 结果卡：P0-BY 多会话第三能力链（**2/2 verified**：会话3 恢复 A+B 后学 family C，三者共存、胶囊逐位）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-412）。脚本 [diag_p0by_20261123.py](../../scripts/training/diag_p0by_20261123.py)；回执 `reports/taiji_p0by_seed{20261120,20261121}.json`。**2 seed、约 747 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-412）。脚本 [diag_p0by_20261123.py](../../scripts/training/diag_p0by_20261123.py)；回执 `reports/taiji_p0by_seed{20261120,20261121}.json`。**2 seed、约 747 CPU、零 check；探索诊断。**
 
 ## 1. 设计（第三会话继续积累）
 

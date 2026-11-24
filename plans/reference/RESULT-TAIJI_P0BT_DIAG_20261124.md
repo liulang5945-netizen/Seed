@@ -1,6 +1,6 @@
 # 结果卡：P0-BT 不确定时「求证/求助」自主选择（**2/2 verified**：两读出不一致≈37%、选求助、准确率 0.48→0.72+）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-407）。脚本 [diag_p0bt_20261123.py](../../scripts/training/diag_p0bt_20261123.py)；回执 `reports/taiji_p0bt_seed{20261120,20261121}.json`。**2 seed、约 556 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-407）。脚本 [diag_p0bt_20261123.py](../../scripts/training/diag_p0bt_20261123.py)；回执 `reports/taiji_p0bt_seed{20261120,20261121}.json`。**2 seed、约 556 CPU、零 check；探索诊断。**
 
 ## 1. 设计（不确定性→求证/求助）
 

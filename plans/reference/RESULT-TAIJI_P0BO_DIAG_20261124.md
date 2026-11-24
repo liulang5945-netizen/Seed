@@ -1,6 +1,6 @@
 # 结果卡：P0-BO 带唤醒条件的等待（`p0bo_wake_condition_failed`；机制按规则工作、预注册期望序列有误）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-402）。脚本 [diag_p0bo_20261123.py](../../scripts/training/diag_p0bo_20261123.py)；回执 `reports/taiji_p0bo_seed{20261120,20261121}.json`。**2 seed、约 431 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-402）。脚本 [diag_p0bo_20261123.py](../../scripts/training/diag_p0bo_20261123.py)；回执 `reports/taiji_p0bo_seed{20261120,20261121}.json`。**2 seed、约 431 CPU、零 check；探索诊断。**
 
 ## 1. 设计
 

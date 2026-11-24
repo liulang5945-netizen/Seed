@@ -1,6 +1,6 @@
 # 结果卡：P0-CT 先长后训的双队列并行（**2/2 verified**：R0/R1 同时 1.000，队列偏置分离 0.73/0.74）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-432）。脚本 [diag_p0ct_20261123.py](../../scripts/training/diag_p0ct_20261123.py)；回执 `reports/taiji_p0ct_seed{20261121,20261122}.json`。**2 seed、约 325 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-432）。脚本 [diag_p0ct_20261123.py](../../scripts/training/diag_p0ct_20261123.py)；回执 `reports/taiji_p0ct_seed{20261121,20261122}.json`。**2 seed、约 325 CPU、零 check；探索诊断。**
 
 ## 1. 设计（修正 P0-CS 的「先学后长」）
 

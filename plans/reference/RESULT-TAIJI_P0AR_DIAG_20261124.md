@@ -1,6 +1,6 @@
 # 结果卡：P0-AR 巩固目标对比（MLP 冻结 vs 线性共训）＋未见颜色对泛化（`p0ar_not_consolidated`）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-379）。脚本 [diag_p0ar_20261123.py](../../scripts/training/diag_p0ar_20261123.py)；回执 [report](../../reports/taiji_p0ar_seed20261120.json)。**1 seed、209.31 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-379）。脚本 [diag_p0ar_20261123.py](../../scripts/training/diag_p0ar_20261123.py)；回执 [report](../../reports/taiji_p0ar_seed20261120.json)。**1 seed、209.31 CPU、零 check；探索诊断。**
 
 ## 1. 设计（按 owner 第 3 步）
 

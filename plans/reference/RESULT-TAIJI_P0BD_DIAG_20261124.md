@@ -1,6 +1,6 @@
 # 结果卡：P0-BD 4→8 色渐进扩容＋混合回放保持（`p0bd_growth_not_causal`；旧 4 色 0.913 保住、8 色 0.994，仅「旧任务不受新单元影响」门不适用）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-391）。脚本 [diag_p0bd_20261123.py](../../scripts/training/diag_p0bd_20261123.py)；回执 [report](../../reports/taiji_p0bd_diag_20261123.json)。**1 seed、182.31 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-391）。脚本 [diag_p0bd_20261123.py](../../scripts/training/diag_p0bd_20261123.py)；回执 [report](../../reports/taiji_p0bd_diag_20261123.json)。**1 seed、182.31 CPU、零 check；探索诊断。**
 
 ## 1. 设计（抗灾难性干扰）
 

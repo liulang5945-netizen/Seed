@@ -1,6 +1,6 @@
 # 结果卡：P0-CD 长程循环＋整合式因果门（**2/2 verified**；P0-CB 失败 seed 在同一流程下通过）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-417）。脚本 [diag_p0cd_20261123.py](../../scripts/training/diag_p0cd_20261123.py)；回执 `reports/taiji_p0cd_seed{20261120,20261121}.json`。**2 seed、约 2080 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-417）。脚本 [diag_p0cd_20261123.py](../../scripts/training/diag_p0cd_20261123.py)；回执 `reports/taiji_p0cd_seed{20261120,20261121}.json`。**2 seed、约 2080 CPU、零 check；探索诊断。**
 
 ## 1. 设计（修正因果口径）
 

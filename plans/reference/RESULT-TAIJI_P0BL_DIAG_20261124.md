@@ -1,6 +1,6 @@
 # 结果卡：P0-BL 退役＋回收 3 seed 复现（**3/3 verified**；退役因果 0.66–0.84、回收后两能力 0.99–1.00）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-399）。脚本 [diag_p0bl_20261123.py](../../scripts/training/diag_p0bl_20261123.py)；回执 `reports/taiji_p0bl_seed{20261120,20261121,20261122}.json`。**3 seed、约 772 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-399）。脚本 [diag_p0bl_20261123.py](../../scripts/training/diag_p0bl_20261123.py)；回执 `reports/taiji_p0bl_seed{20261120,20261121,20261122}.json`。**3 seed、约 772 CPU、零 check；探索诊断。**
 
 ## 1. 设置
 

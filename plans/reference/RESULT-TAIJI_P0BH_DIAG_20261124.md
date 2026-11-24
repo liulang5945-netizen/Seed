@@ -1,6 +1,6 @@
 # 结果卡：P0-BH 加固 Phase B（2400 步＋回放权重 1.0）（**3/3 verified**：未见对 0.648→0.719、旧 4 色 0.965→1.000）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-395）。脚本 [diag_p0bh_20261123.py](../../scripts/training/diag_p0bh_20261123.py)；回执 `reports/taiji_p0bh_seed{20261120,20261121,20261122}.json`。**3 seed、约 644 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-395）。脚本 [diag_p0bh_20261123.py](../../scripts/training/diag_p0bh_20261123.py)；回执 `reports/taiji_p0bh_seed{20261120,20261121,20261122}.json`。**3 seed、约 644 CPU、零 check；探索诊断。**
 
 ## 1. 设计
 

@@ -1,6 +1,6 @@
 # 结果卡：P0-DI 回收损伤校准（分析卡：实测 0.573 vs 先验 0.20；修正生长/回收/退役效用）
 
-> [结果卡·分析校准] — 2026-11-24（D-20261223-448）。脚本 [diag_p0di_calibration_20261124.py](../../scripts/training/diag_p0di_calibration_20261124.py)；回执 [report](../../reports/taiji_p0di_calibration_20261124.json)。**无新训练；分析已提交回执。**
+> [结果卡·分析校准] — 2026-11-24（D-20261124-448）。脚本 [diag_p0di_calibration_20261124.py](../../scripts/training/diag_p0di_calibration_20261124.py)；回执 [report](../../reports/taiji_p0di_calibration_20261124.json)。**无新训练；分析已提交回执。**
 
 ## 1. 目的（对齐 objective 的「按真实收益、损伤和成本调整生长选择」）
 

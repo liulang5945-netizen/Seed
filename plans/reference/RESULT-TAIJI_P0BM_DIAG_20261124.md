@@ -1,6 +1,6 @@
 # 结果卡：P0-BM 收益/损伤/成本驱动的生长选择（`p0bm_verified`；选「生长」而非「退役」，预测后悔 0.143）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-400）。脚本 [diag_p0bm_20261123.py](../../scripts/training/diag_p0bm_20261123.py)；回执 [report](../../reports/taiji_p0bm_seed20261120.json)。**1 seed、214.97 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-400）。脚本 [diag_p0bm_20261123.py](../../scripts/training/diag_p0bm_20261123.py)；回执 [report](../../reports/taiji_p0bm_seed20261120.json)。**1 seed、214.97 CPU、零 check；探索诊断。**
 
 ## 1. 设计（按真实收益、损伤、成本选生长动作）
 

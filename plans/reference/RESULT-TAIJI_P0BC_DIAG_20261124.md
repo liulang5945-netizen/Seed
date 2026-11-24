@@ -1,6 +1,6 @@
 # 结果卡：P0-BC 4→8 色渐进扩容（`p0bc_old_ability_lost`；**课程效应巨大**：8 色未见对 0.893，但旧 4 色能力退化）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-390）。脚本 [diag_p0bc_20261123.py](../../scripts/training/diag_p0bc_20261123.py)；回执 [report](../../reports/taiji_p0bc_diag_20261123.json)。**1 seed、178.16 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-390）。脚本 [diag_p0bc_20261123.py](../../scripts/training/diag_p0bc_20261123.py)；回执 [report](../../reports/taiji_p0bc_diag_20261123.json)。**1 seed、178.16 CPU、零 check；探索诊断。**
 
 ## 1. 设计（按需生长）
 

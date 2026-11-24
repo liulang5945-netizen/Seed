@@ -1,6 +1,6 @@
 # 结果卡：P0-DG 生长↔回收循环（**verified**：先长 R6 1.000，再回收 E 学 R7 1.000，R4 被覆写 0.442，其余全保持）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-445）。脚本 [diag_p0dg_20261123.py](../../scripts/training/diag_p0dg_20261123.py)；回执 [report](../../reports/taiji_p0dg_seed20261121.json)。**1 seed、613.66 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-445）。脚本 [diag_p0dg_20261123.py](../../scripts/training/diag_p0dg_20261123.py)；回执 [report](../../reports/taiji_p0dg_seed20261121.json)。**1 seed、613.66 CPU、零 check；探索诊断。**
 
 ## 1. 设计（一个完整的生长↔回收循环）
 

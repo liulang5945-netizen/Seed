@@ -1,6 +1,6 @@
 # 结果卡：P0-AU 「未见颜色对」参照测量（`p0au_unseen_feasible`；CN 基座未见对正常任务 1.000）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-382）。脚本 [diag_p0au_20261123.py](../../scripts/training/diag_p0au_20261123.py)；回执 [report](../../reports/taiji_p0au_diag_20261123.json)。**1 seed、108.2 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-382）。脚本 [diag_p0au_20261123.py](../../scripts/training/diag_p0au_20261123.py)；回执 [report](../../reports/taiji_p0au_diag_20261123.json)。**1 seed、108.2 CPU、零 check；探索诊断。**
 
 ## 1. 问题与设计
 

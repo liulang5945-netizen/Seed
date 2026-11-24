@@ -1,6 +1,6 @@
 # 结果卡：P0-BQ 等待→自主唤醒→生长学新能力（family B）→保持旧能力→回等待（**2/2 verified**）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-404）。脚本 [diag_p0bq_20261123.py](../../scripts/training/diag_p0bq_20261123.py)；回执 `reports/taiji_p0bq_seed{20261120,20261121}.json`。**2 seed、约 556 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-404）。脚本 [diag_p0bq_20261123.py](../../scripts/training/diag_p0bq_20261123.py)；回执 `reports/taiji_p0bq_seed{20261120,20261121}.json`。**2 seed、约 556 CPU、零 check；探索诊断。**
 
 ## 1. 设计（完整自主循环）
 

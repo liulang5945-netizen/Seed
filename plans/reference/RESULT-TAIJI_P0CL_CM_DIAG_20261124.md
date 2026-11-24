@@ -1,6 +1,6 @@
 # 结果卡：P0-CL/CM RL 反馈诊断与探索式重试（CL 诊断：参数确有更新；CM **1/2 verified**——探索可适应但会崩）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-424/425）。脚本 [diag_p0cl](../../scripts/training/diag_p0cl_20261123.py)（诊断）、[diag_p0cm](../../scripts/training/diag_p0cm_20261123.py)（采样动作＋熵正则）；回执 `reports/taiji_p0c{l,m}_seed*.json`。**约 560 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-424/425）。脚本 [diag_p0cl](../../scripts/training/diag_p0cl_20261123.py)（诊断）、[diag_p0cm](../../scripts/training/diag_p0cm_20261123.py)（采样动作＋熵正则）；回执 `reports/taiji_p0c{l,m}_seed*.json`。**约 560 CPU、零 check；探索诊断。**
 
 ## 1. P0-CL 诊断（回答 P0-CJ/CK 的异常）
 

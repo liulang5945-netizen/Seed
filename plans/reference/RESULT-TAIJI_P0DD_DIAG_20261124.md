@@ -1,6 +1,6 @@
 # 结果卡：P0-DD 退役/回收队列（**负结果**：回收覆盖 R3（1.000→0.362）但 R5 未学成 0.227；其余四能力保持）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-442）。脚本 [diag_p0dd_20261123.py](../../scripts/training/diag_p0dd_20261123.py)；回执 [report](../../reports/taiji_p0dd_seed20261121.json)。**1 seed、427 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-442）。脚本 [diag_p0dd_20261123.py](../../scripts/training/diag_p0dd_20261123.py)；回执 [report](../../reports/taiji_p0dd_seed20261121.json)。**1 seed、427 CPU、零 check；探索诊断。**
 
 ## 1. 设计（容量预算满时的回收）
 

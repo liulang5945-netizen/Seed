@@ -1,6 +1,6 @@
 # 结果卡：P0-BZ 第四能力＋成本决策（**2/2 verified**：选学 family D 并 1.000，A/B/C 保持，胶囊逐位）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-413）。脚本 [diag_p0bz_20261123.py](../../scripts/training/diag_p0bz_20261123.py)；回执 `reports/taiji_p0bz_seed{20261120,20261121}.json`。**2 seed、约 1011 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-413）。脚本 [diag_p0bz_20261123.py](../../scripts/training/diag_p0bz_20261123.py)；回执 `reports/taiji_p0bz_seed{20261120,20261121}.json`。**2 seed、约 1011 CPU、零 check；探索诊断。**
 
 ## 1. 设计（成本感知的第四能力）
 

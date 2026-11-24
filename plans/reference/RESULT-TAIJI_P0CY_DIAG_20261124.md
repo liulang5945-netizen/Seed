@@ -1,6 +1,6 @@
 # 结果卡：P0-CY 分阶段三规则（加强联合阶段，3 seed）（**2/3 verified**；R2 三 seed 全 1.000）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-437）。脚本 [diag_p0cy_20261123.py](../../scripts/training/diag_p0cy_20261123.py)；回执 `reports/taiji_p0cy_seed{20261120,20261121,20261122}.json`。**3 seed、约 950 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-437）。脚本 [diag_p0cy_20261123.py](../../scripts/training/diag_p0cy_20261123.py)；回执 `reports/taiji_p0cy_seed{20261120,20261121,20261122}.json`。**3 seed、约 950 CPU、零 check；探索诊断。**
 
 ## 1. 设计
 

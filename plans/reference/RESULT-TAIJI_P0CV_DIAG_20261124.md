@@ -1,6 +1,6 @@
 # 结果卡：P0-CV 三规则联合训练（**负结果**：R0/R1 通过、R2 只有 0.16/0.25——A 队列特征不含足够 flag 信息）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-434）。脚本 [diag_p0cv_20261123.py](../../scripts/training/diag_p0cv_20261123.py)；回执 `reports/taiji_p0cv_seed{20261121,20261122}.json`。**2 seed、约 325 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-434）。脚本 [diag_p0cv_20261123.py](../../scripts/training/diag_p0cv_20261123.py)；回执 `reports/taiji_p0cv_seed{20261121,20261122}.json`。**2 seed、约 325 CPU、零 check；探索诊断。**
 
 ## 1. 设计
 

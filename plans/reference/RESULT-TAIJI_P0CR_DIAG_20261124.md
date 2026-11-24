@@ -1,6 +1,6 @@
 # 结果卡：P0-CR 多规则并行读出头（**2/2 verified**：规则变化后保留 R0=1.000，同时奖励适应 R1=0.99）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-430）。脚本 [diag_p0cr_20261123.py](../../scripts/training/diag_p0cr_20261123.py)；回执 `reports/taiji_p0cr_seed{20261121,20261122}.json`。**2 seed、约 480 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-430）。脚本 [diag_p0cr_20261123.py](../../scripts/training/diag_p0cr_20261123.py)；回执 `reports/taiji_p0cr_seed{20261121,20261122}.json`。**2 seed、约 480 CPU、零 check；探索诊断。**
 
 ## 1. 设计（并行读出头，解决 P0-CQ 的覆盖）
 

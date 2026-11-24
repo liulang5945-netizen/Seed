@@ -1,6 +1,6 @@
 # 结果卡：P0-BX 主动选样预算扫描（混合/负结果：k=200 才出现小幅优势，不稳定）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-411）。脚本 [diag_p0bx_20261123.py](../../scripts/training/diag_p0bx_20261123.py)；回执 `reports/taiji_p0bx_seed{20261120,20261121}.json`。**2 seed、约 560 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-411）。脚本 [diag_p0bx_20261123.py](../../scripts/training/diag_p0bx_20261123.py)；回执 `reports/taiji_p0bx_seed{20261120,20261121}.json`。**2 seed、约 560 CPU、零 check；探索诊断。**
 
 ## 1. 设计
 

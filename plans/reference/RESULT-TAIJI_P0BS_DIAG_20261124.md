@@ -1,6 +1,6 @@
 # 结果卡：P0-BS 跨会话经验积累 v2（保存时刻基准）（**2/2 verified**：恢复逐位、A+B 均在、旧中文 1.000）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-406）。脚本 [diag_p0bs_20261123.py](../../scripts/training/diag_p0bs_20261123.py)；回执 `reports/taiji_p0bs_seed{20261120,20261121}.json`。**2 seed、约 557 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-406）。脚本 [diag_p0bs_20261123.py](../../scripts/training/diag_p0bs_20261123.py)；回执 `reports/taiji_p0bs_seed{20261120,20261121}.json`。**2 seed、约 557 CPU、零 check；探索诊断。**
 
 ## 1. 设计（修正 D-405 的基准错误）
 

@@ -1,6 +1,6 @@
 # 结果卡：P0-AW 全颜色对 sanity 多种子（3 seed；2/3 到 1.000 ⇒ **容量足够**，P0-AV 的崩塌为坏轨迹 seed）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-384）。脚本 [diag_p0av_20261123.py](../../scripts/training/diag_p0av_20261123.py)（seed 经 env）；回执 `reports/taiji_p0av_seed{20261120,20261121,20261122}.json`。**3 seed、约 555 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-384）。脚本 [diag_p0av_20261123.py](../../scripts/training/diag_p0av_20261123.py)（seed 经 env）；回执 `reports/taiji_p0av_seed{20261120,20261121,20261122}.json`。**3 seed、约 555 CPU、零 check；探索诊断。**
 
 ## 1. 设计
 

@@ -1,6 +1,6 @@
 # 结果卡：P0-AS 可微 ridge 元学习巩固（`p0as_not_consolidated`；未见对线性泛化 0.557→0.707，但未达门）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-380）。脚本 [diag_p0as_20261123.py](../../scripts/training/diag_p0as_20261123.py)；回执 [report](../../reports/taiji_p0as_seed20261120.json)。**1 seed、178.59 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-380）。脚本 [diag_p0as_20261123.py](../../scripts/training/diag_p0as_20261123.py)；回执 [report](../../reports/taiji_p0as_seed20261120.json)。**1 seed、178.59 CPU、零 check；探索诊断。**
 
 ## 1. 设计（owner 第 3 步：MetaOptNet/R2-D2 式）
 

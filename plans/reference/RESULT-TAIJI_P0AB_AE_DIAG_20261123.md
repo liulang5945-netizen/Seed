@@ -1,6 +1,6 @@
 # 结果卡：P0-AB…AE 继承＋开写门＋课程学习后的中文翻转（`p0ae_flip_no_transfer`；翻转 0.930 可学、迁移未成立）
 
-> [结果卡·探索诊断] — 2026-11-23（D-20261223-367）。脚本 [p0ab](../../scripts/training/diag_p0ab_20261123.py)/[p0ac](../../scripts/training/diag_p0ac_20261123.py)/[p0ad](../../scripts/training/diag_p0ad_20261123.py)/[p0ae](../../scripts/training/diag_p0ae_20261123.py)；回执 [p0ab](../../reports/taiji_p0ab_diag_20261123.json)…[p0ae](../../reports/taiji_p0ae_diag_20261123.json)。**1 seed、130–155 CPU/卡、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-23（D-20261124-367）。脚本 [p0ab](../../scripts/training/diag_p0ab_20261123.py)/[p0ac](../../scripts/training/diag_p0ac_20261123.py)/[p0ad](../../scripts/training/diag_p0ad_20261123.py)/[p0ae](../../scripts/training/diag_p0ae_20261123.py)；回执 [p0ab](../../reports/taiji_p0ab_diag_20261123.json)…[p0ae](../../reports/taiji_p0ae_diag_20261123.json)。**1 seed、130–155 CPU/卡、零 check；探索诊断。**
 
 ## 1. 四次迭代（同一压力合格中文修订任务）
 

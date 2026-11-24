@@ -1,6 +1,6 @@
 # 结果卡：P0-BG 生命周期/胶囊 3 seed 复现（**2/3 verified；唤醒与胶囊 3/3 逐位成立**）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-394）。脚本 [diag_p0bg_20261123.py](../../scripts/training/diag_p0bg_20261123.py)；回执 `reports/taiji_p0bg_seed{20261120,20261121,20261122}.json`。**3 seed、约 566 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-394）。脚本 [diag_p0bg_20261123.py](../../scripts/training/diag_p0bg_20261123.py)；回执 `reports/taiji_p0bg_seed{20261120,20261121,20261122}.json`。**3 seed、约 566 CPU、零 check；探索诊断。**
 
 ## 1. 设置
 

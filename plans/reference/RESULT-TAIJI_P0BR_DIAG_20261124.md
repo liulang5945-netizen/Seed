@@ -1,6 +1,6 @@
 # 结果卡：P0-BR 跨会话经验积累（capsule 链）（1/2 verified；seed21 失败系「比较基准过期」判据错误）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-405）。脚本 [diag_p0br_20261123.py](../../scripts/training/diag_p0br_20261123.py)；回执 `reports/taiji_p0br_seed{20261120,20261121}.json`。**2 seed、约 557 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-405）。脚本 [diag_p0br_20261123.py](../../scripts/training/diag_p0br_20261123.py)；回执 `reports/taiji_p0br_seed{20261120,20261121}.json`。**2 seed、约 557 CPU、零 check；探索诊断。**
 
 ## 1. 设计（跨会话积累）
 

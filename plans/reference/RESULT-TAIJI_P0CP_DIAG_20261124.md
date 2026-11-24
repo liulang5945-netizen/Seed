@@ -1,6 +1,6 @@
 # 结果卡：P0-CP 读出-only 奖励反馈适应 v2（**2/2 verified**：规则变化后仅用二值奖励，0.48/0.51→0.995，监督上界 0.99）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-428）。脚本 [diag_p0cp_20261123.py](../../scripts/training/diag_p0cp_20261123.py)；回执 `reports/taiji_p0cp_seed{20261121,20261122}.json`。**2 seed、约 482 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-428）。脚本 [diag_p0cp_20261123.py](../../scripts/training/diag_p0cp_20261123.py)；回执 `reports/taiji_p0cp_seed{20261121,20261122}.json`。**2 seed、约 482 CPU、零 check；探索诊断。**
 
 ## 1. 设计（稳定化后的「行动＋真实奖励」）
 

@@ -1,6 +1,6 @@
 # 结果卡：P0-AT 元学习参数网格（`p0at_not_consolidated`；已见/未见对存在权衡，无配置跨门）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-381）。脚本 [diag_p0at_20261123.py](../../scripts/training/diag_p0at_20261123.py)；回执 [report](../../reports/taiji_p0at_seed20261120.json)。**1 seed、437.62 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-381）。脚本 [diag_p0at_20261123.py](../../scripts/training/diag_p0at_20261123.py)；回执 [report](../../reports/taiji_p0at_seed20261120.json)。**1 seed、437.62 CPU、零 check；探索诊断。**
 
 ## 1. 设计
 

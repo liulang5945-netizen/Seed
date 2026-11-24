@@ -1,6 +1,6 @@
 # 结果卡：P0-BK 退役＋回收（`p0bk_verified`；退役因果成立、回收后两能力恢复、胶囊仍逐值）
 
-> [结果卡·探索诊断] — 2026-11-24（D-20261223-398）。脚本 [diag_p0bk_20261123.py](../../scripts/training/diag_p0bk_20261123.py)；回执 [report](../../reports/taiji_p0bk_seed20261120.json)。**1 seed、253.45 CPU、零 check；探索诊断。**
+> [结果卡·探索诊断] — 2026-11-24（D-20261124-398）。脚本 [diag_p0bk_20261123.py](../../scripts/training/diag_p0bk_20261123.py)；回执 [report](../../reports/taiji_p0bk_seed20261120.json)。**1 seed、253.45 CPU、零 check；探索诊断。**
 
 ## 1. 设计（生命周期继续：休眠→退役→回收）
 
