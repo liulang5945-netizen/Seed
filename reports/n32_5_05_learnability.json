@@ -1,0 +1,161 @@
+{
+  "schema": "taiji-n32-5-05-v1",
+  "card": "N32.5.05",
+  "arm": "ModalityEdgeHop_q3",
+  "arch_version": "taiji-modality-edge-hop-v1",
+  "model_cfg": {
+    "d_model": 64,
+    "d_edge": 64,
+    "n_edge_layers": 2,
+    "n_hops": 2
+  },
+  "design": [
+    "DESIGN-N32-5-05_20261125.md"
+  ],
+  "created_utc": "2026-11-25T09:33:16.576472+00:00",
+  "smoke": false,
+  "data": {
+    "q3": {
+      "train_rows": 288000,
+      "val_rows": 12000,
+      "aug_copies": 3,
+      "digests": {
+        "train": "df7b1ad98a6c7c908ebdb9ddba7e4e407c839edaba01371fccf2bb1a27a034e9",
+        "val": "7f3f3c580ae1f8577b1046c304513d99fa4ab150e7fb0965f1ac315c665d7928"
+      },
+      "val_majority": 0.6004999876022339
+    }
+  },
+  "length": 20,
+  "gates": {
+    "q3": 0.85
+  },
+  "encode_cpu": 4.59,
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "exploratory": true
+  },
+  "planned": "rep_2seeds",
+  "runs": [
+    {
+      "arm": "ModalityEdgeHop_q3",
+      "arch_version": "taiji-modality-edge-hop-v1",
+      "kind": "q3",
+      "seed": 20261121,
+      "steps": 10000,
+      "presentations": 2560000,
+      "val": {
+        "acc": 0.9867500066757202,
+        "n": 12000,
+        "pred_unknown_rate": 0.5994166731834412,
+        "per_class": {
+          "未知": 0.9926450252532959,
+          "红色圆片": 0.97567218542099,
+          "蓝色圆片": 0.9896640777587891,
+          "绿色圆片": 0.9716049432754517,
+          "黄色圆片": 0.9790382385253906,
+          "紫色圆片": 0.9746376872062683,
+          "青色圆片": 0.9772151708602905
+        }
+      },
+      "entity_mean_acc": 0.977972,
+      "train_probe_acc": 0.9925000071525574,
+      "curve": [
+        [
+          2000,
+          0.6004999876022339
+        ],
+        [
+          4000,
+          0.8410833477973938
+        ],
+        [
+          6000,
+          0.9555000066757202
+        ],
+        [
+          8000,
+          0.9802500009536743
+        ],
+        [
+          10000,
+          0.9867500066757202
+        ]
+      ],
+      "n_params": 121612,
+      "cpu": 202.47,
+      "train_loop_cpu": 200.547,
+      "eval_cpu_total": 1.922
+    },
+    {
+      "arm": "ModalityEdgeHop_q3",
+      "arch_version": "taiji-modality-edge-hop-v1",
+      "kind": "q3",
+      "seed": 20261122,
+      "steps": 10000,
+      "presentations": 2560000,
+      "val": {
+        "acc": 0.987416684627533,
+        "n": 12000,
+        "pred_unknown_rate": 0.6044166684150696,
+        "per_class": {
+          "未知": 0.9961143732070923,
+          "红色圆片": 0.9769526124000549,
+          "蓝色圆片": 0.9702842235565186,
+          "绿色圆片": 0.9753086566925049,
+          "黄色圆片": 0.9728729724884033,
+          "紫色圆片": 0.9722222089767456,
+          "青色圆片": 0.9784809947013855
+        }
+      },
+      "entity_mean_acc": 0.974354,
+      "train_probe_acc": 0.9929999709129333,
+      "curve": [
+        [
+          2000,
+          0.6012499928474426
+        ],
+        [
+          4000,
+          0.8962500095367432
+        ],
+        [
+          6000,
+          0.971833348274231
+        ],
+        [
+          8000,
+          0.9838333129882812
+        ],
+        [
+          10000,
+          0.987416684627533
+        ]
+      ],
+      "n_params": 121612,
+      "cpu": 211.42,
+      "train_loop_cpu": 209.406,
+      "eval_cpu_total": 2.016
+    }
+  ],
+  "rep_accs": [
+    0.9867500066757202,
+    0.987416684627533
+  ],
+  "rep_entity_mean_accs": [
+    0.977972,
+    0.974354
+  ],
+  "combined_3seed_accs": [
+    0.9899166822433472,
+    0.9867500066757202,
+    0.987416684627533
+  ],
+  "exit": "learnable",
+  "cost": {
+    "cpu": 419.62,
+    "cap_cpu": 500.0
+  }
+}
