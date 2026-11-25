@@ -1,0 +1,49 @@
+{
+  "schema": "taiji-sub-1-01-v1",
+  "card": "SUB.1.01",
+  "design": "DESIGN-SUB-1-01_20261126.md",
+  "created_utc": "2026-11-25T17:47:29.748197+00:00",
+  "sessions": 5,
+  "seeds": [
+    5200,
+    5201,
+    5202,
+    5203,
+    5204
+  ],
+  "crash_session": 2,
+  "steps": 19,
+  "ledger_posterior": 1.0,
+  "ece": 0.1129,
+  "confidences": [
+    "我很确定",
+    "我很确定",
+    "我很确定",
+    "我很确定",
+    "我很确定"
+  ],
+  "checks": {
+    "sessions_5": true,
+    "steps_positive": true,
+    "audit_chain_len": true,
+    "crash_recovered": true,
+    "sealed_blocked": true,
+    "ledger_posterior_high": true,
+    "ece_in_range": true,
+    "confidence_levels": true,
+    "deterministic_chain": true,
+    "deterministic_digest": true
+  },
+  "exit": "loop_ready",
+  "cost": {
+    "cpu": 0.03,
+    "cap_cpu": 10.0
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "trained_policies": 0,
+    "policy": "scripted_oracle_control"
+  }
+}

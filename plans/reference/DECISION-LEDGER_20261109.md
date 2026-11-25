@@ -10325,3 +10325,9 @@ eports/n33_1_01_sim.json；CPU 0.02/20。
 **2. 资产**：`taiji/uncertainty_calibration.py`（`taiji-uncertainty-calibration-v1`）——10 分箱 ECE（含明细）、Brier、`q^t` 温度网格拟合（工程原型）、中文四级表达（我很确定/比较确定/不太确定/不确定）；单测 6/6。
 **3. 校准**：`reports/unc_1_01_calibration.json`——完美标定 ECE 0.0000、过度自信检出 0.4000、信心不足检出 0.4000、平坦 0.0000、温度拟合后 0.229 ≤ 0.400、四级表达 4 种、确定性一致；7/7 ⇒ `calibration_ready`。
 **4. 范围**：温度拟合与分级表达为工程原型；不构成「表达并处理不确定性」能力证据，须后续训练/确认线。零 check/final。
+
+### D-20261126-619 集成设施：SUB.1.01 主体循环冒烟 = `loop_ready`（零训练，0.03 CPU）
+
+**1. 背景**：D-616/617/618 分别建成中文任务、证据可信度、不确定性设施；本卡把它们与 `SessionStore`、审计链、崩溃恢复集成为**一条主体循环**（`taiji/subject_loop.py`，`taiji-subject-loop-v1`），为后续训练线提供骨架。
+**2. 读数**：`reports/sub_1_01_loop.json`——5 会话/19 步；审计链 5 且可验证；第 2 会话提交前崩溃恢复；`check/final` 拦截 2/2；证据账本跨会话重建（后验 ≥0.5）；ECE 0.1129、四级表达；两个独立目录同序列链与 digest 完全一致；单测 6/6；10/10 检查 ⇒ `loop_ready`。
+**3. 范围**：动作为脚本 oracle **控制臂**（非学得策略）；不构成能力声明；不读确认 seed/check/final。
