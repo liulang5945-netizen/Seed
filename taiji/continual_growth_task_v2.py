@@ -45,16 +45,19 @@ def _sample_phase1(n: int, gen: torch.Generator) -> tuple[torch.Tensor, torch.Te
     return torch.cat([x_lo, x_hi], dim=1), y_noisy
 
 
-def _sample_phase2(n: int, gen: torch.Generator) -> tuple[torch.Tensor, torch.Tensor]:
+def _sample_phase2(
+    n: int, gen: torch.Generator, pairs: int = 4
+) -> tuple[torch.Tensor, torch.Tensor]:
     bits = torch.randint(0, 2, (n, 8), generator=gen)
     signs = bits.to(torch.float32) * 2.0 - 1.0
-    pairs = [
+    pair_terms = [
         (bits[:, 0] ^ bits[:, 1]).to(torch.long),
         (bits[:, 2] ^ bits[:, 3]).to(torch.long),
         (bits[:, 4] ^ bits[:, 5]).to(torch.long),
         (bits[:, 6] ^ bits[:, 7]).to(torch.long),
     ]
-    y = 6 + ((pairs[0] + pairs[1] + pairs[2] + pairs[3]) % 3)
+    terms = pair_terms[: int(pairs)]
+    y = 6 + (torch.stack(terms, dim=0).sum(dim=0) % 3)
 
     x_lo = 0.20 * torch.randn((n, 8), generator=gen)
     sig = 1.25 * signs + 0.16 * torch.randn((n, 8), generator=gen)
@@ -66,12 +69,13 @@ def make_split(
     *,
     n_train: int = 3072,
     n_val: int = 1024,
+    p2_pairs: int = 4,
 ) -> dict[str, dict[str, dict[str, torch.Tensor]]]:
     gen = torch.Generator().manual_seed(int(seed) % (2**63))
     p1_tr_x, p1_tr_y = _sample_phase1(n_train, gen)
     p1_va_x, p1_va_y = _sample_phase1(n_val, gen)
-    p2_tr_x, p2_tr_y = _sample_phase2(n_train, gen)
-    p2_va_x, p2_va_y = _sample_phase2(n_val, gen)
+    p2_tr_x, p2_tr_y = _sample_phase2(n_train, gen, pairs=p2_pairs)
+    p2_va_x, p2_va_y = _sample_phase2(n_val, gen, pairs=p2_pairs)
     return {
         "phase1": {
             "train": {"x": p1_tr_x, "y": p1_tr_y},
