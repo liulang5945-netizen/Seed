@@ -10209,3 +10209,20 @@ eports/n33_1_01_sim.json；CPU 0.02/20。
 
 **1. 读数（[RESULT-N33-3-91_20261125.md](RESULT-N33-3-91_20261125.md)）**：`repro_spot_check`（`20261701`，`1/3 抽检`）`exact = true`；三确认 seed 均在 P1 无压 `0` 生、P2 `step=75` 出生（扰动 `4.77e-7`）、P1 保持掉点 **`0.0`**、`SessionStore` 往返逐位一致、P2 **`0.9990`** 大胜 `fixed_small`（`0.6729 / 0.5264 / 0.6738`）、休眠掉点 `0.9990 / 0.9990 / 0.9775`；联合均值全部 **`0.9995` vs `prealloc_best 0.9995`（差值 `0.0 / 0.0 / 0.0`）**。
 **2. 账、范围与后续**：按 §5.1 正式确认 **`REQUIRED-INPLACE`**，**`N33.3` 线修订结线**；`N33.3` 累计 `42.08 CPU`，`N33` 累计约 `407.51 / 1,200.0 CPU`（余约 `792.49`）；`20261701–03` 已记账作废，**备用 `20261711–13` 完好未读**；零 `check / final`。待 owner 定 `N33.4`（递归发展 vs 合成多模态/模拟物理）。
+
+### D-20261126-599 N33.4.01 预注册：递归发展环境与 C0 校准（零训练，≤10 CPU）
+
+**1. 卡**：[DESIGN-N33-4-01_20261126.md](DESIGN-N33-4-01_20261126.md)。实现 4 周期相依干预环境 [recursive_dev_env.py](../../taiji/recursive_dev_env.py)（`taiji-recursive-dev-v1`，技能/脆弱度/预算真实耦合＋`SessionStore` 谱系持久化）与单测 [test_recursive_dev_20261126.py](../../tests/test_recursive_dev_20261126.py)，在 `EVAL_SEEDS 9000–9099` 校准 `scripted_oracle >= 0.16`、`>=3.0` 净增步、超随机与 6 常量 `>=0.05`；零训练，零 confirm/check/final。
+
+### D-20261126-600 N33.4.01 执行：**`env_ready`**（1.44/10 CPU；C0 全过）
+
+**1. 读数（[RESULT-N33-4-01_20261126.md](RESULT-N33-4-01_20261126.md)）**：单测 3/3 PASS；`oracle = +0.2434`（平均 `3.57` 净增步，`97% >= 3`）、`random = +0.0529`、`stabilize_fragile = +0.0326`、`noop_hold = 0.0`、`consolidate_all = -0.0320`、`boost_s0/1/2 = -0.1609..-0.1500`；`oracle` 最低领先基线 `+0.1904`；`store_roundtrip_exact = true`。
+
+### D-20261126-601 N33.4.02 预注册：递归发展模型与结果屏蔽/置换对照（≤50 CPU）
+
+**1. 卡**：[DESIGN-N33-4-02_20261126.md](DESIGN-N33-4-02_20261126.md)。从探索随机日志离线训练 `ConsequenceModel(16→64→64→13)`，再在模型内做 `T=4` 想象推演确定性 PPO 训 `InterventionPolicy(22→64→6/1)`（`4001–4003`，零 oracle 训练），对比 `full_recursive` / `masked_outcome` / `permuted_outcome` / `fixed_parent`；门：G1 `delta_u_r2 >= 0.85`、G2 `>=0.15 ∧ >=0.80×oracle ∧ >=3.0` 净增步、G3 反事实领先 `>=+0.02`、G4 确定性＋`SessionStore` 闭环。
+
+### D-20261126-602 N33.4.02 执行：**`recursive_dev_negative`**（20.33/50 CPU；G2/G3/G4 全过，仅 G1 `delta_u R²` `0.611–0.717 < 0.85` 未过）
+
+**1. 读数（[RESULT-N33-4-02_20261126.md](RESULT-N33-4-02_20261126.md)）**：`repro_spot_check`（`4001`）`exact = true`、`store_checks_exact = true`；`full_recursive` 在 `4001/4002/4003` 分别得净收益 **`+0.2350 / +0.2316 / +0.2307`**（`3.18 / 3.15 / 3.16` 净增步，达 `oracle 0.2434` 的 95%–97%），对比 `masked` 与 `permuted` 对照领先 **`+0.2307..+0.3924`**（G2 ∧ G3 3/3 强过）；但后果模型留出集 `delta_u_r2 = 0.6951 / 0.6105 / 0.7165 < 0.85`（未加权 MSE 使 `delta_state` 淹没小尺度 `delta_u`），按预注册退出 `recursive_dev_negative`。
+**2. 账与待裁定**：`N33.4` 累计 `21.77 CPU`，`N33` 累计约 `429.28 / 1,200.0 CPU`（余约 `770.72`）；`20261711–13` 完好未读；建议开 **`N33.4.03`（结果端归一化加权＋1,200 步修 `delta_u_r2`）**。

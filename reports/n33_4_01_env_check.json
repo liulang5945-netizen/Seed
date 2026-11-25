@@ -1,0 +1,81 @@
+{
+  "schema": "taiji-n33-4-01-v1",
+  "card": "N33.4.01",
+  "design": "DESIGN-N33-4-01_20261126.md",
+  "env_version": "taiji-recursive-dev-v1",
+  "state_dim": 10,
+  "horizon": 4,
+  "eval_seeds": [
+    9000,
+    9099,
+    100
+  ],
+  "created_utc": "2026-11-25T16:15:22.884372+00:00",
+  "calibration": {
+    "c0_pass": true,
+    "oracle": {
+      "n": 100,
+      "mean_net_gain": 0.243365,
+      "min_net_gain": 0.181546,
+      "max_net_gain": 0.330283,
+      "mean_improving_steps": 3.57,
+      "frac_ge3_improving": 0.97,
+      "mean_damage": 0.079554,
+      "store_roundtrip_exact": true,
+      "action_histogram": {
+        "boost_s0": 93,
+        "boost_s1": 94,
+        "boost_s2": 103,
+        "stabilize_fragile": 97,
+        "consolidate_all": 13,
+        "noop_hold": 0
+      }
+    },
+    "random_true": {
+      "n": 100,
+      "mean_net_gain": 0.05294,
+      "min_net_gain": -0.205006,
+      "max_net_gain": 0.232935,
+      "mean_improving_steps": 1.22,
+      "frac_ge3_improving": 0.03,
+      "mean_damage": 0.153455,
+      "store_roundtrip_exact": true,
+      "action_histogram": {
+        "boost_s0": 73,
+        "boost_s1": 76,
+        "boost_s2": 58,
+        "stabilize_fragile": 67,
+        "consolidate_all": 62,
+        "noop_hold": 64
+      }
+    },
+    "constants_net_gains": {
+      "boost_s0": -0.160883,
+      "boost_s1": -0.156714,
+      "boost_s2": -0.150009,
+      "stabilize_fragile": 0.032615,
+      "consolidate_all": -0.032,
+      "noop_hold": 0.0
+    },
+    "constants_improving_steps": {
+      "boost_s0": 0.3,
+      "boost_s1": 0.29,
+      "boost_s2": 0.38,
+      "stabilize_fragile": 1.0,
+      "consolidate_all": 0.0,
+      "noop_hold": 0.0
+    },
+    "min_margin_over_baselines": 0.190425
+  },
+  "exit": "env_ready",
+  "cost": {
+    "cpu": 1.44,
+    "cap_cpu": 10.0
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "trained_policies": 0
+  }
+}
