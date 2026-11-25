@@ -23,6 +23,7 @@
 | 不确定性学习线 | [RESULT-UNC-1-02](../reference/RESULT-UNC-1-02_20261126.md) | 学习式不确定性估计探索正例（`uncertainty_learned_positive`；D-20261126-641/642） |
 | 主体循环设施 | [DESIGN-SUB-1-01](../reference/DESIGN-SUB-1-01_20261126.md) | 四项设施集成冒烟（零训练 `loop_ready`；D-20261126-619） |
 | 多模态物理设施 | [DESIGN-PHY-1-01](../reference/DESIGN-PHY-1-01_20261126.md) | 两族动力学＋三模态＋可纠正因果预测（零训练 `physics_ready`；D-20261126-621） |
+| 多模态学习线 | [RESULT-PHY-1-02](../reference/RESULT-PHY-1-02_20261126.md) | 学习式多模态后果预测探索正例（`multimodal_learned_positive`；D-20261126-643/644） |
 | 中文任务学习线 | [RESULT-NCH-1-07](../reference/RESULT-NCH-1-07_20261126.md) | 学得策略探索正例（`chinese_policy_positive`；D-20261126-633..638） |
 | 双任务主体循环 | [DESIGN-SUB-1-02](../reference/DESIGN-SUB-1-02_20261126.md) | 中文＋物理交替集成冒烟（零训练 `mixed_loop_ready`；D-20261126-622） |
 | N34 准入备忘 | [MEMO-N34-ADMISSION-DECISION](../reference/MEMO-N34-ADMISSION-DECISION_20261126.md) | 四项签字解锁/建议值/风险（D-20261126-623） |

@@ -1,0 +1,62 @@
+{
+  "schema": "taiji-phy-1-02-v1",
+  "card": "PHY.1.02",
+  "design": "DESIGN-PHY-1-02_20261126.md",
+  "created_utc": "2026-11-25T18:35:46.714211+00:00",
+  "train_seeds": [
+    6401,
+    6402,
+    6403
+  ],
+  "train_family": "incline",
+  "eval_families": [
+    "incline (held-out)",
+    "collision (cross-family)"
+  ],
+  "per_seed": {
+    "6401": {
+      "in_family": 0.9925,
+      "cross_family": 0.9148,
+      "count_baseline": 0.7452,
+      "weights_exact": true,
+      "cpu": 2.33,
+      "n_train": 32000,
+      "n_eval": 4800
+    },
+    "6402": {
+      "in_family": 0.9944,
+      "cross_family": 0.9181,
+      "count_baseline": 0.7379,
+      "weights_exact": null,
+      "cpu": 0.84,
+      "n_train": 32000,
+      "n_eval": 4800
+    },
+    "6403": {
+      "in_family": 0.9969,
+      "cross_family": 0.9165,
+      "count_baseline": 0.7483,
+      "weights_exact": null,
+      "cpu": 0.84,
+      "n_train": 32000,
+      "n_eval": 4800
+    }
+  },
+  "checks": {
+    "g1_in_family": true,
+    "g2_cross_family": true,
+    "g3_beats_count": true,
+    "g4_deterministic": true
+  },
+  "exit": "multimodal_learned_positive",
+  "cost": {
+    "cpu": 4.39,
+    "cap_cpu": 30.0
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "oracle_used_by_subject": false
+  }
+}
