@@ -10343,3 +10343,15 @@ eports/n33_1_01_sim.json；CPU 0.02/20。
 **2. 资产**：`taiji/multimodal_physics_env.py`（`taiji-multimodal-physics-v1`）——两族（incline 斜面滑动/反弹、collision 撞块）、三模态观测 vision6/proprio3/audio2、无 task_id、4 动作、5 类因果结果、8 步一局；oracle 仅对照、随机基线、可纠正计数预测器；单测 6/6。
 **3. 校准**：`reports/phy_1_01_calibration.json`——oracle 1.0000、随机 0.2099、可纠正 0.50→0.75（+0.25）、两族/模态/标签全过；8/8 ⇒ `physics_ready`。
 **4. 范围**：设施就绪；oracle 不参与训练、可纠正器为计数机制；不构成物理因果理解能力证据。零 check/final。
+
+### D-20261126-622 SUB.1.02 中文＋物理双任务主体循环集成 = `mixed_loop_ready`（零训练，0.03 CPU）
+
+**1. 内容**：`taiji/subject_loop.py` 新增 `run_physics_session`（可纠正因果预测器证据写入＋真实结果更新）；双任务交替会话共用同一 subject 记录与审计链。
+**2. 读数**：`reports/sub_1_02_mixed_loop.json`——4 会话（chinese/physics 交替）、72 步、审计链 4、第 2 会话崩溃恢复、封存 2/2、ECE 0.1866、两独立目录确定性一致；单测 10/10；11/11 ⇒ `mixed_loop_ready`。
+**3. 范围**：脚本控制臂；集成骨架，不构成能力声明；零 check/final。
+
+### D-20261126-623 N34 准入决策备忘（一页，待签）：四项签字解锁项、建议值与风险
+
+**1. 卡片**：MEMO-N34-ADMISSION-DECISION_20261126.md。
+**2. 建议一次性批复**：N34 准入生效；authority 范围 N34、`N34.2.01 ≤120 CPU`、耐久训练卡 ≤80 CPU；确认 seed **20261801–03**（备用 20261811–13）；生长净收益按 **+0.02 必签口径**（≤−0.02 触发 v4 修订）；**check/final 不授权**。
+**3. 现状**：零训练前置全部就绪（D-613～622）；不签则能力主张无法推进，全部停在设施级。零 check/final。

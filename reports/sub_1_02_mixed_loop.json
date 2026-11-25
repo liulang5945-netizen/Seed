@@ -1,0 +1,52 @@
+{
+  "schema": "taiji-sub-1-02-v1",
+  "card": "SUB.1.02",
+  "design": "DESIGN-SUB-1-02_20261126.md",
+  "created_utc": "2026-11-25T18:00:01.747979+00:00",
+  "plan": [
+    "chinese",
+    "physics",
+    "chinese",
+    "physics"
+  ],
+  "seeds": [
+    5500,
+    5600,
+    5501,
+    5601
+  ],
+  "steps": 72,
+  "ledger_posterior": 1.0,
+  "ece": 0.1866,
+  "confidences": [
+    "我很确定",
+    "不太确定",
+    "不太确定",
+    "不太确定"
+  ],
+  "checks": {
+    "sessions_4": true,
+    "both_tasks": true,
+    "steps_positive": true,
+    "audit_chain_len": true,
+    "crash_recovered": true,
+    "sealed_blocked": true,
+    "ledger_posterior_in_range": true,
+    "ece_in_range": true,
+    "confidences_valid": true,
+    "deterministic_chain": true,
+    "deterministic_digest": true
+  },
+  "exit": "mixed_loop_ready",
+  "cost": {
+    "cpu": 0.03,
+    "cap_cpu": 10.0
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "trained_policies": 0,
+    "policy": "scripted_controls"
+  }
+}

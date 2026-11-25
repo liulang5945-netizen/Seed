@@ -28,6 +28,13 @@ from typing import Any
 
 from taiji.chinese_task_env import ChineseTaskEnv, scripted_oracle_policy
 from taiji.evidence_ledger import CredibilityLedger
+from taiji.multimodal_physics_env import (
+    ACTIONS as PHYS_ACTIONS,
+)
+from taiji.multimodal_physics_env import (
+    CorrectablePredictor,
+    MultimodalPhysicsEnv,
+)
 from taiji.session_store import SessionRecord, SessionStore
 from taiji.uncertainty_calibration import expected_calibration_error, verbalize_confidence
 
@@ -158,6 +165,80 @@ class SubjectLoop:
         return (correct + 1.0) / (total + 2.0)
 
     # ------------------------------------------------------------------ views
+    def run_physics_session(
+        self, seed: int, *, crash_before_commit: bool = False
+    ) -> dict[str, Any]:
+        """One multimodal-physics session: correctable causal predictor + feedback evidence."""
+        record = (
+            self.store.load(self.subject_id)
+            if self.session_index
+            else SessionRecord(subject_id=self.subject_id)
+        )
+        claim = "physics_prediction_correct"
+        env = MultimodalPhysicsEnv(seed)
+        env.reset()
+        predictor = CorrectablePredictor()
+        predicted: list[float] = []
+        outcomes: list[int] = []
+        steps = 0
+        while True:
+            for action in PHYS_ACTIONS:
+                truth = env.true_outcome(action)
+                pred = predictor.predict(env, action)
+                polarity = 1 if pred == truth else -1
+                record.append_experience(
+                    "evidence", {"claim": claim, "polarity": polarity, "source": "sensor"}
+                )
+                predicted.append(self._confidence_value(record, claim))
+                outcomes.append(int(polarity > 0))
+                predictor.observe(env, action, truth, pred)
+            obs, outcome, reward, done = env.step(PHYS_ACTIONS[env.state.t % len(PHYS_ACTIONS)])
+            record.append_experience(
+                "physics_turn",
+                {
+                    "session": self.session_index,
+                    "step": steps,
+                    "outcome": outcome,
+                    "reward": reward,
+                },
+            )
+            steps += 1
+            if done:
+                break
+        record.append_experience(
+            "session", {"seed": seed, "steps": steps, "claim": claim, "task": "physics"}
+        )
+        record.add_pending({"id": f"physics-session-{self.session_index}", "kind": "closed"})
+        record.resolve_pending(f"physics-session-{self.session_index}", "done")
+        if crash_before_commit:
+            raise RuntimeError(f"crash before commit at session {self.session_index}")
+        self.store.save(record)
+        prev = self.chain[-1] if self.chain else "0" * 64
+        chain = hashlib.sha256((prev + record.digest()).encode("utf-8")).hexdigest()
+        entry = {
+            "schema": SCHEMA,
+            "session": self.session_index,
+            "subject_id": self.subject_id,
+            "seed": seed,
+            "task": "physics",
+            "steps": steps,
+            "record_digest": record.digest(),
+            "prev": prev,
+            "chain": chain,
+        }
+        with self.audit_path.open("a", encoding="utf-8") as fh:
+            fh.write(json.dumps(entry, sort_keys=True, ensure_ascii=False) + "\n")
+            fh.flush()
+        self.chain.append(chain)
+        self.session_index += 1
+        confidence = self._confidence(record, claim)
+        return {
+            "entry": entry,
+            "predicted": predicted,
+            "outcomes": outcomes,
+            "confidence": confidence,
+        }
+
     def sealed_read(self, split: str) -> None:
         if split in SEALED:
             raise PermissionError(f"split {split!r} is sealed")

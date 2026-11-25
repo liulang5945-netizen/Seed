@@ -84,3 +84,53 @@ def test_confidence_verbalisation(tmp_path: Path) -> None:
     record = loop.store.load("subject-0")
     conf = loop._confidence(record, "turn_action_correct")
     assert conf in {"我很确定", "比较确定", "不太确定", "不确定"}
+
+
+def test_mixed_task_sessions(tmp_path: Path) -> None:
+    loop = SubjectLoop(tmp_path, "subject-0")
+    loop.run_session(5300)
+    loop.run_physics_session(5400)
+    loop.run_session(5301)
+    loop.run_physics_session(5401)
+    record = loop.store.load("subject-0")
+    assert loop.session_index == 4 and len(loop.chain) == 4
+    entries = [
+        __import__("json").loads(l)
+        for l in loop.audit_path.read_text(encoding="utf-8").splitlines()
+    ]
+    assert [e.get("task", "chinese") for e in entries] == [
+        "chinese",
+        "physics",
+        "chinese",
+        "physics",
+    ]
+    assert any(e["kind"] == "physics_turn" for e in record.experience)
+
+
+def test_physics_crash_recovery(tmp_path: Path) -> None:
+    loop = SubjectLoop(tmp_path, "subject-0")
+    loop.run_session(5300)
+    loop.run_physics_session(5400)
+    before = loop.store.load("subject-0").digest()
+    with pytest.raises(RuntimeError):
+        loop.run_physics_session(5401, crash_before_commit=True)
+    assert loop.store.load("subject-0").digest() == before
+    assert loop.session_index == 2
+    loop.run_physics_session(5401)
+    assert loop.session_index == 3
+
+
+def test_physics_determinism(tmp_path: Path) -> None:
+    a = SubjectLoop(tmp_path / "a", "subject-0")
+    b = SubjectLoop(tmp_path / "b", "subject-0")
+    for loop in (a, b):
+        loop.run_session(5300)
+        loop.run_physics_session(5400)
+    assert a.chain == b.chain
+    assert a.store.load("subject-0").digest() == b.store.load("subject-0").digest()
+
+
+def test_physics_confidence_level(tmp_path: Path) -> None:
+    loop = SubjectLoop(tmp_path, "subject-0")
+    out = loop.run_physics_session(5402)
+    assert out["confidence"] in {"我很确定", "比较确定", "不太确定", "不确定"}
