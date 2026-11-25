@@ -1,0 +1,156 @@
+{
+  "schema": "taiji-n33-1-91-v1",
+  "card": "N33.1.91",
+  "design": "DESIGN-N33-1-91_20261125.md",
+  "created_utc": "2026-11-25T13:48:55.249487+00:00",
+  "fixture": "taiji-choice-session-v4",
+  "confirm_seeds": [
+    20261511,
+    20261512,
+    20261513
+  ],
+  "episodes": 6000,
+  "eval_seeds": [
+    5000,
+    5001,
+    5002,
+    5003,
+    5004,
+    5005,
+    5006,
+    5007,
+    5008,
+    5009,
+    5010,
+    5011,
+    5012,
+    5013,
+    5014,
+    5015,
+    5016,
+    5017,
+    5018,
+    5019,
+    5020,
+    5021,
+    5022,
+    5023,
+    5024,
+    5025,
+    5026,
+    5027,
+    5028,
+    5029,
+    5030,
+    5031,
+    5032,
+    5033,
+    5034,
+    5035,
+    5036,
+    5037,
+    5038,
+    5039
+  ],
+  "probe": {
+    "source_card": "N33.1.07",
+    "env_seeds": [
+      7000,
+      7199
+    ],
+    "k_per_domain": 150,
+    "pool_sizes": {
+      "rest": 969,
+      "verify": 358,
+      "work": 2247
+    },
+    "scripted_shares": {
+      "rest": 1.0,
+      "verify": 1.0,
+      "work": 0.8867
+    }
+  },
+  "baselines": {
+    "random": {
+      "n": 40,
+      "mean_return": -6.550293,
+      "min_return": -11.909862,
+      "max_return": 0.918556
+    },
+    "scripted": {
+      "n": 40,
+      "mean_return": 4.404469,
+      "min_return": 1.2,
+      "max_return": 8.253136
+    }
+  },
+  "gates": {
+    "g1_random_gap": 10.0,
+    "g1_scripted_ratio": 0.85,
+    "g2_share": 0.5,
+    "g3_drop": 1.5
+  },
+  "per_seed": {
+    "20261511": {
+      "return_normal": 6.303758,
+      "return_zeroed_state": -10.0475,
+      "state_drop": 16.3513,
+      "g1": true,
+      "g2_fixed": true,
+      "fixed_shares": {
+        "rest": 0.98,
+        "verify": 0.6933,
+        "work": 0.5667
+      },
+      "g3": true,
+      "positive": true,
+      "cpu": 12.14
+    },
+    "20261512": {
+      "return_normal": 6.28003,
+      "return_zeroed_state": -10.0475,
+      "state_drop": 16.3275,
+      "g1": true,
+      "g2_fixed": true,
+      "fixed_shares": {
+        "rest": 0.9133,
+        "verify": 0.7733,
+        "work": 0.5333
+      },
+      "g3": true,
+      "positive": true,
+      "cpu": 11.33
+    },
+    "20261513": {
+      "return_normal": 6.326527,
+      "return_zeroed_state": -10.0475,
+      "state_drop": 16.374,
+      "g1": true,
+      "g2_fixed": false,
+      "fixed_shares": {
+        "rest": 0.9,
+        "verify": 0.48,
+        "work": 0.6067
+      },
+      "g3": true,
+      "positive": false,
+      "cpu": 11.42
+    }
+  },
+  "repro_spot_check": {
+    "seed": 20261511,
+    "exact": true
+  },
+  "exit": "confirm_partial",
+  "cost": {
+    "cpu": 46.19,
+    "cap_cpu": 60.0
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 3,
+    "deterministic_sampler": true
+  },
+  "scope": "taiji-choice-session-v4 simulated sessions only; no real cross-session/growth/check/final"
+}
