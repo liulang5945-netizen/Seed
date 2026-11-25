@@ -1,0 +1,51 @@
+{
+  "schema": "taiji-n32-3-03-v1",
+  "card": "N32.3.03",
+  "design": [
+    "DESIGN-N32-3-03_20261125.md"
+  ],
+  "created_utc": "2026-11-25T05:49:03.958675+00:00",
+  "smoke": true,
+  "data": {
+    "train_rows": 96000,
+    "val_rows": 4000,
+    "aug_copies": 3,
+    "digests": {
+      "train": "4dd546b9df7e54875f1d3a62c9756a6888d665d5087dd60180de2784b6d0adfb",
+      "val": "e5e391131959d4ce3252753e5aa837d4efda834d894b37df7ed9400ee2213642"
+    },
+    "val_majority": 0.33550000190734863
+  },
+  "gates": {
+    "mlp_engineering": 0.9,
+    "gru": 0.85
+  },
+  "encode_cpu": 26.06,
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "exploratory": true
+  },
+  "projection": {
+    "per_step_cpu": {
+      "E0_mlp": 0.003578125,
+      "SF_gru96": 0.0128125,
+      "QF_gru96": 0.0128125
+    },
+    "eval_cpu": {
+      "E0_mlp": 0.015625,
+      "SF_gru96": 0.0625,
+      "QF_gru96": 0.0625
+    },
+    "smoke_cpu": 28.64,
+    "projected_full_all": 363.5,
+    "projected_full_no_qf": 286.3,
+    "cap": 442.0,
+    "planned": "all"
+  },
+  "cost": {
+    "cpu": 28.64,
+    "cap_cpu": 442.0
+  }
+}
