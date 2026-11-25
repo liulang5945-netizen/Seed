@@ -1,0 +1,195 @@
+{
+  "schema": "taiji-n33-2-03-v1",
+  "card": "N33.2.03",
+  "design": "DESIGN-N33-2-03_20261125.md",
+  "created_utc": "2026-11-25T14:14:48.974793+00:00",
+  "smoke": false,
+  "env_version": "taiji-cross-session-v1",
+  "dims": {
+    "obs_s2": 6,
+    "cross": 9,
+    "total": 15
+  },
+  "episodes": 8000,
+  "train_seeds": [
+    2001,
+    2002,
+    2003
+  ],
+  "eval_seeds": [
+    6000,
+    6099,
+    100
+  ],
+  "gates": {
+    "stateless_gap": 3.0,
+    "scripted_ratio": 0.85,
+    "resolve_rate": 0.8,
+    "counterfactual_drop": 3.0
+  },
+  "calibration": {
+    "c0_pass": true,
+    "scripted_normal": {
+      "n": 100,
+      "mean_return": 6.0075,
+      "min_return": 2.8,
+      "max_return": 7.9,
+      "pending_episodes": 73,
+      "resolved_episodes": 73,
+      "resolve_rate": 1.0,
+      "store_roundtrip_exact": true,
+      "post_s2_persist_exact": true,
+      "action_histogram": {
+        "work_0": 58,
+        "work_1": 63,
+        "work_2": 57,
+        "verify_pending": 42,
+        "rest": 43,
+        "finish_idle": 537
+      }
+    },
+    "scripted_zero_cross_mean": -3.04,
+    "scripted_swap_cross_mean": -2.705,
+    "scripted_drop_zero": 9.0475,
+    "scripted_drop_swap": 8.7125,
+    "random_true": {
+      "n": 100,
+      "mean_return": -3.0825,
+      "min_return": -5.4,
+      "max_return": 3.15,
+      "pending_episodes": 73,
+      "resolved_episodes": 8,
+      "resolve_rate": 0.1096,
+      "store_roundtrip_exact": true,
+      "post_s2_persist_exact": true,
+      "action_histogram": {
+        "work_0": 130,
+        "work_1": 140,
+        "work_2": 153,
+        "verify_pending": 130,
+        "rest": 121,
+        "finish_idle": 126
+      }
+    },
+    "constants_mean_returns": {
+      "work_0": -4.971,
+      "work_1": -4.987,
+      "work_2": -4.753,
+      "verify_pending": -4.534,
+      "rest": -4.281,
+      "finish_idle": -3.04
+    }
+  },
+  "per_seed": {
+    "2001": {
+      "persistent_normal": {
+        "n": 100,
+        "mean_return": 5.9365,
+        "min_return": 2.8,
+        "max_return": 7.9,
+        "pending_episodes": 73,
+        "resolved_episodes": 73,
+        "resolve_rate": 1.0,
+        "store_roundtrip_exact": true,
+        "post_s2_persist_exact": true,
+        "action_histogram": {
+          "work_0": 58,
+          "work_1": 63,
+          "work_2": 59,
+          "verify_pending": 47,
+          "rest": 45,
+          "finish_idle": 528
+        }
+      },
+      "stateless_mean": -1.6765,
+      "stateless_resolve_rate": 0.2603,
+      "zero_cross_mean": -3.04,
+      "swap_cross_mean": -2.6705,
+      "gap_vs_stateless": 7.613,
+      "drop_zero_cross": 8.9765,
+      "drop_swap_cross": 8.607,
+      "g1": true,
+      "g2": true,
+      "positive": true,
+      "cpu": 16.52
+    },
+    "2002": {
+      "persistent_normal": {
+        "n": 100,
+        "mean_return": 5.9065,
+        "min_return": 2.8,
+        "max_return": 7.9,
+        "pending_episodes": 73,
+        "resolved_episodes": 73,
+        "resolve_rate": 1.0,
+        "store_roundtrip_exact": true,
+        "post_s2_persist_exact": true,
+        "action_histogram": {
+          "work_0": 58,
+          "work_1": 63,
+          "work_2": 57,
+          "verify_pending": 42,
+          "rest": 58,
+          "finish_idle": 522
+        }
+      },
+      "stateless_mean": -1.4675,
+      "stateless_resolve_rate": 0.1507,
+      "zero_cross_mean": -3.04,
+      "swap_cross_mean": -2.6425,
+      "gap_vs_stateless": 7.374,
+      "drop_zero_cross": 8.9465,
+      "drop_swap_cross": 8.549,
+      "g1": true,
+      "g2": true,
+      "positive": true,
+      "cpu": 10.55
+    },
+    "2003": {
+      "persistent_normal": {
+        "n": 100,
+        "mean_return": 5.7655,
+        "min_return": -0.2,
+        "max_return": 7.9,
+        "pending_episodes": 73,
+        "resolved_episodes": 70,
+        "resolve_rate": 0.9589,
+        "store_roundtrip_exact": true,
+        "post_s2_persist_exact": true,
+        "action_histogram": {
+          "work_0": 70,
+          "work_1": 63,
+          "work_2": 57,
+          "verify_pending": 42,
+          "rest": 41,
+          "finish_idle": 527
+        }
+      },
+      "stateless_mean": -0.3515,
+      "stateless_resolve_rate": 0.4384,
+      "zero_cross_mean": -3.04,
+      "swap_cross_mean": -2.6415,
+      "gap_vs_stateless": 6.117,
+      "drop_zero_cross": 8.8055,
+      "drop_swap_cross": 8.407,
+      "g1": true,
+      "g2": true,
+      "positive": true,
+      "cpu": 10.34
+    }
+  },
+  "repro_exact": true,
+  "store_checks_exact": true,
+  "exit": "cross_session_positive",
+  "cost": {
+    "cpu": 39.25,
+    "cap_cpu": 80.0
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "scripted_used_in_training": false,
+    "continual_plasticity_or_growth": false
+  }
+}
