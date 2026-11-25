@@ -1,0 +1,82 @@
+{
+  "schema": "taiji-n32-6-03-v1",
+  "card": "N32.6.03",
+  "arch_version": "taiji-modality-edge-hop-v1",
+  "rep_seeds": [
+    20261121,
+    20261122
+  ],
+  "prior_seed_20261120": {
+    "q1": 0.9959999918937683,
+    "q2": 0.9872499704360962,
+    "q3": 0.9777500033378601,
+    "q3_2k": 0.8494166731834412
+  },
+  "steps": 6000,
+  "joint_batch": {
+    "q3": 256,
+    "q2": 128,
+    "q1": 64
+  },
+  "loss_weights": {
+    "q3": 1.0,
+    "q2": 0.5,
+    "q1": 0.25
+  },
+  "ckpts": [
+    1000,
+    2000,
+    4000,
+    6000
+  ],
+  "design": [
+    "DESIGN-N32-6-03_20261125.md"
+  ],
+  "created_utc": "2026-11-25T11:40:20.540493+00:00",
+  "smoke": true,
+  "data": {
+    "q1": {
+      "train_rows": 24000,
+      "val_rows": 1000
+    },
+    "q2": {
+      "train_rows": 96000,
+      "val_rows": 4000
+    },
+    "q3": {
+      "train_rows": 288000,
+      "val_rows": 12000
+    },
+    "q3_digests": {
+      "train": "df7b1ad98a6c7c908ebdb9ddba7e4e407c839edaba01371fccf2bb1a27a034e9",
+      "val": "7f3f3c580ae1f8577b1046c304513d99fa4ab150e7fb0965f1ac315c665d7928"
+    }
+  },
+  "gates": {
+    "min": 0.85,
+    "pos": 0.9,
+    "q3_2k": 0.75
+  },
+  "encode_cpu": 5.48,
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "exploratory": true
+  },
+  "projection": {
+    "encode_cpu": 5.48,
+    "smoke_cpu": 8.2,
+    "per_step_cpu": 0.0328125,
+    "eval_pass_cpu": 0.375,
+    "proj_train_cpu_per_seed": 196.88,
+    "projected_2seeds": 435.19,
+    "margin": 1.08,
+    "cap_cpu": 460.0,
+    "planned": "rep_2seeds"
+  },
+  "cost": {
+    "cpu": 8.2,
+    "cap_cpu": 460.0
+  }
+}
