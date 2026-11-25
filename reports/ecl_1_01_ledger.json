@@ -1,0 +1,35 @@
+{
+  "schema": "taiji-ecl-1-01-v1",
+  "card": "ECL.1.01",
+  "design": "DESIGN-ECL-1-01_20261126.md",
+  "created_utc": "2026-11-25T17:38:03.125453+00:00",
+  "scenarios": 20,
+  "checks": {
+    "low_credibility_never_flips": true,
+    "credible_contradiction_corrected": true,
+    "ties_pending": true,
+    "provenance_order_preserved": true,
+    "deterministic_digest": true,
+    "credibility_prior_ordered": true,
+    "threshold_in_range": true
+  },
+  "cred_prior": {
+    "owner": 0.9,
+    "manual": 0.8,
+    "sensor": 0.6,
+    "forum": 0.3,
+    "rumor": 0.15
+  },
+  "accept_threshold": 0.6,
+  "exit": "ledger_ready",
+  "cost": {
+    "cpu": 0.0,
+    "cap_cpu": 5.0
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "trained_models": 0
+  }
+}

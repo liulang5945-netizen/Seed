@@ -10311,3 +10311,10 @@ eports/n33_1_01_sim.json；CPU 0.02/20。
 **3. 单测**：`tests/test_chinese_task_env_20261126.py` **5/5 PASS**（确定性、形状/词表、pending 递减、oracle 高/随机低、无 task_id）。
 **4. 校准**：`reports/nch_1_01_calibration.json`——oracle 训练/留出均 **1.0000**；随机 **0.1494**；8 常量均 ≤ 随机+0.15；留出组合与无 task_id 检查通过；6/6 门 ⇒ `env_ready`。
 **5. 范围**：设施就绪 ≠ 中文任务能力成立；「模型能可靠完成自然中文连续任务」仍需独立训练/确认线（owner 准入＋预算/seed）。零 check/final。
+
+### D-20261126-617 缺口 F 设施：ECL.1.01 证据可信度账本与纠正 = `ledger_ready`（零训练，<0.01 CPU）
+
+**1. 背景**：覆盖矩阵（D-615）缺口 F（依据来源可信度核验/纠正）为 ❌；按 owner「合理即批、按推荐持续推进」授权做零训练设施。
+**2. 资产**：`taiji/evidence_ledger.py`（`taiji-evidence-ledger-v1`）——追加式证据日志、来源可信度先验（owner 0.90 / manual 0.80 / sensor 0.60 / forum 0.30 / rumor 0.15）、加权后验接受阈值 0.60、**已接受 claim 被翻转时显式纠正记录**、确定性 digest；单测 6/6。
+**3. 校准**：`reports/ecl_1_01_ledger.json`——弱矛盾不翻转 20/20、可信矛盾纠正 20/20、平局 pending 20/20、provenance 20/20、确定性 digest ✅；7/7 ⇒ `ledger_ready`。
+**4. 范围**：先验为工程常数（非学得）；不构成「可信度核验与纠正」能力证据，须后续训练/确认线。零 check/final。
