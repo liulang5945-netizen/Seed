@@ -1,0 +1,60 @@
+{
+  "schema": "taiji-n32-2-03-v1",
+  "card": "N32.2.03",
+  "design": "DESIGN-N32-2-03_20261125.md",
+  "created_utc": "2026-11-25T03:54:24.787324+00:00",
+  "seed": 20261120,
+  "smoke": true,
+  "steps_per_stage": 40,
+  "params": {
+    "shared_s": 53610,
+    "rt": 60750,
+    "ratio_s_over_rt": 0.8824691358024691
+  },
+  "s_acc": {
+    "after_q1": {
+      "q1": 0.421,
+      "q2": 0.0,
+      "q3": 0.0
+    },
+    "after_q2": {
+      "q1": 0.0,
+      "q2": 0.3447265625,
+      "q3": 0.5927734375
+    },
+    "final": {
+      "q1": 0.0,
+      "q2": 0.3447265625,
+      "q3": 0.5927734375
+    }
+  },
+  "rt_acc_final": {
+    "q1": 0.421,
+    "q2": 0.3447265625,
+    "q3": 0.5927734375
+  },
+  "q3_checkpoints": {
+    "s": {},
+    "rt": {}
+  },
+  "transfer_probe_q3": 0.0,
+  "metrics": {
+    "g1_margin": -0.85,
+    "g2_shared_gain": 0.0,
+    "g3_bwt_min": 0.0,
+    "ceiling": false
+  },
+  "gates": {
+    "q1": 0.85,
+    "q2": 0.85,
+    "q3": 0.85
+  },
+  "cost": {
+    "cpu": 6.36
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  }
+}

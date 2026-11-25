@@ -1,0 +1,56 @@
+{
+  "schema": "taiji-n32-2-03-v1-summary",
+  "card": "N32.2.03",
+  "exit": "signal_negative",
+  "proxy_weakest_seed": -0.85,
+  "positives": [
+    false,
+    false,
+    false,
+    false,
+    false
+  ],
+  "per_seed": [
+    {
+      "seed": 20261120,
+      "g1_margin": -0.85,
+      "g2": 0.0,
+      "g3_bwt_min": 0.0,
+      "ceiling": false,
+      "cpu": 129.72
+    },
+    {
+      "seed": 20261121,
+      "g1_margin": -0.85,
+      "g2": 0.0,
+      "g3_bwt_min": 0.0,
+      "ceiling": false,
+      "cpu": 128.91
+    },
+    {
+      "seed": 20261122,
+      "g1_margin": -0.85,
+      "g2": 0.0,
+      "g3_bwt_min": 0.0,
+      "ceiling": false,
+      "cpu": 130.42
+    },
+    {
+      "seed": 20261123,
+      "g1_margin": -0.85,
+      "g2": 0.0,
+      "g3_bwt_min": 0.0,
+      "ceiling": false,
+      "cpu": 135.2
+    },
+    {
+      "seed": 20261124,
+      "g1_margin": -0.85,
+      "g2": 0.0,
+      "g3_bwt_min": 0.0,
+      "ceiling": false,
+      "cpu": 147.33
+    }
+  ],
+  "cpu_total": 671.58
+}
