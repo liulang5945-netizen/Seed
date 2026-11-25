@@ -20,6 +20,7 @@
 | 证据可信度设施 | [DESIGN-ECL-1-01](../reference/DESIGN-ECL-1-01_20261126.md) | 证据可信度账本与纠正（零训练 `ledger_ready`；D-20261126-617） |
 | 可信度学习线 | [RESULT-ECL-1-03](../reference/RESULT-ECL-1-03_20261126.md) | 在线可信度学习探索正例（`credibility_learned_positive`；D-20261126-639/640） |
 | 不确定性设施 | [DESIGN-UNC-1-01](../reference/DESIGN-UNC-1-01_20261126.md) | ECE/Brier＋温度校准＋中文分级表达（零训练 `calibration_ready`；D-20261126-618） |
+| 不确定性学习线 | [RESULT-UNC-1-02](../reference/RESULT-UNC-1-02_20261126.md) | 学习式不确定性估计探索正例（`uncertainty_learned_positive`；D-20261126-641/642） |
 | 主体循环设施 | [DESIGN-SUB-1-01](../reference/DESIGN-SUB-1-01_20261126.md) | 四项设施集成冒烟（零训练 `loop_ready`；D-20261126-619） |
 | 多模态物理设施 | [DESIGN-PHY-1-01](../reference/DESIGN-PHY-1-01_20261126.md) | 两族动力学＋三模态＋可纠正因果预测（零训练 `physics_ready`；D-20261126-621） |
 | 中文任务学习线 | [RESULT-NCH-1-07](../reference/RESULT-NCH-1-07_20261126.md) | 学得策略探索正例（`chinese_policy_positive`；D-20261126-633..638） |

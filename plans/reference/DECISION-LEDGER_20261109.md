@@ -10438,3 +10438,13 @@ eports/n33_1_01_sim.json；CPU 0.02/20。
 **2. 读数**：ΔBrier −0.0278/−0.0324/−0.0338；漂移后 Δ **−0.0573/−0.0553/−0.0593**（G2 过）；收敛 0.015–0.025；确定性 ✅ ⇒ G1/G2/G3/G4 3/3 ⇒ **`credibility_learned_positive`**。
 **3. 意义**：合成非平稳来源流上，主体内从反馈学得的可信度估计优于工程常数先验并跟踪漂移；oracle 仅对照。
 **4. 范围/纪律**：仅合成 claim 流；确认线需 owner 新 seed；零 check/final。
+
+### D-20261126-641 UNC.1.02 预注册：主体内学习式不确定性估计（≤15 CPU，探索 seed 6301–6303）
+
+**1. 卡**：DESIGN-UNC-1-02_20261126.md。合成二分类（真 logit 2.2x0−1.4x1+0.6、训练 3,000／留出 1,000）；臂 static/base/temperature/learned/oracle；门 G1 Brier 改善 ≥0.05、G2 learned ECE ≤0.10、G3 温度不升 ECE、G4 oracle ECE ≤0.05。
+
+### D-20261126-642 UNC.1.02 执行：**`uncertainty_learned_positive`**（0.14/15 CPU）
+
+**1. 卡**：RESULT-UNC-1-02_20261126.md；回执 `reports/unc_1_02_learned.json`。
+**2. 读数**：learned ECE **0.0175/0.0256/0.0482**（温度原型 0.073/0.092/0.088）；Brier 改善 **−0.1294/−0.1138/−0.1206**；G1/G2/G3/G4 3/3 ⇒ 正例。
+**3. 范围**：合成二分类、可核验二值反馈；oracle 与温度仅对照；不签真实感知/开放任务。零 check/final。

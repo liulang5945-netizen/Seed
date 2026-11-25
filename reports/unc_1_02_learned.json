@@ -1,0 +1,146 @@
+{
+  "schema": "taiji-unc-1-02-v1",
+  "card": "UNC.1.02",
+  "design": "DESIGN-UNC-1-02_20261126.md",
+  "created_utc": "2026-11-25T18:32:30.060442+00:00",
+  "train_seeds": [
+    6301,
+    6302,
+    6303
+  ],
+  "n_train": 3000,
+  "n_eval": 1000,
+  "per_seed": {
+    "6301": {
+      "metrics": {
+        "static": {
+          "ece": 0.07,
+          "brier": 0.25,
+          "mean_conf": 0.5,
+          "acc": 0.57
+        },
+        "base": {
+          "ece": 0.0941,
+          "brier": 0.1333,
+          "mean_conf": 0.5471,
+          "acc": 0.57
+        },
+        "temperature": {
+          "ece": 0.0732,
+          "brier": 0.1282,
+          "mean_conf": 0.6025,
+          "acc": 0.57
+        },
+        "learned": {
+          "ece": 0.0175,
+          "brier": 0.1206,
+          "mean_conf": 0.5639,
+          "acc": 0.57
+        },
+        "oracle": {
+          "ece": 0.0115,
+          "brier": 0.1204,
+          "mean_conf": 0.5719,
+          "acc": 0.57
+        }
+      },
+      "learned_vs_static_brier": -0.1294,
+      "learned_vs_temperature_brier": -0.0076,
+      "temperature_vs_base_ece": -0.0209,
+      "temperature": 0.6
+    },
+    "6302": {
+      "metrics": {
+        "static": {
+          "ece": 0.036,
+          "brier": 0.25,
+          "mean_conf": 0.5,
+          "acc": 0.536
+        },
+        "base": {
+          "ece": 0.1084,
+          "brier": 0.1508,
+          "mean_conf": 0.5192,
+          "acc": 0.536
+        },
+        "temperature": {
+          "ece": 0.0918,
+          "brier": 0.1482,
+          "mean_conf": 0.5811,
+          "acc": 0.536
+        },
+        "learned": {
+          "ece": 0.0256,
+          "brier": 0.1362,
+          "mean_conf": 0.5483,
+          "acc": 0.536
+        },
+        "oracle": {
+          "ece": 0.0296,
+          "brier": 0.1365,
+          "mean_conf": 0.5571,
+          "acc": 0.536
+        }
+      },
+      "learned_vs_static_brier": -0.1138,
+      "learned_vs_temperature_brier": -0.012,
+      "temperature_vs_base_ece": -0.0166,
+      "temperature": 0.6
+    },
+    "6303": {
+      "metrics": {
+        "static": {
+          "ece": 0.104,
+          "brier": 0.25,
+          "mean_conf": 0.5,
+          "acc": 0.604
+        },
+        "base": {
+          "ece": 0.1126,
+          "brier": 0.15,
+          "mean_conf": 0.5433,
+          "acc": 0.604
+        },
+        "temperature": {
+          "ece": 0.0878,
+          "brier": 0.1383,
+          "mean_conf": 0.602,
+          "acc": 0.604
+        },
+        "learned": {
+          "ece": 0.0482,
+          "brier": 0.1294,
+          "mean_conf": 0.5696,
+          "acc": 0.604
+        },
+        "oracle": {
+          "ece": 0.0409,
+          "brier": 0.1289,
+          "mean_conf": 0.5739,
+          "acc": 0.604
+        }
+      },
+      "learned_vs_static_brier": -0.1206,
+      "learned_vs_temperature_brier": -0.0089,
+      "temperature_vs_base_ece": -0.0248,
+      "temperature": 0.6
+    }
+  },
+  "checks": {
+    "g1_learned_beats_static_brier": true,
+    "g2_learned_ece_low": true,
+    "g3_temperature_improves_base": true,
+    "g4_oracle_control": true
+  },
+  "exit": "uncertainty_learned_positive",
+  "cost": {
+    "cpu": 0.14,
+    "cap_cpu": 15.0
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "oracle_used_by_subject": false
+  }
+}
