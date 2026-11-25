@@ -1,0 +1,104 @@
+{
+  "schema": "taiji-ecl-1-02-v1",
+  "card": "ECL.1.02",
+  "design": "DESIGN-ECL-1-02_20261126.md",
+  "created_utc": "2026-11-25T18:27:34.912370+00:00",
+  "train_seeds": [
+    6201,
+    6202,
+    6203
+  ],
+  "items": 3000,
+  "shift_index": 1000,
+  "per_seed": {
+    "6201": {
+      "static": {
+        "brier": 0.1787,
+        "pre_abs_error": 0.3211,
+        "post_abs_error": 0.3564,
+        "mean_pred": 0.5453
+      },
+      "beta": {
+        "brier": 0.1554,
+        "pre_abs_error": 0.3186,
+        "post_abs_error": 0.3105,
+        "mean_pred": 0.6101
+      },
+      "oracle": {
+        "brier": 0.1454,
+        "pre_abs_error": 0.3099,
+        "post_abs_error": 0.2819,
+        "mean_pred": 0.6526
+      },
+      "beta_vs_static_brier": -0.0233,
+      "beta_vs_static_post": -0.0459,
+      "no_shift_convergence_err": 0.0162,
+      "deterministic": true
+    },
+    "6202": {
+      "static": {
+        "brier": 0.1854,
+        "pre_abs_error": 0.3309,
+        "post_abs_error": 0.359,
+        "mean_pred": 0.5471
+      },
+      "beta": {
+        "brier": 0.1569,
+        "pre_abs_error": 0.3233,
+        "post_abs_error": 0.3124,
+        "mean_pred": 0.6291
+      },
+      "oracle": {
+        "brier": 0.1469,
+        "pre_abs_error": 0.3182,
+        "post_abs_error": 0.2768,
+        "mean_pred": 0.6563
+      },
+      "beta_vs_static_brier": -0.0285,
+      "beta_vs_static_post": -0.0466,
+      "no_shift_convergence_err": 0.0248,
+      "deterministic": true
+    },
+    "6203": {
+      "static": {
+        "brier": 0.1912,
+        "pre_abs_error": 0.3316,
+        "post_abs_error": 0.3716,
+        "mean_pred": 0.5494
+      },
+      "beta": {
+        "brier": 0.1631,
+        "pre_abs_error": 0.3465,
+        "post_abs_error": 0.3261,
+        "mean_pred": 0.6179
+      },
+      "oracle": {
+        "brier": 0.1504,
+        "pre_abs_error": 0.3203,
+        "post_abs_error": 0.2853,
+        "mean_pred": 0.6583
+      },
+      "beta_vs_static_brier": -0.0281,
+      "beta_vs_static_post": -0.0455,
+      "no_shift_convergence_err": 0.0146,
+      "deterministic": true
+    }
+  },
+  "checks": {
+    "g1_brier_better": true,
+    "g2_post_shift_better": false,
+    "g3_converges": true,
+    "g4_deterministic": true
+  },
+  "exit": "credibility_learned_partial",
+  "cost": {
+    "cpu": 0.05,
+    "cap_cpu": 15.0
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "oracle_used_by_subject": false
+  }
+}

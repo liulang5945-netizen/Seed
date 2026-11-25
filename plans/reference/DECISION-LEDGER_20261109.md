@@ -10426,3 +10426,15 @@ eports/n33_1_01_sim.json；CPU 0.02/20。
 **1. 卡**：RESULT-NCH-1-07；回执 `reports/nch_1_07_chinese_policy.json`。
 **2. 读数**：6101 **1.0/1.0**、6102 0.870/0.888、6103 **1.0/1.0** ⇒ G1/G2/G3 3/3、G4 逐位一致 ⇒ **`chinese_policy_positive`**；策略在主体内从奖励学得（policy gradient＋学得 value baseline），oracle 未参与训练。
 **3. 范围**：封闭词表合成中文连续任务＋模拟环境；不签开放中文/真实设备；确认线须 owner 新声明确认 seed。**4. 账**：中文探索线累计 ≈**217 CPU**（1.02–1.07），均零 check/final、未读确认 seed。
+
+### D-20261126-639 ECL.1.02 预注册＋执行：在线学得来源可信度 → `credibility_learned_partial`（0.05/15 CPU）
+
+**1. 卡**：DESIGN/RESULT-ECL-1-02；3,000 条/seed；探索 seed 6201–6203；static vs Beta vs oracle；forum 第 1,000 条后 0.35→0.82。
+**2. 读数**：ΔBrier −0.023/−0.029/−0.028（G1 过）；漂移后 Δ −0.0459/−0.0466/−0.0455（G2 差约 0.004 未过）；收敛 0.015–0.025、确定性过 ⇒ `partial`；不调门，加遗忘（1.03）。
+
+### D-20261126-640 ECL.1.03 预注册＋执行：Beta＋指数遗忘（λ=0.995）→ **`credibility_learned_positive`**（0.05/15 CPU）
+
+**1. 卡**：DESIGN/RESULT-ECL-1-03；回执 `reports/ecl_1_03_credibility.json`。
+**2. 读数**：ΔBrier −0.0278/−0.0324/−0.0338；漂移后 Δ **−0.0573/−0.0553/−0.0593**（G2 过）；收敛 0.015–0.025；确定性 ✅ ⇒ G1/G2/G3/G4 3/3 ⇒ **`credibility_learned_positive`**。
+**3. 意义**：合成非平稳来源流上，主体内从反馈学得的可信度估计优于工程常数先验并跟踪漂移；oracle 仅对照。
+**4. 范围/纪律**：仅合成 claim 流；确认线需 owner 新 seed；零 check/final。

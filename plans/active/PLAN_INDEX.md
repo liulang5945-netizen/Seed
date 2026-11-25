@@ -18,6 +18,7 @@
 | 目标覆盖矩阵 | [COVERAGE-MATRIX_20261126](COVERAGE-MATRIX_20261126.md) | v4 条款→✅/🟡/❌、证据与缺口、下一步优先级（D-20261126-615） |
 | 中文任务设施 | [DESIGN-NCH-1-01](../reference/DESIGN-NCH-1-01_20261126.md) | 封闭词表自然中文连续任务 harness（零训练 `env_ready`；D-20261126-616） |
 | 证据可信度设施 | [DESIGN-ECL-1-01](../reference/DESIGN-ECL-1-01_20261126.md) | 证据可信度账本与纠正（零训练 `ledger_ready`；D-20261126-617） |
+| 可信度学习线 | [RESULT-ECL-1-03](../reference/RESULT-ECL-1-03_20261126.md) | 在线可信度学习探索正例（`credibility_learned_positive`；D-20261126-639/640） |
 | 不确定性设施 | [DESIGN-UNC-1-01](../reference/DESIGN-UNC-1-01_20261126.md) | ECE/Brier＋温度校准＋中文分级表达（零训练 `calibration_ready`；D-20261126-618） |
 | 主体循环设施 | [DESIGN-SUB-1-01](../reference/DESIGN-SUB-1-01_20261126.md) | 四项设施集成冒烟（零训练 `loop_ready`；D-20261126-619） |
 | 多模态物理设施 | [DESIGN-PHY-1-01](../reference/DESIGN-PHY-1-01_20261126.md) | 两族动力学＋三模态＋可纠正因果预测（零训练 `physics_ready`；D-20261126-621） |
