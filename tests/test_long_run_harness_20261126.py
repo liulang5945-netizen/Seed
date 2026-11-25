@@ -92,3 +92,43 @@ def test_deterministic_chain(tmp_path: Path) -> None:
         a.run_session(_step)
         b.run_session(_step)
     assert a.chain == b.chain
+
+
+def test_hundred_sessions(tmp_path: Path) -> None:
+    h = LongRunHarness(tmp_path, "subj")
+    for _i in range(100):
+        h.run_session(_step)
+    record, nxt = h.resume()
+    assert nxt == 100
+    assert len(record.pending) == 100
+    assert h.verify_chain()
+    assert len(h.chain) == 100
+
+
+def test_ten_thousand_events(tmp_path: Path) -> None:
+    h = LongRunHarness(tmp_path, "subj")
+    for _i in range(100):
+        h.run_session(_step)
+    record, _ = h.resume()
+    # 100 sessions x (1 experience + 1 pending) = 200 base events; append to 10,000 total events.
+    while len(record.experience) < 9_900:
+        record.append_experience("bulk", {"k": len(record.experience)})
+    h.store.save(record)
+    back = h.store.load("subj")
+    assert len(back.experience) == 9_900
+    assert len(h.chain) == 100
+
+
+def test_crash_at_scale(tmp_path: Path) -> None:
+    h = LongRunHarness(tmp_path, "subj")
+    for _i in range(50):
+        h.run_session(_step)
+    with pytest.raises(CrashInjected):
+        h.run_session(_step, crash_before_commit=True)
+    record, nxt = h.resume()
+    assert nxt == 50 and len(record.pending) == 50
+    for _i in range(50, 60):
+        h.run_session(_step)
+    record, nxt = h.resume()
+    assert nxt == 60 and len(record.pending) == 60
+    assert h.verify_chain()

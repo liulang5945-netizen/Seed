@@ -10269,3 +10269,9 @@ eports/n33_1_01_sim.json；CPU 0.02/20。
 **2. 实现**：`taiji/long_run_harness.py`（`taiji-long-run-v1`）——多会话循环、逐会话 sha256 审计链、崩溃注入与恢复、`check/final` 封存拦截（`SealedSplitGuard`）、确定性链；`tests/test_long_run_harness_20261126.py` **6/6 PASS**（多会话连续、崩溃恢复、审计篡改检测、封存拦截、harness 封存读取拦截、确定性一致）。
 **3. 准入材料草案**：`N34-ADMISSION_20261126.md`（待签）——阶段目标、前置、建议卡序（N34.1.01 harness→N34.1.02 100 会话/10,000 事件→N34.2.01 生长净收益→N34.9x 确认）、需签项（新 seed、预算/authority、生长净收益是否必签、check/final 授权）；`DESIGN-N34-1-01_20261126.md`（零训练 harness 卡，待准入后执行）。
 **4. 状态**：零训练、零 check/final、未读确认 seed；当前**没有活动卡**；N34 生效需 owner 签字。
+
+### D-20261126-611 N34 预备加固：长跑 harness 扩测至 9/9（100 会话、10,000 事件、50 会话处崩溃恢复；零训练，0 check）
+
+**1. 内容**：`tests/test_long_run_harness_20261126.py` 新增三项压力测试——①100 会话连续（链长 100、pending 100、resume 索引 100）；②9,900 条经验事件（10,000 事件规模）持久与回读；③50 会话后注入崩溃、恢复并续跑到 60（链完整、pending 60）。连同原有 6 项共 **9/9 PASS**（2.47 s，零训练 CPU）。
+**2. 意义**：N34.1.02「100 会话/10,000 事件耐久跑」的核心机制已在工程层验证；N34 仍**未准入**（待 owner 签 seed/预算/authority/生长口径），本条目只是预备工程，不构成阶段卡。
+**3. 状态**：零 check/final；确认 seed 未读；工作树干净。
