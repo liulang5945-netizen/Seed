@@ -1,0 +1,54 @@
+{
+  "schema": "taiji-n32-5-02-v1",
+  "card": "N32.5.02",
+  "arch_version": "taiji-slot-hop-gru-v1",
+  "model_cfg": {
+    "d_model": 48,
+    "n_heads": 4,
+    "n_hops": 2,
+    "ffn_mult": 2
+  },
+  "design": [
+    "DESIGN-N32-5-02_20261125.md"
+  ],
+  "created_utc": "2026-11-25T08:03:42.194306+00:00",
+  "smoke": true,
+  "data": {
+    "q3": {
+      "train_rows": 288000,
+      "val_rows": 12000,
+      "aug_copies": 3,
+      "digests": {
+        "train": "df7b1ad98a6c7c908ebdb9ddba7e4e407c839edaba01371fccf2bb1a27a034e9",
+        "val": "7f3f3c580ae1f8577b1046c304513d99fa4ab150e7fb0965f1ac315c665d7928"
+      },
+      "val_majority": 0.6004999876022339
+    }
+  },
+  "length": 20,
+  "gates": {
+    "q3": 0.85
+  },
+  "encode_cpu": 4.78,
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "exploratory": true
+  },
+  "projection": {
+    "encode_cpu": 4.78,
+    "per_step_cpu": 0.03328,
+    "eval_cpu": 0.609375,
+    "smoke_cpu": 11.25,
+    "projected_1seed": 227.78,
+    "projected_3seeds": 673.78,
+    "margin": 1.1,
+    "cap_cpu": 350.0,
+    "planned": "screen_only"
+  },
+  "cost": {
+    "cpu": 11.25,
+    "cap_cpu": 350.0
+  }
+}
