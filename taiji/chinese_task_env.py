@@ -63,6 +63,14 @@ VOCAB: tuple[str, ...] = (
     "右边",
     "上",
     "下",
+    # Action phrases must be single vocab tokens; otherwise render() would silently map them
+    # to PAD and the observation would carry no action identity (bug found in NCH.1.05).
+    "拿杯子",
+    "放杯子",
+    "打开灯",
+    "关闭灯",
+    "检查门",
+    "记录清单",
 )
 VOCAB_TO_ID = {w: i for i, w in enumerate(VOCAB)}
 PAD_ID = 0

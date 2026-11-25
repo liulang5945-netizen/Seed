@@ -1,0 +1,64 @@
+{
+  "schema": "taiji-nch-1-06-v1",
+  "card": "NCH.1.06",
+  "design": "DESIGN-NCH-1-06_20261126.md",
+  "created_utc": "2026-11-25T18:20:38.752720+00:00",
+  "train_seeds": [
+    6101,
+    6102,
+    6103
+  ],
+  "episodes": 6000,
+  "eval_seeds": [
+    4100,
+    4139,
+    40
+  ],
+  "heldout_seeds": [
+    4140,
+    4179,
+    40
+  ],
+  "oracle_train": 1.0,
+  "oracle_heldout": 1.0,
+  "per_seed": {
+    "6101": {
+      "train_acc": 0.6623,
+      "heldout_acc": 0.7267,
+      "cpu": 12.25,
+      "weights_exact": true
+    },
+    "6102": {
+      "train_acc": 1.0,
+      "heldout_acc": 1.0,
+      "cpu": 5.83,
+      "weights_exact": null
+    },
+    "6103": {
+      "train_acc": 1.0,
+      "heldout_acc": 1.0,
+      "cpu": 5.8,
+      "weights_exact": null
+    }
+  },
+  "gates": {
+    "g1_train_acc": 0.85,
+    "g2_heldout_acc": 0.75,
+    "g3_partial_heldout": 0.7
+  },
+  "g1": false,
+  "g2": false,
+  "g3": true,
+  "repro_exact": true,
+  "exit": "chinese_policy_partial",
+  "cost": {
+    "cpu": 23.89,
+    "cap_cpu": 120.0
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "scripted_used_in_training": false
+  }
+}

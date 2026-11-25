@@ -70,3 +70,14 @@ def test_no_task_id_and_action_ids() -> None:
     assert env.step(env.intended_action)[1] == 1.0
     assert env.step(7)[1] in (0.0, 1.0)
     assert PAD_ID == 0
+
+
+def test_action_phrases_are_renderable_tokens() -> None:
+    from taiji.chinese_task_env import ACTIONS
+
+    for action in ACTIONS:
+        assert action in VOCAB_TO_ID, f"action phrase {action!r} missing from VOCAB"
+    env = ChineseTaskEnv(9)
+    env.reset()
+    tokens = env._render(0)
+    assert VOCAB_TO_ID[env.plan[0]["action"]] in tokens
