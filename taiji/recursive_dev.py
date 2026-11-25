@@ -27,16 +27,16 @@ POLICY_IN_DIM = STATE_DIM + 2 * NUM_ACTIONS  # 10 + 12 = 22
 class ConsequenceModel(nn.Module):
     """Forward consequence model predicting delta_state (10) and [damage, cost, delta_u] (3)."""
 
-    def __init__(self, seed: int) -> None:
+    def __init__(self, seed: int, hidden: int = 64) -> None:
         super().__init__()
         with torch.random.fork_rng(devices=[]):
             torch.manual_seed(int(seed))
             self.net = nn.Sequential(
-                nn.Linear(STATE_DIM + NUM_ACTIONS, 64),
+                nn.Linear(STATE_DIM + NUM_ACTIONS, hidden),
                 nn.Tanh(),
-                nn.Linear(64, 64),
+                nn.Linear(hidden, hidden),
                 nn.Tanh(),
-                nn.Linear(64, OUTCOME_DIM),
+                nn.Linear(hidden, OUTCOME_DIM),
             )
 
     def forward(self, state_and_action: torch.Tensor) -> torch.Tensor:
@@ -104,6 +104,8 @@ def train_consequence_model(
     steps: int = 600,
     batch_size: int = 128,
     lr: float = 5e-3,
+    outcome_weight_scale: bool = False,
+    hidden: int = 64,
     deadline: float,
 ) -> tuple[ConsequenceModel, dict[str, float]]:
     """Train forward consequence model under `full`, `masked`, or `permuted` mode."""
@@ -119,7 +121,17 @@ def train_consequence_model(
         perm = torch.randperm(y_tr.shape[0], generator=perm_gen)
         y_tr = y_tr[perm]
 
-    cmodel = ConsequenceModel(seed_from("N33.4", seed, mode, "cmodel"))
+    outcome_weights: torch.Tensor | None = None
+    if outcome_weight_scale:
+        # Standardised outcome-end weights: scale [damage, cost, delta_u] columns by the ratio
+        # of the state-delta variance to their own variance, so small-scale delta_u is not
+        # drowned by the 10 state-delta columns. Weights are clamped to keep training stable.
+        state_var = y_tr[:, :10].var(dim=0).mean().clamp(min=1e-6)
+        out_var = y_tr[:, 10:13].var(dim=0).clamp(min=1e-6)
+        outcome_weights = torch.ones(y_tr.shape[1])
+        outcome_weights[10:13] = (state_var / out_var).clamp(max=50.0)
+
+    cmodel = ConsequenceModel(seed_from("N33.4", seed, mode, "cmodel"), hidden=hidden)
     opt = torch.optim.Adam(cmodel.parameters(), lr=lr)
     bgen = torch.Generator().manual_seed(seed_from("N33.4", seed, mode, "cm-batches"))
 
@@ -128,7 +140,10 @@ def train_consequence_model(
         if time.process_time() > deadline:
             raise TimeoutError(f"cmodel {mode} seed={seed} step={step}")
         idx = torch.randint(0, x_tr.shape[0], (batch_size,), generator=bgen)
-        loss = F.mse_loss(cmodel(x_tr[idx]), y_tr[idx])
+        if outcome_weights is None:
+            loss = F.mse_loss(cmodel(x_tr[idx]), y_tr[idx])
+        else:
+            loss = (((cmodel(x_tr[idx]) - y_tr[idx]) ** 2) * outcome_weights).mean()
         if not torch.isfinite(loss):
             raise FloatingPointError(f"non-finite cmodel {mode} seed={seed}")
         opt.zero_grad(set_to_none=True)

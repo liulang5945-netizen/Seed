@@ -1,0 +1,51 @@
+{
+  "schema": "taiji-n33-4-05-v1",
+  "card": "N33.4.05",
+  "design": "DESIGN-N33-4-05_20261126.md",
+  "created_utc": "2026-11-25T16:31:36.981048+00:00",
+  "train_seeds": [
+    4001,
+    4002,
+    4003
+  ],
+  "log_episodes": 1500,
+  "cm_steps": 6000,
+  "hidden": 256,
+  "eval_seeds": [
+    9000,
+    9099,
+    100
+  ],
+  "per_seed": {
+    "4001": {
+      "delta_u_r2": 0.9411,
+      "val_mse": 0.000132,
+      "params": 73485,
+      "cpu": 6.45
+    },
+    "4002": {
+      "delta_u_r2": 0.9472,
+      "val_mse": 0.000147,
+      "params": 73485,
+      "cpu": 5.8
+    },
+    "4003": {
+      "delta_u_r2": 0.9568,
+      "val_mse": 0.000119,
+      "params": 73485,
+      "cpu": 5.91
+    }
+  },
+  "best_r2": 0.9568,
+  "exit": "ceiling_reachable",
+  "cost": {
+    "cpu": 18.61,
+    "cap_cpu": 60.0
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "gate_changes": 0
+  }
+}
