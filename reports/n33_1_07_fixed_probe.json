@@ -1,0 +1,222 @@
+{
+  "schema": "taiji-n33-1-07-v1",
+  "card": "N33.1.07",
+  "design": "DESIGN-N33-1-07_20261125.md",
+  "created_utc": "2026-11-25T12:57:40.838924+00:00",
+  "fixture": "taiji-choice-session-v4",
+  "probe": {
+    "env_seeds": [
+      7000,
+      7199
+    ],
+    "k_per_domain": 150,
+    "pool_sizes": {
+      "rest": 969,
+      "verify": 358,
+      "work": 2247
+    },
+    "source_counts": {
+      "rest": {
+        "random": 677,
+        "scripted": 292
+      },
+      "verify": {
+        "random": 290,
+        "scripted": 68
+      },
+      "work": {
+        "random": 1386,
+        "scripted": 861
+      }
+    },
+    "g2_share": 0.5
+  },
+  "calibration": {
+    "scripted": {
+      "shares": {
+        "rest": 1.0,
+        "verify": 1.0,
+        "work": 0.8867
+      },
+      "g2": true
+    },
+    "random_true": {
+      "shares": {
+        "rest": 0.14,
+        "verify": 0.34,
+        "work": 0.3733
+      },
+      "g2": false
+    },
+    "constant_continue_task": {
+      "shares": {
+        "rest": 0.0,
+        "verify": 0.0,
+        "work": 1.0
+      },
+      "g2": false
+    },
+    "constant_recall_learn": {
+      "shares": {
+        "rest": 0.0,
+        "verify": 0.0,
+        "work": 1.0
+      },
+      "g2": false
+    },
+    "constant_verify": {
+      "shares": {
+        "rest": 0.0,
+        "verify": 1.0,
+        "work": 0.0
+      },
+      "g2": false
+    },
+    "constant_ask_help": {
+      "shares": {
+        "rest": 0.0,
+        "verify": 1.0,
+        "work": 0.0
+      },
+      "g2": false
+    },
+    "constant_rest": {
+      "shares": {
+        "rest": 1.0,
+        "verify": 0.0,
+        "work": 0.0
+      },
+      "g2": false
+    },
+    "constant_wait_wake": {
+      "shares": {
+        "rest": 0.0,
+        "verify": 0.0,
+        "work": 0.0
+      },
+      "g2": false
+    }
+  },
+  "calibrated": true,
+  "baselines": {
+    "random": {
+      "n": 40,
+      "mean_return": -6.550293,
+      "min_return": -11.909862,
+      "max_return": 0.918556
+    },
+    "scripted": {
+      "n": 40,
+      "mean_return": 4.404469,
+      "min_return": 1.2,
+      "max_return": 8.253136
+    }
+  },
+  "per_seed": {
+    "1001": {
+      "return_normal": 6.221304,
+      "state_drop": 16.2688,
+      "repro_match_n33_1_06": false,
+      "g1": true,
+      "g3": true,
+      "g2_fixed": true,
+      "fixed_shares": {
+        "rest": 0.9067,
+        "verify": 0.6333,
+        "work": 0.5933
+      },
+      "trajectory_probes_for_reference": {
+        "n_low_energy_pending": 1,
+        "rest_share": 1.0,
+        "n_high_unc_pending": 30,
+        "verify_or_help_share": 0.4333,
+        "n_pending_work": 113,
+        "continue_or_recall_share": 0.6637,
+        "action_histogram": {
+          "continue_task": 118,
+          "recall_learn": 62,
+          "verify": 94,
+          "ask_help": 0,
+          "rest": 149,
+          "wait_wake": 537
+        }
+      },
+      "trajectory_g2_for_reference": false,
+      "positive": true
+    },
+    "1002": {
+      "return_normal": 6.211003,
+      "state_drop": 16.2585,
+      "repro_match_n33_1_06": false,
+      "g1": true,
+      "g3": true,
+      "g2_fixed": true,
+      "fixed_shares": {
+        "rest": 0.9,
+        "verify": 0.9,
+        "work": 0.58
+      },
+      "trajectory_probes_for_reference": {
+        "n_low_energy_pending": 2,
+        "rest_share": 1.0,
+        "n_high_unc_pending": 19,
+        "verify_or_help_share": 0.6316,
+        "n_pending_work": 123,
+        "continue_or_recall_share": 0.6829,
+        "action_histogram": {
+          "continue_task": 119,
+          "recall_learn": 62,
+          "verify": 88,
+          "ask_help": 0,
+          "rest": 130,
+          "wait_wake": 561
+        }
+      },
+      "trajectory_g2_for_reference": true,
+      "positive": true
+    },
+    "1003": {
+      "return_normal": 6.285117,
+      "state_drop": 16.3326,
+      "repro_match_n33_1_06": false,
+      "g1": true,
+      "g3": true,
+      "g2_fixed": true,
+      "fixed_shares": {
+        "rest": 0.9867,
+        "verify": 0.62,
+        "work": 0.5533
+      },
+      "trajectory_probes_for_reference": {
+        "n_low_energy_pending": 1,
+        "rest_share": 1.0,
+        "n_high_unc_pending": 30,
+        "verify_or_help_share": 0.4333,
+        "n_pending_work": 114,
+        "continue_or_recall_share": 0.6579,
+        "action_histogram": {
+          "continue_task": 117,
+          "recall_learn": 62,
+          "verify": 85,
+          "ask_help": 0,
+          "rest": 136,
+          "wait_wake": 560
+        }
+      },
+      "trajectory_g2_for_reference": false,
+      "positive": true
+    }
+  },
+  "repro_ok": false,
+  "exit": "repro_mismatch",
+  "cost": {
+    "cpu": 30.92,
+    "cap_cpu": 50.0
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "scripted_used_in_training": false
+  }
+}
