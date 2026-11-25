@@ -216,9 +216,9 @@ def main() -> int:
     else:
         exit_ = "learned_policy_negative"
     payload = {
-        "schema": "taiji-n33-1-02-v1",
+        "schema": "taiji-n33-1-03-v1",
         "card": CARD,
-        "design": "DESIGN-N33-1-02_20261125.md",
+        "design": "DESIGN-N33-1-03_20261125.md",
         "created_utc": datetime.now(UTC).isoformat(),
         "smoke": args.smoke,
         "episodes": episodes,

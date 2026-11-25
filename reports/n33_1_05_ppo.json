@@ -1,0 +1,163 @@
+{
+  "schema": "taiji-n33-1-05-v1",
+  "card": "N33.1.05",
+  "design": "DESIGN-N33-1-05_20261125.md",
+  "created_utc": "2026-11-25T12:48:17.381886+00:00",
+  "smoke": false,
+  "algorithm": "ppo_actor_critic",
+  "episodes": 1500,
+  "train_seeds": [
+    1001,
+    1002,
+    1003
+  ],
+  "eval_seeds": [
+    5000,
+    5001,
+    5002,
+    5003,
+    5004,
+    5005,
+    5006,
+    5007,
+    5008,
+    5009,
+    5010,
+    5011,
+    5012,
+    5013,
+    5014,
+    5015,
+    5016,
+    5017,
+    5018,
+    5019,
+    5020,
+    5021,
+    5022,
+    5023,
+    5024,
+    5025,
+    5026,
+    5027,
+    5028,
+    5029,
+    5030,
+    5031,
+    5032,
+    5033,
+    5034,
+    5035,
+    5036,
+    5037,
+    5038,
+    5039
+  ],
+  "baselines": {
+    "random": {
+      "n": 40,
+      "mean_return": -6.550293,
+      "min_return": -11.909862,
+      "max_return": 0.918556
+    },
+    "scripted": {
+      "n": 40,
+      "mean_return": 4.404469,
+      "min_return": 1.2,
+      "max_return": 8.253136
+    }
+  },
+  "gates": {
+    "g1_random_gap": 10.0,
+    "g1_scripted_ratio": 0.85,
+    "g3_drop": 1.5
+  },
+  "per_seed": {
+    "1001": {
+      "return_normal": 5.834708,
+      "return_zeroed_state": -10.0475,
+      "state_drop": 15.8822,
+      "probes": {
+        "n_low_energy_pending": 36,
+        "rest_share": 0.8611,
+        "n_high_unc_pending": 86,
+        "verify_or_help_share": 0.186,
+        "n_pending_work": 63,
+        "continue_or_recall_share": 0.9683,
+        "action_histogram": {
+          "continue_task": 166,
+          "recall_learn": 56,
+          "verify": 55,
+          "ask_help": 0,
+          "rest": 135,
+          "wait_wake": 548
+        }
+      },
+      "g1": true,
+      "g2": false,
+      "g3": true,
+      "positive": false
+    },
+    "1002": {
+      "return_normal": 5.921618,
+      "return_zeroed_state": -10.0475,
+      "state_drop": 15.9691,
+      "probes": {
+        "n_low_energy_pending": 36,
+        "rest_share": 0.9722,
+        "n_high_unc_pending": 37,
+        "verify_or_help_share": 0.4865,
+        "n_pending_work": 70,
+        "continue_or_recall_share": 0.9286,
+        "action_histogram": {
+          "continue_task": 149,
+          "recall_learn": 52,
+          "verify": 66,
+          "ask_help": 0,
+          "rest": 134,
+          "wait_wake": 559
+        }
+      },
+      "g1": true,
+      "g2": false,
+      "g3": true,
+      "positive": false
+    },
+    "1003": {
+      "return_normal": 5.85611,
+      "return_zeroed_state": -10.0475,
+      "state_drop": 15.9036,
+      "probes": {
+        "n_low_energy_pending": 32,
+        "rest_share": 0.9062,
+        "n_high_unc_pending": 38,
+        "verify_or_help_share": 0.5,
+        "n_pending_work": 62,
+        "continue_or_recall_share": 0.9516,
+        "action_histogram": {
+          "continue_task": 148,
+          "recall_learn": 44,
+          "verify": 63,
+          "ask_help": 0,
+          "rest": 135,
+          "wait_wake": 570
+        }
+      },
+      "g1": true,
+      "g2": true,
+      "g3": true,
+      "positive": true
+    }
+  },
+  "exit": "ppo_partial",
+  "cost": {
+    "cpu": 8.14,
+    "cap_cpu": 80.0
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "scripted_used_in_training": false
+  }
+}

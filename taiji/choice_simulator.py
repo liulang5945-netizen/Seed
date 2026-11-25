@@ -41,7 +41,7 @@ CHOICES: tuple[str, ...] = (
     "rest",
     "wait_wake",
 )
-SIM_VERSION = "taiji-choice-session-v3"
+SIM_VERSION = "taiji-choice-session-v4"
 CHOICE_INDEX = {name: i for i, name in enumerate(CHOICES)}
 STATE_DIM = 7
 HORIZON = 24
@@ -122,12 +122,15 @@ class ChoiceSessionEnv:
                 s.unresolved = self._clip(s.unresolved - 0.35)
                 s.energy = self._clip(s.energy - 0.03)
                 reward += 0.8 * gain + 0.5
-            elif s.progress < 0.2:
-                reward += 0.2
             else:
                 reward -= 0.5
         elif action == "verify":
-            if s.uncertainty > 0.25:
+            if s.uncertainty > 0.5:
+                drop = 0.35 * (0.5 + s.energy)
+                s.uncertainty = self._clip(s.uncertainty - drop)
+                s.energy = self._clip(s.energy - 0.05)
+                reward += 1.2 * drop
+            elif s.uncertainty > 0.25:
                 drop = 0.3 * (0.5 + s.energy)
                 s.uncertainty = self._clip(s.uncertainty - drop)
                 s.energy = self._clip(s.energy - 0.05)

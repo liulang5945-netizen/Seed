@@ -1,7 +1,7 @@
 {
-  "schema": "taiji-n33-1-02-v1",
+  "schema": "taiji-n33-1-03-v1",
   "card": "N33.1.03",
-  "design": "DESIGN-N33-1-02_20261125.md",
+  "design": "DESIGN-N33-1-03_20261125.md",
   "created_utc": "2026-11-25T12:37:06.936038+00:00",
   "smoke": false,
   "episodes": 4000,
@@ -159,5 +159,6 @@
     "final_reads": 0,
     "confirm_reads": 0,
     "scripted_used_in_training": false
-  }
+  },
+  "bookkeeping_fix": "D-20261125-561: schema/design corrected after owner review; measurements unchanged"
 }
