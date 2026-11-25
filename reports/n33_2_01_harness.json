@@ -1,0 +1,26 @@
+{
+  "schema": "taiji-n33-2-01-v1",
+  "card": "N33.2.01",
+  "design": "DESIGN-N33-2-01_20261125.md",
+  "created_utc": "2026-11-25T13:53:32.140265+00:00",
+  "store_schema": "taiji-session-store-v1",
+  "checks": {
+    "roundtrip_bit_exact": true,
+    "cross_process_digest": true,
+    "tamper_detected": true,
+    "subject_isolation": true
+  },
+  "digest_prefix": "f84cc1e1528cd58a",
+  "tamper_probe": "clock field modified in stored session",
+  "exit": "harness_ready",
+  "cost": {
+    "cpu": 0.0,
+    "cap_cpu": 10.0
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "trained_policies": 0
+  }
+}
