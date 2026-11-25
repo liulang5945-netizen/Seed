@@ -1,0 +1,84 @@
+{
+  "schema": "taiji-n32-5-01-v1",
+  "card": "N32.5.01",
+  "design": [
+    "DESIGN-N32-5-01_20261125.md"
+  ],
+  "created_utc": "2026-11-25T07:36:54.245922+00:00",
+  "smoke": false,
+  "data": {
+    "q3": {
+      "train_rows": 288000,
+      "val_rows": 12000,
+      "aug_copies": 3,
+      "digests": {
+        "train": "df7b1ad98a6c7c908ebdb9ddba7e4e407c839edaba01371fccf2bb1a27a034e9",
+        "val": "7f3f3c580ae1f8577b1046c304513d99fa4ab150e7fb0965f1ac315c665d7928"
+      },
+      "val_majority": 0.6004999876022339
+    }
+  },
+  "length": 20,
+  "gates": {
+    "gru": 0.85
+  },
+  "encode_cpu": 4.64,
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "exploratory": true
+  },
+  "planned": "screen_only",
+  "runs": [
+    {
+      "arm": "G3_gru96_q3",
+      "kind": "q3",
+      "seed": 20261120,
+      "steps": 6000,
+      "presentations": 1536000,
+      "val": {
+        "acc": 0.7039166688919067,
+        "n": 12000,
+        "pred_unknown_rate": 0.7046666741371155,
+        "per_class": {
+          "未知": 0.9056341648101807,
+          "红色圆片": 0.4110115170478821,
+          "蓝色圆片": 0.40180879831314087,
+          "绿色圆片": 0.40246912837028503,
+          "黄色圆片": 0.41553637385368347,
+          "紫色圆片": 0.37681159377098083,
+          "青色圆片": 0.39746835827827454
+        }
+      },
+      "train_probe_acc": 0.7200000286102295,
+      "curve": [
+        [
+          2000,
+          0.6048333048820496
+        ],
+        [
+          4000,
+          0.6809999942779541
+        ],
+        [
+          6000,
+          0.7039166688919067
+        ]
+      ],
+      "n_params": 53610,
+      "cpu": 91.72,
+      "train_loop_cpu": 90.578,
+      "eval_cpu_total": 1.141
+    }
+  ],
+  "screen_acc": 0.7039166688919067,
+  "exit": "q3_not_learnable",
+  "accs": [
+    0.7039166688919067
+  ],
+  "cost": {
+    "cpu": 97.36,
+    "cap_cpu": 250.0
+  }
+}

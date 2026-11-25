@@ -1,6 +1,6 @@
 # 态极（Taiji）主线完整闭环执行总纲
 
-> 文档状态：[主线] — 2026-11-25（D-20261125-533）：**`N31` 已按有界交付结案（D-499，主骨干切换为 `taiji-gru-rt-v1/v2`），当前唯一活动探索阶段为 `N32`（正式成绩单仍未准入；A 段终止 D-504；B 段 `R1` 已过 `Q2` N32.3、`N32.4` 结线，下一步 `N32.5.01` 轻量测 GRU Q3 可学性）**；唯一队列 `≤N30(冻结) → N31(有界结案) → N32 ▶ → N33..N37` 见 `§0.3′`；旧 `S1 / 23-S..28-S / 29 / 30` 为历史编号，映射见 [ID_MAP_N](reference/ID_MAP_N.md)。
+> 文档状态：[主线] — 2026-11-25（D-20261125-535）：**`N31` 已按有界交付结案（D-499，主骨干切换为 `taiji-gru-rt-v1/v2`），当前唯一活动探索阶段为 `N32`（正式成绩单仍未准入；A 段终止 D-504；B 段 `R1` 已过 `Q2` N32.3、`N32.4` 结线，`N32.5.01` 实测 `G3 GRU u96 / 6k 步 Q3 = 0.7039 < 0.85` 判 `q3_not_learnable`，待 owner 定 X1 扩训或 X2 回评）**；唯一队列 `≤N30(冻结) → N31(有界结案) → N32 ▶ → N33..N37` 见 `§0.3′`；旧 `S1 / 23-S..28-S / 29 / 30` 为历史编号，映射见 [ID_MAP_N](reference/ID_MAP_N.md)。
 
 > 历史状态（2026-11-21）：（**D-20261121-230 新核心主线计划补全**：§3A S1/23-S..28-S 合同落盘、旧 §3/§4 封存标注；D-229 单线收编：旧 RouteB 包 `22.1–22.8` 及 `23–25` 已整体结案封存，[taiji/u2_neural_units.py](../taiji/u2_neural_units.py) 保持零改动冻结；**当前唯一活动主线**切换至新加法核心 [taiji/u2_selective_units.py](../taiji/u2_selective_units.py) 序列 **`S0(已完成) → S1(▶ 当前唯一队首) → 23-S..28-S → 29 → 30 → §15`**，全程冻结 `check / final` 直至逐包正式授权）。本页是**唯一主线**执行总纲：无论当下推进哪个工作包，只认同一可恢复主体谱系与本页顺序队列。只读逐轮状态归档见 [MAINLINE_STATUS_HISTORY_20261119.md](MAINLINE_STATUS_HISTORY_20261119.md)（其历史“唯一后继”语句只对其时点成立，不得据此执行），审批与证据流水见 [03_CURRENT_EXECUTION.md](active/roadmap/03_CURRENT_EXECUTION.md) 与 [MASTER-PLAN.md](MASTER-PLAN.md)。
 
@@ -24,7 +24,7 @@
 | `23-S..28-S → 29 → 30 → §15` | **新核心正式重入路线（未准入）** | 按 `§4` 阶梯以新核心逐包重立 `23-S..28-S`（真实多世界/生成/巩固/压力/物理/长运行）；`29` 冻结唯一 `R0`（`Q>=0.95`）→ `30` 接管包 → `§15` 运营状态机；各包开窗前均需实测报价＋owner 授权 | 本文 `§0.3` / `§4` / [N 长期路线](reference/PLAN-TAIJI-N_LONG_HORIZON_20261111.md) |
 | 历史阶段财务账（`22.5` 旧线） | **超支永久记事故（D-20261119-04/06/15/142/143/144）** | 诚实位置 `≈32,040 + E5.10 三卡 189.3 + S0–S4 实测 ≈3,209 + check② 首轮 621.60 + 增补轮 914.59 + verify 结案 17.52 = ≈36,804`，对重冻阶段帽 `24,000` 超 `≈12,804（53.4%）`，不追溯改帽；后续每卡单列报价＋硬帽 | [03 台账](active/roadmap/03_CURRENT_EXECUTION.md) / D-15 / [D-144](reference/RESULT-TAIJI_U2_22_5_1_FORMAL_CHECK2_20261120.md) |
 
-**当前明确不能签署**：`N32` 正式成绩单准入（[SCORECARD-N32](active/SCORECARD-N32.md) 仍草案未生效）、`R1` 任务无关共享表示/习得路由收益、`Q3`（两跳组合）在 GRU 上的可学性（待 `N32.5.01` 实测）、`check / final` 通过、非 `N31` 有界范围对外全任务能力、开放自然中文自由对话、真机实体物理控制、结构生长净收益、`N35` 模型级成型（`R0`）或 `N36` 独立接管交付。
+**当前明确不能签署**：`N32` 正式成绩单准入（[SCORECARD-N32](active/SCORECARD-N32.md) 仍草案未生效）、`R1` 任务无关共享表示/习得路由收益、`Q3`（两跳组合）可学性（[N32.5.01](reference/RESULT-N32-5-01_20261125.md) 测得 `GRU u96 / 6k 步 = 0.7039 < 0.85` 判 `q3_not_learnable`）、`check / final` 通过、非 `N31` 有界范围对外全任务能力、开放自然中文自由对话、真机实体物理控制、结构生长净收益、`N35` 模型级成型（`R0`）或 `N36` 独立接管交付。
 
 ### 0.2 根目标九轴资格向量（同主体单一谱系记账）
 
@@ -53,7 +53,7 @@
 |---|---|---|---|
 | ≤N30 | 历史：22.x、旧 23–25、S0、S1、S1-RT、23-S、24-S、P0-A…DL 等（映射见 [ID_MAP_N](reference/ID_MAP_N.md)） | 冻结 | 结论带范围标签保留，不再开卡 |
 | **N31** | 机制资格：N31.1 学得路由（格01–05）、N31.2 未见对泛化（格06）、N31.3 生长（格07–08）、N31.4 单元动力学对标 | **已结案（有界交付，D-499）** | `12,536 CPU`；`u2_selective_units` 退居基线，切换至 `taiji-gru-rt-v1/v2`；[N31 结案卡](reference/CLOSEOUT-N31_20261124.md) |
-| **N32** | 正式训练 T1（K1–K8 窄交付 A 段终止；B 段 `R1` 共享表示/习得路由探索） | **▶ 当前活动探索阶段（成绩单未准入）** | A 段 `N32.0.91` 终止（D-504）；B 段 `Q2` 过（N32.3）、`Q3` MLP 门证伪并结线 `N32.4`（D-533），下转 `N32.5.01`；时间盒见 [STAGE_GATES_AND_STOPPING](active/STAGE_GATES_AND_STOPPING.md) |
+| **N32** | 正式训练 T1（K1–K8 窄交付 A 段终止；B 段 `R1` 共享表示/习得路由探索） | **▶ 当前活动探索阶段（成绩单未准入）** | A 段 `N32.0.91` 终止（D-504）；B 段 `Q2` 过（N32.3）、`N32.4` 结线（D-533）、`N32.5.01` `G3 GRU u96/6k` 得 `0.7039 < 0.85`（D-535 `q3_not_learnable`），待 owner 定 X1/X2；时间盒见 [STAGE_GATES_AND_STOPPING](active/STAGE_GATES_AND_STOPPING.md) |
 | N33 | 正式训练 T2（学得自主策略、递归发展、合成多模态与模拟物理） | 未准入 | — |
 | N34 | 长跑耐久评测（原 28） | 未准入 | — |
 | N35 | 模型级联合确认（原 29，首次读 check / final） | 未准入 | 唯一签署统一目标之处（核心需求 §2.1 三.2） |
@@ -639,7 +639,7 @@ stateDiagram-v2
 <a id="3-唯一执行队列"></a>
 <a id="r3b-旧基线合同"></a>
 
-**唯一执行队列**顺位：**`[冻结历史] ≤N30（含 22.1–22.8 / 旧 23–25 / S0 / S1 / S1-RT）` → `[已结案] N31（机制资格有界交付 D-499，骨干 taiji-gru-rt-v1/v2）` → `N32`（▶ 当前唯一活动探索阶段：A 段终止 D-504，B 段 `R1` 推进至 `N32.5.01` 轻量 Q3 GRU 可学性，零 `check/final`） → `N33` → `N34` → `N35（首次 check/final）` → `N36` → `N37 运营状态机`**；历史标识 **R3b** 原合同见 [R3 隔离实现](reference/SPEC-NATIVE-CONTENT-CORE_R3_ISOLATED_IMPLEMENTATION_20261030.md)（仅保留基线合同身份）。
+**唯一执行队列**顺位：**`[冻结历史] ≤N30（含 22.1–22.8 / 旧 23–25 / S0 / S1 / S1-RT）` → `[已结案] N31（机制资格有界交付 D-499，骨干 taiji-gru-rt-v1/v2）` → `N32`（▶ 当前唯一活动探索阶段：A 段终止 D-504，B 段 `R1` 刚完成 `N32.5.01` `0.7039 < 0.85` 停在 owner 裁定 X1/X2，零 `check/final`） → `N33` → `N34` → `N35（首次 check/final）` → `N36` → `N37 运营状态机`**；历史标识 **R3b** 原合同见 [R3 隔离实现](reference/SPEC-NATIVE-CONTENT-CORE_R3_ISOLATED_IMPLEMENTATION_20261030.md)（仅保留基线合同身份）。
 
 ### 4. 顺序执行工作卡
 
@@ -660,4 +660,4 @@ stateDiagram-v2
 <a id="本轮规划边界与下一轮立项"></a>
 <a id="根目标覆盖与研究准入边界"></a>
 
-当前执行位置（**2026-11-25 唯一 N 阶梯现行口径**）：**`≤N30` 已整体冻结；`N31` 机制资格已按「有界交付」结案（[N31 结案卡](reference/CLOSEOUT-N31_20261124.md)，`D-499`，`12,536 CPU`；`u2_selective_units` 退居 `REPLACE-STANDARD` 历史基线，主力骨干为 `taiji-gru-rt-v1/v2` [gru_rt.py](../taiji/gru_rt.py)）；当前处于 `N32` 探索阶段（[SCORECARD-N32](active/SCORECARD-N32.md) 尚未准入）：A 段 `N32.0.91` 已终止（`D-504`）；B 段（`R1`）已冻结无泄漏数据合同 `taiji-23-composition-v2`、通过 `Q2` 单任务可学性（`N32.3.03`，`D-522`），且在 `N32.4.04` 证伪 `flat-MLP ≥0.90` 工程门后正式结线 `N32.4`（`D-533`）。▶ 当前唯一下一步＝按 owner「方向选 X」授权推进 `N32.5.01`（`≤250 CPU`，快速校验等价编码缓存＋直接测 `G3 GRU u96` 的 `Q3` 可学性，零 `check / final / confirm`）**。详情与逐轮实证见 [统一目标与验收 §2.1](active/TAIJI_CORE_REQUIREMENTS.md#21-统一目标与验收)、[阶段门与停止规则](active/STAGE_GATES_AND_STOPPING.md)、[决策台账](reference/DECISION-LEDGER_20261109.md) 与 [03_CURRENT_EXECUTION.md](active/roadmap/03_CURRENT_EXECUTION.md)；早期全文归档见 [早期全文归档](archive/20261104_plan_consolidation/MAINLINE_FULL_HISTORY_20261104.md)。
+当前执行位置（**2026-11-25 唯一 N 阶梯现行口径**）：**`≤N30` 已整体冻结；`N31` 机制资格已按「有界交付」结案（[N31 结案卡](reference/CLOSEOUT-N31_20261124.md)，`D-499`，`12,536 CPU`；`u2_selective_units` 退居 `REPLACE-STANDARD` 历史基线，主力骨干为 `taiji-gru-rt-v1/v2` [gru_rt.py](../taiji/gru_rt.py)）；当前处于 `N32` 探索阶段（[SCORECARD-N32](active/SCORECARD-N32.md) 尚未准入）：A 段 `N32.0.91` 已终止（`D-504`）；B 段（`R1`）已通过 `Q2` 单任务可学性（`N32.3.03`，`D-522`）、结线 `N32.4`（`D-533`），并于 `N32.5.01`（[结果卡](reference/RESULT-N32-5-01_20261125.md)，`D-535`，`105.39 / 250 CPU`）测得 `G3 GRU u96 / 6k 步` `Q3 = 0.7039 < 0.85`（`q3_not_learnable`，快速编码仅 `4.64 CPU`）。▶ 当前状态＝停在 owner 裁定（`X1` 扩容量/步数续探 `Q3` vs `X2` 暂停 `R1` 回评窄交付 A 段），零 `check / final / confirm`**。详情与逐轮实证见 [统一目标与验收 §2.1](active/TAIJI_CORE_REQUIREMENTS.md#21-统一目标与验收)、[阶段门与停止规则](active/STAGE_GATES_AND_STOPPING.md)、[决策台账](reference/DECISION-LEDGER_20261109.md) 与 [03_CURRENT_EXECUTION.md](active/roadmap/03_CURRENT_EXECUTION.md)；早期全文归档见 [早期全文归档](archive/20261104_plan_consolidation/MAINLINE_FULL_HISTORY_20261104.md)。
