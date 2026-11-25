@@ -10355,3 +10355,10 @@ eports/n33_1_01_sim.json；CPU 0.02/20。
 **1. 卡片**：MEMO-N34-ADMISSION-DECISION_20261126.md。
 **2. 建议一次性批复**：N34 准入生效；authority 范围 N34、`N34.2.01 ≤120 CPU`、耐久训练卡 ≤80 CPU；确认 seed **20261801–03**（备用 20261811–13）；生长净收益按 **+0.02 必签口径**（≤−0.02 触发 v4 修订）；**check/final 不授权**。
 **3. 现状**：零训练前置全部就绪（D-613～622）；不签则能力主张无法推进，全部停在设施级。零 check/final。
+
+### D-20261126-624 N34 签字就绪包：一键复验 = `bundle_ready`（零训练；11/11；64 单测）
+
+**1. 脚本**：`scripts/training/n34_ready_bundle.py`；回执 `reports/n34_ready_bundle.json`。
+**2. 读数**：64 单测通过；8 张零训练校准卡全部重跑并返回预期 `_ready`；生长净收益 v2 脚本编译通过（未执行）；确认 seed 清单完好、check/final 未读；11/11 ⇒ `bundle_ready`。
+**3. 计量披露**：父进程 `process_time` 不含子进程 CPU（回执 0.02）；按历史回执折算实际约 3 CPU 量级，不影响判读。
+**4. 状态**：N34 训练/确认仍待 owner 签四项（MEMO-N34-ADMISSION-DECISION，D-623）；未读确认 seed/check/final。

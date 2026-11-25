@@ -1,0 +1,83 @@
+{
+  "schema": "taiji-n34-ready-bundle-v1",
+  "created_utc": "2026-11-25T18:02:38.181802+00:00",
+  "commit": "c5061f363",
+  "unit_tests": {
+    "files": 10,
+    "tail": [
+      "64 passed in 6.79s"
+    ],
+    "passed": true
+  },
+  "calibrations": {
+    "nch": {
+      "rc": 0,
+      "exit": "env_ready",
+      "expected": "env_ready"
+    },
+    "ecl": {
+      "rc": 0,
+      "exit": "ledger_ready",
+      "expected": "ledger_ready"
+    },
+    "unc": {
+      "rc": 0,
+      "exit": "calibration_ready",
+      "expected": "calibration_ready"
+    },
+    "phy": {
+      "rc": 0,
+      "exit": "physics_ready",
+      "expected": "physics_ready"
+    },
+    "sub1": {
+      "rc": 0,
+      "exit": "loop_ready",
+      "expected": "loop_ready"
+    },
+    "sub2": {
+      "rc": 0,
+      "exit": "mixed_loop_ready",
+      "expected": "mixed_loop_ready"
+    },
+    "n34_1_01": {
+      "rc": 0,
+      "exit": "harness_ready",
+      "expected": "harness_ready"
+    },
+    "n34_1_02": {
+      "rc": 0,
+      "exit": "durability_ready",
+      "expected": "durability_ready"
+    }
+  },
+  "growth_script": {
+    "path": "scripts\\training\\n34_2_01_growth_benefit_v2.py",
+    "compiled": true,
+    "executed": false
+  },
+  "checks": {
+    "unit_tests_pass": true,
+    "calib_nch": true,
+    "calib_ecl": true,
+    "calib_unc": true,
+    "calib_phy": true,
+    "calib_sub1": true,
+    "calib_sub2": true,
+    "calib_n34_1_01": true,
+    "calib_n34_1_02": true,
+    "growth_script_compiles": true,
+    "confirmation_manifest_intact": true
+  },
+  "exit": "bundle_ready",
+  "cost": {
+    "cpu": 0.02,
+    "cap_cpu": 30.0
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "trained_models": 0
+  }
+}

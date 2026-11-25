@@ -2,7 +2,7 @@
   "schema": "taiji-nch-1-01-v1",
   "card": "NCH.1.01",
   "design": "DESIGN-NCH-1-01_20261126.md",
-  "created_utc": "2026-11-25T17:32:03.206710+00:00",
+  "created_utc": "2026-11-25T18:02:24.130172+00:00",
   "task_version": "taiji-chinese-continuous-v1",
   "train_seeds": [
     4100,
@@ -191,7 +191,7 @@
   },
   "exit": "env_ready",
   "cost": {
-    "cpu": 0.03,
+    "cpu": 0.02,
     "cap_cpu": 5.0
   },
   "discipline": {
