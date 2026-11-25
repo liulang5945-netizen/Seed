@@ -14,6 +14,7 @@
 | 规范 | [STAGE_GATES_AND_STOPPING.md](STAGE_GATES_AND_STOPPING.md)、[MECHANISM_ACCEPTANCE.md](MECHANISM_ACCEPTANCE.md) | 阶段成绩单／停止规则与机制终态／训练放行（D-20261124-464）；N31 起所有卡适用 |
 | N31 结案 | [CLOSEOUT-N31](../reference/CLOSEOUT-N31_20261124.md) | 有界交付；能力边界、负结果、缺口清单、资产状态（D-20261124-499） |
 | N32 收口 | [CLOSEOUT-N32](../reference/CLOSEOUT-N32_20261125.md) | 有界交付＋R1 确认正例；终态、负结果、缺口、资源、N33 准入条件（D-20261125-552） |
+| N33 收口 | [CLOSEOUT-N33](../reference/CLOSEOUT-N33_20261126.md) | 三正例＋一条部分确认；生长收益未签署；资源、seed 状态、N34 准入条件（D-20261126-609） |
 | 目标修订 | [主张对照清单](../reference/REVIEW-GOAL-CLAIMS_20261125.md)、[修订稿 v4 草案](../reference/DRAFT-GOAL-REVISION-V4_20261125.md)（未生效） | owner 签字后合并进核心需求 §2.1（D-20261125-501） |
 | N32.2（R1） | [开线卡](../reference/DESIGN-N32-2-00_20261125.md)、[结线卡](../reference/RESULT-N32-2-CLOSE_20261125.md) | 已结线：`budget_stop`「R1 未检验」（D-20261125-514） |
 | N32 放行 | [REVIEW-N32-ADMISSION](../reference/REVIEW-N32-ADMISSION_20261124.md)、[SCORECARD-N32.md](SCORECARD-N32.md)（已实现、未放行） | 放行01–07 逐条状态；N32 成绩单草案（D-20261124-495） |
