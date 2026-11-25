@@ -1,0 +1,40 @@
+{
+  "schema": "taiji-n34-1-02-v1",
+  "card": "N34.1.02",
+  "design": "DESIGN-N34-1-02_20261126.md",
+  "created_utc": "2026-11-25T17:17:13.198796+00:00",
+  "sessions": 100,
+  "events": 10030,
+  "crash_points": [
+    9,
+    19,
+    29,
+    39,
+    49,
+    59,
+    69,
+    79,
+    89,
+    99
+  ],
+  "crashes_recovered": 10,
+  "checks": {
+    "sessions_completed": true,
+    "events_at_least_10k": true,
+    "crashes_all_recovered": true,
+    "audit_chain_ok": true,
+    "sealed_attempts_blocked": true,
+    "pending_consistent": true
+  },
+  "exit": "durability_ready",
+  "cost": {
+    "cpu": 2.38,
+    "cap_cpu": 20.0
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "trained_policies": 0
+  }
+}

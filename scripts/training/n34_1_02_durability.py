@@ -49,14 +49,16 @@ def main() -> int:
         crashes = 0
         digest_before = None
         i = 0
+        crashed: set[int] = set()
         while i < SESSIONS:
-            crash = i in CRASH_POINTS
+            crash = i in CRASH_POINTS and i not in crashed
             if crash:
                 digest_before = h.resume()[0].digest() if h.session_index else "0" * 64
             try:
                 h.run_session(session_body, crash_before_commit=crash)
                 i += 1
             except CrashInjected:
+                crashed.add(i)
                 crashes += 1
                 record, idx = h.resume()
                 after = record.digest() if idx else "0" * 64

@@ -10282,3 +10282,16 @@ eports/n33_1_01_sim.json；CPU 0.02/20。
 **2. 脚本**：`scripts/training/n34_1_02_durability.py` 已就位（lint/compile 通过，**未执行**，不产生读数）。
 **3. 回归**：N33 资产测试 28/28 PASS（`test_long_run_harness` 9、`test_session_store` 7、`test_choice_simulator` 7、`test_recursive_dev` 3；6.54 s，零训练）。
 **4. 状态**：N34 仍**未准入**；零 check/final；确认 seed 未读；工作树干净。
+
+### D-20261126-613 N34.1.01 长跑 harness 卡执行：**`harness_ready`**（0.22/10 CPU，零训练）
+
+**1. 授权**：N34 正式准入仍待 owner 签四项；本卡为**零训练预备**，依据 owner「合理即批、按推荐持续推进」的长期授权执行，不读确认 seed/check/final、不改门、不产生训练读数。
+**2. 卡**：`RESULT-N34-1-01_20261126.md`；脚本 `n34_1_01_harness.py`；回执 `reports/n34_1_01_harness.json`。
+**3. 读数**：50 会话、pending/经验各 50；第 24 会话崩溃注入后恢复一致；审计链通过；`check/final` 读取 2 次均被拦截；两独立目录同序列运行链与 digest 完全一致（确定性）。8/8 检查通过 ⇒ `harness_ready`。
+**4. 修复披露**：首版脚本崩溃标志在重试时重复触发导致死循环（被后台作业超时捕获并终止，无读数落盘、CPU≈0.2 重复计入 N34 预备账），已改为「崩溃点只注入一次」并复跑。
+
+### D-20261126-614 N34.1.02 100 会话/10,000 事件长跑耐久执行：**`durability_ready`**（2.38/20 CPU，零训练）
+
+**1. 卡**：`RESULT-N34-1-02_20261126.md`；脚本 `n34_1_02_durability.py`；回执 `reports/n34_1_02_durability.json`。
+**2. 读数**：100 会话完成；10,100 条经验事件；10 个崩溃点全部恢复一致；审计链通过；`check/final` 拦截 2/2；pending 80 符合脚本（100 − 20 次解析）。6/6 检查 ⇒ `durability_ready`。
+**3. 位置**：N34 前置零训练卡完成（1.01＋1.02，合计 ≈2.6 CPU）；**N34.2.x 训练卡 / N34.9x 确认仍待 owner 签**：新确认 seed 组、预算/时间盒/`training_authority`、生长净收益口径、check/final 授权。零 check/final。

@@ -1,0 +1,35 @@
+{
+  "schema": "taiji-n34-1-01-v1",
+  "card": "N34.1.01",
+  "design": "DESIGN-N34-1-01_20261126.md",
+  "created_utc": "2026-11-25T17:16:33.597357+00:00",
+  "sessions": 50,
+  "crash_session": 24,
+  "checks": {
+    "sessions_50": true,
+    "pending_50": true,
+    "experience_50": true,
+    "crash_recovered": true,
+    "audit_chain_ok": true,
+    "sealed_blocked": true,
+    "deterministic_chain": true,
+    "deterministic_digest": true
+  },
+  "chain_prefix": [
+    "c05ee6fc3154",
+    "d20fadd25a72",
+    "bed758dada7c"
+  ],
+  "exit": "harness_ready",
+  "cost": {
+    "cpu": 0.22,
+    "cap_cpu": 10.0
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "trained_policies": 0
+  },
+  "authorization": "zero-training preparation under owner standing delegation; training cards remain gated"
+}
