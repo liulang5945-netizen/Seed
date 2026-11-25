@@ -10275,3 +10275,10 @@ eports/n33_1_01_sim.json；CPU 0.02/20。
 **1. 内容**：`tests/test_long_run_harness_20261126.py` 新增三项压力测试——①100 会话连续（链长 100、pending 100、resume 索引 100）；②9,900 条经验事件（10,000 事件规模）持久与回读；③50 会话后注入崩溃、恢复并续跑到 60（链完整、pending 60）。连同原有 6 项共 **9/9 PASS**（2.47 s，零训练 CPU）。
 **2. 意义**：N34.1.02「100 会话/10,000 事件耐久跑」的核心机制已在工程层验证；N34 仍**未准入**（待 owner 签 seed/预算/authority/生长口径），本条目只是预备工程，不构成阶段卡。
 **3. 状态**：零 check/final；确认 seed 未读；工作树干净。
+
+### D-20261126-612 N34 预备续：N34.1.02 耐久跑卡草案＋脚本就位；回归测试 28/28（零训练，0 check）
+
+**1. 卡**：`DESIGN-N34-1-02_20261126.md`（待 N34 准入签字后执行）——100 会话、≥10,000 事件、10 个确定性崩溃点（提交前注入）恢复一致、审计链验证、`check/final` 封存拦截；CAP≤20 CPU。
+**2. 脚本**：`scripts/training/n34_1_02_durability.py` 已就位（lint/compile 通过，**未执行**，不产生读数）。
+**3. 回归**：N33 资产测试 28/28 PASS（`test_long_run_harness` 9、`test_session_store` 7、`test_choice_simulator` 7、`test_recursive_dev` 3；6.54 s，零训练）。
+**4. 状态**：N34 仍**未准入**；零 check/final；确认 seed 未读；工作树干净。
