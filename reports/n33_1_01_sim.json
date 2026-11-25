@@ -2,7 +2,7 @@
   "schema": "taiji-n33-1-01-v1",
   "card": "N33.1.01",
   "design": "DESIGN-N33-1-01_20261125.md",
-  "created_utc": "2026-11-25T12:30:00.646919+00:00",
+  "created_utc": "2026-11-25T12:35:12.950125+00:00",
   "fixture": {
     "choices": [
       "continue_task",
@@ -60,25 +60,25 @@
   "baselines": {
     "scripted": {
       "n": 40,
-      "mean_return": 17.042513,
-      "min_return": 13.236996,
-      "max_return": 19.2
+      "mean_return": 5.544689,
+      "min_return": 1.2,
+      "max_return": 8.977055
     },
     "random": {
       "n": 40,
-      "mean_return": -3.074407,
-      "min_return": -9.610148,
-      "max_return": 7.937637
+      "mean_return": -4.682196,
+      "min_return": -11.332098,
+      "max_return": 0.549132
     },
-    "improvement": 20.11692
+    "improvement": 10.226885
   },
   "scripted_action_share": {
-    "continue_task": 0.1333,
-    "recall_learn": 0.0875,
+    "continue_task": 0.1448,
+    "recall_learn": 0.1271,
     "verify": 0.0292,
     "ask_help": 0.0104,
     "rest": 0.1031,
-    "wait_wake": 0.6365
+    "wait_wake": 0.5854
   },
   "actions_used": [
     "continue_task",

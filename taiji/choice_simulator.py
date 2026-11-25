@@ -1,4 +1,11 @@
-"""Session simulator for N33.1: six autonomous-choice actions over pending goals/state.
+"""Session simulator v2 for N33.1: six autonomous-choice actions over pending goals/state.
+
+v2 rebalance (D-20261125-558): wait_wake no longer pays a per-step premium (+0.15 instead of
++0.9), task progress is gated by uncertainty, and verify/ask_help/rest each have a clear
+state where they dominate. N33.1.01 was replayed on v2 before N33.1.02 used it.
+
+Original docstring below.
+
 
 This is the zero-training fixture for the N33.1 line (learned autonomous selection).
 Scripted heuristics here are baselines only: the N33 requirement is that the policy is
@@ -34,6 +41,7 @@ CHOICES: tuple[str, ...] = (
     "rest",
     "wait_wake",
 )
+SIM_VERSION = "taiji-choice-session-v3"
 CHOICE_INDEX = {name: i for i, name in enumerate(CHOICES)}
 STATE_DIM = 7
 HORIZON = 24
@@ -102,45 +110,47 @@ class ChoiceSessionEnv:
         reward = -0.1  # per-step cost so idling is never free
         if action == "continue_task":
             if s.pending > 0:
-                gain = 0.25 * (0.5 + s.energy) * (1.0 - 0.3 * s.uncertainty)
+                gain = 0.25 * (0.5 + s.energy) * (1.0 - 0.8 * s.uncertainty)
                 s.progress = self._clip(s.progress + gain + noise)
                 s.energy = self._clip(s.energy - 0.12)
-                reward += 1.0 * gain
+                reward += 1.3 * gain
             else:
                 reward -= 0.8
         elif action == "recall_learn":
-            if s.unresolved > 0 or s.progress < 0.5:
-                gain = 0.2 * (0.4 + s.uncertainty)
+            if s.unresolved > 0:
+                gain = 0.25 * (1.0 - s.progress)
                 s.unresolved = self._clip(s.unresolved - 0.35)
                 s.energy = self._clip(s.energy - 0.03)
-                reward += 0.9 * gain + 0.4 * (1.0 - s.progress)
+                reward += 0.8 * gain + 0.5
+            elif s.progress < 0.2:
+                reward += 0.2
             else:
                 reward -= 0.5
         elif action == "verify":
             if s.uncertainty > 0.25:
-                drop = 0.25 * (0.5 + s.energy)
+                drop = 0.3 * (0.5 + s.energy)
                 s.uncertainty = self._clip(s.uncertainty - drop)
                 s.energy = self._clip(s.energy - 0.05)
-                reward += 0.9 * drop
+                reward += 1.1 * drop
             else:
                 reward -= 0.4
         elif action == "ask_help":
             if s.uncertainty > 0.55:
-                s.uncertainty = self._clip(s.uncertainty - 0.45)
-                s.progress = self._clip(s.progress + 0.1)
-                reward += 1.1
+                s.uncertainty = self._clip(s.uncertainty - 0.5)
+                s.progress = self._clip(s.progress + 0.05)
+                reward += 0.9
             else:
                 reward -= 0.7
         elif action == "rest":
             if s.energy < 0.6:
                 s.energy = self._clip(s.energy + 0.3)
-                reward += 0.8
+                reward += 0.7
             else:
-                reward -= 0.3
+                reward -= 0.4
         elif action == "wait_wake":
             if s.pending == 0:
                 s.wait_remaining = 1.0
-                reward += 0.9
+                reward += 0.15
             else:
                 reward -= 0.6
 

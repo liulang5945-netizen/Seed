@@ -9979,3 +9979,22 @@ eports/n33_1_01_sim.json；CPU 0.02/20。
 **2. 读数**：脚本基线均值 17.04（最小 13.24）vs 随机 −3.07（−9.61），差 20.12；六类动作全使用（continue 13.3% / recall 8.8% / verify 2.9% / help 1.0% / rest 10.3% / wait 63.7%）；同 seed 逐位一致；7 项单测全过。
 **3. 判定**：sim_ready ⇒ 模拟器可作 N33.1 学得策略评测环境；脚本基线不计入达成。注意 wait_wake 占比偏高，N33.1.02 须设状态相关选择门（低能量→rest、高不确定→verify/help、未完成→continue）。
 **4. 位置**：N33.1 开线；N33.1.02 学得策略训练卡待另写预注册；确认 seed 20261501–03 未读。
+
+### D-20261125-558 N33.1.02 学得自主选择（fixture v2）：**`learned_policy_partial`**；fixture v2/v3 复验登记
+
+**1. 卡**：`RESULT-N33-1-02_20261125.md`；约 38/80 CPU；策略只用环境奖励学得（REINFORCE），脚本不参与训练。
+**2. 读数**：3 个训练种子均塌缩为常量 `recall_learn`（回报 9.60 > 随机+10 与脚本−2，G1 ✅）；G2 状态相关 0/3、G3 状态使用 0/3（状态置零回报相同）⇒ `learned_policy_partial`。
+**3. 归因**：fixture v2 的 `recall_learn` 在 progress<0.5 时每步给正奖励（与未解决事项无关）⇒ 可刷分不推进；**不是学得策略成立**，G2/G3 如实判败。
+**4. fixture 版本登记**：v2（wait +0.15、进度受不确定性门控、rest/verify/help 有明确状态）与 v3（recall 只在 unresolved>0 时给奖励）都把 N33.1.01 基线复验为 `sim_ready`（v3：脚本 5.54 vs 随机 −4.68，六类动作全覆盖；`SIM_VERSION=taiji-choice-session-v3`）；v2/v3 回执分别存 `reports/n33_1_01_sim_v{2,3}.json`。
+
+### D-20261125-559 N33.1.03（单变量：fixture recall 规则）：预注册（≤80 CPU，零 check）
+
+**1. 卡**：DESIGN-N33-1-03_20261125.md。只改一个变量：`recall_learn` 仅在 `unresolved>0` 时给正奖励；网络/REINFORCE/种子/episodes/门与 N33.1.02 完全相同。
+**2. 幂等**：确认 seed 20261501–03 未读；脚本不参与训练。
+
+### D-20261125-560 N33.1.03 执行：**`learned_policy_negative`** → N33.1 线结线
+
+**1. 卡**：`RESULT-N33-1-03_20261125.md`；约 39/80 CPU。
+**2. 读数**：3 seed 回报 4.47/4.06/0.23（G1 门需 ≥4.69 且 ≥3.30）⇒ G1 0/3；G2 状态相关未全过（rest 0.17–0.32、verify+help 0.09–0.51、continue+recall 0.73–1.00）；G3 状态差 10.28–14.52 全过 ⇒ 策略用了状态但能力/条件性不足。
+**3. 处置**：按预注册 `learned_policy_negative` ⇒ **记「学得策略未成立（当前设置）」，N33.1 结线，不追加**；若继续须 owner 另开新线（actor-critic/CEM/行为克隆对照等）并重新预注册。
+**4. 资产**：会话模拟器 v3（sim_ready）、N33.1.01 基线、N33.1.02/03 失败证据；确认 seed 20261501–03 未读；零 check/final。

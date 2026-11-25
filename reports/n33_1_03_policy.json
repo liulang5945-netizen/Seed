@@ -1,0 +1,163 @@
+{
+  "schema": "taiji-n33-1-02-v1",
+  "card": "N33.1.03",
+  "design": "DESIGN-N33-1-02_20261125.md",
+  "created_utc": "2026-11-25T12:37:06.936038+00:00",
+  "smoke": false,
+  "episodes": 4000,
+  "train_seeds": [
+    1001,
+    1002,
+    1003
+  ],
+  "eval_seeds": [
+    5000,
+    5001,
+    5002,
+    5003,
+    5004,
+    5005,
+    5006,
+    5007,
+    5008,
+    5009,
+    5010,
+    5011,
+    5012,
+    5013,
+    5014,
+    5015,
+    5016,
+    5017,
+    5018,
+    5019,
+    5020,
+    5021,
+    5022,
+    5023,
+    5024,
+    5025,
+    5026,
+    5027,
+    5028,
+    5029,
+    5030,
+    5031,
+    5032,
+    5033,
+    5034,
+    5035,
+    5036,
+    5037,
+    5038,
+    5039
+  ],
+  "baselines": {
+    "random": {
+      "n": 40,
+      "mean_return": -5.31034,
+      "min_return": -9.552423,
+      "max_return": 0.812845
+    },
+    "scripted": {
+      "n": 40,
+      "mean_return": 5.302312,
+      "min_return": 1.2,
+      "max_return": 9.104491
+    }
+  },
+  "gates": {
+    "g1_random_gap": 10.0,
+    "g1_scripted_gap": -2.0,
+    "g2_share": 0.5,
+    "g3_drop": 1.5
+  },
+  "per_seed": {
+    "1001": {
+      "return_normal": 4.47475,
+      "return_zeroed_state": -10.0475,
+      "state_drop": 14.5222,
+      "probes": {
+        "n_low_energy": 230,
+        "rest_share_low_energy": 0.1696,
+        "n_high_uncertainty": 347,
+        "verify_or_help_share_high_unc": 0.1354,
+        "n_pending": 624,
+        "continue_or_recall_share_pending": 0.9103,
+        "action_histogram": {
+          "continue_task": 0,
+          "recall_learn": 872,
+          "verify": 0,
+          "ask_help": 48,
+          "rest": 40,
+          "wait_wake": 0
+        }
+      },
+      "g1": false,
+      "g2": false,
+      "g3": true,
+      "positive": false
+    },
+    "1002": {
+      "return_normal": 4.056199,
+      "return_zeroed_state": -10.0475,
+      "state_drop": 14.1037,
+      "probes": {
+        "n_low_energy": 379,
+        "rest_share_low_energy": 0.1187,
+        "n_high_uncertainty": 300,
+        "verify_or_help_share_high_unc": 0.0867,
+        "n_pending": 69,
+        "continue_or_recall_share_pending": 1.0,
+        "action_histogram": {
+          "continue_task": 350,
+          "recall_learn": 36,
+          "verify": 43,
+          "ask_help": 28,
+          "rest": 87,
+          "wait_wake": 416
+        }
+      },
+      "g1": false,
+      "g2": false,
+      "g3": true,
+      "positive": false
+    },
+    "1003": {
+      "return_normal": 0.232988,
+      "return_zeroed_state": -10.0475,
+      "state_drop": 10.2805,
+      "probes": {
+        "n_low_energy": 245,
+        "rest_share_low_energy": 0.3224,
+        "n_high_uncertainty": 43,
+        "verify_or_help_share_high_unc": 0.5116,
+        "n_pending": 99,
+        "continue_or_recall_share_pending": 0.7273,
+        "action_histogram": {
+          "continue_task": 163,
+          "recall_learn": 163,
+          "verify": 454,
+          "ask_help": 40,
+          "rest": 124,
+          "wait_wake": 16
+        }
+      },
+      "g1": false,
+      "g2": false,
+      "g3": true,
+      "positive": false
+    }
+  },
+  "exit": "learned_policy_negative",
+  "cost": {
+    "cpu": 38.55,
+    "cap_cpu": 80.0
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "scripted_used_in_training": false
+  }
+}
