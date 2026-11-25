@@ -1,0 +1,65 @@
+{
+  "schema": "taiji-n32-3-02-v1",
+  "card": "N32.3.02",
+  "design": "DESIGN-N32-3-02_20261125.md",
+  "created_utc": "2026-11-25T05:34:16.110414+00:00",
+  "seed": 20261120,
+  "smoke": false,
+  "batch": {
+    "gru": 256,
+    "mlp": 512
+  },
+  "steps": {
+    "A": 2500,
+    "B": 2500,
+    "C": 2500,
+    "D1": 1500,
+    "D2": 1500
+  },
+  "subset": {
+    "q2_rows": 24000,
+    "q3_rows": 23996,
+    "q2_digest": "3b8b9a30494a673e640bfdd3a826dc01fcc8379248715afae9aebb1c74611da3",
+    "q3_digest": "e5e8062379fd811fa30e81a27aecde6a1e2c119a212618b515bb700fb5c02292"
+  },
+  "results": {
+    "A_gru48_q2": {
+      "q2": 0.341796875,
+      "steps": 2500
+    },
+    "B_gru96_q2": {
+      "q2": 0.3466796875,
+      "steps": 2500
+    },
+    "C_mlp_q2": {
+      "q2": 0.3935546875,
+      "steps": 2500
+    },
+    "D_course_gru96": {
+      "q2_peak": 0.3447265625,
+      "q2_after_q3": 0.203125,
+      "q3_after_q3": 0.134765625,
+      "steps": [
+        1500,
+        1500
+      ]
+    }
+  },
+  "gates": {
+    "G1_learnable": false,
+    "G2_recurrent_gain_over_mlp": -0.046875,
+    "G3_bwt": -0.1416015625,
+    "G3_min": -0.05
+  },
+  "exit": "not_learnable",
+  "cost": {
+    "cpu": 158.02,
+    "encode_cpu": 12.97,
+    "cap_cpu": 600.0
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  }
+}
