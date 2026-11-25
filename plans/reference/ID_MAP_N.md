@@ -241,9 +241,9 @@ N32 主训练骨干为 `taiji-gru-rt-v2`（D-20261124-496）；成绩单为 `pla
 | N33.3.01 | 级 1 不变量检验（零训练；[plastic_growth.py](../../taiji/plastic_growth.py)） | **`invariants_ready`**：8/8 单测＋批独立/中性出生/Net2Net/休眠唤醒/淘汰回收/选择性可塑/`SessionStore` 往返/无压不生全过（`0.02 CPU`；D-586/587） |
 | N33.3.02 | 持续可塑＋按需生长三臂探索（`fixed_small` / `growth_plastic` / `prealloc_equal`） | `growth_pressure_not_met`：工程门全过但 `CHECK_EVERY=100` 晚触发＋`b_in=0` 致 P2 仅 `0.371–0.599`（`7.25 CPU`；D-588/589） |
 | N33.3.03 | v2 修正（`CHECK_EVERY=50`＋公平均匀输入初值） | **`growth_required_inplace`（§5.1 `REQUIRED-INPLACE`）**：3/3 P1 无压 `0` 生、P2 `step=150` 出生（扰动 `4.77e-7`）、P1 保持掉点 `0.0`、P2 `0.976 / 0.992 / 0.992`（超 `fixed_small +0.304..+0.480`、休眠掉点 `0.968..0.975`）、联合差 `prealloc` `−0.0117..−0.0024`（`7.23 CPU`；D-590/591） |
-| N33.3.90 | 确认（拟用未读 `20261611–13`） | 未开（待 owner 授权，或直入 `N33.4`） |
+| **N33.3.90** | **正式确认（确认 seed `20261611–13`，CAP≤30）** | **`confirm_required_revise`（§5.1 `REQUIRED-REVISE`，N33.3 结线）**：3/3 过 `G_eng ∧ G_pressure`（P1 保持掉点 `0.0`、P2 `0.975 / 0.944 / 0.989`、抽检 `1/3` 一致）；`20261612` 联合差 `prealloc` **`−0.0249 < −0.02`**（`7.86 CPU`；D-592/593）；保守触发维持在位，待下阶段行使 1 次设计修订；`20261611–13` 已作废 |
 
-**范围**：`taiji-plastic-growth-v1` ＋ `taiji-continual-growth-v1` 两阶段合成课程＋`SessionStore` 胶囊往返；能力在位且无害，相对同容量预分配无 `+0.05` 超额净收益（如实记 `REQUIRED-INPLACE`，按 §5.1 不移除能力）。
+**范围**：`taiji-plastic-growth-v1` ＋ `taiji-continual-growth-v1` ＋ `taiji-session-store-v1` 两阶段合成课程；能力按 §5.1 保守触发维持在位（不移除），相对等容预分配收益记 `negative` 并留修订项；**不签**开放任务、真实多模态、或 `check / final`。
 
 ## 4. 落盘状态（D-20261124-464）
 
