@@ -1,0 +1,146 @@
+{
+  "schema": "taiji-n34-3-01-v1",
+  "card": "N34.3.01",
+  "design": "DESIGN-N34-3-01_20261126.md",
+  "created_utc": "2026-11-25T18:45:24.939502+00:00",
+  "train_seeds": [
+    6501,
+    6502,
+    6503
+  ],
+  "train_episodes": 50,
+  "eval_tasks": 20,
+  "per_seed": {
+    "6501": {
+      "learned": {
+        "mean_reward": 0.759,
+        "actions": [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "unique_actions": 1
+      },
+      "baselines": {
+        "no_grow": 0.7382,
+        "grow8": 0.7556,
+        "grow16": 0.759,
+        "grow24": 0.772,
+        "scripted_pressure": 0.7556
+      },
+      "train_reward_last20": 0.7576,
+      "weights_exact": true,
+      "cpu": 63.02
+    },
+    "6502": {
+      "learned": {
+        "mean_reward": 0.7604,
+        "actions": [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "unique_actions": 1
+      },
+      "baselines": {
+        "no_grow": 0.7343,
+        "grow8": 0.7508,
+        "grow16": 0.7604,
+        "grow24": 0.7654,
+        "scripted_pressure": 0.7508
+      },
+      "train_reward_last20": 0.7614,
+      "weights_exact": null,
+      "cpu": 44.72
+    },
+    "6503": {
+      "learned": {
+        "mean_reward": 0.7714,
+        "actions": [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "unique_actions": 1
+      },
+      "baselines": {
+        "no_grow": 0.7461,
+        "grow8": 0.7655,
+        "grow16": 0.7714,
+        "grow24": 0.7685,
+        "scripted_pressure": 0.7655
+      },
+      "train_reward_last20": 0.7651,
+      "weights_exact": null,
+      "cpu": 44.83
+    }
+  },
+  "checks": {
+    "g1_beats_scripted": true,
+    "g2_beats_no_grow": false,
+    "g3_action_diversity": false,
+    "g4_deterministic": true
+  },
+  "exit": "growth_decision_learned_partial",
+  "cost": {
+    "cpu": 152.56,
+    "cap_cpu": 300.0
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "scripted_rule_is_control_only": true
+  }
+}
