@@ -10318,3 +10318,10 @@ eports/n33_1_01_sim.json；CPU 0.02/20。
 **2. 资产**：`taiji/evidence_ledger.py`（`taiji-evidence-ledger-v1`）——追加式证据日志、来源可信度先验（owner 0.90 / manual 0.80 / sensor 0.60 / forum 0.30 / rumor 0.15）、加权后验接受阈值 0.60、**已接受 claim 被翻转时显式纠正记录**、确定性 digest；单测 6/6。
 **3. 校准**：`reports/ecl_1_01_ledger.json`——弱矛盾不翻转 20/20、可信矛盾纠正 20/20、平局 pending 20/20、provenance 20/20、确定性 digest ✅；7/7 ⇒ `ledger_ready`。
 **4. 范围**：先验为工程常数（非学得）；不构成「可信度核验与纠正」能力证据，须后续训练/确认线。零 check/final。
+
+### D-20261126-618 缺口 H 设施：UNC.1.01 不确定性校准与表达 = `calibration_ready`（零训练，0.05 CPU）
+
+**1. 背景**：覆盖矩阵（D-615）缺口 H（不确定性表达/校准）为 ❌；按 owner「合理即批、按推荐持续推进」授权做零训练设施。
+**2. 资产**：`taiji/uncertainty_calibration.py`（`taiji-uncertainty-calibration-v1`）——10 分箱 ECE（含明细）、Brier、`q^t` 温度网格拟合（工程原型）、中文四级表达（我很确定/比较确定/不太确定/不确定）；单测 6/6。
+**3. 校准**：`reports/unc_1_01_calibration.json`——完美标定 ECE 0.0000、过度自信检出 0.4000、信心不足检出 0.4000、平坦 0.0000、温度拟合后 0.229 ≤ 0.400、四级表达 4 种、确定性一致；7/7 ⇒ `calibration_ready`。
+**4. 范围**：温度拟合与分级表达为工程原型；不构成「表达并处理不确定性」能力证据，须后续训练/确认线。零 check/final。

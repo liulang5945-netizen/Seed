@@ -1,0 +1,54 @@
+{
+  "schema": "taiji-unc-1-01-v1",
+  "card": "UNC.1.01",
+  "design": "DESIGN-UNC-1-01_20261126.md",
+  "created_utc": "2026-11-25T17:43:02.545218+00:00",
+  "scenarios": {
+    "perfect": {
+      "ece": 0.0,
+      "brier": 0.1675
+    },
+    "overconfident": {
+      "ece": 0.4,
+      "brier": 0.41
+    },
+    "underconfident": {
+      "ece": 0.4
+    },
+    "flat_half": {
+      "ece": 0.0
+    },
+    "temperature_fit": {
+      "temperature": 3.0,
+      "nll": 810.859,
+      "calibrated_ece": 0.229,
+      "calibrated_ece_check": 0.229
+    }
+  },
+  "verbalisation": {
+    "0.95": "我很确定",
+    "0.7": "比较确定",
+    "0.5": "不太确定",
+    "0.1": "不确定"
+  },
+  "checks": {
+    "perfect_ece_near_zero": true,
+    "overconfident_detected": true,
+    "underconfident_detected": true,
+    "flat_half_ece_zero": true,
+    "temperature_reduces_ece": true,
+    "verbalisation_four_levels": true,
+    "deterministic": true
+  },
+  "exit": "calibration_ready",
+  "cost": {
+    "cpu": 0.05,
+    "cap_cpu": 5.0
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "trained_models": 0
+  }
+}
