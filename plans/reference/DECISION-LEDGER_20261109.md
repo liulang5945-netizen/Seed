@@ -10148,3 +10148,31 @@ eports/n33_1_01_sim.json；CPU 0.02/20。
 - `20261602`：`5.8705`（`0.9733`）vs `stateless +0.0405`（`+5.8300`），`zero/swap` 降 `9.0705 / 9.2700` → G1✅ G2✅；
 - `20261603`：`5.9985`（`0.9867`）vs `stateless −0.3420`（`+6.3405`），`zero/swap` 降 `9.1985 / 9.3430` → G1✅ G2✅。
 **2. 账、范围与后续**：`N33.2` 结线累计 `101.47 / 300.0 CPU`，`N33` 累计约 `365.43 / 1,200.0 CPU`（余约 `834.57`）；`20261601–03` 已记账作废，**`20261611–13` 完好未读**；`check/final = 0`。结论严格限 `taiji-cross-session-v1 + taiji-session-store-v1` 两会话模拟闭环；待 owner 指示开启 `N33.3`（持续可塑＋按需生长入训）。
+
+### D-20261125-586 N33.3.01 预注册：持续可塑＋按需生长入训机制级 1 不变量检验（零训练，≤10 CPU）
+
+**1. 卡**：[DESIGN-N33-3-01_20261125.md](DESIGN-N33-3-01_20261125.md)。实现任务无关 [plastic_growth.py](../../taiji/plastic_growth.py)（`taiji-plastic-growth-v1`：中性出生、Net2Net 分化、可逆休眠/唤醒、保持校验淘汰＋物理回收、选择性可塑掩码、保守压力控制器 `GrowthPressureController`、`SessionStore` 多 dtype 往返），通过级 1 单测与程序化校验方可开 `N33.3.02`。零训练，零 confirm/check/final。
+
+### D-20261125-587 N33.3.01 执行：**`invariants_ready`**（0.02/10 CPU；8/8 单测全过）
+
+**1. 读数（[RESULT-N33-3-01_20261125.md](RESULT-N33-3-01_20261125.md)）**：`tests/test_plastic_growth_20261125.py` 8/8 PASS；批独立 `0.0`、中性出生 `1.19e-7`、Net2Net 分化 `1.19e-7`、`SessionStore` 往返输出差 `0.0` 且 `stage` `torch.equal`、成熟单元梯度 `0.0` vs 新生 `>0`、`forward(self, x)` 无 `task_id`、唤醒差 `0.0`、无压 `[0,0,0,0,0]` vs 平台受压 `[0,0,24]`。注：因 CPU float32 BLAS 分块舍入，变维前后容差设为 `<= 1e-6`（同 `MECHANISM_ACCEPTANCE` INV-02/03）。
+
+### D-20261125-588 N33.3.02 预注册：持续可塑＋按需生长入训三臂对照（≤60 CPU）
+
+**1. 卡**：[DESIGN-N33-3-02_20261125.md](DESIGN-N33-3-02_20261125.md)。在 [continual_growth_task.py](../../taiji/continual_growth_task.py)（Phase 1 原型 vs Phase 2 3 对 6 位 parity 模 3，零 `task_id`）上对比 `fixed_small(8)`、`growth_plastic(8→32 + 选择性可塑 + SessionStore)`、`prealloc_equal(32)`（seed `3001–3003`），按 §5.1 分级 `growth_adopt` / `growth_required_inplace` / `growth_required_revise`。
+
+### D-20261125-589 N33.3.02 执行：**`growth_pressure_not_met`**（7.25/60 CPU；定位晚触发与偏置零锁）
+
+**1. 读数（[RESULT-N33-3-02_20261125.md](RESULT-N33-3-02_20261125.md)）**：`fixed_small P2 = 0.6045/0.5381/0.5342`、`prealloc P2 = 1.0000/0.9980/0.9980`；`growth_plastic` 过全部工程门（`G_eng 3/3`、`repro_exact`、P1 掉点 `0.0`），但 P2 仅 `0.5146/0.5986/0.3711`。根因：`CHECK_EVERY=100` 使出生推迟到第 1,000 步＋`new_b_in=0` 奇函数拖慢 parity 收敛。保留历史报告，开 `N33.3.03` 修复。
+
+### D-20261125-590 N33.3.03 预注册：持续可塑＋按需生长入训 v2（`CHECK_EVERY=50`＋公平均匀输入初值，≤60 CPU）
+
+**1. 卡**：[DESIGN-N33-3-03_20261125.md](DESIGN-N33-3-03_20261125.md)。将检查周期调至 `CHECK_EVERY=50` 并补显式 `grew_at_step` 记录，`grow_neutral_` 输入权重与偏置对齐 `nn.Linear` `U[-1/sqrt(in_dim), +1/sqrt(in_dim)]`（`W_out[:, new]=0.0` 不变），其余超参、门、seed `3001–3003` 与 `N33.3.02` 全同。
+
+### D-20261125-591 N33.3.03 执行：**`growth_required_inplace`**（7.23/60 CPU；3/3 全过工程与必要性门，§5.1 `REQUIRED-INPLACE`）
+
+**1. 读数（[RESULT-N33-3-03_20261125.md](RESULT-N33-3-03_20261125.md)）**：`repro_spot_check`（`3001`）权重＋`stage` 逐位一致；三 seed 均在 P1 无压 `0` 次生长、P2 `step=150` 按需出生（扰动 `4.77e-7`）、P1 保持掉点 **`0.0`**、`SessionStore` 全程逐位一致、休眠掉点 **`0.9678–0.9746`**：
+- `3001`：`fixed_small 0.5352` → `growth_plastic P2 0.9756`（联合 `0.9878` vs `prealloc 0.9995`，差 `−0.0117`）；
+- `3002`：`fixed_small 0.6885` → `growth_plastic P2 0.9922`（联合 `0.9961` vs `prealloc 0.9985`，差 `−0.0024`）；
+- `3003`：`fixed_small 0.5117` → `growth_plastic P2 0.9922`（联合 `0.9961` vs `prealloc 1.0000`，差 `−0.0039`）。
+**2. §5.1 判读与账**：`3/3` 处于 `[−0.02, +0.05)`，按 `MECHANISM_ACCEPTANCE` §5.1 诚实定性为 **`REQUIRED-INPLACE`**（能力在位、必要性成立、不劣于预分配；不额外宣称超预分配净收益）。`N33.3` 三卡累计 `14.50 CPU`，`N33` 累计约 `379.93 / 1,200.0 CPU`；`20261611–13` 完好未读；零 `check / final / confirm`。待 owner 定是否跑 `N33.3.90`（`20261611–13`）确认或直入 `N33.4`。

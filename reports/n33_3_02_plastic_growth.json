@@ -1,0 +1,199 @@
+{
+  "schema": "taiji-n33-3-02-v1",
+  "card": "N33.3.02",
+  "design": "DESIGN-N33-3-02_20261125.md",
+  "created_utc": "2026-11-25T14:30:47.428647+00:00",
+  "smoke": false,
+  "arch_version": "taiji-plastic-growth-v1",
+  "task_version": "taiji-continual-growth-v1",
+  "steps": {
+    "p1": 500,
+    "p2": 1200
+  },
+  "train_seeds": [
+    3001,
+    3002,
+    3003
+  ],
+  "repro_spot_check": {
+    "seed": 3001,
+    "exact": true
+  },
+  "per_seed": {
+    "3001": {
+      "fixed_small": {
+        "arm": "fixed_small",
+        "final_hidden": 8,
+        "n_params": 190,
+        "p1_before_acc": 1.0,
+        "p1_after_acc": 1.0,
+        "p1_retention_drop": 0.0,
+        "p2_acc": 0.604492,
+        "combined_acc": 0.802246,
+        "p1_growth_events": 0,
+        "p2_growth_events": 0,
+        "birth_perturbation": 0.0,
+        "p2_dormancy_drop": 0.0,
+        "wake_diff": 0.0,
+        "store_roundtrip_exact": true
+      },
+      "growth_plastic": {
+        "arm": "growth_plastic",
+        "final_hidden": 32,
+        "n_params": 742,
+        "p1_before_acc": 1.0,
+        "p1_after_acc": 1.0,
+        "p1_retention_drop": 0.0,
+        "p2_acc": 0.514648,
+        "combined_acc": 0.757324,
+        "p1_growth_events": 0,
+        "p2_growth_events": 1,
+        "birth_perturbation": 4.76837158203125e-07,
+        "p2_dormancy_drop": 0.136719,
+        "wake_diff": 0.0,
+        "store_roundtrip_exact": true
+      },
+      "prealloc_equal": {
+        "arm": "prealloc_equal",
+        "final_hidden": 32,
+        "n_params": 742,
+        "p1_before_acc": 1.0,
+        "p1_after_acc": 1.0,
+        "p1_retention_drop": 0.0,
+        "p2_acc": 1.0,
+        "combined_acc": 1.0,
+        "p1_growth_events": 0,
+        "p2_growth_events": 0,
+        "birth_perturbation": 0.0,
+        "p2_dormancy_drop": 0.0,
+        "wake_diff": 0.0,
+        "store_roundtrip_exact": true
+      },
+      "p2_gain_over_small": -0.089844,
+      "combined_diff_vs_prealloc": -0.242676,
+      "g_eng": true,
+      "g_pressure": false,
+      "cpu": 3.58
+    },
+    "3002": {
+      "fixed_small": {
+        "arm": "fixed_small",
+        "final_hidden": 8,
+        "n_params": 190,
+        "p1_before_acc": 1.0,
+        "p1_after_acc": 1.0,
+        "p1_retention_drop": 0.0,
+        "p2_acc": 0.538086,
+        "combined_acc": 0.769043,
+        "p1_growth_events": 0,
+        "p2_growth_events": 0,
+        "birth_perturbation": 0.0,
+        "p2_dormancy_drop": 0.0,
+        "wake_diff": 0.0,
+        "store_roundtrip_exact": true
+      },
+      "growth_plastic": {
+        "arm": "growth_plastic",
+        "final_hidden": 32,
+        "n_params": 742,
+        "p1_before_acc": 1.0,
+        "p1_after_acc": 1.0,
+        "p1_retention_drop": 0.0,
+        "p2_acc": 0.598633,
+        "combined_acc": 0.799316,
+        "p1_growth_events": 0,
+        "p2_growth_events": 1,
+        "birth_perturbation": 9.5367431640625e-07,
+        "p2_dormancy_drop": 0.213867,
+        "wake_diff": 0.0,
+        "store_roundtrip_exact": true
+      },
+      "prealloc_equal": {
+        "arm": "prealloc_equal",
+        "final_hidden": 32,
+        "n_params": 742,
+        "p1_before_acc": 1.0,
+        "p1_after_acc": 1.0,
+        "p1_retention_drop": 0.0,
+        "p2_acc": 0.998047,
+        "combined_acc": 0.999023,
+        "p1_growth_events": 0,
+        "p2_growth_events": 0,
+        "birth_perturbation": 0.0,
+        "p2_dormancy_drop": 0.0,
+        "wake_diff": 0.0,
+        "store_roundtrip_exact": true
+      },
+      "p2_gain_over_small": 0.060547,
+      "combined_diff_vs_prealloc": -0.199707,
+      "g_eng": true,
+      "g_pressure": false,
+      "cpu": 1.83
+    },
+    "3003": {
+      "fixed_small": {
+        "arm": "fixed_small",
+        "final_hidden": 8,
+        "n_params": 190,
+        "p1_before_acc": 1.0,
+        "p1_after_acc": 1.0,
+        "p1_retention_drop": 0.0,
+        "p2_acc": 0.53418,
+        "combined_acc": 0.76709,
+        "p1_growth_events": 0,
+        "p2_growth_events": 0,
+        "birth_perturbation": 0.0,
+        "p2_dormancy_drop": 0.0,
+        "wake_diff": 0.0,
+        "store_roundtrip_exact": true
+      },
+      "growth_plastic": {
+        "arm": "growth_plastic",
+        "final_hidden": 32,
+        "n_params": 742,
+        "p1_before_acc": 1.0,
+        "p1_after_acc": 1.0,
+        "p1_retention_drop": 0.0,
+        "p2_acc": 0.371094,
+        "combined_acc": 0.685547,
+        "p1_growth_events": 0,
+        "p2_growth_events": 1,
+        "birth_perturbation": 4.76837158203125e-07,
+        "p2_dormancy_drop": 0.0,
+        "wake_diff": 0.0,
+        "store_roundtrip_exact": true
+      },
+      "prealloc_equal": {
+        "arm": "prealloc_equal",
+        "final_hidden": 32,
+        "n_params": 742,
+        "p1_before_acc": 1.0,
+        "p1_after_acc": 1.0,
+        "p1_retention_drop": 0.0,
+        "p2_acc": 0.998047,
+        "combined_acc": 0.999023,
+        "p1_growth_events": 0,
+        "p2_growth_events": 0,
+        "birth_perturbation": 0.0,
+        "p2_dormancy_drop": 0.0,
+        "wake_diff": 0.0,
+        "store_roundtrip_exact": true
+      },
+      "p2_gain_over_small": -0.163086,
+      "combined_diff_vs_prealloc": -0.313476,
+      "g_eng": true,
+      "g_pressure": false,
+      "cpu": 1.84
+    }
+  },
+  "exit": "growth_pressure_not_met",
+  "cost": {
+    "cpu": 7.25,
+    "cap_cpu": 60.0
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0
+  }
+}
