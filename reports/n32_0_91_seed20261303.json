@@ -1,0 +1,108 @@
+{
+  "schema": "taiji-n32-0-rt-v1",
+  "card": "N32.0.91",
+  "design": "DESIGN-N32-0-91_20261125.md",
+  "arch_version": "taiji-gru-rt-v1",
+  "scope": "routing=external_task_id; protection=disjoint_columns(construction); heads=per_task; state=episode_reset; scenario=task_incremental",
+  "created_utc": "2026-11-25T03:04:58.722089+00:00",
+  "seed": 20261303,
+  "smoke": false,
+  "gates": {
+    "cn": 0.85,
+    "p24": 0.75,
+    "conflict": 0.85,
+    "p27": 0.7
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": false
+  },
+  "config_key": "u48_s1200",
+  "rt": {
+    "configs": {
+      "u48_s1200": {
+        "final": {
+          "cn": 0.97265625,
+          "p24": 1.0,
+          "conflict": 1.0,
+          "p27": 0.9609375
+        },
+        "g01_margin": 0.12265625000000002,
+        "mean3": 0.9778645833333334,
+        "units": 48,
+        "steps": 1200,
+        "capsule_diff": 0.0,
+        "matches_immediate": true
+      }
+    },
+    "live_bwt": {
+      "cn": 0.0,
+      "p24": 0.0,
+      "conflict": 0.0,
+      "p27": 0.0
+    },
+    "live_bwt_exact_zero": true,
+    "n_params": {
+      "cn": 20120,
+      "p24": 19925,
+      "p27": 19860,
+      "total": 59905
+    },
+    "cpu": 31.47
+  },
+  "c2": {
+    "status": "complete",
+    "final": {
+      "cn": 0.84375,
+      "cn_task_id": 0.99609375,
+      "p24": 0.98046875,
+      "p24_task_id": 1.0,
+      "conflict": 1.0,
+      "p27": 0.95703125,
+      "p27_task_id": 1.0
+    },
+    "after_phase": {
+      "cn": {
+        "cn": 0.81640625,
+        "cn_task_id": 1.0
+      },
+      "p24": {
+        "cn": 0.859375,
+        "cn_task_id": 0.9765625,
+        "p24": 0.99609375,
+        "p24_task_id": 1.0,
+        "conflict": 1.0
+      },
+      "p27": {
+        "cn": 0.84375,
+        "cn_task_id": 0.99609375,
+        "p24": 0.98046875,
+        "p24_task_id": 1.0,
+        "conflict": 1.0,
+        "p27": 0.95703125,
+        "p27_task_id": 1.0
+      }
+    },
+    "bwt": {
+      "cn": 0.02734375,
+      "p24": -0.015625,
+      "conflict": 0.0
+    },
+    "forgetting": 0.005208333333333333,
+    "shared_grad_mean": {
+      "cn": 0.0672242994857622,
+      "p24": 0.3464940787708576,
+      "p27": 1.823048719522963
+    },
+    "min_task": 0.84375,
+    "mean3": 0.9270833333333334,
+    "n_params": 35657,
+    "cpu": 45.44
+  },
+  "status": "complete",
+  "cost": {
+    "cpu": 77.08,
+    "cap_cpu": 200.0
+  }
+}
