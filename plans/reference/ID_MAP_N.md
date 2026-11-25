@@ -241,9 +241,11 @@ N32 主训练骨干为 `taiji-gru-rt-v2`（D-20261124-496）；成绩单为 `pla
 | N33.3.01 | 级 1 不变量检验（零训练；[plastic_growth.py](../../taiji/plastic_growth.py)） | **`invariants_ready`**：8/8 单测＋批独立/中性出生/Net2Net/休眠唤醒/淘汰回收/选择性可塑/`SessionStore` 往返/无压不生全过（`0.02 CPU`；D-586/587） |
 | N33.3.02 | 持续可塑＋按需生长三臂探索（`fixed_small` / `growth_plastic` / `prealloc_equal`） | `growth_pressure_not_met`：工程门全过但 `CHECK_EVERY=100` 晚触发＋`b_in=0` 致 P2 仅 `0.371–0.599`（`7.25 CPU`；D-588/589） |
 | N33.3.03 | v2 修正（`CHECK_EVERY=50`＋公平均匀输入初值） | **`growth_required_inplace`（§5.1 `REQUIRED-INPLACE`）**：3/3 P1 无压 `0` 生、P2 `step=150` 出生（扰动 `4.77e-7`）、P1 保持掉点 `0.0`、P2 `0.976 / 0.992 / 0.992`（超 `fixed_small +0.304..+0.480`、休眠掉点 `0.968..0.975`）、联合差 `prealloc` `−0.0117..−0.0024`（`7.23 CPU`；D-590/591） |
-| **N33.3.90** | **正式确认（确认 seed `20261611–13`，CAP≤30）** | **`confirm_required_revise`（§5.1 `REQUIRED-REVISE`，N33.3 结线）**：3/3 过 `G_eng ∧ G_pressure`（P1 保持掉点 `0.0`、P2 `0.975 / 0.944 / 0.989`、抽检 `1/3` 一致）；`20261612` 联合差 `prealloc` **`−0.0249 < −0.02`**（`7.86 CPU`；D-592/593）；保守触发维持在位，待下阶段行使 1 次设计修订；`20261611–13` 已作废 |
+| **N33.3.90** | **正式确认（确认 seed `20261611–13`，CAP≤30）** | **`confirm_required_revise`（§5.1 初轮，已作废后继由 91 接续）**：3/3 过 `G_eng ∧ G_pressure`；`20261612` 联合差 `prealloc` `−0.0249 < −0.02`（`7.86 CPU`；D-592/593）；`20261611–13` 已作废 |
+| N33.3.04 | §5.1 唯一设计修订 1 探索（`CHECK_EVERY=25`＋关键期 `LR_IMMATURE=1e-2` vs 双 LR `prealloc_best`） | **`growth_required_inplace`**：3/3 P1 无压 `0` 生、P2 `step=75` 出生、P1 掉点 `<=0.001`、P2 `0.998–0.999`、差 `prealloc_best −0.0010..0.0`（`9.75 CPU`；D-595/596） |
+| **N33.3.91** | **§5.1 修订 1 正式确认（确认 seed `20261701–03` vs `prealloc_best`，CAP≤30）** | **`confirm_required_inplace`（`REQUIRED-INPLACE`，N33.3 正式结线）**：3/3 过 `G_eng ∧ G_pressure`，P1 掉点 `0.0`、P2 `0.9990`、休眠 `0.978–0.999`、3/3 联合 `0.9995` 齐平 `prealloc_best` **`0.0` 差**、`1/3` 抽检一致（`9.97 CPU`；D-597/598）；`20261701–03` 已作废，备用 **`20261711–13` 未读** |
 
-**范围**：`taiji-plastic-growth-v1` ＋ `taiji-continual-growth-v1` ＋ `taiji-session-store-v1` 两阶段合成课程；能力按 §5.1 保守触发维持在位（不移除），相对等容预分配收益记 `negative` 并留修订项；**不签**开放任务、真实多模态、或 `check / final`。
+**范围**：`taiji-plastic-growth-v1` ＋ `taiji-continual-growth-v1` ＋ `taiji-session-store-v1` 两阶段合成课程（§5.1 修订 1）；已正式确认持续可塑＋按需生长入训能力在位、必要性 3/3 成立且不劣于等容 `prealloc_best`（`REQUIRED-INPLACE`）；**不签**超预分配净收益、开放任务、真实多模态、或 `check / final`。
 
 ## 4. 落盘状态（D-20261124-464）
 
