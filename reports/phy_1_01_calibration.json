@@ -1,0 +1,48 @@
+{
+  "schema": "taiji-phy-1-01-v1",
+  "card": "PHY.1.01",
+  "design": "DESIGN-PHY-1-01_20261126.md",
+  "created_utc": "2026-11-25T17:56:44.744240+00:00",
+  "seeds": [
+    200,
+    259,
+    60
+  ],
+  "oracle_accuracy": 1.0,
+  "random_accuracy": 0.2099,
+  "correctable": {
+    "cold": 0.5,
+    "early": 0.7344,
+    "late": 0.75,
+    "families": [
+      "collision",
+      "incline"
+    ]
+  },
+  "modalities": {
+    "vision": 6,
+    "proprio": 3,
+    "audio": 2
+  },
+  "checks": {
+    "oracle_high": true,
+    "random_low": true,
+    "correctable_late_high": true,
+    "correctable_improves": true,
+    "both_families": true,
+    "modality_shapes": true,
+    "no_task_id": true,
+    "outcome_labels": true
+  },
+  "exit": "physics_ready",
+  "cost": {
+    "cpu": 0.0,
+    "cap_cpu": 5.0
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "trained_models": 0
+  }
+}

@@ -10336,3 +10336,10 @@ eports/n33_1_01_sim.json；CPU 0.02/20。
 
 **1. 脚本**：`scripts/training/n34_2_01_growth_benefit_v2.py`——任务 `taiji-continual-growth-v2`（D-615）；四臂 `fixed_small(8)` / `growth_plastic(8→32 压力触发)` / `prealloc_big(32, 单 LR 5e-3)` / `prealloc_big_lr2(32, 1e-2 敏感性)`；G-cal（fixed P2<0.80、prealloc P2≥0.90、growth 有 1 次出生）；主指标 combined +0.02、保持 −0.02；`4501` 两遍权重逐位抽检；CAP≤120；输出 `reports/n34_2_01_growth_benefit_v2.json`。
 **2. 状态**：lint/compile 通过，**未执行**（无读数、零 check）；N34 准入与净收益口径仍待 owner 签（D-615 §3）。
+
+### D-20261126-621 缺口 E 设施：PHY.1.01 合成多模态＋模拟物理 = `physics_ready`（零训练，<0.01 CPU）
+
+**1. 背景**：覆盖矩阵（D-615）缺口 E（多模态/动作/真实后果/物理因果）为 ❌；按 owner「合理即批、按推荐持续推进」授权做零训练设施。
+**2. 资产**：`taiji/multimodal_physics_env.py`（`taiji-multimodal-physics-v1`）——两族（incline 斜面滑动/反弹、collision 撞块）、三模态观测 vision6/proprio3/audio2、无 task_id、4 动作、5 类因果结果、8 步一局；oracle 仅对照、随机基线、可纠正计数预测器；单测 6/6。
+**3. 校准**：`reports/phy_1_01_calibration.json`——oracle 1.0000、随机 0.2099、可纠正 0.50→0.75（+0.25）、两族/模态/标签全过；8/8 ⇒ `physics_ready`。
+**4. 范围**：设施就绪；oracle 不参与训练、可纠正器为计数机制；不构成物理因果理解能力证据。零 check/final。
