@@ -103,3 +103,33 @@ def test_invalid_ids_rejected(tmp_path: Path) -> None:
 
 def test_schema_constant() -> None:
     assert SCHEMA == "taiji-session-store-v1"
+
+
+def test_atomic_save_no_leftover_tmp(tmp_path: Path) -> None:
+    store = SessionStore(tmp_path)
+    r1 = _record("subj-atomic")
+    store.save(r1)
+    r1.append_experience("step2", {"n": 2}, source="owner")
+    d2 = r1.digest()
+    store.save(r1)
+    assert list(tmp_path.glob("*.tmp")) == []
+    back = store.load("subj-atomic")
+    assert back.digest() == d2
+    assert back.clock == r1.clock
+
+
+def test_mixed_dtype_capsule_roundtrip(tmp_path: Path) -> None:
+    store = SessionStore(tmp_path)
+    r = SessionRecord(subject_id="subj-dtype")
+    r.capsule = {
+        "f": torch.tensor([0.5, -1.25], dtype=torch.float32),
+        "i": torch.tensor([3, 7], dtype=torch.int64),
+        "b": torch.tensor([True, False], dtype=torch.bool),
+    }
+    digest = r.digest()
+    store.save(r)
+    back = store.load("subj-dtype")
+    assert back.digest() == digest
+    for k, orig in r.capsule.items():
+        assert back.capsule[k].dtype == orig.dtype
+        assert torch.equal(back.capsule[k], orig)

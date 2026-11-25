@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -33,8 +34,10 @@ def _canonical(obj: Any) -> str:
 def _tensor_digest(tensors: dict[str, torch.Tensor]) -> str:
     h = hashlib.sha256()
     for name in sorted(tensors):
-        t = tensors[name].detach().to(torch.float32).contiguous()
+        t = tensors[name].detach().cpu().contiguous()
         h.update(name.encode("utf-8"))
+        if t.dtype != torch.float32:
+            h.update(str(t.dtype).encode("utf-8"))
         h.update(str(tuple(t.shape)).encode("utf-8"))
         h.update(t.numpy().tobytes())
     return h.hexdigest()
@@ -118,12 +121,17 @@ class SessionStore:
         payload = {
             "metadata": record.metadata(),
             "digest": record.digest(),
-            "tensors": {
-                k: v.detach().to(torch.float32).contiguous() for k, v in record.capsule.items()
-            },
+            "tensors": {k: v.detach().cpu().contiguous() for k, v in record.capsule.items()},
         }
         path = self._path(record.subject_id)
-        torch.save(payload, path)
+        tmp = self.root / f".{record.subject_id}.{os.getpid()}.tmp"
+        try:
+            torch.save(payload, tmp)
+            os.replace(tmp, path)
+        except Exception:
+            if tmp.exists():
+                tmp.unlink()
+            raise
         return str(path)
 
     def load(self, subject_id: str) -> SessionRecord:
