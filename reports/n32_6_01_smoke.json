@@ -1,0 +1,72 @@
+{
+  "schema": "taiji-n32-6-01-v1",
+  "card": "N32.6.01",
+  "arch_version": "taiji-modality-edge-hop-v1",
+  "seed": 20261120,
+  "stage_steps": {
+    "q1": 1500,
+    "q2": 3000,
+    "q3": 6000
+  },
+  "q3_ckpts": [
+    1000,
+    2000,
+    4000,
+    6000
+  ],
+  "replay": {
+    "batch": 64,
+    "weight": 0.5
+  },
+  "design": [
+    "DESIGN-N32-6-01_20261125.md"
+  ],
+  "created_utc": "2026-11-25T09:54:52.772501+00:00",
+  "smoke": true,
+  "data": {
+    "q1": {
+      "train_rows": 24000,
+      "val_rows": 1000
+    },
+    "q2": {
+      "train_rows": 96000,
+      "val_rows": 4000
+    },
+    "q3": {
+      "train_rows": 288000,
+      "val_rows": 12000
+    },
+    "q3_digests": {
+      "train": "df7b1ad98a6c7c908ebdb9ddba7e4e407c839edaba01371fccf2bb1a27a034e9",
+      "val": "7f3f3c580ae1f8577b1046c304513d99fa4ab150e7fb0965f1ac315c665d7928"
+    }
+  },
+  "gates": {
+    "g1_min": 0.85,
+    "g1_pos": 0.9,
+    "g2_min": 0.05,
+    "g3_min": -0.05
+  },
+  "encode_cpu": 5.67,
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "exploratory": true
+  },
+  "projection": {
+    "encode_cpu": 5.67,
+    "smoke_cpu": 12.42,
+    "eval_pass_cpu": 0.438,
+    "proj_train_cpu": 494.53,
+    "proj_eval_cpu": 3.62,
+    "projected_1seed": 553.64,
+    "margin": 1.1,
+    "cap_cpu": 580.0,
+    "planned": "pilot_1seed"
+  },
+  "cost": {
+    "cpu": 12.42,
+    "cap_cpu": 580.0
+  }
+}
