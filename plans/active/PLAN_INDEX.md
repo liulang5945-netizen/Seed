@@ -16,7 +16,7 @@
 | N32 收口 | [CLOSEOUT-N32](../reference/CLOSEOUT-N32_20261125.md) | 有界交付＋R1 确认正例；终态、负结果、缺口、资源、N33 准入条件（D-20261125-552） |
 | N33 收口 | [CLOSEOUT-N33](../reference/CLOSEOUT-N33_20261126.md) | 三正例＋一条部分确认；生长收益未签署；资源、seed 状态、N34 准入条件（D-20261126-609） |
 | 目标覆盖矩阵 | [COVERAGE-MATRIX_20261126](COVERAGE-MATRIX_20261126.md) | v4 条款→✅/🟡/❌、证据与缺口、下一步优先级（D-20261126-615） |
-| 探索证据汇总 | [EVIDENCE-SUMMARY-EXPLORATION](../reference/EVIDENCE-SUMMARY-EXPLORATION_20261126.md) | review-ready：N33 确认级＋N34 探索级＋四条学习线正例＋缺口表（D-20261126-645） |
+| 探索证据汇总 | [EVIDENCE-SUMMARY-EXPLORATION](../reference/EVIDENCE-SUMMARY-EXPLORATION_20261126.md) | review-ready：N33 确认级＋N34.2.04 parity＋四条学习线正例＋N34.3 负结果＋缺口表（D-20261126-645/650） |
 | 生长决策学习线 | [RESULT-N34-3-02](../reference/RESULT-N34-3-02_20261126.md) | 学习式生长决策两卡均未成立（塌缩常量；**线结线**；D-20261126-646..649） |
 | 中文任务设施 | [DESIGN-NCH-1-01](../reference/DESIGN-NCH-1-01_20261126.md) | 封闭词表自然中文连续任务 harness（零训练 `env_ready`；D-20261126-616） |
 | 证据可信度设施 | [DESIGN-ECL-1-01](../reference/DESIGN-ECL-1-01_20261126.md) | 证据可信度账本与纠正（零训练 `ledger_ready`；D-20261126-617） |
