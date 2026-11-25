@@ -1,0 +1,263 @@
+{
+  "schema": "taiji-n32-2-01-v1",
+  "card": "N32.2.01",
+  "design": "DESIGN-N32-2-01_20261125.md",
+  "created_utc": "2026-11-25T03:27:40.947005+00:00",
+  "encoding": {
+    "encoding_version": "taiji-23-composition-ticks-v1",
+    "horizon": 24,
+    "answers": [
+      "左边",
+      "中间",
+      "右边",
+      "未知",
+      "红色圆片",
+      "蓝色圆片",
+      "绿色圆片",
+      "黄色圆片",
+      "紫色圆片",
+      "青色圆片"
+    ],
+    "train_seed_base": 23100000,
+    "frozen_seed_range": [
+      230000,
+      230896
+    ],
+    "partition_offsets": {
+      "train": 0,
+      "fit": 512,
+      "check": 640,
+      "final": 768
+    }
+  },
+  "pool": {
+    "worlds": 12000,
+    "rows": 36000,
+    "sha256": "2068793851ec7937b03f2123d9da4ab3a1d0c842e323d58a2cf15eb35abbe1db",
+    "path": "reports\\n32_2_pool_v1.json"
+  },
+  "validation": {
+    "source": "frozen train partition",
+    "rows": 1536
+  },
+  "fit_report_only": {
+    "rows": 384
+  },
+  "max_ticks": 24,
+  "coord_range": [
+    -0.8283436369319677,
+    0.8293513678538362
+  ],
+  "baselines": {
+    "pool": {
+      "q1": {
+        "n": 12000,
+        "answer_distribution": {
+          "中间": 0.40425,
+          "左边": 0.3035,
+          "右边": 0.29225
+        },
+        "rules": {
+          "majority": 0.40425,
+          "always_unknown": 0.0,
+          "copy_entity": 0.0,
+          "position_of_entity": 1.0
+        },
+        "best_rule": "position_of_entity",
+        "best_rule_acc": 1.0
+      },
+      "q2": {
+        "n": 12000,
+        "answer_distribution": {
+          "未知": 0.3325,
+          "黄色圆片": 0.11808333333333333,
+          "蓝色圆片": 0.114,
+          "绿色圆片": 0.11208333333333333,
+          "紫色圆片": 0.112,
+          "红色圆片": 0.10883333333333334,
+          "青色圆片": 0.1025
+        },
+        "rules": {
+          "majority": 0.3325,
+          "always_unknown": 0.3325,
+          "copy_entity": 0.0,
+          "opposite_direction": 0.0,
+          "position_of_entity": 0.0
+        },
+        "best_rule": "majority",
+        "best_rule_acc": 0.3325
+      },
+      "q3": {
+        "n": 12000,
+        "answer_distribution": {
+          "未知": 0.3325,
+          "青色圆片": 0.1185,
+          "紫色圆片": 0.11333333333333333,
+          "蓝色圆片": 0.11191666666666666,
+          "绿色圆片": 0.10891666666666666,
+          "红色圆片": 0.10783333333333334,
+          "黄色圆片": 0.107
+        },
+        "rules": {
+          "majority": 0.3325,
+          "always_unknown": 0.3325,
+          "copy_entity": 0.6675,
+          "first_hop_only": 0.3325,
+          "position_of_entity": 0.0,
+          "second_hop_from_entity": 0.0
+        },
+        "best_rule": "copy_entity",
+        "best_rule_acc": 0.6675
+      }
+    },
+    "validation": {
+      "q1": {
+        "n": 512,
+        "answer_distribution": {
+          "中间": 0.421875,
+          "右边": 0.291015625,
+          "左边": 0.287109375
+        },
+        "rules": {
+          "majority": 0.421875,
+          "always_unknown": 0.0,
+          "copy_entity": 0.0,
+          "position_of_entity": 1.0
+        },
+        "best_rule": "position_of_entity",
+        "best_rule_acc": 1.0
+      },
+      "q2": {
+        "n": 512,
+        "answer_distribution": {
+          "未知": 0.33203125,
+          "青色圆片": 0.130859375,
+          "紫色圆片": 0.11328125,
+          "红色圆片": 0.111328125,
+          "蓝色圆片": 0.107421875,
+          "绿色圆片": 0.103515625,
+          "黄色圆片": 0.1015625
+        },
+        "rules": {
+          "majority": 0.33203125,
+          "always_unknown": 0.33203125,
+          "copy_entity": 0.0,
+          "opposite_direction": 0.0,
+          "position_of_entity": 0.0
+        },
+        "best_rule": "majority",
+        "best_rule_acc": 0.33203125
+      },
+      "q3": {
+        "n": 512,
+        "answer_distribution": {
+          "未知": 0.33203125,
+          "蓝色圆片": 0.126953125,
+          "青色圆片": 0.1171875,
+          "绿色圆片": 0.115234375,
+          "紫色圆片": 0.111328125,
+          "红色圆片": 0.107421875,
+          "黄色圆片": 0.08984375
+        },
+        "rules": {
+          "majority": 0.33203125,
+          "always_unknown": 0.33203125,
+          "copy_entity": 0.66796875,
+          "first_hop_only": 0.33203125,
+          "position_of_entity": 0.0,
+          "second_hop_from_entity": 0.0
+        },
+        "best_rule": "copy_entity",
+        "best_rule_acc": 0.66796875
+      }
+    },
+    "fit": {
+      "q2": {
+        "n": 128,
+        "answer_distribution": {
+          "未知": 0.3125,
+          "红色圆片": 0.140625,
+          "绿色圆片": 0.140625,
+          "蓝色圆片": 0.1328125,
+          "紫色圆片": 0.1171875,
+          "青色圆片": 0.0859375,
+          "黄色圆片": 0.0703125
+        },
+        "rules": {
+          "majority": 0.3125,
+          "always_unknown": 0.3125,
+          "copy_entity": 0.0,
+          "opposite_direction": 0.0,
+          "position_of_entity": 0.0
+        },
+        "best_rule": "majority",
+        "best_rule_acc": 0.3125
+      },
+      "q3": {
+        "n": 128,
+        "answer_distribution": {
+          "未知": 0.4609375,
+          "紫色圆片": 0.109375,
+          "蓝色圆片": 0.109375,
+          "红色圆片": 0.109375,
+          "青色圆片": 0.078125,
+          "黄色圆片": 0.0703125,
+          "绿色圆片": 0.0625
+        },
+        "rules": {
+          "majority": 0.4609375,
+          "always_unknown": 0.4609375,
+          "copy_entity": 0.421875,
+          "first_hop_only": 0.34375,
+          "position_of_entity": 0.0,
+          "second_hop_from_entity": 0.0703125
+        },
+        "best_rule": "majority",
+        "best_rule_acc": 0.4609375
+      },
+      "q4": {
+        "n": 128,
+        "answer_distribution": {
+          "中间": 0.421875,
+          "右边": 0.3125,
+          "左边": 0.265625
+        },
+        "rules": {
+          "majority": 0.421875,
+          "always_unknown": 0.0,
+          "copy_entity": 0.0,
+          "position_of_entity": 1.0
+        },
+        "best_rule": "position_of_entity",
+        "best_rule_acc": 1.0
+      }
+    }
+  },
+  "gates_validation": {
+    "q1": 1.15,
+    "q2": 0.85,
+    "q3": 0.85
+  },
+  "presentation": {
+    "max_rule_allowed": 0.7,
+    "too_easy": {
+      "q1": 1.0
+    },
+    "impossible_gate": {
+      "q1": 1.15
+    }
+  },
+  "leakage": {
+    "world_digest_overlap": 0,
+    "frozen_seeds_in_pool": 0
+  },
+  "exit": "presentation_failure",
+  "cost": {
+    "cpu": 542.3
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "training": false
+  }
+}

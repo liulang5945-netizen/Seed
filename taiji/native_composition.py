@@ -16,7 +16,7 @@ from __future__ import annotations
 
 import hashlib
 import json
-from typing import Any
+from typing import Any, cast
 
 from scripts.training.first_a_support_22_5 import RGB_COLORS
 from taiji.u2_task_episode import NAMES, position_word
@@ -55,7 +55,7 @@ def _relation(source: str, direction: str, bodies: list[dict[str, Any]]) -> str 
     if source not in xy:
         return None
     sx, sy = xy[source]
-    candidates = []
+    candidates: list[tuple[float, str]] = []
     for name, (x, y) in xy.items():
         if name == source:
             continue
@@ -78,7 +78,7 @@ def _relative_position(source: str, bodies: list[dict[str, Any]]) -> str:
     if source not in xy:
         return "未知"
     x = xy[source][0]
-    return position_word(x)
+    return cast(str, position_word(x))
 
 
 def world_scene(seed: int) -> dict[str, Any]:

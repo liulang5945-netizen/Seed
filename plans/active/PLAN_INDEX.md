@@ -14,6 +14,7 @@
 | 规范 | [STAGE_GATES_AND_STOPPING.md](STAGE_GATES_AND_STOPPING.md)、[MECHANISM_ACCEPTANCE.md](MECHANISM_ACCEPTANCE.md) | 阶段成绩单／停止规则与机制终态／训练放行（D-20261124-464）；N31 起所有卡适用 |
 | N31 结案 | [CLOSEOUT-N31](../reference/CLOSEOUT-N31_20261124.md) | 有界交付；能力边界、负结果、缺口清单、资产状态（D-20261124-499） |
 | 目标修订 | [主张对照清单](../reference/REVIEW-GOAL-CLAIMS_20261125.md)、[修订稿 v4 草案](../reference/DRAFT-GOAL-REVISION-V4_20261125.md)（未生效） | owner 签字后合并进核心需求 §2.1（D-20261125-501） |
+| N32.2（R1） | [开线卡](../reference/DESIGN-N32-2-00_20261125.md)、[N32.2.01](../reference/DESIGN-N32-2-01_20261125.md) | 研究线：任务无关共享表征的实际收益（D-20261125-506） |
 | N32 放行 | [REVIEW-N32-ADMISSION](../reference/REVIEW-N32-ADMISSION_20261124.md)、[SCORECARD-N32.md](SCORECARD-N32.md)（已实现、未放行） | 放行01–07 逐条状态；N32 成绩单草案（D-20261124-495） |
 | 运营 | [02_GATES_AND_CI.md](roadmap/02_GATES_AND_CI.md)、[05_TECH_DEBT_REGISTER.md](roadmap/05_TECH_DEBT_REGISTER.md)、[07_MINI_MODEL_DELIVERY.md](roadmap/07_MINI_MODEL_DELIVERY.md)、[08_UPSTREAM_SYNC_PLAYBOOK.md](roadmap/08_UPSTREAM_SYNC_PLAYBOOK.md) | 门禁、债、能力/交付、上游重放；不定义方向 |
 | 组件 | [09_NEXT_MAINLINE_PLAN.md](roadmap/09_NEXT_MAINLINE_PLAN.md) | N1–N6 机制词典与历史映射；**已 superseded，不是当前主计算图** |

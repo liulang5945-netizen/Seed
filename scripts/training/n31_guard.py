@@ -30,6 +30,7 @@ READS = ROOT / "plans" / "manifests" / "n31_confirmation_seed_reads.json"
 CONFIRMATION_SEEDS = frozenset(
     {20261201, 20261202, 20261203, 20261211, 20261212, 20261213}  # N31 (all void)
     | {20261301, 20261302, 20261303, 20261311, 20261312, 20261313}  # N32 (D-20261125-503)
+    | {20261401, 20261402, 20261403, 20261411, 20261412, 20261413}  # N32.2 (D-20261125-506)
 )
 CARD_RE = re.compile(r"^N(\d+)\.(\d+)\.(\d{2})$")
 
@@ -48,11 +49,11 @@ def parse_card(card: str) -> tuple[int, int, int]:
 def find_design(card: str) -> Path:
     stage, line, number = parse_card(card)
     prefix = f"DESIGN-N{stage}-{line}-"
-    exact = sorted(REFERENCE.glob(f"{prefix}{number:02d}_*.md"))
-    for path in [*exact, *sorted(REFERENCE.glob(prefix + "*.md"))]:
+    # strict (D-20261125-506): only the card's own design file counts, never the line card
+    for path in sorted(REFERENCE.glob(f"{prefix}{number:02d}_*.md")):
         if card in path.read_text(encoding="utf-8", errors="ignore"):
             return path
-    raise PreflightError(f"{card}: no pre-registration {prefix}*.md mentioning {card}")
+    raise PreflightError(f"{card}: no pre-registration {prefix}{number:02d}_*.md mentioning {card}")
 
 
 def _load_reads() -> list[dict]:
