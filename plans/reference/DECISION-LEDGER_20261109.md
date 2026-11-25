@@ -10295,3 +10295,11 @@ eports/n33_1_01_sim.json；CPU 0.02/20。
 **1. 卡**：`RESULT-N34-1-02_20261126.md`；脚本 `n34_1_02_durability.py`；回执 `reports/n34_1_02_durability.json`。
 **2. 读数**：100 会话完成；10,100 条经验事件；10 个崩溃点全部恢复一致；审计链通过；`check/final` 拦截 2/2；pending 80 符合脚本（100 − 20 次解析）。6/6 检查 ⇒ `durability_ready`。
 **3. 位置**：N34 前置零训练卡完成（1.01＋1.02，合计 ≈2.6 CPU）；**N34.2.x 训练卡 / N34.9x 确认仍待 owner 签**：新确认 seed 组、预算/时间盒/`training_authority`、生长净收益口径、check/final 授权。零 check/final。
+
+### D-20261126-615 N34 训练前置准备（零训练）：生长净收益离线分析＋任务 v2＋N34.2.01 草案＋目标覆盖矩阵
+
+**1. 离线分析**：[ANALYSIS-N33-3-GROWTH-BENEFIT](../reference/ANALYSIS-N33-3-GROWTH-BENEFIT_20261126.md)（只读回执）——N33.3 净收益 0.0 的主因是**任务饱和**（32 单元 0.9995 天花板；P1 太易使预分配不过拟合；预分配臂双 LR 网格取最优），非生长能力失败；给出三个杠杆（P1 加噪/重叠、P2 更难、预锁定净收益口径）。
+**2. 任务 v2**：`taiji/continual_growth_task_v2.py`（`taiji-continual-growth-v2`）——P1 6 类噪声原型（10% 标签噪声、0.60 噪声）、P2 4 对 parity mod 3（12 类），无 task_id；3/3 单测通过。
+**3. 草案**：[DESIGN-N34-2-01](../reference/DESIGN-N34-2-01_20261126.md)（待 N34 准入签）——H1 综合 +0.02、H2 P1 保持 −0.02、公平口径（预分配单 LR；另设 lr2 敏感性）；G-cal/G-benefit/G-retention 与四出口写定；估计 ≤120 CPU。
+**4. 覆盖矩阵**：[COVERAGE-MATRIX_20261126](../active/COVERAGE-MATRIX_20261126.md)——v4 条款→✅/🟡/❌、证据与缺口：中文连续任务、真实多模态/物理、来源可信度纠正、不确定性校准、生长决策学得化、check/final 为未建立项。
+**5. 状态**：零训练、零 check/final、未读确认 seed；N34 训练/确认仍待 owner 签四项（新 seed、预算/authority、净收益口径、check/final）。
