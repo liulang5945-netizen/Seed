@@ -176,6 +176,27 @@ N32 主训练骨干为 `taiji-gru-rt-v2`（D-20261124-496）；成绩单为 `pla
 | N32.3.02 | 可学性 v2（预编码、大 batch、MLP 参照） | `not_learnable`；复核 D-520：MLP 参照未复现，读数不可解释 |
 | N32.3.03 | 可学性 v3（标准化、换名增广、MLP 工程门） | **`learnable`**：QF 0.877 / 0.878 / 0.869（D-20261125-522）；**N32.3 结线** |
 
+### 3.9 N32.5 可学性攻坚线（R1 第二前置：Q3）
+
+| 卡 | 内容 | 状态 |
+|---|---|---|
+| N32.5.01 | 快速编码器＋`G3 GRU u96` Q3 6k 步 | `q3_not_learnable`（0.7039） |
+| N32.5.02 | `SlotHopGRU`（槽记忆＋两跳注意力） | `q3_not_learnable`（0.5990，多数类塌缩） |
+| N32.5.03 | 纯 GRU 上限标定 `u192/18k` | `q3_not_learnable`（0.7879，过拟合平台） |
+| N32.5.04 | `ModalityEdgeHop` Q3 10k 步 | `screen_passed_needs_rep_budget`（0.9899） |
+| N32.5.05 | 补 2 seed 复现 | **`learnable`** 3/3（0.9899 / 0.9868 / 0.9874） |
+
+### 3.10 N32.6 R1 联合线（共享 `S_joint` vs 分列 `RT`）
+
+| 卡 | 内容 | 状态 |
+|---|---|---|
+| N32.6.01 | 序列 `Q1→Q2→Q3` 共享 vs 分列 pilot | `pilot_signal_negative`（S 被 Q1 锁定；RT 三列全过） |
+| N32.6.02 | 联合混训诊断（单阶段） | `joint_capacity_sufficient`（0.996 / 0.987 / 0.978） |
+| N32.6.03 | 补 2 探索 seed | `joint_3seed_positive`（3/3） |
+| **N32.6.90** | **正式确认（v2 封存 confirm ＋确认 seed 20261401–03）** | **`confirm_positive`**：min 0.9826 / 0.9772 / 0.9804；混批 900/900；`D-551` |
+
+**R1 结论（已确认）**：在 `taiji-23-composition-v2` 合成封闭词表任务族上，任务无关 `ModalityEdgeHop` 联合混训相对分列 `RT`，在 Q3 两跳关系上有一致的学习加速与终态增益。范围标签：`data=synthetic; vocab=closed; routing=none(task_agnostic); confirmed=3/3_confirm_seeds`。**不声明** Taiji 特有机制、学得路由、真实多模态、生长净收益。
+
 ## 4. 落盘状态（D-20261124-464）
 
 | 项 | 状态 |

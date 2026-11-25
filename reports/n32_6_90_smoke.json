@@ -1,0 +1,85 @@
+{
+  "schema": "taiji-n32-6-90-v1",
+  "card": "N32.6.90",
+  "arch_version": "taiji-modality-edge-hop-v1",
+  "confirm_seeds": [
+    20261401,
+    20261402,
+    20261403
+  ],
+  "steps": 6000,
+  "joint_batch": {
+    "q3": 256,
+    "q2": 128,
+    "q1": 64
+  },
+  "loss_weights": {
+    "q3": 1.0,
+    "q2": 0.5,
+    "q1": 0.25
+  },
+  "ckpts": [
+    1000,
+    2000,
+    4000,
+    6000
+  ],
+  "design": "DESIGN-N32-6-90_20261125.md",
+  "created_utc": "2026-11-25T11:56:06.964898+00:00",
+  "smoke": true,
+  "data": {
+    "train_rows": {
+      "q1": 24000,
+      "q2": 96000,
+      "q3": 288000
+    },
+    "val_rows": {
+      "q1": 1000,
+      "q2": 4000,
+      "q3": 12000
+    },
+    "confirm_rows": {
+      "q1": 1000,
+      "q2": 4000,
+      "q3": 12000
+    },
+    "confirm_scenes": 1000,
+    "q3_digests": {
+      "train": "df7b1ad98a6c7c908ebdb9ddba7e4e407c839edaba01371fccf2bb1a27a034e9",
+      "val": "7f3f3c580ae1f8577b1046c304513d99fa4ab150e7fb0965f1ac315c665d7928"
+    },
+    "confirm_digests": {
+      "q1": "86ee807933eaabd803844f15c069966d6fa9d6f642ba60d41a307741352634d6",
+      "q2": "e6bbff89e5c496c38f9652daa5a28fc7cf96ac2460f15eab353d224dc72d8816",
+      "q3": "1801b03a86d4ae34d49c96d4556dacab6fc0f43f74cce277705e2542c960b598"
+    }
+  },
+  "gates": {
+    "c1_min": 0.9,
+    "c2_mixed_exact": true,
+    "c3_q3_2k": 0.75,
+    "min_floor": 0.85
+  },
+  "encode_cpu": 5.88,
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 3,
+    "exploratory": false
+  },
+  "projection": {
+    "encode_cpu": 5.88,
+    "smoke_cpu": 8.39,
+    "per_step_cpu": 0.033984375,
+    "eval_pass_cpu": 0.375,
+    "proj_train_cpu_per_seed": 203.91,
+    "projected_3seeds": 686.2,
+    "margin": 1.1,
+    "cap_cpu": 700.0,
+    "planned": "confirm_3seeds"
+  },
+  "cost": {
+    "cpu": 8.39,
+    "cap_cpu": 700.0
+  }
+}
