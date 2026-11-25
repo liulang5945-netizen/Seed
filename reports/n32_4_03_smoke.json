@@ -1,0 +1,67 @@
+{
+  "schema": "taiji-n32-4-01-v1",
+  "card": "N32.4.03",
+  "design": [
+    "DESIGN-N32-4-03_20261125.md"
+  ],
+  "created_utc": "2026-11-25T06:57:16.494163+00:00",
+  "smoke": true,
+  "data": {
+    "q2": {
+      "train_rows": 96000,
+      "val_rows": 4000,
+      "aug_copies": 3,
+      "digests": {
+        "train": "4dd546b9df7e54875f1d3a62c9756a6888d665d5087dd60180de2784b6d0adfb",
+        "val": "e5e391131959d4ce3252753e5aa837d4efda834d894b37df7ed9400ee2213642"
+      },
+      "val_majority": 0.33550000190734863
+    },
+    "q3": {
+      "train_rows": 288000,
+      "val_rows": 12000,
+      "aug_copies": 3,
+      "digests": {
+        "train": "df7b1ad98a6c7c908ebdb9ddba7e4e407c839edaba01371fccf2bb1a27a034e9",
+        "val": "7f3f3c580ae1f8577b1046c304513d99fa4ab150e7fb0965f1ac315c665d7928"
+      },
+      "val_majority": 0.6004999876022339
+    }
+  },
+  "lengths": {
+    "q2": 13,
+    "q3": 20
+  },
+  "gates": {
+    "mlp_engineering": 0.9,
+    "gru": 0.85
+  },
+  "encode_cpu": 118.39,
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "exploratory": true
+  },
+  "projection": {
+    "per_step_cpu": {
+      "E0_mlp_q3": 0.0028125,
+      "G3_gru96_q3": 0.00965625,
+      "R2_gru96_q2": 0.010484375
+    },
+    "eval_cpu": {
+      "E0_mlp_q3": 0.0625,
+      "G3_gru96_q3": 0.28125,
+      "R2_gru96_q2": 0.046875
+    },
+    "smoke_cpu": 121.48,
+    "projected_full_all": 496.2,
+    "projected_full_no_r2": 433.0,
+    "cap": 800.0,
+    "planned": "all"
+  },
+  "cost": {
+    "cpu": 121.48,
+    "cap_cpu": 800.0
+  }
+}
