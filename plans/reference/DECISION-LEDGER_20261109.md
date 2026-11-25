@@ -10331,3 +10331,8 @@ eports/n33_1_01_sim.json；CPU 0.02/20。
 **1. 背景**：D-616/617/618 分别建成中文任务、证据可信度、不确定性设施；本卡把它们与 `SessionStore`、审计链、崩溃恢复集成为**一条主体循环**（`taiji/subject_loop.py`，`taiji-subject-loop-v1`），为后续训练线提供骨架。
 **2. 读数**：`reports/sub_1_01_loop.json`——5 会话/19 步；审计链 5 且可验证；第 2 会话提交前崩溃恢复；`check/final` 拦截 2/2；证据账本跨会话重建（后验 ≥0.5）；ECE 0.1129、四级表达；两个独立目录同序列链与 digest 完全一致；单测 6/6；10/10 检查 ⇒ `loop_ready`。
 **3. 范围**：动作为脚本 oracle **控制臂**（非学得策略）；不构成能力声明；不读确认 seed/check/final。
+
+### D-20261126-620 N34.2.01 执行脚本就位（未执行，零读数）：四臂生长净收益 v2
+
+**1. 脚本**：`scripts/training/n34_2_01_growth_benefit_v2.py`——任务 `taiji-continual-growth-v2`（D-615）；四臂 `fixed_small(8)` / `growth_plastic(8→32 压力触发)` / `prealloc_big(32, 单 LR 5e-3)` / `prealloc_big_lr2(32, 1e-2 敏感性)`；G-cal（fixed P2<0.80、prealloc P2≥0.90、growth 有 1 次出生）；主指标 combined +0.02、保持 −0.02；`4501` 两遍权重逐位抽检；CAP≤120；输出 `reports/n34_2_01_growth_benefit_v2.json`。
+**2. 状态**：lint/compile 通过，**未执行**（无读数、零 check）；N34 准入与净收益口径仍待 owner 签（D-615 §3）。
