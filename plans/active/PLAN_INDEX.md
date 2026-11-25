@@ -17,7 +17,7 @@
 | N33 收口 | [CLOSEOUT-N33](../reference/CLOSEOUT-N33_20261126.md) | 三正例＋一条部分确认；生长收益未签署；资源、seed 状态、N34 准入条件（D-20261126-609） |
 | 目标覆盖矩阵 | [COVERAGE-MATRIX_20261126](COVERAGE-MATRIX_20261126.md) | v4 条款→✅/🟡/❌、证据与缺口、下一步优先级（D-20261126-615） |
 | 探索证据汇总 | [EVIDENCE-SUMMARY-EXPLORATION](../reference/EVIDENCE-SUMMARY-EXPLORATION_20261126.md) | review-ready：N33 确认级＋N34 探索级＋四条学习线正例＋缺口表（D-20261126-645） |
-| 生长决策学习线 | [RESULT-N34-3-01](../reference/RESULT-N34-3-01_20261126.md) | 学习式生长决策探索（`partial`：常量 grow16、净增益低于门；D-20261126-646/647） |
+| 生长决策学习线 | [RESULT-N34-3-02](../reference/RESULT-N34-3-02_20261126.md) | 学习式生长决策两卡均未成立（塌缩常量；**线结线**；D-20261126-646..649） |
 | 中文任务设施 | [DESIGN-NCH-1-01](../reference/DESIGN-NCH-1-01_20261126.md) | 封闭词表自然中文连续任务 harness（零训练 `env_ready`；D-20261126-616） |
 | 证据可信度设施 | [DESIGN-ECL-1-01](../reference/DESIGN-ECL-1-01_20261126.md) | 证据可信度账本与纠正（零训练 `ledger_ready`；D-20261126-617） |
 | 可信度学习线 | [RESULT-ECL-1-03](../reference/RESULT-ECL-1-03_20261126.md) | 在线可信度学习探索正例（`credibility_learned_positive`；D-20261126-639/640） |

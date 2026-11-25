@@ -7,13 +7,16 @@ warm-up of phase-2 training:
 
 * actions: ``no_grow`` / ``grow8`` / ``grow16`` / ``grow24`` (units added neutrally);
 * reward: final combined accuracy − 0.001 × units grown (real benefit minus cost);
-* controls: no-grow, fixed growth sizes, and the scripted pressure rule (grow8 if val error > 0.15).
+* tasks come in two difficulty regimes (easy prototype phase 2 vs hard parity phase 2) so the
+  optimal decision is state-dependent;
+* controls: fixed growth sizes, no growth, and the scripted pressure rule.
 
 Exploration seeds only; no confirmation seed, check or final is read.
 """
 
 from __future__ import annotations
 
+import time
 from dataclasses import dataclass
 
 import torch
@@ -36,6 +39,39 @@ P2_WARMUP = 150
 P2_STEPS = 250
 BATCH = 128
 
+_EASY_PROTOS = torch.tensor(
+    [
+        [1.4, -1.2, 1.2, 0.0, -1.4, 0.6, 0.2, -0.8],
+        [-1.2, 1.4, -1.0, 1.0, 0.4, -1.4, 0.8, 0.2],
+        [0.2, 0.4, 1.4, -1.4, 0.8, 0.2, -1.4, 0.6],
+    ],
+    dtype=torch.float32,
+)
+
+
+def _make_phase2_easy(n: int, gen: torch.Generator) -> tuple[torch.Tensor, torch.Tensor]:
+    y = torch.randint(0, 3, (n,), generator=gen, dtype=torch.long) + 3
+    x_lo = _EASY_PROTOS[y - 3] + 0.35 * torch.randn((n, 8), generator=gen)
+    x_hi = 0.20 * torch.randn((n, 8), generator=gen)
+    return torch.cat([x_lo, x_hi], dim=1), y
+
+
+def make_task(seed: int, hard: bool):
+    """Task data; ``hard=True`` uses the parity phase 2, else the easy prototype phase 2."""
+    data = make_split(seed)
+    if hard:
+        return data
+    gen = torch.Generator().manual_seed(seed * 31 + 3)
+    p2_tr_x, p2_tr_y = _make_phase2_easy(3072, gen)
+    p2_va_x, p2_va_y = _make_phase2_easy(1024, gen)
+    return {
+        "phase1": data["phase1"],
+        "phase2": {
+            "train": {"x": p2_tr_x, "y": p2_tr_y},
+            "val": {"x": p2_va_x, "y": p2_va_y},
+        },
+    }
+
 
 def _batches(
     gen: torch.Generator, x: torch.Tensor, y: torch.Tensor, n: int
@@ -47,11 +83,9 @@ def _batches(
     return out
 
 
-def run_episode(seed: int, action: str, deadline: float) -> dict:
+def run_episode(seed: int, action: str, deadline: float, *, hard: bool = True) -> dict:
     """Train one episode and return the decision context, final accuracy and reward."""
-    import time
-
-    data = make_split(seed)
+    data = make_task(seed, hard=hard)
     p1_tr, p1_va = data["phase1"]["train"], data["phase1"]["val"]
     p2_tr, p2_va = data["phase2"]["train"], data["phase2"]["val"]
 
@@ -78,14 +112,10 @@ def run_episode(seed: int, action: str, deadline: float) -> dict:
 
     p1_acc = acc(p1_va["x"], p1_va["y"])
 
-    # warm-up on mixed batches so the decision is made under real pressure
-    mixed = []
     for xb2, yb2 in _batches(gen2, p2_tr["x"], p2_tr["y"], P2_WARMUP):
         idx = torch.randint(0, p1_tr["x"].shape[0], (BATCH // 2,), generator=gen2)
         xb = torch.cat([xb2[: BATCH // 2], p1_tr["x"][idx]], dim=0)
         yb = torch.cat([yb2[: BATCH // 2], p1_tr["y"][idx]], dim=0)
-        mixed.append((xb, yb))
-    for xb, yb in mixed:
         loss = F.cross_entropy(net(xb), yb)
         opt.zero_grad(set_to_none=True)
         loss.backward()
@@ -113,6 +143,7 @@ def run_episode(seed: int, action: str, deadline: float) -> dict:
     reward = combined - COST_PER_UNIT * k
     return {
         "seed": seed,
+        "hard": hard,
         "action": action,
         "p1_acc": round(p1_acc, 6),
         "val_err": round(val_err, 6),
@@ -154,21 +185,22 @@ class TrainResult:
     rewards: list[float]
 
 
-def train_policy(task_seeds: list[int], seed: int, episodes: int, deadline: float) -> TrainResult:
+def train_policy(
+    task_specs: list[tuple[int, bool]], seed: int, episodes: int, deadline: float
+) -> TrainResult:
     policy = GrowthDecisionPolicy(seed)
     opt = torch.optim.Adam(policy.parameters(), lr=3e-3)
     gen = torch.Generator().manual_seed(seed * 999 + 7)
     rewards: list[float] = []
     baseline = 0.0
     for ep in range(episodes):
-        task_seed = task_seeds[ep % len(task_seeds)]
-        # decide from the warm-up context of this task (run once with no growth to read features)
-        probe = run_episode(task_seed, "no_grow", deadline)
+        task_seed, hard = task_specs[ep % len(task_specs)]
+        probe = run_episode(task_seed, "no_grow", deadline, hard=hard)
         feats = features(probe)
         logits = policy(feats)
         dist = F.softmax(logits, dim=-1)
         a = int(torch.multinomial(dist, 1, generator=gen).item())
-        res = run_episode(task_seed, ACTIONS[a], deadline)
+        res = run_episode(task_seed, ACTIONS[a], deadline, hard=hard)
         r = res["reward"]
         rewards.append(r)
         baseline = 0.9 * baseline + 0.1 * r

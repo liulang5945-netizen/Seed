@@ -1,0 +1,182 @@
+{
+  "schema": "taiji-n34-3-02-v1",
+  "card": "N34.3.02",
+  "design": "DESIGN-N34-3-02_20261126.md",
+  "created_utc": "2026-11-25T18:53:37.703121+00:00",
+  "train_seeds": [
+    6601,
+    6602,
+    6603
+  ],
+  "train_episodes": 40,
+  "eval_tasks_per_type": 15,
+  "per_seed": {
+    "6601": {
+      "learned": {
+        "mean_reward": 0.8622,
+        "easy_actions": [
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3
+        ],
+        "hard_actions": [
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3
+        ],
+        "easy_high_grow_rate": 1.0,
+        "hard_high_grow_rate": 1.0
+      },
+      "baselines": {
+        "no_grow": 0.8618,
+        "grow8": 0.8684,
+        "grow16": 0.8683,
+        "grow24": 0.8622,
+        "scripted_pressure": 0.8724
+      },
+      "weights_exact": true,
+      "cpu": 71.12
+    },
+    "6602": {
+      "learned": {
+        "mean_reward": 0.8729,
+        "easy_actions": [
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3
+        ],
+        "hard_actions": [
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3
+        ],
+        "easy_high_grow_rate": 1.0,
+        "hard_high_grow_rate": 1.0
+      },
+      "baselines": {
+        "no_grow": 0.8735,
+        "grow8": 0.8782,
+        "grow16": 0.8746,
+        "grow24": 0.8729,
+        "scripted_pressure": 0.8821
+      },
+      "weights_exact": null,
+      "cpu": 56.34
+    },
+    "6603": {
+      "learned": {
+        "mean_reward": 0.8787,
+        "easy_actions": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "hard_actions": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "easy_high_grow_rate": 0.0,
+        "hard_high_grow_rate": 0.0
+      },
+      "baselines": {
+        "no_grow": 0.8717,
+        "grow8": 0.8787,
+        "grow16": 0.8785,
+        "grow24": 0.8745,
+        "scripted_pressure": 0.8827
+      },
+      "weights_exact": null,
+      "cpu": 56.38
+    }
+  },
+  "checks": {
+    "g1_beats_scripted": false,
+    "g2_beats_no_grow": false,
+    "g3_state_dependent": false,
+    "g4_deterministic": true
+  },
+  "exit": "growth_decision_state_dependent_partial",
+  "cost": {
+    "cpu": 183.84,
+    "cap_cpu": 300.0
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "scripted_rule_is_control_only": true
+  }
+}
