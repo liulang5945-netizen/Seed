@@ -1,0 +1,50 @@
+{
+  "schema": "taiji-n33-1-07-v1",
+  "card": "N33.1.07",
+  "design": "DESIGN-N33-1-07_20261125.md",
+  "created_utc": "2026-11-25T13:35:30.313746+00:00",
+  "manifest": "plans/manifests/n33_1_probe_states_20261125.json",
+  "sha256": "fb0ae53cf9032185fa78183485ae51c89526ada44c649695a161aac27fa01217",
+  "fixture": "taiji-choice-session-v4",
+  "k_total": 150,
+  "per_domain": {
+    "low_energy_pending": 50,
+    "high_uncertainty_pending": 50,
+    "pending_work": 50
+  },
+  "deterministic": true,
+  "scripted_probes": {
+    "n": {
+      "low_energy_pending": 50,
+      "high_uncertainty_pending": 50,
+      "pending_work": 50
+    },
+    "rest_share": 1.0,
+    "verify_or_help_share": 1.0,
+    "continue_or_recall_share": 0.8
+  },
+  "constant_probes": {
+    "n": {
+      "low_energy_pending": 50,
+      "high_uncertainty_pending": 50,
+      "pending_work": 50
+    },
+    "rest_share": 0.0,
+    "verify_or_help_share": 0.0,
+    "continue_or_recall_share": 0.0
+  },
+  "gates": {
+    "share_min": 0.5
+  },
+  "exit": "probes_frozen",
+  "cost": {
+    "cpu": 0.19,
+    "cap_cpu": 5.0
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "trained_policies": 0
+  }
+}
