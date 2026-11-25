@@ -1,0 +1,200 @@
+{
+  "schema": "taiji-n33-2-90-v1",
+  "card": "N33.2.90",
+  "design": "DESIGN-N33-2-90_20261125.md",
+  "created_utc": "2026-11-25T14:19:11.921793+00:00",
+  "smoke": false,
+  "env_version": "taiji-cross-session-v1",
+  "dims": {
+    "obs_s2": 6,
+    "cross": 9,
+    "total": 15
+  },
+  "episodes": 8000,
+  "confirm_seeds": [
+    20261601,
+    20261602,
+    20261603
+  ],
+  "confirm_eval_seeds": [
+    8000,
+    8099,
+    100
+  ],
+  "gates": {
+    "stateless_gap": 3.0,
+    "scripted_ratio": 0.85,
+    "resolve_rate": 0.8,
+    "counterfactual_drop": 3.0
+  },
+  "calibration": {
+    "c0_pass": true,
+    "scripted_normal": {
+      "n": 100,
+      "mean_return": 6.106,
+      "min_return": 2.8,
+      "max_return": 7.9,
+      "pending_episodes": 75,
+      "resolved_episodes": 75,
+      "resolve_rate": 1.0,
+      "store_roundtrip_exact": true,
+      "post_s2_persist_exact": true,
+      "action_histogram": {
+        "work_0": 62,
+        "work_1": 41,
+        "work_2": 87,
+        "verify_pending": 39,
+        "rest": 42,
+        "finish_idle": 529
+      }
+    },
+    "scripted_zero_cross_mean": -3.2,
+    "scripted_swap_cross_mean": -3.36,
+    "scripted_drop_zero": 9.306,
+    "scripted_drop_swap": 9.466,
+    "random_true": {
+      "n": 100,
+      "mean_return": -3.002,
+      "min_return": -5.5,
+      "max_return": 3.3,
+      "pending_episodes": 75,
+      "resolved_episodes": 10,
+      "resolve_rate": 0.1333,
+      "store_roundtrip_exact": true,
+      "post_s2_persist_exact": true,
+      "action_histogram": {
+        "work_0": 112,
+        "work_1": 145,
+        "work_2": 141,
+        "verify_pending": 137,
+        "rest": 133,
+        "finish_idle": 132
+      }
+    },
+    "constants_mean_returns": {
+      "work_0": -4.883,
+      "work_1": -4.939,
+      "work_2": -4.468,
+      "verify_pending": -4.606,
+      "rest": -4.2555,
+      "finish_idle": -3.2
+    }
+  },
+  "per_seed": {
+    "20261601": {
+      "persistent_normal": {
+        "n": 100,
+        "mean_return": 5.802,
+        "min_return": -3.6,
+        "max_return": 7.9,
+        "pending_episodes": 75,
+        "resolved_episodes": 72,
+        "resolve_rate": 0.96,
+        "store_roundtrip_exact": true,
+        "post_s2_persist_exact": true,
+        "action_histogram": {
+          "work_0": 67,
+          "work_1": 41,
+          "work_2": 97,
+          "verify_pending": 39,
+          "rest": 40,
+          "finish_idle": 516
+        }
+      },
+      "stateless_mean": -1.6905,
+      "stateless_resolve_rate": 0.1333,
+      "zero_cross_mean": -3.2,
+      "swap_cross_mean": -3.453,
+      "gap_vs_stateless": 7.4925,
+      "drop_zero_cross": 9.002,
+      "drop_swap_cross": 9.255,
+      "g1": true,
+      "g2": true,
+      "positive": true,
+      "cpu": 16.53
+    },
+    "20261602": {
+      "persistent_normal": {
+        "n": 100,
+        "mean_return": 5.8705,
+        "min_return": 1.15,
+        "max_return": 7.85,
+        "pending_episodes": 75,
+        "resolved_episodes": 73,
+        "resolve_rate": 0.9733,
+        "store_roundtrip_exact": true,
+        "post_s2_persist_exact": true,
+        "action_histogram": {
+          "work_0": 60,
+          "work_1": 41,
+          "work_2": 87,
+          "verify_pending": 39,
+          "rest": 66,
+          "finish_idle": 507
+        }
+      },
+      "stateless_mean": 0.0405,
+      "stateless_resolve_rate": 0.4133,
+      "zero_cross_mean": -3.2,
+      "swap_cross_mean": -3.3995,
+      "gap_vs_stateless": 5.83,
+      "drop_zero_cross": 9.0705,
+      "drop_swap_cross": 9.27,
+      "g1": true,
+      "g2": true,
+      "positive": true,
+      "cpu": 10.75
+    },
+    "20261603": {
+      "persistent_normal": {
+        "n": 100,
+        "mean_return": 5.9985,
+        "min_return": -0.55,
+        "max_return": 7.9,
+        "pending_episodes": 75,
+        "resolved_episodes": 74,
+        "resolve_rate": 0.9867,
+        "store_roundtrip_exact": true,
+        "post_s2_persist_exact": true,
+        "action_histogram": {
+          "work_0": 61,
+          "work_1": 41,
+          "work_2": 90,
+          "verify_pending": 39,
+          "rest": 50,
+          "finish_idle": 519
+        }
+      },
+      "stateless_mean": -0.342,
+      "stateless_resolve_rate": 0.3867,
+      "zero_cross_mean": -3.2,
+      "swap_cross_mean": -3.3445,
+      "gap_vs_stateless": 6.3405,
+      "drop_zero_cross": 9.1985,
+      "drop_swap_cross": 9.343,
+      "g1": true,
+      "g2": true,
+      "positive": true,
+      "cpu": 10.41
+    }
+  },
+  "repro_spot_check": {
+    "seed": 20261601,
+    "exact": true
+  },
+  "store_checks_exact": true,
+  "exit": "confirm_positive",
+  "cost": {
+    "cpu": 39.58,
+    "cap_cpu": 60.0
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 3,
+    "scripted_used_in_training": false,
+    "continual_plasticity_or_growth": false,
+    "deterministic_sampler": true
+  },
+  "scope": "taiji-cross-session-v1 + taiji-session-store-v1 two-session simulated store loop only; no continual plasticity/growth/check/final"
+}
