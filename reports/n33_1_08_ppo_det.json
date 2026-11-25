@@ -1,0 +1,214 @@
+{
+  "schema": "taiji-n33-1-08-v1",
+  "card": "N33.1.08",
+  "design": "DESIGN-N33-1-08_20261125.md",
+  "created_utc": "2026-11-25T13:02:15.894884+00:00",
+  "smoke": false,
+  "algorithm": "ppo_actor_critic_deterministic",
+  "fixture": "taiji-choice-session-v4",
+  "episodes": 6000,
+  "train_seeds": [
+    1001,
+    1002,
+    1003
+  ],
+  "eval_seeds": [
+    5000,
+    5001,
+    5002,
+    5003,
+    5004,
+    5005,
+    5006,
+    5007,
+    5008,
+    5009,
+    5010,
+    5011,
+    5012,
+    5013,
+    5014,
+    5015,
+    5016,
+    5017,
+    5018,
+    5019,
+    5020,
+    5021,
+    5022,
+    5023,
+    5024,
+    5025,
+    5026,
+    5027,
+    5028,
+    5029,
+    5030,
+    5031,
+    5032,
+    5033,
+    5034,
+    5035,
+    5036,
+    5037,
+    5038,
+    5039
+  ],
+  "probe": {
+    "source_card": "N33.1.07",
+    "env_seeds": [
+      7000,
+      7199
+    ],
+    "k_per_domain": 150,
+    "pool_sizes": {
+      "rest": 969,
+      "verify": 358,
+      "work": 2247
+    },
+    "scripted_shares": {
+      "rest": 1.0,
+      "verify": 1.0,
+      "work": 0.8867
+    }
+  },
+  "gates": {
+    "g1_random_gap": 10.0,
+    "g1_scripted_ratio": 0.85,
+    "g2_share": 0.5,
+    "g3_drop": 1.5
+  },
+  "baselines": {
+    "random": {
+      "n": 40,
+      "mean_return": -6.550293,
+      "min_return": -11.909862,
+      "max_return": 0.918556
+    },
+    "scripted": {
+      "n": 40,
+      "mean_return": 4.404469,
+      "min_return": 1.2,
+      "max_return": 8.253136
+    }
+  },
+  "per_seed": {
+    "1001": {
+      "weights_exact": true,
+      "metrics_exact": true,
+      "repro_exact": true,
+      "return_normal": 6.362229,
+      "return_zeroed_state": -10.0475,
+      "state_drop": 16.4097,
+      "g1": true,
+      "g2_fixed": true,
+      "g3": true,
+      "fixed_shares": {
+        "rest": 0.94,
+        "verify": 0.7867,
+        "work": 0.5267
+      },
+      "trajectory_probes_for_reference": {
+        "n_low_energy_pending": 1,
+        "rest_share": 1.0,
+        "n_high_unc_pending": 22,
+        "verify_or_help_share": 0.5909,
+        "n_pending_work": 124,
+        "continue_or_recall_share": 0.6694,
+        "action_histogram": {
+          "continue_task": 114,
+          "recall_learn": 62,
+          "verify": 98,
+          "ask_help": 0,
+          "rest": 136,
+          "wait_wake": 550
+        }
+      },
+      "trajectory_g2_for_reference": true,
+      "positive": true,
+      "cpu_2pass": 21.03
+    },
+    "1002": {
+      "weights_exact": true,
+      "metrics_exact": true,
+      "repro_exact": true,
+      "return_normal": 6.207836,
+      "return_zeroed_state": -10.0475,
+      "state_drop": 16.2553,
+      "g1": true,
+      "g2_fixed": true,
+      "g3": true,
+      "fixed_shares": {
+        "rest": 0.9333,
+        "verify": 0.6533,
+        "work": 0.64
+      },
+      "trajectory_probes_for_reference": {
+        "n_low_energy_pending": 1,
+        "rest_share": 1.0,
+        "n_high_unc_pending": 28,
+        "verify_or_help_share": 0.4643,
+        "n_pending_work": 113,
+        "continue_or_recall_share": 0.6726,
+        "action_histogram": {
+          "continue_task": 122,
+          "recall_learn": 62,
+          "verify": 83,
+          "ask_help": 0,
+          "rest": 132,
+          "wait_wake": 561
+        }
+      },
+      "trajectory_g2_for_reference": false,
+      "positive": true,
+      "cpu_2pass": 19.64
+    },
+    "1003": {
+      "weights_exact": true,
+      "metrics_exact": true,
+      "repro_exact": true,
+      "return_normal": 6.284232,
+      "return_zeroed_state": -10.0475,
+      "state_drop": 16.3317,
+      "g1": true,
+      "g2_fixed": true,
+      "g3": true,
+      "fixed_shares": {
+        "rest": 0.92,
+        "verify": 0.7933,
+        "work": 0.5333
+      },
+      "trajectory_probes_for_reference": {
+        "n_low_energy_pending": 1,
+        "rest_share": 1.0,
+        "n_high_unc_pending": 21,
+        "verify_or_help_share": 0.5714,
+        "n_pending_work": 123,
+        "continue_or_recall_share": 0.6748,
+        "action_histogram": {
+          "continue_task": 116,
+          "recall_learn": 62,
+          "verify": 94,
+          "ask_help": 0,
+          "rest": 130,
+          "wait_wake": 558
+        }
+      },
+      "trajectory_g2_for_reference": true,
+      "positive": true,
+      "cpu_2pass": 19.7
+    }
+  },
+  "repro_exact": true,
+  "exit": "det_ppo_positive",
+  "cost": {
+    "cpu": 60.44,
+    "cap_cpu": 90.0
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "scripted_used_in_training": false
+  }
+}
