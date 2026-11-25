@@ -1,0 +1,113 @@
+{
+  "schema": "taiji-n32-3-01-v1",
+  "card": "N32.3.01",
+  "design": "DESIGN-N32-3-01_20261125.md",
+  "created_utc": "2026-11-25T05:18:29.480140+00:00",
+  "seed": 20261120,
+  "smoke": false,
+  "gate": 0.85,
+  "results": [
+    {
+      "config": {
+        "kind": "q2",
+        "units": 48,
+        "steps": 1200,
+        "balanced": false
+      },
+      "steps_run": 1200,
+      "eval": {
+        "acc": 0.3271484375,
+        "pred_unknown_rate": 0.2255859375,
+        "n": 1024
+      },
+      "pass": false,
+      "cost": {
+        "cpu": 18.22
+      }
+    },
+    {
+      "config": {
+        "kind": "q2",
+        "units": 48,
+        "steps": 3000,
+        "balanced": false
+      },
+      "steps_run": 3000,
+      "eval": {
+        "acc": 0.3408203125,
+        "pred_unknown_rate": 0.41796875,
+        "n": 1024
+      },
+      "pass": false,
+      "cost": {
+        "cpu": 43.89
+      }
+    },
+    {
+      "config": {
+        "kind": "q2",
+        "units": 48,
+        "steps": 6000,
+        "balanced": false
+      },
+      "steps_run": 6000,
+      "eval": {
+        "acc": 0.341796875,
+        "pred_unknown_rate": 0.1728515625,
+        "n": 1024
+      },
+      "pass": false,
+      "cost": {
+        "cpu": 87.28
+      }
+    },
+    {
+      "config": {
+        "kind": "q3",
+        "units": 48,
+        "steps": 3000,
+        "balanced": false
+      },
+      "steps_run": 3000,
+      "eval": {
+        "acc": 0.5927734375,
+        "pred_unknown_rate": 1.0,
+        "n": 1024
+      },
+      "pass": false,
+      "cost": {
+        "cpu": 65.52
+      }
+    },
+    {
+      "config": {
+        "kind": "q3",
+        "units": 48,
+        "steps": 3000,
+        "balanced": true
+      },
+      "steps_run": 3000,
+      "eval": {
+        "acc": 0.14453125,
+        "pred_unknown_rate": 0.0,
+        "n": 1024
+      },
+      "pass": false,
+      "cost": {
+        "cpu": 71.89
+      }
+    }
+  ],
+  "q2_pass": false,
+  "q3_pass": false,
+  "exit": "precheck_fail",
+  "cost": {
+    "cpu": 288.08,
+    "cap_cpu": 600.0
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "exploratory": true
+  }
+}
