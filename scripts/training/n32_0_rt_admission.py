@@ -7,6 +7,8 @@ N32.0.01 (exploration, seeds 20261120-22): units per column in {24, 48}; each co
 N32.0.90 (confirmation, seeds 20261201-03): only the configuration chosen by the N32.0.01
   summary, plus the full-standard baseline C2 (N31.1.02 protocol, same steps) for
   release-05.  Protocol: plans/reference/DESIGN-N32-0-90_20261124.md.
+N32.0.91 (confirmation, seeds 20261301-03; D-20261125-503): owner-fixed config u48/1200 under
+  core requirements §2.1 v4, same gates as N32.0.90.  plans/reference/DESIGN-N32-0-91_20261125.md.
 
 Usage:
   python scripts/training/n32_0_rt_admission.py N32.0.01 <seed> [--smoke]
@@ -55,8 +57,14 @@ CHECKPOINTS = (1200, 2400)
 ORDER = ((24, 1200), (24, 2400), (48, 1200), (48, 2400))
 SMOKE_STEPS = 40
 EXPLORATION_SEEDS = (20261120, 20261121, 20261122)
-CONFIRMATION_SEEDS = (20261201, 20261202, 20261203)
-CARD_CPU_CAP = {"N32.0.01": 600.0, "N32.0.90": 600.0}
+CARD_SEEDS = {
+    "N32.0.01": EXPLORATION_SEEDS,
+    "N32.0.90": (20261201, 20261202, 20261203),
+    "N32.0.91": (20261301, 20261302, 20261303),
+}
+CONFIRMATION_CARDS = ("N32.0.90", "N32.0.91")
+FIXED_CONFIG = {"N32.0.91": {"units": 48, "steps": 1200}}
+CARD_CPU_CAP = {"N32.0.01": 600.0, "N32.0.90": 600.0, "N32.0.91": 600.0}
 SEED_CPU_CAP = 200.0
 CAPSULE_TOL = 1e-6
 
@@ -178,7 +186,7 @@ def seed_ok(report: dict[str, Any], key: str, threshold: float) -> bool:
 
 
 def aggregate(card: str) -> int:
-    seeds = EXPLORATION_SEEDS if card == "N32.0.01" else CONFIRMATION_SEEDS
+    seeds = CARD_SEEDS[card]
     stem = card.lower().replace(".", "_")
     rows = []
     for seed in seeds:
@@ -220,7 +228,7 @@ def aggregate(card: str) -> int:
                 "weakest_margin": min(r["rt"]["configs"][key]["g01_margin"] for r in complete),
                 "rt_mean3": sum(rt3) / len(rt3),
                 "c2_mean3": sum(c2) / len(c2) if c2 else None,
-                "exit": "n32_0_90_pass" if all(oks) else "n32_0_90_fail",
+                "exit": f"{stem}_pass" if all(oks) else f"{stem}_fail",
             }
         )
     out = REPORTS / f"{stem}_summary.json"
@@ -238,13 +246,13 @@ def main() -> int:
     args = parser.parse_args()
     if args.aggregate:
         return aggregate(args.card)
-    confirm = args.card == "N32.0.90"
-    allowed = CONFIRMATION_SEEDS if confirm else EXPLORATION_SEEDS
+    confirm = args.card in CONFIRMATION_CARDS
+    allowed = CARD_SEEDS[args.card]
     if args.seed not in allowed:
         raise SystemExit(f"{args.card}: seed must be in {allowed}")
     if confirm and args.smoke:
         raise SystemExit("no smoke on confirmation seeds")
-    chosen = load_chosen() if confirm else None
+    chosen = FIXED_CONFIG.get(args.card) or (load_chosen() if confirm else None)
     design = preflight(args.card, [args.seed], record=confirm)
     torch.set_num_threads(1)
     started = time.process_time()
