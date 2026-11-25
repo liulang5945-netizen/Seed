@@ -2,7 +2,7 @@
   "schema": "taiji-n33-1-01-v1",
   "card": "N33.1.01",
   "design": "DESIGN-N33-1-01_20261125.md",
-  "created_utc": "2026-11-25T12:21:10.440159+00:00",
+  "created_utc": "2026-11-25T12:30:00.646919+00:00",
   "fixture": {
     "choices": [
       "continue_task",
