@@ -6,11 +6,13 @@
 
 ## 按顺序推进只读一份
 
-[MAINLINE](MAINLINE.md)是**唯一主线与完整闭环入口**（统一串联已封存旧基线 `22.1–22.8` / 旧 RouteB `23–25` 与新加法核心单线 `S0 → S1 → 23-S..28-S → 29 → 30 → §15`），状态与审批台账归[MASTER-PLAN](MASTER-PLAN.md)，[ROADMAP-NEXT](reference/ROADMAP-NEXT_20261104.md)同步依赖。[U2完整主体闭环候选](reference/SPEC-TAIJI-CLOSED_LOOP_U2_20261110.md)已完成[执行包22](reference/PLAN-TAIJI-CLOSED_LOOP_DEVELOPMENT_20261110.md)收束（`22.5.0` A 父、`22.5.1` B 父过门、`22.5.2–22.8` 结案为 `package22_closed_partial`），旧 RouteB `23–25` 按有界/负面收口封存；当前已切换至新加法核心 `SelectivePersistentGraph`（零改动旧 `u2_neural_units.py`）并完成 **`S0` 分轴闭环预验证**（[D-225 整体验证](reference/RESULT-TAIJI_U2_HOLISTIC_ALGORITHM_VERIFY_20261121.md) `13/13`、[D-227 四轴桥接](reference/RESULT-TAIJI_U2_SELECTIVE_BRIDGE_20261121.md) `16/17`、[D-228 二阶闭环](reference/RESULT-TAIJI_U2_COGNITIVE_LOOP_20261121.md) `15/18`，全程零 check/final）。**当前唯一队首＝`S1`（同主体单一谱系联合生命流演练，零 check/final）**，通过后方可顺序准入 `23-S..28-S`。S18–S22 为长期责任轴，与执行包号独立。
+[MAINLINE](MAINLINE.md)是**唯一主线与完整闭环入口**（统一 N 阶梯：`≤N30` 历史冻结 → `N31` 有界交付已结案 `D-499`、主力骨干切换为 `taiji-gru-rt-v1/v2` → `N32` 当前活动探索阶段 → `N33..N37`），阶段门与停止规则见[阶段门与停止规则](active/STAGE_GATES_AND_STOPPING.md)，机制验收与编号映射见[机制验收](active/MECHANISM_ACCEPTANCE.md)及[ID_MAP_N](reference/ID_MAP_N.md)，审批与证据台账归[03_CURRENT_EXECUTION](active/roadmap/03_CURRENT_EXECUTION.md)与[决策台账](reference/DECISION-LEDGER_20261109.md)。
 
-本轮范围、顺序、预算、风险与具名出口见[MAINLINE](MAINLINE.md)与[闭环开发卡](reference/PLAN-TAIJI-CLOSED_LOOP_DEVELOPMENT_20261110.md)。22.3 已按[工程结案](reference/VALIDATION-TAIJI-U2_22_3_CLOSEOUT_20261111.md)交付 small 初始化接受父，22.4 已交付 1,280 world 分区与七分项定价基准，22.5.0 已交付 first-A 任务父；P3.8/P3.9 与包20、包21、v2 F 学习线、桥/边界线按各自结案保存，阶段编号不表示长期能力完成比例。
+本轮范围、顺序、预算、风险与具名出口一律以[MAINLINE](MAINLINE.md)和[统一目标与验收 §2.1](active/TAIJI_CORE_REQUIREMENTS.md#21-统一目标与验收)为准；旧 `22.x / 23–25 / S0 / S1 / S1-RT`（均归并至 `≤N30` 冻结历史）仅作历史凭证检索，不再发布执行队列。
 
-22.4.1 已按[接口与恢复回执](reference/VALIDATION-TAIJI-U2_22_4_1_CLOSEOUT_20261112.md)结案，五个计费名额结清；连续物理世界与学习校准前置见[学习校准计划](reference/PLAN-TAIJI_U2_LEARNING_CALIBRATION_20261113.md)，当前按[MAINLINE](MAINLINE.md)顺序推进 `22.5.1 → 22.8`。
+（以下历史旧编号 `22.x / S1` 均已归并至 `≤N30`，仅供检索，不构成现行执行队列。）
+
+22.4.1 已按[接口与恢复回执](reference/VALIDATION-TAIJI-U2_22_4_1_CLOSEOUT_20261112.md)结案，五个计费名额结清；连续物理世界与学习校准前置见[学习校准计划](reference/PLAN-TAIJI_U2_LEARNING_CALIBRATION_20261113.md)，现行 N 阶梯推进序列详见[MAINLINE](MAINLINE.md)。
 
 [N长期实施方案](reference/PLAN-TAIJI-N_LONG_HORIZON_20261111.md)从 22 接到 23–30（完整闭环主视图同步整合在[MAINLINE](MAINLINE.md) §4）：组合/跨会话记忆（24 锚定 `22.5.Y`）/成长/递归/物理/长期联合研究→29 同一主体模型级确认→30 用户可独立接管的运行交付。各卡有实施方法、风险处置、数据/资源及有限出口；交付后按运营、影子学习/成长、验收、回滚和退役状态机维持闭环。
 
