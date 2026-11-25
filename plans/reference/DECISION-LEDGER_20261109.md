@@ -10303,3 +10303,11 @@ eports/n33_1_01_sim.json；CPU 0.02/20。
 **3. 草案**：[DESIGN-N34-2-01](../reference/DESIGN-N34-2-01_20261126.md)（待 N34 准入签）——H1 综合 +0.02、H2 P1 保持 −0.02、公平口径（预分配单 LR；另设 lr2 敏感性）；G-cal/G-benefit/G-retention 与四出口写定；估计 ≤120 CPU。
 **4. 覆盖矩阵**：[COVERAGE-MATRIX_20261126](../active/COVERAGE-MATRIX_20261126.md)——v4 条款→✅/🟡/❌、证据与缺口：中文连续任务、真实多模态/物理、来源可信度纠正、不确定性校准、生长决策学得化、check/final 为未建立项。
 **5. 状态**：零训练、零 check/final、未读确认 seed；N34 训练/确认仍待 owner 签四项（新 seed、预算/authority、净收益口径、check/final）。
+
+### D-20261126-616 缺口 D 设施：NCH.1.01 封闭词表自然中文连续任务 harness = `env_ready`（零训练，0.03 CPU）
+
+**1. 背景**：目标覆盖矩阵（D-615）显示「自然中文连续任务」为 ❌ 未建立；按 owner「合理即批、按推荐持续推进」授权，先做**零训练设施**（非阶段训练卡）。
+**2. 资产**：`taiji/chinese_task_env.py`（`taiji-chinese-continuous-v1`）——43 token 封闭词表；3–5 回合连续指令；状态含物体位置（「原位」跨回合指代）；留出槽位组合 split；观测定长 16 token（无 task_id）；8 动作；脚本 oracle 仅作校准对照。
+**3. 单测**：`tests/test_chinese_task_env_20261126.py` **5/5 PASS**（确定性、形状/词表、pending 递减、oracle 高/随机低、无 task_id）。
+**4. 校准**：`reports/nch_1_01_calibration.json`——oracle 训练/留出均 **1.0000**；随机 **0.1494**；8 常量均 ≤ 随机+0.15；留出组合与无 task_id 检查通过；6/6 门 ⇒ `env_ready`。
+**5. 范围**：设施就绪 ≠ 中文任务能力成立；「模型能可靠完成自然中文连续任务」仍需独立训练/确认线（owner 准入＋预算/seed）。零 check/final。

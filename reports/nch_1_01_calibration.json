@@ -1,0 +1,203 @@
+{
+  "schema": "taiji-nch-1-01-v1",
+  "card": "NCH.1.01",
+  "design": "DESIGN-NCH-1-01_20261126.md",
+  "created_utc": "2026-11-25T17:32:03.206710+00:00",
+  "task_version": "taiji-chinese-continuous-v1",
+  "train_seeds": [
+    4100,
+    4139,
+    40
+  ],
+  "heldout_seeds": [
+    4140,
+    4179,
+    40
+  ],
+  "oracle_train": {
+    "n_episodes": 40,
+    "mean_step_acc": 1.0,
+    "episode_success": 1.0,
+    "mean_turns": 3.85,
+    "per_seed": [
+      {
+        "seed": 4100,
+        "turns": 3,
+        "success": true
+      },
+      {
+        "seed": 4101,
+        "turns": 4,
+        "success": true
+      },
+      {
+        "seed": 4102,
+        "turns": 5,
+        "success": true
+      },
+      {
+        "seed": 4103,
+        "turns": 4,
+        "success": true
+      },
+      {
+        "seed": 4104,
+        "turns": 3,
+        "success": true
+      }
+    ]
+  },
+  "oracle_heldout": {
+    "n_episodes": 40,
+    "mean_step_acc": 1.0,
+    "episode_success": 1.0,
+    "mean_turns": 4.03,
+    "per_seed": [
+      {
+        "seed": 4140,
+        "turns": 4,
+        "success": true
+      },
+      {
+        "seed": 4141,
+        "turns": 4,
+        "success": true
+      },
+      {
+        "seed": 4142,
+        "turns": 5,
+        "success": true
+      },
+      {
+        "seed": 4143,
+        "turns": 3,
+        "success": true
+      },
+      {
+        "seed": 4144,
+        "turns": 3,
+        "success": true
+      }
+    ]
+  },
+  "random_train": {
+    "n_episodes": 40,
+    "mean_step_acc": 0.1494,
+    "episode_success": 0.0,
+    "mean_turns": 3.85,
+    "per_seed": [
+      {
+        "seed": 4100,
+        "turns": 3,
+        "success": false
+      },
+      {
+        "seed": 4101,
+        "turns": 4,
+        "success": false
+      },
+      {
+        "seed": 4102,
+        "turns": 5,
+        "success": false
+      },
+      {
+        "seed": 4103,
+        "turns": 4,
+        "success": false
+      },
+      {
+        "seed": 4104,
+        "turns": 3,
+        "success": false
+      }
+    ]
+  },
+  "random_heldout": {
+    "n_episodes": 40,
+    "mean_step_acc": 0.1056,
+    "episode_success": 0.0,
+    "mean_turns": 4.03,
+    "per_seed": [
+      {
+        "seed": 4140,
+        "turns": 4,
+        "success": false
+      },
+      {
+        "seed": 4141,
+        "turns": 4,
+        "success": false
+      },
+      {
+        "seed": 4142,
+        "turns": 5,
+        "success": false
+      },
+      {
+        "seed": 4143,
+        "turns": 3,
+        "success": false
+      },
+      {
+        "seed": 4144,
+        "turns": 3,
+        "success": false
+      }
+    ]
+  },
+  "constants": {
+    "拿杯子": {
+      "mean_step_acc": 0.0844,
+      "episode_success": 0.0
+    },
+    "放杯子": {
+      "mean_step_acc": 0.1299,
+      "episode_success": 0.0
+    },
+    "打开灯": {
+      "mean_step_acc": 0.1494,
+      "episode_success": 0.0
+    },
+    "关闭灯": {
+      "mean_step_acc": 0.2078,
+      "episode_success": 0.0
+    },
+    "检查门": {
+      "mean_step_acc": 0.0714,
+      "episode_success": 0.0
+    },
+    "记录清单": {
+      "mean_step_acc": 0.1299,
+      "episode_success": 0.0
+    },
+    "等待": {
+      "mean_step_acc": 0.1299,
+      "episode_success": 0.0
+    },
+    "求助": {
+      "mean_step_acc": 0.0974,
+      "episode_success": 0.0
+    }
+  },
+  "best_constant_step_acc": 0.2078,
+  "checks": {
+    "oracle_train_high": true,
+    "oracle_heldout_high": true,
+    "random_low": true,
+    "constants_below_random_plus_margin": true,
+    "heldout_episodes_use_heldout_combos": true,
+    "no_task_id": true
+  },
+  "exit": "env_ready",
+  "cost": {
+    "cpu": 0.03,
+    "cap_cpu": 5.0
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "trained_policies": 0
+  }
+}
