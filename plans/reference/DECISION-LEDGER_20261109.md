@@ -10262,3 +10262,10 @@ eports/n33_1_01_sim.json；CPU 0.02/20。
 **4. Seed**：N33 六组确认 seed（20261501–03、1511–13、1601–03、1611–13、1701–03、1711–13）**全部烧毁**；check/final 从未读取；N34/后续确认须 owner 重新声明新组。
 **5. 缺口**：生长净收益（仅持平）、自主选择条件性（verify 探针最弱 0.480）、真实多模态/物理、跨会话长期运行与容错、不确定性校准、无正式成绩单项。
 **6. N34 准入需 owner 签**：新确认 seed 组、预算/时间盒与 `training_authority`、生长净收益是否必签或按 REQUIRED-INPLACE 豁免、首卡（长跑耐久 harness 或生长收益单卡）、是否授权读 check/final（逐包）。
+
+### D-20261126-610 N33 收口后推进：N34 预备——长跑耐久 harness 实现（零训练，6/6 单测）＋准入材料草案（零 check）
+
+**1. 背景**：N33 已收口（D-609），N34 未准入（需 owner 新 seed/预算/authority/生长口径）。按 owner「合理即批、按推荐持续推进」授权，先完成**不需要新 seed/训练的 N34 前置工程**。
+**2. 实现**：`taiji/long_run_harness.py`（`taiji-long-run-v1`）——多会话循环、逐会话 sha256 审计链、崩溃注入与恢复、`check/final` 封存拦截（`SealedSplitGuard`）、确定性链；`tests/test_long_run_harness_20261126.py` **6/6 PASS**（多会话连续、崩溃恢复、审计篡改检测、封存拦截、harness 封存读取拦截、确定性一致）。
+**3. 准入材料草案**：`N34-ADMISSION_20261126.md`（待签）——阶段目标、前置、建议卡序（N34.1.01 harness→N34.1.02 100 会话/10,000 事件→N34.2.01 生长净收益→N34.9x 确认）、需签项（新 seed、预算/authority、生长净收益是否必签、check/final 授权）；`DESIGN-N34-1-01_20261126.md`（零训练 harness 卡，待准入后执行）。
+**4. 状态**：零训练、零 check/final、未读确认 seed；当前**没有活动卡**；N34 生效需 owner 签字。
