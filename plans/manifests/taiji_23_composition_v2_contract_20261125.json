@@ -1,0 +1,90 @@
+{
+  "schema": "taiji-23-composition-v2-contract-v1",
+  "card": "N32.2.02",
+  "status": "frozen",
+  "criteria": {
+    "fixture": "taiji-23-composition-v2",
+    "encoding": "taiji-23-composition-ticks-v1",
+    "world_seed_base": 23200000,
+    "splits": {
+      "train": [
+        0,
+        6000
+      ],
+      "val": [
+        6000,
+        7000
+      ],
+      "confirm": [
+        7000,
+        8000
+      ]
+    },
+    "pairs": [
+      [
+        "左边",
+        "左边"
+      ],
+      [
+        "左边",
+        "前边"
+      ],
+      [
+        "左边",
+        "后边"
+      ],
+      [
+        "右边",
+        "右边"
+      ],
+      [
+        "右边",
+        "前边"
+      ],
+      [
+        "右边",
+        "后边"
+      ],
+      [
+        "前边",
+        "左边"
+      ],
+      [
+        "前边",
+        "右边"
+      ],
+      [
+        "前边",
+        "前边"
+      ],
+      [
+        "后边",
+        "左边"
+      ],
+      [
+        "后边",
+        "右边"
+      ],
+      [
+        "后边",
+        "后边"
+      ]
+    ],
+    "templates": {
+      "q1": "{x}现在在哪里？",
+      "q2": "{x}的{d}是谁？",
+      "q3": "{x}{d1}的那个物体的{d2}是谁？"
+    },
+    "digests": {
+      "open_file_sha256": "ec84f4b6941dbc720ae84b7860410b803adae33511160adeaa88a948274b9a37",
+      "confirm_file_sha256": "f8f76f586f70cc6b642f256ba15b6ae10ad0bef97e5da493c6ce8ac45d6a9c2f"
+    },
+    "gates_val": {
+      "q1": 0.85,
+      "q2": 0.85,
+      "q3": 0.85
+    }
+  },
+  "criteria_sha256": "b0084d37e35166a37b3bc3e6cd94031b349d7a94b70227223e53658753d1d016",
+  "confirm_reads": 0
+}

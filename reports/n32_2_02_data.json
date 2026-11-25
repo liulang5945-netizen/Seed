@@ -1,0 +1,116 @@
+{
+  "schema": "taiji-n32-2-02-v1",
+  "card": "N32.2.02",
+  "design": "DESIGN-N32-2-02_20261125.md",
+  "created_utc": "2026-11-25T03:46:20.251677+00:00",
+  "generated_this_run": true,
+  "counts": {
+    "train_rows": 102000,
+    "val_rows": 17000,
+    "worlds": 7000
+  },
+  "max_ticks": 20,
+  "baselines": {
+    "q1": {
+      "n_train": 6000,
+      "n_val": 1000,
+      "answer_distribution_val": {
+        "中间": 0.421,
+        "右边": 0.299,
+        "左边": 0.28
+      },
+      "shortcuts": {
+        "majority": 0.421,
+        "always_unknown": 0.0,
+        "copy_entity": 0.0,
+        "position_of_first_tick_body": 0.493,
+        "always_middle": 0.421
+      },
+      "best_shortcut": "position_of_first_tick_body",
+      "best_shortcut_acc": 0.493,
+      "diagnostic_not_shortcut": {}
+    },
+    "q2": {
+      "n_train": 24000,
+      "n_val": 4000,
+      "answer_distribution_val": {
+        "未知": 0.3355,
+        "紫色圆片": 0.12125,
+        "黄色圆片": 0.11275,
+        "绿色圆片": 0.11175,
+        "蓝色圆片": 0.1095,
+        "红色圆片": 0.10925,
+        "青色圆片": 0.1
+      },
+      "shortcuts": {
+        "majority": 0.3355,
+        "always_unknown": 0.3355,
+        "copy_entity": 0.0,
+        "opposite_direction": 0.0,
+        "nearest_other": 0.4065,
+        "farthest_other": 0.258
+      },
+      "best_shortcut": "nearest_other",
+      "best_shortcut_acc": 0.4065,
+      "diagnostic_not_shortcut": {}
+    },
+    "q3": {
+      "n_train": 72000,
+      "n_val": 12000,
+      "answer_distribution_val": {
+        "未知": 0.6005,
+        "紫色圆片": 0.069,
+        "黄色圆片": 0.06758333333333333,
+        "绿色圆片": 0.0675,
+        "青色圆片": 0.06583333333333333,
+        "红色圆片": 0.06508333333333334,
+        "蓝色圆片": 0.0645
+      },
+      "shortcuts": {
+        "majority": 0.6005,
+        "always_unknown": 0.6005,
+        "copy_entity": 0.13583333333333333,
+        "exist_d1_then_copy": 0.4713333333333333,
+        "first_hop_only": 0.3355,
+        "second_hop_from_entity": 0.18366666666666667,
+        "third_body_if_d1": 0.5991666666666666,
+        "role_by_pair": 0.6005,
+        "role_by_pair_exist_d1": 0.6015,
+        "role_by_pair_exist_d1_exist_d2_from_x": 0.6861666666666667
+      },
+      "best_shortcut": "role_by_pair_exist_d1_exist_d2_from_x",
+      "best_shortcut_acc": 0.6861666666666667,
+      "diagnostic_not_shortcut": {
+        "role_by_pair_and_x_one_hop_signature": 1.0
+      }
+    }
+  },
+  "gates_val": {
+    "q1": 0.85,
+    "q2": 0.85,
+    "q3": 0.85
+  },
+  "presentation": {
+    "max_shortcut_allowed": 0.7,
+    "too_easy": {},
+    "impossible_gate": {}
+  },
+  "leakage": {
+    "frozen_23_1_seeds": 0,
+    "v1_pool_seeds": 0,
+    "unknown_answers": []
+  },
+  "manifest": "plans\\manifests\\taiji_23_composition_v2_contract_20261125.json",
+  "criteria_sha256": "b0084d37e35166a37b3bc3e6cd94031b349d7a94b70227223e53658753d1d016",
+  "exit": "data_ready",
+  "cost": {
+    "cpu": 272.14,
+    "generation_cpu": 270.42
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "training": false
+  }
+}
