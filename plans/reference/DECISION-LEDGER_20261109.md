@@ -10519,3 +10519,28 @@ eports/n33_1_01_sim.json；CPU 0.02/20。
 ### D-20261126-655 复审与重构阶段总验（`audit + ruff + pytest + n34_ready_bundle` 全绿，待 owner 签发新 seed 与 N34 准入）
 
 **1. 汇总**：同步更新 [探索证据汇总](EVIDENCE-SUMMARY-EXPLORATION_20261126.md)、[目标覆盖矩阵](COVERAGE-MATRIX_20261126.md)、[ID_MAP_N](ID_MAP_N.md) 与 [MAINLINE](../MAINLINE.md)；确认 seed 清单 `n31_confirmation_seed_reads.json` 零改动，零 `check / final`。
+
+---
+
+### D-20261126-656 owner 批复「123全是」：追认探索算力＋`N34` 准入生效＋注册确认 seed `20261801–03 / 20261811–13`
+
+**1. 裁定**：① 正式追认 `dde5bb766` 后全部探索算力（含重构纠偏与 `N34.2/3.4` 预备）；② [N34 准入卡](N34-ADMISSION_20261126.md) 与 [准入决策备忘](MEMO-N34-ADMISSION-DECISION_20261126.md) 正式生效；③ 注册确认 seed `20261801–03`（主）与 `20261811–13`（备）入 `scripts/training/n31_guard.py`；④ 生长净收益按 `+0.02` 必签口径（±0.02 记 `parity`）；⑤ `check/final` 继续封存（`0` 读取）。
+
+### D-20261126-657 N34.3.04 预注册＋执行：**`growth_decision_v2_positive`**（53.94/120.0 CPU；3/3 全过）
+
+**1. 卡**：[DESIGN-N34-3-04](DESIGN-N34-3-04_20261126.md) / [RESULT-N34-3-04](RESULT-N34-3-04_20261126.md)；回执 `reports/n34_3_04_state_dependent_growth_cal.json`。
+**2. 读数**（`6611–6613`，将 G2 对齐 `≥no_grow+0.025 ∧ ≥0.85×(oracle−no_grow)`）：3/3 易局全 `no_grow`、难局全生长，奖励 `0.9053 / 0.9115 / 0.8942`（100% 匹配各自 `oracle_per_type`）、`6611` 权重逐位一致；C0 ∧ G1..G4 3/3 全过，获批并入 `N34.9.90` 确认电池。
+
+### D-20261126-658 N34.9.90 预注册：六轴综合正式确认（确认 seed `20261801–03`；CAP≤280 CPU；零 check/final）
+
+**1. 卡**：[DESIGN-N34-9-90](DESIGN-N34-9-90_20261126.md)。一次性冻结 `ecl` / `unc` / `phy` / `n34_2` / `n34_3` / `nch` 六轴探索配置与预注册门，经 `--smoke`（探索 seed `6901–6903`，guard 清单零改动）验证后执行。
+
+### D-20261126-659 N34.9.90 正式确认执行：**`confirm_all_passed`**（116.59/280.0 CPU；6/6 轴在 `20261801–03` 全部通过）
+
+**1. 卡**：[RESULT-N34-9-90](RESULT-N34-9-90_20261126.md)；回执 `reports/n34_9_90_confirm_battery.json`；`n31_confirmation_seed_reads.json` 已一次性记账 `20261801–03` 作废。
+**2. 分轴确认结果**：`ecl` **`confirm_positive`**（ΔBrier `−0.0291..−0.0328`，漂移后 `−0.0526..−0.0673`）；`unc` **`confirm_positive`**（ECE `0.0320–0.0361`，Brier `−0.1201..−0.1271`）；`phy` **`confirm_positive`**（同族 `0.968–0.970`，跨族 `0.941–0.953`，碰撞召回 `0.9856–0.9895`，障碍移除消融跌 `0.0`）；`n34_2` **`confirm_parity`**（benefit `−0.0098..−0.0034`，P1 保持 ≥`−0.0020`）；`n34_3` **`confirm_positive`**（易 `no_grow=1.0`，难 `grow=1.0`，奖励 `0.8943–0.9049` ≥99.6% oracle）；`nch` **`confirm_positive`**（`gru_recurrent` 指代 `0.958–0.968` vs 无状态 `0.319–0.328`）。全 6 轴 `weights_exact/deterministic = true`。
+**3. 储备与纪律**：备用 **`20261811–13` 完好未读**；`check_reads = 0, final_reads = 0`。
+
+### D-20261126-660 N34 六轴确认收束校验与文档同步
+
+**1. 同步**：更新 [证据汇总](EVIDENCE-SUMMARY-EXPLORATION_20261126.md)、[目标覆盖矩阵](COVERAGE-MATRIX_20261126.md)、[ID_MAP_N](ID_MAP_N.md)、[PLAN_INDEX](../active/PLAN_INDEX.md) 与 [MAINLINE](../MAINLINE.md)；待下一步在备用 `20261811–13` 推进同主体联合长跑耐久或开放中文/真实物理新探索。

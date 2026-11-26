@@ -16,8 +16,9 @@
 | N32 收口 | [CLOSEOUT-N32](../reference/CLOSEOUT-N32_20261125.md) | 有界交付＋R1 确认正例；终态、负结果、缺口、资源、N33 准入条件（D-20261125-552） |
 | N33 收口 | [CLOSEOUT-N33](../reference/CLOSEOUT-N33_20261126.md) | 三正例＋一条部分确认；生长收益未签署；资源、seed 状态、N34 准入条件（D-20261126-609） |
 | 目标覆盖矩阵 | [COVERAGE-MATRIX_20261126](../reference/COVERAGE-MATRIX_20261126.md) | v4 条款→✅/🟡/❌、证据与缺口、下一步优先级（D-20261126-615） |
-| 探索证据汇总 | [EVIDENCE-SUMMARY-EXPLORATION](../reference/EVIDENCE-SUMMARY-EXPLORATION_20261126.md) | review-ready：N33 确认级＋N34.2.04 parity＋四条学习线正例＋N34.3 负结果＋缺口表（D-20261126-645/650） |
-| 生长决策学习线 | [RESULT-N34-3-03](../reference/RESULT-N34-3-03_20261126.md) | 状态相关生长决策 v2（3/3 达按型 oracle，推翻 3.01/02 伪负结论；`partial`；D-20261126-654） |
+| 探索证据汇总 | [EVIDENCE-SUMMARY-EXPLORATION](../reference/EVIDENCE-SUMMARY-EXPLORATION_20261126.md) | N33＋N34.9.90 确认级汇总＋缺口表（D-20261126-645/650/659） |
+| **N34.9.90 六轴确认** | [RESULT-N34-9-90](../reference/RESULT-N34-9-90_20261126.md) | 确认 seed `20261801–03` 六轴全过（`confirm_all_passed`，`116.59 CPU`；D-20261126-658/659） |
+| 生长决策学习线 | [RESULT-N34-3-04](../reference/RESULT-N34-3-04_20261126.md) | 状态相关生长决策 v2 探索正例（3/3 达按型 oracle，D-20261126-657；已入 N34.9.90 确认） |
 | 中文任务设施 | [DESIGN-NCH-1-01](../reference/DESIGN-NCH-1-01_20261126.md) | 封闭词表自然中文连续任务 harness（零训练 `env_ready`；D-20261126-616） |
 | 证据可信度设施 | [DESIGN-ECL-1-01](../reference/DESIGN-ECL-1-01_20261126.md) | 证据可信度账本与纠正（零训练 `ledger_ready`；D-20261126-617） |
 | 可信度学习线 | [RESULT-ECL-1-03](../reference/RESULT-ECL-1-03_20261126.md) | 在线可信度学习探索正例（`credibility_learned_positive`；D-20261126-639/640） |

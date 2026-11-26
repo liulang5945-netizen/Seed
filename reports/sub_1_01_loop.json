@@ -2,7 +2,7 @@
   "schema": "taiji-sub-1-01-v1",
   "card": "SUB.1.01",
   "design": "DESIGN-SUB-1-01_20261126.md",
-  "created_utc": "2026-11-26T03:37:53.984935+00:00",
+  "created_utc": "2026-11-26T04:02:48.855522+00:00",
   "sessions": 5,
   "seeds": [
     5200,
@@ -36,7 +36,7 @@
   },
   "exit": "loop_ready",
   "cost": {
-    "cpu": 0.05,
+    "cpu": 0.03,
     "cap_cpu": 10.0
   },
   "discipline": {

@@ -2,7 +2,7 @@
   "schema": "taiji-n34-1-01-v1",
   "card": "N34.1.01",
   "design": "DESIGN-N34-1-01_20261126.md",
-  "created_utc": "2026-11-26T03:37:59.487169+00:00",
+  "created_utc": "2026-11-26T04:02:53.732892+00:00",
   "sessions": 50,
   "crash_session": 24,
   "checks": {
@@ -22,7 +22,7 @@
   ],
   "exit": "harness_ready",
   "cost": {
-    "cpu": 0.19,
+    "cpu": 0.06,
     "cap_cpu": 10.0
   },
   "discipline": {
