@@ -1,0 +1,530 @@
+{
+  "schema": "taiji-n35-1-91-v1",
+  "card": "N35.1.91",
+  "design": "DESIGN-N35-1-91_20261126.md",
+  "created_utc": "2026-11-26T10:53:32.967581+00:00",
+  "smoke": false,
+  "seeds": [
+    20261911,
+    20261912,
+    20261913
+  ],
+  "long_run": {
+    "20261911": {
+      "schema": "taiji-long-run-trained-v1",
+      "seed": 20261911,
+      "durability": {
+        "sessions": 100,
+        "events": 10025,
+        "crash_recoveries": 10,
+        "unplanned_rescues": 0,
+        "chain_valid": true,
+        "chain_head": "4c7c89c3a91cd82890d9011f4e525a7312620f257a7b155a826e04e91caac0a9",
+        "record_digest": "9502d2546b621e33e098c36edda499f9b9e5936bbcb226584f6163b4e0ab620e",
+        "resolved_pending": 25,
+        "sealed_blocks": 2
+      },
+      "chinese": {
+        "train": {
+          "mean_step_acc": 0.9545,
+          "coref_acc": 0.9328,
+          "episode_success": 0.8
+        },
+        "heldout": {
+          "mean_step_acc": 0.9779,
+          "coref_acc": 0.9677,
+          "episode_success": 0.9
+        }
+      },
+      "physics": {
+        "in_family": {
+          "n": 4800,
+          "accuracy": 0.9731,
+          "collision_recall": 1.0,
+          "collision_count": 1046,
+          "macro_f1": 0.9519,
+          "per_class_recall": {
+            "向右滑动": 0.9931,
+            "向左滑动": 0.953,
+            "停下": 0.9437,
+            "碰撞": 1.0,
+            "无变化": 0.9292
+          }
+        },
+        "cross_family": {
+          "n": 4800,
+          "accuracy": 0.9502,
+          "collision_recall": 0.994,
+          "collision_count": 1160,
+          "macro_f1": 0.903,
+          "per_class_recall": {
+            "向右滑动": 0.9519,
+            "向左滑动": 0.9386,
+            "停下": 0.8773,
+            "碰撞": 0.994,
+            "无变化": 0.9106
+          }
+        },
+        "barrier_ablation": {
+          "full_collision_recall": 0.994,
+          "ablated_collision_recall": 0.0,
+          "collision_recall_drop": 0.994
+        }
+      },
+      "growth": {
+        "final_hidden": 32,
+        "growth_events": 1,
+        "grew_session": 22,
+        "birth_perturbation": 0.0,
+        "dormancy_drop": 0.9990230202674866,
+        "wake_diff": 0.0,
+        "p1_before_acc": 1.0,
+        "p1_after_acc": 0.999,
+        "p1_retention_drop": 0.000977,
+        "p2_acc": 1.0
+      },
+      "credibility": {
+        "brier_beta": 0.152,
+        "brier_static": 0.1894,
+        "delta_brier": -0.0374,
+        "post_abs_beta": 0.2997,
+        "post_abs_static": 0.3693,
+        "delta_post_abs": -0.0696,
+        "final_forum_cred": 0.8046
+      },
+      "uncertainty": {
+        "coupled_ece": 0.0124,
+        "coupled_brier": 0.0303,
+        "brier_vs_static": -0.2197,
+        "n_eval_samples": 781,
+        "mean_acc": 0.9654
+      }
+    },
+    "20261912": {
+      "schema": "taiji-long-run-trained-v1",
+      "seed": 20261912,
+      "durability": {
+        "sessions": 100,
+        "events": 10025,
+        "crash_recoveries": 10,
+        "unplanned_rescues": 0,
+        "chain_valid": true,
+        "chain_head": "8c62412fbcbd6b14db7e71e1fa773ed31bfa19d101e440a330a46bf0a95d4633",
+        "record_digest": "45898e6ae3faebba3e3e260bdfdd3e64dc793f59626ea1a511301d99a4c275f9",
+        "resolved_pending": 25,
+        "sealed_blocks": 2
+      },
+      "chinese": {
+        "train": {
+          "mean_step_acc": 0.9659,
+          "coref_acc": 0.9496,
+          "episode_success": 0.875
+        },
+        "heldout": {
+          "mean_step_acc": 0.9724,
+          "coref_acc": 0.9597,
+          "episode_success": 0.875
+        }
+      },
+      "physics": {
+        "in_family": {
+          "n": 4800,
+          "accuracy": 0.9806,
+          "collision_recall": 0.9971,
+          "collision_count": 1039,
+          "macro_f1": 0.9602,
+          "per_class_recall": {
+            "向右滑动": 0.9865,
+            "向左滑动": 0.9845,
+            "停下": 0.8995,
+            "碰撞": 0.9971,
+            "无变化": 0.9347
+          }
+        },
+        "cross_family": {
+          "n": 4800,
+          "accuracy": 0.95,
+          "collision_recall": 0.9752,
+          "collision_count": 1212,
+          "macro_f1": 0.8854,
+          "per_class_recall": {
+            "向右滑动": 0.961,
+            "向左滑动": 0.9549,
+            "停下": 0.7244,
+            "碰撞": 0.9752,
+            "无变化": 0.9128
+          }
+        },
+        "barrier_ablation": {
+          "full_collision_recall": 0.9752,
+          "ablated_collision_recall": 0.0,
+          "collision_recall_drop": 0.9752
+        }
+      },
+      "growth": {
+        "final_hidden": 32,
+        "growth_events": 1,
+        "grew_session": 22,
+        "birth_perturbation": 2.384185791015625e-07,
+        "dormancy_drop": 1.0,
+        "wake_diff": 0.0,
+        "p1_before_acc": 1.0,
+        "p1_after_acc": 1.0,
+        "p1_retention_drop": 0.0,
+        "p2_acc": 0.999
+      },
+      "credibility": {
+        "brier_beta": 0.1532,
+        "brier_static": 0.1828,
+        "delta_brier": -0.0296,
+        "post_abs_beta": 0.3059,
+        "post_abs_static": 0.3623,
+        "delta_post_abs": -0.0564,
+        "final_forum_cred": 0.778
+      },
+      "uncertainty": {
+        "coupled_ece": 0.0256,
+        "coupled_brier": 0.0449,
+        "brier_vs_static": -0.2051,
+        "n_eval_samples": 781,
+        "mean_acc": 0.9488
+      }
+    },
+    "20261913": {
+      "schema": "taiji-long-run-trained-v1",
+      "seed": 20261913,
+      "durability": {
+        "sessions": 100,
+        "events": 10025,
+        "crash_recoveries": 10,
+        "unplanned_rescues": 0,
+        "chain_valid": true,
+        "chain_head": "72ab6d37483aedd65cac0c114d1a94a46ffb33fe03742abc80331a45c19ce261",
+        "record_digest": "eb80df4fab4fa734e01322355fc84c5fd55a0290d29d8ce8e9ae96bfb725fd55",
+        "resolved_pending": 25,
+        "sealed_blocks": 2
+      },
+      "chinese": {
+        "train": {
+          "mean_step_acc": 0.9773,
+          "coref_acc": 0.9916,
+          "episode_success": 0.9
+        },
+        "heldout": {
+          "mean_step_acc": 0.9503,
+          "coref_acc": 0.9758,
+          "episode_success": 0.825
+        }
+      },
+      "physics": {
+        "in_family": {
+          "n": 4800,
+          "accuracy": 0.9675,
+          "collision_recall": 0.9826,
+          "collision_count": 1035,
+          "macro_f1": 0.9395,
+          "per_class_recall": {
+            "向右滑动": 0.998,
+            "向左滑动": 0.9634,
+            "停下": 0.9039,
+            "碰撞": 0.9826,
+            "无变化": 0.8636
+          }
+        },
+        "cross_family": {
+          "n": 4800,
+          "accuracy": 0.9467,
+          "collision_recall": 0.9757,
+          "collision_count": 1153,
+          "macro_f1": 0.8897,
+          "per_class_recall": {
+            "向右滑动": 0.9569,
+            "向左滑动": 0.9506,
+            "停下": 0.7463,
+            "碰撞": 0.9757,
+            "无变化": 0.9068
+          }
+        },
+        "barrier_ablation": {
+          "full_collision_recall": 0.9757,
+          "ablated_collision_recall": 0.0,
+          "collision_recall_drop": 0.9757
+        }
+      },
+      "growth": {
+        "final_hidden": 32,
+        "growth_events": 1,
+        "grew_session": 22,
+        "birth_perturbation": 4.76837158203125e-07,
+        "dormancy_drop": 1.0,
+        "wake_diff": 0.0,
+        "p1_before_acc": 1.0,
+        "p1_after_acc": 0.999,
+        "p1_retention_drop": 0.000977,
+        "p2_acc": 1.0
+      },
+      "credibility": {
+        "brier_beta": 0.148,
+        "brier_static": 0.1829,
+        "delta_brier": -0.0349,
+        "post_abs_beta": 0.2963,
+        "post_abs_static": 0.3633,
+        "delta_post_abs": -0.0671,
+        "final_forum_cred": 0.7859
+      },
+      "uncertainty": {
+        "coupled_ece": 0.0165,
+        "coupled_brier": 0.0401,
+        "brier_vs_static": -0.2099,
+        "n_eval_samples": 781,
+        "mean_acc": 0.9539
+      }
+    }
+  },
+  "n34_3": {
+    "exit": "confirm_partial",
+    "checks": {
+      "c0_calibration": false,
+      "g1_beats_fixed_and_scripted": false,
+      "g2_oracle_calibrated_gain": false,
+      "g3_state_dependent": true,
+      "g4_deterministic": true
+    },
+    "per_seed": {
+      "20261911": {
+        "calibration": {
+          "c0_pass": true,
+          "easy_no_grow": 0.9997,
+          "easy_max_high_grow": 0.9677,
+          "hard_no_grow": 0.7219,
+          "hard_best_grow": 0.8172,
+          "best_fixed": 0.8845,
+          "oracle_per_type": 0.9084
+        },
+        "learned": {
+          "mean_reward": 0.8993,
+          "easy_actions": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "hard_actions": [
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2
+          ],
+          "easy_no_grow_rate": 1.0,
+          "hard_grow_rate": 1.0
+        },
+        "baselines": {
+          "no_grow": 0.8608,
+          "grow8": 0.8704,
+          "grow16": 0.8833,
+          "grow24": 0.8845,
+          "scripted_pressure": 0.9084
+        },
+        "weights_exact": true
+      },
+      "20261912": {
+        "calibration": {
+          "c0_pass": true,
+          "easy_no_grow": 0.9996,
+          "easy_max_high_grow": 0.9675,
+          "hard_no_grow": 0.7216,
+          "hard_best_grow": 0.7901,
+          "best_fixed": 0.8783,
+          "oracle_per_type": 0.8948
+        },
+        "learned": {
+          "mean_reward": 0.8943,
+          "easy_actions": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "hard_actions": [
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2
+          ],
+          "easy_no_grow_rate": 1.0,
+          "hard_grow_rate": 1.0
+        },
+        "baselines": {
+          "no_grow": 0.8606,
+          "grow8": 0.8683,
+          "grow16": 0.8783,
+          "grow24": 0.8708,
+          "scripted_pressure": 0.8948
+        },
+        "weights_exact": null
+      },
+      "20261913": {
+        "calibration": {
+          "c0_pass": false,
+          "easy_no_grow": 0.9997,
+          "easy_max_high_grow": 0.9679,
+          "hard_no_grow": 0.7344,
+          "hard_best_grow": 0.7906,
+          "best_fixed": 0.8871,
+          "oracle_per_type": 0.8952
+        },
+        "learned": {
+          "mean_reward": 0.8944,
+          "easy_actions": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "hard_actions": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "easy_no_grow_rate": 1.0,
+          "hard_grow_rate": 1.0
+        },
+        "baselines": {
+          "no_grow": 0.867,
+          "grow8": 0.8871,
+          "grow16": 0.8763,
+          "grow24": 0.8704,
+          "scripted_pressure": 0.8944
+        },
+        "weights_exact": null
+      }
+    },
+    "cpu": 66.7
+  },
+  "n33_2": {
+    "exit": "confirm_positive",
+    "repro_exact": true,
+    "store_ok": true,
+    "per_seed": {
+      "20261911": {
+        "mean_return": 5.6935,
+        "resolve_rate": 0.9333,
+        "stateless_return": -1.474,
+        "gap_stateless": 7.1675,
+        "drop_zero": 8.8935,
+        "drop_swap": 8.999,
+        "g1": true,
+        "g2": true
+      },
+      "20261912": {
+        "mean_return": 6.0955,
+        "resolve_rate": 1.0,
+        "stateless_return": -1.893,
+        "gap_stateless": 7.9885,
+        "drop_zero": 9.2955,
+        "drop_swap": 9.435,
+        "g1": true,
+        "g2": true
+      },
+      "20261913": {
+        "mean_return": 5.9435,
+        "resolve_rate": 0.9733,
+        "stateless_return": -1.784,
+        "gap_stateless": 7.7275,
+        "drop_zero": 9.1435,
+        "drop_swap": 9.269,
+        "g1": true,
+        "g2": true
+      }
+    },
+    "cpu": 53.75
+  },
+  "n33_4": {
+    "exit": "confirm_positive",
+    "repro_exact": true,
+    "store_exact": true,
+    "per_seed": {
+      "20261911": {
+        "full_r2": 0.9537,
+        "permuted_r2": 0.0008,
+        "full_gain": 0.241594,
+        "masked_gain": 0.0,
+        "permuted_gain": -0.156714,
+        "improving_steps": 3.4,
+        "g1": true,
+        "g2": true,
+        "g3": true
+      },
+      "20261912": {
+        "full_r2": 0.9421,
+        "permuted_r2": -0.0027,
+        "full_gain": 0.238679,
+        "masked_gain": -0.02024,
+        "permuted_gain": -0.160883,
+        "improving_steps": 3.34,
+        "g1": true,
+        "g2": true,
+        "g3": true
+      },
+      "20261913": {
+        "full_r2": 0.9059,
+        "permuted_r2": -0.0099,
+        "full_gain": 0.23801,
+        "masked_gain": -0.102327,
+        "permuted_gain": 0.032615,
+        "improving_steps": 3.41,
+        "g1": true,
+        "g2": true,
+        "g3": true
+      }
+    },
+    "cpu": 87.95
+  },
+  "checks": {
+    "r0_b1_1_closed_chinese": true,
+    "r0_b1_2_physics_cross_family": true,
+    "r0_b1_3_growth_retention": true,
+    "r0_b1_4_credibility": true,
+    "r0_b1_5_uncertainty": true,
+    "r0_b1_6_durability_repro": true,
+    "r0_b1_7_growth_decision": false,
+    "r0_b1_8_cross_session": true,
+    "r0_b1_9_recursive_and_discipline": true
+  },
+  "exit": "confirm_partial",
+  "cost": {
+    "cpu": 294.3,
+    "cap_cpu": 450.0
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 3,
+    "confirmation_seeds": [
+      20261911,
+      20261912,
+      20261913
+    ],
+    "open_chinese_scope": "deferred_post_N35",
+    "oracle_used_by_subject": false
+  }
+}

@@ -10646,3 +10646,12 @@ eports/n33_1_01_sim.json；CPU 0.02/20。
 
 **1. 裁定**：owner 选「B1」，显式将开放词表自然中文移出 `N35` 声明并标 `deferred_post_N35`（不降原门、收窄声明范围），以未读备用确认 seed `20261911–13` 执行有界多模块联合确认 `N35.1.91`（百会话五模块 ＋ 状态相关生长决策 ＋ 跨会话 ＋ 模型内递归发展），帽 `450.0 CPU`（在 `N35` 剩余 `~849.97 CPU` 内），`0 check / 0 final`。
 **2. 冻结**：[SCORECARD-N35-B1](SCORECARD-N35-B1_20261126.md)（`sha256 = d696ff11a489f8d7f9c80483dcf3e6081099e2b3abdaf3ab0f36a7ba46884803`）与 [DESIGN-N35-1-91](DESIGN-N35-1-91_20261126.md)。
+
+### D-20261126-680 N35.1.91 方案 B1 有界联合确认：**`confirm_partial`**（294.30/450.0 CPU；8/9 门 3/3 通过）
+
+**1. 冻结锚与回执**：在冻结提交 `1b83a3e2f` 上执行 `n35_1_91_bounded_joint_confirm.py`，结果落盘于 [RESULT-N35-1-91](RESULT-N35-1-91_20261126.md) 与 `reports/n35_1_91_bounded_joint_confirm.json`；`n31_confirmation_seed_reads.json` 记账 `20261911–13` 作废。
+**2. 读数**：`R0-B1-1..6, 8, 9` 共 8/9 门 3/3 全过；仅 `R0-B1-7`（`n34_3`）因 `20261913` `oracle_per_type (0.8952) − grow8 (0.8871) = +0.0081 < 0.025`（`c0` 未达）记 `confirm_partial`（3/3 均达 `easy_no_grow=1.0 ∧ hard_grow=1.0`）。
+
+### D-20261126-681 `N35.1.91` 后门禁边界：零 `check/final`、`N35` 两批确认 seed 耗尽
+
+**1. 裁定**：`check` 与 `final` 保持 `0` 读取；`20261901–03` 与 `20261911–13` 均已消耗作废；`N35` 阶段累计 `944.33 / 1,500.0 CPU`。呈报 owner 决定是否直接出具 `CLOSEOUT-N35` 收束阶段。
