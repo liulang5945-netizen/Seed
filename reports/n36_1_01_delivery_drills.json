@@ -1,0 +1,35 @@
+{
+  "schema": "taiji-n36-1-01-v1",
+  "card": "N36.1.01",
+  "design": "DESIGN-N36-1-01_20261126.md",
+  "scope": "bounded_closed_vocab_and_multimodule_v1",
+  "created_utc": "2026-11-26T11:24:07.803109+00:00",
+  "smoke": false,
+  "delivery_seed": 6801,
+  "bundle_summary": {
+    "sessions": 100,
+    "parameter_count": 53861,
+    "record_digest": "d61e53c088c2f5c72a66f99b7729c563fc87ae1010c274f9fd8df116063a912e",
+    "chain_head": "32467e66412737a7daf2c1f14eb751ee0fa80f2d095e0f4b0dc2936a366349dc",
+    "phy_collision_recall": 0.9565,
+    "phy_barrier_ablation_drop": 0.9565
+  },
+  "checks": {
+    "d1_fail_closed_integrity": true,
+    "d2_cross_process_fresh_load": true,
+    "d3_crash_recovery": true,
+    "d4_lifecycle_and_rollback": true,
+    "d5_sealed_guard_and_authenticity": true
+  },
+  "exit": "delivery_package_ready",
+  "cost": {
+    "cpu": 23.06,
+    "cap_cpu": 100.0
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "oracle_used_by_subject": false
+  }
+}

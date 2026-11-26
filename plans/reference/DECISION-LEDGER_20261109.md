@@ -10659,3 +10659,11 @@ eports/n33_1_01_sim.json；CPU 0.02/20。
 ### D-20261126-682 N35 阶段正式收口（`CLOSEOUT-N35_20261126.md`；零 `check/final`）
 
 **1. 终态**：owner 接受建议，出具 [CLOSEOUT-N35](CLOSEOUT-N35_20261126.md) 正式收口 `N35`（有界部分确认：`N35.1.90` `engineering_failure` ＋ `N35.1.91` 8/9 门 3/3 过 `confirm_partial`；`944.33 / 1,500.0 CPU`；`NCH.3` 暂停于 `2,490.72/2,500 CPU`；两批确认 seed 作废；`check/final` 保持 `0` 读取）。当前无活动训练阶段，待 owner 决定是否开启有界范围 `N36` 可运行接管包或停线。
+
+### D-20261126-683 owner 批复开启有界 `N36` 可运行交付/接管包设计（`≤120 CPU`；零 `check/final`）
+
+**1. 裁定**：基于 `N34.5.90 + N34.9.90 + N35.1.91 (8/9)` 已确认有界能力，准入 `N36`（[N36-ADMISSION](N36-ADMISSION_20261126.md) / [DESIGN-N36-1-01](DESIGN-N36-1-01_20261126.md)），范围 `bounded_closed_vocab_and_multimodule_v1`，零确认 seed、零 `check/final`。
+
+### D-20261126-684 N36.1.01 有界交付/接管包演练通过：**`delivery_package_ready`**（23.06/100.0 CPU）
+
+**1. 交付与实测**（[RESULT-N36-1-01](RESULT-N36-1-01_20261126.md)，`reports/n36_1_01_delivery_drills.json`）：落地 `taiji/bounded_delivery_runtime.py` ＋ `scripts/taiji_n36_takeover.py` ＋ `tests/test_n36_bounded_delivery_20261126.py`（4/4 PASS）；`D1..D5` 5 类演练（fail-closed 完整性、跨进程复现、崩溃恢复、生命周期/回滚、`check/final` 封存与消融真实性）`5/5` 通过，零确认 seed、零 `check/final`。
