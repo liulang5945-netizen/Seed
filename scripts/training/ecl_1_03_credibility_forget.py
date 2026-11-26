@@ -1,13 +1,13 @@
 """ECL.1.03 (exploration): credibility learning with exponential forgetting for shift tracking.
 
-Design: plans/reference/DESIGN-ECL-1-02_20261126.md (D-20261126-639).
+Design: plans/reference/DESIGN-ECL-1-03_20261126.md (D-20261126-640).
 Compares the static engineering priors against an online Beta-credibility estimator (learned
 inside the subject from verifiable feedback) on a claim stream with a mid-stream reliability
 shift; oracle accuracy is a control only. Exploration seeds 6201-6203; no confirmation seed,
 check or final is read.
 
-Usage: python scripts/training/ecl_1_02_credibility_learning.py
-Output: reports/ecl_1_02_credibility.json
+Usage: python scripts/training/ecl_1_03_credibility_forget.py
+Output: reports/ecl_1_03_credibility.json
 """
 
 from __future__ import annotations
@@ -75,9 +75,9 @@ def main() -> int:
         "credibility_learned_positive" if all(checks.values()) else "credibility_learned_partial"
     )
     payload = {
-        "schema": "taiji-ecl-1-02-v1",
+        "schema": "taiji-ecl-1-03-v1",
         "card": CARD,
-        "design": "DESIGN-ECL-1-02_20261126.md",
+        "design": "DESIGN-ECL-1-03_20261126.md",
         "created_utc": datetime.now(UTC).isoformat(),
         "train_seeds": list(SEEDS),
         "items": N_ITEMS,

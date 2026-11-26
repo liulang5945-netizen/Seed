@@ -43,7 +43,7 @@ class PhysicsState:
             self.pos,
             self.block_b,
             self.target,
-            1.0 if self.family == "incline" else 0.0,
+            max(0.0, self.block_b - self.pos),
             float(self.t),
             float(abs(self.vel)),
         ]
@@ -116,8 +116,11 @@ class MultimodalPhysicsEnv:
         self.rng = random.Random(int(seed))
         self.state: PhysicsState | None = None
 
-    def reset(self) -> dict[str, Any]:
-        family = FAMILIES[self.rng.randrange(len(FAMILIES))]
+    def reset(self, *, family: str | None = None) -> dict[str, Any]:
+        if family is None:
+            family = FAMILIES[self.rng.randrange(len(FAMILIES))]
+        elif family not in FAMILIES:
+            raise ValueError(f"unknown family {family!r}")
         if family == "incline":
             pos = self.rng.uniform(0.05, 0.35)
             block_b = 1.0

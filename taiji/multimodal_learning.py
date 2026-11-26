@@ -1,4 +1,4 @@
-"""Learned multimodal consequence prediction over the physics facility (`taiji-multimodal-learning-v1`).
+"""Learned multimodal consequence prediction (`taiji-multimodal-learning-v1`).
 
 Zero-heavy-training supervised facility: collects `(vision, proprio, audio, action) -> outcome`
 samples from :mod:`taiji.multimodal_physics_env` and trains a small MLP consequence predictor on
@@ -36,9 +36,8 @@ def collect(seed: int, family: str, n_episodes: int) -> tuple[torch.Tensor, torc
     ys: list[int] = []
     for ep in range(n_episodes):
         env = MultimodalPhysicsEnv(seed * 1_000_000 + ep)
-        env.reset()
+        env.reset(family=family)
         assert env.state is not None
-        env.state.family = family
         for _ in range(HORIZON):
             if env.state is None:
                 break
@@ -105,9 +104,8 @@ def count_baseline_accuracy(seed: int, family: str, n_episodes: int) -> float:
     correct = total = 0
     for ep in range(n_episodes):
         env = MultimodalPhysicsEnv(seed * 1_000_000 + ep)
-        env.reset()
+        env.reset(family=family)
         assert env.state is not None
-        env.state.family = family
         for _ in range(HORIZON):
             if env.state is None:
                 break

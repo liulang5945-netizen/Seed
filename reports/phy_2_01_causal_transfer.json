@@ -1,0 +1,193 @@
+{
+  "schema": "taiji-phy-2-01-v1",
+  "card": "PHY.2.01",
+  "design": "DESIGN-PHY-2-01_20261126.md",
+  "created_utc": "2026-11-26T03:29:31.558888+00:00",
+  "smoke": false,
+  "train_seeds": [
+    6411,
+    6412,
+    6413
+  ],
+  "train_family": "ramp_bumper",
+  "eval_families": [
+    "ramp_bumper (held-out)",
+    "rough_collision (cross-family)"
+  ],
+  "calibration": {
+    "c0_pass": true,
+    "collision_fraction": {
+      "ramp_bumper": 0.217,
+      "rough_collision": 0.2473
+    },
+    "oracle_acc": 1.0
+  },
+  "per_seed": {
+    "6411": {
+      "in_family": {
+        "n": 4800,
+        "accuracy": 0.9731,
+        "collision_recall": 0.9866,
+        "collision_count": 1047,
+        "macro_f1": 0.9476,
+        "per_class_recall": {
+          "向右滑动": 0.9863,
+          "向左滑动": 0.981,
+          "停下": 0.9135,
+          "碰撞": 0.9866,
+          "无变化": 0.8725
+        }
+      },
+      "cross_family": {
+        "n": 4800,
+        "accuracy": 0.9613,
+        "collision_recall": 0.9751,
+        "collision_count": 1247,
+        "macro_f1": 0.9059,
+        "per_class_recall": {
+          "向右滑动": 0.9884,
+          "向左滑动": 0.9674,
+          "停下": 0.7556,
+          "碰撞": 0.9751,
+          "无变化": 0.9099
+        }
+      },
+      "count_in_family": {
+        "n": 4800,
+        "accuracy": 0.835,
+        "collision_recall": 0.914
+      },
+      "count_cross_family": {
+        "n": 4800,
+        "accuracy": 0.7677,
+        "collision_recall": 0.9503
+      },
+      "barrier_ablation": {
+        "full_collision_recall": 0.9751,
+        "ablated_collision_recall": 0.0,
+        "collision_recall_drop": 0.9751
+      },
+      "weights_exact": true,
+      "cpu": 4.09,
+      "n_train": 32000,
+      "n_eval": 4800
+    },
+    "6412": {
+      "in_family": {
+        "n": 4800,
+        "accuracy": 0.9692,
+        "collision_recall": 0.9934,
+        "collision_count": 904,
+        "macro_f1": 0.9407,
+        "per_class_recall": {
+          "向右滑动": 0.9909,
+          "向左滑动": 0.9817,
+          "停下": 0.8647,
+          "碰撞": 0.9934,
+          "无变化": 0.8227
+        }
+      },
+      "cross_family": {
+        "n": 4800,
+        "accuracy": 0.9508,
+        "collision_recall": 0.9918,
+        "collision_count": 1220,
+        "macro_f1": 0.881,
+        "per_class_recall": {
+          "向右滑动": 0.9719,
+          "向左滑动": 0.9292,
+          "停下": 0.8053,
+          "碰撞": 0.9918,
+          "无变化": 0.9
+        }
+      },
+      "count_in_family": {
+        "n": 4800,
+        "accuracy": 0.8396,
+        "collision_recall": 0.9115
+      },
+      "count_cross_family": {
+        "n": 4800,
+        "accuracy": 0.7702,
+        "collision_recall": 0.9426
+      },
+      "barrier_ablation": {
+        "full_collision_recall": 0.9918,
+        "ablated_collision_recall": 0.0,
+        "collision_recall_drop": 0.9918
+      },
+      "weights_exact": null,
+      "cpu": 1.69,
+      "n_train": 32000,
+      "n_eval": 4800
+    },
+    "6413": {
+      "in_family": {
+        "n": 4800,
+        "accuracy": 0.964,
+        "collision_recall": 0.992,
+        "collision_count": 1003,
+        "macro_f1": 0.9319,
+        "per_class_recall": {
+          "向右滑动": 0.9926,
+          "向左滑动": 0.9481,
+          "停下": 0.8355,
+          "碰撞": 0.992,
+          "无变化": 0.9254
+        }
+      },
+      "cross_family": {
+        "n": 4800,
+        "accuracy": 0.9431,
+        "collision_recall": 0.9817,
+        "collision_count": 1094,
+        "macro_f1": 0.8584,
+        "per_class_recall": {
+          "向右滑动": 0.9875,
+          "向左滑动": 0.9321,
+          "停下": 0.6124,
+          "碰撞": 0.9817,
+          "无变化": 0.8659
+        }
+      },
+      "count_in_family": {
+        "n": 4800,
+        "accuracy": 0.8306,
+        "collision_recall": 0.9073
+      },
+      "count_cross_family": {
+        "n": 4800,
+        "accuracy": 0.7583,
+        "collision_recall": 0.9287
+      },
+      "barrier_ablation": {
+        "full_collision_recall": 0.9817,
+        "ablated_collision_recall": 0.0,
+        "collision_recall_drop": 0.9817
+      },
+      "weights_exact": null,
+      "cpu": 1.72,
+      "n_train": 32000,
+      "n_eval": 4800
+    }
+  },
+  "checks": {
+    "c0_calibration": true,
+    "g1_in_family": true,
+    "g2_cross_family": true,
+    "g3_beats_count_both": true,
+    "g4_barrier_ablation": true,
+    "g5_deterministic": true
+  },
+  "exit": "multimodal_v2_positive",
+  "cost": {
+    "cpu": 7.58,
+    "cap_cpu": 30.0
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "oracle_used_by_subject": false
+  }
+}

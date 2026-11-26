@@ -10301,7 +10301,7 @@ eports/n33_1_01_sim.json；CPU 0.02/20。
 **1. 离线分析**：[ANALYSIS-N33-3-GROWTH-BENEFIT](../reference/ANALYSIS-N33-3-GROWTH-BENEFIT_20261126.md)（只读回执）——N33.3 净收益 0.0 的主因是**任务饱和**（32 单元 0.9995 天花板；P1 太易使预分配不过拟合；预分配臂双 LR 网格取最优），非生长能力失败；给出三个杠杆（P1 加噪/重叠、P2 更难、预锁定净收益口径）。
 **2. 任务 v2**：`taiji/continual_growth_task_v2.py`（`taiji-continual-growth-v2`）——P1 6 类噪声原型（10% 标签噪声、0.60 噪声）、P2 4 对 parity mod 3（12 类），无 task_id；3/3 单测通过。
 **3. 草案**：[DESIGN-N34-2-01](../reference/DESIGN-N34-2-01_20261126.md)（待 N34 准入签）——H1 综合 +0.02、H2 P1 保持 −0.02、公平口径（预分配单 LR；另设 lr2 敏感性）；G-cal/G-benefit/G-retention 与四出口写定；估计 ≤120 CPU。
-**4. 覆盖矩阵**：[COVERAGE-MATRIX_20261126](../active/COVERAGE-MATRIX_20261126.md)——v4 条款→✅/🟡/❌、证据与缺口：中文连续任务、真实多模态/物理、来源可信度纠正、不确定性校准、生长决策学得化、check/final 为未建立项。
+**4. 覆盖矩阵**：[COVERAGE-MATRIX_20261126](COVERAGE-MATRIX_20261126.md)——v4 条款→✅/🟡/❌、证据与缺口：中文连续任务、真实多模态/物理、来源可信度纠正、不确定性校准、生长决策学得化、check/final 为未建立项。
 **5. 状态**：零训练、零 check/final、未读确认 seed；N34 训练/确认仍待 owner 签四项（新 seed、预算/authority、净收益口径、check/final）。
 
 ### D-20261126-616 缺口 D 设施：NCH.1.01 封闭词表自然中文连续任务 harness = `env_ready`（零训练，0.03 CPU）
@@ -10464,7 +10464,7 @@ eports/n33_1_01_sim.json；CPU 0.02/20。
 **1. 卡**：EVIDENCE-SUMMARY-EXPLORATION_20261126.md（只读汇总，不改范围）。
 **2. 内容**：N33 四项确认终态（跨会话/生长在位/递归发展/自主选择部分）；N34.2.04 生长净收益 `parity`（未成立、亦无害）；NCH.1.07 / ECL.1.03 / UNC.1.02 / PHY.1.02 四条探索正例（中文封闭词表、可信度非平稳流、合成不确定性、跨族多模态）；设施清单；v4 缺口表（真实多模态、中文确认、长期运行、可信度/不确定性确认、生长决策学得化、check/final、成绩单）。
 **3. 资源/seed**：N33≈605/1,200（六组确认 seed 烧毁）；N34.2≈35.22/120；中文探索≈217；新确认 seed 未声明；N34 未准入；check/final 未读。
-**4. 建议**：owner 认可范围标签、声明新确认 seed（建议 20261801–03/1611–13）、决定「生长决策学得化」是否为新研究目标、check/final 继续不授权。
+**4. 建议**：owner 认可范围标签、声明新确认 seed（建议 20261801–03/1811–13；复审修正：原笔误 1611–13 已在 N33.3.90 烧毁）、决定「生长决策学得化」是否为新研究目标、check/final 继续不授权。
 
 ### D-20261126-646 N34.3.01 预注册：生长决策学得化（策略自主选择 no_grow/grow8/16/24；奖励＝综合准确率−0.001×单元；≤300 CPU）
 
@@ -10493,3 +10493,29 @@ eports/n33_1_01_sim.json；CPU 0.02/20。
 **1. 更新**：EVIDENCE-SUMMARY-EXPLORATION_20261126.md——新增 N34.3.01/3.02 负结果行（生长决策学得化未成立，N34.3 结线）；缺口表「生长决策学得化」标 ❌ 两卡均未成立；资源表加 N34.3 ≈336.4 CPU；确认建议注明「无可用确认 seed，一切确认级工作停在此处」。
 **2. 当前状态**：N33 四项确认＋N34.2.04 parity＋NCH/ECL/UNC/PHY 四条探索正例＋N34.3 两条负结果；所有确认级需 owner 新 seed；N34 准入未签；check/final 未读。
 **3. 纪律**：零 check/final；不重新解释读数。
+
+---
+
+### D-20261126-651 复审止血与账面纠偏（`test_project_identity` 回归修复＋`ECL.1.03` schema＋`N33.4.90` 披露＋v1 物理 env 修复）
+
+**1. 触发**：owner 复审批复执行「1 + 2」（只读审计全部 `dde5bb766..eb5d869e2` 进展并纠偏/重构）。
+**2. 修复**：① 将 `COVERAGE-MATRIX_20261126.md` 从 `plans/active/` 迁至 `plans/reference/` 并同步全部 7 处链接，`tests/seed/test_project_identity.py` 恢复全绿；② 修复 `ecl_1_03_credibility_forget.py` 的 `schema/design`（`taiji-ecl-1-03-v1` / `DESIGN-ECL-1-03_20261126.md`）并重跑（0.06 CPU，读数不变）；③ 修复 `D-645` / `ID_MAP_N` 的 `1611–13` 笔误（应为 `1811–13`），同步 `MAINLINE.md` 文件头与 `§0.3′`；④ 在 `RESULT-N33-4-90` 补注 `31/400` 验证转移重叠与 `confirm_reads=0` 口误披露；⑤ 修复 `taiji/multimodal_physics_env.py` `vision[3]` 泄露与 `reset(family=...)`，同步 `multimodal_learning.py` 并重验 `PHY.1.01` 绿灯；⑥ 将旧 `PHY.1.02` / `NCH.1.07` / `N34.3.01-02` 标注为存在环境/RL 缺陷、不作能力或机制否定结论。零 check/final，零确认 seed 读取。
+
+### D-20261126-652 PHY.2.01 跨族物理因果迁移 v2：**`multimodal_v2_positive`**（7.58/30.0 CPU）
+
+**1. 卡**：`DESIGN-PHY-2-01_20261126.md` / `RESULT-PHY-2-01_20261126.md`；模块 `taiji/multimodal_physics_env_v2.py`（4/4 单测）；回执 `reports/phy_2_01_causal_transfer.json`。
+**2. 读数**（仅 `ramp_bumper` 训练，探索 seed `6411–6413`，无 `family_id`）：同族 `0.9731 / 0.9692 / 0.9640`（碰撞召回 `0.9866 / 0.9934 / 0.9920`）；跨族 `rough_collision` 准确率 **`0.9613 / 0.9508 / 0.9431`**、碰撞召回 **`0.9751 / 0.9918 / 0.9817`**、宏 F1 **`0.9059 / 0.8810 / 0.8584`**（计数基线跨族 `0.7677 / 0.7702 / 0.7583`）；反事实移除障碍后跨族碰撞召回全跌至 **`0.0000`**（降 `−0.9751..−0.9918`）；`6411` 权重逐位一致。C0 ∧ G1..G5 3/3 全过。零 check/final。
+
+### D-20261126-653 NCH.2.01 封闭词表中文连续指代任务 v2：**`chinese_continuous_v2_positive`**（71.36/120.0 CPU）
+
+**1. 卡**：`DESIGN-NCH-2-01_20261126.md` / `RESULT-NCH-2-01_20261126.md`；模块 `taiji/chinese_task_env_v2.py`（3/3 单测）；回执 `reports/nch_2_01_continuous_chinese.json`。
+**2. 读数**（探索 seed `6701–6703`；`VOCAB[0]=<PAD>` 无动作词，指代回合零位置 token）：`gru_recurrent` 训练 **`0.9830 / 0.9034 / 0.9716`**（指代 **`0.9832 / 0.9580 / 0.9664`**）、留出 **`0.9558 / 0.9227 / 0.9724`**（指代 **`0.9839 / 0.9677 / 0.9597`**），大幅胜出 `stateless_mlp`（训练总分 `0.4034–0.4602`、指代 **`0.2521–0.2857`**；留出指代 `0.3548–0.3710`）；`6701` 权重逐位一致。C0 ∧ G1..G4 3/3 全过。零 check/final。
+
+### D-20261126-654 N34.3.03 状态相关生长决策 v2：**`growth_decision_v2_partial`**（63.53/120.0 CPU；3/3 达 `oracle_per_type`）
+
+**1. 卡**：`DESIGN-N34-3-03_20261126.md` / `RESULT-N34-3-03_20261126.md`；模块 `taiji/growth_decision_learning_v2.py`（3/3 单测）；回执 `reports/n34_3_03_state_dependent_growth.json`。
+**2. 读数**（探索 seed `6611–6613`；快照分叉＋`N33.3.04` 选择性可塑＋`GrowthActorCritic`）：3/3 易局全选 `no_grow`（`1.0000`）、难局全选生长（`1.0000`：`6611/6612` `grow24`、`6613` 自主选 `grow16` 胜过硬编码规则 `0.8942 > 0.8939`），奖励 `0.9053 / 0.9115 / 0.8942` **100% 匹配各自 `oracle_per_type`**；vs `best_fixed` `+0.0216 / +0.0239 / +0.0159`（G1 ✅）；G3/G4 ✅；vs `no_grow` `+0.0353 / +0.0603 / +0.0323`（因 `6611/6613` 环境理论 oracle 上界即低于 `+0.04`，严格按预注册退出 `partial` 不改门）。推翻 `N34.3.01/02` 伪负结论。
+
+### D-20261126-655 复审与重构阶段总验（`audit + ruff + pytest + n34_ready_bundle` 全绿，待 owner 签发新 seed 与 N34 准入）
+
+**1. 汇总**：同步更新 [探索证据汇总](EVIDENCE-SUMMARY-EXPLORATION_20261126.md)、[目标覆盖矩阵](COVERAGE-MATRIX_20261126.md)、[ID_MAP_N](ID_MAP_N.md) 与 [MAINLINE](../MAINLINE.md)；确认 seed 清单 `n31_confirmation_seed_reads.json` 零改动，零 `check / final`。

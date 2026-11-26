@@ -1,0 +1,136 @@
+{
+  "schema": "taiji-nch-2-01-v1",
+  "card": "NCH.2.01",
+  "design": "DESIGN-NCH-2-01_20261126.md",
+  "created_utc": "2026-11-26T03:31:48.880806+00:00",
+  "smoke": false,
+  "updates": 220,
+  "rollout_episodes": 16,
+  "train_seeds": [
+    6701,
+    6702,
+    6703
+  ],
+  "eval_seeds": [
+    5100,
+    5139,
+    40
+  ],
+  "heldout_seeds": [
+    5140,
+    5179,
+    40
+  ],
+  "calibration": {
+    "c0_pass": true,
+    "oracle_train": 1.0,
+    "oracle_heldout": 1.0,
+    "random_acc": 0.0909,
+    "best_constant_acc": 0.1705,
+    "coref_has_no_place_token": true
+  },
+  "per_seed": {
+    "6701": {
+      "gru_recurrent": {
+        "train": {
+          "mean_step_acc": 0.983,
+          "coref_acc": 0.9832,
+          "episode_success": 0.925
+        },
+        "heldout": {
+          "mean_step_acc": 0.9558,
+          "coref_acc": 0.9839,
+          "episode_success": 0.85
+        }
+      },
+      "stateless_mlp": {
+        "train": {
+          "mean_step_acc": 0.4034,
+          "coref_acc": 0.2521,
+          "episode_success": 0.15
+        },
+        "heldout": {
+          "mean_step_acc": 0.4917,
+          "coref_acc": 0.3548,
+          "episode_success": 0.325
+        }
+      },
+      "weights_exact": true,
+      "cpu": 32.28
+    },
+    "6702": {
+      "gru_recurrent": {
+        "train": {
+          "mean_step_acc": 0.9034,
+          "coref_acc": 0.958,
+          "episode_success": 0.725
+        },
+        "heldout": {
+          "mean_step_acc": 0.9227,
+          "coref_acc": 0.9677,
+          "episode_success": 0.75
+        }
+      },
+      "stateless_mlp": {
+        "train": {
+          "mean_step_acc": 0.4602,
+          "coref_acc": 0.2857,
+          "episode_success": 0.0
+        },
+        "heldout": {
+          "mean_step_acc": 0.5028,
+          "coref_acc": 0.371,
+          "episode_success": 0.1
+        }
+      },
+      "weights_exact": null,
+      "cpu": 19.98
+    },
+    "6703": {
+      "gru_recurrent": {
+        "train": {
+          "mean_step_acc": 0.9716,
+          "coref_acc": 0.9664,
+          "episode_success": 0.875
+        },
+        "heldout": {
+          "mean_step_acc": 0.9724,
+          "coref_acc": 0.9597,
+          "episode_success": 0.9
+        }
+      },
+      "stateless_mlp": {
+        "train": {
+          "mean_step_acc": 0.4318,
+          "coref_acc": 0.2773,
+          "episode_success": 0.075
+        },
+        "heldout": {
+          "mean_step_acc": 0.4807,
+          "coref_acc": 0.3629,
+          "episode_success": 0.075
+        }
+      },
+      "weights_exact": null,
+      "cpu": 19.08
+    }
+  },
+  "checks": {
+    "c0_calibration": true,
+    "g1_train_recurrent": true,
+    "g2_heldout_recurrent": true,
+    "g3_memory_necessity": true,
+    "g4_deterministic": true
+  },
+  "exit": "chinese_continuous_v2_positive",
+  "cost": {
+    "cpu": 71.36,
+    "cap_cpu": 120.0
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "oracle_used_in_training": false
+  }
+}

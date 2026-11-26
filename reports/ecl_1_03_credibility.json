@@ -1,8 +1,8 @@
 {
-  "schema": "taiji-ecl-1-02-v1",
+  "schema": "taiji-ecl-1-03-v1",
   "card": "ECL.1.03",
-  "design": "DESIGN-ECL-1-02_20261126.md",
-  "created_utc": "2026-11-25T18:27:36.411973+00:00",
+  "design": "DESIGN-ECL-1-03_20261126.md",
+  "created_utc": "2026-11-26T03:20:32.182016+00:00",
   "train_seeds": [
     6201,
     6202,
@@ -92,7 +92,7 @@
   },
   "exit": "credibility_learned_positive",
   "cost": {
-    "cpu": 0.05,
+    "cpu": 0.06,
     "cap_cpu": 15.0
   },
   "discipline": {

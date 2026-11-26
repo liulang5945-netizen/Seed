@@ -15,9 +15,9 @@
 | N31 结案 | [CLOSEOUT-N31](../reference/CLOSEOUT-N31_20261124.md) | 有界交付；能力边界、负结果、缺口清单、资产状态（D-20261124-499） |
 | N32 收口 | [CLOSEOUT-N32](../reference/CLOSEOUT-N32_20261125.md) | 有界交付＋R1 确认正例；终态、负结果、缺口、资源、N33 准入条件（D-20261125-552） |
 | N33 收口 | [CLOSEOUT-N33](../reference/CLOSEOUT-N33_20261126.md) | 三正例＋一条部分确认；生长收益未签署；资源、seed 状态、N34 准入条件（D-20261126-609） |
-| 目标覆盖矩阵 | [COVERAGE-MATRIX_20261126](COVERAGE-MATRIX_20261126.md) | v4 条款→✅/🟡/❌、证据与缺口、下一步优先级（D-20261126-615） |
+| 目标覆盖矩阵 | [COVERAGE-MATRIX_20261126](../reference/COVERAGE-MATRIX_20261126.md) | v4 条款→✅/🟡/❌、证据与缺口、下一步优先级（D-20261126-615） |
 | 探索证据汇总 | [EVIDENCE-SUMMARY-EXPLORATION](../reference/EVIDENCE-SUMMARY-EXPLORATION_20261126.md) | review-ready：N33 确认级＋N34.2.04 parity＋四条学习线正例＋N34.3 负结果＋缺口表（D-20261126-645/650） |
-| 生长决策学习线 | [RESULT-N34-3-02](../reference/RESULT-N34-3-02_20261126.md) | 学习式生长决策两卡均未成立（塌缩常量；**线结线**；D-20261126-646..649） |
+| 生长决策学习线 | [RESULT-N34-3-03](../reference/RESULT-N34-3-03_20261126.md) | 状态相关生长决策 v2（3/3 达按型 oracle，推翻 3.01/02 伪负结论；`partial`；D-20261126-654） |
 | 中文任务设施 | [DESIGN-NCH-1-01](../reference/DESIGN-NCH-1-01_20261126.md) | 封闭词表自然中文连续任务 harness（零训练 `env_ready`；D-20261126-616） |
 | 证据可信度设施 | [DESIGN-ECL-1-01](../reference/DESIGN-ECL-1-01_20261126.md) | 证据可信度账本与纠正（零训练 `ledger_ready`；D-20261126-617） |
 | 可信度学习线 | [RESULT-ECL-1-03](../reference/RESULT-ECL-1-03_20261126.md) | 在线可信度学习探索正例（`credibility_learned_positive`；D-20261126-639/640） |
@@ -25,8 +25,8 @@
 | 不确定性学习线 | [RESULT-UNC-1-02](../reference/RESULT-UNC-1-02_20261126.md) | 学习式不确定性估计探索正例（`uncertainty_learned_positive`；D-20261126-641/642） |
 | 主体循环设施 | [DESIGN-SUB-1-01](../reference/DESIGN-SUB-1-01_20261126.md) | 四项设施集成冒烟（零训练 `loop_ready`；D-20261126-619） |
 | 多模态物理设施 | [DESIGN-PHY-1-01](../reference/DESIGN-PHY-1-01_20261126.md) | 两族动力学＋三模态＋可纠正因果预测（零训练 `physics_ready`；D-20261126-621） |
-| 多模态学习线 | [RESULT-PHY-1-02](../reference/RESULT-PHY-1-02_20261126.md) | 学习式多模态后果预测探索正例（`multimodal_learned_positive`；D-20261126-643/644） |
-| 中文任务学习线 | [RESULT-NCH-1-07](../reference/RESULT-NCH-1-07_20261126.md) | 学得策略探索正例（`chinese_policy_positive`；D-20261126-633..638） |
+| 多模态学习线 | [RESULT-PHY-2-01](../reference/RESULT-PHY-2-01_20261126.md) | 跨族物理因果迁移 v2 探索正例（无泄露，碰撞召回 0.975–0.992；`multimodal_v2_positive`；D-20261126-652） |
+| 中文任务学习线 | [RESULT-NCH-2-01](../reference/RESULT-NCH-2-01_20261126.md) | 中文连续指代任务 v2 探索正例（跨回合 GRU vs 无状态；`chinese_continuous_v2_positive`；D-20261126-653） |
 | 双任务主体循环 | [DESIGN-SUB-1-02](../reference/DESIGN-SUB-1-02_20261126.md) | 中文＋物理交替集成冒烟（零训练 `mixed_loop_ready`；D-20261126-622） |
 | N34 准入备忘 | [MEMO-N34-ADMISSION-DECISION](../reference/MEMO-N34-ADMISSION-DECISION_20261126.md) | 四项签字解锁/建议值/风险（D-20261126-623） |
 | N34 就绪包 | [READY-N34](../reference/READY-N34_20261126.md) | 一键复验全部零训练资产（`bundle_ready`，11/11；D-20261126-624） |

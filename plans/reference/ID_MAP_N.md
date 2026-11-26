@@ -356,8 +356,9 @@ N32 主训练骨干为 `taiji-gru-rt-v2`（D-20261124-496）；成绩单为 `pla
 |---|---|---|
 | NCH.1.02–1.05 | 学得策略（mean-pool/GRU、预算、bandit 信号） | `partial`（受 VOCAB 缺动作短语 bug 影响，不作结论） |
 | NCH.1.06 | 修复 VOCAB 后重跑 | `partial`（6101 0.662；6102/6103 满分） |
-| **NCH.1.07** | **EPISODES 12,000** | **`chinese_policy_positive`**：1.0/1.0、0.870/0.888、1.0/1.0；复现逐位一致（D-638） |
-| NCH.1.90 | 正式确认（须 owner 新确认 seed） | 未开 |
+| **NCH.1.07** | EPISODES 12,000 | **`chinese_policy_positive`（复审作废，D-651/653）**：观测直给动作词且 `原位` 未读，退化为单步查表 |
+| **NCH.2.01** | **中文连续指代 v2（跨回合 GRU vs 无状态）** | **`chinese_continuous_v2_positive`**：训练 0.903–0.983（指代 0.958–0.983）、留出 0.923–0.972（指代 0.960–0.984）vs 无状态指代 0.252–0.286；`71.36 CPU`（D-653） |
+| NCH.2.90 | 正式确认（须 owner 新确认 seed） | 未开 |
 
 **范围**：封闭词表合成中文连续任务＋模拟环境；不签开放中文/真实设备。
 
@@ -384,8 +385,9 @@ N32 主训练骨干为 `taiji-gru-rt-v2`（D-20261124-496）；成绩单为 `pla
 
 | 卡 | 内容 | 状态 |
 |---|---|---|
-| PHY.1.02 | 学习式多模态后果预测（训练 incline，跨族 collision 评测） | **`multimodal_learned_positive`**：同族 0.992–0.997、跨族 0.915–0.918（基线 0.74；D-644） |
-| PHY.1.90 | 正式确认（须 owner 新确认 seed） | 未开 |
+| PHY.1.02 | 学习式多模态后果预测（训练 incline，跨族 collision 评测） | `multimodal_learned_positive`（**复审作废，D-651/652**：`vision[3]` 泄露族标签且「碰撞」召回 0.0） |
+| **PHY.2.01** | **跨族物理因果迁移 v2（无 `family_id`，碰撞+消融）** | **`multimodal_v2_positive`**：同族 0.964–0.973、跨族 0.943–0.961、碰撞召回 0.975–0.992（消融跌 0.0）；`7.58 CPU`（D-652） |
+| PHY.2.90 | 正式确认（须 owner 新确认 seed） | 未开 |
 
 **范围**：合成两族动力学；不签真实传感器/物理。
 
@@ -395,14 +397,15 @@ N32 主训练骨干为 `taiji-gru-rt-v2`（D-20261124-496）；成绩单为 `pla
 |---|---|
 | 卡 | [EVIDENCE-SUMMARY-EXPLORATION](../reference/EVIDENCE-SUMMARY-EXPLORATION_20261126.md) |
 | 内容 | N33 确认级四项＋N34.2.04 parity＋NCH/ECL/UNC/PHY 四条探索正例＋设施清单＋v4 缺口表＋资源/seed 状态 |
-| 用途 | owner 一次性复核；确认需新 seed 组（建议 20261801–03/1611–13） |
+| 用途 | owner 一次性复核；确认需新 seed 组（建议 20261801–03/1811–13） |
 
 ### 3.29 N34.3 生长决策学得化（探索，D-20261126-646/647）
 
 | 卡 | 内容 | 状态 |
 |---|---|---|
-| N34.3.01 | 学习式生长决策（no_grow/grow8/16/24，奖励−成本） | `growth_decision_learned_partial`：塌缩为常量 grow16；净增益 0.025–0.031<+0.05；优于脚本规则（D-647） |
-| N34.3.02 | 单变量：任务异质性（易/难混合） | `growth_decision_state_dependent_partial`（仍塌缩；**N34.3 结线：学得化未成立**；D-649） |
+| N34.3.01 | 学习式生长决策（no_grow/grow8/16/24，奖励−成本） | `growth_decision_learned_partial`（受 `baseline=0.0` 正优势锁死 bug 影响，不作机制负结论；D-647/651） |
+| N34.3.02 | 单变量：任务异质性（易/难混合） | `growth_decision_state_dependent_partial`（同受 RL baseline bug 与超上限门影响；D-649/651） |
+| **N34.3.03** | **状态相关生长决策 v2（快照分叉＋选择性可塑＋ActorCritic）** | **`growth_decision_v2_partial`**：3/3 易全 `no_grow`、难全生长，100% 匹配最优 `oracle_per_type`（0.905/0.912/0.894）；G2 +0.04 超 `6611/6613` 上界暂记 `partial`（推翻 3.01/02 伪负结论，`63.53 CPU`；D-654） |
 
 **范围**：合成两阶段任务；脚本规则仅对照。
 

@@ -1,11 +1,11 @@
 {
   "schema": "taiji-n34-ready-bundle-v1",
-  "created_utc": "2026-11-25T18:02:38.181802+00:00",
-  "commit": "c5061f363",
+  "created_utc": "2026-11-26T03:38:05.805135+00:00",
+  "commit": "eb5d869e2",
   "unit_tests": {
     "files": 10,
     "tail": [
-      "64 passed in 6.79s"
+      "65 passed in 10.27s"
     ],
     "passed": true
   },
@@ -71,7 +71,7 @@
   },
   "exit": "bundle_ready",
   "cost": {
-    "cpu": 0.02,
+    "cpu": 0.03,
     "cap_cpu": 30.0
   },
   "discipline": {
