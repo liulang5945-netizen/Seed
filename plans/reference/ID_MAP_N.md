@@ -434,6 +434,7 @@ N32 主训练骨干为 `taiji-gru-rt-v2`（D-20261124-496）；成绩单为 `pla
 | **NCH.3.03** | `BiGRU+2×MHA`＋全 CJK 开放字池＋OOV 无关指针探索 v2（同硬门 `7101–7103`） | **`signal_partial`**（`561.20 CPU`；D-667：`C0/G4/G5` 3/3 全过，OOV 已知 EM `0.625–0.688` vs 三对照 `0.000`；`coref 0.48–0.57` 与微差未过） |
 | **NCH.3.04** | 13 维纯字节回合/Turn-0/1 锚定＋修 Turn 4 `coref_recent`＋`"到了{loc}"` 边界探索 v3（同硬门 `7101–7103`） | **`signal_positive`**（`595.83 CPU`；D-669：**全 6 门 3/3 过**——`train 0.925–0.958`、`paraphrase 0.833–0.867`（`coref 0.759–0.778`）、OOV `0.792–0.875`（已知 EM `0.750–0.844` vs 三对照全 `0.000`、拒答 `0.917–1.000`）、`simple_zh` 干扰 `0.758–0.842`、`7101` 与 `SessionStore` 逐位一致；零确认 seed/`check`/`final`） |
 | **MEMO-N35** | N35 模型级联合确认与首次 `check` 评测准入决策书 | **已批复方案 A（D-671）**（[MEMO-N35-ADMISSION-DECISION](../reference/MEMO-N35-ADMISSION-DECISION_20261126.md)，D-670） |
+| **NCH.3.05** | `v4`（Conv1d＋4 头回合池化＋Turn-GRU/SDPA＋向量化 Span Copy）探索（`7101–03`） | **`signal_partial`**（`442.61/520 CPU`；D-675：单 seed 降至 `127.5–133.2 CPU`、`c0/g1/g3/g4` 过，但 `paraphrase` 指代 `0.5000–0.7222`、`weights_exact=false`；[DESIGN-NCH-3-05](../reference/DESIGN-NCH-3-05_20261126.md) / [RESULT-NCH-3-05](../reference/RESULT-NCH-3-05_20261126.md)） |
 
 ### 3.33 N35 模型级联合确认（方案 A＋A1，D-20261126-671..674）
 

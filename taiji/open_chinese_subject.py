@@ -1,17 +1,18 @@
-"""Open-vocab UTF-8 codepoint-block pointer-generator subject (`taiji-open-chinese-subject-v2`).
+"""Open-vocab UTF-8 codepoint-block pointer-generator subject (`taiji-open-chinese-subject-v4`).
 
 Processes raw UTF-8 byte streams across multi-turn Chinese episodes with ZERO closed-word
 IDs, ZERO dictionary lookups, and ZERO environment state leakage. Segments raw UTF-8 streams
 deterministically via UTF-8 lead-byte length into 4-byte codepoint blocks (`[b0, b1, b2, b3]`),
 combining:
-1. Pure-byte codepoint-block embedding + Conv1d + 1-layer BiGRU + 2-layer 4-head Self-Attention
-   over turn history for direct cross-turn resolution;
-2. Five structural alignment features computed strictly from observed UTF-8 blocks plus a 2-dim
-   episodic familiarity summary (`hist_has_m2`, `hist_m2_count`);
-3. Dual learned pooling for 5-way intent prediction;
-4. OOV-invariant location-shifted hybrid pointer-generator decoder constrained strictly by the
-   canonical product UTF-8 state machine (`taiji.utf8_state`);
-5. Native persistence via `SessionStore` / `SessionRecord.capsule`.
+1. Pure-byte codepoint-block embedding + multi-scale Conv1d local encoder (fast, no slow token BiGRU);
+2. Hierarchical turn-level episodic state tracker (causal Turn-GRU + Turn-BiGRU over per-turn
+   2-head learned attention pooling + pure-byte turn overlap scalars) broadcast back to tokens;
+3. 2-layer 4-head fused SDPA Self-Attention over turn history for direct cross-turn resolution;
+4. Bidirectional 13-dim pure-byte episodic & bigram anchor features (`m1, m2, mt0, mt1, mrec`
+   computed on both history turns and the current turn against earlier turns);
+5. OOV-invariant location-shifted hybrid pointer-generator decoder with span-exact copy supervision
+   and strict `taiji.utf8_state` constraints;
+6. Native persistence via `SessionStore` / `SessionRecord.capsule`.
 """
 
 from __future__ import annotations
@@ -27,7 +28,7 @@ from taiji.open_chinese_task_env import INTENTS
 from taiji.session_store import SessionRecord, SessionStore
 from taiji.utf8_state import advance_utf8, trim_partial_tail, utf8_allowed
 
-SCHEMA = "taiji-open-chinese-subject-v3"
+SCHEMA = "taiji-open-chinese-subject-v4"
 PAD_BYTE = 256
 BOS_BYTE = 257
 EOS_BYTE = 258
@@ -103,7 +104,8 @@ def build_turn_memory_tensors(
     cur_blocks = turn_blks[-1]
     cur_1 = {b for b in cur_blocks if _is_cjk_content_block(b)}
     cur_2 = _cjk_bigrams(cur_blocks)
-    seen_earlier: set[tuple[tuple[int, int, int, int], tuple[int, int, int, int]]] = set()
+    seen_earlier_1: set[tuple[int, int, int, int]] = set()
+    seen_earlier_2: set[tuple[tuple[int, int, int, int], tuple[int, int, int, int]]] = set()
 
     flat_blocks: list[list[int]] = []
     flat_feats: list[list[float]] = []
@@ -136,9 +138,27 @@ def build_turn_memory_tensors(
                         mt0[j] = mt0[j + 1] = 1.0
                     if tid > 1 and bg in t1_bg:
                         mt1[j] = mt1[j + 1] = 1.0
-                    if bg in seen_earlier:
+                    if bg in seen_earlier_2:
                         mrec[j] = mrec[j + 1] = 1.0
-            seen_earlier |= _cjk_bigrams(t_blks)
+            seen_earlier_1 |= {b for b in t_blks if _is_cjk_content_block(b)}
+            seen_earlier_2 |= _cjk_bigrams(t_blks)
+        else:
+            for j, blk in enumerate(t_blks):
+                if blk in seen_earlier_1:
+                    m1[j] = 1.0
+                if (
+                    j + 1 < n
+                    and _is_cjk_content_block(blk)
+                    and _is_cjk_content_block(t_blks[j + 1])
+                ):
+                    bg = (blk, t_blks[j + 1])
+                    if bg in seen_earlier_2:
+                        m2[j] = m2[j + 1] = 1.0
+                        mrec[j] = mrec[j + 1] = 1.0
+                    if tid > 0 and bg in t0_bg:
+                        mt0[j] = mt0[j + 1] = 1.0
+                    if tid > 1 and bg in t1_bg:
+                        mt1[j] = mt1[j + 1] = 1.0
 
         for j, blk in enumerate(t_blks):
             flat_blocks.append(list(blk))
@@ -187,8 +207,47 @@ def collate_memory_batch(
     return mem_blocks, mem_feats, mem_mask, tgt_intent, tgt_blocks
 
 
+class _SDPABlock(nn.Module):
+    """Fused scaled_dot_product_attention transformer block."""
+
+    def __init__(self, d_model: int, num_heads: int = 4, dropout: float = 0.1) -> None:
+        super().__init__()
+        self.d_model = d_model
+        self.num_heads = num_heads
+        self.head_dim = d_model // num_heads
+        self.drop_p = float(dropout)
+        self.qkv = nn.Linear(d_model, 3 * d_model)
+        self.out_proj = nn.Linear(d_model, d_model)
+        self.norm1 = nn.LayerNorm(d_model)
+        self.ffn = nn.Sequential(
+            nn.Linear(d_model, d_model * 2),
+            nn.GELU(),
+            nn.Dropout(dropout),
+            nn.Linear(d_model * 2, d_model),
+        )
+        self.norm2 = nn.LayerNorm(d_model)
+        self.drop = nn.Dropout(dropout)
+
+    def forward(self, x: torch.Tensor, mem_mask: torch.Tensor) -> torch.Tensor:
+        bsz, seq_len, _ = x.shape
+        q, k, v = self.qkv(x).chunk(3, dim=-1)
+        q = q.view(bsz, seq_len, self.num_heads, self.head_dim).transpose(1, 2)
+        k = k.view(bsz, seq_len, self.num_heads, self.head_dim).transpose(1, 2)
+        v = v.view(bsz, seq_len, self.num_heads, self.head_dim).transpose(1, 2)
+        attn_out = F.scaled_dot_product_attention(
+            q,
+            k,
+            v,
+            attn_mask=mem_mask[:, None, None, :],
+            dropout_p=0.0,
+        )
+        attn_out = attn_out.transpose(1, 2).reshape(bsz, seq_len, self.d_model)
+        h = self.norm1(x + self.drop(self.out_proj(attn_out)))
+        return self.norm2(h + self.drop(self.ffn(h)))
+
+
 class OpenChineseCognitiveSubject(nn.Module):
-    """Pure UTF-8 BiGRU+2xMHA OOV-invariant pointer-generator with SessionStore serialization."""
+    """Pure UTF-8 Conv1d + Turn-GRU + 2xSDPA OOV-invariant pointer-generator."""
 
     def __init__(
         self,
@@ -212,39 +271,40 @@ class OpenChineseCognitiveSubject(nn.Module):
             torch.manual_seed(self.init_seed)
             self.byte_emb = nn.Embedding(BYTE_VOCAB, self.d_byte, padding_idx=PAD_BYTE)
             self.char_proj = nn.Linear(4 * self.d_byte, self.d_char)
-            self.conv3 = nn.Conv1d(self.d_char, 24, kernel_size=3, padding=1)
-            self.mem_gru = nn.GRU(
-                self.d_char + 24 + 13,
-                self.d_mem // 2,
-                num_layers=1,
-                batch_first=True,
-                bidirectional=True,
+            self.in_proj = nn.Linear(self.d_char + 13, self.d_mem)
+            self.conv1 = nn.Conv1d(self.d_mem, self.d_mem, kernel_size=5, padding=2)
+            self.cnorm1 = nn.LayerNorm(self.d_mem)
+            self.conv2 = nn.Conv1d(self.d_mem, self.d_mem, kernel_size=5, padding=4, dilation=2)
+            self.cnorm2 = nn.LayerNorm(self.d_mem)
+            self.drop = nn.Dropout(0.10)
+
+            self.turn_pool = nn.Linear(self.d_mem, 4)
+            self.turn_in_proj = nn.Linear(self.d_mem * 4 + 4, self.d_mem)
+            self.turn_causal_gru = nn.GRU(self.d_mem, self.d_mem, batch_first=True)
+            self.tnorm1 = nn.LayerNorm(self.d_mem)
+            self.turn_bi_gru = nn.GRU(
+                self.d_mem, self.d_mem // 2, batch_first=True, bidirectional=True
             )
-            self.attn1 = nn.MultiheadAttention(
-                self.d_mem, num_heads=4, dropout=0.0, batch_first=True
-            )
-            self.norm1a = nn.LayerNorm(self.d_mem)
-            self.ffn1 = nn.Sequential(
+            self.tnorm2 = nn.LayerNorm(self.d_mem)
+            self.turn_to_tok = nn.Linear(self.d_mem, self.d_mem)
+            self.fuse_norm = nn.LayerNorm(self.d_mem)
+
+            self.turn_sdpa1 = _SDPABlock(self.d_mem, num_heads=4, dropout=0.10)
+            self.turn_sdpa2 = _SDPABlock(self.d_mem, num_heads=4, dropout=0.10)
+            self.conv3 = nn.Conv1d(self.d_mem, self.d_mem, kernel_size=5, padding=2)
+            self.cnorm3 = nn.LayerNorm(self.d_mem)
+            self.tok_ffn = nn.Sequential(
                 nn.Linear(self.d_mem, self.d_mem * 2),
                 nn.GELU(),
+                nn.Dropout(0.10),
                 nn.Linear(self.d_mem * 2, self.d_mem),
             )
-            self.norm1b = nn.LayerNorm(self.d_mem)
-            self.attn2 = nn.MultiheadAttention(
-                self.d_mem, num_heads=4, dropout=0.0, batch_first=True
-            )
-            self.norm2a = nn.LayerNorm(self.d_mem)
-            self.ffn2 = nn.Sequential(
-                nn.Linear(self.d_mem, self.d_mem * 2),
-                nn.GELU(),
-                nn.Linear(self.d_mem * 2, self.d_mem),
-            )
-            self.norm2b = nn.LayerNorm(self.d_mem)
+            self.cnorm4 = nn.LayerNorm(self.d_mem)
 
             self.pool_q_cur = nn.Linear(self.d_mem, 1)
             self.pool_q_all = nn.Linear(self.d_mem, 1)
 
-            rep_dim = self.d_mem * 3 + 2
+            rep_dim = self.d_mem * 4 + 2
             self.intent_head = nn.Sequential(
                 nn.Linear(rep_dim, self.d_mem),
                 nn.Tanh(),
@@ -270,18 +330,42 @@ class OpenChineseCognitiveSubject(nn.Module):
         mem_feats: torch.Tensor,
         mem_mask: torch.Tensor,
     ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
-        """Encode codepoint blocks via BiGRU + 2xMHA and pool intent/decoder rep."""
+        """Encode codepoint blocks via Conv1d + Turn-GRU + 2xSDPA and pool rep."""
         ch = self._embed_blocks(mem_blocks)
-        c3 = F.gelu(self.conv3(ch.transpose(1, 2))).transpose(1, 2)
-        mh, _ = self.mem_gru(torch.cat([ch, c3, mem_feats], dim=-1))
+        h = F.gelu(self.in_proj(torch.cat([ch, mem_feats], dim=-1)))
+        h = self.cnorm1(h + self.drop(F.gelu(self.conv1(h.transpose(1, 2)).transpose(1, 2))))
+        h = self.cnorm2(h + self.drop(F.gelu(self.conv2(h.transpose(1, 2)).transpose(1, 2))))
+        h = h * mem_mask.unsqueeze(-1).float()
 
-        pad_mask = ~mem_mask
-        a1, _ = self.attn1(mh, mh, mh, key_padding_mask=pad_mask, need_weights=False)
-        mh = self.norm1a(mh + a1)
-        mh = self.norm1b(mh + self.ffn1(mh))
-        a2, _ = self.attn2(mh, mh, mh, key_padding_mask=pad_mask, need_weights=False)
-        mh = self.norm2a(mh + a2)
-        mh = self.norm2b(mh + self.ffn2(mh))
+        turn_oh = mem_feats[:, :, 2:8]  # [B, L, 6]
+        t_mask = (turn_oh > 0.5) & mem_mask.unsqueeze(-1)  # [B, L, 6]
+        t_scores = self.turn_pool(h)  # [B, L, 2]
+        overlap_feats = mem_feats[:, :, 9:13]  # [B, L, 4]
+
+        turn_vecs: list[torch.Tensor] = []
+        for t in range(6):
+            tm = t_mask[:, :, t]  # [B, L]
+            has_t = tm.any(dim=-1, keepdim=True).float()  # [B, 1]
+            sc = t_scores.masked_fill(~tm.unsqueeze(-1), -1e9)
+            w = F.softmax(sc, dim=1) * has_t.unsqueeze(1)  # [B, L, 2]
+            pooled_t = torch.bmm(w.transpose(1, 2), h).reshape(h.shape[0], -1)  # [B, 2*d_mem]
+            ov_t = overlap_feats.masked_fill(~tm.unsqueeze(-1), 0.0).max(dim=1).values * has_t
+            turn_vecs.append(torch.cat([pooled_t, ov_t], dim=-1))
+
+        u_turn = F.gelu(self.turn_in_proj(torch.stack(turn_vecs, dim=1)))  # [B, 6, d_mem]
+        th_c, _ = self.turn_causal_gru(u_turn)
+        th_c = self.tnorm1(u_turn + self.drop(th_c))
+        th_b, _ = self.turn_bi_gru(th_c)
+        th = self.tnorm2(th_c + self.drop(th_b))  # [B, 6, d_mem]
+        has_turn_mask = t_mask.any(dim=1)  # [B, 6]
+        th = self.turn_sdpa1(th, has_turn_mask)
+        th = self.turn_sdpa2(th, has_turn_mask)
+
+        tok_turn_ctx = torch.bmm(turn_oh, th)
+        mh = self.fuse_norm(h + self.turn_to_tok(tok_turn_ctx))
+        mh = self.cnorm3(mh + self.drop(F.gelu(self.conv3(mh.transpose(1, 2)).transpose(1, 2))))
+        mh = self.cnorm4(mh + self.drop(self.tok_ffn(mh)))
+        mh = mh * mem_mask.unsqueeze(-1).float()
 
         cur_mask = (mem_feats[:, :, 0] > 0.5) & mem_mask
         cur_scores = self.pool_q_cur(mh).squeeze(-1).masked_fill(~cur_mask, -1e9)
@@ -293,9 +377,13 @@ class OpenChineseCognitiveSubject(nn.Module):
 
         mask_f = mem_mask.float().unsqueeze(-1)
         rep_mean = (mh * mask_f).sum(dim=1) / mask_f.sum(dim=1).clamp(min=1.0)
+        cur_turn_oh = (turn_oh * cur_mask.unsqueeze(-1).float()).sum(dim=1)
+        cur_turn_oh = cur_turn_oh / cur_turn_oh.sum(dim=-1, keepdim=True).clamp(min=1.0)
+        th_cur = torch.bmm(cur_turn_oh.unsqueeze(1), th).squeeze(1)
+
         hist_has_m2 = mem_feats[:, :, 9].max(dim=1, keepdim=True).values
         hist_m2_count = (mem_feats[:, :, 9].sum(dim=1, keepdim=True) / 8.0).clamp(max=1.0)
-        rep = torch.cat([rep_cur, rep_all, rep_mean, hist_has_m2, hist_m2_count], dim=-1)
+        rep = torch.cat([rep_cur, rep_all, rep_mean, th_cur, hist_has_m2, hist_m2_count], dim=-1)
         keys = self.k_proj(mh)
         return mh, keys, rep
 
@@ -354,11 +442,43 @@ class OpenChineseCognitiveSubject(nn.Module):
         target_intent: torch.Tensor,
         target_blocks: torch.Tensor,
     ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
-        """Compute joint `(total_loss, intent_loss, block_loss)` via pointer-first supervision."""
+        """Compute joint `(total_loss, intent_loss, block_loss)` with span-exact copy."""
         bsz, max_k, _ = target_blocks.shape
+        max_m = mem_blocks.shape[1]
         mh, keys, rep = self.encode_memory(mem_blocks, mem_feats, mem_mask)
 
         intent_loss = F.cross_entropy(self.intent_head(rep), target_intent)
+
+        span_match = torch.zeros((bsz, max_k, max_m), dtype=torch.bool, device=mem_blocks.device)
+        has_span_copy = torch.zeros((bsz,), dtype=torch.bool, device=mem_blocks.device)
+        if self.use_copy:
+            mem_id = (
+                (mem_blocks[:, :, 0] << 24)
+                | (mem_blocks[:, :, 1] << 16)
+                | (mem_blocks[:, :, 2] << 8)
+                | mem_blocks[:, :, 3]
+            )
+            tgt_id = (
+                (target_blocks[:, :, 0] << 24)
+                | (target_blocks[:, :, 1] << 16)
+                | (target_blocks[:, :, 2] << 8)
+                | target_blocks[:, :, 3]
+            )
+            is_ans_tok = (target_blocks[:, :, 0] != EOS_BYTE) & (target_blocks[:, :, 0] != PAD_BYTE)
+            ans_lens = is_ans_tok.sum(dim=-1).tolist()
+            by_len: dict[int, list[int]] = {}
+            for b, ans_len in enumerate(ans_lens):
+                if 0 < ans_len <= max_m:
+                    by_len.setdefault(ans_len, []).append(b)
+            for ans_len, idxs in by_len.items():
+                idx_t = torch.tensor(idxs, dtype=torch.long, device=mem_blocks.device)
+                win = mem_id[idx_t].unfold(1, ans_len, 1)
+                win_m = mem_mask[idx_t].unfold(1, ans_len, 1).all(dim=-1)
+                starts = win_m & (win == tgt_id[idx_t, None, :ans_len]).all(dim=-1)
+                has_span_copy[idx_t] = starts.any(dim=-1)
+                n_pos = starts.shape[1]
+                for k in range(ans_len):
+                    span_match[idx_t, k, k : k + n_pos] = starts
 
         state = torch.tanh(self.dec_init(rep))
         ctx = rep[:, : self.d_mem]
@@ -383,8 +503,8 @@ class OpenChineseCognitiveSubject(nn.Module):
             safe_tgt = tgt_k.clamp(0, BYTE_VOCAB - 1)
             log_p_gen = log_byte.gather(2, safe_tgt.unsqueeze(-1)).squeeze(-1).sum(dim=-1)
 
-            match_k = (mem_blocks == tgt_k.unsqueeze(1)).all(dim=-1) & mem_mask
-            has_copy = self.use_copy & match_k.any(dim=-1) & (~is_eos)
+            match_k = span_match[:, k, :]
+            has_copy = self.use_copy & has_span_copy & (~is_eos) & is_active
             p_copy = (prev_alpha * match_k.float()).sum(dim=-1).clamp(min=1e-12)
 
             log_char = torch.where(

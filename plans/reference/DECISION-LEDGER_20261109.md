@@ -10622,3 +10622,8 @@ eports/n33_1_01_sim.json；CPU 0.02/20。
 ### D-20261126-674 `N35.1.90` 后门禁边界：不申 `check`、`final` 封存，备用 `20261911–13` 暂冻
 
 **1. 裁定**：因 `N35.1.90` 未过且已完成 seed 暴露 `R0-1` 指代余量不足，**不得**申请 `check` 解封，`final` 持续封存（`0 check / 0 final`），且**禁止**在未补足 `coref` 余量前直接消耗备用 `20261911–13`；呈报 owner 决定是否先在探索 seed 上开 `NCH.3.05` 提升指代余量与 CPU 效率后再启 `N35.1.91`。
+
+### D-20261126-675 NCH.3.05 开放自然中文探索 v4：**`signal_partial`**（442.61/520.0 CPU；零确认 seed/`check`/`final`）
+
+**1. 实测**（[DESIGN-NCH-3-05](DESIGN-NCH-3-05_20261126.md) / [RESULT-NCH-3-05](RESULT-NCH-3-05_20261126.md)，`reports/nch_3_05_open_chinese_v4.json`，探索 seed `7101–7103`）：单 seed 三臂 CPU 成功降至 **`133.17 / 127.45 / 132.05`**（`<=140.0`），`c0 / g1 / g3 / g4` 3/3 过；但去掉 token 级注意力后 `heldout_paraphrase.coref_success` 仅 `0.6481 / 0.5000 / 0.7222`（`g2` 未过），且 `weights_exact = false`（`g5` 未过）。
+**2. 后继**：**不预注册 `N35.1.91`**，备用确认 seed `20261911–13` 严格未读；`NCH.3` 线累计 `1,987.14 / 2,000.0 CPU`。
