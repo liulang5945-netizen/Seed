@@ -433,7 +433,14 @@ N32 主训练骨干为 `taiji-gru-rt-v2`（D-20261124-496）；成绩单为 `pla
 | **NCH.3.02** | 开放中文码点分块探索（`7101–7103` × 4 臂） | **`signal_negative`**（`387.42 CPU`；D-666：`C0/G5` 过、`unknown_abstain 0.71–0.96`，定位纯 BiGRU＋词表捷径 OOV 坍缩 `0.06–0.15`） |
 | **NCH.3.03** | `BiGRU+2×MHA`＋全 CJK 开放字池＋OOV 无关指针探索 v2（同硬门 `7101–7103`） | **`signal_partial`**（`561.20 CPU`；D-667：`C0/G4/G5` 3/3 全过，OOV 已知 EM `0.625–0.688` vs 三对照 `0.000`；`coref 0.48–0.57` 与微差未过） |
 | **NCH.3.04** | 13 维纯字节回合/Turn-0/1 锚定＋修 Turn 4 `coref_recent`＋`"到了{loc}"` 边界探索 v3（同硬门 `7101–7103`） | **`signal_positive`**（`595.83 CPU`；D-669：**全 6 门 3/3 过**——`train 0.925–0.958`、`paraphrase 0.833–0.867`（`coref 0.759–0.778`）、OOV `0.792–0.875`（已知 EM `0.750–0.844` vs 三对照全 `0.000`、拒答 `0.917–1.000`）、`simple_zh` 干扰 `0.758–0.842`、`7101` 与 `SessionStore` 逐位一致；零确认 seed/`check`/`final`） |
-| **MEMO-N35** | N35 模型级联合确认与首次 `check` 评测准入决策书 | **待 owner 签字**（[MEMO-N35-ADMISSION-DECISION](../reference/MEMO-N35-ADMISSION-DECISION_20261126.md)，D-670；含开放中文并入 `R0` 方案与新 seed 建议） |
+| **MEMO-N35** | N35 模型级联合确认与首次 `check` 评测准入决策书 | **已批复方案 A（D-671）**（[MEMO-N35-ADMISSION-DECISION](../reference/MEMO-N35-ADMISSION-DECISION_20261126.md)，D-670） |
+
+### 3.33 N35 模型级联合确认（方案 A＋A1，D-20261126-671..674）
+
+| 卡 | 内容 | 状态 |
+|---|---|---|
+| **N35.0.00** | N35 准入生效＋`R0` 成绩单冻结＋确认 seed 注册 | **已生效**（[N35-ADMISSION](../reference/N35-ADMISSION_20261126.md) / [SCORECARD-N35](../reference/SCORECARD-N35_20261126.md)；D-671/672） |
+| **N35.1.90** | 同主体六模块联合确认（`20261901–03`，帽 `650.0 CPU`，零 `check/final`） | **`engineering_failure`**（`650.03/650 CPU`：`20261903` 第 666/720 步超时且 `20261901` 未过 `R0-1` `coref=0.6250<0.70`；`20261901–03` 作废，备 `20261911–13` 未读；[DESIGN-N35-1-90](../reference/DESIGN-N35-1-90_20261126.md) / [RESULT-N35-1-90](../reference/RESULT-N35-1-90_20261126.md)；D-673/674） |
 
 ## 4. 落盘状态（D-20261124-464）
 
