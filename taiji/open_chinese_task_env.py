@@ -191,6 +191,7 @@ TRAIN_PATTERNS: dict[str, tuple[str, ...]] = {
         "提醒一下，{ent}刚才被我搬去{loc}了。",
         "我把{ent}重新放到{loc}去了，不在原先处。",
         "现在把{ent}改移到{loc}里了。",
+        "我刚顺手把{ent}搬到了{loc}。",
     ),
     "move_coref": (
         "顺手把刚才那件挪到{loc}了。",
@@ -203,6 +204,7 @@ TRAIN_PATTERNS: dict[str, tuple[str, ...]] = {
         "上一轮放好的那个东西，被我挪到{loc}了。",
         "刚刚那件物品现在改放到{loc}那边去了。",
         "把刚才那件顺手搬去{loc}了。",
+        "刚才那件东西被我顺手挪到了{loc}。",
     ),
     "correction": (
         "不好意思，刚才说错了，{ent}其实是在{loc}。",
@@ -625,6 +627,9 @@ class OpenChineseTaskEnv:
         m1 = query_modes_pool[self._rand_idx(len(query_modes_pool))]
         rem_modes = [m for m in query_modes_pool if m != m1]
         m2 = rem_modes[self._rand_idx(len(rem_modes))]
+        # Place `coref_recent` at Turn 4 directly after turns 0-3 to avoid Turn-4 entity conflict.
+        if m2 == "coref_recent" and m1 != "coref_recent":
+            m1, m2 = m2, m1
         intent_choices = ("retrieve", "inspect", "locate")
 
         for mode in (m1, m2):

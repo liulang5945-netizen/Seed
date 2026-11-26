@@ -2,7 +2,7 @@
   "schema": "taiji-phy-1-01-v1",
   "card": "PHY.1.01",
   "design": "DESIGN-PHY-1-01_20261126.md",
-  "created_utc": "2026-11-26T06:00:21.673128+00:00",
+  "created_utc": "2026-11-26T06:37:43.578846+00:00",
   "seeds": [
     200,
     259,
@@ -36,7 +36,7 @@
   },
   "exit": "physics_ready",
   "cost": {
-    "cpu": 0.0,
+    "cpu": 0.02,
     "cap_cpu": 5.0
   },
   "discipline": {

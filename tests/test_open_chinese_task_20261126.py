@@ -94,6 +94,16 @@ def test_oracle_and_random_calibration_plus_determinism() -> None:
     env2.reset()
     assert env1.turns_data == env2.turns_data
 
+    # Ensure coref_recent is placed at Turn 4 immediately after turns 0-3 (no Turn-4 entity conflict).
+    recent_markers = ("最近", "最后")
+    for split in ("train_seen", "heldout_paraphrase", "heldout_oov_entities"):
+        for s in range(500, 550):
+            e = OpenChineseTaskEnv(s, split=split)
+            e.reset()
+            t5 = e.turns_data[5]
+            if t5["is_coref"] and any(m in t5["text"] for m in recent_markers):
+                raise AssertionError(f"coref_recent appeared at Turn 5 on {split} seed={s}")
+
 
 def test_subject_forward_backward_utf8_validity_and_store_roundtrip(tmp_path) -> None:
     env = OpenChineseTaskEnv(42, split="heldout_oov_entities")
@@ -117,6 +127,7 @@ def test_subject_forward_backward_utf8_validity_and_store_roundtrip(tmp_path) ->
         history.append(list(obs_next["utf8_bytes"]))
 
     batch = collate_memory_batch(samples)
+    assert batch[1].shape[-1] == 13
     for use_history, use_copy in ((True, True), (False, True), (True, False)):
         subj = OpenChineseCognitiveSubject(123, use_history=use_history, use_copy=use_copy)
         subj.zero_grad(set_to_none=True)

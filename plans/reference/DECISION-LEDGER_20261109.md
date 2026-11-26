@@ -10588,3 +10588,15 @@ eports/n33_1_01_sim.json；CPU 0.02/20。
 ### D-20261126-668 NCH.3 探索线收束与全套门禁复验（保持 N34 已收口与 N35 待签状态不变）
 
 **1. 同步**：更新 [COVERAGE-MATRIX](COVERAGE-MATRIX_20261126.md)、[EVIDENCE-SUMMARY-EXPLORATION](EVIDENCE-SUMMARY-EXPLORATION_20261126.md)、[ID_MAP_N](ID_MAP_N.md) §3.32 与 [PLAN_INDEX](../active/PLAN_INDEX.md)；`MAINLINE.md` 队首与 `n31_confirmation_seed_reads.json` 零改动，全程 `check/final = 0`；待 owner 决定是否立即进入 `N35` 或先补 `NCH.3.04` 指代微调。
+
+
+### D-20261126-669 NCH.3.04 开放自然中文连续任务探索 v3：**`signal_positive`**（595.83/850.0 CPU；全 6 门 3/3 通过）
+
+**1. 背景与三项修正**（owner 批复「先 2 后 1」）：① 按 `STAGE_GATES_AND_STOPPING.md` §3.3.1 修复 Turn 4/5 `coref_recent` 指代冲突（将 `coref_recent` 置于 Turn 4 紧接陈述回合之后）；② `taiji-open-chinese-subject-v3` 扩充 13 维纯字节特征（6 维 `turn_oh`、Turn-0/Turn-1 双字锚定、`recurs_earlier_2char`）；③ 训练句式增补 `"到了{loc}"` 边界变体。保持与 `3.02/3.03` **完全一致硬门、OOV 集合与留出句式**，零确认 seed、零 `check/final`。
+**2. 读数**（[DESIGN-NCH-3-04](DESIGN-NCH-3-04_20261126.md) / [RESULT-NCH-3-04](RESULT-NCH-3-04_20261126.md)，`reports/nch_3_04_open_chinese_v3.json`，探索 seed `7101–7103`）：
+  - **`c0_calibration` ∧ `g1..g5` 全部 3/3 通过 ⇒ `signal_positive`**：`train_seen` 查询 **`0.9583 / 0.9250 / 0.9333`**（`coref 0.8400–0.9400`）；`heldout_paraphrase` 查询 **`0.8583 / 0.8333 / 0.8667`**（`coref 0.7593–0.7778`、`corr 0.7321–0.8214`）；`heldout_oov_entities` 查询 **`0.8000 / 0.8750 / 0.7917`**（EM **`0.8000 / 0.8750 / 0.8000`**、已知 EM **`0.7500 / 0.8438 / 0.7708`**、未出场拒答 **`1.0000 / 1.0000 / 0.9167`**）；`real_corpus_distractor` 查询 **`0.8250 / 0.8417 / 0.7583`**（拒答 `1.0000` 3/3）。
+  - **三重因果对照（`heldout_oov_entities`）**：`stateless` / `no_copy` / `history_shuffle` 已知答案 EM 全 **`0.0000`**（3/3）；`7101` 权重与 `SessionStore` 胶囊往返逐位一致。全线累计 `1,544.53 / 2,000 CPU`。
+
+### D-20261126-670 起草 `N35` 准入决策备忘与全套门禁复验（待 owner 签字开启 `N35`）
+
+**1. 落盘**：新建 [MEMO-N35-ADMISSION-DECISION](MEMO-N35-ADMISSION-DECISION_20261126.md)（含四项签字项、建议 seed `20261901–03 / 1911–13`、方案 A/B `check` 策略与 `R0` 联合成绩单门槛）；同步更新 [COVERAGE-MATRIX](COVERAGE-MATRIX_20261126.md)、[EVIDENCE-SUMMARY-EXPLORATION](EVIDENCE-SUMMARY-EXPLORATION_20261126.md)、[ID_MAP_N](ID_MAP_N.md) §3.32 与 [PLAN_INDEX](../active/PLAN_INDEX.md)；保持 `MAINLINE.md` 与 `n31_confirmation_seed_reads.json` 零改动，零 `check/final`。

@@ -2,7 +2,7 @@
   "schema": "taiji-nch-3-01-v1",
   "card": "NCH.3.01",
   "design": "DESIGN-NCH-3-01_20261126.md",
-  "created_utc": "2026-11-26T05:36:06.844530+00:00",
+  "created_utc": "2026-11-26T06:17:19.761483+00:00",
   "task_version": "taiji-open-chinese-continuous-v1",
   "pool_sizes": {
     "train_entities": 120,
@@ -87,7 +87,7 @@
       "n_episodes": 40,
       "all_turn_success": 0.0083,
       "query_turn_success": 0.0,
-      "query_intent_acc": 0.2,
+      "query_intent_acc": 0.1875,
       "query_answer_em": 0.025,
       "known_answer_em": 0.0156,
       "coref_success": 0.0,
@@ -109,7 +109,7 @@
       "n_episodes": 40,
       "all_turn_success": 0.0,
       "query_turn_success": 0.0,
-      "query_intent_acc": 0.2625,
+      "query_intent_acc": 0.225,
       "query_answer_em": 0.0125,
       "known_answer_em": 0.0149,
       "coref_success": 0.0,
@@ -131,8 +131,8 @@
       "n_episodes": 40,
       "all_turn_success": 0.0167,
       "query_turn_success": 0.025,
-      "query_intent_acc": 0.1875,
-      "query_answer_em": 0.0375,
+      "query_intent_acc": 0.2,
+      "query_answer_em": 0.05,
       "known_answer_em": 0.0,
       "coref_success": 0.0,
       "corr_neg_success": 0.0,
@@ -181,7 +181,7 @@
   },
   "exit": "open_env_ready",
   "cost": {
-    "cpu": 0.11,
+    "cpu": 0.08,
     "cap_cpu": 10.0
   },
   "discipline": {

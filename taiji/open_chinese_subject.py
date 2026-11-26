@@ -27,7 +27,7 @@ from taiji.open_chinese_task_env import INTENTS
 from taiji.session_store import SessionRecord, SessionStore
 from taiji.utf8_state import advance_utf8, trim_partial_tail, utf8_allowed
 
-SCHEMA = "taiji-open-chinese-subject-v2"
+SCHEMA = "taiji-open-chinese-subject-v3"
 PAD_BYTE = 256
 BOS_BYTE = 257
 EOS_BYTE = 258
@@ -68,55 +68,85 @@ def _is_cjk_content_block(blk: tuple[int, int, int, int]) -> bool:
     return 0xE4 <= blk[0] <= 0xE9 and blk[3] == PAD_BYTE
 
 
+def _cjk_bigrams(
+    blks: list[tuple[int, int, int, int]],
+) -> set[tuple[tuple[int, int, int, int], tuple[int, int, int, int]]]:
+    """Extract consecutive CJK 2-char UTF-8 block bigrams from a segmented block list."""
+    return {
+        (blks[i], blks[i + 1])
+        for i in range(len(blks) - 1)
+        if _is_cjk_content_block(blks[i]) and _is_cjk_content_block(blks[i + 1])
+    }
+
+
 def build_turn_memory_tensors(
     turns_bytes: list[list[int]],
     *,
     use_history: bool = True,
 ) -> tuple[list[list[int]], list[list[float]]]:
-    """Flatten observed turns into UTF-8 codepoint blocks and 5 structural features."""
+    """Flatten observed turns into UTF-8 codepoint blocks and 13 pure-byte episodic features."""
     if not turns_bytes:
-        return [list(SEP_BLOCK)], [[1.0, 0.0, 0.0, 0.0, 0.0]]
+        return [list(SEP_BLOCK)], [[1.0, 0.0, 1.0, *([0.0] * 10)]]
 
     cur_idx = len(turns_bytes) - 1
     selected = turns_bytes if use_history else [turns_bytes[cur_idx]]
     base_idx = 0 if use_history else cur_idx
 
-    cur_blocks = [tuple(b) for b in bytes_to_utf8_blocks(turns_bytes[cur_idx])]
+    turn_blks = [[tuple(b) for b in bytes_to_utf8_blocks(tb)] for tb in selected]
+    t0_bg = _cjk_bigrams(turn_blks[0]) if (use_history and base_idx == 0) else set()
+    t1_bg = (
+        _cjk_bigrams(turn_blks[1])
+        if (use_history and base_idx == 0 and len(turn_blks) > 1)
+        else set()
+    )
+
+    cur_blocks = turn_blks[-1]
     cur_1 = {b for b in cur_blocks if _is_cjk_content_block(b)}
-    cur_2 = {
-        (cur_blocks[i], cur_blocks[i + 1])
-        for i in range(len(cur_blocks) - 1)
-        if _is_cjk_content_block(cur_blocks[i]) and _is_cjk_content_block(cur_blocks[i + 1])
-    }
+    cur_2 = _cjk_bigrams(cur_blocks)
+    seen_earlier: set[tuple[tuple[int, int, int, int], tuple[int, int, int, int]]] = set()
 
     flat_blocks: list[list[int]] = []
     flat_feats: list[list[float]] = []
 
-    for offset, tb in enumerate(selected):
+    for offset, t_blks in enumerate(turn_blks):
         tid = base_idx + offset
-        blks = bytes_to_utf8_blocks(tb)
         is_cur = 1.0 if tid == cur_idx else 0.0
         recency = min(1.0, max(0.0, float(cur_idx - tid) / 6.0))
-        pos_abs = min(1.0, max(0.0, float(tid) / 6.0))
-        m1 = [0.0] * len(blks)
-        m2 = [0.0] * len(blks)
+        turn_oh = [1.0 if min(tid, 5) == k else 0.0 for k in range(6)]
+        n = len(t_blks)
+        m1 = [0.0] * n
+        m2 = [0.0] * n
+        mt0 = [0.0] * n
+        mt1 = [0.0] * n
+        mrec = [0.0] * n
 
         if tid < cur_idx:
-            t_blks = [tuple(b) for b in blks]
             for j, blk in enumerate(t_blks):
                 if blk in cur_1:
                     m1[j] = 1.0
-                if j + 1 < len(t_blks) and (blk, t_blks[j + 1]) in cur_2:
-                    m2[j] = 1.0
-                    m2[j + 1] = 1.0
+                if (
+                    j + 1 < n
+                    and _is_cjk_content_block(blk)
+                    and _is_cjk_content_block(t_blks[j + 1])
+                ):
+                    bg = (blk, t_blks[j + 1])
+                    if bg in cur_2:
+                        m2[j] = m2[j + 1] = 1.0
+                    if tid > 0 and bg in t0_bg:
+                        mt0[j] = mt0[j + 1] = 1.0
+                    if tid > 1 and bg in t1_bg:
+                        mt1[j] = mt1[j + 1] = 1.0
+                    if bg in seen_earlier:
+                        mrec[j] = mrec[j + 1] = 1.0
+            seen_earlier |= _cjk_bigrams(t_blks)
 
-        for blk, v1, v2 in zip(blks, m1, m2, strict=True):
-            flat_blocks.append(blk)
-            flat_feats.append([is_cur, recency, pos_abs, v1, v2])
+        for j, blk in enumerate(t_blks):
+            flat_blocks.append(list(blk))
+            flat_feats.append([is_cur, recency, *turn_oh, m1[j], m2[j], mt0[j], mt1[j], mrec[j]])
 
-        if offset + 1 < len(selected):
+        if offset + 1 < len(turn_blks):
             flat_blocks.append(list(SEP_BLOCK))
-            flat_feats.append([is_cur, recency, pos_abs, 0.0, 0.0])
+            flat_feats.append([is_cur, recency, *turn_oh, 0.0, 0.0, 0.0, 0.0, 0.0])
 
     return flat_blocks, flat_feats
 
@@ -140,7 +170,7 @@ def collate_memory_batch(
 
     pad_blk = torch.tensor(PAD_BLOCK, dtype=torch.long)
     mem_blocks = pad_blk.view(1, 1, 4).expand(bsz, max_m, 4).clone()
-    mem_feats = torch.zeros((bsz, max_m, 5), dtype=torch.float32)
+    mem_feats = torch.zeros((bsz, max_m, 13), dtype=torch.float32)
     mem_mask = torch.zeros((bsz, max_m), dtype=torch.bool)
     tgt_intent = torch.zeros((bsz,), dtype=torch.long)
     tgt_blocks = pad_blk.view(1, 1, 4).expand(bsz, max_k, 4).clone()
@@ -184,7 +214,7 @@ class OpenChineseCognitiveSubject(nn.Module):
             self.char_proj = nn.Linear(4 * self.d_byte, self.d_char)
             self.conv3 = nn.Conv1d(self.d_char, 24, kernel_size=3, padding=1)
             self.mem_gru = nn.GRU(
-                self.d_char + 24 + 5,
+                self.d_char + 24 + 13,
                 self.d_mem // 2,
                 num_layers=1,
                 batch_first=True,
@@ -263,8 +293,8 @@ class OpenChineseCognitiveSubject(nn.Module):
 
         mask_f = mem_mask.float().unsqueeze(-1)
         rep_mean = (mh * mask_f).sum(dim=1) / mask_f.sum(dim=1).clamp(min=1.0)
-        hist_has_m2 = mem_feats[:, :, 4].max(dim=1, keepdim=True).values
-        hist_m2_count = (mem_feats[:, :, 4].sum(dim=1, keepdim=True) / 8.0).clamp(max=1.0)
+        hist_has_m2 = mem_feats[:, :, 9].max(dim=1, keepdim=True).values
+        hist_m2_count = (mem_feats[:, :, 9].sum(dim=1, keepdim=True) / 8.0).clamp(max=1.0)
         rep = torch.cat([rep_cur, rep_all, rep_mean, hist_has_m2, hist_m2_count], dim=-1)
         keys = self.k_proj(mh)
         return mh, keys, rep
