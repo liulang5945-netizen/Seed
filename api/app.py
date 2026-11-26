@@ -66,6 +66,9 @@ class JWTAuthMiddleware:
         "/api/auth/status",
         "/api/runtime/bootstrap",
         "/api/health",
+        "/api/taiji/ops/overview",
+        "/api/taiji/ops/n38-training",
+        "/taiji-ops",
         "/",
     }
     # NOTE: /workspace_data is intentionally public for static file serving.
@@ -234,6 +237,7 @@ def _register_routers(app: FastAPI):
     from .routes_runtime import router as runtime_router
     from .routes_settings import router as settings_router
     from .routes_system import router as system_router
+    from .routes_taiji_ops import router as taiji_ops_router
     from .routes_terminal import router as terminal_router
     from .routes_update import router as update_router
     from .routes_web_search import router as web_search_router
@@ -264,6 +268,7 @@ def _register_routers(app: FastAPI):
         app.include_router(rag_router)
     app.include_router(models_router)
     app.include_router(system_router)
+    app.include_router(taiji_ops_router)
     app.include_router(web_search_router)
     app.include_router(settings_router)
     app.include_router(update_router)
