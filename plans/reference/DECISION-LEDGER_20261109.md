@@ -10683,3 +10683,7 @@ eports/n33_1_01_sim.json；CPU 0.02/20。
 ### D-20261126-688 N37 阶段有界收口（[CLOSEOUT-N37](CLOSEOUT-N37_20261126.md)；有界主线完整闭环）
 
 **1. 终态**：出具 [CLOSEOUT-N37](CLOSEOUT-N37_20261126.md) 正式收口 `N37`，至此有界主线 `≤N30 → N31 → N32 → N33 → N34 → N35 → N36 → N37` 完整闭环（零确认 seed、零 `check/final`）。
+
+### D-20261126-689 `N38` 阶段 0 预检完成并启动 `mid_18m` 24h CPU 预训练＋全局收束
+
+**1. 实测与启动**：完成 [MEMO-N38-STAGE0-PREFLIGHT](MEMO-N38-STAGE0-PREFLIGHT_20261126.md)（2,207 MB 去重中文语料、8K BPE 零 OOV 词表、`threads=8 + bfloat16` 实测 `4,343.2 tok/s`），并启动 `scripts/training/n38_1_01_pretrain_open_zh.py`（`mid_18m` 19.47M 参数、24h 后台断点续训）；同步落盘 [CONSOLIDATION_20261126](CONSOLIDATION_20261126.md) 与新版中英文 `README`。

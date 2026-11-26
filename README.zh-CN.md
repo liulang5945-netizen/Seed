@@ -75,11 +75,24 @@ python -m pip install -e ".[dev,legacy]"
 python -m uvicorn api.app:app --host 127.0.0.1 --port 8000
 ```
 
+使用有界 `N36 / N37` 交付运行时与 `§15` 运营状态机 CLI：
+
+```bash
+python scripts/taiji_n36_takeover.py build --bundle-dir ./taiji_bundle --seed 6801
+python scripts/taiji_n36_takeover.py chat --bundle-dir ./taiji_bundle --utterance "请把红色杯子放到桌上。"
+python scripts/taiji_n37_ops.py init-ops --bundle-dir ./taiji_bundle --initial-state Qualified
+```
+
 客户端安装与构建见 [Taiji Harness 贡献指南](taiji-harness/CONTRIBUTING.md)。开发检查和贡献方式见 [Seed 贡献指南](CONTRIBUTING.md)。
 
 ## 近期成果
 
-截至 2026-11-03，N 主线已把 N16.1 按任务负结果结案：选择—复制候选在1,200次正式更新后总体完成率0.0500 / 0.0167、新输出名字0/60，因此没有模型获准晋升，确认面继续保持封存（读取0次）。后继包 N17（“选择—锁定绑定”）**已完成定价但未准入**：三臂 13,092.25 CPU / 1,800 Adam / 495.0 MiB，二臂 8,750.34 CPU / 1,200 Adam / 330.0 MiB。当前没有任何训练在跑；唯一下一步是等 owner 裁定臂范围。能力表述以[能力边界卡](plans/reference/CAPABILITY-CARD_20261103.md)为准，项目全局体检见[收束文档](plans/reference/CONSOLIDATION_20261103.md)。
+截至 **2026-11-26**，有界主线（`≤N30 → N31 → N32 → N33 → N34 → N35 → N36 → N37`）已在 `bounded_closed_vocab_and_multimodule_v1` 范围内完成全部收口（**`check` / `final` 读取 0 次**）：
+- **已确认有界能力（`N33–N35`）**：百会话五模块联合耐久（`N34.5.90`）、封闭词表中文多轮指代、两族合成物理因果迁移、在线 Beta 可信度学习、学习式不确定性校准与在位生长（`N34.9.90`、`N35.1.91` 8/9 门 3/3 通过）。
+- **有界交付与 `§15` 运营状态机（`N36 / N37`）**：独立可接管运行包（[CLOSEOUT-N36](plans/reference/CLOSEOUT-N36_20261126.md)，`D1..D5` 5/5 过）与 8 态运营状态机、6 步日常影子升级及三层变更分流（[CLOSEOUT-N37](plans/reference/CLOSEOUT-N37_20261126.md)，`O1..O6` 6/6 过）。
+- **进行中的 `N38` 开放中文预训练**：`mid_18m`（1,947 万参数、8K 字节回退 BPE、跨会话持久记忆槽）正在进行 24 小时 CPU 预训练（`bfloat16` 实测 `~4,343 tokens/sec`，见 [MEMO-N38-STAGE0-PREFLIGHT](plans/reference/MEMO-N38-STAGE0-PREFLIGHT_20261126.md)）。
+
+开放词表自然中文、真机传感器/执行器、24 小时现场试运行与 `check / final` 分区仍明确标为**未验证 / 不签署**。全局收束见 [CONSOLIDATION_20261126](plans/reference/CONSOLIDATION_20261126.md) 与 [主线总纲](plans/MAINLINE.md)。
 
 ## 进一步了解
 

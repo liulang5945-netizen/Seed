@@ -75,11 +75,24 @@ python -m pip install -e ".[dev,legacy]"
 python -m uvicorn api.app:app --host 127.0.0.1 --port 8000
 ```
 
+For the bounded `N36 / N37` delivery runtime and operational state machine CLI:
+
+```bash
+python scripts/taiji_n36_takeover.py build --bundle-dir ./taiji_bundle --seed 6801
+python scripts/taiji_n36_takeover.py chat --bundle-dir ./taiji_bundle --utterance "请把红色杯子放到桌上。"
+python scripts/taiji_n37_ops.py init-ops --bundle-dir ./taiji_bundle --initial-state Qualified
+```
+
 Client setup and build instructions are in [Taiji Harness contributing](taiji-harness/CONTRIBUTING.md). See [Seed contributing](CONTRIBUTING.md) for development checks and contribution guidance.
 
 ## Recent research
 
-As of 2026-11-03, the N mainline has closed N16.1 as a negative task result: the selection-and-copy candidate reached 0.0500 / 0.0167 overall completion and 0/60 new output names after 1,200 formal updates, so no model was promoted and the confirmation split remains sealed (0 reads). The successor package N17 ("selection-locked binding") is priced but **not admitted**: 13,092.25 CPU / 1,800 Adam / 495.0 MiB for three arms, or 8,750.34 CPU / 1,200 Adam / 330.0 MiB for two arms. Nothing is training now; the only next step is the owner's arm-scope decision. Capability claims are governed by the [capability card](plans/reference/CAPABILITY-CARD_20261103.md); the project-wide audit is in [CONSOLIDATION_20261103](plans/reference/CONSOLIDATION_20261103.md).
+As of **2026-11-26**, the bounded mainline (`≤N30 → N31 → N32 → N33 → N34 → N35 → N36 → N37`) has completed full closeout within `bounded_closed_vocab_and_multimodule_v1` (**0 `check` / 0 `final` reads**):
+- **Confirmed bounded capabilities (`N33–N35`)**: 100-session multi-module durability (`N34.5.90`), closed-vocab multi-turn Chinese coreference, synthetic two-family physics causal transfer, online Beta credibility learning, calibrated uncertainty, and in-place plastic growth (`N34.9.90`, `N35.1.91` 8/9 gates 3/3 pass).
+- **Bounded delivery & §15 operational state machine (`N36 / N37`)**: Self-contained takeover runtime ([CLOSEOUT-N36](plans/reference/CLOSEOUT-N36_20261126.md), `D1..D5` 5/5 pass) and 8-state operational FSM with 6-step shadow upgrade & 3-tier change routing ([CLOSEOUT-N37](plans/reference/CLOSEOUT-N37_20261126.md), `O1..O6` 6/6 pass).
+- **Active `N38` open-Chinese pretraining**: `mid_18m` (19.47M params, 8K byte-level BPE, persistent memory slots) is running 24h CPU pretraining (`~4,343 tokens/sec` in `bfloat16`, [MEMO-N38-STAGE0-PREFLIGHT](plans/reference/MEMO-N38-STAGE0-PREFLIGHT_20261126.md)).
+
+Open-vocab natural Chinese, real physical sensors/actuators, 24h live field trials, and `check / final` splits remain explicitly **unverified / not signed**. See [CONSOLIDATION_20261126](plans/reference/CONSOLIDATION_20261126.md) and [MAINLINE](plans/MAINLINE.md).
 
 ## Read more
 
