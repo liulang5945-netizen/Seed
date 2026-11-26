@@ -10687,3 +10687,7 @@ eports/n33_1_01_sim.json；CPU 0.02/20。
 ### D-20261126-689 `N38` 阶段 0 预检完成并启动 `mid_18m` 24h CPU 预训练＋全局收束
 
 **1. 实测与启动**：完成 [MEMO-N38-STAGE0-PREFLIGHT](MEMO-N38-STAGE0-PREFLIGHT_20261126.md)（2,207 MB 去重中文语料、8K BPE 零 OOV 词表、`threads=8 + bfloat16` 实测 `4,343.2 tok/s`），并启动 `scripts/training/n38_1_01_pretrain_open_zh.py`（`mid_18m` 19.47M 参数、24h 后台断点续训）；同步落盘 [CONSOLIDATION_20261126](CONSOLIDATION_20261126.md) 与新版中英文 `README`。
+
+### D-20261126-690 Level 2 全仓目录整理与 `15.95 GB` 未跟踪残留清理
+
+**1. 清理与归档**：删除根部 15 个台账外/空/缓存目录及 4 个杂散日志（含 `.seed_test_tmp` `14.82 GB`）与 `reports/` 下 `114,325` 个未跟踪旧残留（合计释放 **`15.95 GB`**）；将 `≤N30` 历史脚本与报告分别归档至 `scripts/archive/legacy_n1_n30/` 与 `reports/archive/legacy_n1_n30/`（扫描保护全部活跃 import），同步更新 [docs/README.md](../../docs/README.md) 与 [FOLDER_STRUCTURE_RULES.md](../../docs/FOLDER_STRUCTURE_RULES.md)，`test_folder_structure_guard.py` 恢复全绿。

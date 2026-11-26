@@ -4,8 +4,8 @@ from copy import deepcopy
 from dataclasses import replace
 
 import pytest
-
 from scripts.training.eval_taiji_a2_world import build_corpus
+
 from taiji import (
     CapacityGrowthTrigger,
     CapacityGrowthTriggerDecision,

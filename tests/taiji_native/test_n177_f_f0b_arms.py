@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import torch
-
 from scripts.training.run_taiji_n1_plan177_f_f0b import _Arm, _value_bytes
 
 ITEM = {"value": "红色", "target_byte": int(list("红色".encode())[0])}

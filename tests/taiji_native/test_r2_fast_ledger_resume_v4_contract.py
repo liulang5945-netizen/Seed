@@ -12,8 +12,6 @@ if sys.platform != "win32":
         allow_module_level=True,
     )
 
-from scripts.training import run_taiji_r2_daily_dialogue_continuation_extension as runner
-from scripts.training import run_taiji_r2_fast_ledger_resume_v4 as v4
 from scripts.training.run_taiji_r2_fast_ledger_resume import SOURCE_REVISION_SHA256
 from scripts.training.run_taiji_r2_fast_ledger_resume_v4 import (
     APPROVED_BUDGET,
@@ -21,6 +19,9 @@ from scripts.training.run_taiji_r2_fast_ledger_resume_v4 import (
     build_manifest_v4,
 )
 from scripts.training.taiji_r2_resume_ledger_anchor import BASELINE
+
+from scripts.training import run_taiji_r2_daily_dialogue_continuation_extension as runner
+from scripts.training import run_taiji_r2_fast_ledger_resume_v4 as v4
 
 
 def inputs(arm="warm_start"):

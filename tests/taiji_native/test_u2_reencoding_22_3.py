@@ -6,8 +6,8 @@ from dataclasses import replace
 
 import pytest
 import torch
-
 from scripts.training.verify_taiji_u2_runtime_22_3 import load_checks
+
 from taiji.u2_history import CausalHistory, assert_values_equal, value_digest
 from taiji.u2_learning_transaction import FACT_FIELDS, rebuild_state
 from taiji.u2_recovery import ReferenceExecutor, U2Runtime

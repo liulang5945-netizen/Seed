@@ -3,7 +3,6 @@
 from copy import deepcopy
 
 import pytest
-
 from scripts.training.build_taiji_n1_evidence_curriculum import build, validate
 
 

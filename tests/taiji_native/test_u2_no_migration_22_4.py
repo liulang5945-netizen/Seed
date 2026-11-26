@@ -5,11 +5,11 @@ from types import SimpleNamespace
 
 import pytest
 import torch
-
 from scripts.training.verify_taiji_u2_no_migration_22_4 import (
     compare_measurements,
     validate_unchanged_width,
 )
+
 from taiji.u2_subject import U2Config, U2Subject
 
 

@@ -2,7 +2,6 @@ import copy
 import hashlib
 
 import pytest
-
 from scripts.training.validate_taiji_r2_continuation_endpoint import (
     STAGES,
     EndpointRefuse,

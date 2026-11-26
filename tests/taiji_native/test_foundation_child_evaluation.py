@@ -4,12 +4,12 @@ import json
 
 import pytest
 import torch
-
 from scripts.training.eval_taiji_foundation_baseline import (
     _evaluate_loaded_b1,
     _indexed_checkpoint_paths,
     _reuse_b1_measurement,
 )
+
 from taiji import Taiji, TaijiConfig
 from taiji.foundation_evaluation import FoundationManifest
 from taiji.foundation_tasks import SequencePredictionCorpus

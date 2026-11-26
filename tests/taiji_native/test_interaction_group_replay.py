@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from scripts.training.eval_taiji_interaction_groups import build_native_corpus
+
 from taiji import InteractionGroupEvaluator, InteractionGroupEvaluatorConfig
 
 

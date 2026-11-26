@@ -6,6 +6,7 @@ from scripts.training.eval_taiji_m2r3_r0_structured_semantics import (
 from scripts.training.eval_taiji_m2r3_r3_multistep import (
     build_corpus as build_transition_corpus,
 )
+
 from taiji import (
     StructuredSemanticLearner,
     StructuredSemanticTransitionLearner,

@@ -1,5 +1,4 @@
 import pytest
-
 from scripts.training.taiji_r2_dialogue_boot_accounting import reconciled_host_cpu_upper
 
 

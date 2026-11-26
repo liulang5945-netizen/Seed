@@ -1,9 +1,9 @@
 import copy
 
 import pytest
+from scripts.training.taiji_r2_resume_ledger_anchor import LedgerAnchorRefuse, replay_ledger_tail
 
 from scripts.training import taiji_r2_dialogue_continuation_extension as budget
-from scripts.training.taiji_r2_resume_ledger_anchor import LedgerAnchorRefuse, replay_ledger_tail
 
 ARMS = budget.ARMS
 

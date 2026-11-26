@@ -2,7 +2,6 @@
 
 import pytest
 import torch
-
 from scripts.training.paired_world_22_5 import build_partition
 from scripts.training.probe_first_binding_22_5 import interaction, select_cells
 

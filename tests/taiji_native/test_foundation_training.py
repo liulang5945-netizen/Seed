@@ -9,7 +9,6 @@ from pathlib import Path
 
 import pytest
 import torch
-
 from scripts.training.train_taiji_joint import _build_memory_course
 from scripts.training.train_taiji_memory import build_corpus as build_memory_corpus
 from scripts.training.train_taiji_world_action import (
@@ -17,6 +16,7 @@ from scripts.training.train_taiji_world_action import (
     build_world_corpus,
     build_world_learner,
 )
+
 from taiji import (
     JOINT_SEQUENCE_PREDICTIVE_CONTEXT_MODE,
     JOINT_SEQUENCE_READOUT_MODE,

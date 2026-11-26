@@ -5,7 +5,6 @@ import json
 
 import pytest
 import torch
-
 from scripts.training.run_taiji_n1_c2_calibration import (
     BASE_SHA,
     ITEM_IDS,

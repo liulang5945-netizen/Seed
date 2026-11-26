@@ -1,9 +1,9 @@
 import pytest
-
-from scripts.training import run_taiji_r2_daily_dialogue_continuation_extension as runner
 from scripts.training.run_taiji_r2_fast_ledger_resume import SOURCE_REVISION_SHA256
 from scripts.training.run_taiji_r2_fast_ledger_resume_v3 import SOURCES, build_manifest_v3
 from scripts.training.taiji_r2_resume_ledger_anchor import BASELINE
+
+from scripts.training import run_taiji_r2_daily_dialogue_continuation_extension as runner
 
 
 def inputs():

@@ -3,7 +3,6 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
-
 from scripts.training.eval_taiji_runtime_retention_store_separation import evaluate
 
 

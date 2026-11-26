@@ -15,7 +15,6 @@ import json
 from pathlib import Path
 
 import pytest
-
 from scripts.training.build_taiji_r2_content_binding_data import (
     EXPECTED_IN_GROUP,
     FLIP_GATE_CLASSES,

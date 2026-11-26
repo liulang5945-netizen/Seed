@@ -2,7 +2,6 @@ from uuid import uuid4
 
 import pytest
 import torch
-
 from scripts.training._eval_cross_domain_collab import _resolve_generation_tokenizer
 from scripts.training.train_cross_domain_collab import load_cross_spec_reference
 

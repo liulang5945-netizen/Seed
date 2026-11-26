@@ -3,14 +3,14 @@ from __future__ import annotations
 import os
 
 from _scratch import artifact_scratch_root
-
-from api.seed_runtime import SeedRuntime
 from scripts.training.eval_taiji_runtime_structural_artifact_multi_round import _record_round
 from scripts.training.eval_taiji_workbench_measured_artifact_batch import _build_artifact
 from scripts.training.eval_taiji_workbench_multi_region_batch import (
     _build_runtime,
     _schedule_requests,
 )
+
+from api.seed_runtime import SeedRuntime
 from taiji import ArtifactConsumptionPolicy, StructuralValidationArtifactStore
 from taiji.adapter import _checkpoint_digest
 

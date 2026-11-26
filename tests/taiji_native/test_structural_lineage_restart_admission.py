@@ -4,8 +4,6 @@ import os
 
 import torch
 from _scratch import artifact_scratch_root
-
-from api.seed_runtime import SeedRuntime
 from scripts.training.eval_taiji_structural_lineage_compaction import _record_terminal_subgraph
 from scripts.training.eval_taiji_structural_lineage_restart_continuation import (
     _continuation_requests,
@@ -16,6 +14,8 @@ from scripts.training.eval_taiji_workbench_multi_region_batch import (
     _schedule_requests,
 )
 from scripts.training.eval_taiji_workbench_multi_region_lifecycle import _record_real_evidence
+
+from api.seed_runtime import SeedRuntime
 from taiji import AdaptiveNeuronRegion, StructuralLineageRetentionPolicy
 from taiji.adapter import _checkpoint_digest
 

@@ -6,8 +6,6 @@ import os
 from pathlib import Path
 
 from _scratch import artifact_scratch_root
-
-from api.seed_runtime import SeedRuntime
 from scripts.training.eval_taiji_workbench_measured_artifact_batch import _build_artifact
 from scripts.training.eval_taiji_workbench_multi_region_batch import (
     _build_runtime,
@@ -15,6 +13,8 @@ from scripts.training.eval_taiji_workbench_multi_region_batch import (
     _schedule_requests,
 )
 from scripts.training.eval_taiji_workbench_multi_region_lifecycle import _record_real_evidence
+
+from api.seed_runtime import SeedRuntime
 from taiji.adapter import _checkpoint_digest
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]

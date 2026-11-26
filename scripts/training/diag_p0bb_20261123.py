@@ -21,7 +21,6 @@ from pathlib import Path
 sys.path.insert(0, r"E:\Seed")
 import torch
 import torch.nn.functional as F
-
 from scripts.training.taiji_eval_framework_20261124 import (
     closed_form_probe,
     ideal_reference,
@@ -29,6 +28,9 @@ from scripts.training.taiji_eval_framework_20261124 import (
     mlp_transfer_acc,
     prototype_acc,
 )
+from scripts.training.verify_taiji_24s_f1c_20261122 import mask_newborn_grads, newborn_params
+from scripts.training.verify_taiji_algorithm_holistic_20261121 import _channels_seq
+
 from scripts.training.verify_taiji_23s2a_gain_20261122 import (
     BI_CN_CHAR_INDEX,
     BI_CN_PROJ32,
@@ -37,8 +39,6 @@ from scripts.training.verify_taiji_23s2a_gain_20261122 import (
     CN_COLOURS,
     CN_MAX_LEN,
 )
-from scripts.training.verify_taiji_24s_f1c_20261122 import mask_newborn_grads, newborn_params
-from scripts.training.verify_taiji_algorithm_holistic_20261121 import _channels_seq
 from scripts.training.verify_taiji_cognitive_loop_20261121 import _build_bidirectional_cn_32dim
 from scripts.training.verify_taiji_s1r2_rework_20261121 import PhaseHead
 from scripts.training.verify_taiji_s1rt_stage1b_20261121 import Subject72

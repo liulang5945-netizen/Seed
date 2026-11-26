@@ -4,8 +4,8 @@ from copy import deepcopy
 
 import pytest
 import torch
-
 from scripts.training.verify_taiji_e4_artifact_internalization import build_fixture, run_gate
+
 from taiji import (
     ArtifactInternalizationTrainer,
     ArtifactKnowledgeEncoder,

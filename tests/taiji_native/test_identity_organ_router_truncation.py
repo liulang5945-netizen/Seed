@@ -28,11 +28,11 @@ from typing import Any
 
 import pytest
 import torch
-
 from scripts.training.eval_taiji_foundation_baseline import _memory_config
 from scripts.training.eval_taiji_m1_64_foundation_memory import (
     build_foundation_delayed_memory_corpus,
 )
+
 from taiji import Taiji, TaijiConfig
 from taiji.foundation_tasks import DelayedMemoryTask
 

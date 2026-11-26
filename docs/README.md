@@ -9,7 +9,7 @@
 | 了解整个项目及成熟度 | [全项目评估](../plans/reference/PROJECT_WIDE_ASSESSMENT_20261014.md)（2026-10-14 快照） |
 | 理解长期目标 | [核心需求](../plans/active/TAIJI_CORE_REQUIREMENTS.md) |
 | 理解认知架构 | [原生架构](../plans/active/TAIJI_NATIVE_ARCHITECTURE_V1.md)、[代码 Wiki](../TAIJI_CODE_WIKI.md) |
-| 查看当前主线与下一步 | [当前执行](../plans/active/roadmap/03_CURRENT_EXECUTION.md)、[N 主线规划](../plans/active/roadmap/09_NEXT_MAINLINE_PLAN.md) |
+| 查看当前主线与下一步 | [主线总纲](../plans/MAINLINE.md)、[2026-11-26 全局收束](../plans/reference/CONSOLIDATION_20261126.md)、[当前执行](../plans/active/roadmap/03_CURRENT_EXECUTION.md) |
 | 查看详细计划与旧计划去向 | [10详细计划](../plans/active/roadmap/10_CONTINUOUS_CAPABILITY_EXECUTION_PLAN.md)、[17衔接矩阵](../plans/reference/delivery-runs/20261021-n-mainline/artifacts/17-plan-transition-and-reconciliation.md) |
 | 查实验规格、裁决和评估 | [参考件索引](../plans/reference/README.md)、[研究完成度](../plans/reference/N_MAINLINE_COMPLETION_AUDIT_20261011.md)（含后继追加） |
 | 查产品收官范围及遗留 | [阶段收束](../plans/reference/M0_M7_PROJECT_CONSOLIDATION_20261006.md)、[M6 批准书](../plans/reference/M6_SCOPE_EXCLUSION_APPROVAL_20261006.md) |
@@ -26,11 +26,11 @@
 | `seed/`、`seed_platform/`、`api/` | 产品运行时、平台路径和接口 | 与内核分层维护 |
 | `taiji-harness/` | web/桌面产品及打包，独立 pnpm workspace | 遵循内部 AGENTS.md |
 | `neuroplex/` | 历史兼容实现及回归涉及的代码 | 保留兼容，不因旧名称批量删除 |
-| `instruments/`、`scripts/`、`tests/` | 仪器、可复用任务和测试 | 可复用脚本留在 scripts，历史脚本已有 archive/legacy 分区 |
+| `instruments/`、`scripts/`、`tests/` | 仪器、可复用任务与测试 | 活跃 `N31–N38` 脚本留在 `scripts/training/`，`≤N30` 历史脚本归入 `scripts/archive/legacy_n1_n30/` |
 | `plans/active/` | 根需求、架构、活动调度 | 当前执行以 03 为准 |
 | `plans/reference/` | 预注册、批准书、判读、专题评估 | 文件日期是证据时点，不自动等于失效 |
 | `plans/archive/` | 历史计划与被替代设计 | 保留追溯，旧下一步不生效 |
-| `reports/` | 新入库机器报告唯一入口，旧散落报告归并至 legacy/ | [报告导航](../reports/README.md) |
+| `reports/` | 活跃 `N31–N38` 机器报告与 `_gate_*.log` | `≤N30` 历史报告归入 `reports/archive/legacy_n1_n30/` 与 `reports/legacy/` |
 | `design/` | 品牌资产及生成工具 | 与研究报告分开 |
 | `artifacts/` | 历史本地诊断状态 | 不新增入库报告，现有数据保留 |
 | `output/` | 历史运行输出、截图和人工验收资产 | 不再新增入库机器报告 |

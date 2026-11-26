@@ -5,8 +5,8 @@ from pathlib import Path
 
 import pytest
 import torch
-
 from scripts.training.migrate_taiji_f1_checkpoint import migrate_checkpoint
+
 from taiji import (
     DevelopmentalSynapseBundle,
     Taiji,

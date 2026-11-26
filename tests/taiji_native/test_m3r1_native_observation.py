@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 import torch
-
 from scripts.training.eval_taiji_m3r1_native_observation import (
     _schema,
     build_course,
     run_gate,
 )
+
 from taiji import WorkbenchObservation
 
 

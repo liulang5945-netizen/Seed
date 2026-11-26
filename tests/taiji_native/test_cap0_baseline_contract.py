@@ -13,7 +13,6 @@ from pathlib import Path
 import pytest
 import torch
 from _report_leaves import leaves, tail  # tests/taiji_native/_report_leaves.py
-
 from scripts.training.eval_taiji_cap0_baseline import (
     DRIVEN_DIMENSIONS,
     NOT_EXECUTED_DIMENSIONS,
@@ -443,6 +442,7 @@ def test_the_constrained_decode_patch_installs_against_the_current_model() -> No
     """
 
     from scripts.training.probe_taiji_cap0_byte_output import install_constrained_decode
+
     from taiji.adapter import Taiji
 
     original = Taiji.generate
@@ -1029,6 +1029,7 @@ def test_every_ablation_target_resolves_on_a_real_model_at_its_recorded_shape() 
     """
 
     from scripts.training.eval_taiji_cap0_baseline import A05_ABLATION_TARGETS, _resolve_leaf
+
     from seed import Seed, SeedConfig
 
     sealed = json.loads(HEALTH_REPORT_V4.read_text(encoding="utf-8"))
@@ -1421,8 +1422,9 @@ def test_treated_arm_mounts_the_circuit_on_every_load(monkeypatch, capsys) -> No
 
     import types
 
-    import api.seed_runtime as sr
     from scripts.training.eval_taiji_cap0_baseline import RESET_MARKER, _run_item_child
+
+    import api.seed_runtime as sr
 
     mounts: list[str] = []
 

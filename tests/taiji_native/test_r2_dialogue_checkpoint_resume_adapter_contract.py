@@ -2,7 +2,6 @@ import hashlib
 import json
 
 import pytest
-
 from scripts.training.run_taiji_r2_checkpoint_resume_adapter import verify_receipt_ancestry
 from scripts.training.run_taiji_r2_daily_dialogue_continuation_extension import Refuse
 

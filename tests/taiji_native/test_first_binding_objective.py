@@ -4,14 +4,14 @@ import itertools
 
 import pytest
 import torch
-
 from scripts.training.evidence_a_learner_22_5 import fresh_optimizer
-from scripts.training.first_a_support_22_5 import make_model
 from scripts.training.first_binding_objective_22_5 import add_gradients, quad_terms
 from scripts.training.paired_compute_22_5 import shadow_optimizer
 from scripts.training.paired_world_22_5 import build_partition
 from scripts.training.probe_first_binding_22_5 import interaction, select_cells
 from scripts.training.task_history_loss_22_5 import history_loss
+
+from scripts.training.first_a_support_22_5 import make_model
 from taiji.u2_evidence_subject import EvidenceSubject
 from taiji.u2_history import assert_values_equal, value_digest
 from taiji.u2_task_goal import ActiveQuerySubject

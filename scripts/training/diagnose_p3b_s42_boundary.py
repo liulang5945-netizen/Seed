@@ -28,6 +28,7 @@ from scripts.training.eval_taiji_interaction_group_multifamily import (  # noqa:
     _build_corpus,
     _evaluator,
 )
+
 from taiji.interaction_group_learning import InteractionGroupUtilityLearner  # noqa: E402
 
 MINIMUM_UTILITY = 0.0

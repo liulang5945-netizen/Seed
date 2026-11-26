@@ -4,6 +4,7 @@ import copy
 
 import pytest
 import torch
+from scripts.training.paired_world_22_5 import build_partition
 
 from scripts.training import calibrate_content_credit_22_5 as auxiliary
 from scripts.training import calibrate_first_round_22_5 as original
@@ -13,7 +14,6 @@ from scripts.training.first_round_baseline_22_5 import (
     loss_and_logits,
     make_batch,
 )
-from scripts.training.paired_world_22_5 import build_partition
 from taiji.u2_history import assert_values_equal
 
 

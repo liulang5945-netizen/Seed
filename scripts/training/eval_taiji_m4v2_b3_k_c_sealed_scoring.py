@@ -34,6 +34,7 @@ from scripts.training.eval_taiji_m4v2_r6_k_worker_attachment_preflight import ( 
     _parent,
     _restore_worker,
 )
+
 from scripts.training.eval_taiji_m5_k2_multistep_composition import (  # noqa: E402
     _build_workspace,
     _episode,

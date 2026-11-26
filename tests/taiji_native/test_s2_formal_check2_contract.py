@@ -7,9 +7,9 @@ import json
 from typing import Any, cast
 
 import pytest
+from scripts.training.first_a_support_22_5_v2 import generate_examples as generate_v2
 
 from scripts.training import run_s2_formal_check2_20261120 as runner
-from scripts.training.first_a_support_22_5_v2 import generate_examples as generate_v2
 from taiji.u2_22_5_pipeline import DEFAULT_TEMPLATES, build_b_items
 
 
@@ -55,7 +55,12 @@ def make_seed_row(
         "child_d_raw_hits": [i < d_child_truth for i in range(n_b)],
         "raw_mod_collisions": 12,
         "cut_record_organ_b_correct": cut_b,
-        "overwrite_probe": {"n": 24, "a_before": 24, "a_after": 24 - int(round(probe_drop * 24)), "drop": probe_drop},
+        "overwrite_probe": {
+            "n": 24,
+            "a_before": 24,
+            "a_after": 24 - int(round(probe_drop * 24)),
+            "drop": probe_drop,
+        },
         "parent_bit_identical": bit_id,
         "optional_reports": {"multi_record_b": "not_run", "superseding_b": "not_run"},
     }
@@ -65,7 +70,9 @@ def test_distinct_entity_pairing_never_collides_on_fit() -> None:
     fit = generate_v2("fit", 32)
     items = build_b_items(fit, templates=DEFAULT_TEMPLATES[:2])
     for idx, item in enumerate(items):
-        _, rec_b, rec_d, rec_d2, _, _, _ = runner._records_distinct(items, idx, DEFAULT_TEMPLATES[:2])
+        _, rec_b, rec_d, rec_d2, _, _, _ = runner._records_distinct(
+            items, idx, DEFAULT_TEMPLATES[:2]
+        )
         assert rec_d.raw != item["records"][idx % 2]
         assert rec_d2.raw != rec_b.raw
         assert rec_d2.raw != rec_d.raw
@@ -76,15 +83,25 @@ def test_formal_check2_exit_order_and_strict_d() -> None:
     assert crit["d_reference"] == "parent_a_truth"
     assert runner.classify([make_seed_row()], crit)[0] == "joint_gate_check2_pass"
     assert runner.classify([make_seed_row(bit_id=False)], crit)[0] == "engineering_failure"
-    assert runner.classify([make_seed_row(probe_drop=0.0)], crit)[0] == "retention_gate_not_failable"
+    assert (
+        runner.classify([make_seed_row(probe_drop=0.0)], crit)[0] == "retention_gate_not_failable"
+    )
     assert runner.classify([make_seed_row(cut_b=5)], crit)[0] == "causal_control_failure"
-    assert runner.classify([make_seed_row(a_child=150, a_parent=192)], crit)[0] == "retention_breach"
+    assert (
+        runner.classify([make_seed_row(a_child=150, a_parent=192)], crit)[0] == "retention_breach"
+    )
     assert (
         runner.classify([make_seed_row(d_child_truth=120, d_parent_a_truth=144)], crit)[0]
         == "d_backoff_breach"
     )
-    assert runner.classify([make_seed_row(b_correct=144, frozen_b_correct=144)], crit)[0] == "learning_gain_absent"
-    assert runner.classify([make_seed_row(b_correct=100, frozen_b_correct=0)], crit)[0] == "correction_absent"
+    assert (
+        runner.classify([make_seed_row(b_correct=144, frozen_b_correct=144)], crit)[0]
+        == "learning_gain_absent"
+    )
+    assert (
+        runner.classify([make_seed_row(b_correct=100, frozen_b_correct=0)], crit)[0]
+        == "correction_absent"
+    )
 
 
 def test_contract_frozen_pins_and_exposure_guards() -> None:

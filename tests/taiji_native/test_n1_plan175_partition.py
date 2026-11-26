@@ -1,9 +1,9 @@
 """Exercise isolation and deterministic selection before any body access."""
 
 import pytest
+from scripts.training.partition_taiji_n1_plan175_metadata import partition
 
 from scripts.training.audit_taiji_n1_plan175_train_quality import check_chain
-from scripts.training.partition_taiji_n1_plan175_metadata import partition
 
 
 def source():

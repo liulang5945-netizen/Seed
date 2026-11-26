@@ -3,9 +3,9 @@
 from __future__ import annotations
 
 import torch
+from scripts.training.paired_world_22_5 import public_example
 from torch import nn
 
-from scripts.training.paired_world_22_5 import public_example
 from taiji.u2_operators import utf8_mask
 from taiji.utf8_state import advance_utf8
 

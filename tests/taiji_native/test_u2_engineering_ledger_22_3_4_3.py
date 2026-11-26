@@ -6,7 +6,6 @@ import json
 from pathlib import Path
 
 import pytest
-
 from scripts.training.u2_attempt_ledger_22_3_4_3 import (
     AttemptLedger,
     AuthorizationError,

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from scripts.training.eval_taiji_a3_workspace import build_corpus
+
 from taiji import WorkspaceCollaborationEvaluator
 
 

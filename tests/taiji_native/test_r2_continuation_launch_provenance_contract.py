@@ -3,7 +3,6 @@ import json
 from types import SimpleNamespace
 
 import pytest
-
 import scripts.training.validate_taiji_r2_continuation_launches as provenance
 from scripts.training.validate_taiji_r2_continuation_endpoint import EndpointRefuse
 from scripts.training.validate_taiji_r2_continuation_launches import (

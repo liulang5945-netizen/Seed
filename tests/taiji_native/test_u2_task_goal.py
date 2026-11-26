@@ -2,13 +2,13 @@
 
 import pytest
 import torch
-
 from scripts.training.evidence_a_learner_22_5 import fresh_optimizer
-from scripts.training.first_a_support_22_5 import accept, make_model, output
 from scripts.training.paired_episode_22_5 import episode_loss
 from scripts.training.paired_world_22_5 import build_partition
 from scripts.training.task_goal_learner_22_5 import fork_with_optimizer, load_learner, save_learner
 from scripts.training.task_history_loss_22_5 import history_loss
+
+from scripts.training.first_a_support_22_5 import accept, make_model, output
 from taiji.u2_evidence_subject import EvidenceSubject
 from taiji.u2_history import assert_values_equal, value_digest
 from taiji.u2_task_goal import (
