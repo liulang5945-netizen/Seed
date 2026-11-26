@@ -1,0 +1,307 @@
+{
+  "schema": "taiji-n34-5-01-v1",
+  "card": "N34.5.01",
+  "design": "DESIGN-N34-5-01_20261126.md",
+  "created_utc": "2026-11-26T04:15:32.210495+00:00",
+  "smoke": false,
+  "train_seeds": [
+    6801,
+    6802,
+    6803
+  ],
+  "per_seed": {
+    "6801": {
+      "schema": "taiji-long-run-trained-v1",
+      "seed": 6801,
+      "durability": {
+        "sessions": 100,
+        "events": 10025,
+        "crash_recoveries": 10,
+        "unplanned_rescues": 0,
+        "chain_valid": true,
+        "chain_head": "1a5758f2716c7abf76dda2f8f1126694bb3278ae75ab53f86622cb4e6b6ba55a",
+        "record_digest": "67ffcdffea5e154b20e63ece60c2027d6c3b8d46afa3667d126528738ab55bff",
+        "resolved_pending": 25,
+        "sealed_blocks": 2
+      },
+      "chinese": {
+        "train": {
+          "mean_step_acc": 0.9659,
+          "coref_acc": 0.958,
+          "episode_success": 0.85
+        },
+        "heldout": {
+          "mean_step_acc": 0.9724,
+          "coref_acc": 0.9758,
+          "episode_success": 0.875
+        }
+      },
+      "physics": {
+        "in_family": {
+          "n": 4800,
+          "accuracy": 0.9737,
+          "collision_recall": 0.9923,
+          "collision_count": 1039,
+          "macro_f1": 0.9437,
+          "per_class_recall": {
+            "向右滑动": 0.9959,
+            "向左滑动": 0.9896,
+            "停下": 0.7619,
+            "碰撞": 0.9923,
+            "无变化": 0.8822
+          }
+        },
+        "cross_family": {
+          "n": 4800,
+          "accuracy": 0.9579,
+          "collision_recall": 0.9725,
+          "collision_count": 1237,
+          "macro_f1": 0.8978,
+          "per_class_recall": {
+            "向右滑动": 0.9841,
+            "向左滑动": 0.9712,
+            "停下": 0.7099,
+            "碰撞": 0.9725,
+            "无变化": 0.9001
+          }
+        },
+        "barrier_ablation": {
+          "full_collision_recall": 0.9725,
+          "ablated_collision_recall": 0.0,
+          "collision_recall_drop": 0.9725
+        }
+      },
+      "growth": {
+        "final_hidden": 32,
+        "growth_events": 1,
+        "grew_session": 22,
+        "birth_perturbation": 9.5367431640625e-07,
+        "dormancy_drop": 0.9990230202674866,
+        "wake_diff": 0.0,
+        "p1_before_acc": 1.0,
+        "p1_after_acc": 0.999,
+        "p1_retention_drop": 0.000977,
+        "p2_acc": 0.999
+      },
+      "credibility": {
+        "brier_beta": 0.1591,
+        "brier_static": 0.1915,
+        "delta_brier": -0.0324,
+        "post_abs_beta": 0.3136,
+        "post_abs_static": 0.3655,
+        "delta_post_abs": -0.0519,
+        "final_forum_cred": 0.7961
+      },
+      "uncertainty": {
+        "coupled_ece": 0.0085,
+        "coupled_brier": 0.029,
+        "brier_vs_static": -0.221,
+        "n_eval_samples": 781,
+        "mean_acc": 0.9667
+      },
+      "cpu": 33.41
+    },
+    "6802": {
+      "schema": "taiji-long-run-trained-v1",
+      "seed": 6802,
+      "durability": {
+        "sessions": 100,
+        "events": 10025,
+        "crash_recoveries": 10,
+        "unplanned_rescues": 0,
+        "chain_valid": true,
+        "chain_head": "45d7644a885c8315ddda5d453668f4e88097552b7885936ff08a69ff0f905d35",
+        "record_digest": "52572031d3b076d2cc7d25e60ed524bc03baeb258efc28a989383017fa7cbe43",
+        "resolved_pending": 25,
+        "sealed_blocks": 2
+      },
+      "chinese": {
+        "train": {
+          "mean_step_acc": 0.9773,
+          "coref_acc": 0.9664,
+          "episode_success": 0.9
+        },
+        "heldout": {
+          "mean_step_acc": 0.9779,
+          "coref_acc": 0.9677,
+          "episode_success": 0.9
+        }
+      },
+      "physics": {
+        "in_family": {
+          "n": 4800,
+          "accuracy": 0.9652,
+          "collision_recall": 0.9881,
+          "collision_count": 1008,
+          "macro_f1": 0.9356,
+          "per_class_recall": {
+            "向右滑动": 0.9794,
+            "向左滑动": 0.9846,
+            "停下": 0.7925,
+            "碰撞": 0.9881,
+            "无变化": 0.8842
+          }
+        },
+        "cross_family": {
+          "n": 4800,
+          "accuracy": 0.9465,
+          "collision_recall": 0.9791,
+          "collision_count": 1100,
+          "macro_f1": 0.8926,
+          "per_class_recall": {
+            "向右滑动": 0.9497,
+            "向左滑动": 0.9597,
+            "停下": 0.8067,
+            "碰撞": 0.9791,
+            "无变化": 0.8894
+          }
+        },
+        "barrier_ablation": {
+          "full_collision_recall": 0.9791,
+          "ablated_collision_recall": 0.0,
+          "collision_recall_drop": 0.9791
+        }
+      },
+      "growth": {
+        "final_hidden": 32,
+        "growth_events": 1,
+        "grew_session": 22,
+        "birth_perturbation": 4.76837158203125e-07,
+        "dormancy_drop": 0.9970700144767761,
+        "wake_diff": 0.0,
+        "p1_before_acc": 1.0,
+        "p1_after_acc": 1.0,
+        "p1_retention_drop": 0.0,
+        "p2_acc": 0.9971
+      },
+      "credibility": {
+        "brier_beta": 0.1458,
+        "brier_static": 0.1801,
+        "delta_brier": -0.0344,
+        "post_abs_beta": 0.2876,
+        "post_abs_static": 0.3543,
+        "delta_post_abs": -0.0666,
+        "final_forum_cred": 0.8011
+      },
+      "uncertainty": {
+        "coupled_ece": 0.0322,
+        "coupled_brier": 0.047,
+        "brier_vs_static": -0.203,
+        "n_eval_samples": 781,
+        "mean_acc": 0.9488
+      },
+      "cpu": 16.31
+    },
+    "6803": {
+      "schema": "taiji-long-run-trained-v1",
+      "seed": 6803,
+      "durability": {
+        "sessions": 100,
+        "events": 10025,
+        "crash_recoveries": 10,
+        "unplanned_rescues": 0,
+        "chain_valid": true,
+        "chain_head": "d06d8b23e3c6d45b2033e32da627cb96b46156f0477ea1795f99bee7e599f2af",
+        "record_digest": "d7f4b783fdbe5260bd61da8d5fd0fc6b5fc7fdbe387bc6127af4d41c73464017",
+        "resolved_pending": 25,
+        "sealed_blocks": 2
+      },
+      "chinese": {
+        "train": {
+          "mean_step_acc": 0.9943,
+          "coref_acc": 0.9916,
+          "episode_success": 0.975
+        },
+        "heldout": {
+          "mean_step_acc": 0.989,
+          "coref_acc": 0.9839,
+          "episode_success": 0.95
+        }
+      },
+      "physics": {
+        "in_family": {
+          "n": 4800,
+          "accuracy": 0.9667,
+          "collision_recall": 0.9884,
+          "collision_count": 1036,
+          "macro_f1": 0.9344,
+          "per_class_recall": {
+            "向右滑动": 0.9886,
+            "向左滑动": 0.9953,
+            "停下": 0.8306,
+            "碰撞": 0.9884,
+            "无变化": 0.765
+          }
+        },
+        "cross_family": {
+          "n": 4800,
+          "accuracy": 0.9535,
+          "collision_recall": 0.977,
+          "collision_count": 1215,
+          "macro_f1": 0.8928,
+          "per_class_recall": {
+            "向右滑动": 0.9865,
+            "向左滑动": 0.9399,
+            "停下": 0.837,
+            "碰撞": 0.977,
+            "无变化": 0.8934
+          }
+        },
+        "barrier_ablation": {
+          "full_collision_recall": 0.977,
+          "ablated_collision_recall": 0.0,
+          "collision_recall_drop": 0.977
+        }
+      },
+      "growth": {
+        "final_hidden": 32,
+        "growth_events": 1,
+        "grew_session": 22,
+        "birth_perturbation": 2.384185791015625e-07,
+        "dormancy_drop": 0.9990230202674866,
+        "wake_diff": 0.0,
+        "p1_before_acc": 1.0,
+        "p1_after_acc": 1.0,
+        "p1_retention_drop": 0.0,
+        "p2_acc": 0.999
+      },
+      "credibility": {
+        "brier_beta": 0.1485,
+        "brier_static": 0.1811,
+        "delta_brier": -0.0326,
+        "post_abs_beta": 0.3004,
+        "post_abs_static": 0.3617,
+        "delta_post_abs": -0.0613,
+        "final_forum_cred": 0.7906
+      },
+      "uncertainty": {
+        "coupled_ece": 0.0134,
+        "coupled_brier": 0.0298,
+        "brier_vs_static": -0.2202,
+        "n_eval_samples": 781,
+        "mean_acc": 0.9667
+      },
+      "cpu": 16.39
+    }
+  },
+  "checks": {
+    "g1_durability_and_recovery": true,
+    "g2_chinese_endurance": true,
+    "g3_physics_causal_endurance": true,
+    "g4_plastic_growth_retention": true,
+    "g5_credibility_drift_tracking": true,
+    "g6_coupled_uncertainty_calibration": true,
+    "g7_reproducibility": true
+  },
+  "exit": "long_run_joint_positive",
+  "cost": {
+    "cpu": 66.11,
+    "cap_cpu": 160.0
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "oracle_used_by_subject": false
+  }
+}

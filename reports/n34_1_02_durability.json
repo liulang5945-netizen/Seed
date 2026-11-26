@@ -2,7 +2,7 @@
   "schema": "taiji-n34-1-02-v1",
   "card": "N34.1.02",
   "design": "DESIGN-N34-1-02_20261126.md",
-  "created_utc": "2026-11-26T04:02:58.933743+00:00",
+  "created_utc": "2026-11-26T04:21:49.680871+00:00",
   "sessions": 100,
   "events": 10030,
   "crash_points": [
@@ -28,7 +28,7 @@
   },
   "exit": "durability_ready",
   "cost": {
-    "cpu": 2.44,
+    "cpu": 2.69,
     "cap_cpu": 20.0
   },
   "discipline": {
