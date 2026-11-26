@@ -70,7 +70,7 @@
 
 ## 6. 下一步建议
 
-1. N34 已完整收口且 `NCH.3.04` 已取得开放中文探索 `signal_positive`；请阅 [MEMO-N35-ADMISSION-DECISION](MEMO-N35-ADMISSION-DECISION_20261126.md) 书面签发 **`N35` 准入**、新确认 seed（建议 `20261901–03 / 1911–13`）与 `check` 策略；
+1. **`NCH.3` 探索线已暂停**（累计 `2,490.72 / 2,500.0 CPU`，D-678）；请阅 [MEMO-N35-SCOPE-REEVAL](MEMO-N35-SCOPE-REEVAL_20261126.md) 在 `B1 / B2 / B3` 中裁定 `N35` 后续口径（备用 `20261911–13` 未读，零 `check/final`）；
 2. 若继续补开放真实物理感知闭环，可先开真实传感器/执行器探索卡。
 
 零 check/final；不签 24-S/25-S/29/final/C/D/J。

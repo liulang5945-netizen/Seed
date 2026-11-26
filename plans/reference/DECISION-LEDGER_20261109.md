@@ -10636,3 +10636,8 @@ eports/n33_1_01_sim.json；CPU 0.02/20。
 
 **1. 实测**（[DESIGN-NCH-3-06](DESIGN-NCH-3-06_20261126.md) / [RESULT-NCH-3-06](RESULT-NCH-3-06_20261126.md)，`reports/nch_3_06_open_chinese_v5.json`，探索 seed `7101–7103`）：`c0 / g4 / g5`（含 `weights_exact=true ∧ store_roundtrip_exact=true`）通过，但 `train_seen`（`0.7833–0.8000`）、`heldout_paraphrase`（`0.6667–0.6917`，`coref 0.5556–0.5741`）与 `heldout_oov_entities`（`0.6000–0.7417`）均未过，单 seed `145.25–151.92 CPU`。
 **2. 后继**：**不预注册 `N35.1.91`**，备用确认 seed `20261911–13` 严格未读；`NCH.3` 线累计 `2,490.72 / 2,500.0 CPU`（已近满额）。
+
+### D-20261126-678 owner 批复「B」：暂停 `NCH.3` 探索线并重估 `N35` 口径（零训练）
+
+**1. 裁定**：owner 选「B」，正式暂停 `NCH.3` 探索线（停于 `2,490.72 / 2,500.0 CPU`），不再消耗开放中文探索算力；备用确认 seed `20261911–13` 严格未读，`check/final` 保持 `0` 读取。
+**2. 落盘**：起草 [MEMO-N35-SCOPE-REEVAL](MEMO-N35-SCOPE-REEVAL_20261126.md)，基于 `N34.5.90` ＋ `N34.9.90` ＋ `N33` 呈报 `B1`（有界重定口径 `N35` → 单包 `check`）／`B2`（有界收束 `N35`）／`B3`（冻结原 `SCORECARD-N35` 暂停）三选一待 owner 裁定。

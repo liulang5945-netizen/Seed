@@ -443,6 +443,7 @@ N32 主训练骨干为 `taiji-gru-rt-v2`（D-20261124-496）；成绩单为 `pla
 |---|---|---|
 | **N35.0.00** | N35 准入生效＋`R0` 成绩单冻结＋确认 seed 注册 | **已生效**（[N35-ADMISSION](../reference/N35-ADMISSION_20261126.md) / [SCORECARD-N35](../reference/SCORECARD-N35_20261126.md)；D-671/672） |
 | **N35.1.90** | 同主体六模块联合确认（`20261901–03`，帽 `650.0 CPU`，零 `check/final`） | **`engineering_failure`**（`650.03/650 CPU`：`20261903` 第 666/720 步超时且 `20261901` 未过 `R0-1` `coref=0.6250<0.70`；`20261901–03` 作废，备 `20261911–13` 未读；[DESIGN-N35-1-90](../reference/DESIGN-N35-1-90_20261126.md) / [RESULT-N35-1-90](../reference/RESULT-N35-1-90_20261126.md)；D-673/674） |
+| **MEMO-N35-REEVAL** | 暂停 `NCH.3` 线并重估 `N35` 联合确认口径（`B1 / B2 / B3`） | **待 owner 裁定**（[MEMO-N35-SCOPE-REEVAL](../reference/MEMO-N35-SCOPE-REEVAL_20261126.md)，D-678） |
 
 ## 4. 落盘状态（D-20261124-464）
 

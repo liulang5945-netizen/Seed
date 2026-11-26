@@ -34,6 +34,7 @@
 | **N35 准入备忘** | [MEMO-N35-ADMISSION-DECISION](../reference/MEMO-N35-ADMISSION-DECISION_20261126.md) | 模型级联合确认＋首次 `check` 准入四项签字决策（D-20261126-670） |
 | **N35 准入（已生效）** | [N35-ADMISSION](../reference/N35-ADMISSION_20261126.md)、[SCORECARD-N35](../reference/SCORECARD-N35_20261126.md) | owner 批复方案 A；确认 seed `20261901–03`；`R0` 成绩单冻结（D-20261126-671） |
 | **N35.1.90 联合确认** | [DESIGN-N35-1-90](../reference/DESIGN-N35-1-90_20261126.md)、[RESULT-N35-1-90](../reference/RESULT-N35-1-90_20261126.md) | `engineering_failure`（`650.03/650 CPU`：`20261903` 超时且 `20261901` 未过 `R0-1` `coref=0.6250<0.70`；`20261901–03` 作废，备 `20261911–13` 未读；D-20261126-673/674） |
+| **N35 口径重估** | [MEMO-N35-SCOPE-REEVAL](../reference/MEMO-N35-SCOPE-REEVAL_20261126.md) | 暂停 `NCH.3` 探索线（`2,490.72/2,500 CPU`），呈报 `B1 / B2 / B3` 待裁定（D-20261126-678） |
 | 双任务主体循环 | [DESIGN-SUB-1-02](../reference/DESIGN-SUB-1-02_20261126.md) | 中文＋物理交替集成冒烟（零训练 `mixed_loop_ready`；D-20261126-622） |
 | N34 准入备忘 | [MEMO-N34-ADMISSION-DECISION](../reference/MEMO-N34-ADMISSION-DECISION_20261126.md) | 四项签字解锁/建议值/风险（D-20261126-623） |
 | N34 就绪包 | [READY-N34](../reference/READY-N34_20261126.md) | 一键复验全部零训练资产（`bundle_ready`，11/11；D-20261126-624） |
