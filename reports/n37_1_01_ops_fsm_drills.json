@@ -1,0 +1,37 @@
+{
+  "schema": "taiji-n37-1-01-v1",
+  "card": "N37.1.01",
+  "design": "DESIGN-N37-1-01_20261126.md",
+  "scope": "bounded_closed_vocab_and_multimodule_v1",
+  "created_utc": "2026-11-26T11:42:42.060878+00:00",
+  "smoke": false,
+  "delivery_seed": 6801,
+  "bundle_summary": {
+    "initial_sessions": 100,
+    "parameter_count": 53861,
+    "shadow_accept_gain": 0.015119,
+    "shadow_accept_retention_drop": 0.0,
+    "shadow_reject_retention_drop": 0.9565,
+    "transitions_count": 19,
+    "consequence_ledger_count": 3
+  },
+  "checks": {
+    "o1_fsm_transition_graph": true,
+    "o2_three_tier_change_routing": true,
+    "o3_shadow_upgrade_accept_and_recalibrate": true,
+    "o4_shadow_reject_rollback_and_waiting": true,
+    "o5_restricted_guard_and_recovery": true,
+    "o6_retirement_archival_verification": true
+  },
+  "exit": "ops_state_machine_ready",
+  "cost": {
+    "cpu": 23.22,
+    "cap_cpu": 100.0
+  },
+  "discipline": {
+    "check_reads": 0,
+    "final_reads": 0,
+    "confirm_reads": 0,
+    "oracle_used_by_subject": false
+  }
+}

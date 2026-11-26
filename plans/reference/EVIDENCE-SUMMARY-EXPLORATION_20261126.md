@@ -71,7 +71,7 @@
 
 ## 6. 下一步建议
 
-1. **`N35` 已正式收口**（[CLOSEOUT-N35](CLOSEOUT-N35_20261126.md)，D-682）；**`N36.1.01` 有界交付/接管包已就绪**（[RESULT-N36-1-01](RESULT-N36-1-01_20261126.md)，D-683/684：`D1..D5` 5/5 过，`23.06/100 CPU`，零 `check/final`）；
+1. **有界主线已完整收口**：`N35`（[CLOSEOUT-N35](CLOSEOUT-N35_20261126.md)，D-682）→ `N36`（[CLOSEOUT-N36](CLOSEOUT-N36_20261126.md)，D-685）→ `N37`（[CLOSEOUT-N37](CLOSEOUT-N37_20261126.md)，D-688：`O1..O6` 6/6 过，`23.22/100 CPU`，零 `check/final`）；
 2. 若继续补开放真实物理感知闭环，可先开真实传感器/执行器探索卡。
 
 零 check/final；不签 24-S/25-S/29/final/C/D/J。

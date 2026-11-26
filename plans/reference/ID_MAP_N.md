@@ -447,12 +447,21 @@ N32 主训练骨干为 `taiji-gru-rt-v2`（D-20261124-496）；成绩单为 `pla
 | **N35.1.91** | 方案 B1 有界联合确认（`20261911–13`，帽 `450 CPU`，零 `check/final`） | **`confirm_partial`**（`294.30/450 CPU`，8/9 门 3/3 过，仅 `R0-B1-7` `20261913` `c0` 差 `0.0081`；`20261911–13` 作废；[SCORECARD-N35-B1](../reference/SCORECARD-N35-B1_20261126.md) / [DESIGN-N35-1-91](../reference/DESIGN-N35-1-91_20261126.md) / [RESULT-N35-1-91](../reference/RESULT-N35-1-91_20261126.md)；D-679..681） |
 | **CLOSEOUT-N35** | N35 阶段正式收束卡 | **已正式收口**（[CLOSEOUT-N35](../reference/CLOSEOUT-N35_20261126.md)，D-682；`944.33/1,500 CPU`，零 `check/final`） |
 
-### 3.34 N36 有界可运行交付/接管包（D-20261126-683/684）
+### 3.34 N36 有界可运行交付/接管包（D-20261126-683..685）
 
 | 卡 | 内容 | 状态 |
 |---|---|---|
 | **N36.0.00** | N36 有界准入生效（`bounded_closed_vocab_and_multimodule_v1`） | **已生效**（[N36-ADMISSION](../reference/N36-ADMISSION_20261126.md)，D-683） |
 | **N36.1.01** | 有界交付运行时、用户接管 CLI 与 5 类故障演练（`D1..D5`） | **`delivery_package_ready`**（`23.06/100 CPU`，4/4 单测，零确认 seed/`check`/`final`；[DESIGN-N36-1-01](../reference/DESIGN-N36-1-01_20261126.md) / [RESULT-N36-1-01](../reference/RESULT-N36-1-01_20261126.md)，D-684） |
+| **CLOSEOUT-N36** | 中文接管与故障操作手册＋N36 有界收口 | **已收口**（[HANDBOOK-N36-BOUNDED-TAKEOVER](../reference/HANDBOOK-N36-BOUNDED-TAKEOVER_20261126.md) / [CLOSEOUT-N36](../reference/CLOSEOUT-N36_20261126.md)，D-685） |
+
+### 3.35 N37 有界运营状态机（`§15`，D-20261126-686..688）
+
+| 卡 | 内容 | 状态 |
+|---|---|---|
+| **N37.0.00** | N37 有界准入生效（`bounded_closed_vocab_and_multimodule_v1`） | **已生效**（[N37-ADMISSION](../reference/N37-ADMISSION_20261126.md)，D-686） |
+| **N37.1.01** | 8 态运营状态机、6 步日常影子升级、3 层变更分流、`Restricted`/退役归档演练（`O1..O6`） | **`ops_state_machine_ready`**（`23.22/100 CPU`，3/3 单测，零确认 seed/`check`/`final`；[DESIGN-N37-1-01](../reference/DESIGN-N37-1-01_20261126.md) / [RESULT-N37-1-01](../reference/RESULT-N37-1-01_20261126.md)，D-687） |
+| **CLOSEOUT-N37** | N37 有界运营状态机收口 | **已收口**（[CLOSEOUT-N37](../reference/CLOSEOUT-N37_20261126.md)，D-688） |
 
 ## 4. 落盘状态（D-20261124-464）
 

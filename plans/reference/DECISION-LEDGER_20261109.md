@@ -10667,3 +10667,19 @@ eports/n33_1_01_sim.json；CPU 0.02/20。
 ### D-20261126-684 N36.1.01 有界交付/接管包演练通过：**`delivery_package_ready`**（23.06/100.0 CPU）
 
 **1. 交付与实测**（[RESULT-N36-1-01](RESULT-N36-1-01_20261126.md)，`reports/n36_1_01_delivery_drills.json`）：落地 `taiji/bounded_delivery_runtime.py` ＋ `scripts/taiji_n36_takeover.py` ＋ `tests/test_n36_bounded_delivery_20261126.py`（4/4 PASS）；`D1..D5` 5 类演练（fail-closed 完整性、跨进程复现、崩溃恢复、生命周期/回滚、`check/final` 封存与消融真实性）`5/5` 通过，零确认 seed、零 `check/final`。
+
+### D-20261126-685 N36 阶段有界收口（[CLOSEOUT-N36](CLOSEOUT-N36_20261126.md)；零 `check/final`）
+
+**1. 落盘**：补齐 `§4.4` 资产⑥ [HANDBOOK-N36-BOUNDED-TAKEOVER](HANDBOOK-N36-BOUNDED-TAKEOVER_20261126.md)（中文接管命令、边界说明与 5 类故障恢复规程）与 [CLOSEOUT-N36](CLOSEOUT-N36_20261126.md)，正式收口有界 `N36`（`23.06/100.0 CPU`，明确披露 24h 现场试运行与 `check/final` 未执行），解锁 `N37`。
+
+### D-20261126-686 准入 `N37` 有界运营状态机（`§15`，`<=100 CPU`；零 `check/final`）
+
+**1. 裁定**：基于 `N36` 有界收口，准入 `N37`（[N37-ADMISSION](N37-ADMISSION_20261126.md) / [DESIGN-N37-1-01](DESIGN-N37-1-01_20261126.md)），预注册 `O1..O6` 6 项运营状态机硬门，范围 `bounded_closed_vocab_and_multimodule_v1`，零确认 seed、零 `check/final`。
+
+### D-20261126-687 N37.1.01 有界运营状态机演练通过：**`ops_state_machine_ready`**（23.22/100.0 CPU）
+
+**1. 实测**（[RESULT-N37-1-01](RESULT-N37-1-01_20261126.md)，`reports/n37_1_01_ops_fsm_drills.json`）：落地 `taiji/operational_state_machine.py` ＋ `scripts/taiji_n37_ops.py` ＋ `tests/test_n37_operational_fsm_20261126.py`（3/3 PASS）；`O1..O6` 6/6 全过（8 态转移、3 层变更分流、`ecl_calibration` 影子接受 `gain=+0.015119`/`drop=0.0`、有害候选拒载回滚＋两连拒转 `Waiting`、`Restricted` 恢复、退役归档核验）。
+
+### D-20261126-688 N37 阶段有界收口（[CLOSEOUT-N37](CLOSEOUT-N37_20261126.md)；有界主线完整闭环）
+
+**1. 终态**：出具 [CLOSEOUT-N37](CLOSEOUT-N37_20261126.md) 正式收口 `N37`，至此有界主线 `≤N30 → N31 → N32 → N33 → N34 → N35 → N36 → N37` 完整闭环（零确认 seed、零 `check/final`）。
