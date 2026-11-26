@@ -30,6 +30,7 @@
 | 多模态物理设施 | [DESIGN-PHY-1-01](../reference/DESIGN-PHY-1-01_20261126.md) | 两族动力学＋三模态＋可纠正因果预测（零训练 `physics_ready`；D-20261126-621） |
 | 多模态学习线 | [RESULT-PHY-2-01](../reference/RESULT-PHY-2-01_20261126.md) | 跨族物理因果迁移 v2 探索正例（无泄露，碰撞召回 0.975–0.992；`multimodal_v2_positive`；D-20261126-652） |
 | 中文任务学习线 | [RESULT-NCH-2-01](../reference/RESULT-NCH-2-01_20261126.md) | 中文连续指代任务 v2 探索正例（跨回合 GRU vs 无状态；`chinese_continuous_v2_positive`；D-20261126-653） |
+| 开放中文探索线 | [DESIGN-NCH-3-01](../reference/DESIGN-NCH-3-01_20261126.md)、[RESULT-NCH-3-03](../reference/RESULT-NCH-3-03_20261126.md) | 开放自然中文连续任务设施（`open_env_ready`）与 `BiGRU+2×MHA` 探索部分信号（`signal_partial`；D-20261126-665..668） |
 | 双任务主体循环 | [DESIGN-SUB-1-02](../reference/DESIGN-SUB-1-02_20261126.md) | 中文＋物理交替集成冒烟（零训练 `mixed_loop_ready`；D-20261126-622） |
 | N34 准入备忘 | [MEMO-N34-ADMISSION-DECISION](../reference/MEMO-N34-ADMISSION-DECISION_20261126.md) | 四项签字解锁/建议值/风险（D-20261126-623） |
 | N34 就绪包 | [READY-N34](../reference/READY-N34_20261126.md) | 一键复验全部零训练资产（`bundle_ready`，11/11；D-20261126-624） |

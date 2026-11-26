@@ -2,7 +2,7 @@
   "schema": "taiji-unc-1-01-v1",
   "card": "UNC.1.01",
   "design": "DESIGN-UNC-1-01_20261126.md",
-  "created_utc": "2026-11-26T04:21:34.180942+00:00",
+  "created_utc": "2026-11-26T06:00:19.523158+00:00",
   "scenarios": {
     "perfect": {
       "ece": 0.0,
@@ -42,7 +42,7 @@
   },
   "exit": "calibration_ready",
   "cost": {
-    "cpu": 0.06,
+    "cpu": 0.05,
     "cap_cpu": 5.0
   },
   "discipline": {

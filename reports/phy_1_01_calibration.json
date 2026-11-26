@@ -2,7 +2,7 @@
   "schema": "taiji-phy-1-01-v1",
   "card": "PHY.1.01",
   "design": "DESIGN-PHY-1-01_20261126.md",
-  "created_utc": "2026-11-26T04:21:36.538753+00:00",
+  "created_utc": "2026-11-26T06:00:21.673128+00:00",
   "seeds": [
     200,
     259,

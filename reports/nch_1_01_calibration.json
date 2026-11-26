@@ -2,7 +2,7 @@
   "schema": "taiji-nch-1-01-v1",
   "card": "NCH.1.01",
   "design": "DESIGN-NCH-1-01_20261126.md",
-  "created_utc": "2026-11-26T04:21:29.406997+00:00",
+  "created_utc": "2026-11-26T06:00:15.195402+00:00",
   "task_version": "taiji-chinese-continuous-v1",
   "train_seeds": [
     4100,
@@ -115,7 +115,7 @@
   },
   "random_heldout": {
     "n_episodes": 40,
-    "mean_step_acc": 0.0994,
+    "mean_step_acc": 0.0807,
     "episode_success": 0.0,
     "mean_turns": 4.03,
     "per_seed": [

@@ -2,7 +2,7 @@
   "schema": "taiji-ecl-1-01-v1",
   "card": "ECL.1.01",
   "design": "DESIGN-ECL-1-01_20261126.md",
-  "created_utc": "2026-11-26T04:21:31.800911+00:00",
+  "created_utc": "2026-11-26T06:00:17.358259+00:00",
   "scenarios": 20,
   "checks": {
     "low_credibility_never_flips": true,

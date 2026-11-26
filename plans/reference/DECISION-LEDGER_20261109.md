@@ -10564,3 +10564,27 @@ eports/n33_1_01_sim.json；CPU 0.02/20。
 ### D-20261126-664 N34 阶段正式收口（`CLOSEOUT-N34_20261126.md`；零 `check/final`）
 
 **1. 终态**：`N34.1` 设施就绪＋`N34.9.90` 六轴（5 正例＋1 `parity`）＋`N34.5.90` 百会话同主体训练联合确认全部完成；N34 两批确认 seed（`20261801–03 / 20261811–13`）按规作废；`check/final` 仍 `0` 读取。待 owner 声明新 seed 与是否进入 `N35`（模型级联合确认／首次 `check`）或开放环境探索。
+
+
+---
+
+### D-20261126-665 NCH.3.01 开放自然中文连续任务设施校准：**`open_env_ready`**（0.11/10.0 CPU；零训练）
+
+**1. 卡与资产**：[DESIGN-NCH-3-01](DESIGN-NCH-3-01_20261126.md) / [RESULT-NCH-3-01](RESULT-NCH-3-01_20261126.md)；环境 `taiji/open_chinese_task_env.py`（`taiji-open-chinese-continuous-v1`）＋主体 `taiji/open_chinese_subject.py`＋单测 `tests/test_open_chinese_task_20261126.py`（5/5 PASS）；回执 `reports/nch_3_01_open_calibration.json`。
+**2. 读数**：全划分（`train_seen` 120×100、`heldout_paraphrase`、`heldout_oov_entities` 12×12 100% 汉字互斥、`simple_zh` 48 句真实语料干扰）oracle 全为 `1.0000`、随机查询 `0.0000–0.0250`、零答案泄露、`SessionStore` 往返逐位一致、约束解码 100% 合法 UTF-8。零确认 seed、零 `check/final`。
+
+### D-20261126-666 NCH.3.02 开放自然中文探索（诚实负结果与定位）：**`signal_negative`**（387.42/600.0 CPU）
+
+**1. 卡**：[DESIGN-NCH-3-02](DESIGN-NCH-3-02_20261126.md) / [RESULT-NCH-3-02](RESULT-NCH-3-02_20261126.md)；回执 `reports/nch_3_02_open_chinese_explore.json`。
+**2. 读数与诊断**（探索 seed `7101–7103`）：`c0_calibration` ∧ `g5_repro_and_persistence` 通过，`unknown_abstain` 已达 `0.7083–0.9583`，OOV 三重对照（`stateless / no_copy / shuffle`）已知 EM 均 `0.0000`（证实零泄露）；主臂 OOV 已知 EM 仅 `0.0625–0.1458`（`paraphrase` 查询 `0.5417–0.6167`）。归因为：① `logaddexp(GEN, COPY)` 在 20 地点字上放任 `byte_head` 记忆词表；② 解码器输入原始未见字嵌入分布外；③ 纯 BiGRU 缺少跨回合直接自注意力。保留负结果、推进 `NCH.3.03`。
+
+### D-20261126-667 NCH.3.03 开放自然中文探索 v2（`BiGRU+2×MHA`＋全 CJK 开放字池）：**`signal_partial`**（561.20/950.0 CPU）
+
+**1. 卡**：[DESIGN-NCH-3-03](DESIGN-NCH-3-03_20261126.md) / [RESULT-NCH-3-03](RESULT-NCH-3-03_20261126.md)；回执 `reports/nch_3_03_open_chinese_v2.json`（探索 seed `7101–7103`，保持与 `3.02` 完全一致硬门；零确认 seed/`check`/`final`）。
+**2. 读数**：
+  - **`c0_calibration` ∧ `g4_causal_and_open_controls` ∧ `g5_repro_and_persistence` 3/3 全过**：OOV 已知答案精确匹配跃升至 **`0.6250 / 0.6875 / 0.6562`**（`stateless / no_copy / history_shuffle` 三对照全 **`0.0000`**），未出场拒答 **`1.0000`**（3/3；`stateless = 0.0000`），真实 `simple_zh` 语料干扰查询 **`0.6500–0.7083`**（拒答 `1.0000`），`7101` 权重与 `SessionStore` 胶囊往返逐位一致；
+  - **`g1–g3` 未全过（记 `signal_partial`）**：`train_seen` `0.8917 / 0.8333 / 0.8667`、`heldout_paraphrase` `0.7250 / 0.7417 / 0.7250`（`coref 0.4815–0.5741`）、`heldout_oov_entities` `0.6917 / 0.7500 / 0.7000`。如实停线不降门。
+
+### D-20261126-668 NCH.3 探索线收束与全套门禁复验（保持 N34 已收口与 N35 待签状态不变）
+
+**1. 同步**：更新 [COVERAGE-MATRIX](COVERAGE-MATRIX_20261126.md)、[EVIDENCE-SUMMARY-EXPLORATION](EVIDENCE-SUMMARY-EXPLORATION_20261126.md)、[ID_MAP_N](ID_MAP_N.md) §3.32 与 [PLAN_INDEX](../active/PLAN_INDEX.md)；`MAINLINE.md` 队首与 `n31_confirmation_seed_reads.json` 零改动，全程 `check/final = 0`；待 owner 决定是否立即进入 `N35` 或先补 `NCH.3.04` 指代微调。
