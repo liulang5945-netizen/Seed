@@ -10600,3 +10600,16 @@ eports/n33_1_01_sim.json；CPU 0.02/20。
 ### D-20261126-670 起草 `N35` 准入决策备忘与全套门禁复验（待 owner 签字开启 `N35`）
 
 **1. 落盘**：新建 [MEMO-N35-ADMISSION-DECISION](MEMO-N35-ADMISSION-DECISION_20261126.md)（含四项签字项、建议 seed `20261901–03 / 1911–13`、方案 A/B `check` 策略与 `R0` 联合成绩单门槛）；同步更新 [COVERAGE-MATRIX](COVERAGE-MATRIX_20261126.md)、[EVIDENCE-SUMMARY-EXPLORATION](EVIDENCE-SUMMARY-EXPLORATION_20261126.md)、[ID_MAP_N](ID_MAP_N.md) §3.32 与 [PLAN_INDEX](../active/PLAN_INDEX.md)；保持 `MAINLINE.md` 与 `n31_confirmation_seed_reads.json` 零改动，零 `check/final`。
+
+
+---
+
+### D-20261126-671 owner 批复「A」：`N35` 准入生效（方案 A）＋确认 seed 注册＋`R0` 成绩单冻结
+
+**1. 裁定**：采用 [MEMO-N35-ADMISSION-DECISION](MEMO-N35-ADMISSION-DECISION_20261126.md) 方案 A——`N35` 准入与 `training_authority`（范围 `N35`、首卡建议帽 `≤400 CPU`、总帽 `≤1,500 CPU`、10 日历日）；注册确认 seed `20261901–03`（主）与 `20261911–13`（备）入 `n31_guard.py`；`N35.1` 保持 `0 check / 0 final`，`check` 须再单包书面解封，`final` 全程封存。
+**2. 落盘**：[N35-ADMISSION](N35-ADMISSION_20261126.md)、[SCORECARD-N35](SCORECARD-N35_20261126.md)（`R0` 联合成绩单读前冻结）。**待裁定**：首卡 `≤400 CPU` 与开放中文三对照全量确认电池的实测定价差额（见下一决策）。
+
+### D-20261126-672 owner 裁定 A1：`N35.1.90` 单卡帽提高到 650 CPU，并披露薄余量风险
+
+**1. 裁定**：开放中文三对照确认电池（3 seed × 主臂/无历史/禁指针，实测每次训练约 58 CPU）约 `520 CPU`，加百会话同主体联合约 `66 CPU`，合计约 `590 CPU`，超出首卡建议 `≤400`；owner 选 A1——帽提到 `650 CPU`（`1,500` 总帽内），门槛与配置不变。
+**2. 披露的风险**：`NCH.3.04` 探索最弱 seed 在个别门上余量低于核心需求 §2.1 第四节第 2 条的 `+0.05` 最低要求（OOV 查询 `0.7917` 距 `0.75` 为 `+0.042`；纠否 `0.7321` 距 `0.70` 为 `+0.032`）；该条为最低要求且 owner 明知后选择照此执行，**确认可能失败，确认 seed 读后即作废**。为控成本，开放中文轴不再重训复现（`NCH.3.04` 已证 `7101` 权重逐位一致），改以 `SessionStore` 往返逐位一致与百会话审计链抽检复现为准。
