@@ -16,6 +16,7 @@
 | N32 收口 | [CLOSEOUT-N32](../reference/CLOSEOUT-N32_20261125.md) | 有界交付＋R1 确认正例；终态、负结果、缺口、资源、N33 准入条件（D-20261125-552） |
 | N33 收口 | [CLOSEOUT-N33](../reference/CLOSEOUT-N33_20261126.md) | 三正例＋一条部分确认；生长收益未签署；资源、seed 状态、N34 准入条件（D-20261126-609） |
 | **N34 收口** | [CLOSEOUT-N34](../reference/CLOSEOUT-N34_20261126.md) | N34.9.90 六轴＋N34.5.90 百会话同主体联合全部确认通过；零 `check/final`（D-20261126-664） |
+| **N35 收口** | [CLOSEOUT-N35](../reference/CLOSEOUT-N35_20261126.md) | N35 有界部分确认收口（`N35.1.91` 8/9 门 3/3 过，`944.33/1,500 CPU`，零 `check/final`；D-20261126-682） |
 | 目标覆盖矩阵 | [COVERAGE-MATRIX_20261126](../reference/COVERAGE-MATRIX_20261126.md) | v4 条款→✅/🟡/❌、证据与缺口、下一步优先级（D-20261126-615） |
 | 探索证据汇总 | [EVIDENCE-SUMMARY-EXPLORATION](../reference/EVIDENCE-SUMMARY-EXPLORATION_20261126.md) | N33＋N34.9.90＋N34.5.90 确认级汇总＋缺口表（D-20261126-645/659/664） |
 | **N34.5.90 长跑联合确认** | [RESULT-N34-5-90](../reference/RESULT-N34-5-90_20261126.md) | 确认 seed `20261811–13` 同主体百会话联合确认通过（`confirm_positive`，`65.83 CPU`；D-20261126-662/663） |

@@ -1,6 +1,6 @@
 # 态极（Taiji）主线完整闭环执行总纲
 
-> 文档状态：[主线] — 2026-11-26（D-20261126-680）：**`N31` 有界结案（D-499）；`N32` 收口（D-552）；`N33` 收口（D-609）；`N34` 已正式收口（[CLOSEOUT-N34](reference/CLOSEOUT-N34_20261126.md)）；`N35` 方案 B1 有界联合确认 `N35.1.91`（`20261911–13`）`confirm_partial`（`294.30/450 CPU`，8/9 门 3/3 过，仅 `R0-B1-7` `20261913` `c0` 差 `0.0081<0.025`；`N35` 两批 seed 作废，零 `check/final`）**；唯一队列 `≤N30(冻结) → N31(有界结案) → N32(收口) → N33(收口) → N34(已收口·D-664) → N35(▶ N35.1.91 confirm_partial·待收束/裁定·零check/final) → N36..N37` 见 `§0.3′`；旧 `S1 / 23-S..28-S / 29 / 30` 为历史编号，映射见 [ID_MAP_N](reference/ID_MAP_N.md)。
+> 文档状态：[主线] — 2026-11-26（D-20261126-682）：**`N31` 有界结案（D-499）；`N32` 收口（D-552）；`N33` 收口（D-609）；`N34` 已正式收口（[CLOSEOUT-N34](reference/CLOSEOUT-N34_20261126.md)）；`N35` 已正式收口（[CLOSEOUT-N35](reference/CLOSEOUT-N35_20261126.md)：有界部分确认，`N35.1.90` `engineering_failure` ＋ `N35.1.91` 8/9 门 3/3 过 `confirm_partial`；`944.33/1,500 CPU`、两批 seed 作废、零 `check/final`），当前无活动训练阶段**；唯一队列 `≤N30(冻结) → N31(有界结案) → N32(收口) → N33(收口) → N34(已收口·D-664) → N35(已收口·D-682) → N36(▶ 待准入·有界接管包) → N37` 见 `§0.3′`；旧 `S1 / 23-S..28-S / 29 / 30` 为历史编号，映射见 [ID_MAP_N](reference/ID_MAP_N.md)。
 
 > 历史状态（2026-11-21）：（**D-20261121-230 新核心主线计划补全**：§3A S1/23-S..28-S 合同落盘、旧 §3/§4 封存标注；D-229 单线收编：旧 RouteB 包 `22.1–22.8` 及 `23–25` 已整体结案封存，[taiji/u2_neural_units.py](../taiji/u2_neural_units.py) 保持零改动冻结；**当前唯一活动主线**切换至新加法核心 [taiji/u2_selective_units.py](../taiji/u2_selective_units.py) 序列 **`S0(已完成) → S1(▶ 当前唯一队首) → 23-S..28-S → 29 → 30 → §15`**，全程冻结 `check / final` 直至逐包正式授权）。本页是**唯一主线**执行总纲：无论当下推进哪个工作包，只认同一可恢复主体谱系与本页顺序队列。只读逐轮状态归档见 [MAINLINE_STATUS_HISTORY_20261119.md](MAINLINE_STATUS_HISTORY_20261119.md)（其历史“唯一后继”语句只对其时点成立，不得据此执行），审批与证据流水见 [03_CURRENT_EXECUTION.md](active/roadmap/03_CURRENT_EXECUTION.md) 与 [MASTER-PLAN.md](MASTER-PLAN.md)。
 
@@ -56,7 +56,7 @@
 | **N32** | 正式训练 T1（K1–K8 窄交付 A 段终止；B 段 `R1` 共享表示/习得路由） | **已收口（D-552）** | A 段终止（D-504）；`N32.6.90` 确认正例 `3/3`（D-551）；正式成绩单未生效 |
 | N33 | 正式训练 T2（学得自主策略、跨会话、可塑生长、递归发展） | **已收口（D-609）** | `N33.2/3.4` 确认正例、`N33.3` `REQUIRED-INPLACE`、`N33.1` 2/3；六组确认 seed 烧毁 |
 | **N34** | 长跑耐久评测（原 28）与能力补齐确认 | **已收口（D-664）** | `N34.1.01/02` 就绪；`N34.9.90`（`20261801–03`）6/6 通过；`N34.5.90`（`20261811–13`）同主体百会话联合 `confirm_positive`（65.83 CPU） |
-| **N35** | 模型级联合确认（原 29，首次读 check / final） | **▶ 方案 B1 `N35.1.91` `confirm_partial`（D-680）** | `N35.1.90` `engineering_failure`；`N35.1.91`（`20261911–13`，`294.30/450 CPU`）**8/9 门 3/3 过**（仅 `R0-B1-7` `20261913` `c0` 差 `0.0081<0.025`）；两批 seed 作废、零 `check/final`；[RESULT-N35-1-91](reference/RESULT-N35-1-91_20261126.md) |
+| **N35** | 模型级联合确认（原 29，首次读 check / final） | **已收口（有界部分确认，D-682）** | `N35.1.90` `engineering_failure`；`N35.1.91` 方案 B1 **8/9 门 3/3 过**（`confirm_partial`，`944.33/1,500 CPU`）；两批 seed 作废、零 `check/final`；[CLOSEOUT-N35](reference/CLOSEOUT-N35_20261126.md) |
 | N36 | 交付与接管（原 30） | 未准入 | 首个交付范围见核心需求 §2.1 四 |
 | N37 | 运营状态机（原 §15） | 未准入 | — |
 
@@ -660,4 +660,4 @@ stateDiagram-v2
 <a id="本轮规划边界与下一轮立项"></a>
 <a id="根目标覆盖与研究准入边界"></a>
 
-当前执行位置（**2026-11-26 `N35.1.91` 方案 B1 有界联合确认 `confirm_partial` 口径**）：`≤N30` 冻结；`N31` 有界交付结案（D-499）；`N32` 阶段收口（D-552）；`N33` 阶段收口（D-609）；`N34` 已正式收口（[CLOSEOUT-N34](reference/CLOSEOUT-N34_20261126.md)，`D-20261126-664`）；**`N35`**（[N35-ADMISSION](reference/N35-ADMISSION_20261126.md)）经 owner 批复「B1」（D-679）冻结 [SCORECARD-N35-B1](reference/SCORECARD-N35-B1_20261126.md) 并执行 **`N35.1.91`**（`20261911–13`，`294.30 / 450.0 CPU`，累计 `944.33 / 1,500.0 CPU`）：**8/9 门（`R0-B1-1..6, 8, 9`）在全部 3 颗确认 seed 上 3/3 通过**，仅 `R0-B1-7`（`n34_3`）因 `20261913` `c0` 差 `0.0081<0.025` 记 **`confirm_partial`**（[RESULT-N35-1-91](reference/RESULT-N35-1-91_20261126.md)，D-680）。`N35` 两批确认 seed（`20261901–03` 与 `20261911–13`）已按规作废，`check / final` 持续封存（`0` 读取），待 owner 决定是否收束 `N35`（`CLOSEOUT-N35`）。总表同步于 [证据汇总](reference/EVIDENCE-SUMMARY-EXPLORATION_20261126.md) 与 [目标覆盖矩阵](reference/COVERAGE-MATRIX_20261126.md)。
+当前执行位置（**2026-11-26 `N35` 正式收口口径**）：`≤N30` 冻结；`N31` 有界交付结案（D-499）；`N32` 阶段收口（D-552）；`N33` 阶段收口（D-609）；`N34` 已正式收口（[CLOSEOUT-N34](reference/CLOSEOUT-N34_20261126.md)，`D-20261126-664`）；**`N35` 已正式收口**（[CLOSEOUT-N35](reference/CLOSEOUT-N35_20261126.md)，D-682）：`N35.1.90` `engineering_failure`（`650.03 CPU`）＋ `N35.1.91` 方案 B1 有界联合确认 **`confirm_partial`**（`294.30 CPU`，**8/9 门 3/3 过**，仅 `R0-B1-7` `20261913` `c0` 差 `0.0081<0.025`）；`NCH.3` 线暂停于 `2,490.72/2,500 CPU`（开放中文 `deferred_post_N35`）；`N35` 两批确认 seed（`20261901–03` 与 `20261911–13`）已作废，`check / final` 保持 `0` 读取，**当前无活动训练阶段**。总表同步于 [证据汇总](reference/EVIDENCE-SUMMARY-EXPLORATION_20261126.md) 与 [目标覆盖矩阵](reference/COVERAGE-MATRIX_20261126.md)；待 owner 决定是否开启有界范围 **`N36` 可运行接管包**设计或停线。
