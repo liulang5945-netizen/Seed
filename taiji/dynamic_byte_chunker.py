@@ -22,7 +22,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from taiji.native_cognitive_backbone import BYTE_VOCAB, EOS_BYTE
+BYTE_VOCAB = 259  # 0..255 raw UTF-8 bytes, 256=EOS, 257=BOS, 258=PAD
+EOS_BYTE = 256
 
 SCHEMA = "taiji-dynamic-byte-chunker-v1"
 BOUNDARY_ROLE = "compute_allocation_signal_not_concept_truth"

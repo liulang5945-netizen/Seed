@@ -59,7 +59,8 @@ def _read_json_safe(path: Path) -> dict[str, Any] | None:
     if not path.exists():
         return None
     try:
-        return json.loads(path.read_text(encoding="utf-8"))
+        data = json.loads(path.read_text(encoding="utf-8"))
+        return data if isinstance(data, dict) else None
     except Exception:
         return None
 
@@ -189,24 +190,34 @@ def taiji_architecture_readiness() -> dict[str, Any]:
         "baseline_transformer": _read_json_safe(N38_STATUS_PATH)
         or {"status": "not_started", "preset": "mid_18m"},
         "parallel_modules": {
+            "native_runtime": {
+                "module": "taiji.native_runtime",
+                "status": "wired_in_native_runtime",
+                "wired_by": "taiji.native_runtime.TaijiNativeRuntime",
+                "spec_ref": "TAIJI_NATIVE_ARCHITECTURE_V1 + VISION VX1..VX5",
+            },
             "dynamic_byte_chunker": {
                 "module": "taiji.dynamic_byte_chunker",
-                "status": "implemented_and_tested",
+                "status": "wired_in_native_runtime",
+                "wired_by": "taiji.native_runtime.TaijiNativeRuntime",
                 "spec_ref": "TAIJI_NATIVE_ARCHITECTURE_V1 §2.2/§5.2/§5.10",
             },
             "conditional_value": {
                 "module": "taiji.conditional_value",
-                "status": "implemented_and_tested",
+                "status": "wired_in_native_runtime",
+                "wired_by": "taiji.native_runtime.TaijiNativeRuntime",
                 "spec_ref": "VISION §3.2/VX2",
             },
             "action_lifecycle": {
                 "module": "taiji.action_lifecycle",
-                "status": "implemented_and_tested",
+                "status": "wired_in_native_runtime",
+                "wired_by": "taiji.native_runtime.TaijiNativeRuntime",
                 "spec_ref": "TAIJI_NATIVE_ARCHITECTURE_V1 §4.7/GOV-ACT",
             },
             "development_learning": {
                 "module": "taiji.development_learning",
-                "status": "implemented_and_tested",
+                "status": "wired_in_native_runtime",
+                "wired_by": "taiji.native_runtime.TaijiNativeRuntime",
                 "spec_ref": "VISION §3.4/VX4/GOV-LEARN",
             },
         },
@@ -316,7 +327,7 @@ async function refresh() {
     const gp = nb.growth_policy || {};
     document.getElementById('native-stats').innerHTML = [
       ['架构', nb.architecture],
-      ['状态 / 预设', `${nst.status || '-'} / ${nst.preset || 'native_mid_18m'}`],
+      ['状态 / 预设', `${nst.status || '-'} / ${nst.preset || 'native_byte_mid'}`],
       ['自动生长 / 参数上限', `${gp.auto_grow_enabled ? '开启' : '关闭'} / ${(gp.max_params || 0).toLocaleString()}`],
       ['保持门禁 / 净增益门禁', `≤ ${gp.max_retention_drop ?? 0.02} / ≥ ${gp.min_gain ?? 0.001}`]
     ].map(([k,v]) => `<div class="kv"><span>${k}</span><strong>${v}</strong></div>`).join('');

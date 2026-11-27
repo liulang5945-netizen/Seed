@@ -146,3 +146,15 @@ def test_o5_o6_restricted_recovery_retire_and_cli(tmp_path: Path) -> None:
         check=True,
     )
     assert json.loads(proc.stdout)["tier"] == "tier1_ops_only"
+
+
+def test_o3_growth_proposal_executes_real_phase2_adaptation(tmp_path: Path) -> None:
+    bdir = _build_smoke(tmp_path)
+    fsm = OperationalStateMachine.initialize(bdir, initial_state="Running", shadow_budget=2)
+    before_units = fsm.rt.grow_net.active_units()
+    res = fsm.run_shadow_upgrade("growth_proposal", min_gain=0.01, max_retention_drop=0.05)
+    assert res["accepted"] is True
+    assert res["gain"] >= 0.01
+    assert res["retention_drop"] <= 0.05
+    assert fsm.rt.grow_net.active_units() > before_units
+    assert fsm.rt.harness.verify_chain() is True

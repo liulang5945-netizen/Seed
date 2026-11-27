@@ -18,9 +18,17 @@ import hashlib
 import json
 from typing import Any, cast
 
-from scripts.training.first_a_support_22_5 import RGB_COLORS
 from taiji.u2_task_episode import NAMES, position_word
 from taiji.u2_task_world import PhysicalWorld
+
+RGB_COLORS = (
+    (220, 45, 45),
+    (45, 90, 220),
+    (45, 190, 80),
+    (230, 190, 40),
+    (170, 60, 200),
+    (40, 190, 195),
+)
 
 FIXTURE_ID = "taiji-23-composition-v1"
 TEMPLATES = {

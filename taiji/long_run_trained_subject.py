@@ -29,28 +29,28 @@ import torch
 import torch.nn.functional as F
 from torch import nn
 
-from scripts.training.nch_2_01_continuous_chinese import (
+from taiji.chinese_task_env_v2 import MAX_TOKENS, ChineseTaskEnvV2
+from taiji.chinese_turn_policy import (
     EPOCHS as CH_EPOCHS,
 )
-from scripts.training.nch_2_01_continuous_chinese import (
+from taiji.chinese_turn_policy import (
     EVAL_SEEDS as CH_EVAL_SEEDS,
 )
-from scripts.training.nch_2_01_continuous_chinese import (
+from taiji.chinese_turn_policy import (
     HELDOUT_SEEDS as CH_HELDOUT_SEEDS,
 )
-from scripts.training.nch_2_01_continuous_chinese import (
+from taiji.chinese_turn_policy import (
     LR as CH_LR,
 )
-from scripts.training.nch_2_01_continuous_chinese import (
+from taiji.chinese_turn_policy import (
     ROLLOUT_EPISODES as CH_ROLLOUT,
 )
-from scripts.training.nch_2_01_continuous_chinese import (
+from taiji.chinese_turn_policy import (
     ChineseTurnPolicy,
 )
-from scripts.training.nch_2_01_continuous_chinese import (
+from taiji.chinese_turn_policy import (
     _eval_arm as ch_eval_arm,
 )
-from taiji.chinese_task_env_v2 import MAX_TOKENS, ChineseTaskEnvV2
 from taiji.continual_growth_task import IN_DIM as GROW_IN_DIM
 from taiji.continual_growth_task import NUM_CLASSES as GROW_OUT_DIM
 from taiji.continual_growth_task import make_split as make_grow_split

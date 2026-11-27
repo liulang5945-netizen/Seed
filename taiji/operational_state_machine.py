@@ -16,6 +16,7 @@ from pathlib import Path
 from typing import Any
 
 import torch
+import torch.nn.functional as F
 
 from taiji.bounded_delivery_runtime import (
     BOUNDARIES,
@@ -23,7 +24,9 @@ from taiji.bounded_delivery_runtime import (
     BoundedDeliveryRuntime,
     _atomic_write_json,
 )
+from taiji.continual_growth_task import make_split as make_grow_split
 from taiji.credibility_learning import SOURCES as ECL_SOURCES
+from taiji.long_run_trained_subject import _eval_acc, _pack_growth_net
 
 SCHEMA = "taiji-n37-ops-fsm-v1"
 
@@ -294,10 +297,22 @@ class OperationalStateMachine:
         parent_digest = str(self.rt.manifest["record_digest"])
         parent_chain = str(self.rt.manifest["chain_head"])
         parent_metrics = _evaluate_retention_and_ecl(self.rt)
-        parent_active_units = self.rt.grow_net.active_units()
+        run_id = used + 1
+        grow_split: dict[str, Any] | None = None
+        parent_p1_acc = 0.0
+        parent_p2_acc = 0.0
+        if candidate_kind == "growth_proposal":
+            grow_split = make_grow_split(
+                int(self.rt.manifest["seed"]) + run_id, n_train=256, n_val=128
+            )
+            parent_p1_acc = _eval_acc(
+                self.rt.grow_net, grow_split["phase1"]["val"]["x"], grow_split["phase1"]["val"]["y"]
+            )
+            parent_p2_acc = _eval_acc(
+                self.rt.grow_net, grow_split["phase2"]["val"]["x"], grow_split["phase2"]["val"]["y"]
+            )
         self.transition("Shadow", reason=f"shadow_start:{candidate_kind}")
 
-        run_id = used + 1
         sid = str(self.rt.manifest["subject_id"])
         accepted = False
         reject_reason = ""
@@ -315,21 +330,32 @@ class OperationalStateMachine:
                 for _ in range(15):
                     shadow_rt.update_credibility("forum", 1)
             elif candidate_kind == "growth_proposal":
+                assert grow_split is not None
+                p1_x = grow_split["phase1"]["train"]["x"]
+                p1_y = grow_split["phase1"]["train"]["y"]
+                p2_x = grow_split["phase2"]["train"]["x"]
+                p2_y = grow_split["phase2"]["train"]["y"]
+                mix_x = torch.cat([p2_x, p1_x], dim=0)
+                mix_y = torch.cat([p2_y, p1_y], dim=0)
 
                 def _grow_fn(rec: Any, _s: int) -> None:
-                    before_units = shadow_rt.grow_net.active_units()
-                    shadow_rt.grow_net.grow_neutral_(k=2, seed=run_id)
-                    after_units = shadow_rt.grow_net.active_units()
+                    net = shadow_rt.grow_net
+                    net.mature_()
+                    before_units = net.active_units()
+                    net.grow_neutral_(k=16, seed=run_id)
+                    after_units = net.active_units()
                     if after_units <= before_units:
                         raise RuntimeError("growth_proposal failed to expand active units")
-                    for k, v in shadow_rt.grow_net.to_session_record("grow").capsule.items():
-                        if k == "meta":
-                            events = int(rec.capsule["grow.meta"][4].item())
-                            rec.capsule["grow.meta"] = torch.cat(
-                                [v, torch.tensor([events], dtype=torch.long)]
-                            )
-                        else:
-                            rec.capsule[f"grow.{k}"] = v
+                    net.train()
+                    opt = torch.optim.Adam(net.parameters(), lr=0.01)
+                    for _ in range(40):
+                        opt.zero_grad(set_to_none=True)
+                        loss = F.cross_entropy(net(mix_x), mix_y)
+                        loss.backward()
+                        net.apply_selective_plasticity_grad_mask(freeze_mature=True)
+                        opt.step()
+                    net.eval()
+                    _pack_growth_net(rec.capsule, net, shadow_rt.grow_ctrl, {})
 
                 shadow_rt.harness.run_session(_grow_fn, crash_before_commit=False)
                 shadow_rt._sync_manifest()
@@ -353,17 +379,27 @@ class OperationalStateMachine:
             ch_drop = max(
                 0.0, parent_metrics["ch_mean_confidence"] - shadow_metrics["ch_mean_confidence"]
             )
-            retention_drop = round(max(phy_drop, ch_drop), 6)
+            p1_drop = 0.0
             if candidate_kind == "growth_proposal":
-                gain = round(
-                    max(0, shadow_rt.grow_net.active_units() - parent_active_units) * 0.01,
-                    6,
+                assert grow_split is not None
+                shadow_p1_acc = _eval_acc(
+                    shadow_rt.grow_net,
+                    grow_split["phase1"]["val"]["x"],
+                    grow_split["phase1"]["val"]["y"],
                 )
+                shadow_p2_acc = _eval_acc(
+                    shadow_rt.grow_net,
+                    grow_split["phase2"]["val"]["x"],
+                    grow_split["phase2"]["val"]["y"],
+                )
+                p1_drop = max(0.0, parent_p1_acc - shadow_p1_acc)
+                gain = round(shadow_p2_acc - parent_p2_acc, 6)
             else:
                 gain = round(
                     shadow_metrics["ecl_forum_posterior"] - parent_metrics["ecl_forum_posterior"],
                     6,
                 )
+            retention_drop = round(max(phy_drop, ch_drop, p1_drop), 6)
             finite_ok = _capsule_all_finite(shadow_rt)
             chain_ok = shadow_rt.harness.verify_chain()
 

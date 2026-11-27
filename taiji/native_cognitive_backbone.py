@@ -20,6 +20,7 @@ and `SPEC-TAIJI_U2_NEURAL_UNIT_LIFECYCLE`:
 from __future__ import annotations
 
 import math
+from collections.abc import Sequence
 from dataclasses import asdict, dataclass
 from typing import Any, cast
 
@@ -27,12 +28,27 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+from taiji.dynamic_byte_chunker import DynamicByteVocab
 from taiji.u2_operators import (
+    CursorState,
+    Emission,
     append_neutral_units,
     choose_left_directions,
     credit_matrix,
     fp1,
     utf8_mask,
+)
+from taiji.u2_operators import (
+    accept as u2_accept,
+)
+from taiji.u2_operators import (
+    emission as u2_emission,
+)
+from taiji.u2_operators import (
+    record_inputs as u2_record_inputs,
+)
+from taiji.u2_operators import (
+    revoke_records as u2_revoke_records,
 )
 from taiji.utf8_state import advance_utf8
 
@@ -162,6 +178,37 @@ class NativeSubjectState:
             residual_a=[t.detach() for t in self.residual_a],
         )
 
+    def to_dict(self) -> dict[str, list[torch.Tensor]]:
+        """Serialize state to plain CPU tensor lists safe for `torch.load(..., weights_only=True)`."""
+        return {
+            "h_states": [t.detach().cpu().clone() for t in self.h_states],
+            "unit_z": [t.detach().cpu().clone() for t in self.unit_z],
+            "unit_a": [t.detach().cpu().clone() for t in self.unit_a],
+            "fast_memories": [t.detach().cpu().clone() for t in self.fast_memories],
+            "residual_h": [t.detach().cpu().clone() for t in self.residual_h],
+            "residual_z": [t.detach().cpu().clone() for t in self.residual_z],
+            "residual_a": [t.detach().cpu().clone() for t in self.residual_a],
+        }
+
+    @classmethod
+    def from_dict(
+        cls,
+        data: dict[str, list[torch.Tensor]],
+        device: torch.device | None = None,
+    ) -> NativeSubjectState:
+        def _move(xs: list[torch.Tensor]) -> list[torch.Tensor]:
+            return [x.to(device=device).clone() if device is not None else x.clone() for x in xs]
+
+        return cls(
+            h_states=_move(list(data["h_states"])),
+            unit_z=_move(list(data["unit_z"])),
+            unit_a=_move(list(data["unit_a"])),
+            fast_memories=_move(list(data["fast_memories"])),
+            residual_h=_move(list(data.get("residual_h", []))),
+            residual_z=_move(list(data.get("residual_z", []))),
+            residual_a=_move(list(data.get("residual_a", []))),
+        )
+
 
 class BytePatchEncoder(nn.Module):
     """§5.1 Pure UTF-8 byte embedding + 3-layer causal Conv1d (d=1,2,4) + 8-byte patch."""
@@ -175,13 +222,52 @@ class BytePatchEncoder(nn.Module):
         self.byte_emb = nn.Embedding(BYTE_VOCAB, self.byte_emb_dim)
         nn.init.normal_(self.byte_emb.weight, std=0.02)
 
+        # Lossless dynamic macro-byte vocabulary hook (zero residual delta at birth)
+        self.dynamic_vocab = DynamicByteVocab()
+        self.macro_delta = nn.Parameter(torch.zeros(0, self.byte_emb_dim))
+
         self.conv1 = nn.Conv1d(self.byte_emb_dim, self.d_model, kernel_size=3, dilation=1)
         self.conv2 = nn.Conv1d(self.d_model, self.d_model, kernel_size=3, dilation=2)
         self.conv3 = nn.Conv1d(self.d_model, self.d_model, kernel_size=3, dilation=4)
 
+    def _embed_symbols(self, byte_ids: torch.Tensor) -> torch.Tensor:
+        """Fast path for pure base bytes (0..258); macro path preserves birth equivalence."""
+        if self.dynamic_vocab.vocab_size == BYTE_VOCAB or bool((byte_ids < BYTE_VOCAB).all()):
+            return cast(torch.Tensor, self.byte_emb(byte_ids))
+        base_ids = byte_ids.clamp(max=BYTE_VOCAB - 1)
+        emb: torch.Tensor = cast(torch.Tensor, self.byte_emb(base_ids)).clone()
+        macro_mask = byte_ids >= BYTE_VOCAB
+        positions = torch.nonzero(macro_mask, as_tuple=False)
+        for pos in positions:
+            b_idx, t_idx = int(pos[0].item()), int(pos[1].item())
+            sid = int(byte_ids[b_idx, t_idx].item())
+            raw_b = self.dynamic_vocab.decode_to_bytes([sid])
+            raw_t = torch.tensor(list(raw_b), dtype=torch.long, device=byte_ids.device)
+            pooled = self.byte_emb(raw_t).mean(dim=0) + self.macro_delta[sid - BYTE_VOCAB]
+            emb[b_idx, t_idx] = pooled.to(dtype=emb.dtype)
+        return emb
+
+    @torch.no_grad()
+    def grow_macro_symbol_neutral_(
+        self, raw_bytes: bytes, *, birth_step: int = 0, lineage_tag: str = "chunk_growth"
+    ) -> dict[str, Any]:
+        """Register a multi-byte macro-symbol with zero residual delta (`0.0` birth shift)."""
+        sym_id = self.dynamic_vocab.register_macro(
+            raw_bytes, birth_step=birth_step, lineage_tag=lineage_tag
+        )
+        old = self.macro_delta.detach()
+        new_row = torch.zeros(1, self.byte_emb_dim, device=old.device, dtype=old.dtype)
+        self.macro_delta = nn.Parameter(torch.cat([old, new_row], dim=0))
+        return {
+            "op": "grow_macro_symbol_neutral",
+            "symbol_id": sym_id,
+            "n_bytes": len(raw_bytes),
+            "vocab_size": self.dynamic_vocab.vocab_size,
+        }
+
     def forward(self, byte_ids: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
         """Return strictly causal per-byte features (B, T, D) and patch embeddings (B, P, D)."""
-        x = self.byte_emb(byte_ids).transpose(1, 2)  # (B, E, T)
+        x = self._embed_symbols(byte_ids).transpose(1, 2)  # (B, E, T)
         h1 = torch.tanh(self.conv1(F.pad(x, (2, 0))))
         h2 = h1 + torch.tanh(self.conv2(F.pad(h1, (4, 0))))
         h3 = h2 + torch.tanh(self.conv3(F.pad(h2, (8, 0))))
@@ -265,6 +351,7 @@ class StatefulNeuralGroup(nn.Module):
 
         self.unit_ids: list[str] = [f"g{self.group_idx}/u{i}" for i in range(self.n_units)]
         self.unit_branches: list[str] = ["base"] * self.n_units
+        self.retired_unit_ids: list[str] = []
 
         # Inter-group Q/K/V projections
         self.msg_q = nn.Linear(self.d_model, self.d_model, bias=False)
@@ -369,6 +456,93 @@ class StatefulNeuralGroup(nn.Module):
         return torch.stack(out_list, dim=0)
 
 
+class NativeExperienceCopyHead(nn.Module):
+    """U2 §7 Position-sensitive raw-experience copy head powered by `taiji.u2_operators`."""
+
+    def __init__(self, d_model: int) -> None:
+        super().__init__()
+        self.d_model = int(d_model)
+        self.rec_emb = nn.Embedding(BYTE_VOCAB, self.d_model)
+        nn.init.normal_(self.rec_emb.weight, std=0.02)
+        self.route_proj = nn.Linear(self.d_model, self.d_model, bias=False)
+        self.pos_proj = nn.Linear(self.d_model, self.d_model, bias=False)
+        self.null_route = nn.Parameter(torch.zeros(1))
+        self.lam_head = nn.Linear(self.d_model, 1, bias=True)
+        self.gamma_head = nn.Linear(self.d_model, 1, bias=True)
+        nn.init.normal_(self.route_proj.weight, std=0.02)
+        nn.init.normal_(self.pos_proj.weight, std=0.02)
+        nn.init.constant_(self.lam_head.bias, 1.0)
+        nn.init.constant_(self.gamma_head.bias, 0.0)
+
+    def init_cursor(
+        self, n_records: int, max_len: int, device: torch.device | None = None
+    ) -> CursorState:
+        """Create a normalized log-domain cursor initialized in the reset (`zeta=1`) state."""
+        return {
+            "log_m": torch.full(
+                (1, n_records, max_len), -torch.inf, dtype=torch.float32, device=device
+            ),
+            "log_zeta": torch.zeros((1,), dtype=torch.float32, device=device),
+            "log_eta": torch.zeros((1,), dtype=torch.float32, device=device),
+            "coverage": torch.zeros((1, n_records, max_len), dtype=torch.float32, device=device),
+        }
+
+    def step_emission(
+        self,
+        ctx_vec: torch.Tensor,
+        gen_logits: torch.Tensor,
+        cursor: CursorState,
+        record_bytes: torch.Tensor,
+        record_valid: torch.Tensor,
+        utf8_legal_mask: torch.Tensor,
+    ) -> Emission:
+        """Compute U2 log-domain joint generate/copy emission masked to legal UTF-8 bytes."""
+        with torch.amp.autocast("cpu", enabled=False):
+            ctx = ctx_vec.float()
+            rec_emb = self.rec_emb(record_bytes.clamp(0, BYTE_VOCAB - 1)).float()  # (R, L, D)
+            valid_f = record_valid.float().unsqueeze(-1)
+            rec_mean = (rec_emb * valid_f).sum(dim=1) / valid_f.sum(dim=1).clamp(min=1.0)
+
+            scale = 1.0 / math.sqrt(self.d_model)
+            rec_logits = torch.einsum("d,rd->r", self.route_proj(ctx), rec_mean)
+            rec_logits = rec_logits * scale
+            route_scores = torch.cat([rec_logits, self.null_route.float()], dim=0).unsqueeze(0)
+
+            pos_scores = torch.einsum("d,rld->rl", self.pos_proj(ctx), rec_emb) * scale
+            pos_scores = pos_scores.unsqueeze(0)
+
+            log_alpha, log_beta = u2_record_inputs(route_scores, pos_scores, record_valid)
+            lam = torch.sigmoid(self.lam_head(ctx)).reshape(1)
+            gamma = torch.sigmoid(self.gamma_head(ctx)).reshape(1)
+            log_gen = F.log_softmax(gen_logits.float(), dim=-1).unsqueeze(0)
+            return u2_emission(
+                cursor,
+                log_alpha,
+                log_beta,
+                lam,
+                gamma,
+                log_gen,
+                record_bytes,
+                record_valid,
+                utf8_legal_mask,
+            )
+
+    def step_accept(
+        self,
+        cursor: CursorState,
+        em: Emission,
+        symbol: int,
+        record_bytes: torch.Tensor,
+        record_valid: torch.Tensor,
+    ) -> CursorState:
+        return u2_accept(cursor, em, symbol, record_bytes, record_valid)
+
+    def revoke(
+        self, cursor: CursorState, indices: Sequence[int]
+    ) -> tuple[CursorState, torch.Tensor]:
+        return cast(tuple[CursorState, torch.Tensor], u2_revoke_records(cursor, indices))
+
+
 class TaijiNativeCognitiveBackbone(nn.Module):
     """态极 Native Byte-Group Cognitive Backbone (Zero Transformer, Zero BPE)."""
 
@@ -405,6 +579,9 @@ class TaijiNativeCognitiveBackbone(nn.Module):
         nn.init.normal_(self.group_read_proj.weight, std=0.02)
         nn.init.normal_(self.byte_out.weight, std=0.02)
         nn.init.zeros_(self.byte_out.bias)
+
+        # U2 §7 position-sensitive raw-experience copy head (used on experience-grounded rollout)
+        self.copy_head = NativeExperienceCopyHead(cfg.d_model)
 
     def count_parameters(self) -> int:
         return sum(p.numel() for p in self.parameters())
@@ -587,6 +764,86 @@ class TaijiNativeCognitiveBackbone(nn.Module):
         text = bytes(generated).decode("utf-8")
         return text, cur_state
 
+    @torch.no_grad()
+    def generate_utf8_with_records(
+        self,
+        prompt: str,
+        records: Sequence[bytes | str],
+        max_new_bytes: int = 64,
+        state: NativeSubjectState | None = None,
+        temperature: float = 0.8,
+        revoked_indices: Sequence[int] = (),
+    ) -> tuple[str, NativeSubjectState, dict[str, Any]]:
+        """Autoregressively generate valid UTF-8 with U2 §7 position-sensitive copy head."""
+        self.eval()
+        dev = self.encoder.byte_emb.weight.device
+        raw = list(prompt.encode("utf-8"))
+        if not raw:
+            raw = [BOS_BYTE]
+
+        rec_bytes_list: list[list[int]] = []
+        for r in records:
+            rb = list(r.encode("utf-8")) if isinstance(r, str) else list(r)
+            rec_bytes_list.append(rb)
+
+        n_records = len(rec_bytes_list)
+        max_rec_len = max((len(rb) for rb in rec_bytes_list), default=1)
+        record_bytes = torch.zeros((n_records, max_rec_len), dtype=torch.long, device=dev)
+        record_valid = torch.zeros((n_records, max_rec_len), dtype=torch.bool, device=dev)
+        for r_idx, rb in enumerate(rec_bytes_list):
+            if rb:
+                record_bytes[r_idx, : len(rb)] = torch.tensor(rb, dtype=torch.long, device=dev)
+                record_valid[r_idx, : len(rb)] = True
+
+        cursor = self.copy_head.init_cursor(n_records, max_rec_len, device=dev)
+        archived_cov: torch.Tensor | None = None
+        if revoked_indices:
+            cursor, archived_cov = self.copy_head.revoke(cursor, revoked_indices)
+            for idx in revoked_indices:
+                r_i = int(idx)
+                if 0 <= r_i < n_records:
+                    record_valid[r_i] = False
+
+        x = torch.tensor([raw[-self.cfg.max_seq_bytes :]], dtype=torch.long, device=dev)
+        logits, _, cur_state = self(x, state=state, p_allowed=0.0)
+
+        generated: list[int] = []
+        remaining, lead = 0, 0
+        for step in range(max_new_bytes):
+            budget = max_new_bytes - step
+            mask = utf8_mask(remaining, lead, budget, device=dev)
+            ctx_vec = torch.stack(cur_state.h_states, dim=0).mean(dim=0)[0]
+            gen_logits = logits[0, -1, :].float() / max(1e-4, temperature)
+            em = self.copy_head.step_emission(
+                ctx_vec,
+                gen_logits,
+                cursor,
+                record_bytes,
+                record_valid,
+                mask,
+            )
+            probs = em["log_output"].exp()
+            sym = int(torch.multinomial(probs, num_samples=1).item())
+            if sym == EOS_BYTE:
+                break
+            cursor = self.copy_head.step_accept(cursor, em, sym, record_bytes, record_valid)
+            generated.append(sym)
+            remaining, lead = advance_utf8(remaining, lead, sym)
+            x = torch.cat([x, torch.tensor([[sym]], dtype=torch.long, device=dev)], dim=1)
+            x_cond = x[:, -self.cfg.max_seq_bytes :]
+            logits, _, cur_state = self(x_cond, state=state, p_allowed=0.0)
+
+        text = bytes(generated).decode("utf-8")
+        meta = {
+            "n_records": n_records,
+            "revoked_indices": [int(i) for i in revoked_indices],
+            "coverage_sum": float(cursor["coverage"].sum().item()),
+            "archived_coverage_sum": (
+                float(archived_cov.sum().item()) if archived_cov is not None else 0.0
+            ),
+        }
+        return text, cur_state, meta
+
     def _refresh_cfg(self) -> None:
         units = tuple(cast(StatefulNeuralGroup, g).n_units for g in self.groups)
         self.cfg = NativeBackboneConfig(
@@ -622,6 +879,11 @@ class TaijiNativeCognitiveBackbone(nn.Module):
         dt = grp.unit_r.dtype
         before_params = self.count_parameters()
         bid = birth_id or f"birth_{len(self.growth_lineage)}"
+        while any(
+            f"{bid}/{k}" in grp.retired_unit_ids or f"{bid}/{k}" in grp.unit_ids
+            for k in range(max(1, budget))
+        ):
+            bid = f"{bid}_n"
 
         if deltas is not None and inputs is not None:
             gates = torch.ones((deltas.shape[0], 1), device=deltas.device, dtype=deltas.dtype)
@@ -730,6 +992,11 @@ class TaijiNativeCognitiveBackbone(nn.Module):
                 w_new[i_new, j_new] = w_old[p_i, p_j] / float(counts[p_j])
 
         bid = birth_id or f"prolif_{len(self.growth_lineage)}"
+        while any(
+            f"{bid}/{k}" in grp.retired_unit_ids or f"{bid}/{k}" in grp.unit_ids
+            for k in range(len(parents))
+        ):
+            bid = f"{bid}_n"
         new_ids = [f"{bid}/{k}" for k in range(len(parents))]
 
         grp.unit_r = nn.Parameter(r_new)
@@ -804,10 +1071,183 @@ class TaijiNativeCognitiveBackbone(nn.Module):
             g.unit_stage[mask] = STAGE_ID["mature"]
         return promoted
 
+    @torch.no_grad()
+    def set_dormant_(self, group_idx: int, unit_indices: Sequence[int]) -> dict[str, Any]:
+        """Reversibly transition `immature`/`mature` units to `dormant` without weight loss."""
+        grp = cast(StatefulNeuralGroup, self.groups[group_idx])
+        changed: list[tuple[int, int]] = []
+        for idx in unit_indices:
+            i = int(idx)
+            if not (0 <= i < grp.n_units):
+                raise IndexError(f"unit_idx {i} out of range for group {group_idx}")
+            prev = int(grp.unit_stage[i].item())
+            if prev in (STAGE_ID["immature"], STAGE_ID["mature"]):
+                grp.unit_stage[i] = STAGE_ID["dormant"]
+                changed.append((i, prev))
+        return {
+            "op": "set_dormant",
+            "group_idx": group_idx,
+            "count": len(changed),
+            "previous_stages": changed,
+        }
+
+    @torch.no_grad()
+    def wake_(
+        self,
+        group_idx: int,
+        unit_indices: Sequence[int],
+        *,
+        target_stage: str = "mature",
+    ) -> dict[str, Any]:
+        """Wake `dormant` units back into `mature` or `immature` active pool."""
+        if target_stage not in ("mature", "immature"):
+            raise ValueError(f"target_stage must be 'mature' or 'immature', got {target_stage!r}")
+        grp = cast(StatefulNeuralGroup, self.groups[group_idx])
+        tgt_id = STAGE_ID[target_stage]
+        woken: list[int] = []
+        for idx in unit_indices:
+            i = int(idx)
+            if not (0 <= i < grp.n_units):
+                raise IndexError(f"unit_idx {i} out of range for group {group_idx}")
+            if int(grp.unit_stage[i].item()) == STAGE_ID["dormant"]:
+                grp.unit_stage[i] = tgt_id
+                woken.append(i)
+        return {
+            "op": "wake",
+            "group_idx": group_idx,
+            "target_stage": target_stage,
+            "woken_indices": woken,
+        }
+
+    @torch.no_grad()
+    def retire_(self, group_idx: int, unit_indices: Sequence[int]) -> dict[str, Any]:
+        """Mark units `retired` and zero their outgoing/incoming recurrent edges cleanly."""
+        grp = cast(StatefulNeuralGroup, self.groups[group_idx])
+        retired: list[int] = []
+        for idx in unit_indices:
+            i = int(idx)
+            if not (0 <= i < grp.n_units):
+                raise IndexError(f"unit_idx {i} out of range for group {group_idx}")
+            grp.unit_stage[i] = STAGE_ID["retired"]
+            grp.unit_p.data[:, i].zero_()
+            grp.unit_w_rec.data[:, i].zero_()
+            grp.unit_w_rec.data[i, :].zero_()
+            retired.append(i)
+        return {"op": "retire", "group_idx": group_idx, "retired_indices": retired}
+
+    @torch.no_grad()
+    def recycle_retired_(self, group_idx: int) -> dict[str, Any]:
+        """U2_NEURAL_UNIT §4: verify zero outgoing weights, then compact retired slots."""
+        grp = cast(StatefulNeuralGroup, self.groups[group_idx])
+        retired_mask = grp.unit_stage == STAGE_ID["retired"]
+        n_ret = int(retired_mask.sum().item())
+        if n_ret == 0:
+            return {"op": "recycle_retired", "group_idx": group_idx, "recycled": 0}
+
+        if float(grp.unit_p[:, retired_mask].abs().max().item()) > 1e-12:
+            raise RuntimeError("Cannot recycle retired units with non-zero outgoing unit_p")
+        if float(grp.unit_w_rec[:, retired_mask].abs().max().item()) > 1e-12:
+            raise RuntimeError("Cannot recycle retired units with non-zero outgoing unit_w_rec")
+
+        keep_mask = ~retired_mask
+        keep_idx = [i for i in range(grp.n_units) if bool(keep_mask[i].item())]
+        removed_ids = [grp.unit_ids[i] for i in range(grp.n_units) if not bool(keep_mask[i].item())]
+        grp.retired_unit_ids.extend(removed_ids)
+
+        before_params = self.count_parameters()
+        grp.unit_r = nn.Parameter(grp.unit_r.detach()[keep_mask].clone())
+        grp.unit_p = nn.Parameter(grp.unit_p.detach()[:, keep_mask].clone())
+        grp.unit_w_rec = nn.Parameter(grp.unit_w_rec.detach()[keep_mask][:, keep_mask].clone())
+        grp.edge_mask = grp.edge_mask[keep_mask][:, keep_mask].clone()
+        grp.unit_c = nn.Parameter(grp.unit_c.detach()[keep_mask].clone())
+        grp.unit_eta = nn.Parameter(grp.unit_eta.detach()[keep_mask].clone())
+        grp.unit_b = nn.Parameter(grp.unit_b.detach()[keep_mask].clone())
+        grp.unit_stage = grp.unit_stage[keep_mask].clone()
+        grp.unit_ids = [grp.unit_ids[i] for i in keep_idx]
+        grp.unit_branches = [grp.unit_branches[i] for i in keep_idx]
+        grp.n_units = len(keep_idx)
+
+        self._refresh_cfg()
+        event = {
+            "op": "recycle_retired",
+            "group_idx": group_idx,
+            "recycled": n_ret,
+            "retired_unit_ids": removed_ids,
+            "before_params": before_params,
+            "after_params": self.count_parameters(),
+        }
+        self.growth_lineage.append(event)
+        return event
+
+    @torch.no_grad()
+    def grow_macro_symbol_neutral_(
+        self, raw_bytes: bytes, *, birth_step: int = 0, lineage_tag: str = "chunk_growth"
+    ) -> dict[str, Any]:
+        """Grow a lossless multi-byte macro-symbol with `0.0` birth perturbation."""
+        before_params = self.count_parameters()
+        ev = self.encoder.grow_macro_symbol_neutral_(
+            raw_bytes, birth_step=birth_step, lineage_tag=lineage_tag
+        )
+        ev["before_params"] = before_params
+        ev["after_params"] = self.count_parameters()
+        self.growth_lineage.append(dict(ev))
+        return ev
+
+    def snapshot_param_handles(self) -> dict[str, nn.Parameter]:
+        """Capture `{param_name: nn.Parameter}` handles before structural topology mutation."""
+        return dict(self.named_parameters())
+
+    @torch.no_grad()
+    def migrate_adamw_state_(
+        self,
+        optimizer: torch.optim.Optimizer,
+        old_handles: dict[str, nn.Parameter],
+    ) -> dict[str, int]:
+        """U2_NEURAL_UNIT §6: migrate AdamW moments across replaced/grown parameters."""
+        new_handles = dict(self.named_parameters())
+        old_to_new: dict[nn.Parameter, nn.Parameter] = {}
+        migrated = 0
+        added = 0
+
+        for name, new_p in new_handles.items():
+            old_p = old_handles.get(name)
+            if old_p is None:
+                added += 1
+                if optimizer.param_groups:
+                    optimizer.param_groups[0]["params"].append(new_p)
+                continue
+            if old_p is new_p:
+                continue
+            old_to_new[old_p] = new_p
+            old_state = optimizer.state.pop(old_p, None)
+            if isinstance(old_state, dict) and old_state:
+                new_state: dict[str, Any] = {}
+                for k, v in old_state.items():
+                    if isinstance(v, torch.Tensor) and v.shape == old_p.shape:
+                        dst = torch.zeros_like(new_p, dtype=v.dtype, device=new_p.device)
+                        slices = tuple(
+                            slice(0, min(int(os_), int(ns_)))
+                            for os_, ns_ in zip(v.shape, new_p.shape, strict=True)
+                        )
+                        dst[slices].copy_(v[slices].to(device=new_p.device))
+                        new_state[k] = dst
+                    elif isinstance(v, torch.Tensor):
+                        new_state[k] = v.clone()
+                    else:
+                        new_state[k] = v
+                optimizer.state[new_p] = new_state
+            migrated += 1
+
+        if old_to_new:
+            for pg in optimizer.param_groups:
+                pg["params"] = [old_to_new.get(p, p) for p in pg["params"]]
+
+        return {"migrated": migrated, "added": added}
+
     def apply_selective_plasticity_grad_mask(
         self, freeze_mature_slow: bool = True
     ) -> dict[str, int]:
-        """Zero gradients on mature unit parameters & w_slow while keeping immature & Psi plastic."""
+        """Zero gradients on mature unit params (r, p, w_rec[mature], c, eta, b) & w_slow."""
         masked_units = 0
         masked_slow = 0
         for g_m in list(self.groups) + list(self.residual_groups):
@@ -820,6 +1260,14 @@ class TaijiNativeCognitiveBackbone(nn.Module):
                     g.unit_r.grad[mature] = 0.0
                 if g.unit_p.grad is not None:
                     g.unit_p.grad[:, mature] = 0.0
+                if g.unit_w_rec.grad is not None:
+                    g.unit_w_rec.grad[mature, :] = 0.0
+                if g.unit_c.grad is not None:
+                    g.unit_c.grad[mature] = 0.0
+                if g.unit_eta.grad is not None:
+                    g.unit_eta.grad[mature] = 0.0
+                if g.unit_b.grad is not None:
+                    g.unit_b.grad[mature] = 0.0
             if freeze_mature_slow and g.w_slow.weight.grad is not None:
                 g.w_slow.weight.grad.zero_()
                 masked_slow += 1
@@ -835,6 +1283,7 @@ class TaijiNativeCognitiveBackbone(nn.Module):
             "n_groups": len(self.groups),
             "n_residual_groups": len(self.residual_groups),
             "group_units": [cast(StatefulNeuralGroup, g).n_units for g in self.groups],
+            "dynamic_vocab_size": self.encoder.dynamic_vocab.vocab_size,
             "use_fast_memory": self.cfg.use_fast_memory,
             "growth_events": len(self.growth_lineage),
             "growth_lineage": list(self.growth_lineage),
@@ -848,6 +1297,13 @@ class TaijiNativeCognitiveBackbone(nn.Module):
         sd[f"{prefix}.lineage"] = list(self.growth_lineage)
         sd[f"{prefix}.n_residual"] = len(self.residual_groups)
         sd[f"{prefix}.unit_ids"] = [cast(StatefulNeuralGroup, g).unit_ids for g in self.groups]
+        sd[f"{prefix}.unit_branches"] = [
+            cast(StatefulNeuralGroup, g).unit_branches for g in self.groups
+        ]
+        sd[f"{prefix}.retired_unit_ids"] = [
+            cast(StatefulNeuralGroup, g).retired_unit_ids for g in self.groups
+        ]
+        sd[f"{prefix}.dynamic_vocab"] = self.encoder.dynamic_vocab.to_dict()
         return sd
 
     @classmethod
@@ -862,11 +1318,31 @@ class TaijiNativeCognitiveBackbone(nn.Module):
         return model
 
     def load_capsule(self, capsule: dict[str, Any], prefix: str = "native_byte") -> None:
+        dv = capsule.get(f"{prefix}.dynamic_vocab")
+        if isinstance(dv, dict):
+            self.encoder.dynamic_vocab = DynamicByteVocab.from_dict(dv)
         pfx = f"{prefix}.w."
         sd = {k[len(pfx) :]: v for k, v in capsule.items() if k.startswith(pfx)}
+        macro_w = sd.get("encoder.macro_delta")
+        if isinstance(macro_w, torch.Tensor) and macro_w.shape != self.encoder.macro_delta.shape:
+            self.encoder.macro_delta = nn.Parameter(
+                torch.zeros_like(
+                    macro_w,
+                    device=self.encoder.byte_emb.weight.device,
+                    dtype=self.encoder.byte_emb.weight.dtype,
+                )
+            )
         self.load_state_dict(sd, strict=True)
         self.growth_lineage = list(capsule.get(f"{prefix}.lineage", []))
         saved_ids = capsule.get(f"{prefix}.unit_ids")
         if isinstance(saved_ids, list):
             for g_m, ids in zip(self.groups, saved_ids, strict=True):
                 cast(StatefulNeuralGroup, g_m).unit_ids = list(ids)
+        saved_branches = capsule.get(f"{prefix}.unit_branches")
+        if isinstance(saved_branches, list):
+            for g_m, brs in zip(self.groups, saved_branches, strict=True):
+                cast(StatefulNeuralGroup, g_m).unit_branches = list(brs)
+        saved_retired = capsule.get(f"{prefix}.retired_unit_ids")
+        if isinstance(saved_retired, list):
+            for g_m, rids in zip(self.groups, saved_retired, strict=True):
+                cast(StatefulNeuralGroup, g_m).retired_unit_ids = list(rids)

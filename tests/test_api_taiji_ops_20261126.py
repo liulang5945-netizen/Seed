@@ -78,10 +78,11 @@ def test_taiji_native_backbone_and_growth_policy_handlers(
     ready = taiji_architecture_readiness()
     assert ready["schema"] == "taiji-architecture-readiness-v1"
     for key in (
+        "native_runtime",
         "dynamic_byte_chunker",
         "conditional_value",
         "action_lifecycle",
         "development_learning",
     ):
-        assert ready["parallel_modules"][key]["status"] == "implemented_and_tested"
+        assert ready["parallel_modules"][key]["status"] == "wired_in_native_runtime"
     assert len(ready["waiting_for_trained_native_base"]) == 4

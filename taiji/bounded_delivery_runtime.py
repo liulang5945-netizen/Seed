@@ -23,9 +23,9 @@ from typing import Any
 
 import torch
 
-from scripts.training.nch_2_01_continuous_chinese import ChineseTurnPolicy
 from taiji.chinese_task_env_v2 import ACTIONS as CH_ACTIONS
 from taiji.chinese_task_env_v2 import MAX_TOKENS, PAD_ID, VOCAB, VOCAB_TO_ID
+from taiji.chinese_turn_policy import ChineseTurnPolicy
 from taiji.credibility_learning import SOURCES as ECL_SOURCES
 from taiji.long_run_harness import LongRunHarness
 from taiji.long_run_trained_subject import (

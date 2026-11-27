@@ -19,6 +19,7 @@ from typing import Any
 
 import torch
 
+from taiji.development_learning import OutcomeRouter, VerifiedOutcomeEvent
 from taiji.native_cognitive_backbone import TaijiNativeCognitiveBackbone
 from taiji.plastic_growth import GrowthPressureController
 
@@ -105,6 +106,11 @@ class NativeGrowthController:
         )
         self.history: list[dict[str, Any]] = []
 
+    def refresh_policy(self, path: str | Path) -> NativeGrowthPolicy:
+        """Reload growth policy from disk (e.g. live ops dashboard settings)."""
+        self.policy = load_growth_policy(path)
+        return self.policy
+
     def propose_action(
         self,
         model: TaijiNativeCognitiveBackbone,
@@ -173,6 +179,7 @@ class NativeGrowthController:
         eval_old_fn: Callable[[TaijiNativeCognitiveBackbone], float],
         eval_new_fn: Callable[[TaijiNativeCognitiveBackbone], float],
         sample_input: torch.Tensor | None = None,
+        outcome_router: OutcomeRouter | None = None,
         seed: int = 0,
     ) -> tuple[TaijiNativeCognitiveBackbone, dict[str, Any]]:
         """Execute neutral growth in an isolated shadow copy and commit iff gates pass."""
@@ -194,6 +201,9 @@ class NativeGrowthController:
             shadow.eval()
             with torch.no_grad():
                 before_logits, _, _ = shadow(sample_input)
+
+        # Freeze existing units BEFORE birth so newborn units stay immature & plastic!
+        shadow.mark_all_mature_()
 
         if action == "grow_stateful_units_svd":
             event = shadow.grow_stateful_units_svd_neutral_(
@@ -221,7 +231,6 @@ class NativeGrowthController:
                 after_logits, _, _ = shadow(sample_input)
             birth_max_abs_diff = float((after_logits - before_logits).abs().max().item())
 
-        shadow.mark_all_mature_()
         shadow.train()
         adapt_fn(shadow)
         shadow.eval()
@@ -259,5 +268,28 @@ class NativeGrowthController:
             "gain": gain,
             "growth_event": event,
         }
+        if outcome_router is not None:
+            phase = {"after": False}
+
+            def _apply_receipt(_planes: list[str]) -> None:
+                phase["after"] = True
+
+            ev = VerifiedOutcomeEvent(
+                event_id=f"shadow_growth:{proposal.get('step', len(self.history))}:{action}",
+                action_ref=action,
+                provenance="real",
+                authorized=True,
+                reward=float(gain),
+                prediction_error=float(max(0.0, -gain)),
+                cost=float(max(0, event.get("after_params", 0) - event.get("before_params", 0))),
+            )
+            learning_rec = outcome_router.route_event(
+                ev,
+                apply_fn=_apply_receipt,
+                eval_old_fn=lambda: old_after if phase["after"] else old_before,
+                eval_new_fn=lambda: new_after if phase["after"] else new_before,
+            )
+            receipt["learning_receipt_id"] = learning_rec.receipt_id
+            receipt["learning_receipt_accepted"] = learning_rec.accepted
         self.history.append(receipt)
         return (shadow if accepted else model), receipt
