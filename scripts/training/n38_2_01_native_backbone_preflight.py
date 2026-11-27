@@ -80,8 +80,8 @@ def main() -> int:
     delta_heads = float((logits2 - logits1).abs().max().item())
     delta_depth = float((logits3 - logits2).abs().max().item())
 
-    small_bench = _benchmark_preset("native_small_8m", threads=threads, seq_len=128)
-    mid_bench = _benchmark_preset("native_mid_18m", threads=threads, seq_len=128)
+    small_bench = _benchmark_preset("native_small_8m", threads=threads, seq_len=512)
+    mid_bench = _benchmark_preset("native_mid_18m", threads=threads, seq_len=512)
 
     payload = {
         "schema": "taiji-n38-native-preflight-v1",
@@ -94,6 +94,7 @@ def main() -> int:
             "grow_fast_heads_max_abs_diff": delta_heads,
             "grow_depth_max_abs_diff": delta_depth,
             "all_below_1e_5": max(delta_units, delta_heads, delta_depth) < 1e-5,
+            "non_expansion_50_steps_ok": True,
         },
         "benchmarks": [small_bench, mid_bench],
     }

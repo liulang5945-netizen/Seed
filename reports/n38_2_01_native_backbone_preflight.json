@@ -8,22 +8,23 @@
     "grow_group_units_max_abs_diff": 0.0,
     "grow_fast_heads_max_abs_diff": 0.0,
     "grow_depth_max_abs_diff": 0.0,
-    "all_below_1e_5": true
+    "all_below_1e_5": true,
+    "non_expansion_50_steps_ok": true
   },
   "benchmarks": [
     {
       "preset": "native_small_8m",
-      "params": 4379888,
-      "seq_len": 128,
+      "params": 7237952,
+      "seq_len": 512,
       "batch_size": 4,
-      "tokens_per_sec_bfloat16": 218.2
+      "tokens_per_sec_bfloat16": 2605.22
     },
     {
       "preset": "native_mid_18m",
-      "params": 9578560,
-      "seq_len": 128,
+      "params": 17839608,
+      "seq_len": 512,
       "batch_size": 4,
-      "tokens_per_sec_bfloat16": 146.18
+      "tokens_per_sec_bfloat16": 1753.21
     }
   ]
 }

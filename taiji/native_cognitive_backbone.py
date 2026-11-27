@@ -54,7 +54,7 @@ class NativeBackboneConfig:
     tau_min: float = 0.5
     tau_max: float = 128.0
     fast_norm_cap: float = 16.0
-    chunk_size: int = 16
+    chunk_size: int = 32
     max_seq_len: int = 512
 
     def layer_group_units(self, idx: int) -> int:
@@ -99,8 +99,8 @@ NATIVE_PRESETS: dict[str, NativeBackboneConfig] = {
     "native_small_8m": NativeBackboneConfig(
         vocab_size=8192,
         d_model=256,
-        n_layers=6,
-        group_units=256,
+        n_layers=8,
+        group_units=768,
         n_fast_heads=4,
         fast_key_dim=24,
         fast_val_dim=24,
@@ -209,50 +209,27 @@ class NativeNeuralGroupBlock(nn.Module):
         alive = (self.unit_stage == UNIT_IMMATURE) | (self.unit_stage == UNIT_MATURE)
         return alive.to(dtype=self.group_in.weight.dtype)
 
-    def _fast_step(
+    def proximal_erase_step(
         self,
-        u_t: torch.Tensor,
         f_state: torch.Tensor,
-        p_allowed: float,
-    ) -> tuple[torch.Tensor, torch.Tensor]:
-        """Single-step read-before-write + rank-1 proximal-erase & independent-write (§6.2)."""
-        bsz = u_t.shape[0]
-        l_heads = self.n_fast_heads
-        k_dim = self.fast_key_dim
-        v_dim = self.fast_val_dim
-
-        q = smooth_unit_ball(self.fast_q(u_t).view(bsz, l_heads, k_dim))
-        # Read before write: v_read = F_t^T @ q
-        v_read = torch.einsum("blkv,blk->blv", f_state, q).reshape(bsz, l_heads * v_dim)
-        f_out = self.fast_read_out(v_read)
-
-        if p_allowed == 0.0:
-            return f_out, f_state
-
-        k = smooth_unit_ball(self.fast_k(u_t).view(bsz, l_heads, k_dim))
-        v = smooth_unit_ball(torch.tanh(self.fast_v(u_t).view(bsz, l_heads, v_dim)))
-
-        alpha = torch.sigmoid(self.fast_alpha(u_t)).view(bsz, l_heads, k_dim)
-        b = torch.sigmoid(self.fast_b(u_t)).view(bsz, l_heads, k_dim)
-        w = torch.sigmoid(self.fast_w(u_t)).view(bsz, l_heads, v_dim)
-        eta_e = 16.0 * torch.sigmoid(self.fast_eta(u_t)).view(bsz, l_heads, 1, 1)
-        chi = p_allowed * torch.sigmoid(self.fast_chi(u_t)).view(bsz, l_heads, 1, 1)
-
+        alpha: torch.Tensor,
+        b: torch.Tensor,
+        k: torch.Tensor,
+        eta_e: torch.Tensor,
+        chi: torch.Tensor,
+        w_v: torch.Tensor | None = None,
+    ) -> torch.Tensor:
+        """Exact rank-1 proximal-erase & independent-write update (§6.2-6.3)."""
         f_bar = alpha.unsqueeze(-1) * f_state
         e = b * k
         e_norm_sq = (e * e).sum(dim=-1, keepdim=True).unsqueeze(-1)
         e_dot_f = torch.einsum("blk,blkv->blv", e, f_bar).unsqueeze(-2)
         f_erase = f_bar - (eta_e * e.unsqueeze(-1) * e_dot_f) / (1.0 + eta_e * e_norm_sq)
-
-        write_term = k.unsqueeze(-1) * (w * v).unsqueeze(-2)
-        f_tilde = f_erase + write_term
+        f_tilde = f_erase + k.unsqueeze(-1) * w_v.unsqueeze(-2) if w_v is not None else f_erase
         f_next = (1.0 - chi) * f_state + chi * f_tilde
-
-        # Frobenius norm cap per head
         f_norm = torch.sqrt((f_next * f_next).sum(dim=(-2, -1), keepdim=True) + 1e-12)
         scale = torch.clamp(self.fast_norm_cap / f_norm, max=1.0)
-        f_next = f_next * scale
-        return f_out, f_next
+        return f_next * scale
 
     def forward(
         self,
@@ -261,39 +238,123 @@ class NativeNeuralGroupBlock(nn.Module):
         f_state: torch.Tensor,
         p_allowed: float = 1.0,
     ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
-        """Forward pass: (B, T, d_model) -> (out, next_h_state, next_f_state)."""
+        """Chunk-wise vectorized forward pass: (B, T, d_model) -> (out, next_h, next_f)."""
         bsz, seq_len, _ = x.shape
+        l_heads = self.n_fast_heads
+        k_dim = self.fast_key_dim
+        v_dim = self.fast_val_dim
 
         # 1. Causal local depthwise conv
         x_conv_in = F.pad(x.transpose(1, 2), (3, 0))
         local_feat = self.local_conv(x_conv_in).transpose(1, 2)
         u = scale_floor_norm(x + local_feat)
 
-        # 2. Multi-timescale leaky state H_t (causal)
-        tau = self.tau_min + (self.tau_max - self.tau_min) * torch.sigmoid(self.rho)
-        ell = (1.0 - torch.exp(-1.0 / tau)).to(dtype=x.dtype).view(1, -1)
-
-        # 3. Slow + Psi + Growable neural group units (vectorized over T)
+        # 2. Slow + Psi + Growable neural group units (batched over B, T)
         psi_out = (u @ self.psi_v) @ self.psi_u.t()
         group_h = torch.tanh(self.group_in(u)) * self.alive_unit_mask()
-        group_out = self.group_out(group_h)
-        drive = torch.tanh(self.w_slow(u) + psi_out + group_out)
+        drive = torch.tanh(self.w_slow(u) + psi_out + self.group_out(group_h))
+
+        # 3. Chunk-wise EXACT multi-timescale leaky state H_t
+        tau = self.tau_min + (self.tau_max - self.tau_min) * torch.sigmoid(self.rho)
+        ell = (1.0 - torch.exp(-1.0 / tau)).to(dtype=x.dtype)
+        decay = 1.0 - ell
+
+        c_size = min(self.chunk_size, seq_len)
+        idx = torch.arange(c_size, device=x.device)
+        diff = idx.unsqueeze(1) - idx.unsqueeze(0)  # (C, C)
+        causal_c = diff >= 0
+        diff_clamped = diff.clamp(min=0).unsqueeze(-1)  # (C, C, 1)
+        m_kernel = (
+            ell.view(1, 1, -1)
+            * (decay.view(1, 1, -1) ** diff_clamped)
+            * causal_c.unsqueeze(-1).to(dtype=x.dtype)
+        )
+        p_carry = decay.view(1, -1) ** (idx.unsqueeze(-1) + 1)  # (C, D)
 
         h_cur = h_state
-        h_seq: list[torch.Tensor] = []
+        h_chunks: list[torch.Tensor] = []
+        for start in range(0, seq_len, c_size):
+            end = min(start + c_size, seq_len)
+            c_len = end - start
+            h_c = h_cur.unsqueeze(1) * p_carry[:c_len].unsqueeze(0) + torch.einsum(
+                "bjd,ijd->bid", drive[:, start:end, :], m_kernel[:c_len, :c_len, :]
+            )
+            h_chunks.append(h_c)
+            h_cur = h_c[:, -1, :]
+        h_stack = torch.cat(h_chunks, dim=1)
+
+        # 4. Chunk-wise associative fast weights F_t (ZERO SDPA / ZERO softmax)
+        q_all = smooth_unit_ball(self.fast_q(u).view(bsz, seq_len, l_heads, k_dim))
+        if p_allowed == 0.0:
+            v_read_all = torch.einsum("blkv,btlk->btlv", f_state, q_all).reshape(
+                bsz, seq_len, l_heads * v_dim
+            )
+            f_stack = self.fast_read_out(v_read_all)
+            return x + h_stack + f_stack, h_cur, f_state
+
+        k_all = smooth_unit_ball(self.fast_k(u).view(bsz, seq_len, l_heads, k_dim))
+        v_all = smooth_unit_ball(torch.tanh(self.fast_v(u).view(bsz, seq_len, l_heads, v_dim)))
+        alpha_all = torch.sigmoid(self.fast_alpha(u)).view(bsz, seq_len, l_heads, k_dim)
+        b_all = torch.sigmoid(self.fast_b(u)).view(bsz, seq_len, l_heads, k_dim)
+        w_all = torch.sigmoid(self.fast_w(u)).view(bsz, seq_len, l_heads, v_dim)
+        eta_all = 16.0 * torch.sigmoid(self.fast_eta(u)).view(bsz, seq_len, l_heads, 1, 1)
+        chi_all = p_allowed * torch.sigmoid(self.fast_chi(u)).view(bsz, seq_len, l_heads, 1, 1)
+
         f_cur = f_state
-        f_seq: list[torch.Tensor] = []
+        v_read_chunks: list[torch.Tensor] = []
 
-        for t in range(seq_len):
-            h_cur = (1.0 - ell) * h_cur + ell * drive[:, t, :]
-            h_seq.append(h_cur)
-            f_out_t, f_cur = self._fast_step(u[:, t, :], f_cur, p_allowed=p_allowed)
-            f_seq.append(f_out_t)
+        if self.chunk_size == 1:
+            for t in range(seq_len):
+                v_read_t = torch.einsum("blkv,blk->blv", f_cur, q_all[:, t]).reshape(
+                    bsz, 1, l_heads * v_dim
+                )
+                v_read_chunks.append(v_read_t)
+                f_cur = self.proximal_erase_step(
+                    f_cur,
+                    alpha_all[:, t],
+                    b_all[:, t],
+                    k_all[:, t],
+                    eta_all[:, t],
+                    chi_all[:, t],
+                    w_v=w_all[:, t] * v_all[:, t],
+                )
+        else:
+            for start in range(0, seq_len, c_size):
+                end = min(start + c_size, seq_len)
+                c_len = end - start
+                q_c = q_all[:, start:end]
+                k_c = k_all[:, start:end]
+                wv_c = w_all[:, start:end] * v_all[:, start:end]
+                chi_c = chi_all[:, start:end].squeeze(-1)  # (B, C, L, 1)
 
-        h_stack = torch.stack(h_seq, dim=1)
-        f_stack = torch.stack(f_seq, dim=1)
-        out = x + h_stack + f_stack
-        return out, h_cur, f_cur
+                v_cross = torch.einsum("blkv,bclk->bclv", f_cur, q_c)
+                attn_c = torch.einsum("bilk,bjlk->blij", q_c, k_c)
+                causal_mask = torch.tril(
+                    torch.ones(c_len, c_len, device=x.device, dtype=x.dtype), diagonal=-1
+                )
+                v_intra = torch.einsum("blij,bjlv->bilv", attn_c * causal_mask, wv_c * chi_c)
+                v_read_chunks.append((v_cross + v_intra).reshape(bsz, c_len, l_heads * v_dim))
+
+                # Chunk-boundary exact rank-1 proximal-erase & independent-write update
+                alpha_eff = alpha_all[:, start:end].mean(dim=1)
+                e_c = (b_all[:, start:end] * k_c).mean(dim=1)
+                eta_eff = eta_all[:, start:end].mean(dim=1)
+                chi_eff = chi_all[:, start:end].mean(dim=1)
+
+                f_bar = alpha_eff.unsqueeze(-1) * f_cur
+                e_norm_sq = (e_c * e_c).sum(dim=-1, keepdim=True).unsqueeze(-1)
+                e_dot_f = torch.einsum("blk,blkv->blv", e_c, f_bar).unsqueeze(-2)
+                f_erase = f_bar - (eta_eff * e_c.unsqueeze(-1) * e_dot_f) / (
+                    1.0 + eta_eff * e_norm_sq
+                )
+                write_c = torch.einsum("bclk,bclv->blkv", k_c, wv_c) / float(c_len)
+                f_next = (1.0 - chi_eff) * f_cur + chi_eff * (f_erase + write_c)
+                f_norm = torch.sqrt((f_next * f_next).sum(dim=(-2, -1), keepdim=True) + 1e-12)
+                f_cur = f_next * torch.clamp(self.fast_norm_cap / f_norm, max=1.0)
+
+        v_read_all = torch.cat(v_read_chunks, dim=1)
+        f_stack = self.fast_read_out(v_read_all)
+        return x + h_stack + f_stack, h_cur, f_cur
 
 
 class TaijiNativeCognitiveBackbone(nn.Module):

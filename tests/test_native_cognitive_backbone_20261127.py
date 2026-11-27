@@ -135,3 +135,68 @@ def test_autonomous_shadow_growth_controller_accepts_and_rejects() -> None:
     assert rec_bad["accepted"] is False
     assert "retention_breach" in rec_bad["reject_reason"]
     assert kept is model
+
+
+def test_proximal_erase_no_write_non_expansion_50_steps() -> None:
+    """§6.3: With w=0, alternating-direction proximal erase never amplifies ||F||_F."""
+    torch.manual_seed(23)
+    blk = NativeNeuralGroupBlock(
+        d_model=64,
+        group_units=64,
+        n_fast_heads=2,
+        fast_key_dim=16,
+        fast_val_dim=16,
+        psi_rank=4,
+        fast_norm_cap=16.0,
+    )
+    f_cur = torch.randn(1, 2, 16, 16)
+    f_cur = f_cur / torch.sqrt((f_cur * f_cur).sum(dim=(-2, -1), keepdim=True))
+    alpha = torch.full((1, 2, 16), 0.99)
+    b = torch.ones(1, 2, 16)
+    eta_e = torch.full((1, 2, 1, 1), 8.0)
+    chi = torch.ones(1, 2, 1, 1)
+
+    k1 = torch.zeros(1, 2, 16)
+    k1[..., 0] = 0.1
+    k1[..., 1] = 0.99**0.5
+    k2 = torch.zeros(1, 2, 16)
+    k2[..., 0] = 0.99**0.5
+    k2[..., 1] = 0.1
+
+    for step in range(50):
+        prev_norm = float(torch.linalg.norm(f_cur.reshape(2, -1), dim=-1).max().item())
+        f_cur = blk.proximal_erase_step(
+            f_cur, alpha, b, k1 if step % 2 == 0 else k2, eta_e, chi, w_v=None
+        )
+        next_norm = float(torch.linalg.norm(f_cur.reshape(2, -1), dim=-1).max().item())
+        assert next_norm <= prev_norm + 1e-6
+
+
+def test_operational_state_machine_growth_proposal_executes_real_neutral_growth(
+    tmp_path: Path,
+) -> None:
+    from taiji.bounded_delivery_runtime import build_delivery_bundle
+    from taiji.long_run_trained_subject import RunConfig
+    from taiji.operational_state_machine import OperationalStateMachine
+
+    bundle_dir = tmp_path / "bundle_growth"
+    build_delivery_bundle(
+        bundle_dir,
+        seed=6801,
+        cfg=RunConfig(
+            n_sessions=6,
+            events_per_session=10,
+            crash_sessions=(),
+            p1_end_session=2,
+            p2_end_session=4,
+        ),
+    )
+    fsm = OperationalStateMachine.initialize(bundle_dir, initial_state="Qualified", shadow_budget=4)
+    fsm.transition("Trial", reason="start_trial")
+    fsm.transition("Running", reason="trial_passed")
+
+    before_units = fsm.rt.grow_net.active_units()
+    res = fsm.run_shadow_upgrade("growth_proposal")
+    assert res["accepted"] is True
+    assert res["retention_drop"] <= 0.02
+    assert fsm.rt.grow_net.active_units() == before_units + 2

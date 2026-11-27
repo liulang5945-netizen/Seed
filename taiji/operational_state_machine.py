@@ -323,7 +323,13 @@ class OperationalStateMachine:
                     if after_units <= before_units:
                         raise RuntimeError("growth_proposal failed to expand active units")
                     for k, v in shadow_rt.grow_net.to_session_record("grow").capsule.items():
-                        rec.capsule[k] = v
+                        if k == "meta":
+                            events = int(rec.capsule["grow.meta"][4].item())
+                            rec.capsule["grow.meta"] = torch.cat(
+                                [v, torch.tensor([events], dtype=torch.long)]
+                            )
+                        else:
+                            rec.capsule[f"grow.{k}"] = v
 
                 shadow_rt.harness.run_session(_grow_fn, crash_before_commit=False)
                 shadow_rt._sync_manifest()
