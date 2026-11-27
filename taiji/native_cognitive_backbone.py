@@ -383,6 +383,66 @@ class StatefulNeuralGroup(nn.Module):
         alive = (self.unit_stage == STAGE_ID["immature"]) | (self.unit_stage == STAGE_ID["mature"])
         return alive.to(dtype=dtype)
 
+    def prepare_tick_tensors(self, dtype: torch.dtype) -> dict[str, torch.Tensor]:
+        """Hoist invariant masks, clamps, splits, and dtype casts once outside the tick loop."""
+        d = self.d_model
+        alive = self.alive_mask(dtype)
+        c = self.unit_c.clamp(0.0, 1.0 - 1e-4).to(dtype=dtype)
+        eta = self.unit_eta.clamp(1e-4, 1.0).to(dtype=dtype)
+        b = self.unit_b.clamp(0.0, 2.0).to(dtype=dtype)
+        w_eff = (self.unit_w_rec * self.edge_mask).to(dtype=dtype)
+        r_dt = self.unit_r.to(dtype=dtype)
+        p_dt = self.unit_p.to(dtype=dtype)
+        ws_dt = self.w_slow.weight.to(dtype=dtype)
+        pv_dt = self.psi_v.to(dtype=dtype)
+        pu_dt = self.psi_u.to(dtype=dtype)
+        tau = self.tau_min + (self.tau_max - self.tau_min) * torch.sigmoid(self.rho)
+        ell = (1.0 - torch.exp(-1.0 / tau)).to(dtype=dtype)
+        return {
+            "alive": alive,
+            "c": c,
+            "eta": eta,
+            "b": b,
+            "w_eff": w_eff,
+            "r_e": r_dt[:, d : 2 * d],
+            "r_dyn": torch.cat([r_dt[:, :d], r_dt[:, 2 * d :]], dim=-1),
+            "p_dt": p_dt,
+            "ws_e": ws_dt[:, d : 2 * d],
+            "ws_dyn": torch.cat([ws_dt[:, :d], ws_dt[:, 2 * d :]], dim=-1),
+            "pv_e": pv_dt[d : 2 * d, :],
+            "pv_dyn": torch.cat([pv_dt[:d, :], pv_dt[2 * d :, :]], dim=0),
+            "pu_dt": pu_dt,
+            "ell": ell,
+        }
+
+    def step_tick_cached(
+        self,
+        x_dyn: torch.Tensor,
+        e_r: torch.Tensor,
+        e_ws: torch.Tensor,
+        e_pv: torch.Tensor,
+        h_prev: torch.Tensor,
+        z_prev: torch.Tensor,
+        a_prev: torch.Tensor,
+        cache: dict[str, torch.Tensor],
+    ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+        """Exact U2_NEURAL_UNIT §3 tick using pre-hoisted weights & pre-projected patch input."""
+        alive = cache["alive"]
+        c = cache["c"]
+        eta = cache["eta"]
+        b = cache["b"]
+        z_alive = z_prev * alive
+        v = F.linear(x_dyn, cache["r_dyn"]) + e_r + F.linear(z_alive, cache["w_eff"]) - b * a_prev
+        z_next = (c * z_prev + (1.0 - c) * torch.tanh(v)) * alive
+        a_next = ((1.0 - eta) * a_prev + eta * z_next) * alive
+
+        psi_out = (x_dyn @ cache["pv_dyn"] + e_pv) @ cache["pu_dt"].t()
+        unit_out = F.linear(z_next * alive, cache["p_dt"])
+        pre_act = F.linear(x_dyn, cache["ws_dyn"]) + e_ws + psi_out + unit_out
+        ell = cache["ell"]
+        h_next = (1.0 - ell) * h_prev + ell * torch.tanh(pre_act)
+        return h_next, z_next, a_next
+
     def read_fast(self, h_prev: torch.Tensor, f_prev: torch.Tensor) -> torch.Tensor:
         if not self.use_fast_memory:
             return torch.zeros_like(h_prev)
@@ -636,6 +696,7 @@ class TaijiNativeCognitiveBackbone(nn.Module):
         state: NativeSubjectState | None = None,
         labels: torch.Tensor | None = None,
         p_allowed: float = 1.0,
+        use_batched_fast_path: bool = True,
     ) -> tuple[torch.Tensor, torch.Tensor | None, NativeSubjectState]:
         bsz, seq_len = byte_ids.shape
         a_byte, e_patch = self.encoder(byte_ids)
@@ -652,60 +713,173 @@ class TaijiNativeCognitiveBackbone(nn.Module):
         rz_cur = [z.to(dtype=dt) for z in state.residual_z]
         ra_cur = [a.to(dtype=dt) for a in state.residual_a]
 
-        patch_readouts: list[torch.Tensor] = []
-        h_traces: list[list[torch.Tensor]] = [[] for _ in self.groups]
         scale = 1.0 / math.sqrt(self.cfg.d_model)
+        groups_typed = [cast(StatefulNeuralGroup, g) for g in self.groups]
+        uniform_groups = (
+            use_batched_fast_path
+            and len(groups_typed) > 0
+            and len({g.n_units for g in groups_typed}) == 1
+            and len({g.psi_rank for g in groups_typed}) == 1
+            and len({g.use_fast_memory for g in groups_typed}) == 1
+        )
 
-        for p_idx in range(n_patches):
-            e_t = e_patch[:, p_idx, :]
-            # Synchronous inter-group Q/K/V messaging from pre-step H
-            qs = [cast(StatefulNeuralGroup, g).msg_q(h_cur[i]) for i, g in enumerate(self.groups)]
-            ks = torch.stack(
-                [cast(StatefulNeuralGroup, g).msg_k(h_cur[i]) for i, g in enumerate(self.groups)],
-                dim=1,
-            )  # (B, G, D)
-            vs = torch.stack(
-                [cast(StatefulNeuralGroup, g).msg_v(h_cur[i]) for i, g in enumerate(self.groups)],
-                dim=1,
-            )  # (B, G, D)
+        if uniform_groups:
+            n_groups = len(groups_typed)
+            d_dim = self.cfg.d_model
+            caches = [g.prepare_tick_tensors(dt) for g in groups_typed]
 
-            next_h: list[torch.Tensor] = []
-            next_z: list[torch.Tensor] = []
-            next_a: list[torch.Tensor] = []
-            for i, grp_m in enumerate(self.groups):
-                grp = cast(StatefulNeuralGroup, grp_m)
-                attn = torch.softmax(torch.einsum("bd,bgd->bg", qs[i], ks) * scale, dim=-1)
-                m_g = torch.einsum("bg,bgd->bd", attn, vs)
-                r_f = grp.read_fast(h_cur[i], f_cur[i])
-                x_g = torch.cat([scale_floor_norm(h_cur[i]), e_t, m_g, r_f], dim=-1)
-                h_n, z_n, a_n = grp.step_tick(x_g, h_cur[i], z_cur[i], a_cur[i])
-                next_h.append(h_n)
-                next_z.append(z_n)
-                next_a.append(a_n)
-                h_traces[i].append(h_n)
+            H = torch.stack(h_cur, dim=0)  # (G, B, D)
+            Z = torch.stack(z_cur, dim=0)  # (G, B, U)
+            A = torch.stack(a_cur, dim=0)  # (G, B, U)
 
-            h_cur, z_cur, a_cur = next_h, next_z, next_a
+            ALIVE = torch.stack([c["alive"] for c in caches], dim=0).unsqueeze(1)
+            C_mem = torch.stack([c["c"] for c in caches], dim=0).unsqueeze(1)
+            ETA = torch.stack([c["eta"] for c in caches], dim=0).unsqueeze(1)
+            B_ad = torch.stack([c["b"] for c in caches], dim=0).unsqueeze(1)
+            ELL = torch.stack([c["ell"] for c in caches], dim=0).view(n_groups, 1, 1)
 
-            # Mean group readout + additive residual groups
-            z_p = self.group_read_proj(torch.stack(h_cur, dim=0).mean(dim=0))
-            for r_i, r_grp_m in enumerate(self.residual_groups):
-                r_grp = cast(StatefulNeuralGroup, r_grp_m)
-                zero_msg = torch.zeros_like(z_p)
-                rx_g = torch.cat([scale_floor_norm(rh_cur[r_i]), e_t, zero_msg, zero_msg], dim=-1)
-                rh_n, rz_n, ra_n = r_grp.step_tick(rx_g, rh_cur[r_i], rz_cur[r_i], ra_cur[r_i])
-                rh_cur[r_i], rz_cur[r_i], ra_cur[r_i] = rh_n, rz_n, ra_n
-                z_p = z_p + rh_n
-            patch_readouts.append(z_p)
+            W_eff_T = torch.stack([c["w_eff"].t() for c in caches], dim=0)
+            R_dyn_T = torch.stack([c["r_dyn"].t() for c in caches], dim=0)
+            R_e_T = torch.stack([c["r_e"].t() for c in caches], dim=0)
+            P_T = torch.stack([c["p_dt"].t() for c in caches], dim=0)
+            WS_dyn_T = torch.stack([c["ws_dyn"].t() for c in caches], dim=0)
+            WS_e_T = torch.stack([c["ws_e"].t() for c in caches], dim=0)
+            PV_dyn = torch.stack([c["pv_dyn"] for c in caches], dim=0)
+            PV_e = torch.stack([c["pv_e"] for c in caches], dim=0)
+            PU_T = torch.stack([c["pu_dt"].t() for c in caches], dim=0)
+
+            MQ_T = torch.stack([g.msg_q.weight.to(dtype=dt).t() for g in groups_typed], dim=0)
+            MK_T = torch.stack([g.msg_k.weight.to(dtype=dt).t() for g in groups_typed], dim=0)
+            MV_T = torch.stack([g.msg_v.weight.to(dtype=dt).t() for g in groups_typed], dim=0)
+
+            use_fast = groups_typed[0].use_fast_memory
+            if use_fast:
+                F_mem = torch.stack([f.to(dtype=dt) for f in f_cur], dim=0)  # (G, B, dk, dv)
+                FQ_T = torch.stack([g.fast_q.weight.to(dtype=dt).t() for g in groups_typed], dim=0)
+                FRO_T = torch.stack(
+                    [g.fast_read_out.weight.to(dtype=dt).t() for g in groups_typed], dim=0
+                )
+
+            # Pre-project patch embeddings across all groups & ticks once
+            e_flat = e_patch.reshape(1, bsz * n_patches, d_dim).expand(n_groups, -1, -1)
+            E_r = torch.bmm(e_flat, R_e_T).view(n_groups, bsz, n_patches, -1)
+            E_ws = torch.bmm(e_flat, WS_e_T).view(n_groups, bsz, n_patches, d_dim)
+            E_pv = torch.bmm(e_flat, PV_e).view(n_groups, bsz, n_patches, -1)
+
+            h_hist: list[torch.Tensor] = []
+            for p_idx in range(n_patches):
+                Q = torch.bmm(H, MQ_T)
+                K = torch.bmm(H, MK_T)
+                V = torch.bmm(H, MV_T)
+                attn = torch.softmax(torch.einsum("gbd,kbd->gbk", Q, K) * scale, dim=-1)
+                M = torch.einsum("gbk,kbd->gbd", attn, V)
+                if use_fast:
+                    q_f = smooth_unit_ball(torch.bmm(H, FQ_T))
+                    v_f = torch.einsum("gbkv,gbk->gbv", F_mem, q_f)
+                    R_f = torch.bmm(v_f, FRO_T)
+                else:
+                    R_f = torch.zeros_like(H)
+                X_dyn = torch.cat([scale_floor_norm(H), M, R_f], dim=-1)
+                Z_alive = Z * ALIVE
+                V_in = (
+                    torch.bmm(X_dyn, R_dyn_T)
+                    + E_r[:, :, p_idx, :]
+                    + torch.bmm(Z_alive, W_eff_T)
+                    - B_ad * A
+                )
+                Z = (C_mem * Z + (1.0 - C_mem) * torch.tanh(V_in)) * ALIVE
+                A = ((1.0 - ETA) * A + ETA * Z) * ALIVE
+                PSI_out = torch.bmm(torch.bmm(X_dyn, PV_dyn) + E_pv[:, :, p_idx, :], PU_T)
+                UNIT_out = torch.bmm(Z * ALIVE, P_T)
+                PRE = torch.bmm(X_dyn, WS_dyn_T) + E_ws[:, :, p_idx, :] + PSI_out + UNIT_out
+                H = (1.0 - ELL) * H + ELL * torch.tanh(PRE)
+                h_hist.append(H)
+
+            H_stack = torch.stack(h_hist, dim=2)  # (G, B, P, D)
+            z_stack = self.group_read_proj(H_stack.mean(dim=0))  # (B, P, D)
+            h_cur = list(H.unbind(0))
+            z_cur = list(Z.unbind(0))
+            a_cur = list(A.unbind(0))
+            h_traces_tensors = list(H_stack.unbind(0))
+
+            if self.residual_groups:
+                res_accum = torch.zeros_like(z_stack)
+                for r_i, r_grp_m in enumerate(self.residual_groups):
+                    r_grp = cast(StatefulNeuralGroup, r_grp_m)
+                    rcache = r_grp.prepare_tick_tensors(dt)
+                    r_e_r = F.linear(e_patch, rcache["r_e"])
+                    r_e_ws = F.linear(e_patch, rcache["ws_e"])
+                    r_e_pv = e_patch @ rcache["pv_e"]
+                    zero_2d = torch.zeros((bsz, 2 * d_dim), device=byte_ids.device, dtype=dt)
+                    rh_list: list[torch.Tensor] = []
+                    for p_idx in range(n_patches):
+                        rx_dyn = torch.cat([scale_floor_norm(rh_cur[r_i]), zero_2d], dim=-1)
+                        rh_n, rz_n, ra_n = r_grp.step_tick_cached(
+                            rx_dyn,
+                            r_e_r[:, p_idx, :],
+                            r_e_ws[:, p_idx, :],
+                            r_e_pv[:, p_idx, :],
+                            rh_cur[r_i],
+                            rz_cur[r_i],
+                            ra_cur[r_i],
+                            rcache,
+                        )
+                        rh_cur[r_i], rz_cur[r_i], ra_cur[r_i] = rh_n, rz_n, ra_n
+                        rh_list.append(rh_n)
+                    res_accum = res_accum + torch.stack(rh_list, dim=1)
+                z_stack = z_stack + res_accum
+        else:
+            patch_readouts: list[torch.Tensor] = []
+            h_traces: list[list[torch.Tensor]] = [[] for _ in self.groups]
+            for p_idx in range(n_patches):
+                e_t = e_patch[:, p_idx, :]
+                qs = [g.msg_q(h_cur[i]) for i, g in enumerate(groups_typed)]
+                ks = torch.stack(
+                    [g.msg_k(h_cur[i]) for i, g in enumerate(groups_typed)],
+                    dim=1,
+                )
+                vs = torch.stack(
+                    [g.msg_v(h_cur[i]) for i, g in enumerate(groups_typed)],
+                    dim=1,
+                )
+
+                next_h: list[torch.Tensor] = []
+                next_z: list[torch.Tensor] = []
+                next_a: list[torch.Tensor] = []
+                for i, grp in enumerate(groups_typed):
+                    attn = torch.softmax(torch.einsum("bd,bgd->bg", qs[i], ks) * scale, dim=-1)
+                    m_g = torch.einsum("bg,bgd->bd", attn, vs)
+                    r_f = grp.read_fast(h_cur[i], f_cur[i])
+                    x_g = torch.cat([scale_floor_norm(h_cur[i]), e_t, m_g, r_f], dim=-1)
+                    h_n, z_n, a_n = grp.step_tick(x_g, h_cur[i], z_cur[i], a_cur[i])
+                    next_h.append(h_n)
+                    next_z.append(z_n)
+                    next_a.append(a_n)
+                    h_traces[i].append(h_n)
+
+                h_cur, z_cur, a_cur = next_h, next_z, next_a
+
+                z_p = self.group_read_proj(torch.stack(h_cur, dim=0).mean(dim=0))
+                for r_i, r_grp_m in enumerate(self.residual_groups):
+                    r_grp = cast(StatefulNeuralGroup, r_grp_m)
+                    zero_msg = torch.zeros_like(z_p)
+                    rx_g = torch.cat(
+                        [scale_floor_norm(rh_cur[r_i]), e_t, zero_msg, zero_msg], dim=-1
+                    )
+                    rh_n, rz_n, ra_n = r_grp.step_tick(rx_g, rh_cur[r_i], rz_cur[r_i], ra_cur[r_i])
+                    rh_cur[r_i], rz_cur[r_i], ra_cur[r_i] = rh_n, rz_n, ra_n
+                    z_p = z_p + rh_n
+                patch_readouts.append(z_p)
+
+            z_stack = torch.stack(patch_readouts, dim=1)
+            h_traces_tensors = [torch.stack(tr, dim=1) for tr in h_traces]
 
         # Update FP1 KKT fast memories after patch window reads
         next_f: list[torch.Tensor] = []
-        for i, grp_m in enumerate(self.groups):
-            grp = cast(StatefulNeuralGroup, grp_m)
-            h_seq = torch.stack(h_traces[i], dim=1)
-            next_f.append(grp.write_fast_fp1(f_cur[i], h_seq, p_allowed=p_allowed))
+        for i, grp in enumerate(groups_typed):
+            next_f.append(grp.write_fast_fp1(f_cur[i], h_traces_tensors[i], p_allowed=p_allowed))
 
         # Strictly causal byte readout: byte t in patch p uses z_{p-1} (0 for p=0) + a_byte[:, t]
-        z_stack = torch.stack(patch_readouts, dim=1)  # (B, P, D)
         z_shifted = F.pad(z_stack[:, :-1, :], (0, 0, 1, 0))  # (B, P, D), strictly causal!
         z_per_byte = z_shifted.repeat_interleave(self.cfg.patch_size, dim=1)[:, :seq_len, :]
         logits = self.byte_out(torch.cat([a_byte, z_per_byte], dim=-1))

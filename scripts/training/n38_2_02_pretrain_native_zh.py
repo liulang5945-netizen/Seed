@@ -432,7 +432,7 @@ def run_training(args: argparse.Namespace) -> dict[str, Any]:
 
     params = model.count_parameters()
     bytes_per_opt = batch_size * seq_bytes * grad_accum
-    total_steps_est = max(100, int((args.max_hours * 3600.0 * 1500.0) / bytes_per_opt))
+    total_steps_est = max(100, int((args.max_hours * 3600.0 * 3500.0) / bytes_per_opt))
 
     policy_path = Path(args.policy_path)
     growth_controller = NativeGrowthController(load_growth_policy(policy_path))
@@ -606,6 +606,10 @@ def run_training(args: argparse.Namespace) -> dict[str, Any]:
                     "subject_state_persisted": True,
                     "status": "running",
                     "preset": args.preset,
+                    "dtype": args.dtype,
+                    "batch_size": batch_size,
+                    "grad_accum": grad_accum,
+                    "threads": args.threads,
                     "params": params,
                     "pid": os.getpid(),
                     "opt_step": opt_step,
@@ -656,10 +660,10 @@ def main() -> int:
     ap = argparse.ArgumentParser(description="N38.2.02 态极 Native Byte-Group CPU Pretraining")
     ap.add_argument("--preset", default="native_byte_mid", choices=sorted(NATIVE_PRESETS))
     ap.add_argument("--max-hours", type=float, default=24.0)
-    ap.add_argument("--threads", type=int, default=8)
-    ap.add_argument("--dtype", default="bfloat16", choices=("bfloat16", "float32"))
-    ap.add_argument("--batch-size", type=int, default=4)
-    ap.add_argument("--grad-accum", type=int, default=4)
+    ap.add_argument("--threads", type=int, default=4)
+    ap.add_argument("--dtype", default="float32", choices=("bfloat16", "float32"))
+    ap.add_argument("--batch-size", type=int, default=16)
+    ap.add_argument("--grad-accum", type=int, default=1)
     ap.add_argument("--eval-every", type=int, default=250)
     ap.add_argument("--val-bytes-path", default=str(VAL_BYTES_PATH))
     ap.add_argument("--ckpt-dir", default=str(DEFAULT_CKPT_DIR))

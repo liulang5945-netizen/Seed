@@ -313,3 +313,41 @@ def test_unit_lifecycle_optimizer_migration_copy_head_macro_and_state_roundtrip(
     restored = TaijiNativeCognitiveBackbone.from_capsule(cap)
     assert restored.encoder.dynamic_vocab.vocab_size == model.encoder.dynamic_vocab.vocab_size
     assert cast(StatefulNeuralGroup, restored.groups[0]).retired_unit_ids == grp0.retired_unit_ids
+
+
+def test_batched_bmm_fast_path_matches_reference_forward_and_grads() -> None:
+    torch.manual_seed(41)
+    model = TaijiNativeCognitiveBackbone(NATIVE_PRESETS["native_byte_tiny"])
+    model.grow_group_neutral_(seed=9)
+    x = torch.randint(0, 256, (4, 32))
+    y = torch.randint(0, 256, (4, 32))
+    st0 = model.init_state(4)
+
+    model.zero_grad(set_to_none=True)
+    logits_ref, loss_ref, st_ref = model(x, state=st0, labels=y, use_batched_fast_path=False)
+    assert loss_ref is not None
+    loss_ref.backward()
+    grads_ref = {
+        name: p.grad.detach().clone() for name, p in model.named_parameters() if p.grad is not None
+    }
+
+    model.zero_grad(set_to_none=True)
+    logits_fast, loss_fast, st_fast = model(x, state=st0, labels=y, use_batched_fast_path=True)
+    assert loss_fast is not None
+    loss_fast.backward()
+    grads_fast = {
+        name: p.grad.detach().clone() for name, p in model.named_parameters() if p.grad is not None
+    }
+
+    assert float((logits_fast - logits_ref).abs().max().item()) < 1e-5
+    assert abs(float(loss_fast.item()) - float(loss_ref.item())) < 1e-5
+    for a, b in zip(st_fast.h_states, st_ref.h_states, strict=True):
+        assert float((a - b).abs().max().item()) < 1e-5
+    for a, b in zip(st_fast.unit_z, st_ref.unit_z, strict=True):
+        assert float((a - b).abs().max().item()) < 1e-5
+    for a, b in zip(st_fast.fast_memories, st_ref.fast_memories, strict=True):
+        assert float((a - b).abs().max().item()) < 1e-5
+    assert set(grads_fast) == set(grads_ref)
+    for name in grads_ref:
+        diff = float((grads_fast[name] - grads_ref[name]).abs().max().item())
+        assert diff < 1e-4, f"grad mismatch for {name}: {diff}"
