@@ -12,6 +12,7 @@ P5.1g a-gate with no overlap and in-vocabulary pruning.
 from __future__ import annotations
 
 import pytest
+
 from scripts.training.eval_taiji_p5_1h_admission_recipe_gate import (
     FROZEN_TICK_MAJORITY,
     INDEPENDENT_MARGIN,

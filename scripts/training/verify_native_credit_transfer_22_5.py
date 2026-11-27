@@ -21,11 +21,11 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
 import torch  # noqa: E402
+
+from scripts.training.first_a_support_22_5 import output  # noqa: E402
 from scripts.training.joint_token_learner_22_5 import load_learner  # noqa: E402
 from scripts.training.paired_episode_22_5 import start_episode  # noqa: E402
 from scripts.training.task_history_loss_22_5 import history_loss  # noqa: E402
-
-from scripts.training.first_a_support_22_5 import output  # noqa: E402
 from taiji.u2_credit_learner import (  # noqa: E402
     BODY_TENSORS,
     HEAD_TENSORS,
@@ -529,7 +529,6 @@ def proposals(r2: bool = False) -> int:
     import copy  # noqa: PLC0415
 
     from scripts.training.task_history_loss_22_5 import score_answer  # noqa: PLC0415
-
     from taiji.u2_credit_update import accepted_adam_step  # noqa: PLC0415
     from taiji.u2_learning_transaction import migrate_parameters  # noqa: PLC0415
     from taiji.u2_recovery import U2Runtime  # noqa: PLC0415
@@ -891,7 +890,6 @@ def proposals(r2: bool = False) -> int:
 def price_p383() -> int:
     """Zero-parent-mutation price probe for the two P3.8.3 recipe arms."""
     from scripts.training.task_history_loss_22_5 import score_answer  # noqa: PLC0415
-
     from taiji.u2_credit_update import accepted_adam_step  # noqa: PLC0415
 
     price_report = ROOT / "reports/taiji_u2_p3_8_3_price_20261114.json"

@@ -4,8 +4,8 @@ import copy
 from dataclasses import replace
 
 import pytest
-from scripts.training.eval_taiji_structural_bridge import _build_model
 
+from scripts.training.eval_taiji_structural_bridge import _build_model
 from taiji import (
     StructuralEvidenceCompactionResult,
     StructuralEvidenceConsumptionAudit,

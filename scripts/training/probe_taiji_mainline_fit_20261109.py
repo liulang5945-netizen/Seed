@@ -49,7 +49,6 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 import scripts.training.probe_taiji_cross_family_readout_20261109 as base  # noqa: E402
-
 import taiji.data_premise_18_0 as premise  # noqa: E402
 from taiji.address_bridge import BridgeTable, sequence_key  # noqa: E402
 from taiji.copy_stop_boundary import field_bounds  # noqa: E402

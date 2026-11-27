@@ -5,8 +5,8 @@ from pathlib import Path
 
 import pytest
 import torch
-from scripts.training.verify_paired_compute_22_5 import load_reference
 
+from scripts.training.verify_paired_compute_22_5 import load_reference
 from taiji.u2_operators import emission, initial_cursor
 
 ROOT = Path(__file__).resolve().parents[2]

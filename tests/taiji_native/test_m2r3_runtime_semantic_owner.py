@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from scripts.training.eval_taiji_m2r3_r0_structured_semantics import build_corpus
-
 from taiji import StructuredSemanticLearner, TSKV8Adapter, content_digest
 
 

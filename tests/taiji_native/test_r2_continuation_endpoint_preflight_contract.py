@@ -6,10 +6,10 @@ from contextlib import nullcontext
 from types import SimpleNamespace
 
 import pytest
-from scripts.training.validate_taiji_r2_continuation_endpoint import STAGES, EndpointRefuse
 
 from scripts.training import prepare_taiji_r2_continuation_endpoints as m
 from scripts.training import taiji_r2_continuation_evaluation_adapter as adapter
+from scripts.training.validate_taiji_r2_continuation_endpoint import STAGES, EndpointRefuse
 
 
 def fixture(tmp_path):

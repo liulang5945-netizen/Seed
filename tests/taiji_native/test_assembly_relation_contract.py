@@ -4,12 +4,12 @@ import json
 from pathlib import Path
 
 import pytest
+
 from scripts.training.build_taiji_a1_relation_manifest import (
     RELATION_MANIFEST_FORMAT,
     build_relation_manifest,
     relation_corpus_from_manifest,
 )
-
 from taiji import AssemblyRelationCorpus, AssemblyRelationExample
 
 

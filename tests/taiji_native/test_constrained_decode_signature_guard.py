@@ -24,7 +24,6 @@ def test_patched_generate_accepts_every_keyword_of_the_product_generate() -> Non
     import functools
 
     from scripts.training.probe_taiji_cap0_byte_output import install_constrained_decode
-
     from taiji.adapter import Taiji
 
     saved = Taiji.generate
@@ -53,8 +52,8 @@ def test_patched_generate_refuses_non_default_repetition_penalty_loudly() -> Non
     """对齐不了的一律响亮拒绝（与 boundary/authorization 同一处置）——绝不静默丢语义。"""
 
     import pytest
-    from scripts.training.probe_taiji_cap0_byte_output import install_constrained_decode
 
+    from scripts.training.probe_taiji_cap0_byte_output import install_constrained_decode
     from taiji.adapter import Taiji
 
     saved = Taiji.generate

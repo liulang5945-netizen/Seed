@@ -7,8 +7,8 @@ from pathlib import Path
 
 import pytest
 import torch
-from scripts.training.verify_taiji_u2_runtime_22_3 import load_checks
 
+from scripts.training.verify_taiji_u2_runtime_22_3 import load_checks
 from taiji.u2_history import CausalHistory, value_digest
 from taiji.u2_recovery import U2Runtime
 

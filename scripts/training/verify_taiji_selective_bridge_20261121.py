@@ -30,6 +30,7 @@ from torch import nn
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
+from scripts.training.check_report_run_conditions import write_report  # noqa: E402
 from scripts.training.run_s2_23_0b_joint_20261120 import SEEDS, lr_at  # noqa: E402
 from scripts.training.run_s2_23_2c_attention_20261120 import train_joint_parent  # noqa: E402
 from scripts.training.run_s2_action_prior_20261121 import (
@@ -41,21 +42,6 @@ from scripts.training.run_s2_action_prior_20261121 import (
 from scripts.training.run_s2_action_prior_20261121 import (
     DIRECTIONS as ACTION_DIRECTIONS,
 )
-from scripts.training.verify_taiji_algorithm_holistic_20261121 import (  # noqa: E402
-    ACTION_CHAR_INDEX,
-    ACTION_FIT_TEMPLATES,
-    ACTION_PROJECTION,
-    ACTION_TRAIN_TEMPLATES,
-    ACTION_VOCAB,
-    _channels_seq,
-    _clip_and_step,
-    _eval_selective_preds,
-    _make_m3_data,
-    _skill_scores,
-    _trainable_params,
-)
-
-from scripts.training.check_report_run_conditions import write_report  # noqa: E402
 from scripts.training.run_s2_cn_vocab3_20261121 import (  # noqa: E402
     CLASSES as CN_CLASSES,
 )
@@ -82,6 +68,19 @@ from scripts.training.run_s2_cn_vocab3_20261121 import (
 )
 from scripts.training.run_s2_cn_vocab3_20261121 import (
     build as build_cn_vocab3,
+)
+from scripts.training.verify_taiji_algorithm_holistic_20261121 import (  # noqa: E402
+    ACTION_CHAR_INDEX,
+    ACTION_FIT_TEMPLATES,
+    ACTION_PROJECTION,
+    ACTION_TRAIN_TEMPLATES,
+    ACTION_VOCAB,
+    _channels_seq,
+    _clip_and_step,
+    _eval_selective_preds,
+    _make_m3_data,
+    _skill_scores,
+    _trainable_params,
 )
 from taiji.u2_neural_units import LEGAL_INPUT_CHANNELS  # noqa: E402
 from taiji.u2_selective_units import (  # noqa: E402

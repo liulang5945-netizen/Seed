@@ -7,9 +7,9 @@ import json
 from typing import Any, cast
 
 import pytest
-from scripts.training.first_a_support_22_5_v2 import generate_examples as generate_v2
 
 from scripts.training import run_s2_formal_check2_20261120 as runner
+from scripts.training.first_a_support_22_5_v2 import generate_examples as generate_v2
 from taiji.u2_22_5_pipeline import DEFAULT_TEMPLATES, build_b_items
 
 

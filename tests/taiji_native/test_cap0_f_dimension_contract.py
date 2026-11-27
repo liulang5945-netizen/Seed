@@ -11,6 +11,7 @@ import json
 from pathlib import Path
 
 import pytest
+
 from scripts.training.eval_taiji_cap0_baseline import (
     _dimension_items,
     _eval_set,

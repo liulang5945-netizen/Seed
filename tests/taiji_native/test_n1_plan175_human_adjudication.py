@@ -3,6 +3,7 @@
 import copy
 
 import pytest
+
 from scripts.training.adjudicate_taiji_n1_plan175_review import (
     finalize,
     parse_markdown,

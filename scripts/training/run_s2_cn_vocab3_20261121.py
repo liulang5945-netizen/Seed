@@ -23,14 +23,13 @@ from torch import nn
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
+from scripts.training.check_report_run_conditions import write_report  # noqa: E402
 from scripts.training.run_s2_23_0b_joint_20261120 import accuracy as skill_accuracy  # noqa: E402
 from scripts.training.run_s2_23_0b_joint_20261120 import (
     build_data as build_skill_data,  # noqa: E402
 )
 from scripts.training.run_s2_23_0b_joint_20261120 import channels, lr_at  # noqa: E402
 from scripts.training.run_s2_23_2c_attention_20261120 import train_joint_parent  # noqa: E402
-
-from scripts.training.check_report_run_conditions import write_report  # noqa: E402
 
 OUT = ROOT / "reports/taiji_u2_cn_vocab3_20261121.json"
 CAP_CPU = 1500.0

@@ -24,13 +24,11 @@ import torch.nn.functional as F
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
+from scripts.training.check_report_run_conditions import write_report  # noqa: E402
 from scripts.training.verify_taiji_algorithm_holistic_20261121 import (  # noqa: E402
     _channels_seq,
     _clip_and_step,
 )
-from scripts.training.verify_taiji_s1r_restructure_20261121 import SubjectR  # noqa: E402
-
-from scripts.training.check_report_run_conditions import write_report  # noqa: E402
 from scripts.training.verify_taiji_cognitive_loop_20261121 import (  # noqa: E402
     BI_CN_ADV_FIRST,
     BI_CN_ADV_SECOND,
@@ -43,6 +41,7 @@ from scripts.training.verify_taiji_cognitive_loop_20261121 import (  # noqa: E40
     _make_p27_physics_batch,
 )
 from scripts.training.verify_taiji_s1r2_rework_20261121 import PhaseHead  # noqa: E402
+from scripts.training.verify_taiji_s1r_restructure_20261121 import SubjectR  # noqa: E402
 from taiji.u2_selective_units import (  # noqa: E402
     SelectivePersistentGraph,
     apply_capsule_v2,

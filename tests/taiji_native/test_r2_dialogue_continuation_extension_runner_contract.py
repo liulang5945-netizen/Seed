@@ -2262,8 +2262,8 @@ def test_extension_cursor_rng_and_32_episode_commit_resume_are_equivalent(
     import random
 
     import torch
-    from scripts.training.taiji_r2_dialogue_recovery import Cursor, RecoveryStore, train_next
 
+    from scripts.training.taiji_r2_dialogue_recovery import Cursor, RecoveryStore, train_next
     from taiji import LanguageAlignmentTrainer, LanguageEpisode, LanguageEpisodeCorpus, Taiji
 
     torch.set_num_threads(1)

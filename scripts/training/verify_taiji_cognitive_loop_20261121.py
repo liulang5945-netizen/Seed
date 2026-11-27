@@ -31,18 +31,17 @@ from torch import nn
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
+from scripts.training.check_report_run_conditions import write_report  # noqa: E402
 from scripts.training.run_s2_23_0b_joint_20261120 import SEEDS, lr_at  # noqa: E402
 from scripts.training.run_s2_23_2c_attention_20261120 import train_joint_parent  # noqa: E402
+from scripts.training.run_s2_cn_vocab3_20261121 import CLASSES as CN_CLASSES  # noqa: E402
+from scripts.training.run_s2_cn_vocab3_20261121 import FIT as CN_FIT  # noqa: E402
 from scripts.training.verify_taiji_algorithm_holistic_20261121 import (  # noqa: E402
     _channels_seq,
     _clip_and_step,
     _skill_scores,
     _trainable_params,
 )
-
-from scripts.training.check_report_run_conditions import write_report  # noqa: E402
-from scripts.training.run_s2_cn_vocab3_20261121 import CLASSES as CN_CLASSES  # noqa: E402
-from scripts.training.run_s2_cn_vocab3_20261121 import FIT as CN_FIT  # noqa: E402
 from scripts.training.verify_taiji_selective_bridge_20261121 import (  # noqa: E402
     BI_CN_ADV_FIRST,
     BI_CN_ADV_SECOND,

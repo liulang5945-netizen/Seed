@@ -5,7 +5,9 @@ from unittest.mock import patch
 
 import pytest
 import torch
+
 from scripts.training.evidence_a_learner_22_5 import fresh_optimizer
+from scripts.training.first_a_support_22_5 import make_model, output
 from scripts.training.joint_token_learner_22_5 import (
     fork_with_optimizer,
     load_learner,
@@ -15,8 +17,6 @@ from scripts.training.paired_episode_22_5 import start_episode
 from scripts.training.paired_world_22_5 import build_partition
 from scripts.training.task_history_loss_22_5 import score_answer
 from scripts.training.verify_joint_subject_22_5 import make_runtime
-
-from scripts.training.first_a_support_22_5 import make_model, output
 from taiji.u2_events import observation_intent
 from taiji.u2_evidence_subject import EvidenceSubject
 from taiji.u2_history import assert_values_equal, value_digest

@@ -3,6 +3,7 @@ from __future__ import annotations
 from copy import deepcopy
 
 import torch
+
 from scripts.training.eval_taiji_m1_62_learning_data_contract import (
     _curriculum,
     _write_train,
@@ -18,7 +19,6 @@ from scripts.training.eval_taiji_m1_identity_organ_canary import (
     run_canary,
 )
 from scripts.training.train_taiji_memory import _memory_config
-
 from taiji import Taiji, TaijiConfig
 from taiji.identity_organ import (
     IDENTITY_ORGAN_BOUND_PROVENANCE,

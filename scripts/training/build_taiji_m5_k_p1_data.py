@@ -26,7 +26,6 @@ from scripts.training.eval_taiji_m5_k1_skill_composition import (
     _registry,
     _schema,
 )
-
 from seed_platform.programming_languages import ProgrammingLanguageRegistry
 from taiji import content_digest
 

@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 import pytest
+
 from scripts.training.eval_taiji_m3r1_native_observation import _course_registry
 from scripts.training.eval_taiji_m3r2_task_state_sequence import _world
 from scripts.training.eval_taiji_m3r3_read_only_intent import (
     _catalog_semantics,
     run_gate,
 )
-
 from seed_platform.workbench import WorkbenchEnvironment
 from taiji import (
     ContentPlan,

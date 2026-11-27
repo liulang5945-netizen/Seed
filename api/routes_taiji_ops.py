@@ -10,9 +10,10 @@ from fastapi import APIRouter, HTTPException
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 
-from taiji.bounded_delivery_runtime import BOUNDARIES, SCOPE
-from taiji.operational_state_machine import (
+from taiji.ops_contract import (
     ALLOWED_TRANSITIONS,
+    BOUNDARIES,
+    SCOPE,
     STATES,
     OutOfContractChangeError,
     classify_change,

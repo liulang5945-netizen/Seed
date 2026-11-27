@@ -10,11 +10,11 @@ import time
 import unicodedata
 
 import torch
+
+from scripts.training.audit_taiji_n1_plan175_source_metadata import ROOT, digest
 from scripts.training.run_taiji_r2_daily_dialogue_full_turn_pretraining import (
     _json_selected_fields,
 )
-
-from scripts.training.audit_taiji_n1_plan175_source_metadata import ROOT, digest
 from taiji.conditional_language_v3 import ConditionalLanguageTrainerV3
 from taiji.language_alignment import LanguageEpisode
 

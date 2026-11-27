@@ -26,11 +26,11 @@ reason.
 from __future__ import annotations
 
 import torch
+
 from scripts.training.eval_taiji_foundation_baseline import _memory_config
 from scripts.training.eval_taiji_m1_64_foundation_memory import (
     build_foundation_delayed_memory_corpus,
 )
-
 from taiji import Taiji
 from taiji.foundation_tasks import (
     DelayedMemoryQuery,

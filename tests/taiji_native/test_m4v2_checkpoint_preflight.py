@@ -6,13 +6,13 @@ from pathlib import Path
 
 import pytest
 import torch
+
 from scripts.training.check_taiji_m4v2_checkpoint_preflight import (
     COURSE_CURSOR,
     COURSE_ID,
     _envelope,
     _verify_envelope,
 )
-
 from taiji import content_digest
 
 REPORT = (

@@ -1,9 +1,9 @@
 """The post-pilot diagnostic cannot silently become heldout fitting."""
 
 import pytest
-from scripts.training.build_taiji_n1_evidence_curriculum import build
 
 from scripts.training.audit_taiji_n1_native_evidence_train_fit import measure, training_items
+from scripts.training.build_taiji_n1_evidence_curriculum import build
 
 
 def test_diagnostic_selects_all_train_and_no_dev_or_holdout():

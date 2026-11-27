@@ -2,11 +2,11 @@ from __future__ import annotations
 
 import pytest
 import torch
+
 from scripts.training.run_taiji_n1_c2_state_flow import (
     assert_noninterference,
     observe_state_flow,
 )
-
 from taiji import InputFrame, TaijiConfig, TSKV8Adapter
 from taiji.stepwise_consumer import StepwiseConsumerRequest
 

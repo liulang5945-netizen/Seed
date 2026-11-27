@@ -7,8 +7,8 @@ from dataclasses import replace
 from pathlib import Path
 
 import torch
-from scripts.training.task_baselines_22_4_a import TaskSequenceBaseline
 
+from scripts.training.task_baselines_22_4_a import TaskSequenceBaseline
 from taiji.u2_events import observation_intent
 from taiji.u2_history import (
     assert_values_equal,

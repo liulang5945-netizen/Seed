@@ -4,10 +4,10 @@ import copy
 
 import pytest
 import torch
-from scripts.training.paired_world_22_5 import audit_partition, build_partition, public_example
 
 from scripts.training import paired_episode_22_5 as paired
 from scripts.training.first_a_support_22_5 import accept, make_model, output
+from scripts.training.paired_world_22_5 import audit_partition, build_partition, public_example
 from taiji.u2_evidence_subject import EvidenceSubject
 from taiji.u2_history import value_digest
 

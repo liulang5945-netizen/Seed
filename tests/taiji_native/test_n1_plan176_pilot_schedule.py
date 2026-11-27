@@ -2,9 +2,6 @@
 
 from collections import Counter
 
-from scripts.training.evaluate_taiji_n1_plan176_foundation_pilot import color_variants
-from scripts.training.run_taiji_n1_plan176_foundation_pilot import ARMS, schedule
-
 from scripts.training.audit_taiji_n1_plan176_learning_paths import normalized_answer
 from scripts.training.build_taiji_n1_plan176_foundation_corpus import (
     COLORS,
@@ -12,6 +9,8 @@ from scripts.training.build_taiji_n1_plan176_foundation_corpus import (
     build_rows,
     pair_split,
 )
+from scripts.training.evaluate_taiji_n1_plan176_foundation_pilot import color_variants
+from scripts.training.run_taiji_n1_plan176_foundation_pilot import ARMS, schedule
 
 
 def test_three_arms_share_multiset_and_only_curriculum_arms_share_order():

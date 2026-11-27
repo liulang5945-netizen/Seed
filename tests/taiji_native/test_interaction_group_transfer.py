@@ -3,12 +3,12 @@ from __future__ import annotations
 from dataclasses import replace
 
 import pytest
+
 from scripts.training.eval_taiji_interaction_group_transfer import (
     MEMBER_IDS,
     _evaluator,
     build_corpus,
 )
-
 from taiji import (
     InteractionGroupTransferLearner,
     build_member_evidence,

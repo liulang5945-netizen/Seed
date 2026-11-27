@@ -44,19 +44,12 @@ from taiji.multimodal_physics_env_v2 import (
     collect_v2,
     eval_metrics_v2,
 )
+from taiji.ops_contract import BOUNDARIES, SCOPE
 from taiji.plastic_growth import GrowthPressureController, PlasticGrowthNet
 from taiji.session_store import SessionRecord
 from taiji.uncertainty_calibration import VERBAL_LEVELS
 
 SCHEMA = "taiji-n36-bounded-delivery-v1"
-SCOPE = "bounded_closed_vocab_and_multimodule_v1"
-BOUNDARIES: dict[str, Any] = {
-    "check_reads": 0,
-    "final_reads": 0,
-    "open_chinese": "deferred_post_N35",
-    "physical_sensors": "synthetic_two_family_only",
-    "not_signed": ["24-S", "25-S", "29", "final", "C", "D", "J"],
-}
 CONFIRMED_EVIDENCE_REFS: tuple[str, ...] = (
     "N34.5.90 (confirm_positive)",
     "N34.9.90 (confirm_all_passed)",

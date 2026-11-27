@@ -3,6 +3,7 @@ from __future__ import annotations
 import copy
 
 import pytest
+
 from scripts.training.eval_taiji_m4v2_r6_k_worker_attachment_preflight import (
     _parent as attachment_parent,
 )
@@ -12,7 +13,6 @@ from scripts.training.eval_taiji_m4v2_r6_k_worker_attachment_preflight import (
 from scripts.training.eval_taiji_m4v2_r6_parent_baseline_preflight import (
     _parent as baseline_parent,
 )
-
 from taiji import (
     K_WORKER_IDS,
     KContinualAdapter,

@@ -4,8 +4,8 @@ from pathlib import Path
 
 import pytest
 import torch
-from scripts.training.taiji_r2_dialogue_recovery import Cursor, RecoveryStore, train_next
 
+from scripts.training.taiji_r2_dialogue_recovery import Cursor, RecoveryStore, train_next
 from taiji import LanguageAlignmentTrainer, LanguageEpisode, LanguageEpisodeCorpus, Taiji
 
 
@@ -105,6 +105,7 @@ def test_reclaim_dead_owner_and_guard(tmp_path, monkeypatch):
     import json
 
     import psutil
+
     from scripts.training.taiji_r2_dialogue_recovery import reclaim_writer_lock
 
     candidate = trainer()
@@ -140,6 +141,7 @@ def test_reclaim_alive_reused_invalid(tmp_path):
     import os
 
     import psutil
+
     from scripts.training.taiji_r2_dialogue_recovery import reclaim_writer_lock
 
     lock = tmp_path / "writer.lock"

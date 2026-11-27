@@ -20,6 +20,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from scripts.training import verify_ci_deselect_list as guard
 from scripts.training.verify_ci_deselect_list import (
     _error_file_of,
     collect_listed_files,
@@ -28,8 +29,6 @@ from scripts.training.verify_ci_deselect_list import (
     listed_files,
     parse_collection_output,
 )
-
-from scripts.training import verify_ci_deselect_list as guard
 
 SAMPLE_NODE = "tests/x/test_a.py::test_alpha_beta"
 SAMPLE_OUTPUT = "tests/x/test_a.py::test_alpha_beta\n" "=== 1 collected in 0.01s ===\n"

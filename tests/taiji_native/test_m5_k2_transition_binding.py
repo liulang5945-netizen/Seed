@@ -3,7 +3,6 @@ from __future__ import annotations
 import copy
 
 from scripts.training.eval_taiji_m2r3_r3_multistep import build_corpus
-
 from taiji.semantic_transition import StructuredSemanticTransitionLearner
 
 

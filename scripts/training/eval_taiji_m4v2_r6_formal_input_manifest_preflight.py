@@ -37,7 +37,6 @@ from scripts.training.eval_taiji_m4v2_r6_parent_baseline_preflight import (  # n
     _parent,
     _r6_course,
 )
-
 from taiji import (  # noqa: E402
     KWorkerManifest,
     KWorkerManifestBundle,

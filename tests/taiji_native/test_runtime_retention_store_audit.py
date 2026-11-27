@@ -6,6 +6,8 @@ from pathlib import Path
 
 import pytest
 from _scratch import artifact_scratch_root
+
+from api.seed_runtime import SeedRuntime
 from scripts.training.eval_taiji_runtime_structural_artifact_multi_round import (
     _batch,
     _record_round,
@@ -15,8 +17,6 @@ from scripts.training.eval_taiji_workbench_multi_region_batch import (
     _build_runtime,
     _schedule_requests,
 )
-
-from api.seed_runtime import SeedRuntime
 from taiji import (
     ArtifactConsumptionPolicy,
     StructuralLineageRetentionPolicy,

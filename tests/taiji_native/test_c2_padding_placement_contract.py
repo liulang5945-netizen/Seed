@@ -4,8 +4,8 @@ import importlib
 
 import pytest
 import torch
-from scripts.training.run_taiji_n1_c2_padding_placement import front_padding, prefix_padding
 
+from scripts.training.run_taiji_n1_c2_padding_placement import front_padding, prefix_padding
 from taiji.stepwise_consumer import StepwiseConsumerRequest, select_and_prepare, vector_digest
 
 

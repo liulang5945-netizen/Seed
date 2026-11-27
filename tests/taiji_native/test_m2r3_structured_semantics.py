@@ -3,11 +3,11 @@ from __future__ import annotations
 from dataclasses import replace
 
 import torch
+
 from scripts.training.eval_taiji_m2r3_r0_structured_semantics import (
     build_corpus,
     evaluate,
 )
-
 from taiji import StructuredSemanticLearner, semantic_input_digest
 
 

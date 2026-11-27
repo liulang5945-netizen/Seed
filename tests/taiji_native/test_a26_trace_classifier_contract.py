@@ -9,12 +9,12 @@ from __future__ import annotations
 import types
 
 import torch
+
 from scripts.training.probe_taiji_r2_a26_emission_trace import (
     _classify,
     _keep_only_target_events,
     _top_bytes,
 )
-
 from taiji.copy_circuit import ToldContentStore
 
 

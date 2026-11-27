@@ -7,7 +7,6 @@ from scripts.training.eval_taiji_workbench_multi_region_batch import (
     _schedule_requests,
 )
 from scripts.training.eval_taiji_workbench_multi_region_lifecycle import _record_real_evidence
-
 from taiji import (
     StructuralAdmissionResult,
     StructuralCandidateBatch,

@@ -4,6 +4,7 @@ import copy
 
 import pytest
 import torch
+
 from scripts.training.calibrate_first_round_22_5 import (
     measure,
     optimizer_for,
@@ -11,14 +12,13 @@ from scripts.training.calibrate_first_round_22_5 import (
     persist,
     restore,
 )
-from scripts.training.paired_world_22_5 import build_partition, public_image
-
 from scripts.training.first_round_baseline_22_5 import (
     FirstRoundBaseline,
     generate,
     loss_and_logits,
     make_batch,
 )
+from scripts.training.paired_world_22_5 import build_partition, public_image
 from taiji.u2_history import assert_values_equal
 
 

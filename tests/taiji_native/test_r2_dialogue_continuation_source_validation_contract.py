@@ -4,6 +4,8 @@ import hashlib
 from pathlib import Path
 
 import pytest
+
+from scripts.training import run_taiji_r2_daily_dialogue_full_turn_pretraining as base
 from scripts.training.taiji_r2_dialogue_continuation_source_validation import (
     BUILDER_RELATIVE_PATH,
     EXACT_COMPATIBILITY,
@@ -17,8 +19,6 @@ from scripts.training.taiji_r2_dialogue_continuation_source_validation import (
     _validate_source_hashes,
     validate_training_sources,
 )
-
-from scripts.training import run_taiji_r2_daily_dialogue_full_turn_pretraining as base
 
 ARMS = ("full_turn_1m", "warm_start", "fresh_same_capacity")
 

@@ -30,6 +30,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
+from api.seed_runtime import SeedRuntime  # noqa: E402
 from scripts.training.eval_taiji_m5_k1_skill_composition import (  # noqa: E402
     EXTENSIONS,
     FILES_PER_LANG,
@@ -47,8 +48,6 @@ from scripts.training.eval_taiji_m5_k1_skill_composition import (  # noqa: E402
 from scripts.training.eval_taiji_m5_s6b_failure_admission import (  # noqa: E402
     _graded_reward as _graded_read_reward,
 )
-
-from api.seed_runtime import SeedRuntime  # noqa: E402
 from seed import Seed  # noqa: E402
 from seed.config import SeedConfig  # noqa: E402
 from seed_platform.programming_languages import (  # noqa: E402

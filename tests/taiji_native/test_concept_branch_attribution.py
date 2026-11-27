@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from scripts.training.eval_taiji_concept_branch_attribution import evaluate
-
 from taiji import TaijiConfig
 
 

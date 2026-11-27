@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from scripts.training.eval_taiji_m1_identity_admission import run_admission
-
 from taiji import TaijiConfig
 
 

@@ -17,13 +17,13 @@ from pathlib import Path
 
 import pytest
 import torch
+
 from scripts.training.train_taiji_r2_content_binding import (
     GROUP_CLASSES,
     load_train_fixture,
     run,
     train_pair_margin_diagnostic,
 )
-
 from taiji.sequence_char_workspace import CharVocab
 from taiji.sequence_content_workspace import (
     SequenceContentConfig,

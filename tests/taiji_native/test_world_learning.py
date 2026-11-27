@@ -3,8 +3,8 @@ from __future__ import annotations
 from copy import deepcopy
 
 import torch
-from scripts.training.eval_taiji_a2_world import build_corpus
 
+from scripts.training.eval_taiji_a2_world import build_corpus
 from taiji import (
     Outcome,
     WorldAction,

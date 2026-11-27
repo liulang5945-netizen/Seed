@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 
 import pytest
+
 from scripts.training.aggregate_taiji_m4r0_cascade3 import aggregate_reports
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]

@@ -4,8 +4,8 @@ from dataclasses import replace
 
 import pytest
 import torch
-from scripts.training.eval_taiji_a2_world import build_corpus
 
+from scripts.training.eval_taiji_a2_world import build_corpus
 from seed import Seed, SeedConfig
 from taiji import (
     CONTRACT_FORMAT,

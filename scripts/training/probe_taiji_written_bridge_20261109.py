@@ -60,7 +60,6 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 import scripts.training.probe_taiji_cross_family_readout_20261109 as base  # noqa: E402
-
 from taiji.address_bridge import BridgeTable, bridge_records, phrase_key  # noqa: E402
 from taiji.living_core import LivingCoreConfig, LivingCoreReference  # noqa: E402
 from taiji.native_goal_world_wide import (  # noqa: E402

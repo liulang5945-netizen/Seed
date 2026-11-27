@@ -5,13 +5,13 @@ from pathlib import Path
 
 import torch
 from _scratch import artifact_scratch_root
+
 from scripts.training.eval_taiji_structural_lineage_restart_continuation import (
     _build_migrated_runtime,
     _continuation_requests,
     _record_continuation_evidence,
 )
 from scripts.training.eval_taiji_workbench_measured_artifact_batch import _build_artifact
-
 from taiji import TSKV8Adapter
 from taiji.adapter import _checkpoint_digest
 
