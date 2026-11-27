@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 from typing import Any
 
@@ -23,12 +24,35 @@ ROOT = Path(__file__).resolve().parents[1]
 N38_STATUS_PATH = ROOT / "data" / "n38_open_zh" / "training_status.json"
 N38_METRICS_PATH = ROOT / "data" / "n38_open_zh" / "training_metrics.jsonl"
 N38_PREFLIGHT_PATH = ROOT / "reports" / "n38_0_01_stage0_preflight.json"
+NATIVE_STATUS_PATH = ROOT / "data" / "n38_native_zh" / "native_backbone_status.json"
+NATIVE_PREFLIGHT_PATH = ROOT / "reports" / "n38_2_01_native_backbone_preflight.json"
+GROWTH_POLICY_PATH = ROOT / "data" / "taiji_ops" / "growth_policy.json"
+
+DEFAULT_GROWTH_POLICY: dict[str, Any] = {
+    "auto_grow_enabled": True,
+    "max_params": 40_000_000,
+    "max_layers": 16,
+    "max_group_units": 2048,
+    "max_fast_heads": 8,
+    "max_retention_drop": 0.02,
+    "min_gain": 0.001,
+}
 
 router = APIRouter(tags=["taiji-ops"])
 
 
 class ClassifyChangeRequest(BaseModel):
     kind: str
+
+
+class GrowthPolicyUpdateRequest(BaseModel):
+    auto_grow_enabled: bool | None = None
+    max_params: int | None = None
+    max_layers: int | None = None
+    max_group_units: int | None = None
+    max_fast_heads: int | None = None
+    max_retention_drop: float | None = None
+    min_gain: float | None = None
 
 
 def _read_json_safe(path: Path) -> dict[str, Any] | None:
@@ -55,10 +79,28 @@ def _read_recent_metrics(path: Path, limit: int = 40) -> list[dict[str, Any]]:
     return out
 
 
+def _read_growth_policy() -> dict[str, Any]:
+    policy = dict(DEFAULT_GROWTH_POLICY)
+    saved = _read_json_safe(GROWTH_POLICY_PATH)
+    if saved:
+        for k in DEFAULT_GROWTH_POLICY:
+            if k in saved:
+                policy[k] = saved[k]
+    return policy
+
+
+def _write_growth_policy(policy: dict[str, Any]) -> None:
+    GROWTH_POLICY_PATH.parent.mkdir(parents=True, exist_ok=True)
+    tmp = GROWTH_POLICY_PATH.with_name(f".{GROWTH_POLICY_PATH.name}.{os.getpid()}.tmp")
+    tmp.write_text(json.dumps(policy, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    os.replace(tmp, GROWTH_POLICY_PATH)
+
+
 @router.get("/api/taiji/ops/overview")
 def taiji_ops_overview() -> dict[str, Any]:
     """Return consolidated N31–N37 closeout status, boundaries, and N38 training state."""
-    n38_status = _read_json_safe(N38_STATUS_PATH)
+    n38_status = _read_json_safe(N38_STATUS_PATH) or {"status": "not_started"}
+    n38_status.setdefault("role", "baseline_transformer")
     return {
         "schema": "taiji-ops-overview-v1",
         "scope": SCOPE,
@@ -66,19 +108,73 @@ def taiji_ops_overview() -> dict[str, Any]:
         "mainline_closed": ["<=N30", "N31", "N32", "N33", "N34", "N35", "N36", "N37"],
         "fsm_states": list(STATES),
         "fsm_transitions": {k: sorted(v) for k, v in ALLOWED_TRANSITIONS.items()},
-        "n38_pretraining": n38_status or {"status": "not_started"},
+        "n38_pretraining": n38_status,
+        "native_backbone": taiji_native_backbone(),
     }
 
 
 @router.get("/api/taiji/ops/n38-training")
 def taiji_n38_training() -> dict[str, Any]:
     """Return live N38 mid_18m pretraining telemetry, recent metrics, and Stage 0 baseline."""
+    status = _read_json_safe(N38_STATUS_PATH) or {"status": "not_started"}
+    status.setdefault("role", "baseline_transformer")
     return {
         "schema": "taiji-n38-training-telemetry-v1",
-        "status": _read_json_safe(N38_STATUS_PATH) or {"status": "not_started"},
+        "status": status,
         "recent_metrics": _read_recent_metrics(N38_METRICS_PATH, limit=40),
         "stage0_preflight": _read_json_safe(N38_PREFLIGHT_PATH),
     }
+
+
+@router.get("/api/taiji/ops/native-backbone")
+def taiji_native_backbone() -> dict[str, Any]:
+    """Return Taiji native non-Transformer backbone status, preflight, and growth policy."""
+    baseline = _read_json_safe(N38_STATUS_PATH) or {"status": "not_started"}
+    baseline.setdefault("role", "baseline_transformer")
+    return {
+        "schema": "taiji-native-backbone-ops-v1",
+        "architecture": "taiji-native-cognitive-backbone-v1",
+        "non_transformer": True,
+        "status": _read_json_safe(NATIVE_STATUS_PATH)
+        or {"status": "ready_in_trunk", "preset": "native_mid_18m"},
+        "preflight": _read_json_safe(NATIVE_PREFLIGHT_PATH),
+        "growth_policy": _read_growth_policy(),
+        "baseline_transformer": baseline,
+    }
+
+
+@router.post("/api/taiji/ops/growth-policy")
+def taiji_update_growth_policy(req: GrowthPolicyUpdateRequest) -> dict[str, Any]:
+    """Update autonomous shadow growth budget & safety gates."""
+    policy = _read_growth_policy()
+    if req.auto_grow_enabled is not None:
+        policy["auto_grow_enabled"] = bool(req.auto_grow_enabled)
+    if req.max_params is not None:
+        if req.max_params < 1_000_000:
+            raise HTTPException(status_code=400, detail="max_params must be >= 1,000,000")
+        policy["max_params"] = int(req.max_params)
+    if req.max_layers is not None:
+        if req.max_layers < 1:
+            raise HTTPException(status_code=400, detail="max_layers must be >= 1")
+        policy["max_layers"] = int(req.max_layers)
+    if req.max_group_units is not None:
+        if req.max_group_units < 32:
+            raise HTTPException(status_code=400, detail="max_group_units must be >= 32")
+        policy["max_group_units"] = int(req.max_group_units)
+    if req.max_fast_heads is not None:
+        if req.max_fast_heads < 1:
+            raise HTTPException(status_code=400, detail="max_fast_heads must be >= 1")
+        policy["max_fast_heads"] = int(req.max_fast_heads)
+    if req.max_retention_drop is not None:
+        if not (0.0 <= req.max_retention_drop <= 0.2):
+            raise HTTPException(status_code=400, detail="max_retention_drop must be in [0, 0.2]")
+        policy["max_retention_drop"] = float(req.max_retention_drop)
+    if req.min_gain is not None:
+        if req.min_gain < 0.0:
+            raise HTTPException(status_code=400, detail="min_gain must be >= 0")
+        policy["min_gain"] = float(req.min_gain)
+    _write_growth_policy(policy)
+    return {"status": "updated", "growth_policy": policy}
 
 
 @router.post("/api/taiji/ops/classify-change")
@@ -118,10 +214,19 @@ _DASHBOARD_HTML = """<!DOCTYPE html>
   <div class="sub">有界主线 ≤N30..N37 已收口（0 check / 0 final） · 每 5 秒自动刷新</div>
   <div class="grid">
     <div class="card">
-      <h2>N38.1.01 mid_18m 24h CPU 预训练</h2>
+      <h2>Baseline-Transformer（标准对照基线）N38.1.01 mid_18m</h2>
       <div id="n38-stats">加载中...</div>
       <h2 style="margin-top:14px;">实时中文续写采样</h2>
       <pre id="n38-sample">等待首个评测步...</pre>
+    </div>
+    <div class="card">
+      <h2>Taiji 原生非 Transformer 底座（关联快权重 F_t + 三时间尺度 + 自发影子生长）</h2>
+      <div id="native-stats">加载中...</div>
+      <div style="display:flex;gap:8px;margin-top:10px;align-items:center;">
+        <label style="font-size:12px;"><input type="checkbox" id="auto-grow" checked /> 自动影子生长</label>
+        <input id="max-params" type="number" value="40000000" style="width:110px" />
+        <button onclick="savePolicy()">保存预算</button>
+      </div>
     </div>
     <div class="card">
       <h2>§15 八态运营状态机与边界</h2>
@@ -137,9 +242,10 @@ _DASHBOARD_HTML = """<!DOCTYPE html>
 <script>
 async function refresh() {
   try {
-    const [ov, tr] = await Promise.all([
+    const [ov, tr, nb] = await Promise.all([
       fetch('/api/taiji/ops/overview').then(r => r.json()),
-      fetch('/api/taiji/ops/n38-training').then(r => r.json())
+      fetch('/api/taiji/ops/n38-training').then(r => r.json()),
+      fetch('/api/taiji/ops/native-backbone').then(r => r.json())
     ]);
     const st = tr.status || {};
     document.getElementById('n38-stats').innerHTML = [
@@ -152,6 +258,16 @@ async function refresh() {
     if (st.sample_generation) {
       document.getElementById('n38-sample').textContent = st.sample_generation;
     }
+    const nst = nb.status || {};
+    const gp = nb.growth_policy || {};
+    document.getElementById('native-stats').innerHTML = [
+      ['架构', nb.architecture],
+      ['状态 / 预设', `${nst.status || '-'} / ${nst.preset || 'native_mid_18m'}`],
+      ['自动生长 / 参数上限', `${gp.auto_grow_enabled ? '开启' : '关闭'} / ${(gp.max_params || 0).toLocaleString()}`],
+      ['保持门禁 / 净增益门禁', `≤ ${gp.max_retention_drop ?? 0.02} / ≥ ${gp.min_gain ?? 0.001}`]
+    ].map(([k,v]) => `<div class="kv"><span>${k}</span><strong>${v}</strong></div>`).join('');
+    document.getElementById('auto-grow').checked = !!gp.auto_grow_enabled;
+    if (gp.max_params) document.getElementById('max-params').value = gp.max_params;
     document.getElementById('ops-stats').innerHTML = [
       ['声明范围', ov.scope],
       ['已收口阶段', (ov.mainline_closed || []).join(' → ')],
@@ -159,6 +275,15 @@ async function refresh() {
       ['8 态 FSM', (ov.fsm_states || []).join(' · ')]
     ].map(([k,v]) => `<div class="kv"><span>${k}</span><strong>${v}</strong></div>`).join('');
   } catch (e) { console.error(e); }
+}
+async function savePolicy() {
+  const auto_grow_enabled = document.getElementById('auto-grow').checked;
+  const max_params = parseInt(document.getElementById('max-params').value, 10);
+  await fetch('/api/taiji/ops/growth-policy', {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({auto_grow_enabled, max_params})
+  });
+  refresh();
 }
 async function testClassify() {
   const kind = document.getElementById('chg-kind').value.trim();

@@ -7,12 +7,16 @@ from pathlib import Path
 import pytest
 from fastapi import HTTPException
 
+from api import routes_taiji_ops
 from api.routes_taiji_ops import (
     ClassifyChangeRequest,
+    GrowthPolicyUpdateRequest,
     taiji_classify_change,
     taiji_n38_training,
+    taiji_native_backbone,
     taiji_ops_dashboard,
     taiji_ops_overview,
+    taiji_update_growth_policy,
 )
 
 
@@ -40,9 +44,32 @@ def test_taiji_ops_handlers_and_app_registration() -> None:
     assert exc_info.value.status_code == 400
 
     dash = taiji_ops_dashboard()
-    assert "N38.1.01" in dash.body.decode("utf-8")
+    dash_html = dash.body.decode("utf-8")
+    assert "N38.1.01" in dash_html
+    assert "Baseline-Transformer" in dash_html
+    assert "Taiji 原生非 Transformer 底座" in dash_html
 
     app_src = Path("api/app.py").read_text(encoding="utf-8")
     assert "routes_taiji_ops" in app_src
     assert '"/taiji-ops"' in app_src
     assert '"/api/taiji/ops/overview"' in app_src
+
+
+def test_taiji_native_backbone_and_growth_policy_handlers(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(routes_taiji_ops, "GROWTH_POLICY_PATH", tmp_path / "growth_policy.json")
+    nb = taiji_native_backbone()
+    assert nb["schema"] == "taiji-native-backbone-ops-v1"
+    assert nb["non_transformer"] is True
+
+    upd = taiji_update_growth_policy(
+        GrowthPolicyUpdateRequest(auto_grow_enabled=False, max_params=30_000_000)
+    )
+    assert upd["status"] == "updated"
+    assert upd["growth_policy"]["auto_grow_enabled"] is False
+    assert upd["growth_policy"]["max_params"] == 30_000_000
+
+    with pytest.raises(HTTPException) as exc_info:
+        taiji_update_growth_policy(GrowthPolicyUpdateRequest(max_params=100))
+    assert exc_info.value.status_code == 400

@@ -4,7 +4,7 @@
   "generated": "2026-11-10",
   "status": "report_level_claim_not_machine_verifiable",
   "note": "旧报告一律不回写、不补字段：列在这里只表示它们的结论依赖未记录的运行条件，按『报告级声明、不可机器复核』引用。新报告若带相等／摘要字段而缺运行条件，由 check_report_run_conditions.py 判失败。",
-  "count": 649,
+  "count": 669,
   "files": {
     "plans/manifests/n1_plan163_transition_template_rebalanced_schedule_20261020.json": [
       "equal"
@@ -2052,6 +2052,66 @@
     ],
     "reports/taiji_u2_v1_hard_selection_recover_20261117.json": [
       "digest"
+    ],
+    "reports/archive/legacy_n1_n30/taiji_p0cl_seed20261121.json": [
+      "max_delta"
+    ],
+    "reports/archive/legacy_n1_n30/taiji_p0cm_seed20261121.json": [
+      "max_delta"
+    ],
+    "reports/archive/legacy_n1_n30/taiji_p0cm_seed20261122.json": [
+      "max_delta"
+    ],
+    "reports/archive/legacy_n1_n30/taiji_p0cn_seed20261121.json": [
+      "max_delta"
+    ],
+    "reports/archive/legacy_n1_n30/taiji_p0cn_seed20261122.json": [
+      "max_delta"
+    ],
+    "reports/archive/legacy_n1_n30/taiji_p0co_seed20261121.json": [
+      "max_delta"
+    ],
+    "reports/archive/legacy_n1_n30/taiji_p0co_seed20261122.json": [
+      "max_delta"
+    ],
+    "reports/archive/legacy_n1_n30/taiji_p0cp_seed20261121.json": [
+      "max_delta"
+    ],
+    "reports/archive/legacy_n1_n30/taiji_p0cp_seed20261122.json": [
+      "max_delta"
+    ],
+    "reports/archive/legacy_n1_n30/taiji_p0cq_seed20261121.json": [
+      "max_delta"
+    ],
+    "reports/archive/legacy_n1_n30/taiji_p0cq_seed20261122.json": [
+      "max_delta"
+    ],
+    "reports/archive/legacy_n1_n30/taiji_p0cr_seed20261121.json": [
+      "max_delta"
+    ],
+    "reports/archive/legacy_n1_n30/taiji_p0cr_seed20261122.json": [
+      "max_delta"
+    ],
+    "reports/archive/legacy_n1_n30/taiji_p0cs_seed20261121.json": [
+      "max_delta"
+    ],
+    "reports/archive/legacy_n1_n30/taiji_p0dj_seed20261121.json": [
+      "max_delta"
+    ],
+    "reports/archive/legacy_n1_n30/taiji_p0dj_seed20261122.json": [
+      "max_delta"
+    ],
+    "reports/archive/legacy_n1_n30/taiji_p0dk_seed20261121.json": [
+      "max_delta"
+    ],
+    "reports/archive/legacy_n1_n30/taiji_p0dk_seed20261122.json": [
+      "max_delta"
+    ],
+    "reports/archive/legacy_n1_n30/taiji_p0dl_seed20261121.json": [
+      "max_delta"
+    ],
+    "reports/archive/legacy_n1_n30/taiji_p0dl_seed20261122.json": [
+      "max_delta"
     ]
   },
   "amendments": [
@@ -2060,6 +2120,13 @@
       "action": "claim_level_admission",
       "files_added": 29,
       "reason": "11-12→11-18 各卡（A.1/A.1b/A.2/A.3/A.4、bind_2、evidence_A、p3/p4 执行、u1/u1r1/u1r2/v1 recover、e5_1_capacity、22_5_a_readout_repair、22_6_0_fixture 等）生成报告时未记录运行条件。按「旧报告一律不回写、不补字段」的同一纪律，不事后伪造 threads 记录，降级为报告级声明；其结论引用须按 report_level_claim_not_machine_verifiable 口径。后继新报告必须经 check_report_run_conditions.write_report() 落盘（缺条件即写盘失败）。",
+      "audit": "python scripts/training/check_report_run_conditions.py --check 于修订后复跑判绿"
+    },
+    {
+      "date": "2026-11-27",
+      "action": "claim_level_admission",
+      "files_added": 20,
+      "reason": "历史归档 p0cl..p0dl_seed2026112* 报告生成时未记录运行条件，按旧报告不回写纪律降级为报告级声明。",
       "audit": "python scripts/training/check_report_run_conditions.py --check 于修订后复跑判绿"
     }
   ]

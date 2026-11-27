@@ -1,0 +1,29 @@
+{
+  "schema": "taiji-n38-native-preflight-v1",
+  "non_transformer": true,
+  "threads": 8,
+  "OMP_NUM_THREADS": "8",
+  "MKL_NUM_THREADS": "8",
+  "neutral_birth_checks": {
+    "grow_group_units_max_abs_diff": 0.0,
+    "grow_fast_heads_max_abs_diff": 0.0,
+    "grow_depth_max_abs_diff": 0.0,
+    "all_below_1e_5": true
+  },
+  "benchmarks": [
+    {
+      "preset": "native_small_8m",
+      "params": 4379888,
+      "seq_len": 128,
+      "batch_size": 4,
+      "tokens_per_sec_bfloat16": 218.2
+    },
+    {
+      "preset": "native_mid_18m",
+      "params": 9578560,
+      "seq_len": 128,
+      "batch_size": 4,
+      "tokens_per_sec_bfloat16": 146.18
+    }
+  ]
+}

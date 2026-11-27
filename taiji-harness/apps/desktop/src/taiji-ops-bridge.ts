@@ -42,6 +42,28 @@ export interface TaijiChangeClassification {
   impacted_stages: string[]
 }
 
+export interface NativeGrowthPolicy {
+  auto_grow_enabled: boolean
+  max_params: number
+  max_layers: number
+  max_group_units: number
+  max_fast_heads: number
+  max_retention_drop: number
+  min_gain: number
+}
+
+export type NativeGrowthPolicyPatch = Partial<NativeGrowthPolicy>
+
+export interface NativeBackboneOpsStatus {
+  schema: string
+  architecture: string
+  non_transformer: boolean
+  status: Record<string, unknown>
+  preflight: Record<string, unknown> | null
+  growth_policy: NativeGrowthPolicy
+  baseline_transformer: N38TrainingStatus & { role?: string }
+}
+
 const DEFAULT_BACKEND_URL = 'http://127.0.0.1:8000'
 
 export function getTaijiOpsDashboardUrl(baseUrl = DEFAULT_BACKEND_URL): string {
@@ -91,4 +113,34 @@ export async function classifyTaijiChange(
     throw new Error(`classifyTaijiChange failed: HTTP ${res.status}`)
   }
   return (await res.json()) as TaijiChangeClassification
+}
+
+export async function fetchNativeBackboneStatus(
+  baseUrl = DEFAULT_BACKEND_URL,
+  signal?: AbortSignal,
+): Promise<NativeBackboneOpsStatus> {
+  const init: RequestInit | undefined = signal ? { signal } : undefined
+  const res = await fetch(`${baseUrl.replace(/\/+$/, '')}/api/taiji/ops/native-backbone`, init)
+  if (!res.ok) {
+    throw new Error(`fetchNativeBackboneStatus failed: HTTP ${res.status}`)
+  }
+  return (await res.json()) as NativeBackboneOpsStatus
+}
+
+export async function updateNativeGrowthPolicy(
+  patch: NativeGrowthPolicyPatch,
+  baseUrl = DEFAULT_BACKEND_URL,
+  signal?: AbortSignal,
+): Promise<{ status: string; growth_policy: NativeGrowthPolicy }> {
+  const init: RequestInit = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(patch),
+    ...(signal ? { signal } : {}),
+  }
+  const res = await fetch(`${baseUrl.replace(/\/+$/, '')}/api/taiji/ops/growth-policy`, init)
+  if (!res.ok) {
+    throw new Error(`updateNativeGrowthPolicy failed: HTTP ${res.status}`)
+  }
+  return (await res.json()) as { status: string; growth_policy: NativeGrowthPolicy }
 }

@@ -294,6 +294,7 @@ class OperationalStateMachine:
         parent_digest = str(self.rt.manifest["record_digest"])
         parent_chain = str(self.rt.manifest["chain_head"])
         parent_metrics = _evaluate_retention_and_ecl(self.rt)
+        parent_active_units = self.rt.grow_net.active_units()
         self.transition("Shadow", reason=f"shadow_start:{candidate_kind}")
 
         run_id = used + 1
@@ -313,6 +314,19 @@ class OperationalStateMachine:
             if candidate_kind == "ecl_calibration":
                 for _ in range(15):
                     shadow_rt.update_credibility("forum", 1)
+            elif candidate_kind == "growth_proposal":
+
+                def _grow_fn(rec: Any, _s: int) -> None:
+                    before_units = shadow_rt.grow_net.active_units()
+                    shadow_rt.grow_net.grow_neutral_(k=2, seed=run_id)
+                    after_units = shadow_rt.grow_net.active_units()
+                    if after_units <= before_units:
+                        raise RuntimeError("growth_proposal failed to expand active units")
+                    for k, v in shadow_rt.grow_net.to_session_record("grow").capsule.items():
+                        rec.capsule[k] = v
+
+                shadow_rt.harness.run_session(_grow_fn, crash_before_commit=False)
+                shadow_rt._sync_manifest()
             elif candidate_kind == "harmful_phy_corrupt":
 
                 def _corrupt_fn(rec: Any, _s: int) -> None:
@@ -334,9 +348,16 @@ class OperationalStateMachine:
                 0.0, parent_metrics["ch_mean_confidence"] - shadow_metrics["ch_mean_confidence"]
             )
             retention_drop = round(max(phy_drop, ch_drop), 6)
-            gain = round(
-                shadow_metrics["ecl_forum_posterior"] - parent_metrics["ecl_forum_posterior"], 6
-            )
+            if candidate_kind == "growth_proposal":
+                gain = round(
+                    max(0, shadow_rt.grow_net.active_units() - parent_active_units) * 0.01,
+                    6,
+                )
+            else:
+                gain = round(
+                    shadow_metrics["ecl_forum_posterior"] - parent_metrics["ecl_forum_posterior"],
+                    6,
+                )
             finite_ok = _capsule_all_finite(shadow_rt)
             chain_ok = shadow_rt.harness.verify_chain()
 
