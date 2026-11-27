@@ -47,7 +47,7 @@ def test_taiji_ops_handlers_and_app_registration() -> None:
     dash_html = dash.body.decode("utf-8")
     assert "N38.1.01" in dash_html
     assert "Baseline-Transformer" in dash_html
-    assert "Taiji 原生非 Transformer 底座" in dash_html
+    assert "态极原生纯字节有状态神经群底座" in dash_html
 
     app_src = Path("api/app.py").read_text(encoding="utf-8")
     assert "routes_taiji_ops" in app_src

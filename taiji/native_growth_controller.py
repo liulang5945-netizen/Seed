@@ -113,42 +113,56 @@ class NativeGrowthController:
     ) -> dict[str, Any]:
         """Decide whether to propose growth based on pressure and budget caps."""
         if not self.policy.auto_grow_enabled:
-            return {"action": "no_grow", "reason": "auto_grow_disabled", "step": int(step)}
+            return {
+                "action": "no_grow",
+                "trigger": "engineering_prototype",
+                "reason": "auto_grow_disabled",
+                "step": int(step),
+            }
 
         should_grow = self.pressure.observe(float(val_loss)) > 0
         if not should_grow:
-            return {"action": "no_grow", "reason": "no_pressure", "step": int(step)}
+            return {
+                "action": "no_grow",
+                "trigger": "engineering_prototype",
+                "reason": "no_pressure",
+                "step": int(step),
+            }
 
         cur_params = model.count_parameters()
         if cur_params >= self.policy.max_params:
-            return {"action": "no_grow", "reason": "max_params_reached", "step": int(step)}
+            return {
+                "action": "no_grow",
+                "trigger": "engineering_prototype",
+                "reason": "max_params_reached",
+                "step": int(step),
+            }
 
         topo = model.topology_summary()
-        max_u = max(topo["group_units_per_layer"])
-        max_h = max(topo["fast_heads_per_layer"])
-        n_layers = int(topo["n_layers"])
+        max_u = max(topo["group_units"])
+        n_groups = int(topo["n_groups"]) + int(topo["n_residual_groups"])
 
         if max_u + self.policy.delta_units <= self.policy.max_group_units:
             return {
-                "action": "grow_group_units",
+                "action": "grow_stateful_units_svd",
+                "trigger": "engineering_prototype",
                 "delta_units": self.policy.delta_units,
                 "reason": "pressure_plateau",
                 "step": int(step),
             }
-        if max_h + self.policy.delta_fast_heads <= self.policy.max_fast_heads:
+        if n_groups + 1 <= self.policy.max_layers:
             return {
-                "action": "grow_fast_heads",
-                "delta_heads": self.policy.delta_fast_heads,
+                "action": "grow_group_residual",
+                "trigger": "engineering_prototype",
                 "reason": "pressure_plateau",
                 "step": int(step),
             }
-        if n_layers + 1 <= self.policy.max_layers:
-            return {
-                "action": "grow_depth",
-                "reason": "pressure_plateau",
-                "step": int(step),
-            }
-        return {"action": "no_grow", "reason": "all_topology_caps_reached", "step": int(step)}
+        return {
+            "action": "no_grow",
+            "trigger": "engineering_prototype",
+            "reason": "all_topology_caps_reached",
+            "step": int(step),
+        }
 
     def run_shadow_growth_cycle(
         self,
@@ -181,20 +195,20 @@ class NativeGrowthController:
             with torch.no_grad():
                 before_logits, _, _ = shadow(sample_input)
 
-        if action == "grow_group_units":
-            event = shadow.grow_group_units_neutral_(
-                delta_units=int(proposal.get("delta_units", self.policy.delta_units)), seed=seed
-            )
-        elif action == "grow_fast_heads":
-            event = shadow.grow_fast_heads_neutral_(
-                delta_heads=int(proposal.get("delta_heads", self.policy.delta_fast_heads)),
+        if action == "grow_stateful_units_svd":
+            event = shadow.grow_stateful_units_svd_neutral_(
+                group_idx=0,
+                budget=int(proposal.get("delta_units", self.policy.delta_units)),
                 seed=seed,
             )
-        elif action == "grow_depth":
-            event = shadow.grow_depth_neutral_(seed=seed)
+        elif action == "proliferate_units":
+            event = shadow.proliferate_units_neutral_(group_idx=0, parent_indices=[0])
+        elif action == "grow_group_residual":
+            event = shadow.grow_group_neutral_(seed=seed)
         else:
             return model, {
                 "schema": SCHEMA,
+                "trigger": "engineering_prototype",
                 "action": action,
                 "accepted": False,
                 "reason": f"unknown_action:{action}",
@@ -235,6 +249,7 @@ class NativeGrowthController:
 
         receipt = {
             "schema": SCHEMA,
+            "trigger": "engineering_prototype",
             "ts_utc": datetime.now(UTC).isoformat(),
             "action": action,
             "accepted": accepted,

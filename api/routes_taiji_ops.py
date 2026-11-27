@@ -133,10 +133,12 @@ def taiji_native_backbone() -> dict[str, Any]:
     baseline.setdefault("role", "baseline_transformer")
     return {
         "schema": "taiji-native-backbone-ops-v1",
-        "architecture": "taiji-native-cognitive-backbone-v1",
+        "architecture": "taiji-native-byte-group-v2",
+        "input_encoding": "raw_utf8_bytes_259",
         "non_transformer": True,
+        "growth_trigger_scope": "engineering_prototype",
         "status": _read_json_safe(NATIVE_STATUS_PATH)
-        or {"status": "ready_in_trunk", "preset": "native_mid_18m"},
+        or {"status": "ready_in_trunk", "preset": "native_byte_mid"},
         "preflight": _read_json_safe(NATIVE_PREFLIGHT_PATH),
         "growth_policy": _read_growth_policy(),
         "baseline_transformer": baseline,
@@ -220,7 +222,7 @@ _DASHBOARD_HTML = """<!DOCTYPE html>
       <pre id="n38-sample">等待首个评测步...</pre>
     </div>
     <div class="card">
-      <h2>Taiji 原生非 Transformer 底座（关联快权重 F_t + 三时间尺度 + 自发影子生长）</h2>
+      <h2>态极原生纯字节有状态神经群底座（零 BPE / 零 Transformer / FP1 KKT / SVD 中性出生）</h2>
       <div id="native-stats">加载中...</div>
       <div style="display:flex;gap:8px;margin-top:10px;align-items:center;">
         <label style="font-size:12px;"><input type="checkbox" id="auto-grow" checked /> 自动影子生长</label>

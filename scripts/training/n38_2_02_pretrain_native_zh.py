@@ -1,13 +1,12 @@
-"""N38.2.02 Long-Horizon CPU Pretraining for 态极 Native Non-Transformer Backbone (`native_mid_18m`).
+"""N38.2.02 Long-Horizon CPU Pretraining for 态极 Native Byte-Group Backbone.
 
-Streams the exact same deduplicated `train`-bucket Chinese docs as `n38_1_01_pretrain_open_zh.py`
-(strictly excluding `val` and `sealed_eval`), trains `TaijiNativeCognitiveBackbone` with
-`bfloat16` autocast, AdamW + cosine schedule, atomic checkpointing (`latest.pt` / `best.pt`),
-and live telemetry under `data/n38_native_zh/`.
+Pure UTF-8 raw bytes (ZERO BPE, ZERO Transformer), carrying persistent subject state
+(H, z, a, F) across training windows (`CORE_ALG §15.2`), reporting `val_loss` (nats/byte)
+and `val_bpb` (bits-per-byte) on the exact same deduplicated Chinese corpus.
 
 Usage:
   python scripts/training/n38_2_02_pretrain_native_zh.py --smoke
-  python scripts/training/n38_2_02_pretrain_native_zh.py --preset native_mid_18m --max-hours 24 --threads 8 --dtype bfloat16 --resume
+  python scripts/training/n38_2_02_pretrain_native_zh.py --preset native_byte_mid --max-hours 24 --threads 8 --dtype bfloat16 --resume
 """
 
 from __future__ import annotations
@@ -27,23 +26,22 @@ from typing import Any
 
 import numpy as np
 import torch
-from tokenizers import Tokenizer
 
 ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from taiji.native_cognitive_backbone import (  # noqa: E402
+    EOS_BYTE,
     NATIVE_PRESETS,
     NativeBackboneConfig,
+    NativeSubjectState,
     TaijiNativeCognitiveBackbone,
+    bits_per_byte,
 )
 
-OPEN_ZH_DIR = ROOT / "data" / "n38_open_zh"
-TOKENIZER_PATH = OPEN_ZH_DIR / "tokenizer_8k.json"
-VAL_BIN_PATH = OPEN_ZH_DIR / "val_tokens.bin"
-
 NATIVE_DIR = ROOT / "data" / "n38_native_zh"
+VAL_BYTES_PATH = NATIVE_DIR / "val_bytes.bin"
 STATUS_PATH = NATIVE_DIR / "native_backbone_status.json"
 METRICS_PATH = NATIVE_DIR / "training_metrics.jsonl"
 DEFAULT_CKPT_DIR = NATIVE_DIR / "checkpoints"
@@ -102,15 +100,48 @@ def _extract_text(obj: dict[str, Any]) -> str:
     return ""
 
 
-def _is_train_bucket(text: str) -> bool:
-    return (int(hashlib.sha256(text.encode("utf-8")).hexdigest()[:8], 16) % 1000) < 980
+def _bucket_id(text: str) -> int:
+    return int(hashlib.sha256(text.encode("utf-8")).hexdigest()[:8], 16) % 1000
 
 
-def _stream_token_chunks(
-    tok: Tokenizer, seq_len: int, batch_size: int
+def _ensure_val_bytes(path: Path, max_bytes: int = 1_000_000) -> np.ndarray:
+    if path.exists():
+        return np.fromfile(path, dtype=np.uint16)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    buf: list[int] = []
+    for src in TRAIN_SOURCES:
+        if not src.exists():
+            continue
+        with src.open("r", encoding="utf-8", errors="replace") as fh:
+            for line in fh:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    obj = json.loads(line)
+                except Exception:
+                    continue
+                txt = _extract_text(obj).strip()
+                if len(txt) < 16:
+                    continue
+                if 980 <= _bucket_id(txt) < 990:
+                    buf.extend(txt.encode("utf-8"))
+                    buf.append(EOS_BYTE)
+                    if len(buf) >= max_bytes:
+                        break
+        if len(buf) >= max_bytes:
+            break
+    arr = np.array(buf[:max_bytes], dtype=np.uint16)
+    tmp = path.with_name(f".{path.name}.{os.getpid()}.tmp")
+    arr.tofile(tmp)
+    os.replace(tmp, path)
+    return arr
+
+
+def _stream_byte_chunks(
+    seq_bytes: int, batch_size: int
 ) -> Iterator[tuple[torch.Tensor, torch.Tensor]]:
-    eos_id = tok.token_to_id("<|eos|>")
-    chunk_len = seq_len + 1
+    chunk_len = seq_bytes + 1
     buf: list[int] = []
     batch_x: list[list[int]] = []
     batch_y: list[list[int]] = []
@@ -127,13 +158,10 @@ def _stream_token_chunks(
                     except Exception:
                         continue
                     txt = _extract_text(obj).strip()
-                    if len(txt) < 16 or not _is_train_bucket(txt):
+                    if len(txt) < 16 or _bucket_id(txt) >= 980:
                         continue
-                    ids = tok.encode(txt).ids
-                    if not ids:
-                        continue
-                    buf.extend(ids)
-                    buf.append(eos_id)
+                    buf.extend(txt.encode("utf-8"))
+                    buf.append(EOS_BYTE)
                     while len(buf) >= chunk_len:
                         chunk = buf[:chunk_len]
                         buf = buf[chunk_len:]
@@ -152,13 +180,13 @@ def _stream_token_chunks(
 def evaluate_val(
     model: TaijiNativeCognitiveBackbone,
     val_arr: np.ndarray,
-    seq_len: int,
+    seq_bytes: int,
     batch_size: int,
     use_bf16: bool,
-    n_batches: int = 24,
+    n_batches: int = 16,
 ) -> tuple[float, float]:
     model.eval()
-    stride = seq_len + 1
+    stride = seq_bytes + 1
     max_start = max(1, len(val_arr) - stride * batch_size - 1)
     losses: list[float] = []
     for b in range(n_batches):
@@ -174,38 +202,14 @@ def evaluate_val(
         yb = torch.from_numpy(np.stack(ys))
         if use_bf16:
             with torch.amp.autocast("cpu", dtype=torch.bfloat16):
-                _, loss, _ = model(xb, labels=yb)
+                _, loss, _ = model(xb, labels=yb, p_allowed=0.0)
         else:
-            _, loss, _ = model(xb, labels=yb)
+            _, loss, _ = model(xb, labels=yb, p_allowed=0.0)
         assert loss is not None
         losses.append(float(loss.item()))
     model.train()
     mean_loss = sum(losses) / max(1, len(losses))
-    ppl = math.exp(min(20.0, mean_loss))
-    return round(mean_loss, 4), round(ppl, 2)
-
-
-@torch.no_grad()
-def sample_chinese(
-    model: TaijiNativeCognitiveBackbone,
-    tok: Tokenizer,
-    prompt: str = "今天我们一起",
-    max_new: int = 48,
-) -> str:
-    model.eval()
-    ids = tok.encode(prompt).ids
-    x = torch.tensor([ids], dtype=torch.long)
-    for _ in range(max_new):
-        x_cond = x[:, -model.cfg.max_seq_len :]
-        logits, _, _ = model(x_cond)
-        next_logits = logits[:, -1, :] / 0.8
-        top_v, top_i = torch.topk(next_logits, k=min(40, next_logits.size(-1)))
-        probs = torch.softmax(top_v, dim=-1)
-        idx = torch.multinomial(probs, num_samples=1)
-        next_tok = top_i.gather(-1, idx)
-        x = torch.cat((x, next_tok), dim=1)
-    model.train()
-    return tok.decode(x[0].tolist())
+    return round(mean_loss, 4), round(bits_per_byte(mean_loss), 4)
 
 
 def _lr_for_step(
@@ -219,11 +223,10 @@ def _lr_for_step(
 
 def run_training(args: argparse.Namespace) -> dict[str, Any]:
     torch.set_num_threads(args.threads)
-    tok = Tokenizer.from_file(str(TOKENIZER_PATH))
-    val_arr = np.fromfile(VAL_BIN_PATH, dtype=np.uint16)
+    val_arr = _ensure_val_bytes(Path(args.val_bytes_path))
 
     cfg = NATIVE_PRESETS[args.preset]
-    seq_len = 128 if args.smoke else cfg.max_seq_len
+    seq_bytes = 128 if args.smoke else cfg.max_seq_bytes
     batch_size = 2 if args.smoke else args.batch_size
     grad_accum = 1 if args.smoke else args.grad_accum
     use_bf16 = args.dtype == "bfloat16"
@@ -235,7 +238,7 @@ def run_training(args: argparse.Namespace) -> dict[str, Any]:
 
     latest_ckpt = ckpt_dir / "latest.pt"
     opt_step = 0
-    tokens_seen = 0
+    bytes_seen = 0
     best_val_loss = float("inf")
     resume_state: dict[str, Any] | None = None
     if args.resume and latest_ckpt.exists():
@@ -250,21 +253,23 @@ def run_training(args: argparse.Namespace) -> dict[str, Any]:
         model.growth_lineage = list(resume_state.get("growth_lineage", []))
         opt.load_state_dict(resume_state["opt"])
         opt_step = int(resume_state.get("opt_step", 0))
-        tokens_seen = int(resume_state.get("tokens_seen", 0))
+        bytes_seen = int(resume_state.get("bytes_seen", 0))
         best_val_loss = float(resume_state.get("best_val_loss", float("inf")))
 
     params = model.count_parameters()
-    est_tps = 1753.0 if args.preset == "native_mid_18m" else 2605.0
-    toks_per_opt = batch_size * seq_len * grad_accum
-    total_steps_est = max(100, int((args.max_hours * 3600.0 * est_tps) / toks_per_opt))
+    bytes_per_opt = batch_size * seq_bytes * grad_accum
+    total_steps_est = max(100, int((args.max_hours * 3600.0 * 1500.0) / bytes_per_opt))
 
-    stream = _stream_token_chunks(tok, seq_len, batch_size)
+    stream = _stream_byte_chunks(seq_bytes, batch_size)
     t_start = time.monotonic()
     max_sec = args.max_hours * 3600.0
     last_train_loss = 0.0
     last_val_loss = best_val_loss if math.isfinite(best_val_loss) else 0.0
-    last_val_ppl = round(math.exp(min(20.0, last_val_loss)), 2) if last_val_loss > 0 else 0.0
+    last_val_bpb = round(bits_per_byte(last_val_loss), 4) if last_val_loss > 0 else 0.0
     last_sample = ""
+
+    # Persistent subject state carried across windows (CORE_ALG §15.2)
+    subject_state: NativeSubjectState | None = model.init_state(batch_size)
 
     max_opt_steps = 4 if args.smoke else 10_000_000
     eval_every = 2 if args.smoke else args.eval_every
@@ -284,34 +289,37 @@ def run_training(args: argparse.Namespace) -> dict[str, Any]:
             xb, yb = next(stream)
             if use_bf16:
                 with torch.amp.autocast("cpu", dtype=torch.bfloat16):
-                    _, loss, _ = model(xb, labels=yb)
+                    _, loss, next_state = model(xb, state=subject_state, labels=yb)
             else:
-                _, loss, _ = model(xb, labels=yb)
+                _, loss, next_state = model(xb, state=subject_state, labels=yb)
             assert loss is not None
             (loss / grad_accum).backward()
             accum_loss += float(loss.item()) / grad_accum
+            subject_state = next_state.detach()
         torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
         opt.step()
 
         opt_step += 1
-        tokens_seen += toks_per_opt
+        bytes_seen += bytes_per_opt
         last_train_loss = round(accum_loss, 4)
         elapsed = time.monotonic() - t_start
-        tps = round(tokens_seen / max(1e-3, elapsed), 1)
+        bps = round(bytes_seen / max(1e-3, elapsed), 1)
         progress_pct = round(min(100.0, 100.0 * elapsed / max(1.0, max_sec)), 2)
 
         if opt_step % eval_every == 0 or opt_step == 1:
-            last_val_loss, last_val_ppl = evaluate_val(
-                model, val_arr, seq_len, batch_size, use_bf16, n_batches=4 if args.smoke else 24
+            last_val_loss, last_val_bpb = evaluate_val(
+                model, val_arr, seq_bytes, batch_size, use_bf16, n_batches=4 if args.smoke else 16
             )
-            last_sample = sample_chinese(model, tok, max_new=16 if args.smoke else 48)
+            last_sample, _ = model.generate_utf8(
+                "今天我们一起", max_new_bytes=16 if args.smoke else 48
+            )
             ckpt_payload = {
                 "model": model.state_dict(),
                 "cfg": model.cfg.to_dict(),
                 "growth_lineage": list(model.growth_lineage),
                 "opt": opt.state_dict(),
                 "opt_step": opt_step,
-                "tokens_seen": tokens_seen,
+                "bytes_seen": bytes_seen,
                 "best_val_loss": min(best_val_loss, last_val_loss),
                 "preset": args.preset,
             }
@@ -326,12 +334,12 @@ def run_training(args: argparse.Namespace) -> dict[str, Any]:
                         {
                             "ts_utc": datetime.now(UTC).isoformat(),
                             "opt_step": opt_step,
-                            "tokens_seen": tokens_seen,
-                            "tokens_per_sec": tps,
+                            "bytes_seen": bytes_seen,
+                            "bytes_per_sec": bps,
                             "elapsed_sec": round(elapsed, 1),
                             "train_loss": last_train_loss,
                             "val_loss": last_val_loss,
-                            "val_ppl": last_val_ppl,
+                            "val_bpb": last_val_bpb,
                             "lr": round(lr, 7),
                         },
                         ensure_ascii=False,
@@ -343,22 +351,23 @@ def run_training(args: argparse.Namespace) -> dict[str, Any]:
             _atomic_write_json(
                 status_path,
                 {
-                    "schema": "taiji-n38-native-training-status-v1",
-                    "architecture": "taiji-native-cognitive-backbone-v1",
+                    "schema": "taiji-n38-native-training-status-v2",
+                    "architecture": "taiji-native-byte-group-v2",
+                    "input_encoding": "raw_utf8_bytes_259",
                     "non_transformer": True,
                     "status": "running",
                     "preset": args.preset,
                     "params": params,
                     "pid": os.getpid(),
                     "opt_step": opt_step,
-                    "tokens_seen": tokens_seen,
-                    "tokens_per_sec": tps,
+                    "bytes_seen": bytes_seen,
+                    "bytes_per_sec": bps,
                     "elapsed_sec": round(elapsed, 1),
                     "max_hours": args.max_hours,
                     "progress_pct": progress_pct,
                     "train_loss": last_train_loss,
                     "val_loss": last_val_loss,
-                    "val_ppl": last_val_ppl,
+                    "val_bpb": last_val_bpb,
                     "best_val_loss": round(best_val_loss, 4) if math.isfinite(best_val_loss) else 0,
                     "lr": round(lr, 7),
                     "sample_generation": last_sample,
@@ -368,17 +377,19 @@ def run_training(args: argparse.Namespace) -> dict[str, Any]:
             )
 
     final_payload = {
-        "schema": "taiji-n38-native-training-status-v1",
-        "architecture": "taiji-native-cognitive-backbone-v1",
+        "schema": "taiji-n38-native-training-status-v2",
+        "architecture": "taiji-native-byte-group-v2",
+        "input_encoding": "raw_utf8_bytes_259",
         "non_transformer": True,
         "status": "completed",
         "preset": args.preset,
         "params": params,
         "pid": os.getpid(),
         "opt_step": opt_step,
-        "tokens_seen": tokens_seen,
+        "bytes_seen": bytes_seen,
+        "val_loss": last_val_loss,
+        "val_bpb": last_val_bpb,
         "best_val_loss": round(best_val_loss, 4) if math.isfinite(best_val_loss) else 0,
-        "val_ppl": last_val_ppl,
         "sample_generation": last_sample,
         "topology": model.topology_summary(),
         "updated_utc": datetime.now(UTC).isoformat(),
@@ -388,14 +399,15 @@ def run_training(args: argparse.Namespace) -> dict[str, Any]:
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description="N38.2.02 态极 Native Non-Transformer CPU Pretraining")
-    ap.add_argument("--preset", default="native_mid_18m", choices=sorted(NATIVE_PRESETS))
+    ap = argparse.ArgumentParser(description="N38.2.02 态极 Native Byte-Group CPU Pretraining")
+    ap.add_argument("--preset", default="native_byte_mid", choices=sorted(NATIVE_PRESETS))
     ap.add_argument("--max-hours", type=float, default=24.0)
     ap.add_argument("--threads", type=int, default=8)
     ap.add_argument("--dtype", default="bfloat16", choices=("bfloat16", "float32"))
     ap.add_argument("--batch-size", type=int, default=4)
     ap.add_argument("--grad-accum", type=int, default=4)
     ap.add_argument("--eval-every", type=int, default=250)
+    ap.add_argument("--val-bytes-path", default=str(VAL_BYTES_PATH))
     ap.add_argument("--ckpt-dir", default=str(DEFAULT_CKPT_DIR))
     ap.add_argument("--status-path", default=str(STATUS_PATH))
     ap.add_argument("--metrics-path", default=str(METRICS_PATH))

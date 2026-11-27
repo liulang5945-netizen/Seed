@@ -1,15 +1,20 @@
-"""Taiji Native Non-Transformer Cognitive Backbone (`taiji-native-cognitive-backbone-v1`).
+"""态极 Native Byte-Group Cognitive Backbone (`taiji-native-byte-group-v2`).
 
-Implements the non-Transformer core algorithm of `TAIJI_CORE_ALGORITHM_V1_DRAFT`:
-  * ZERO standard Transformer / scaled_dot_product_attention / GQA blocks;
-  * Three-timescale neural plasticity: slow knowledge (`w_slow`, `Theta`), medium
-    low-rank adaptation (`psi_u @ psi_v^T`, `Psi`), and fast associative weights `F_t`;
-  * Exact rank-1 proximal-erase + independent-write associative fast weights (`§6.2-6.5`)
-    with `p_allowed=0.0` strict freeze and `Frobenius <= C_F` norm cap;
-  * Multi-timescale leaky neural state `H_t` with causal depthwise local encoding;
-  * Native built-in neutral structural growth primitives (`grow_group_units_neutral_`,
-    `grow_depth_neutral_`, `grow_fast_heads_neutral_`) + selective plasticity grad mask;
-  * Bit-exact `SessionStore` capsule export/load preserving grown topology & lineage.
+Strictly aligned with `TAIJI_CORE_ALGORITHM_V1_DRAFT`, `SPEC-TAIJI-CLOSED_LOOP_U2`,
+and `SPEC-TAIJI_U2_NEURAL_UNIT_LIFECYCLE`:
+  * Pure UTF-8 raw byte input (`BYTE_VOCAB = 259`, `OUT_VOCAB = 257`) with 3-layer causal
+    Conv1d (`k=3, d=1/2/4`) -> 8-byte patch encoder (ZERO BPE, ZERO Transformer);
+  * Heterogeneous persistent neural groups (`tau_init` in `{1, 4, 16, 64}`) with
+    synchronous Q/K/V inter-group messaging and additive residual groups;
+  * Stateful neural units inside each group (`unit_id`, `z`, `a`, directed `W_rec`,
+    `c`, `eta`, `b`, and 5-stage lifecycle `proposed/immature/mature/dormant/retired`);
+  * Exact FP1 KKT constrained quadratic fast memory (`taiji.u2_operators.fp1`) with
+    `allowed=False` bit-exact freeze and `use_fast_memory=False` no-F ablation switch;
+  * SVD zero-in / non-zero-out neutral birth (`grow_stateful_units_svd_neutral_` using
+    `u2_operators.credit_matrix / choose_left_directions / append_neutral_units`),
+    inheritance proliferation (`proliferate_units_neutral_`), and additive residual group
+    growth (`grow_group_neutral_`);
+  * Strict UTF-8 legal byte decoding via `taiji.u2_operators.utf8_mask` + `utf8_state`.
 """
 
 from __future__ import annotations
@@ -22,12 +27,25 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-SCHEMA = "taiji-native-cognitive-backbone-v1"
+from taiji.u2_operators import (
+    append_neutral_units,
+    choose_left_directions,
+    credit_matrix,
+    fp1,
+    utf8_mask,
+)
+from taiji.utf8_state import advance_utf8
 
-UNIT_IMMATURE = 0
-UNIT_MATURE = 1
-UNIT_DORMANT = 2
-UNIT_RETIRED = 3
+SCHEMA = "taiji-native-byte-group-v2"
+
+BYTE_VOCAB = 259  # 0..255 raw UTF-8 bytes, 256=EOS, 257=BOS, 258=PAD
+OUT_VOCAB = 257  # 0..255 + 256=EOS (matches u2_operators.utf8_mask)
+EOS_BYTE = 256
+BOS_BYTE = 257
+PAD_BYTE = 258
+
+UNIT_STAGES = ("proposed", "immature", "mature", "dormant", "retired")
+STAGE_ID = {name: i for i, name in enumerate(UNIT_STAGES)}
 
 
 def smooth_unit_ball(x: torch.Tensor) -> torch.Tensor:
@@ -41,38 +59,36 @@ def scale_floor_norm(h: torch.Tensor) -> torch.Tensor:
     return h * torch.rsqrt(1.0 + h.pow(2).mean(dim=-1, keepdim=True))
 
 
+def bits_per_byte(loss_nats: float) -> float:
+    """Convert natural-log cross-entropy (nats/byte) to bits-per-byte (BPB)."""
+    return float(loss_nats) / math.log(2.0)
+
+
 @dataclass(frozen=True)
 class NativeBackboneConfig:
-    vocab_size: int = 8192
-    d_model: int = 384
-    n_layers: int = 8
-    group_units: int | tuple[int, ...] = 384
-    n_fast_heads: int | tuple[int, ...] = 4
+    d_model: int = 256
+    byte_emb_dim: int = 64
+    patch_size: int = 8
+    n_groups: int = 4
+    group_units: int | tuple[int, ...] = 256
     fast_key_dim: int = 32
     fast_val_dim: int = 32
+    fast_radius: float = 4.0
     psi_rank: int = 16
     tau_min: float = 0.5
     tau_max: float = 128.0
-    fast_norm_cap: float = 16.0
-    chunk_size: int = 32
-    max_seq_len: int = 512
+    use_fast_memory: bool = True
+    max_seq_bytes: int = 512
 
-    def layer_group_units(self, idx: int) -> int:
+    def group_unit_count(self, idx: int) -> int:
         if isinstance(self.group_units, int):
             return self.group_units
         return self.group_units[idx]
-
-    def layer_fast_heads(self, idx: int) -> int:
-        if isinstance(self.n_fast_heads, int):
-            return self.n_fast_heads
-        return self.n_fast_heads[idx]
 
     def to_dict(self) -> dict[str, Any]:
         d = asdict(self)
         if isinstance(self.group_units, tuple):
             d["group_units"] = list(self.group_units)
-        if isinstance(self.n_fast_heads, tuple):
-            d["n_fast_heads"] = list(self.n_fast_heads)
         return d
 
     @classmethod
@@ -80,311 +96,315 @@ class NativeBackboneConfig:
         d = dict(data)
         if isinstance(d.get("group_units"), list):
             d["group_units"] = tuple(int(x) for x in d["group_units"])
-        if isinstance(d.get("n_fast_heads"), list):
-            d["n_fast_heads"] = tuple(int(x) for x in d["n_fast_heads"])
         return cls(**d)
 
 
 NATIVE_PRESETS: dict[str, NativeBackboneConfig] = {
-    "native_tiny_2m": NativeBackboneConfig(
-        vocab_size=8192,
+    "native_byte_tiny": NativeBackboneConfig(
         d_model=128,
-        n_layers=4,
-        group_units=128,
-        n_fast_heads=2,
+        byte_emb_dim=64,
+        patch_size=8,
+        n_groups=4,
+        group_units=96,
         fast_key_dim=16,
         fast_val_dim=16,
+        fast_radius=4.0,
         psi_rank=8,
+        max_seq_bytes=256,
     ),
-    "native_small_8m": NativeBackboneConfig(
-        vocab_size=8192,
+    "native_byte_small": NativeBackboneConfig(
         d_model=256,
-        n_layers=8,
-        group_units=768,
-        n_fast_heads=4,
-        fast_key_dim=24,
-        fast_val_dim=24,
-        psi_rank=16,
-    ),
-    "native_mid_18m": NativeBackboneConfig(
-        vocab_size=8192,
-        d_model=384,
-        n_layers=10,
-        group_units=1024,
-        n_fast_heads=6,
+        byte_emb_dim=64,
+        patch_size=8,
+        n_groups=4,
+        group_units=384,
         fast_key_dim=32,
         fast_val_dim=32,
+        fast_radius=4.0,
         psi_rank=16,
+        max_seq_bytes=512,
+    ),
+    "native_byte_mid": NativeBackboneConfig(
+        d_model=384,
+        byte_emb_dim=64,
+        patch_size=8,
+        n_groups=4,
+        group_units=768,
+        fast_key_dim=32,
+        fast_val_dim=32,
+        fast_radius=4.0,
+        psi_rank=24,
+        max_seq_bytes=512,
     ),
 }
 
 
 @dataclass
-class NativeCognitiveState:
-    """Persistent cross-turn / cross-session state (H_t + associative fast weights F_t)."""
+class NativeSubjectState:
+    """Persistent cross-window / cross-session state (H, z, a, F, residual)."""
 
     h_states: list[torch.Tensor]
-    fast_weights: list[torch.Tensor]
+    unit_z: list[torch.Tensor]
+    unit_a: list[torch.Tensor]
+    fast_memories: list[torch.Tensor]
+    residual_h: list[torch.Tensor]
+    residual_z: list[torch.Tensor]
+    residual_a: list[torch.Tensor]
+
+    def detach(self) -> NativeSubjectState:
+        return NativeSubjectState(
+            h_states=[t.detach() for t in self.h_states],
+            unit_z=[t.detach() for t in self.unit_z],
+            unit_a=[t.detach() for t in self.unit_a],
+            fast_memories=[t.detach() for t in self.fast_memories],
+            residual_h=[t.detach() for t in self.residual_h],
+            residual_z=[t.detach() for t in self.residual_z],
+            residual_a=[t.detach() for t in self.residual_a],
+        )
 
 
-class NativeNeuralGroupBlock(nn.Module):
-    """Single Taiji native neural group layer with 3-timescale plasticity & fast weights."""
+class BytePatchEncoder(nn.Module):
+    """§5.1 Pure UTF-8 byte embedding + 3-layer causal Conv1d (d=1,2,4) + 8-byte patch."""
+
+    def __init__(self, d_model: int, byte_emb_dim: int = 64, patch_size: int = 8) -> None:
+        super().__init__()
+        self.d_model = int(d_model)
+        self.byte_emb_dim = int(byte_emb_dim)
+        self.patch_size = int(patch_size)
+
+        self.byte_emb = nn.Embedding(BYTE_VOCAB, self.byte_emb_dim)
+        nn.init.normal_(self.byte_emb.weight, std=0.02)
+
+        self.conv1 = nn.Conv1d(self.byte_emb_dim, self.d_model, kernel_size=3, dilation=1)
+        self.conv2 = nn.Conv1d(self.d_model, self.d_model, kernel_size=3, dilation=2)
+        self.conv3 = nn.Conv1d(self.d_model, self.d_model, kernel_size=3, dilation=4)
+
+    def forward(self, byte_ids: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
+        """Return strictly causal per-byte features (B, T, D) and patch embeddings (B, P, D)."""
+        x = self.byte_emb(byte_ids).transpose(1, 2)  # (B, E, T)
+        h1 = torch.tanh(self.conv1(F.pad(x, (2, 0))))
+        h2 = h1 + torch.tanh(self.conv2(F.pad(h1, (4, 0))))
+        h3 = h2 + torch.tanh(self.conv3(F.pad(h2, (8, 0))))
+        a_byte = h3.transpose(1, 2)  # (B, T, D)
+
+        bsz, seq_len, d_dim = a_byte.shape
+        rem = seq_len % self.patch_size
+        if rem != 0:
+            pad_len = self.patch_size - rem
+            padded = F.pad(a_byte, (0, 0, 0, pad_len))
+        else:
+            padded = a_byte
+        n_patches = padded.shape[1] // self.patch_size
+        e_patch = padded.view(bsz, n_patches, self.patch_size, d_dim).mean(dim=2)
+        return a_byte, e_patch
+
+
+class StatefulNeuralGroup(nn.Module):
+    """Heterogeneous neural group with stateful units (z, a, W_rec) & FP1 KKT fast memory."""
 
     def __init__(
         self,
+        group_idx: int,
         d_model: int,
-        group_units: int,
-        n_fast_heads: int,
+        n_units: int,
         fast_key_dim: int,
         fast_val_dim: int,
+        fast_radius: float,
         psi_rank: int,
+        tau_init: float,
         tau_min: float = 0.5,
         tau_max: float = 128.0,
-        fast_norm_cap: float = 16.0,
-        chunk_size: int = 16,
+        use_fast_memory: bool = True,
+        *,
+        is_residual: bool = False,
     ) -> None:
         super().__init__()
+        self.group_idx = int(group_idx)
         self.d_model = int(d_model)
-        self.group_units = int(group_units)
-        self.n_fast_heads = int(n_fast_heads)
+        self.n_units = int(n_units)
         self.fast_key_dim = int(fast_key_dim)
         self.fast_val_dim = int(fast_val_dim)
+        self.fast_radius = float(fast_radius)
         self.psi_rank = int(psi_rank)
         self.tau_min = float(tau_min)
         self.tau_max = float(tau_max)
-        self.fast_norm_cap = float(fast_norm_cap)
-        self.chunk_size = max(1, int(chunk_size))
+        self.use_fast_memory = bool(use_fast_memory)
+        self.is_residual = bool(is_residual)
 
-        # Causal depthwise local encoder (kernel=4, left-padded)
-        self.local_conv = nn.Conv1d(
-            self.d_model, self.d_model, kernel_size=4, padding=0, groups=self.d_model, bias=False
+        frac = max(
+            1e-4,
+            min(1.0 - 1e-4, (tau_init - self.tau_min) / max(1e-6, self.tau_max - self.tau_min)),
         )
+        self.rho = nn.Parameter(torch.tensor(math.log(frac / (1.0 - frac)), dtype=torch.float32))
 
-        # Multi-timescale leaky recurrence rho initialized across tau in [1, 4, 16, 64]
-        taus = torch.tensor([1.0, 4.0, 16.0, 64.0], dtype=torch.float32).repeat(
-            (self.d_model + 3) // 4
-        )[: self.d_model]
-        frac = ((taus - self.tau_min) / max(1e-6, self.tau_max - self.tau_min)).clamp(
-            1e-4, 1 - 1e-4
-        )
-        self.rho = nn.Parameter(torch.log(frac / (1.0 - frac)))
+        in_dim = 4 * self.d_model  # [N(H_g), e_patch, m_g, r_F]
+        self.w_slow = nn.Linear(in_dim, self.d_model, bias=False)
+        nn.init.normal_(self.w_slow.weight, std=0.02)
 
-        # Slow knowledge weights (Theta)
-        self.w_slow = nn.Linear(self.d_model, self.d_model, bias=False)
-
-        # Medium low-rank adaptation Psi = U @ V^T (U zero-init, V non-zero init)
         self.psi_u = nn.Parameter(torch.zeros(self.d_model, self.psi_rank))
-        self.psi_v = nn.Parameter(
-            torch.randn(self.d_model, self.psi_rank) / math.sqrt(self.d_model)
-        )
+        self.psi_v = nn.Parameter(torch.randn(in_dim, self.psi_rank) * 0.02)
 
-        # Growable neural group units: P @ tanh(R @ x)
-        self.group_in = nn.Linear(self.d_model, self.group_units, bias=False)
-        self.group_out = nn.Linear(self.group_units, self.d_model, bias=False)
+        # Stateful neural units (U2_NEURAL_UNIT §2-3)
+        self.unit_r = nn.Parameter(torch.randn(self.n_units, in_dim) * (0.5 / math.sqrt(in_dim)))
+        self.unit_p = nn.Parameter(
+            torch.randn(self.d_model, self.n_units) * (0.5 / math.sqrt(self.n_units))
+        )
+        self.unit_w_rec = nn.Parameter(torch.zeros(self.n_units, self.n_units))
+        self.unit_c = nn.Parameter(torch.full((self.n_units,), 0.5))
+        self.unit_eta = nn.Parameter(torch.full((self.n_units,), 0.1))
+        self.unit_b = nn.Parameter(torch.zeros(self.n_units))
+
         self.register_buffer(
-            "unit_stage", torch.full((self.group_units,), UNIT_IMMATURE, dtype=torch.long)
+            "unit_stage", torch.full((self.n_units,), STAGE_ID["immature"], dtype=torch.long)
         )
         self.unit_stage: torch.Tensor
+        edge_mask = torch.ones(self.n_units, self.n_units, dtype=torch.float32)
+        edge_mask.fill_diagonal_(0.0)
+        self.register_buffer("edge_mask", edge_mask)
+        self.edge_mask: torch.Tensor
 
-        # Associative fast-weight projections (F_t: L x k x v)
-        self.fast_q = nn.Linear(self.d_model, self.n_fast_heads * self.fast_key_dim, bias=False)
-        self.fast_k = nn.Linear(self.d_model, self.n_fast_heads * self.fast_key_dim, bias=False)
-        self.fast_v = nn.Linear(self.d_model, self.n_fast_heads * self.fast_val_dim, bias=False)
-        self.fast_read_out = nn.Linear(
-            self.n_fast_heads * self.fast_val_dim, self.d_model, bias=False
-        )
+        self.unit_ids: list[str] = [f"g{self.group_idx}/u{i}" for i in range(self.n_units)]
+        self.unit_branches: list[str] = ["base"] * self.n_units
 
-        # Fast-weight gates: alpha (decay), b (erase dir), w (write), erase_strength, chi
-        self.fast_alpha = nn.Linear(self.d_model, self.n_fast_heads * self.fast_key_dim, bias=True)
-        self.fast_b = nn.Linear(self.d_model, self.n_fast_heads * self.fast_key_dim, bias=True)
-        self.fast_w = nn.Linear(self.d_model, self.n_fast_heads * self.fast_val_dim, bias=True)
-        self.fast_eta = nn.Linear(self.d_model, self.n_fast_heads, bias=True)
-        self.fast_chi = nn.Linear(self.d_model, self.n_fast_heads, bias=True)
+        # Inter-group Q/K/V projections
+        self.msg_q = nn.Linear(self.d_model, self.d_model, bias=False)
+        self.msg_k = nn.Linear(self.d_model, self.d_model, bias=False)
+        self.msg_v = nn.Linear(self.d_model, self.d_model, bias=False)
+        nn.init.normal_(self.msg_q.weight, std=0.02)
+        nn.init.normal_(self.msg_k.weight, std=0.02)
+        nn.init.normal_(self.msg_v.weight, std=0.02)
 
-        # Initialize chi bias slightly negative for conservative fast-memory writes
-        nn.init.constant_(self.fast_chi.bias, -1.0)
+        # FP1 KKT Fast Memory projections
+        self.fast_q = nn.Linear(self.d_model, self.fast_key_dim, bias=False)
+        self.fast_k = nn.Linear(self.d_model, self.fast_key_dim, bias=False)
+        self.fast_v = nn.Linear(self.d_model, self.fast_val_dim, bias=False)
+        self.fast_read_out = nn.Linear(self.fast_val_dim, self.d_model, bias=False)
+        self.fast_alpha = nn.Linear(self.d_model, self.fast_key_dim, bias=True)
+        self.fast_gain = nn.Linear(self.d_model, 1, bias=True)
+        self.fast_chi = nn.Linear(self.d_model, 1, bias=True)
+        nn.init.normal_(self.fast_read_out.weight, std=0.02)
         nn.init.constant_(self.fast_alpha.bias, 2.0)
+        nn.init.constant_(self.fast_chi.bias, -1.0)
 
-    def alive_unit_mask(self) -> torch.Tensor:
-        alive = (self.unit_stage == UNIT_IMMATURE) | (self.unit_stage == UNIT_MATURE)
-        return alive.to(dtype=self.group_in.weight.dtype)
+        if self.is_residual:
+            # CORE_ALG §11.3: zero incoming mapping for residual group at birth
+            self.w_slow.weight.data.zero_()
+            self.psi_v.data.zero_()
+            self.unit_r.data.zero_()
 
-    def proximal_erase_step(
+    def alive_mask(self, dtype: torch.dtype) -> torch.Tensor:
+        alive = (self.unit_stage == STAGE_ID["immature"]) | (self.unit_stage == STAGE_ID["mature"])
+        return alive.to(dtype=dtype)
+
+    def read_fast(self, h_prev: torch.Tensor, f_prev: torch.Tensor) -> torch.Tensor:
+        if not self.use_fast_memory:
+            return torch.zeros_like(h_prev)
+        q = smooth_unit_ball(self.fast_q(h_prev))
+        v_read = torch.einsum("bkv,bk->bv", f_prev.to(dtype=q.dtype), q)
+        return cast(torch.Tensor, self.fast_read_out(v_read))
+
+    def step_tick(
         self,
-        f_state: torch.Tensor,
-        alpha: torch.Tensor,
-        b: torch.Tensor,
-        k: torch.Tensor,
-        eta_e: torch.Tensor,
-        chi: torch.Tensor,
-        w_v: torch.Tensor | None = None,
-    ) -> torch.Tensor:
-        """Exact rank-1 proximal-erase & independent-write update (§6.2-6.3)."""
-        f_bar = alpha.unsqueeze(-1) * f_state
-        e = b * k
-        e_norm_sq = (e * e).sum(dim=-1, keepdim=True).unsqueeze(-1)
-        e_dot_f = torch.einsum("blk,blkv->blv", e, f_bar).unsqueeze(-2)
-        f_erase = f_bar - (eta_e * e.unsqueeze(-1) * e_dot_f) / (1.0 + eta_e * e_norm_sq)
-        f_tilde = f_erase + k.unsqueeze(-1) * w_v.unsqueeze(-2) if w_v is not None else f_erase
-        f_next = (1.0 - chi) * f_state + chi * f_tilde
-        f_norm = torch.sqrt((f_next * f_next).sum(dim=(-2, -1), keepdim=True) + 1e-12)
-        scale = torch.clamp(self.fast_norm_cap / f_norm, max=1.0)
-        return f_next * scale
-
-    def forward(
-        self,
-        x: torch.Tensor,
-        h_state: torch.Tensor,
-        f_state: torch.Tensor,
-        p_allowed: float = 1.0,
+        x_g: torch.Tensor,
+        h_prev: torch.Tensor,
+        z_prev: torch.Tensor,
+        a_prev: torch.Tensor,
     ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
-        """Chunk-wise vectorized forward pass: (B, T, d_model) -> (out, next_h, next_f)."""
-        bsz, seq_len, _ = x.shape
-        l_heads = self.n_fast_heads
-        k_dim = self.fast_key_dim
-        v_dim = self.fast_val_dim
+        """Exact synchronous U2_NEURAL_UNIT §3 tick."""
+        alive = self.alive_mask(x_g.dtype)
+        c = self.unit_c.clamp(0.0, 1.0 - 1e-4).to(dtype=x_g.dtype)
+        eta = self.unit_eta.clamp(1e-4, 1.0).to(dtype=x_g.dtype)
+        b = self.unit_b.clamp(0.0, 2.0).to(dtype=x_g.dtype)
 
-        # 1. Causal local depthwise conv
-        x_conv_in = F.pad(x.transpose(1, 2), (3, 0))
-        local_feat = self.local_conv(x_conv_in).transpose(1, 2)
-        u = scale_floor_norm(x + local_feat)
+        z_alive = z_prev * alive
+        w_eff = (self.unit_w_rec * self.edge_mask).to(dtype=x_g.dtype)
+        v = F.linear(x_g, self.unit_r.to(dtype=x_g.dtype)) + F.linear(z_alive, w_eff) - b * a_prev
+        z_next = (c * z_prev + (1.0 - c) * torch.tanh(v)) * alive
+        a_next = ((1.0 - eta) * a_prev + eta * z_next) * alive
 
-        # 2. Slow + Psi + Growable neural group units (batched over B, T)
-        psi_out = (u @ self.psi_v) @ self.psi_u.t()
-        group_h = torch.tanh(self.group_in(u)) * self.alive_unit_mask()
-        drive = torch.tanh(self.w_slow(u) + psi_out + self.group_out(group_h))
+        psi_out = (x_g @ self.psi_v.to(dtype=x_g.dtype)) @ self.psi_u.to(dtype=x_g.dtype).t()
+        unit_out = F.linear(z_next * alive, self.unit_p.to(dtype=x_g.dtype))
+        pre_act = self.w_slow(x_g) + psi_out + unit_out
 
-        # 3. Chunk-wise EXACT multi-timescale leaky state H_t
         tau = self.tau_min + (self.tau_max - self.tau_min) * torch.sigmoid(self.rho)
-        ell = (1.0 - torch.exp(-1.0 / tau)).to(dtype=x.dtype)
-        decay = 1.0 - ell
+        ell = (1.0 - torch.exp(-1.0 / tau)).to(dtype=x_g.dtype)
+        h_next = (1.0 - ell) * h_prev + ell * torch.tanh(pre_act)
+        return h_next, z_next, a_next
 
-        c_size = min(self.chunk_size, seq_len)
-        idx = torch.arange(c_size, device=x.device)
-        diff = idx.unsqueeze(1) - idx.unsqueeze(0)  # (C, C)
-        causal_c = diff >= 0
-        diff_clamped = diff.clamp(min=0).unsqueeze(-1)  # (C, C, 1)
-        m_kernel = (
-            ell.view(1, 1, -1)
-            * (decay.view(1, 1, -1) ** diff_clamped)
-            * causal_c.unsqueeze(-1).to(dtype=x.dtype)
-        )
-        p_carry = decay.view(1, -1) ** (idx.unsqueeze(-1) + 1)  # (C, D)
+    def write_fast_fp1(
+        self,
+        f_prev: torch.Tensor,
+        h_seq: torch.Tensor,
+        p_allowed: float,
+    ) -> torch.Tensor:
+        """Update fast memory via exact KKT constrained quadratic solver `u2_operators.fp1`."""
+        if not self.use_fast_memory or p_allowed <= 0.0:
+            return f_prev
+        bsz = h_seq.shape[0]
+        with torch.amp.autocast("cpu", enabled=False):
+            k_seq = smooth_unit_ball(self.fast_k(h_seq.float())).float()  # (B, P, dk)
+            v_seq = smooth_unit_ball(torch.tanh(self.fast_v(h_seq.float()))).float()  # (B, P, dv)
+            alpha = torch.sigmoid(self.fast_alpha(h_seq[:, -1, :].float())).float()  # (B, dk)
+            gains = (4.0 * torch.sigmoid(self.fast_gain(h_seq.float()))).squeeze(-1).float()
+            chi = (p_allowed * torch.sigmoid(self.fast_chi(h_seq[:, -1, :].float())).mean()).float()
+            radius = torch.tensor(self.fast_radius, dtype=torch.float32, device=f_prev.device)
 
-        h_cur = h_state
-        h_chunks: list[torch.Tensor] = []
-        for start in range(0, seq_len, c_size):
-            end = min(start + c_size, seq_len)
-            c_len = end - start
-            h_c = h_cur.unsqueeze(1) * p_carry[:c_len].unsqueeze(0) + torch.einsum(
-                "bjd,ijd->bid", drive[:, start:end, :], m_kernel[:c_len, :c_len, :]
-            )
-            h_chunks.append(h_c)
-            h_cur = h_c[:, -1, :]
-        h_stack = torch.cat(h_chunks, dim=1)
-
-        # 4. Chunk-wise associative fast weights F_t (ZERO SDPA / ZERO softmax)
-        q_all = smooth_unit_ball(self.fast_q(u).view(bsz, seq_len, l_heads, k_dim))
-        if p_allowed == 0.0:
-            v_read_all = torch.einsum("blkv,btlk->btlv", f_state, q_all).reshape(
-                bsz, seq_len, l_heads * v_dim
-            )
-            f_stack = self.fast_read_out(v_read_all)
-            return x + h_stack + f_stack, h_cur, f_state
-
-        k_all = smooth_unit_ball(self.fast_k(u).view(bsz, seq_len, l_heads, k_dim))
-        v_all = smooth_unit_ball(torch.tanh(self.fast_v(u).view(bsz, seq_len, l_heads, v_dim)))
-        alpha_all = torch.sigmoid(self.fast_alpha(u)).view(bsz, seq_len, l_heads, k_dim)
-        b_all = torch.sigmoid(self.fast_b(u)).view(bsz, seq_len, l_heads, k_dim)
-        w_all = torch.sigmoid(self.fast_w(u)).view(bsz, seq_len, l_heads, v_dim)
-        eta_all = 16.0 * torch.sigmoid(self.fast_eta(u)).view(bsz, seq_len, l_heads, 1, 1)
-        chi_all = p_allowed * torch.sigmoid(self.fast_chi(u)).view(bsz, seq_len, l_heads, 1, 1)
-
-        f_cur = f_state
-        v_read_chunks: list[torch.Tensor] = []
-
-        if self.chunk_size == 1:
-            for t in range(seq_len):
-                v_read_t = torch.einsum("blkv,blk->blv", f_cur, q_all[:, t]).reshape(
-                    bsz, 1, l_heads * v_dim
+            out_list: list[torch.Tensor] = []
+            for b_idx in range(bsz):
+                f_b = f_prev[b_idx].float()
+                norm_b = float(f_b.detach().norm())
+                if norm_b > self.fast_radius - 1e-5:
+                    f_b = f_b * ((self.fast_radius - 1e-5) / max(1e-12, norm_b))
+                f_new = fp1(
+                    f_b,
+                    k_seq[b_idx].transpose(0, 1),
+                    v_seq[b_idx].transpose(0, 1),
+                    alpha[b_idx],
+                    gains[b_idx],
+                    chi,
+                    radius,
+                    allowed=True,
                 )
-                v_read_chunks.append(v_read_t)
-                f_cur = self.proximal_erase_step(
-                    f_cur,
-                    alpha_all[:, t],
-                    b_all[:, t],
-                    k_all[:, t],
-                    eta_all[:, t],
-                    chi_all[:, t],
-                    w_v=w_all[:, t] * v_all[:, t],
-                )
-        else:
-            for start in range(0, seq_len, c_size):
-                end = min(start + c_size, seq_len)
-                c_len = end - start
-                q_c = q_all[:, start:end]
-                k_c = k_all[:, start:end]
-                wv_c = w_all[:, start:end] * v_all[:, start:end]
-                chi_c = chi_all[:, start:end].squeeze(-1)  # (B, C, L, 1)
-
-                v_cross = torch.einsum("blkv,bclk->bclv", f_cur, q_c)
-                attn_c = torch.einsum("bilk,bjlk->blij", q_c, k_c)
-                causal_mask = torch.tril(
-                    torch.ones(c_len, c_len, device=x.device, dtype=x.dtype), diagonal=-1
-                )
-                v_intra = torch.einsum("blij,bjlv->bilv", attn_c * causal_mask, wv_c * chi_c)
-                v_read_chunks.append((v_cross + v_intra).reshape(bsz, c_len, l_heads * v_dim))
-
-                # Chunk-boundary exact rank-1 proximal-erase & independent-write update
-                alpha_eff = alpha_all[:, start:end].mean(dim=1)
-                e_c = (b_all[:, start:end] * k_c).mean(dim=1)
-                eta_eff = eta_all[:, start:end].mean(dim=1)
-                chi_eff = chi_all[:, start:end].mean(dim=1)
-
-                f_bar = alpha_eff.unsqueeze(-1) * f_cur
-                e_norm_sq = (e_c * e_c).sum(dim=-1, keepdim=True).unsqueeze(-1)
-                e_dot_f = torch.einsum("blk,blkv->blv", e_c, f_bar).unsqueeze(-2)
-                f_erase = f_bar - (eta_eff * e_c.unsqueeze(-1) * e_dot_f) / (
-                    1.0 + eta_eff * e_norm_sq
-                )
-                write_c = torch.einsum("bclk,bclv->blkv", k_c, wv_c) / float(c_len)
-                f_next = (1.0 - chi_eff) * f_cur + chi_eff * (f_erase + write_c)
-                f_norm = torch.sqrt((f_next * f_next).sum(dim=(-2, -1), keepdim=True) + 1e-12)
-                f_cur = f_next * torch.clamp(self.fast_norm_cap / f_norm, max=1.0)
-
-        v_read_all = torch.cat(v_read_chunks, dim=1)
-        f_stack = self.fast_read_out(v_read_all)
-        return x + h_stack + f_stack, h_cur, f_cur
+                out_list.append(f_new.to(dtype=f_prev.dtype))
+        return torch.stack(out_list, dim=0)
 
 
 class TaijiNativeCognitiveBackbone(nn.Module):
-    """Taiji native non-Transformer cognitive backbone with built-in neutral growth."""
+    """态极 Native Byte-Group Cognitive Backbone (Zero Transformer, Zero BPE)."""
 
     def __init__(self, cfg: NativeBackboneConfig) -> None:
         super().__init__()
         self.cfg = cfg
         self.growth_lineage: list[dict[str, Any]] = []
 
-        self.tok_emb = nn.Embedding(cfg.vocab_size, cfg.d_model)
-        self.blocks = nn.ModuleList(
+        self.encoder = BytePatchEncoder(cfg.d_model, cfg.byte_emb_dim, cfg.patch_size)
+        tau_inits = [1.0, 4.0, 16.0, 64.0]
+        self.groups = nn.ModuleList(
             [
-                NativeNeuralGroupBlock(
+                StatefulNeuralGroup(
+                    group_idx=i,
                     d_model=cfg.d_model,
-                    group_units=cfg.layer_group_units(i),
-                    n_fast_heads=cfg.layer_fast_heads(i),
+                    n_units=cfg.group_unit_count(i),
                     fast_key_dim=cfg.fast_key_dim,
                     fast_val_dim=cfg.fast_val_dim,
+                    fast_radius=cfg.fast_radius,
                     psi_rank=cfg.psi_rank,
+                    tau_init=tau_inits[i % len(tau_inits)],
                     tau_min=cfg.tau_min,
                     tau_max=cfg.tau_max,
-                    fast_norm_cap=cfg.fast_norm_cap,
-                    chunk_size=cfg.chunk_size,
+                    use_fast_memory=cfg.use_fast_memory,
                 )
-                for i in range(cfg.n_layers)
+                for i in range(cfg.n_groups)
             ]
         )
-        self.lm_head = nn.Linear(cfg.d_model, cfg.vocab_size, bias=False)
-        self.lm_head.weight = self.tok_emb.weight  # tied embeddings
+        self.residual_groups = nn.ModuleList()
+
+        # Shared group readout + strictly causal byte output head (257 = 0..255 + EOS)
+        self.group_read_proj = nn.Linear(cfg.d_model, cfg.d_model, bias=False)
+        self.byte_out = nn.Linear(2 * cfg.d_model, OUT_VOCAB, bias=True)
+        nn.init.normal_(self.group_read_proj.weight, std=0.02)
+        nn.init.normal_(self.byte_out.weight, std=0.02)
+        nn.init.zeros_(self.byte_out.bias)
 
     def count_parameters(self) -> int:
         return sum(p.numel() for p in self.parameters())
@@ -394,300 +414,459 @@ class TaijiNativeCognitiveBackbone(nn.Module):
         batch_size: int,
         device: torch.device | None = None,
         dtype: torch.dtype | None = None,
-    ) -> NativeCognitiveState:
-        dev = device or self.tok_emb.weight.device
-        dt = dtype or self.tok_emb.weight.dtype
-        h_states: list[torch.Tensor] = []
-        fast_weights: list[torch.Tensor] = []
-        for blk in self.blocks:
-            b = cast(NativeNeuralGroupBlock, blk)
-            h_states.append(torch.zeros(batch_size, b.d_model, device=dev, dtype=dt))
-            fast_weights.append(
+    ) -> NativeSubjectState:
+        dev = device or self.encoder.byte_emb.weight.device
+        dt = dtype or self.encoder.byte_emb.weight.dtype
+        return NativeSubjectState(
+            h_states=[
+                torch.zeros(batch_size, self.cfg.d_model, device=dev, dtype=dt) for _ in self.groups
+            ],
+            unit_z=[
+                torch.zeros(batch_size, cast(StatefulNeuralGroup, g).n_units, device=dev, dtype=dt)
+                for g in self.groups
+            ],
+            unit_a=[
+                torch.zeros(batch_size, cast(StatefulNeuralGroup, g).n_units, device=dev, dtype=dt)
+                for g in self.groups
+            ],
+            fast_memories=[
                 torch.zeros(
                     batch_size,
-                    b.n_fast_heads,
-                    b.fast_key_dim,
-                    b.fast_val_dim,
+                    self.cfg.fast_key_dim,
+                    self.cfg.fast_val_dim,
                     device=dev,
-                    dtype=dt,
+                    dtype=torch.float32,
                 )
-            )
-        return NativeCognitiveState(h_states=h_states, fast_weights=fast_weights)
+                for _ in self.groups
+            ],
+            residual_h=[
+                torch.zeros(batch_size, self.cfg.d_model, device=dev, dtype=dt)
+                for _ in self.residual_groups
+            ],
+            residual_z=[
+                torch.zeros(batch_size, cast(StatefulNeuralGroup, g).n_units, device=dev, dtype=dt)
+                for g in self.residual_groups
+            ],
+            residual_a=[
+                torch.zeros(batch_size, cast(StatefulNeuralGroup, g).n_units, device=dev, dtype=dt)
+                for g in self.residual_groups
+            ],
+        )
 
     def forward(
         self,
-        input_ids: torch.Tensor,
-        state: NativeCognitiveState | None = None,
+        byte_ids: torch.Tensor,
+        state: NativeSubjectState | None = None,
         labels: torch.Tensor | None = None,
         p_allowed: float = 1.0,
-    ) -> tuple[torch.Tensor, torch.Tensor | None, NativeCognitiveState]:
-        bsz, _ = input_ids.shape
-        x = self.tok_emb(input_ids)
+    ) -> tuple[torch.Tensor, torch.Tensor | None, NativeSubjectState]:
+        bsz, seq_len = byte_ids.shape
+        a_byte, e_patch = self.encoder(byte_ids)
+        dt = a_byte.dtype
         if state is None:
-            state = self.init_state(bsz, device=x.device, dtype=x.dtype)
+            state = self.init_state(bsz, device=byte_ids.device, dtype=dt)
 
-        next_h: list[torch.Tensor] = []
+        n_patches = e_patch.shape[1]
+        h_cur = [h.to(dtype=dt) for h in state.h_states]
+        z_cur = [z.to(dtype=dt) for z in state.unit_z]
+        a_cur = [a.to(dtype=dt) for a in state.unit_a]
+        f_cur = list(state.fast_memories)
+        rh_cur = [h.to(dtype=dt) for h in state.residual_h]
+        rz_cur = [z.to(dtype=dt) for z in state.residual_z]
+        ra_cur = [a.to(dtype=dt) for a in state.residual_a]
+
+        patch_readouts: list[torch.Tensor] = []
+        h_traces: list[list[torch.Tensor]] = [[] for _ in self.groups]
+        scale = 1.0 / math.sqrt(self.cfg.d_model)
+
+        for p_idx in range(n_patches):
+            e_t = e_patch[:, p_idx, :]
+            # Synchronous inter-group Q/K/V messaging from pre-step H
+            qs = [cast(StatefulNeuralGroup, g).msg_q(h_cur[i]) for i, g in enumerate(self.groups)]
+            ks = torch.stack(
+                [cast(StatefulNeuralGroup, g).msg_k(h_cur[i]) for i, g in enumerate(self.groups)],
+                dim=1,
+            )  # (B, G, D)
+            vs = torch.stack(
+                [cast(StatefulNeuralGroup, g).msg_v(h_cur[i]) for i, g in enumerate(self.groups)],
+                dim=1,
+            )  # (B, G, D)
+
+            next_h: list[torch.Tensor] = []
+            next_z: list[torch.Tensor] = []
+            next_a: list[torch.Tensor] = []
+            for i, grp_m in enumerate(self.groups):
+                grp = cast(StatefulNeuralGroup, grp_m)
+                attn = torch.softmax(torch.einsum("bd,bgd->bg", qs[i], ks) * scale, dim=-1)
+                m_g = torch.einsum("bg,bgd->bd", attn, vs)
+                r_f = grp.read_fast(h_cur[i], f_cur[i])
+                x_g = torch.cat([scale_floor_norm(h_cur[i]), e_t, m_g, r_f], dim=-1)
+                h_n, z_n, a_n = grp.step_tick(x_g, h_cur[i], z_cur[i], a_cur[i])
+                next_h.append(h_n)
+                next_z.append(z_n)
+                next_a.append(a_n)
+                h_traces[i].append(h_n)
+
+            h_cur, z_cur, a_cur = next_h, next_z, next_a
+
+            # Mean group readout + additive residual groups
+            z_p = self.group_read_proj(torch.stack(h_cur, dim=0).mean(dim=0))
+            for r_i, r_grp_m in enumerate(self.residual_groups):
+                r_grp = cast(StatefulNeuralGroup, r_grp_m)
+                zero_msg = torch.zeros_like(z_p)
+                rx_g = torch.cat([scale_floor_norm(rh_cur[r_i]), e_t, zero_msg, zero_msg], dim=-1)
+                rh_n, rz_n, ra_n = r_grp.step_tick(rx_g, rh_cur[r_i], rz_cur[r_i], ra_cur[r_i])
+                rh_cur[r_i], rz_cur[r_i], ra_cur[r_i] = rh_n, rz_n, ra_n
+                z_p = z_p + rh_n
+            patch_readouts.append(z_p)
+
+        # Update FP1 KKT fast memories after patch window reads
         next_f: list[torch.Tensor] = []
-        for i, blk in enumerate(self.blocks):
-            b = cast(NativeNeuralGroupBlock, blk)
-            x, h_i, f_i = b(x, state.h_states[i], state.fast_weights[i], p_allowed=p_allowed)
-            next_h.append(h_i)
-            next_f.append(f_i)
+        for i, grp_m in enumerate(self.groups):
+            grp = cast(StatefulNeuralGroup, grp_m)
+            h_seq = torch.stack(h_traces[i], dim=1)
+            next_f.append(grp.write_fast_fp1(f_cur[i], h_seq, p_allowed=p_allowed))
 
-        x_norm = scale_floor_norm(x)
-        logits = self.lm_head(x_norm)
+        # Strictly causal byte readout: byte t in patch p uses z_{p-1} (0 for p=0) + a_byte[:, t]
+        z_stack = torch.stack(patch_readouts, dim=1)  # (B, P, D)
+        z_shifted = F.pad(z_stack[:, :-1, :], (0, 0, 1, 0))  # (B, P, D), strictly causal!
+        z_per_byte = z_shifted.repeat_interleave(self.cfg.patch_size, dim=1)[:, :seq_len, :]
+        logits = self.byte_out(torch.cat([a_byte, z_per_byte], dim=-1))
+
         loss: torch.Tensor | None = None
         if labels is not None:
-            loss = F.cross_entropy(logits.view(-1, self.cfg.vocab_size), labels.view(-1))
-        return logits, loss, NativeCognitiveState(h_states=next_h, fast_weights=next_f)
+            loss = F.cross_entropy(
+                logits.reshape(-1, OUT_VOCAB), labels.reshape(-1), ignore_index=PAD_BYTE
+            )
+
+        next_state = NativeSubjectState(
+            h_states=h_cur,
+            unit_z=z_cur,
+            unit_a=a_cur,
+            fast_memories=next_f,
+            residual_h=rh_cur,
+            residual_z=rz_cur,
+            residual_a=ra_cur,
+        )
+        return logits, loss, next_state
+
+    @torch.no_grad()
+    def generate_utf8(
+        self,
+        prompt: str,
+        max_new_bytes: int = 64,
+        state: NativeSubjectState | None = None,
+        temperature: float = 0.8,
+    ) -> tuple[str, NativeSubjectState]:
+        """Autoregressively generate strictly valid UTF-8 bytes using `u2_operators.utf8_mask`."""
+        self.eval()
+        dev = self.encoder.byte_emb.weight.device
+        raw = list(prompt.encode("utf-8"))
+        if not raw:
+            raw = [BOS_BYTE]
+        x = torch.tensor([raw[-self.cfg.max_seq_bytes :]], dtype=torch.long, device=dev)
+        logits, _, cur_state = self(x, state=state, p_allowed=0.0)
+
+        generated: list[int] = []
+        remaining, lead = 0, 0
+        for step in range(max_new_bytes):
+            budget = max_new_bytes - step
+            mask = utf8_mask(remaining, lead, budget, device=dev)
+            next_logits = logits[0, -1, :].float() / max(1e-4, temperature)
+            next_logits = next_logits.masked_fill(~mask, -1e9)
+            probs = torch.softmax(next_logits, dim=-1)
+            sym = int(torch.multinomial(probs, num_samples=1).item())
+            if sym == EOS_BYTE:
+                break
+            generated.append(sym)
+            remaining, lead = advance_utf8(remaining, lead, sym)
+            x = torch.cat([x, torch.tensor([[sym]], dtype=torch.long, device=dev)], dim=1)
+            x_cond = x[:, -self.cfg.max_seq_bytes :]
+            logits, _, cur_state = self(x_cond, state=state, p_allowed=0.0)
+
+        text = bytes(generated).decode("utf-8")
+        return text, cur_state
 
     def _refresh_cfg(self) -> None:
-        units = tuple(cast(NativeNeuralGroupBlock, b).group_units for b in self.blocks)
-        heads = tuple(cast(NativeNeuralGroupBlock, b).n_fast_heads for b in self.blocks)
+        units = tuple(cast(StatefulNeuralGroup, g).n_units for g in self.groups)
         self.cfg = NativeBackboneConfig(
-            vocab_size=self.cfg.vocab_size,
             d_model=self.cfg.d_model,
-            n_layers=len(self.blocks),
+            byte_emb_dim=self.cfg.byte_emb_dim,
+            patch_size=self.cfg.patch_size,
+            n_groups=len(self.groups),
             group_units=units,
-            n_fast_heads=heads,
             fast_key_dim=self.cfg.fast_key_dim,
             fast_val_dim=self.cfg.fast_val_dim,
+            fast_radius=self.cfg.fast_radius,
             psi_rank=self.cfg.psi_rank,
             tau_min=self.cfg.tau_min,
             tau_max=self.cfg.tau_max,
-            fast_norm_cap=self.cfg.fast_norm_cap,
-            chunk_size=self.cfg.chunk_size,
-            max_seq_len=self.cfg.max_seq_len,
+            use_fast_memory=self.cfg.use_fast_memory,
+            max_seq_bytes=self.cfg.max_seq_bytes,
         )
 
     @torch.no_grad()
-    def grow_group_units_neutral_(
-        self, layer_idx: int | None = None, delta_units: int = 32, seed: int = 0
+    def grow_stateful_units_svd_neutral_(
+        self,
+        group_idx: int = 0,
+        budget: int = 16,
+        *,
+        deltas: torch.Tensor | None = None,
+        inputs: torch.Tensor | None = None,
+        birth_id: str | None = None,
+        seed: int = 0,
     ) -> dict[str, Any]:
-        """Expand neural group units neutrally (zero outgoing weights => 0.0 birth delta)."""
-        if delta_units <= 0:
-            raise ValueError("delta_units must be positive")
-        targets = list(range(len(self.blocks))) if layer_idx is None else [int(layer_idx)]
+        """CORE_ALG §11.2 + U2_NEURAL_UNIT §5: zero incoming r=0, non-zero outgoing p."""
+        grp = cast(StatefulNeuralGroup, self.groups[group_idx])
+        dev = grp.unit_r.device
+        dt = grp.unit_r.dtype
         before_params = self.count_parameters()
-        with torch.random.fork_rng(devices=[]):
-            torch.manual_seed(int(seed))
-            for idx in targets:
-                blk = cast(NativeNeuralGroupBlock, self.blocks[idx])
-                dev = blk.group_in.weight.device
-                dt = blk.group_in.weight.dtype
-                old_u = blk.group_units
-                new_u = old_u + delta_units
+        bid = birth_id or f"birth_{len(self.growth_lineage)}"
 
-                new_in = nn.Linear(blk.d_model, new_u, bias=False, device=dev, dtype=dt)
-                new_in.weight[:old_u].copy_(blk.group_in.weight)
-                nn.init.normal_(new_in.weight[old_u:], std=1.0 / math.sqrt(blk.d_model))
+        if deltas is not None and inputs is not None:
+            gates = torch.ones((deltas.shape[0], 1), device=deltas.device, dtype=deltas.dtype)
+            c_mat = credit_matrix(deltas, inputs, gates)[0]
+            chosen = choose_left_directions(c_mat, budget)
+            directions = chosen["directions"].to(device=dev, dtype=dt)
+        else:
+            with torch.random.fork_rng(devices=[]):
+                torch.manual_seed(int(seed))
+                raw_dir = torch.randn(grp.d_model, budget, device=dev, dtype=dt)
+                directions, _ = torch.linalg.qr(raw_dir.float())
+                directions = directions[:, :budget].to(dtype=dt)
 
-                new_out = nn.Linear(new_u, blk.d_model, bias=False, device=dev, dtype=dt)
-                new_out.weight[:, :old_u].copy_(blk.group_out.weight)
-                new_out.weight[:, old_u:].zero_()
+        count = int(directions.shape[1])
+        if count == 0:
+            return {"op": "grow_stateful_units_svd_neutral", "count": 0, "skipped": True}
 
-                new_stage = torch.full((new_u,), UNIT_IMMATURE, dtype=torch.long, device=dev)
-                new_stage[:old_u].copy_(blk.unit_stage)
+        res = append_neutral_units(
+            grp.unit_r.detach(),
+            grp.unit_p.detach(),
+            directions,
+            grp.unit_ids,
+            grp.unit_branches,
+            birth_id=bid,
+        )
+        old_n = grp.n_units
+        new_n = int(res["units"])
 
-                blk.group_in = new_in
-                blk.group_out = new_out
-                blk.unit_stage = new_stage
-                blk.group_units = new_u
+        grp.unit_r = nn.Parameter(res["r"])
+        grp.unit_p = nn.Parameter(res["p"])
+        grp.unit_ids = list(res["unit_ids"])
+        grp.unit_branches = list(res["branches"])
+
+        new_w = torch.zeros(new_n, new_n, device=dev, dtype=dt)
+        new_w[:old_n, :old_n].copy_(grp.unit_w_rec.detach())
+        grp.unit_w_rec = nn.Parameter(new_w)
+
+        new_mask = torch.ones(new_n, new_n, device=dev, dtype=torch.float32)
+        new_mask.fill_diagonal_(0.0)
+        new_mask[:old_n, :old_n].copy_(grp.edge_mask)
+        grp.edge_mask = new_mask
+
+        new_c = torch.full((new_n,), 0.5, device=dev, dtype=dt)
+        new_c[:old_n].copy_(grp.unit_c.detach())
+        grp.unit_c = nn.Parameter(new_c)
+
+        new_eta = torch.full((new_n,), 0.1, device=dev, dtype=dt)
+        new_eta[:old_n].copy_(grp.unit_eta.detach())
+        grp.unit_eta = nn.Parameter(new_eta)
+
+        new_b = torch.zeros(new_n, device=dev, dtype=dt)
+        new_b[:old_n].copy_(grp.unit_b.detach())
+        grp.unit_b = nn.Parameter(new_b)
+
+        new_stage = torch.full((new_n,), STAGE_ID["immature"], device=dev, dtype=torch.long)
+        new_stage[:old_n].copy_(grp.unit_stage)
+        grp.unit_stage = new_stage
+        grp.n_units = new_n
 
         self._refresh_cfg()
-        after_params = self.count_parameters()
         event = {
-            "op": "grow_group_units_neutral",
-            "layers": targets,
-            "delta_units": delta_units,
+            "op": "grow_stateful_units_svd_neutral",
+            "group_idx": group_idx,
+            "count": count,
             "before_params": before_params,
-            "after_params": after_params,
+            "after_params": self.count_parameters(),
         }
         self.growth_lineage.append(event)
         return event
 
     @torch.no_grad()
-    def grow_fast_heads_neutral_(
-        self, layer_idx: int | None = None, delta_heads: int = 1, seed: int = 0
+    def proliferate_units_neutral_(
+        self,
+        group_idx: int = 0,
+        parent_indices: list[int] | None = None,
+        birth_id: str | None = None,
     ) -> dict[str, Any]:
-        """Expand associative fast-weight heads neutrally (zero fast_read_out cols)."""
-        if delta_heads <= 0:
-            raise ValueError("delta_heads must be positive")
-        targets = list(range(len(self.blocks))) if layer_idx is None else [int(layer_idx)]
+        """U2_NEURAL_UNIT §6: exact inheritance proliferation preserving W_rec & p."""
+        grp = cast(StatefulNeuralGroup, self.groups[group_idx])
+        dev = grp.unit_r.device
+        dt = grp.unit_r.dtype
         before_params = self.count_parameters()
-        with torch.random.fork_rng(devices=[]):
-            torch.manual_seed(int(seed))
-            for idx in targets:
-                blk = cast(NativeNeuralGroupBlock, self.blocks[idx])
-                dev = blk.fast_q.weight.device
-                dt = blk.fast_q.weight.dtype
-                old_h = blk.n_fast_heads
-                new_h = old_h + delta_heads
-                k_dim = blk.fast_key_dim
-                v_dim = blk.fast_val_dim
+        parents = list(parent_indices or [0])
+        old_n = grp.n_units
 
-                def _expand_linear_out(
-                    old_lin: nn.Linear,
-                    old_out: int,
-                    new_out: int,
-                    init_bias: float = 0.0,
-                    dev: torch.device = dev,
-                    dt: torch.dtype = dt,
-                ) -> nn.Linear:
-                    lin = nn.Linear(
-                        old_lin.in_features,
-                        new_out,
-                        bias=old_lin.bias is not None,
-                        device=dev,
-                        dtype=dt,
-                    )
-                    lin.weight[:old_out].copy_(old_lin.weight)
-                    nn.init.normal_(lin.weight[old_out:], std=1.0 / math.sqrt(old_lin.in_features))
-                    if lin.bias is not None and old_lin.bias is not None:
-                        lin.bias[:old_out].copy_(old_lin.bias)
-                        lin.bias[old_out:].fill_(init_bias)
-                    return lin
+        # Build mapping pi: new index -> parent index, and counts m_u
+        pi = list(range(old_n)) + parents
+        counts: dict[int, int] = {}
+        for p_idx in pi:
+            counts[p_idx] = counts.get(p_idx, 0) + 1
+        new_n = len(pi)
 
-                blk.fast_q = _expand_linear_out(blk.fast_q, old_h * k_dim, new_h * k_dim)
-                blk.fast_k = _expand_linear_out(blk.fast_k, old_h * k_dim, new_h * k_dim)
-                blk.fast_v = _expand_linear_out(blk.fast_v, old_h * v_dim, new_h * v_dim)
-                blk.fast_alpha = _expand_linear_out(
-                    blk.fast_alpha, old_h * k_dim, new_h * k_dim, init_bias=2.0
-                )
-                blk.fast_b = _expand_linear_out(blk.fast_b, old_h * k_dim, new_h * k_dim)
-                blk.fast_w = _expand_linear_out(blk.fast_w, old_h * v_dim, new_h * v_dim)
-                blk.fast_eta = _expand_linear_out(blk.fast_eta, old_h, new_h)
-                blk.fast_chi = _expand_linear_out(blk.fast_chi, old_h, new_h, init_bias=-1.0)
+        r_new = grp.unit_r.detach()[pi].clone()
+        c_new = grp.unit_c.detach()[pi].clone()
+        eta_new = grp.unit_eta.detach()[pi].clone()
+        b_new = grp.unit_b.detach()[pi].clone()
 
-                new_ro = nn.Linear(new_h * v_dim, blk.d_model, bias=False, device=dev, dtype=dt)
-                new_ro.weight[:, : old_h * v_dim].copy_(blk.fast_read_out.weight)
-                new_ro.weight[:, old_h * v_dim :].zero_()
-                blk.fast_read_out = new_ro
-                blk.n_fast_heads = new_h
+        p_old = grp.unit_p.detach()
+        p_new = torch.zeros(grp.d_model, new_n, device=dev, dtype=dt)
+        w_old = grp.unit_w_rec.detach()
+        w_new = torch.zeros(new_n, new_n, device=dev, dtype=dt)
+
+        for i_new, p_i in enumerate(pi):
+            p_new[:, i_new] = p_old[:, p_i] / float(counts[p_i])
+            for j_new, p_j in enumerate(pi):
+                w_new[i_new, j_new] = w_old[p_i, p_j] / float(counts[p_j])
+
+        bid = birth_id or f"prolif_{len(self.growth_lineage)}"
+        new_ids = [f"{bid}/{k}" for k in range(len(parents))]
+
+        grp.unit_r = nn.Parameter(r_new)
+        grp.unit_p = nn.Parameter(p_new)
+        grp.unit_w_rec = nn.Parameter(w_new)
+        grp.unit_c = nn.Parameter(c_new)
+        grp.unit_eta = nn.Parameter(eta_new)
+        grp.unit_b = nn.Parameter(b_new)
+        grp.unit_ids = grp.unit_ids + new_ids
+        grp.unit_branches = grp.unit_branches + ["proliferated"] * len(parents)
+
+        new_mask = torch.ones(new_n, new_n, device=dev, dtype=torch.float32)
+        new_mask.fill_diagonal_(0.0)
+        grp.edge_mask = new_mask
+
+        new_stage = torch.full((new_n,), STAGE_ID["immature"], device=dev, dtype=torch.long)
+        new_stage[:old_n].copy_(grp.unit_stage)
+        grp.unit_stage = new_stage
+        grp.n_units = new_n
 
         self._refresh_cfg()
-        after_params = self.count_parameters()
         event = {
-            "op": "grow_fast_heads_neutral",
-            "layers": targets,
-            "delta_heads": delta_heads,
+            "op": "proliferate_units_neutral",
+            "group_idx": group_idx,
+            "parents": parents,
             "before_params": before_params,
-            "after_params": after_params,
+            "after_params": self.count_parameters(),
         }
         self.growth_lineage.append(event)
         return event
 
     @torch.no_grad()
-    def grow_depth_neutral_(self, insert_after: int | None = None, seed: int = 0) -> dict[str, Any]:
-        """Insert a new NativeNeuralGroupBlock as an exact residual identity (x + 0 = x)."""
+    def grow_group_neutral_(self, tau_init: float = 32.0, seed: int = 0) -> dict[str, Any]:
+        """CORE_ALG §11.3: append an additive residual group with zero incoming mapping."""
         before_params = self.count_parameters()
-        pos = len(self.blocks) if insert_after is None else int(insert_after) + 1
-        dev = self.tok_emb.weight.device
-        dt = self.tok_emb.weight.dtype
+        dev = self.encoder.byte_emb.weight.device
+        dt = self.encoder.byte_emb.weight.dtype
+        idx = len(self.groups) + len(self.residual_groups)
         with torch.random.fork_rng(devices=[]):
             torch.manual_seed(int(seed))
-            new_blk = NativeNeuralGroupBlock(
+            res_grp = StatefulNeuralGroup(
+                group_idx=idx,
                 d_model=self.cfg.d_model,
-                group_units=self.cfg.layer_group_units(0),
-                n_fast_heads=self.cfg.layer_fast_heads(0),
+                n_units=64,
                 fast_key_dim=self.cfg.fast_key_dim,
                 fast_val_dim=self.cfg.fast_val_dim,
+                fast_radius=self.cfg.fast_radius,
                 psi_rank=self.cfg.psi_rank,
+                tau_init=tau_init,
                 tau_min=self.cfg.tau_min,
                 tau_max=self.cfg.tau_max,
-                fast_norm_cap=self.cfg.fast_norm_cap,
-                chunk_size=self.cfg.chunk_size,
+                use_fast_memory=False,
+                is_residual=True,
             ).to(device=dev, dtype=dt)
-            # Zero-init all output projections so block output == x at birth
-            new_blk.w_slow.weight.zero_()
-            new_blk.psi_u.zero_()
-            new_blk.group_out.weight.zero_()
-            new_blk.fast_read_out.weight.zero_()
-            # Force ell -> 0 at birth by setting rho very negative so H_t starts at 0
-            new_blk.rho.fill_(-20.0)
-
-        blocks_list = list(self.blocks)
-        blocks_list.insert(pos, new_blk)
-        self.blocks = nn.ModuleList(blocks_list)
-        self._refresh_cfg()
-        after_params = self.count_parameters()
+        self.residual_groups.append(res_grp)
         event = {
-            "op": "grow_depth_neutral",
-            "insert_pos": pos,
+            "op": "grow_group_neutral",
+            "residual_idx": len(self.residual_groups) - 1,
             "before_params": before_params,
-            "after_params": after_params,
+            "after_params": self.count_parameters(),
         }
         self.growth_lineage.append(event)
         return event
 
     @torch.no_grad()
     def mark_all_mature_(self) -> int:
-        """Promote all immature group units to mature."""
         promoted = 0
-        for blk in self.blocks:
-            b = cast(NativeNeuralGroupBlock, blk)
-            mask = b.unit_stage == UNIT_IMMATURE
+        for g_m in list(self.groups) + list(self.residual_groups):
+            g = cast(StatefulNeuralGroup, g_m)
+            mask = g.unit_stage == STAGE_ID["immature"]
             promoted += int(mask.sum().item())
-            b.unit_stage[mask] = UNIT_MATURE
+            g.unit_stage[mask] = STAGE_ID["mature"]
         return promoted
 
     def apply_selective_plasticity_grad_mask(
         self, freeze_mature_slow: bool = True
     ) -> dict[str, int]:
-        """Zero gradients on mature units (and w_slow) while keeping immature units & Psi plastic."""
+        """Zero gradients on mature unit parameters & w_slow while keeping immature & Psi plastic."""
         masked_units = 0
         masked_slow = 0
-        for blk in self.blocks:
-            b = cast(NativeNeuralGroupBlock, blk)
-            mature_mask = b.unit_stage == UNIT_MATURE
-            n_mat = int(mature_mask.sum().item())
+        for g_m in list(self.groups) + list(self.residual_groups):
+            g = cast(StatefulNeuralGroup, g_m)
+            mature = g.unit_stage == STAGE_ID["mature"]
+            n_mat = int(mature.sum().item())
             if n_mat > 0:
                 masked_units += n_mat
-                if b.group_in.weight.grad is not None:
-                    b.group_in.weight.grad[mature_mask] = 0.0
-                if b.group_out.weight.grad is not None:
-                    b.group_out.weight.grad[:, mature_mask] = 0.0
-            if freeze_mature_slow and b.w_slow.weight.grad is not None:
-                b.w_slow.weight.grad.zero_()
+                if g.unit_r.grad is not None:
+                    g.unit_r.grad[mature] = 0.0
+                if g.unit_p.grad is not None:
+                    g.unit_p.grad[:, mature] = 0.0
+            if freeze_mature_slow and g.w_slow.weight.grad is not None:
+                g.w_slow.weight.grad.zero_()
                 masked_slow += 1
-        return {"masked_units": masked_units, "masked_slow_layers": masked_slow}
+        return {"masked_units": masked_units, "masked_slow_groups": masked_slow}
 
     def topology_summary(self) -> dict[str, Any]:
         return {
             "schema": SCHEMA,
             "non_transformer": True,
+            "input_encoding": "raw_utf8_bytes_259",
             "params": self.count_parameters(),
             "d_model": self.cfg.d_model,
-            "n_layers": len(self.blocks),
-            "group_units_per_layer": [
-                cast(NativeNeuralGroupBlock, b).group_units for b in self.blocks
-            ],
-            "fast_heads_per_layer": [
-                cast(NativeNeuralGroupBlock, b).n_fast_heads for b in self.blocks
-            ],
-            "psi_rank": self.cfg.psi_rank,
+            "n_groups": len(self.groups),
+            "n_residual_groups": len(self.residual_groups),
+            "group_units": [cast(StatefulNeuralGroup, g).n_units for g in self.groups],
+            "use_fast_memory": self.cfg.use_fast_memory,
             "growth_events": len(self.growth_lineage),
             "growth_lineage": list(self.growth_lineage),
         }
 
-    def export_capsule(self, prefix: str = "native_zh") -> dict[str, Any]:
-        """Export state_dict + grown topology metadata into a SessionStore-compatible dict."""
-        sd = {f"{prefix}.w.{k}": v.detach().cpu().clone() for k, v in self.state_dict().items()}
+    def export_capsule(self, prefix: str = "native_byte") -> dict[str, Any]:
+        sd: dict[str, Any] = {
+            f"{prefix}.w.{k}": v.detach().cpu().clone() for k, v in self.state_dict().items()
+        }
         sd[f"{prefix}.cfg"] = self.cfg.to_dict()
         sd[f"{prefix}.lineage"] = list(self.growth_lineage)
+        sd[f"{prefix}.n_residual"] = len(self.residual_groups)
+        sd[f"{prefix}.unit_ids"] = [cast(StatefulNeuralGroup, g).unit_ids for g in self.groups]
         return sd
 
     @classmethod
     def from_capsule(
-        cls, capsule: dict[str, Any], prefix: str = "native_zh"
+        cls, capsule: dict[str, Any], prefix: str = "native_byte"
     ) -> TaijiNativeCognitiveBackbone:
         cfg = NativeBackboneConfig.from_dict(capsule[f"{prefix}.cfg"])
         model = cls(cfg)
+        for _ in range(int(capsule.get(f"{prefix}.n_residual", 0))):
+            model.grow_group_neutral_()
         model.load_capsule(capsule, prefix=prefix)
         return model
 
-    def load_capsule(self, capsule: dict[str, Any], prefix: str = "native_zh") -> None:
+    def load_capsule(self, capsule: dict[str, Any], prefix: str = "native_byte") -> None:
         pfx = f"{prefix}.w."
         sd = {k[len(pfx) :]: v for k, v in capsule.items() if k.startswith(pfx)}
         self.load_state_dict(sd, strict=True)
         self.growth_lineage = list(capsule.get(f"{prefix}.lineage", []))
+        saved_ids = capsule.get(f"{prefix}.unit_ids")
+        if isinstance(saved_ids, list):
+            for g_m, ids in zip(self.groups, saved_ids, strict=True):
+                cast(StatefulNeuralGroup, g_m).unit_ids = list(ids)
