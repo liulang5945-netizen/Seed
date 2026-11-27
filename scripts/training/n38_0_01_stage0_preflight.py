@@ -27,7 +27,7 @@ ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from taiji.open_chinese_backbone import PRESETS, TaijiOpenChineseLM  # noqa: E402
+from scripts.training.n38_baseline_transformer import PRESETS, TaijiOpenChineseLM  # noqa: E402
 
 DATA_OUT = ROOT / "data" / "n38_open_zh"
 REPORT_OUT = ROOT / "reports" / "n38_0_01_stage0_preflight.json"

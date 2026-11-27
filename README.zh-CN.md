@@ -1,6 +1,6 @@
 # Seed — 态极原生认知模型的运行时
 
-[English](README.md) · [项目地图](docs/README.md) · [贡献指南](CONTRIBUTING.md)
+[English](README.md) · [项目站点](https://taij-seed-liulang.traesite.cn/) · [项目地图](docs/README.md) · [贡献指南](CONTRIBUTING.md)
 
 **态极（Taiji）是本项目正在研发的原生认知模型。** 它的架构研究如何让感知、记忆、世界模型、推理和行动协同工作，使模型在与环境交互中逐步发展。**Seed** 为态极提供运行时、实验工具、API 和产品界面。
 
@@ -30,7 +30,7 @@ Taiji 的设计围绕五个相互关联的方向展开：
    └──────── 环境反馈与学习 ──────────┘
 ```
 
-Python 实现包含 TSK-v8 底层内核，以及学习型读取、记忆、规划和发展学习等原型。不同组件采用不同学习方法：底层内核使用局部预测误差学习，部分序列原型使用优化器和自动微分。[代码 Wiki](TAIJI_CODE_WIKI.md)提供机制到实现的对应关系。
+Python 实现现已包含两条核心路径：当前主线正在预训练与合龙的 **态极原生纯字节有状态神经群底座**（`taiji/native_cognitive_backbone.py`、`taiji/native_runtime.py`：纯 UTF-8 字节、异质时间尺度持久神经群、精确 `u2_operators.fp1` KKT 快记忆、SVD 中性出生与五态单元生命周期、U2 §7 复制头、9 态外部动作台账与 5 平面结果分流）以及早期 `TSK-v8` 局部稀疏底层内核。[代码 Wiki](TAIJI_CODE_WIKI.md)与[项目站点](https://taij-seed-liulang.traesite.cn/)提供机制到源码的完整映射。
 
 ## 仓库里有什么
 
@@ -87,15 +87,16 @@ python scripts/taiji_n37_ops.py init-ops --bundle-dir ./taiji_bundle --initial-s
 
 ## 近期成果
 
-截至 **2026-11-26**，有界主线（`≤N30 → N31 → N32 → N33 → N34 → N35 → N36 → N37`）已在 `bounded_closed_vocab_and_multimodule_v1` 范围内完成全部收口（**`check` / `final` 读取 0 次**）：
+截至 **2026-11-27**，有界主线（`≤N30 → N31 → N32 → N33 → N34 → N35 → N36 → N37`）已在 `bounded_closed_vocab_and_multimodule_v1` 范围内完成全部收口（**`check` / `final` 读取 0 次**）：
 - **已确认有界能力（`N33–N35`）**：百会话五模块联合耐久（`N34.5.90`）、封闭词表中文多轮指代、两族合成物理因果迁移、在线 Beta 可信度学习、学习式不确定性校准与在位生长（`N34.9.90`、`N35.1.91` 8/9 门 3/3 通过）。
 - **有界交付与 `§15` 运营状态机（`N36 / N37`）**：独立可接管运行包（[CLOSEOUT-N36](plans/reference/CLOSEOUT-N36_20261126.md)，`D1..D5` 5/5 过）与 8 态运营状态机、6 步日常影子升级及三层变更分流（[CLOSEOUT-N37](plans/reference/CLOSEOUT-N37_20261126.md)，`O1..O6` 6/6 过）。
-- **进行中的 `N38` 开放中文预训练**：`mid_18m`（1,947 万参数、8K 字节回退 BPE、跨会话持久记忆槽）正在进行 24 小时 CPU 预训练（`bfloat16` 实测 `~4,343 tokens/sec`，见 [MEMO-N38-STAGE0-PREFLIGHT](plans/reference/MEMO-N38-STAGE0-PREFLIGHT_20261126.md)）。
+- **进行中的 `N38` 态极原生纯字节底座预训练与统一运行时**：`taiji-native-byte-group-v2`（`native_byte_mid`，1,455 万参数起可自发生长、纯 UTF-8 字节 `BYTE_VOCAB=259`、零 BPE、零 Transformer、4 异质持久神经群、`u2_operators.fp1` KKT 快记忆、SVD 中性出生与五态单元生命周期、U2 §7 复制头、动态宏字节词表挂接与统一 [TaijiNativeRuntime](taiji/native_runtime.py)）正在通过批处理 `bmm` 加速跑 24 小时开放中文 CPU 预训练（`float32` 稳态 `~5,000+ bytes/sec`）；`mid_18m` Transformer 仅作为外部对照基线留存（已留存 `best_val_loss = 5.0442`）。
 
-开放词表自然中文、真机传感器/执行器、24 小时现场试运行与 `check / final` 分区仍明确标为**未验证 / 不签署**。全局收束见 [CONSOLIDATION_20261126](plans/reference/CONSOLIDATION_20261126.md) 与 [主线总纲](plans/MAINLINE.md)。
+开放词表自然中文、真机传感器/执行器、24 小时现场试运行、主体内学习式自主策略（`VX5`）与 `check / final` 分区仍明确标为**未验证 / 不签署**。全局收束见 [CONSOLIDATION_20261126](plans/reference/CONSOLIDATION_20261126.md) 与 [主线总纲](plans/MAINLINE.md)。
 
 ## 进一步了解
 
+- [项目站点](https://taij-seed-liulang.traesite.cn/)：态极与 Seed 架构原理与真实源码地图交互概览。
 - [项目地图](docs/README.md)：按目的查找文档。
 - [核心需求](plans/active/TAIJI_CORE_REQUIREMENTS.md)：长期目标与设计原则。
 - [架构设计](plans/active/TAIJI_NATIVE_ARCHITECTURE_V1.md)：认知组件及其合同。

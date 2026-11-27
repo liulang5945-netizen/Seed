@@ -32,7 +32,7 @@ ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from taiji.open_chinese_backbone import PRESETS, TaijiOpenChineseLM  # noqa: E402
+from scripts.training.n38_baseline_transformer import PRESETS, TaijiOpenChineseLM  # noqa: E402
 
 DATA_DIR = ROOT / "data" / "n38_open_zh"
 TOKENIZER_PATH = DATA_DIR / "tokenizer_8k.json"
@@ -195,7 +195,7 @@ def sample_chinese(
         next_tok = top_i.gather(-1, idx)
         x = torch.cat((x, next_tok), dim=1)
     model.train()
-    return tok.decode(x[0].tolist())
+    return str(tok.decode(x[0].tolist()))
 
 
 def _lr_for_step(

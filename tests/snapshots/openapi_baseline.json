@@ -256,6 +256,19 @@
         "title": "ChatWorkbenchRequest",
         "type": "object"
       },
+      "ClassifyChangeRequest": {
+        "properties": {
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind"
+        ],
+        "title": "ClassifyChangeRequest",
+        "type": "object"
+      },
       "ConsolidationRequest": {
         "description": "One native sleep pass.\n\n``organs`` decides whether the substrate sleeps at all and ``learn`` whether\nthat sleep may change weights; both default off, because housekeeping must\nnever train a brain by accident.",
         "properties": {
@@ -325,6 +338,89 @@
           "password"
         ],
         "title": "EnableAuthRequest",
+        "type": "object"
+      },
+      "GrowthPolicyUpdateRequest": {
+        "properties": {
+          "auto_grow_enabled": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Auto Grow Enabled"
+          },
+          "max_fast_heads": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Fast Heads"
+          },
+          "max_group_units": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Group Units"
+          },
+          "max_layers": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Layers"
+          },
+          "max_params": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Params"
+          },
+          "max_retention_drop": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Retention Drop"
+          },
+          "min_gain": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Min Gain"
+          }
+        },
+        "title": "GrowthPolicyUpdateRequest",
         "type": "object"
       },
       "HTTPValidationError": {
@@ -5025,6 +5121,190 @@
           }
         },
         "summary": "Get System Version"
+      }
+    },
+    "/api/taiji/ops/architecture-readiness": {
+      "get": {
+        "description": "Return authoritative-architecture module readiness: implemented vs waiting on base weights.",
+        "operationId": "taiji_architecture_readiness_api_taiji_ops_architecture_readiness_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Taiji Architecture Readiness Api Taiji Ops Architecture Readiness Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Taiji Architecture Readiness",
+        "tags": [
+          "taiji-ops"
+        ]
+      }
+    },
+    "/api/taiji/ops/classify-change": {
+      "post": {
+        "description": "Route a proposed change through the §15 3-tier change classifier.",
+        "operationId": "taiji_classify_change_api_taiji_ops_classify_change_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClassifyChangeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Taiji Classify Change Api Taiji Ops Classify Change Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Taiji Classify Change",
+        "tags": [
+          "taiji-ops"
+        ]
+      }
+    },
+    "/api/taiji/ops/growth-policy": {
+      "post": {
+        "description": "Update autonomous shadow growth budget & safety gates.",
+        "operationId": "taiji_update_growth_policy_api_taiji_ops_growth_policy_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GrowthPolicyUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Taiji Update Growth Policy Api Taiji Ops Growth Policy Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Taiji Update Growth Policy",
+        "tags": [
+          "taiji-ops"
+        ]
+      }
+    },
+    "/api/taiji/ops/n38-training": {
+      "get": {
+        "description": "Return live N38 mid_18m pretraining telemetry, recent metrics, and Stage 0 baseline.",
+        "operationId": "taiji_n38_training_api_taiji_ops_n38_training_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Taiji N38 Training Api Taiji Ops N38 Training Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Taiji N38 Training",
+        "tags": [
+          "taiji-ops"
+        ]
+      }
+    },
+    "/api/taiji/ops/native-backbone": {
+      "get": {
+        "description": "Return Taiji native non-Transformer backbone status, preflight, and growth policy.",
+        "operationId": "taiji_native_backbone_api_taiji_ops_native_backbone_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Taiji Native Backbone Api Taiji Ops Native Backbone Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Taiji Native Backbone",
+        "tags": [
+          "taiji-ops"
+        ]
+      }
+    },
+    "/api/taiji/ops/overview": {
+      "get": {
+        "description": "Return consolidated N31–N37 closeout status, boundaries, and N38 training state.",
+        "operationId": "taiji_ops_overview_api_taiji_ops_overview_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Taiji Ops Overview Api Taiji Ops Overview Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Taiji Ops Overview",
+        "tags": [
+          "taiji-ops"
+        ]
       }
     },
     "/api/tools/web_search": {

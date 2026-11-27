@@ -9,7 +9,6 @@ from pathlib import Path
 import torch
 
 from scripts.training.task_baselines_22_4_a import TaskSequenceBaseline
-from taiji.native_composition import RGB_COLORS
 from taiji.u2_events import observation_intent
 from taiji.u2_history import (
     assert_values_equal,
@@ -25,6 +24,14 @@ from taiji.u2_task_world import PhysicalWorld
 
 GOAL = "依据当前可核验观测，用自然中文回答请求。".encode()
 LABELS = ("左边", "中间", "右边", "未知")
+RGB_COLORS = (
+    (220, 45, 45),
+    (45, 90, 220),
+    (45, 190, 80),
+    (230, 190, 40),
+    (170, 60, 200),
+    (40, 190, 195),
+)
 
 
 def seed_for(partition, index, attempt):

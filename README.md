@@ -1,6 +1,6 @@
 # Seed — Runtime for the Taiji Native Cognitive Model
 
-[简体中文](README.zh-CN.md) · [Project map](docs/README.md) · [Contributing](CONTRIBUTING.md)
+[简体中文](README.zh-CN.md) · [Project Site](https://taij-seed-liulang.traesite.cn/) · [Project map](docs/README.md) · [Contributing](CONTRIBUTING.md)
 
 **Taiji (态极) is the native cognitive model being developed in this project.** Its architecture explores how perception, memory, world models, reasoning and action can work together in a model that develops through experience. **Seed** provides the runtime, experiments, APIs and product interface around the model.
 
@@ -30,7 +30,7 @@ Observations → Perception → State, memory and reasoning → Action
      └──────────── Environment feedback and learning ──────┘
 ```
 
-The Python implementation includes the TSK-v8 substrate and prototypes for learned reading, memory, planning and developmental learning. Learning methods vary by component: the substrate uses local prediction-error learning, while some sequence prototypes use optimizers and autograd. The [code wiki](TAIJI_CODE_WIKI.md) maps these mechanisms to their implementations.
+The Python implementation includes both the active **态极 (Taiji) native byte-group backbone** (`taiji/native_cognitive_backbone.py`, `taiji/native_runtime.py`: raw UTF-8 bytes, heterogeneous persistent neural groups, exact `u2_operators.fp1` KKT fast memory, SVD neutral birth, and unified 9-state action / 5-plane outcome governance) and the earlier `TSK-v8` local sparse substrate. The [code wiki](TAIJI_CODE_WIKI.md) and [Project Site](https://taij-seed-liulang.traesite.cn/) map these mechanisms to their implementations.
 
 ## What is in this repository
 
@@ -87,15 +87,16 @@ Client setup and build instructions are in [Taiji Harness contributing](taiji-ha
 
 ## Recent research
 
-As of **2026-11-26**, the bounded mainline (`≤N30 → N31 → N32 → N33 → N34 → N35 → N36 → N37`) has completed full closeout within `bounded_closed_vocab_and_multimodule_v1` (**0 `check` / 0 `final` reads**):
+As of **2026-11-27**, the bounded mainline (`≤N30 → N31 → N32 → N33 → N34 → N35 → N36 → N37`) has completed full closeout within `bounded_closed_vocab_and_multimodule_v1` (**0 `check` / 0 `final` reads**):
 - **Confirmed bounded capabilities (`N33–N35`)**: 100-session multi-module durability (`N34.5.90`), closed-vocab multi-turn Chinese coreference, synthetic two-family physics causal transfer, online Beta credibility learning, calibrated uncertainty, and in-place plastic growth (`N34.9.90`, `N35.1.91` 8/9 gates 3/3 pass).
 - **Bounded delivery & §15 operational state machine (`N36 / N37`)**: Self-contained takeover runtime ([CLOSEOUT-N36](plans/reference/CLOSEOUT-N36_20261126.md), `D1..D5` 5/5 pass) and 8-state operational FSM with 6-step shadow upgrade & 3-tier change routing ([CLOSEOUT-N37](plans/reference/CLOSEOUT-N37_20261126.md), `O1..O6` 6/6 pass).
-- **Active `N38` open-Chinese pretraining**: `mid_18m` (19.47M params, 8K byte-level BPE, persistent memory slots) is running 24h CPU pretraining (`~4,343 tokens/sec` in `bfloat16`, [MEMO-N38-STAGE0-PREFLIGHT](plans/reference/MEMO-N38-STAGE0-PREFLIGHT_20261126.md)).
+- **Active `N38` Taiji native byte-group pretraining & unified governance runtime**: `taiji-native-byte-group-v2` (`native_byte_mid`, 14.55M params, pure UTF-8 bytes `BYTE_VOCAB=259`, ZERO BPE, ZERO Transformer, 4 heterogeneous persistent neural groups, exact `u2_operators.fp1` KKT fast memory, SVD zero-in neutral birth & 5-stage unit lifecycle, U2 §7 copy head, dynamic macro-byte vocabulary hook, and unified [TaijiNativeRuntime](taiji/native_runtime.py)) is running 24h CPU pretraining with batched `bmm` acceleration (`~5,000+ bytes/sec` in `float32`); `mid_18m` Transformer (`best_val_loss = 5.0442`) is retained strictly as an external comparison baseline.
 
-Open-vocab natural Chinese, real physical sensors/actuators, 24h live field trials, and `check / final` splits remain explicitly **unverified / not signed**. See [CONSOLIDATION_20261126](plans/reference/CONSOLIDATION_20261126.md) and [MAINLINE](plans/MAINLINE.md).
+Open-vocab natural Chinese, real physical sensors/actuators, 24h live field trials, learned internal autonomous policies (`VX5`), and `check / final` splits remain explicitly **unverified / not signed**. See [CONSOLIDATION_20261126](plans/reference/CONSOLIDATION_20261126.md) and [MAINLINE](plans/MAINLINE.md).
 
 ## Read more
 
+- [Project Site](https://taij-seed-liulang.traesite.cn/): interactive overview of Taiji (态极) & Seed architecture and live source map.
 - [Project map](docs/README.md): find documentation by purpose.
 - [Core requirements](plans/active/TAIJI_CORE_REQUIREMENTS.md): the long-term goals and design principles.
 - [Architecture design](plans/active/TAIJI_NATIVE_ARCHITECTURE_V1.md): cognitive components and their contracts.

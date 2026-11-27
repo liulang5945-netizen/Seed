@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import torch
 
-from taiji.open_chinese_backbone import PRESETS, TaijiOpenChineseLM
+from scripts.training.n38_baseline_transformer import PRESETS, TaijiOpenChineseLM
 
 
 def test_presets_instantiate_and_param_counts() -> None:
