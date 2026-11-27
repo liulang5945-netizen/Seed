@@ -14,7 +14,7 @@ from __future__ import annotations
 
 import random
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, cast
 
 import torch
 from torch import nn
@@ -205,7 +205,7 @@ class ConsequenceNetV2(nn.Module):
             )
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        return self.net(x)
+        return cast(torch.Tensor, self.net(x))
 
 
 def train_net_v2(

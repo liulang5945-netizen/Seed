@@ -54,16 +54,22 @@ class MultiHeadGraph2(RouteBGraph):
         with torch.no_grad():
             for index in range(max(0, heads - 1)):
                 for channel in LEGAL_INPUT_CHANNELS:
-                    encoders[f"h{index + 1}"][channel].weight.copy_(
-                        self.input_encoders[channel].weight
-                    )
+                    enc_map = encoders[f"h{index + 1}"]
+                    assert isinstance(enc_map, nn.ModuleDict)
+                    dst = enc_map[channel]
+                    src = self.input_encoders[channel]
+                    assert isinstance(dst, nn.Linear) and isinstance(src, nn.Linear)
+                    dst.weight.copy_(src.weight)
         self.task_encoders = encoders
 
     def _encode(self, channels: dict[str, torch.Tensor], head: int) -> torch.Tensor:
         encoders = self.task_encoders[f"h{head}"] if head > 0 else self.input_encoders
+        assert isinstance(encoders, nn.ModuleDict)
         columns = []
         for channel in LEGAL_INPUT_CHANNELS:
-            columns.append(encoders[channel](channels[channel]) @ self.input_projection)
+            mod = encoders[channel]
+            assert isinstance(mod, nn.Module)
+            columns.append(mod(channels[channel]) @ self.input_projection)
         stacked = torch.stack(columns, dim=1)
         repeats = [
             stacked[:, group % len(LEGAL_INPUT_CHANNELS), :] for group in range(self.spec.groups)

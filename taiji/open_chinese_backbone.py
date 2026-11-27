@@ -8,7 +8,7 @@ that can be exported/reloaded bit-identically via `SessionStore.capsule`.
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
-from typing import Any
+from typing import Any, cast
 
 import torch
 import torch.nn as nn
@@ -147,7 +147,7 @@ class GQAAttention(nn.Module):
 
         out = F.scaled_dot_product_attention(q, k, v, attn_mask=attn_mask, is_causal=False)
         out = out.transpose(1, 2).contiguous().view(bsz, total_len, -1)
-        return self.o_proj(out)
+        return cast(torch.Tensor, self.o_proj(out))
 
 
 class SwiGLUMLP(nn.Module):
@@ -158,7 +158,7 @@ class SwiGLUMLP(nn.Module):
         self.down_proj = nn.Linear(cfg.d_ff, cfg.d_model, bias=False)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        return self.down_proj(F.silu(self.gate_proj(x)) * self.up_proj(x))
+        return cast(torch.Tensor, self.down_proj(F.silu(self.gate_proj(x)) * self.up_proj(x)))
 
 
 class TransformerBlock(nn.Module):

@@ -21,7 +21,7 @@ from __future__ import annotations
 import math
 from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, cast
 
 import torch
 from torch import nn
@@ -56,6 +56,8 @@ class PlasticGrowthNet(nn.Module):
             "unit_ids",
             torch.arange(self.hidden_dim, dtype=torch.long),
         )
+        self.stage: torch.Tensor
+        self.unit_ids: torch.Tensor
 
     def alive_mask(self) -> torch.Tensor:
         """Mask of active units (`immature` or `mature`), identical in train and eval."""
@@ -65,7 +67,7 @@ class PlasticGrowthNet(nn.Module):
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """Task-agnostic forward pass (`x` only, zero `task_id` routing)."""
         h = torch.tanh(self.fc_in(x)) * self.alive_mask()
-        return self.fc_out(h)
+        return cast(torch.Tensor, self.fc_out(h))
 
     def n_params(self) -> int:
         return sum(p.numel() for p in self.parameters())

@@ -192,6 +192,7 @@ class SubjectLoop:
                 predicted.append(self._confidence_value(record, claim))
                 outcomes.append(int(polarity > 0))
                 predictor.observe(env, action, truth, pred)
+            assert env.state is not None
             obs, outcome, reward, done = env.step(PHYS_ACTIONS[env.state.t % len(PHYS_ACTIONS)])
             record.append_experience(
                 "physics_turn",
@@ -249,11 +250,8 @@ class SubjectLoop:
     ) -> LoopResult:
         record = self.store.load(self.subject_id)
         led = self._ledger(record)
-        posterior = (
-            led.claims.get("turn_action_correct").posterior
-            if "turn_action_correct" in led.claims
-            else 0.0
-        )
+        claim_st = led.claims.get("turn_action_correct")
+        posterior = claim_st.posterior if claim_st is not None else 0.0
         return LoopResult(
             sessions=self.session_index,
             steps=len(predicted),

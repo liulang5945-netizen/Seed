@@ -555,7 +555,7 @@ class OpenChineseTaskEnv:
                 cands = [p for p in self.places if p != exclude_loc]
             chosen = self._pick(cands)
             used_locs.add(chosen)
-            return chosen
+            return str(chosen)
 
         def _apply_event(kind: str) -> str:
             nonlocal recent_ent

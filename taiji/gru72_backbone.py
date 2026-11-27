@@ -10,6 +10,8 @@
 
 from __future__ import annotations
 
+from typing import cast
+
 import torch
 from torch import nn
 
@@ -46,6 +48,7 @@ class GRU72Backbone(nn.Module):
                 nn.Linear(gate_hidden, self.hidden_dim),
             )
         self.register_buffer("lifecycle_mask", torch.ones(self.n_units), persistent=True)
+        self.lifecycle_mask: torch.Tensor
 
     # ---- lifecycle -------------------------------------------------------
     def set_lifecycle_(self, indices, active: bool) -> None:
@@ -77,7 +80,11 @@ class GRU72Backbone(nn.Module):
             activity = (out[:, -1, :] - out[:, -2, :]).abs()
         else:
             activity = torch.zeros_like(state)
-        mask = self.lifecycle_mask.repeat_interleave(self.hidden_dim).to(state.dtype)
+        mask = (
+            cast(torch.Tensor, self.lifecycle_mask)
+            .repeat_interleave(self.hidden_dim)
+            .to(state.dtype)
+        )
         state = state * mask
         b, d = state.shape
         per_unit = state.view(b, self.n_units, self.hidden_dim)

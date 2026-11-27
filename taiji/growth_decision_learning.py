@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import time
 from dataclasses import dataclass
+from typing import cast
 
 import torch
 import torch.nn.functional as F
@@ -169,7 +170,7 @@ class GrowthDecisionPolicy(nn.Module):
             )
 
     def forward(self, feats: torch.Tensor) -> torch.Tensor:
-        return self.net(feats)
+        return cast(torch.Tensor, self.net(feats))
 
 
 def features(result: dict) -> torch.Tensor:

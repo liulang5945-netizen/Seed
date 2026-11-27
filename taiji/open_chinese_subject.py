@@ -96,16 +96,16 @@ def build_turn_memory_tensors(
     base_idx = 0 if use_history else cur_idx
 
     turn_blks = [[tuple(b) for b in bytes_to_utf8_blocks(tb)] for tb in selected]
-    t0_bg = _cjk_bigrams(turn_blks[0]) if (use_history and base_idx == 0) else set()
+    t0_bg = _cjk_bigrams(turn_blks[0]) if (use_history and base_idx == 0) else set()  # type: ignore[arg-type]
     t1_bg = (
-        _cjk_bigrams(turn_blks[1])
+        _cjk_bigrams(turn_blks[1])  # type: ignore[arg-type]
         if (use_history and base_idx == 0 and len(turn_blks) > 1)
         else set()
     )
 
     cur_blocks = turn_blks[-1]
-    cur_1 = {b for b in cur_blocks if _is_cjk_content_block(b)}
-    cur_2 = _cjk_bigrams(cur_blocks)
+    cur_1 = {b for b in cur_blocks if _is_cjk_content_block(b)}  # type: ignore[arg-type]
+    cur_2 = _cjk_bigrams(cur_blocks)  # type: ignore[arg-type]
     seen_earlier_1: set[tuple[int, int, int, int]] = set()
     seen_earlier_2: set[tuple[tuple[int, int, int, int], tuple[int, int, int, int]]] = set()
 
@@ -130,28 +130,28 @@ def build_turn_memory_tensors(
                     m1[j] = 1.0
                 if (
                     j + 1 < n
-                    and _is_cjk_content_block(blk)
-                    and _is_cjk_content_block(t_blks[j + 1])
+                    and _is_cjk_content_block(blk)  # type: ignore[arg-type]
+                    and _is_cjk_content_block(t_blks[j + 1])  # type: ignore[arg-type]
                 ):
                     bg = (blk, t_blks[j + 1])
-                    if bg in cur_2:
+                    if bg in cur_2:  # type: ignore[comparison-overlap]
                         m2[j] = m2[j + 1] = 1.0
-                    if tid > 0 and bg in t0_bg:
+                    if tid > 0 and bg in t0_bg:  # type: ignore[comparison-overlap]
                         mt0[j] = mt0[j + 1] = 1.0
-                    if tid > 1 and bg in t1_bg:
+                    if tid > 1 and bg in t1_bg:  # type: ignore[comparison-overlap]
                         mt1[j] = mt1[j + 1] = 1.0
-                    if bg in seen_earlier_2:
+                    if bg in seen_earlier_2:  # type: ignore[comparison-overlap]
                         mrec[j] = mrec[j + 1] = 1.0
-            seen_earlier_1 |= {b for b in t_blks if _is_cjk_content_block(b)}
-            seen_earlier_2 |= _cjk_bigrams(t_blks)
+            seen_earlier_1 |= {b for b in t_blks if _is_cjk_content_block(b)}  # type: ignore[arg-type,misc]
+            seen_earlier_2 |= _cjk_bigrams(t_blks)  # type: ignore[arg-type]
         else:
             for j, blk in enumerate(t_blks):
                 if blk in seen_earlier_1:
                     m1[j] = 1.0
                 if (
                     j + 1 < n
-                    and _is_cjk_content_block(blk)
-                    and _is_cjk_content_block(t_blks[j + 1])
+                    and _is_cjk_content_block(blk)  # type: ignore[arg-type]
+                    and _is_cjk_content_block(t_blks[j + 1])  # type: ignore[arg-type]
                 ):
                     bg = (blk, t_blks[j + 1])
                     if bg in seen_earlier_2:
@@ -242,7 +242,7 @@ class _SDPABlock(nn.Module):
         )
         attn_out = attn_out.transpose(1, 2).reshape(bsz, seq_len, self.d_model)
         h = self.norm1(x + self.out_proj(attn_out))
-        return self.norm2(h + self.ffn(h))
+        return self.norm2(h + self.ffn(h))  # type: ignore[no-any-return]
 
 
 def _within_turn_positions(turn_oh: torch.Tensor) -> torch.Tensor:

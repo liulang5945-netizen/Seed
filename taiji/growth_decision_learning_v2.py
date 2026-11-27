@@ -109,8 +109,8 @@ def prepare_warmup(seed: int, *, hard: bool, deadline: float) -> WarmupSnapshot:
         seed=seed,
         hard=hard,
         state_dict=copy.deepcopy(net.state_dict()),
-        stage=net.stage.clone(),
-        unit_ids=net.unit_ids.clone(),
+        stage=net.stage.clone(),  # type: ignore[operator]
+        unit_ids=net.unit_ids.clone(),  # type: ignore[operator]
         next_unit_id=net._next_unit_id,
         data=data,
         p1_acc=p1_acc,
@@ -125,8 +125,8 @@ def finish_from_warmup(snap: WarmupSnapshot, action: str, deadline: float) -> di
         raise ValueError(f"unknown action {action!r}")
     net = PlasticGrowthNet(IN_DIM, 8, NUM_CLASSES, seed=snap.seed)
     net.load_state_dict(copy.deepcopy(snap.state_dict))
-    net.stage.copy_(snap.stage)
-    net.unit_ids.copy_(snap.unit_ids)
+    net.stage.copy_(snap.stage)  # type: ignore[operator]
+    net.unit_ids.copy_(snap.unit_ids)  # type: ignore[operator]
     net._next_unit_id = snap.next_unit_id
 
     k = GROW_K[action]

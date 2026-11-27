@@ -19,6 +19,7 @@ import json
 import sys
 from collections.abc import Callable
 from pathlib import Path
+from typing import Any, cast
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
@@ -130,10 +131,10 @@ def save_probe_set(payload: dict | None = None) -> dict:
 def load_probe_set() -> dict:
     if not PROBE_PATH.exists():
         save_probe_set()
-    return json.loads(PROBE_PATH.read_text(encoding="utf-8"))
+    return cast(dict[Any, Any], json.loads(PROBE_PATH.read_text(encoding="utf-8")))
 
 
-def probe_shares(action_fn: Callable[[State], str]) -> dict[str, float | int]:
+def probe_shares(action_fn: Callable[[State], str]) -> dict[str, Any]:
     """G2 shares on the frozen probe states (thresholds unchanged: >= 0.50)."""
     payload = load_probe_set()
     hits = {d: 0 for d in DOMAINS}

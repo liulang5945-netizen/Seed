@@ -40,13 +40,13 @@ def expected_calibration_error(
     conf: list[float], correct: list[int], n_bins: int = ECE_BINS
 ) -> dict[str, Any]:
     _validate(conf, correct)
-    bins = [[] for _ in range(n_bins)]
+    bins: list[list[tuple[float, int]]] = [[] for _ in range(n_bins)]
     for q, c in zip(conf, correct, strict=True):
         idx = min(n_bins - 1, int(q * n_bins))
         bins[idx].append((q, c))
     total = len(conf)
     ece = 0.0
-    details = []
+    details: list[dict[str, Any]] = []
     for i, entries in enumerate(bins):
         if not entries:
             details.append({"bin": i, "n": 0})

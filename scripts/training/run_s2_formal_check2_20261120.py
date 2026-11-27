@@ -481,9 +481,13 @@ def classify(
         for entry in per_seed
     ):
         return "retention_gate_not_failable", summary
-    if any(entry["cut_record_organ_b_correct"] > thresholds["causal_max_wrong"] for entry in per_seed):
+    if any(
+        entry["cut_record_organ_b_correct"] > thresholds["causal_max_wrong"] for entry in per_seed
+    ):
         return "causal_control_failure", summary
-    if any(entry["a_drop_upper_bound"] > thresholds["a_drop_upper_bound_max"] for entry in per_seed):
+    if any(
+        entry["a_drop_upper_bound"] > thresholds["a_drop_upper_bound_max"] for entry in per_seed
+    ):
         return "retention_breach", summary
     if any(
         entry["d_truth_drop_upper_bound"] > thresholds["d_truth_drop_upper_bound_max"]
@@ -556,7 +560,9 @@ def authorize(contract_path: Path, authority: str) -> int:
         raise ValueError(f"unexpected_contract_status:{contract.get('status')}")
     contract["status"] = "frozen"
     contract["training_authority"] = authority
-    contract_path.write_bytes(json.dumps(contract, ensure_ascii=False, indent=2).encode("utf-8") + b"\n")
+    contract_path.write_bytes(
+        json.dumps(contract, ensure_ascii=False, indent=2).encode("utf-8") + b"\n"
+    )
     guards(contract, "run")
     print(json.dumps({"authorized": authority, "cap_cpu": contract["cap_cpu"]}))
     return 0
@@ -647,9 +653,7 @@ def smoke(contract: dict[str, Any]) -> int:
     return 0 if passed else 1
 
 
-def _verify_frozen_child_equals_parent(
-    parent: U2Subject, b_items: list[dict[str, Any]]
-) -> bool:
+def _verify_frozen_child_equals_parent(parent: U2Subject, b_items: list[dict[str, Any]]) -> bool:
     frozen = parent.record_organ_candidate()
     if float(frozen.record_organ.organ_mix.detach()) != 0.0:
         return False
@@ -681,14 +685,14 @@ def run(contract_path: Path, contract: dict[str, Any]) -> int:
     check_examples = _check_examples()
     b_items = build_b_items(check_examples, templates=SEEN)
     if len(check_examples) != CHECK_WORLDS or len(b_items) != CHECK_B_ITEMS:
-        raise ValueError(
-            f"unexpected_check_counts:{len(check_examples)}/{len(b_items)}"
-        )
+        raise ValueError(f"unexpected_check_counts:{len(check_examples)}/{len(b_items)}")
 
     # Mark exposure used immediately once check_examples is generated.
     contract["check_exposure"]["used"] = 1
     contract["check_exposure"]["remaining"] = 0
-    contract_path.write_bytes(json.dumps(contract, ensure_ascii=False, indent=2).encode("utf-8") + b"\n")
+    contract_path.write_bytes(
+        json.dumps(contract, ensure_ascii=False, indent=2).encode("utf-8") + b"\n"
+    )
 
     id_to_b_idx = {item["example"]["id"]: idx for idx, item in enumerate(b_items)}
     frozen_matches_parent = _verify_frozen_child_equals_parent(parent, b_items)
@@ -823,7 +827,7 @@ def run(contract_path: Path, contract: dict[str, Any]) -> int:
         if budget_ok and len(seed_rows) == len(CHILD_SEEDS):
             reserve_cpu = 120.0
             with torch.no_grad():
-                for seed_idx, (seed, child) in enumerate(loaded_children):
+                for seed_idx, (_seed, child) in enumerate(loaded_children):
                     if time.process_time() - started > cap - reserve_cpu:
                         break
                     sup_hits = 0
@@ -842,9 +846,9 @@ def run(contract_path: Path, contract: dict[str, Any]) -> int:
                         sup_hits += int(bool(s_eos and s_out == item["target"]))
                     if sup_aborted:
                         break
-                    seed_rows[seed_idx]["optional_reports"]["superseding_b"] = (
-                        f"{sup_hits}/{len(b_items)}"
-                    )
+                    seed_rows[seed_idx]["optional_reports"][
+                        "superseding_b"
+                    ] = f"{sup_hits}/{len(b_items)}"
                     if time.process_time() - started > cap - reserve_cpu:
                         break
                     multi_hits = 0
@@ -863,9 +867,9 @@ def run(contract_path: Path, contract: dict[str, Any]) -> int:
                         multi_hits += int(bool(m_eos and m_out == item["target"]))
                     if multi_aborted:
                         break
-                    seed_rows[seed_idx]["optional_reports"]["multi_record_b"] = (
-                        f"{multi_hits}/{len(b_items)}"
-                    )
+                    seed_rows[seed_idx]["optional_reports"][
+                        "multi_record_b"
+                    ] = f"{multi_hits}/{len(b_items)}"
 
     total_cpu = round(time.process_time() - started, 2)
     if total_cpu > cap:
@@ -1133,7 +1137,9 @@ def closeout(contract_path: Path) -> int:
         "report": str(RUN.relative_to(ROOT)),
         "verify": str(VERIFY.relative_to(ROOT)),
     }
-    contract_path.write_bytes(json.dumps(contract, ensure_ascii=False, indent=2).encode("utf-8") + b"\n")
+    contract_path.write_bytes(
+        json.dumps(contract, ensure_ascii=False, indent=2).encode("utf-8") + b"\n"
+    )
     print(
         json.dumps(
             {"closed": verdict, "cost_cpu": report["cost"]["cpu"], "verify_cost_cpu": verify_cpu}

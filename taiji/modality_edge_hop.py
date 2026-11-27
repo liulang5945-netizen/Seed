@@ -118,8 +118,16 @@ class ModalityEdgeHop(nn.Module):
             )
 
     def _gru_step(self, x_t: torch.Tensor, h: torch.Tensor) -> torch.Tensor:
-        ih = F.linear(x_t, self.q_gru.weight_ih_l0, self.q_gru.bias_ih_l0)
-        hh = F.linear(h, self.q_gru.weight_hh_l0, self.q_gru.bias_hh_l0)
+        ih = F.linear(
+            x_t,
+            cast(torch.Tensor, self.q_gru.weight_ih_l0),
+            cast(torch.Tensor, self.q_gru.bias_ih_l0),
+        )
+        hh = F.linear(
+            h,
+            cast(torch.Tensor, self.q_gru.weight_hh_l0),
+            cast(torch.Tensor, self.q_gru.bias_hh_l0),
+        )
         r_i, z_i, n_i = ih.chunk(3, dim=-1)
         r_h, z_h, n_h = hh.chunk(3, dim=-1)
         r = torch.sigmoid(r_i + r_h)
@@ -135,7 +143,7 @@ class ModalityEdgeHop(nn.Module):
             q_hi = int(idx[-1].item()) + 1
             if idx.numel() == q_hi - q_lo:
                 _, qh = self.q_gru(ticks[:, q_lo:q_hi])
-                return qh.squeeze(0)
+                return cast(torch.Tensor, qh.squeeze(0))
 
         h = ticks.new_zeros(batch, self.d_model)
         qf = query_mask.to(ticks.dtype)

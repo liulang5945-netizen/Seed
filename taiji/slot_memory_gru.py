@@ -107,8 +107,16 @@ class SlotHopGRU(nn.Module):
             )
 
     def _gru_step(self, x_t: torch.Tensor, h: torch.Tensor) -> torch.Tensor:
-        ih = F.linear(x_t, self.gru.weight_ih_l0, self.gru.bias_ih_l0)
-        hh = F.linear(h, self.gru.weight_hh_l0, self.gru.bias_hh_l0)
+        ih = F.linear(
+            x_t,
+            cast(torch.Tensor, self.gru.weight_ih_l0),
+            cast(torch.Tensor, self.gru.bias_ih_l0),
+        )
+        hh = F.linear(
+            h,
+            cast(torch.Tensor, self.gru.weight_hh_l0),
+            cast(torch.Tensor, self.gru.bias_hh_l0),
+        )
         r_i, z_i, n_i = ih.chunk(3, dim=-1)
         r_h, z_h, n_h = hh.chunk(3, dim=-1)
         r = torch.sigmoid(r_i + r_h)

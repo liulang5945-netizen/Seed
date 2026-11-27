@@ -97,8 +97,8 @@ def _pack_growth_net(
     capsule["grow.fc_in.b"] = net.fc_in.bias.detach().cpu().clone()
     capsule["grow.fc_out.w"] = net.fc_out.weight.detach().cpu().clone()
     capsule["grow.fc_out.b"] = net.fc_out.bias.detach().cpu().clone()
-    capsule["grow.stage"] = net.stage.detach().cpu().clone()
-    capsule["grow.unit_ids"] = net.unit_ids.detach().cpu().clone()
+    capsule["grow.stage"] = net.stage.detach().cpu().clone()  # type: ignore[operator]
+    capsule["grow.unit_ids"] = net.unit_ids.detach().cpu().clone()  # type: ignore[operator]
     capsule["grow.meta"] = torch.tensor(
         [net.in_dim, net.hidden_dim, net.out_dim, net._next_unit_id, ctrl.growth_events],
         dtype=torch.long,
@@ -427,14 +427,14 @@ def run_long_run_subject(
         start_i = s * 30
         shift_at = (cfg.n_sessions // 3) * 30
         for offset in range(30):
-            idx = start_i + offset
-            src, corr = claims[idx]
-            p_b = cred.predict(src, idx)
-            p_s = static_prior.predict(src, idx)
+            claim_idx = start_i + offset
+            src, corr = claims[claim_idx]
+            p_b = cred.predict(src, claim_idx)
+            p_s = static_prior.predict(src, claim_idx)
             stats[0] += (p_b - corr) ** 2
             stats[1] += (p_s - corr) ** 2
             stats[4] += 1.0
-            if idx >= shift_at:
+            if claim_idx >= shift_at:
                 stats[2] += abs(p_b - corr)
                 stats[3] += abs(p_s - corr)
                 stats[5] += 1.0
@@ -448,18 +448,18 @@ def run_long_run_subject(
         record.capsule["ecl.stats"] = stats
 
         # 6. Coupled uncertainty update (from own verifiable outcomes)
-        w = record.capsule["unc.w"].clone()
+        w_unc = record.capsule["unc.w"].clone()
         b_bias = record.capsule["unc.b"].clone()
         if unc_feats_list:
             uf = torch.stack(unc_feats_list, dim=0)
             uy = torch.tensor(unc_targets_list, dtype=torch.float32)
             for _ in range(4):
-                up = torch.sigmoid(uf @ w + b_bias)
-                gw = ((up - uy).unsqueeze(1) * uf).mean(dim=0)
-                gb = (up - uy).mean()
-                w = w - 0.15 * gw
+                up_prob = torch.sigmoid(uf @ w_unc + b_bias)
+                gw = ((up_prob - uy).unsqueeze(1) * uf).mean(dim=0)
+                gb = (up_prob - uy).mean()
+                w_unc = w_unc - 0.15 * gw
                 b_bias = b_bias - 0.15 * gb
-        record.capsule["unc.w"] = w
+        record.capsule["unc.w"] = w_unc
         record.capsule["unc.b"] = b_bias
 
         # 7. Append >=100 compact structured experience events for 10,000+ event endurance

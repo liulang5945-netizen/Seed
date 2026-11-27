@@ -8,7 +8,7 @@ task-specific output path).  Used by the multi-head feasibility probe.
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, cast
 
 import torch
 from torch import nn
@@ -22,7 +22,7 @@ class MultiHeadGraph(RouteBGraph):
     def __init__(self, spec: UnitGraphSpec, heads: int = 2, head_hidden: int = 0) -> None:
         super().__init__(spec)
         first = self.readout
-        extra_modules = []
+        extra_modules: list[nn.Module] = []
         for _ in range(max(0, heads - 1)):
             if head_hidden > 0:
                 extra_modules.append(
@@ -75,4 +75,4 @@ def freeze_module(module: nn.Module) -> None:
 
 def copy_head_state(source: nn.Module, target: nn.Module) -> None:
     with torch.no_grad():
-        target.weight.copy_(source.weight)
+        cast(torch.Tensor, target.weight).copy_(cast(torch.Tensor, source.weight))

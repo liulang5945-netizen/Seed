@@ -52,7 +52,8 @@ export async function fetchTaijiOpsOverview(
   baseUrl = DEFAULT_BACKEND_URL,
   signal?: AbortSignal,
 ): Promise<TaijiOpsOverview> {
-  const res = await fetch(`${baseUrl.replace(/\/+$/, '')}/api/taiji/ops/overview`, { signal })
+  const init: RequestInit | undefined = signal ? { signal } : undefined
+  const res = await fetch(`${baseUrl.replace(/\/+$/, '')}/api/taiji/ops/overview`, init)
   if (!res.ok) {
     throw new Error(`fetchTaijiOpsOverview failed: HTTP ${res.status}`)
   }
@@ -63,7 +64,8 @@ export async function fetchN38TrainingStatus(
   baseUrl = DEFAULT_BACKEND_URL,
   signal?: AbortSignal,
 ): Promise<{ status: N38TrainingStatus; recent_metrics: Record<string, unknown>[] }> {
-  const res = await fetch(`${baseUrl.replace(/\/+$/, '')}/api/taiji/ops/n38-training`, { signal })
+  const init: RequestInit | undefined = signal ? { signal } : undefined
+  const res = await fetch(`${baseUrl.replace(/\/+$/, '')}/api/taiji/ops/n38-training`, init)
   if (!res.ok) {
     throw new Error(`fetchN38TrainingStatus failed: HTTP ${res.status}`)
   }
@@ -78,12 +80,13 @@ export async function classifyTaijiChange(
   baseUrl = DEFAULT_BACKEND_URL,
   signal?: AbortSignal,
 ): Promise<TaijiChangeClassification> {
-  const res = await fetch(`${baseUrl.replace(/\/+$/, '')}/api/taiji/ops/classify-change`, {
+  const init: RequestInit = {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ kind }),
-    signal,
-  })
+    ...(signal ? { signal } : {}),
+  }
+  const res = await fetch(`${baseUrl.replace(/\/+$/, '')}/api/taiji/ops/classify-change`, init)
   if (!res.ok) {
     throw new Error(`classifyTaijiChange failed: HTTP ${res.status}`)
   }

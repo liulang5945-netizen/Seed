@@ -54,7 +54,7 @@ class PhysicsState:
     def audio(self) -> list[float]:
         return [1.0 if self.last_outcome == "碰撞" else 0.0, 1.0 if abs(self.vel) > 0.1 else 0.0]
 
-    def observe(self) -> dict[str, list[float]]:
+    def observe(self) -> dict[str, Any]:
         return {
             "vision": self.vision(),
             "proprio": self.proprio(),
@@ -189,14 +189,14 @@ class CorrectablePredictor:
         key = self._key(env, action)
         best, best_n = "无变化", -1
         for outcome in OUTCOMES:
-            n = self.counts.get((key, outcome), 0)
+            n = self.counts.get((key, outcome), 0)  # type: ignore[call-overload,arg-type]
             if n > best_n:
                 best, best_n = outcome, n
         return best
 
     def observe(self, env: MultimodalPhysicsEnv, action: str, truth: str, predicted: str) -> None:
         key = self._key(env, action)
-        self.counts[(key, truth)] = self.counts.get((key, truth), 0) + 1
+        self.counts[(key, truth)] = self.counts.get((key, truth), 0) + 1  # type: ignore[call-overload,index,arg-type]
         self.total += 1
         if predicted == truth:
             self.correct += 1
@@ -217,6 +217,7 @@ def eval_predictor(predictor, seeds: list[int]) -> dict[str, float]:
                 total += 1
                 if pred == truth:
                     correct += 1
+            assert env.state is not None
             obs, outcome, reward, done = env.step(ACTIONS[env.state.t % len(ACTIONS)])
             if done:
                 break

@@ -11,7 +11,7 @@ policy inside the learned consequence model (`T=4` imagined rollouts) across 3 a
 from __future__ import annotations
 
 import time
-from typing import Any
+from typing import Any, cast
 
 import torch
 import torch.nn.functional as F
@@ -40,7 +40,7 @@ class ConsequenceModel(nn.Module):
             )
 
     def forward(self, state_and_action: torch.Tensor) -> torch.Tensor:
-        return self.net(state_and_action)
+        return cast(torch.Tensor, self.net(state_and_action))
 
 
 class InterventionPolicy(nn.Module):

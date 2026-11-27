@@ -9,6 +9,7 @@ oracle (true lookahead) and the correctable count baseline from the environment 
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import cast
 
 import torch
 from torch import nn
@@ -67,7 +68,7 @@ class ConsequenceNet(nn.Module):
             )
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        return self.net(x)
+        return cast(torch.Tensor, self.net(x))
 
 
 def train_net(
