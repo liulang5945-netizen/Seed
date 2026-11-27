@@ -64,6 +64,17 @@ export interface NativeBackboneOpsStatus {
   baseline_transformer: N38TrainingStatus & { role?: string }
 }
 
+export interface ArchitectureReadinessReport {
+  schema: string
+  native_pretraining: Record<string, unknown>
+  baseline_transformer: Record<string, unknown>
+  parallel_modules: Record<
+    string,
+    { module: string; status: string; spec_ref: string }
+  >
+  waiting_for_trained_native_base: Array<{ id: string; reason: string }>
+}
+
 const DEFAULT_BACKEND_URL = 'http://127.0.0.1:8000'
 
 export function getTaijiOpsDashboardUrl(baseUrl = DEFAULT_BACKEND_URL): string {
@@ -143,4 +154,19 @@ export async function updateNativeGrowthPolicy(
     throw new Error(`updateNativeGrowthPolicy failed: HTTP ${res.status}`)
   }
   return (await res.json()) as { status: string; growth_policy: NativeGrowthPolicy }
+}
+
+export async function fetchArchitectureReadiness(
+  baseUrl = DEFAULT_BACKEND_URL,
+  signal?: AbortSignal,
+): Promise<ArchitectureReadinessReport> {
+  const init: RequestInit | undefined = signal ? { signal } : undefined
+  const res = await fetch(
+    `${baseUrl.replace(/\/+$/, '')}/api/taiji/ops/architecture-readiness`,
+    init,
+  )
+  if (!res.ok) {
+    throw new Error(`fetchArchitectureReadiness failed: HTTP ${res.status}`)
+  }
+  return (await res.json()) as ArchitectureReadinessReport
 }

@@ -179,6 +179,58 @@ def taiji_update_growth_policy(req: GrowthPolicyUpdateRequest) -> dict[str, Any]
     return {"status": "updated", "growth_policy": policy}
 
 
+@router.get("/api/taiji/ops/architecture-readiness")
+def taiji_architecture_readiness() -> dict[str, Any]:
+    """Return authoritative-architecture module readiness: implemented vs waiting on base weights."""
+    return {
+        "schema": "taiji-architecture-readiness-v1",
+        "native_pretraining": _read_json_safe(NATIVE_STATUS_PATH)
+        or {"status": "not_started", "preset": "native_byte_mid"},
+        "baseline_transformer": _read_json_safe(N38_STATUS_PATH)
+        or {"status": "not_started", "preset": "mid_18m"},
+        "parallel_modules": {
+            "dynamic_byte_chunker": {
+                "module": "taiji.dynamic_byte_chunker",
+                "status": "implemented_and_tested",
+                "spec_ref": "TAIJI_NATIVE_ARCHITECTURE_V1 §2.2/§5.2/§5.10",
+            },
+            "conditional_value": {
+                "module": "taiji.conditional_value",
+                "status": "implemented_and_tested",
+                "spec_ref": "VISION §3.2/VX2",
+            },
+            "action_lifecycle": {
+                "module": "taiji.action_lifecycle",
+                "status": "implemented_and_tested",
+                "spec_ref": "TAIJI_NATIVE_ARCHITECTURE_V1 §4.7/GOV-ACT",
+            },
+            "development_learning": {
+                "module": "taiji.development_learning",
+                "status": "implemented_and_tested",
+                "spec_ref": "VISION §3.4/VX4/GOV-LEARN",
+            },
+        },
+        "waiting_for_trained_native_base": [
+            {
+                "id": "open_zh_curriculum_stage2",
+                "reason": "Requires converged native_byte_mid byte representation before source/correction copy curriculum",
+            },
+            {
+                "id": "dynamic_chunk_bpb_ablation",
+                "reason": "Must compare dynamic macro-chunk growth against fixed 8-byte patch BPB curve from task-5203",
+            },
+            {
+                "id": "autonomous_vx5_policy",
+                "reason": "Learned autonomous scheduling must be trained atop real representation & outcome feedback (VX2/VX4)",
+            },
+            {
+                "id": "a1_a9_joint_gates",
+                "reason": "Full semantic/world/planning/language joint capability gates require non-random native substrate",
+            },
+        ],
+    }
+
+
 @router.post("/api/taiji/ops/classify-change")
 def taiji_classify_change(req: ClassifyChangeRequest) -> dict[str, Any]:
     """Route a proposed change through the §15 3-tier change classifier."""

@@ -11,6 +11,7 @@ from api import routes_taiji_ops
 from api.routes_taiji_ops import (
     ClassifyChangeRequest,
     GrowthPolicyUpdateRequest,
+    taiji_architecture_readiness,
     taiji_classify_change,
     taiji_n38_training,
     taiji_native_backbone,
@@ -73,3 +74,14 @@ def test_taiji_native_backbone_and_growth_policy_handlers(
     with pytest.raises(HTTPException) as exc_info:
         taiji_update_growth_policy(GrowthPolicyUpdateRequest(max_params=100))
     assert exc_info.value.status_code == 400
+
+    ready = taiji_architecture_readiness()
+    assert ready["schema"] == "taiji-architecture-readiness-v1"
+    for key in (
+        "dynamic_byte_chunker",
+        "conditional_value",
+        "action_lifecycle",
+        "development_learning",
+    ):
+        assert ready["parallel_modules"][key]["status"] == "implemented_and_tested"
+    assert len(ready["waiting_for_trained_native_base"]) == 4
